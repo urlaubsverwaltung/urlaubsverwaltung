@@ -151,6 +151,7 @@ public class AbsencePeriod {
      * Describes an absence record. (e.g. {@link RecordMorning} absence or {@link RecordNoon} absence)
      */
     public interface RecordInfo {
+        Person getPerson();
         AbsenceType getType();
         AbsenceStatus getStatus();
         Integer getId();
@@ -174,20 +175,27 @@ public class AbsencePeriod {
      */
     public abstract static class AbstractRecordInfo implements RecordInfo {
 
+        private final Person person;
         private final AbsenceType type;
         private final Integer id;
         private final AbsenceStatus status;
         private final Integer vacationTypeId;
 
-        private AbstractRecordInfo(AbsenceType type, Integer id, AbsenceStatus status) {
-            this(type, id, status, null);
+        private AbstractRecordInfo(Person person, AbsenceType type, Integer id, AbsenceStatus status) {
+            this(person, type, id, status, null);
         }
 
-        private AbstractRecordInfo(AbsenceType type, Integer id, AbsenceStatus status, Integer vacationTypeId) {
+        private AbstractRecordInfo(Person person, AbsenceType type, Integer id, AbsenceStatus status, Integer vacationTypeId) {
+            this.person = person;
             this.type = type;
             this.id = id;
             this.status = status;
             this.vacationTypeId = vacationTypeId;
+        }
+
+        @Override
+        public Person getPerson() {
+            return person;
         }
 
         @Override
@@ -243,26 +251,26 @@ public class AbsencePeriod {
     }
 
     public static class RecordMorningVacation extends AbstractRecordInfo implements RecordMorning {
-        public RecordMorningVacation(Integer applicationId, AbsenceStatus status, Integer vacationTypeId) {
-            super(AbsenceType.VACATION, applicationId, status, vacationTypeId);
+        public RecordMorningVacation(Person person, Integer applicationId, AbsenceStatus status, Integer vacationTypeId) {
+            super(person, AbsenceType.VACATION, applicationId, status, vacationTypeId);
         }
     }
 
     public static class RecordMorningSick extends AbstractRecordInfo implements RecordMorning {
-        public RecordMorningSick(Integer sickNoteId) {
-            super(AbsenceType.SICK, sickNoteId, AbsenceStatus.ACTIVE);
+        public RecordMorningSick(Person person, Integer sickNoteId) {
+            super(person, AbsenceType.SICK, sickNoteId, AbsenceStatus.ACTIVE);
         }
     }
 
     public static class RecordNoonVacation extends AbstractRecordInfo implements RecordNoon {
-        public RecordNoonVacation(Integer applicationId, AbsenceStatus status, Integer vacationTypeId) {
-            super(AbsenceType.VACATION, applicationId, status, vacationTypeId);
+        public RecordNoonVacation(Person person, Integer applicationId, AbsenceStatus status, Integer vacationTypeId) {
+            super(person, AbsenceType.VACATION, applicationId, status, vacationTypeId);
         }
     }
 
     public static class RecordNoonSick extends AbstractRecordInfo implements RecordNoon {
-        public RecordNoonSick(Integer sickNoteId) {
-            super(AbsenceType.SICK, sickNoteId, AbsenceStatus.ACTIVE);
+        public RecordNoonSick(Person person, Integer sickNoteId) {
+            super(person, AbsenceType.SICK, sickNoteId, AbsenceStatus.ACTIVE);
         }
     }
 }

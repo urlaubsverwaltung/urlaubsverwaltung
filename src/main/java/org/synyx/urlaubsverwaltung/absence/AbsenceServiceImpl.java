@@ -184,6 +184,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private AbsencePeriod.Record toVacationAbsencePeriodRecord(DateDayLengthTuple tuple, Application application) {
 
+        final Integer applicationId = application.getId();
         final Person person = application.getPerson();
         final AbsencePeriod.AbsenceStatus status = toAbsenceStatus(application.getStatus());
         final Integer vacationTypeId = application.getVacationType().getId();
@@ -193,13 +194,13 @@ public class AbsenceServiceImpl implements AbsenceService {
             final AbsencePeriod.RecordNoon noon;
             if (tuple.publicHolidayDayLength.equals(DayLength.MORNING)) {
                 morning = null;
-                noon = new AbsencePeriod.RecordNoonVacation(application.getId(), status, vacationTypeId);
+                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId);
             } else if (tuple.publicHolidayDayLength.equals(DayLength.NOON)) {
-                morning = new AbsencePeriod.RecordMorningVacation(application.getId(), status, vacationTypeId);
+                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId);
                 noon = null;
             } else {
-                morning = new AbsencePeriod.RecordMorningVacation(application.getId(), status, vacationTypeId);
-                noon = new AbsencePeriod.RecordNoonVacation(application.getId(), status, vacationTypeId);
+                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId);
+                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId);
             }
             return new AbsencePeriod.Record(tuple.date, person, morning, noon);
         }
@@ -208,16 +209,16 @@ public class AbsenceServiceImpl implements AbsenceService {
         final AbsencePeriod.RecordNoonVacation noon;
 
         if (DayLength.MORNING.equals(application.getDayLength())) {
-            morning = new AbsencePeriod.RecordMorningVacation(application.getId(), status, vacationTypeId);
+            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId);
             noon = null;
         }
         else if (DayLength.NOON.equals(application.getDayLength())) {
             morning = null;
-            noon = new AbsencePeriod.RecordNoonVacation(application.getId(), status, vacationTypeId);
+            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId);
         }
         else {
-            morning = new AbsencePeriod.RecordMorningVacation(application.getId(), status, vacationTypeId);
-            noon = new AbsencePeriod.RecordNoonVacation(application.getId(), status, vacationTypeId);
+            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId);
+            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId);
         }
 
         return new AbsencePeriod.Record(tuple.date, person, morning, noon);
@@ -245,6 +246,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private AbsencePeriod.Record toSickAbsencePeriodRecord(DateDayLengthTuple tuple, SickNote sickNote) {
 
+        final Integer sickNoteId = sickNote.getId();
         final Person person = sickNote.getPerson();
 
         if (tuple.publicHolidayDayLength.isHalfDay()) {
@@ -252,13 +254,13 @@ public class AbsenceServiceImpl implements AbsenceService {
             final AbsencePeriod.RecordNoon noon;
             if (tuple.publicHolidayDayLength.equals(DayLength.MORNING)) {
                 morning = null;
-                noon = new AbsencePeriod.RecordNoonSick(sickNote.getId());
+                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
             } else if (tuple.publicHolidayDayLength.equals(DayLength.NOON)) {
-                morning = new AbsencePeriod.RecordMorningSick(sickNote.getId());
+                morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
                 noon = null;
             } else {
-                morning = new AbsencePeriod.RecordMorningSick(sickNote.getId());
-                noon = new AbsencePeriod.RecordNoonSick(sickNote.getId());
+                morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
+                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
             }
             return new AbsencePeriod.Record(tuple.date, person, morning, noon);
         }
@@ -267,16 +269,16 @@ public class AbsenceServiceImpl implements AbsenceService {
         final AbsencePeriod.RecordNoonSick noon;
 
         if (DayLength.MORNING.equals(sickNote.getDayLength())) {
-            morning = new AbsencePeriod.RecordMorningSick(sickNote.getId());
+            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
             noon = null;
         }
         else if (DayLength.NOON.equals(sickNote.getDayLength())) {
             morning = null;
-            noon = new AbsencePeriod.RecordNoonSick(sickNote.getId());
+            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
         }
         else {
-            morning = new AbsencePeriod.RecordMorningSick(sickNote.getId());
-            noon = new AbsencePeriod.RecordNoonSick(sickNote.getId());
+            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
+            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
         }
 
         return new AbsencePeriod.Record(tuple.date, person, morning, noon);

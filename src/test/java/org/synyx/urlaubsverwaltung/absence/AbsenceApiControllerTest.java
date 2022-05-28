@@ -121,8 +121,8 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, JANUARY, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(42, WAITING, 1);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(42, WAITING, 1);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42, WAITING, 1);
         final AbsencePeriod.Record recordOne = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation, recordNoonVacation);
         final AbsencePeriod.Record recordTwo = new AbsencePeriod.Record(startDate.plusDays(2), person, recordMorningVacation, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(recordOne, recordTwo));
@@ -170,8 +170,8 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(42, WAITING, 1);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(42, WAITING, 1);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42, WAITING, 1);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -202,7 +202,7 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(42, WAITING, 1);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -233,7 +233,7 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(42, WAITING, 1);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42, WAITING, 1);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -265,8 +265,8 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(42);
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(42);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42);
         final AbsencePeriod.Record fullDaySickRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningSick, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDaySickRecord));
 
@@ -297,7 +297,7 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(42);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42);
         final AbsencePeriod.Record morningSickRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(morningSickRecord));
 
@@ -328,7 +328,7 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(42);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42);
         final AbsencePeriod.Record noonSickRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(noonSickRecord));
 
@@ -360,8 +360,8 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(1337, WAITING, 1);
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(42);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 1337, WAITING, 1);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42);
         final AbsencePeriod.Record absenceRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(absenceRecord));
 
@@ -397,8 +397,8 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(42);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(1337, WAITING, 1);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 1337, WAITING, 1);
         final AbsencePeriod.Record absenceRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningSick, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(absenceRecord));
 
@@ -435,8 +435,8 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(42, WAITING, 1);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(42, WAITING, 1);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42, WAITING, 1);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningVacation, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -472,7 +472,7 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(42, WAITING, 1);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -508,7 +508,7 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(42, WAITING, 1);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -554,8 +554,8 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(42);
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(42);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42);
         final AbsencePeriod.Record fullDaySick = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningSick, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDaySick));
 
@@ -591,7 +591,7 @@ class AbsenceApiControllerTest {
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(42);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42);
         final AbsencePeriod.Record morningSick = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(morningSick));
 
@@ -778,12 +778,12 @@ class AbsenceApiControllerTest {
     }
 
     private static AbsencePeriod.Record anyVacationRecord(Person person, LocalDate date) {
-        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningVacation(42, WAITING, 1);
+        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1);
         return new AbsencePeriod.Record(date, person, morning);
     }
 
     private static AbsencePeriod.Record anySickRecord(Person person, LocalDate date) {
-        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningSick(42);
+        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningSick(person, 42);
         return new AbsencePeriod.Record(date, person, morning);
     }
 
