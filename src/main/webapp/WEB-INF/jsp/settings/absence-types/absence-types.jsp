@@ -10,8 +10,8 @@
     </h2>
 </uv:section-heading>
 
-<div class="tw-flex tw-flex-col xl:tw-flex-row xl:tw-flex-row-reverse">
-    <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none xl:tw-w-1/3 xl:tw-ml-3 xl:tw-pl-5 tw-pt-2 md:tw-pt-0 tw-text-sm">
+<div>
+    <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none tw-pt-2 md:tw-pt-0 tw-text-sm">
         <div>
             <icon:information-circle className="tw-w-4 tw-h-4 tw-mr-1" solid="true"/>
         </div>
@@ -46,7 +46,7 @@
             <span class="tw-break-all tw-text-right">
                 <spring:message code='settings.absenceTypes.table.head.approval' />
             </span>
-            <span class="tw-text-right">
+            <span class="tw-break-words tw-text-right">
                 <spring:message code='settings.absenceTypes.table.head.visibleToEveryone' />
             </span>
             <span class="tw-pr-5">

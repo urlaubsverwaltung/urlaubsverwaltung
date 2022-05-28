@@ -10,8 +10,8 @@
     </h2>
 </uv:section-heading>
 
-<div class="tw-flex tw-flex-col xl:tw-flex-row xl:tw-flex-row-reverse">
-    <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start xl:tw-flex-none xl:tw-w-1/3 xl:tw-ml-3 xl:tw-pl-5 tw-pt-2 xl:tw-pt-0 tw-text-sm">
+<div>
+    <div class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start tw-pt-2 tw-text-sm">
         <div>
             <icon:information-circle className="tw-w-4 tw-h-4" solid="true" />
         </div>
@@ -28,7 +28,7 @@
             </p>
         </div>
     </div>
-    <table id="special-leave-table" class="lg:tw-flex-1 absence-type-settings-table">
+    <table id="special-leave-table" class="tw-w-full absence-type-settings-table">
         <caption class="tw-sr-only">
             <spring:message code='settings.specialleave.title'/>
         </caption>
