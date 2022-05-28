@@ -144,6 +144,8 @@ public class AbsenceOverviewViewController {
         final List<Person> membersOfSignedInUser = getActiveMembersOfPerson(signedInUser);
         model.addAttribute("showRichLegend", !membersOfSignedInUser.isEmpty());
 
+        final Function<Person, Boolean> shouldAnonymizeAbsenceType = (person) -> !membersOfSignedInUser.contains(person);
+
         // use active vacation types instead of all to avoid too much items in the legend.
         // (there could be non-active vacation types visible in the absence-overview)
         // the legend will be removed soon -> therefore display just the active items
@@ -151,7 +153,7 @@ public class AbsenceOverviewViewController {
         model.addAttribute("vacationTypeColors", vacationTypes.stream().map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(toUnmodifiableList()));
 
         final DateRange dateRange = new DateRange(startDate, endDate);
-        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(dateRange, overviewPersons, locale, membersOfSignedInUser);
+        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(dateRange, overviewPersons, locale, shouldAnonymizeAbsenceType);
         final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
         model.addAttribute("absenceOverview", absenceOverview);
 
@@ -163,7 +165,7 @@ public class AbsenceOverviewViewController {
         return preparedSelectedDepartments.isEmpty() ? List.of(departments.get(0).getName()) : preparedSelectedDepartments;
     }
 
-    private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(DateRange dateRange, List<Person> personList, Locale locale, List<Person> members) {
+    private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(DateRange dateRange, List<Person> personList, Locale locale, Function<Person, Boolean> shouldAnonymizeAbsenceType) {
 
         final LocalDate today = LocalDate.now(clock);
 
@@ -222,8 +224,8 @@ public class AbsenceOverviewViewController {
                     .collect(toUnmodifiableList());
 
                 final AbsenceOverviewDayType personViewDayType = Optional.ofNullable(publicHolidaysOfAllPersons.get(person).get(date))
-                    .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, members, publicHoliday, vacationTypesById::get))
-                    .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, members, vacationTypesById::get))
+                    .map(publicHoliday -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, publicHoliday, vacationTypesById::get))
+                    .orElseGet(() -> getAbsenceOverviewDayType(personAbsenceRecordsForDate, shouldAnonymizeAbsenceType, vacationTypesById::get))
                     .build();
 
                 personView.getDays().add(new AbsenceOverviewPersonDayDto(personViewDayType, isWorkday(date, personWorkingTimeList)));
@@ -269,8 +271,8 @@ public class AbsenceOverviewViewController {
         return new AbsenceOverviewMonthPersonDto(firstName, lastName, email, gravatarUrl, new ArrayList<>());
     }
 
-    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, List<Person> members, PublicHoliday publicHoliday, Function<Integer, VacationType> vacationTypById) {
-        AbsenceOverviewDayType.Builder builder = getAbsenceOverviewDayType(absenceRecords, members, vacationTypById);
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, Function<Person, Boolean> shouldAnonymizeAbsenceType, PublicHoliday publicHoliday, Function<Integer, VacationType> vacationTypById) {
+        AbsenceOverviewDayType.Builder builder = getAbsenceOverviewDayType(absenceRecords, shouldAnonymizeAbsenceType, vacationTypById);
         if (publicHoliday.getDayLength().equals(DayLength.MORNING)) {
             builder = builder.publicHolidayMorning();
         }
@@ -283,47 +285,55 @@ public class AbsenceOverviewViewController {
         return builder;
     }
 
-    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, List<Person> members, Function<Integer, VacationType> vacationTypById) {
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, Function<Person, Boolean> shouldAnonymizeAbsenceType, Function<Integer, VacationType> vacationTypById) {
         if (absenceRecords.isEmpty()) {
             return AbsenceOverviewDayType.builder();
         }
 
         AbsenceOverviewDayType.Builder builder = AbsenceOverviewDayType.builder();
         for (AbsencePeriod.Record absenceRecord : absenceRecords) {
-            final boolean showAllInformation = members.contains(absenceRecord.getPerson());
             if (absenceRecord.isHalfDayAbsence()) {
-                builder = getAbsenceOverviewDayTypeForHalfDay(builder, absenceRecord, showAllInformation, vacationTypById);
+                builder = getAbsenceOverviewDayTypeForHalfDay(builder, absenceRecord, shouldAnonymizeAbsenceType, vacationTypById);
             } else {
-                builder = getAbsenceOverviewDayTypeForFullDay(builder, absenceRecord, showAllInformation, vacationTypById);
+                builder = getAbsenceOverviewDayTypeForFullDay(builder, absenceRecord, shouldAnonymizeAbsenceType, vacationTypById);
             }
         }
 
         return builder;
     }
 
-    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForHalfDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean showAllInformation, Function<Integer, VacationType> vacationTypById) {
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForHalfDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, Function<Person, Boolean> shouldAnonymizeAbsenceType, Function<Integer, VacationType> vacationTypById) {
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
 
         final AbsencePeriod.AbsenceType morningAbsenceType = morning.map(AbsencePeriod.RecordInfo::getType).orElse(null);
         final AbsencePeriod.AbsenceType noonAbsenceType = noon.map(AbsencePeriod.RecordInfo::getType).orElse(null);
 
+        final boolean anonymizeAbsenceType = shouldAnonymizeAbsenceType.apply(absenceRecord.getPerson());
+
         if (AbsencePeriod.AbsenceType.SICK.equals(morningAbsenceType)) {
-            if (showAllInformation) {
-                return builder.sickNoteMorning();
-            } else {
+            if (anonymizeAbsenceType) {
                 return builder.colorMorning(ANONYMIZED_ABSENCE_COLOR).absenceMorning();
+            } else {
+                return builder.sickNoteMorning();
             }
         }
         if (AbsencePeriod.AbsenceType.SICK.equals(noonAbsenceType)) {
-            if (showAllInformation) {
-                return builder.sickNoteNoon();
-            } else {
+            if (anonymizeAbsenceType) {
                 return builder.colorNoon(ANONYMIZED_ABSENCE_COLOR).absenceNoon();
+            } else {
+                return builder.sickNoteNoon();
             }
         }
 
-        if (showAllInformation) {
+        if (anonymizeAbsenceType) {
+            if (morning.isPresent()) {
+                builder = builder.colorMorning(ANONYMIZED_ABSENCE_COLOR);
+            }
+            if (noon.isPresent()) {
+                builder = builder.colorNoon(ANONYMIZED_ABSENCE_COLOR);
+            }
+        } else {
             if (morning.isPresent()) {
                 final VacationTypeColor color = recordInfoToColor(morning.orElseThrow(), vacationTypById);
                 builder = builder.colorMorning(color);
@@ -332,18 +342,11 @@ public class AbsenceOverviewViewController {
                 final VacationTypeColor color = recordInfoToColor(noon.orElseThrow(), vacationTypById);
                 builder = builder.colorNoon(color);
             }
-        } else {
-            if (morning.isPresent()) {
-                builder = builder.colorMorning(ANONYMIZED_ABSENCE_COLOR);
-            }
-            if (noon.isPresent()) {
-                builder = builder.colorNoon(ANONYMIZED_ABSENCE_COLOR);
-            }
         }
 
         final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (morningWaiting) {
-            return showAllInformation ? builder.waitingAbsenceMorning() : builder.absenceMorning();
+            return anonymizeAbsenceType ? builder.absenceMorning() : builder.waitingAbsenceMorning();
         }
         final boolean morningAllowed = morning.map(AbsencePeriod.RecordInfo::hasStatusAllowed).orElse(false);
         if (morningAllowed) {
@@ -352,13 +355,13 @@ public class AbsenceOverviewViewController {
 
         final boolean noonWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (noonWaiting) {
-            return showAllInformation ? builder.waitingAbsenceNoon() : builder.absenceNoon();
+            return anonymizeAbsenceType ? builder.absenceNoon() : builder.waitingAbsenceNoon();
         }
 
         return builder.absenceNoon();
     }
 
-    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForFullDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, boolean showAllInformation, Function<Integer, VacationType> vacationTypById) {
+    private AbsenceOverviewDayType.Builder getAbsenceOverviewDayTypeForFullDay(AbsenceOverviewDayType.Builder builder, AbsencePeriod.Record absenceRecord, Function<Person, Boolean> shouldAnonymizeAbsenceType, Function<Integer, VacationType> vacationTypById) {
         final Optional<AbsencePeriod.RecordInfo> morning = absenceRecord.getMorning();
         final Optional<AbsencePeriod.RecordInfo> noon = absenceRecord.getNoon();
         final Optional<AbsencePeriod.AbsenceType> morningType = morning.map(AbsencePeriod.RecordInfo::getType);
@@ -368,28 +371,30 @@ public class AbsenceOverviewViewController {
         final boolean sickNoon = noonType.map(AbsencePeriod.AbsenceType.SICK::equals).orElse(false);
         final boolean sickFull = sickMorning && sickNoon;
 
+        final boolean anonymizeAbsenceType = shouldAnonymizeAbsenceType.apply(absenceRecord.getPerson());
+
         if (sickFull) {
-            if (showAllInformation) {
-                return builder.sickNoteFull();
-            } else {
+            if (anonymizeAbsenceType) {
                 return builder.colorFull(ANONYMIZED_ABSENCE_COLOR).absenceFull();
+            } else {
+                return builder.sickNoteFull();
             }
         }
 
         final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         final boolean noonWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
 
-        if (showAllInformation) {
+        if (anonymizeAbsenceType) {
+            builder = builder.colorFull(ANONYMIZED_ABSENCE_COLOR);
+        } else {
             // full day absence consists of a morning and a noon recordInfo.
             // both recordInfos have the same vacationType, therefore we can use the morning color.
             final VacationTypeColor color = recordInfoToColor(morning.orElseThrow(), vacationTypById);
             builder = builder.colorFull(color);
-        } else {
-            builder = builder.colorFull(ANONYMIZED_ABSENCE_COLOR);
         }
 
         if (morningWaiting && noonWaiting) {
-            return showAllInformation ? builder.waitingAbsenceFull() : builder.absenceFull();
+            return anonymizeAbsenceType ? builder.absenceFull() : builder.waitingAbsenceFull();
         } else if (!morningWaiting && !noonWaiting) {
             return builder.absenceFull();
         }
