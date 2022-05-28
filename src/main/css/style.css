@@ -31,6 +31,8 @@
 @import "./components/tooltip.css";
 @import "./components/ui.timepicker.css";
 
+@import "./components/settings-absence-types.css";
+
 @import "tailwindcss/utilities";
 @import "./utility.css";
 
