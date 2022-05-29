@@ -309,10 +309,18 @@ public class AbsenceOverviewViewController {
         final AbsencePeriod.AbsenceType noonAbsenceType = noon.map(AbsencePeriod.RecordInfo::getType).orElse(null);
 
         if (AbsencePeriod.AbsenceType.SICK.equals(morningAbsenceType)) {
-            return showAllInformation ? builder.sickNoteMorning() : builder.absenceMorning();
+            if (showAllInformation) {
+                return builder.sickNoteMorning();
+            } else {
+                return builder.colorMorning(ANONYMIZED_ABSENCE_COLOR).absenceMorning();
+            }
         }
         if (AbsencePeriod.AbsenceType.SICK.equals(noonAbsenceType)) {
-            return showAllInformation ? builder.sickNoteNoon() : builder.absenceNoon();
+            if (showAllInformation) {
+                return builder.sickNoteNoon();
+            } else {
+                return builder.colorNoon(ANONYMIZED_ABSENCE_COLOR).absenceNoon();
+            }
         }
 
         if (showAllInformation) {
@@ -361,7 +369,11 @@ public class AbsenceOverviewViewController {
         final boolean sickFull = sickMorning && sickNoon;
 
         if (sickFull) {
-            return showAllInformation ? builder.sickNoteFull() : builder.absenceFull();
+            if (showAllInformation) {
+                return builder.sickNoteFull();
+            } else {
+                return builder.colorFull(ANONYMIZED_ABSENCE_COLOR).absenceFull();
+            }
         }
 
         final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
