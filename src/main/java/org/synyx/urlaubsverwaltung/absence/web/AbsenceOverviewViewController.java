@@ -145,6 +145,7 @@ public class AbsenceOverviewViewController {
         model.addAttribute("showRichLegend", !membersOfSignedInUser.isEmpty());
 
         final List<VacationType> vacationTypes = vacationTypeService.getAllVacationTypes();
+        final Map<Integer, VacationType> vacationTypesById = vacationTypes.stream().collect(toMap(VacationType::getId, Function.identity()));
 
         // use active vacation types instead of all to avoid too much items in the legend.
         // (there could be non-active vacation types visible in the absence-overview)
@@ -153,13 +154,10 @@ public class AbsenceOverviewViewController {
         model.addAttribute("vacationTypeColors", activeVacationTypes.stream().map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(toUnmodifiableList()));
 
         // TODO this information should be part of the domain imho. (`AbsencePeriod.RecordInfo`)
-        // TODO memoize value for given vacationTypeId instead of iterating list every time.
-        final Function<Integer, Optional<VacationType>> vacationTypeForId = id -> vacationTypes.stream().filter(type -> type.getId().equals(id)).findFirst();
         final Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType = recordInfo -> !(membersOfSignedInUser.contains(recordInfo.getPerson()) ||
                 // recordInfo for a sick-note does not have a vacationTypeId. and sick-notes cannot be configured right now to be deanonymized.
-                recordInfo.getVacationTypeId().flatMap(vacationTypeForId).map(VacationType::isVisibleToEveryone).orElse(false));
+                recordInfo.getVacationTypeId().map(vacationTypesById::get).map(VacationType::isVisibleToEveryone).orElse(false));
 
-        final Map<Integer, VacationType> vacationTypesById = vacationTypes.stream().collect(toMap(VacationType::getId, Function.identity()));
         final Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor = recordInfo -> this.recordInfoToColor(recordInfo, vacationTypesById::get);
 
         final DateRange dateRange = new DateRange(startDate, endDate);
