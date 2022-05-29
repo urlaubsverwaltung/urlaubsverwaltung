@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayTypeColor.absenceOverviewDayTypeColorNone;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
 public class AbsenceOverviewDayType {
 
@@ -116,7 +116,9 @@ public class AbsenceOverviewDayType {
         private boolean publicHolidayNoon = false;
         private boolean publicHolidayFull = false;
 
-        private AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorNone();
+        private VacationTypeColor colorMorning;
+        private VacationTypeColor colorNoon;
+        private VacationTypeColor colorFull;
 
         public Builder sickNoteMorning() {
             this.sickNoteMorning = true;
@@ -178,8 +180,18 @@ public class AbsenceOverviewDayType {
             return this;
         }
 
-        public Builder color(AbsenceOverviewDayTypeColor color) {
-            this.color = color;
+        public Builder colorMorning(VacationTypeColor colorMorning) {
+            this.colorMorning = colorMorning;
+            return this;
+        }
+
+        public Builder colorNoon(VacationTypeColor colorNoon) {
+            this.colorNoon = colorNoon;
+            return this;
+        }
+
+        public Builder colorFull(VacationTypeColor colorFull) {
+            this.colorFull = colorFull;
             return this;
         }
 
@@ -197,7 +209,7 @@ public class AbsenceOverviewDayType {
                 publicHolidayMorning,
                 publicHolidayNoon,
                 publicHolidayFull,
-                color);
+                new AbsenceOverviewDayTypeColor(colorMorning, colorNoon, colorFull));
         }
     }
 }

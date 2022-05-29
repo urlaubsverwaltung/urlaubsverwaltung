@@ -55,8 +55,6 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayTypeColor.absenceOverviewDayTypeColorFull;
-import static org.synyx.urlaubsverwaltung.absence.web.AbsenceOverviewDayTypeColor.absenceOverviewDayTypeColorMorningAndNoon;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -318,15 +316,21 @@ public class AbsenceOverviewViewController {
         }
 
         if (showAllInformation) {
-            final VacationTypeColor morningColor = recordInfoToColor(morning, vacationTypById);
-            final VacationTypeColor noonColor = recordInfoToColor(noon, vacationTypById);
-            final AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorMorningAndNoon(morningColor, noonColor);
-            builder = builder.color(color);
+            if (morning.isPresent()) {
+                final VacationTypeColor color = recordInfoToColor(morning.orElseThrow(), vacationTypById);
+                builder = builder.colorMorning(color);
+            }
+            if (noon.isPresent()) {
+                final VacationTypeColor color = recordInfoToColor(noon.orElseThrow(), vacationTypById);
+                builder = builder.colorNoon(color);
+            }
         } else {
-            final VacationTypeColor morningColor = morning.isPresent() ? ANONYMIZED_ABSENCE_COLOR : null;
-            final VacationTypeColor noonColor = noon.isPresent() ? ANONYMIZED_ABSENCE_COLOR : null;
-            final AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorMorningAndNoon(morningColor, noonColor);
-            builder = builder.color(color);
+            if (morning.isPresent()) {
+                builder = builder.colorMorning(ANONYMIZED_ABSENCE_COLOR);
+            }
+            if (noon.isPresent()) {
+                builder = builder.colorNoon(ANONYMIZED_ABSENCE_COLOR);
+            }
         }
 
         final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
@@ -366,12 +370,10 @@ public class AbsenceOverviewViewController {
         if (showAllInformation) {
             // full day absence consists of a morning and a noon recordInfo.
             // both recordInfos have the same vacationType, therefore we can use the morning color.
-            final VacationTypeColor morningColor = recordInfoToColor(morning, vacationTypById);
-            final AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorFull(morningColor);
-            builder = builder.color(color);
+            final VacationTypeColor color = recordInfoToColor(morning.orElseThrow(), vacationTypById);
+            builder = builder.colorFull(color);
         } else {
-            final AbsenceOverviewDayTypeColor color = absenceOverviewDayTypeColorFull(ANONYMIZED_ABSENCE_COLOR);
-            builder = builder.color(color);
+            builder = builder.colorFull(ANONYMIZED_ABSENCE_COLOR);
         }
 
         if (morningWaiting && noonWaiting) {
@@ -383,13 +385,12 @@ public class AbsenceOverviewViewController {
         return builder;
     }
 
-    private VacationTypeColor recordInfoToColor(Optional<AbsencePeriod.RecordInfo> recordInfo, Function<Integer, VacationType> vacationTypById) {
-        return recordInfo.map(AbsencePeriod.RecordInfo::getVacationTypeId)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
+    private VacationTypeColor recordInfoToColor(AbsencePeriod.RecordInfo recordInfo, Function<Integer, VacationType> vacationTypById) {
+        return recordInfo.getVacationTypeId()
             .map(vacationTypById)
             .map(VacationType::getColor)
-            .orElse(null);
+            // sick-note does not have a vacationTypeId, but is handled separately. therefore just throw.
+            .orElseThrow();
     }
 
     private AbsenceOverviewDayType.Builder getPublicHolidayType(DayLength dayLength) {
