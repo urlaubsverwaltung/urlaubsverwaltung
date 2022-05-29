@@ -9,8 +9,4 @@ public enum VacationTypeColor {
     BLUE,
     VIOLET,
     PINK;
-
-    public static VacationTypeColor defaultColor() {
-        return YELLOW;
-    }
 }
