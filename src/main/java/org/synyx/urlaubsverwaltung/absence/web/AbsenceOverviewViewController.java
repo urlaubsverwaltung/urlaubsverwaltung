@@ -142,7 +142,8 @@ public class AbsenceOverviewViewController {
         model.addAttribute("selectedMonth", selectedMonth);
 
         final List<Person> membersOfSignedInUser = getActiveMembersOfPerson(signedInUser);
-        model.addAttribute("showRichLegend", !membersOfSignedInUser.isEmpty());
+        final boolean isSignedInUserAllowedToSeeAbsences = !membersOfSignedInUser.isEmpty();
+        model.addAttribute("sickNoteLegendVisible", isSignedInUserAllowedToSeeAbsences);
 
         final List<VacationType> vacationTypes = vacationTypeService.getAllVacationTypes();
         final Map<Integer, VacationType> vacationTypesById = vacationTypes.stream().collect(toMap(VacationType::getId, Function.identity()));
@@ -151,7 +152,10 @@ public class AbsenceOverviewViewController {
         // (there could be non-active vacation types visible in the absence-overview)
         // the legend will be removed soon -> therefore display just the active items
         final List<VacationType> activeVacationTypes = vacationTypes.stream().filter(VacationType::isActive).collect(toUnmodifiableList());
-        model.addAttribute("vacationTypeColors", activeVacationTypes.stream().map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(toUnmodifiableList()));
+        final List<VacationTypeColorDto> vacationTypeColorDtos = isSignedInUserAllowedToSeeAbsences
+            ? activeVacationTypes.stream().map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(toUnmodifiableList())
+            : activeVacationTypes.stream().filter(VacationType::isVisibleToEveryone).map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(toUnmodifiableList());
+        model.addAttribute("vacationTypeColors", vacationTypeColorDtos);
 
         // TODO this information should be part of the domain imho. (`AbsencePeriod.RecordInfo`)
         final Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType = recordInfo -> !(membersOfSignedInUser.contains(recordInfo.getPerson()) ||

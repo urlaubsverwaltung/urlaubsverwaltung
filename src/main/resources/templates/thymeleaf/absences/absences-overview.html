@@ -284,36 +284,23 @@
             </td>
             <td class="vacationOverview-legend-text" th:text="#{absences.overview.no-workday}"></td>
           </tr>
-          <th:block th:if="${showRichLegend}">
-            <th:block th:each="vacationTypeColor : ${vacationTypeColors}">
-              <tr>
-                <td class="vacationOverview-legend-colorbox">
-                  <div
-                    class="cal-day absence-full absence-full--solid"
-                    th:styleappend="|--absence-bar-color:var(--absence-color-${vacationTypeColor.color});|"
-                  ></div>
-                  <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.absence.abbr}"></span>
-                </td>
-                <td class="vacationOverview-legend-text" th:text="${#messages.msg(vacationTypeColor.messageKey)}"></td>
-              </tr>
-            </th:block>
-            <tr>
-              <td class="vacationOverview-legend-colorbox">
-                <div class="cal-day sick-note-full"></div>
-                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.sick.abbr}"></span>
-              </td>
-              <td class="vacationOverview-legend-text" th:text="#{absences.overview.sick}"></td>
-            </tr>
-          </th:block>
-          <th:block th:if="${not showRichLegend}">
-            <tr>
-              <td class="vacationOverview-legend-colorbox">
-                <div class="cal-day absence-full absence-full--solid"></div>
-                <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.absence.abbr}"></span>
-              </td>
-              <td class="vacationOverview-legend-text" th:text="#{absences.overview.absence}"></td>
-            </tr>
-          </th:block>
+          <tr th:each="vacationTypeColor : ${vacationTypeColors}">
+            <td class="vacationOverview-legend-colorbox">
+              <div
+                class="cal-day absence-full absence-full--solid"
+                th:styleappend="|--absence-bar-color:var(--absence-color-${vacationTypeColor.color});|"
+              ></div>
+              <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.absence.abbr}"></span>
+            </td>
+            <td class="vacationOverview-legend-text" th:text="${#messages.msg(vacationTypeColor.messageKey)}"></td>
+          </tr>
+          <tr th:if="${sickNoteLegendVisible}">
+            <td class="vacationOverview-legend-colorbox">
+              <div class="cal-day sick-note-full"></div>
+              <span class="tw-hidden print:tw-inline" th:text="#{absences.overview.sick.abbr}"></span>
+            </td>
+            <td class="vacationOverview-legend-text" th:text="#{absences.overview.sick}"></td>
+          </tr>
         </tbody>
       </table>
     </div>
