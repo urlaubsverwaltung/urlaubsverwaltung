@@ -143,16 +143,17 @@ public class AbsenceOverviewViewController {
         model.addAttribute("selectedMonth", selectedMonth);
 
         final List<Person> membersOfSignedInUser = getActiveMembersOfPerson(signedInUser);
-        final boolean isSignedInUserAllowedToSeeAbsences = !membersOfSignedInUser.isEmpty();
-        model.addAttribute("sickNoteLegendVisible", isSignedInUserAllowedToSeeAbsences);
+        final boolean isSignedInUserAllowedToSeeAbsencesOfOthers = !membersOfSignedInUser.isEmpty();
+        model.addAttribute("sickNoteLegendVisible", isSignedInUserAllowedToSeeAbsencesOfOthers || overviewPersons.contains(signedInUser));
 
         final List<VacationType> vacationTypes = vacationTypeService.getAllVacationTypes();
         final Map<Integer, VacationType> vacationTypesById = vacationTypes.stream().collect(toMap(VacationType::getId, Function.identity()));
 
+        final boolean isSignedInUserInOverview = overviewPersons.contains(signedInUser);
         // use active vacation types instead of all to avoid too many items in the legend.
         // (there could be non-active vacation types visible in the absence-overview)
         // the legend will be removed soon -> therefore display just the active items
-        List<VacationTypeColorDto> vacationTypeColorDtos = prepareVacationTypeColorsForLegend(isSignedInUserAllowedToSeeAbsences, vacationTypes);
+        List<VacationTypeColorDto> vacationTypeColorDtos = prepareVacationTypeColorsForLegend(isSignedInUserAllowedToSeeAbsencesOfOthers, isSignedInUserInOverview, vacationTypes);
         model.addAttribute("vacationTypeColors", vacationTypeColorDtos);
 
         final Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType = recordInfo -> !recordInfo.getPerson().equals(signedInUser)
@@ -168,15 +169,19 @@ public class AbsenceOverviewViewController {
         return "thymeleaf/absences/absences-overview";
     }
 
-    private List<VacationTypeColorDto> prepareVacationTypeColorsForLegend(boolean isSignedInUserAllowedToSeeAbsences, List<VacationType> vacationTypes) {
+    private List<VacationTypeColorDto> prepareVacationTypeColorsForLegend(boolean isSignedInUserAllowedToSeeAbsences, boolean isSignedInUserInOverview, List<VacationType> vacationTypes) {
         final List<VacationType> activeVacationTypes = vacationTypes.stream().filter(VacationType::isActive).collect(toUnmodifiableList());
 
         List<VacationTypeColorDto> vacationTypeColorDtos;
 
         if (isSignedInUserAllowedToSeeAbsences) {
-            vacationTypeColorDtos = activeVacationTypes.stream().map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(Collectors.toList());
+            vacationTypeColorDtos = activeVacationTypes.stream().map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(Collectors.toUnmodifiableList());
         } else {
-            vacationTypeColorDtos = activeVacationTypes.stream().filter(VacationType::isVisibleToEveryone).map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(Collectors.toList());
+            if (isSignedInUserInOverview) {
+                vacationTypeColorDtos = activeVacationTypes.stream().map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(Collectors.toList());
+            } else {
+                vacationTypeColorDtos = activeVacationTypes.stream().filter(VacationType::isVisibleToEveryone).map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(Collectors.toList());
+            }
             if (activeVacationTypes.stream().anyMatch(vacationType -> !vacationType.isVisibleToEveryone())) {
                 vacationTypeColorDtos.add(getAnonymizedAbsenceTypeColor());
             }

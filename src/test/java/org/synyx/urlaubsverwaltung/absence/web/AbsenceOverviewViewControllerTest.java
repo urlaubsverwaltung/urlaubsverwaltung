@@ -1089,7 +1089,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, "other", false, VacationTypeColor.CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1, absenceStatus, 1, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
@@ -1128,13 +1128,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ))
-            .andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-            )));
+            ));
     }
 
     @ParameterizedTest
@@ -1196,13 +1190,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ))
-            .andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-            )));
+            ));
     }
 
     @ParameterizedTest
@@ -1271,13 +1259,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ))
-            .andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-            )));
+            ));
     }
 
     @ParameterizedTest
@@ -1339,14 +1321,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ))
-            .andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-
-            )));
+            ));
     }
 
     @ParameterizedTest
@@ -1416,14 +1391,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ))
-            .andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-
-            )));
+            ));
     }
 
     @ParameterizedTest
@@ -1486,14 +1454,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ))
-            .andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-
-            )));
+            ));
     }
 
     // ---
@@ -1768,14 +1729,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ))
-            .andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-
-            )));
+            ));
     }
 
     @Test
@@ -1836,14 +1790,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ))
-            .andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-
-            )));
+            ));
     }
 
     @Test
@@ -1910,13 +1857,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            )).andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-
-            )));
+            ));
     }
 
     @Test
@@ -1976,13 +1917,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            )).andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-
-            )));
+            ));
     }
 
     @Test
@@ -2050,12 +1985,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            )).andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-            )));
+            ));
     }
 
     @Test
@@ -2116,12 +2046,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            )).andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-            )));
+            ));
     }
 
     // ---
@@ -3477,13 +3402,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ))
-            .andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-            )));
+            ));
     }
 
     @Test
@@ -3552,14 +3471,7 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ))
-            .andExpect(model().attribute("vacationTypeColors", contains(
-                allOf(
-                    hasProperty("messageKey", is("absences.overview.absence")),
-                    hasProperty("color", is(YELLOW))
-                )
-
-            )));
+            ));
     }
 
     @Test
