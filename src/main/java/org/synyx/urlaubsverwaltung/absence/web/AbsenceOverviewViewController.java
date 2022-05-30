@@ -155,8 +155,8 @@ public class AbsenceOverviewViewController {
         List<VacationTypeColorDto> vacationTypeColorDtos = prepareVacationTypeColorsForLegend(isSignedInUserAllowedToSeeAbsences, vacationTypes);
         model.addAttribute("vacationTypeColors", vacationTypeColorDtos);
 
-        final Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType =
-            recordInfo -> !(membersOfSignedInUser.contains(recordInfo.getPerson()) || recordInfo.isVisibleToEveryone());
+        final Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType = recordInfo -> !recordInfo.getPerson().equals(signedInUser)
+            && !membersOfSignedInUser.contains(recordInfo.getPerson()) && !recordInfo.isVisibleToEveryone();
 
         final Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor = recordInfo -> this.recordInfoToColor(recordInfo, vacationTypesById::get);
 
