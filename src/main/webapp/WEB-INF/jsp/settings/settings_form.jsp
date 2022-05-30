@@ -146,7 +146,7 @@
                         <jsp:include page="absence/reminder-upcoming-application.jsp" />
                     </div>
                     <div class="form-section">
-                        <jsp:include page="absence/reminder-upcoming-application.jsp" />
+                        <jsp:include page="absence/sick-days.jsp" />
                     </div>
                 </div>
 
