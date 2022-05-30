@@ -6,6 +6,9 @@
   <changeSet author="honnel" id="add-vacation-type-visible-to-everyone">
     <preConditions>
       <tableExists tableName="vacation_type"/>
+      <not>
+        <columnExists tableName="vacation_type" columnName="visible_to_everyone"/>
+      </not>
     </preConditions>
 
     <addColumn tableName="vacation_type">

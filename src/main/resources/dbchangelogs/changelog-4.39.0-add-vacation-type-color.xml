@@ -6,6 +6,9 @@
   <changeSet author="aendi" id="add-vacation-type-color">
     <preConditions>
       <tableExists tableName="vacation_type"/>
+      <not>
+        <columnExists tableName="vacation_type" columnName="color"/>
+      </not>
     </preConditions>
 
     <addColumn tableName="vacation_type">
@@ -33,6 +36,7 @@
   <changeSet author="seber" id="use-vacation-type-color-enum">
     <preConditions>
       <tableExists tableName="vacation_type"/>
+      <columnExists tableName="vacation_type" columnName="color"/>
     </preConditions>
 
     <update tableName="vacation_type">
@@ -76,6 +80,7 @@
   <changeSet author="seber" id="use-vacation-type-color-default">
     <preConditions>
       <tableExists tableName="vacation_type"/>
+      <columnExists tableName="vacation_type" columnName="color"/>
     </preConditions>
 
     <update tableName="vacation_type">
