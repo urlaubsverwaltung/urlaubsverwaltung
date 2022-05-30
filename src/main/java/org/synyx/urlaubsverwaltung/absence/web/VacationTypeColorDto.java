@@ -7,7 +7,7 @@ public class VacationTypeColorDto {
     private final String messageKey;
     private final VacationTypeColor color;
 
-    public VacationTypeColorDto(String messageKey, VacationTypeColor color) {
+    VacationTypeColorDto(String messageKey, VacationTypeColor color) {
         this.messageKey = messageKey;
         this.color = color;
     }
