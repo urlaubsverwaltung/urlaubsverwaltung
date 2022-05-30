@@ -156,9 +156,7 @@ public class AbsenceOverviewViewController {
         model.addAttribute("vacationTypeColors", vacationTypeColorDtos);
 
         // TODO this information should be part of the domain imho. (`AbsencePeriod.RecordInfo`)
-        final Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType = recordInfo -> !(membersOfSignedInUser.contains(recordInfo.getPerson()) ||
-                // recordInfo for a sick-note does not have a vacationTypeId. and sick-notes cannot be configured right now to be deanonymized.
-                recordInfo.getVacationTypeId().map(vacationTypesById::get).map(VacationType::isVisibleToEveryone).orElse(false));
+        final Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType = recordInfo -> !(membersOfSignedInUser.contains(recordInfo.getPerson()) || recordInfo.isVisibleToEveryone());
 
         final Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor = recordInfo -> this.recordInfoToColor(recordInfo, vacationTypesById::get);
 

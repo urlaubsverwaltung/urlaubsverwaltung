@@ -158,6 +158,7 @@ public class AbsencePeriod {
         boolean hasStatusWaiting();
         boolean hasStatusAllowed();
         Optional<Integer> getVacationTypeId();
+        boolean isVisibleToEveryone();
     }
 
     /**
@@ -181,16 +182,19 @@ public class AbsencePeriod {
         private final AbsenceStatus status;
         private final Integer vacationTypeId;
 
+        private final boolean visibleToEveryone;
+
         private AbstractRecordInfo(Person person, AbsenceType type, Integer id, AbsenceStatus status) {
-            this(person, type, id, status, null);
+            this(person, type, id, status, null, false);
         }
 
-        private AbstractRecordInfo(Person person, AbsenceType type, Integer id, AbsenceStatus status, Integer vacationTypeId) {
+        private AbstractRecordInfo(Person person, AbsenceType type, Integer id, AbsenceStatus status, Integer vacationTypeId, boolean visibleToEveryone) {
             this.person = person;
             this.type = type;
             this.id = id;
             this.status = status;
             this.vacationTypeId = vacationTypeId;
+            this.visibleToEveryone = visibleToEveryone;
         }
 
         @Override
@@ -229,6 +233,10 @@ public class AbsencePeriod {
             return Optional.ofNullable(vacationTypeId);
         }
 
+        public boolean isVisibleToEveryone() {
+            return visibleToEveryone;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -251,8 +259,8 @@ public class AbsencePeriod {
     }
 
     public static class RecordMorningVacation extends AbstractRecordInfo implements RecordMorning {
-        public RecordMorningVacation(Person person, Integer applicationId, AbsenceStatus status, Integer vacationTypeId) {
-            super(person, AbsenceType.VACATION, applicationId, status, vacationTypeId);
+        public RecordMorningVacation(Person person, Integer applicationId, AbsenceStatus status, Integer vacationTypeId, boolean visibleToEveryone) {
+            super(person, AbsenceType.VACATION, applicationId, status, vacationTypeId, visibleToEveryone);
         }
     }
 
@@ -263,8 +271,8 @@ public class AbsencePeriod {
     }
 
     public static class RecordNoonVacation extends AbstractRecordInfo implements RecordNoon {
-        public RecordNoonVacation(Person person, Integer applicationId, AbsenceStatus status, Integer vacationTypeId) {
-            super(person, AbsenceType.VACATION, applicationId, status, vacationTypeId);
+        public RecordNoonVacation(Person person, Integer applicationId, AbsenceStatus status, Integer vacationTypeId, boolean visibleToEveryone) {
+            super(person, AbsenceType.VACATION, applicationId, status, vacationTypeId, visibleToEveryone);
         }
     }
 

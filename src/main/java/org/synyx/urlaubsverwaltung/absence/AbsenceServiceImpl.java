@@ -4,8 +4,8 @@ import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
@@ -188,19 +188,20 @@ public class AbsenceServiceImpl implements AbsenceService {
         final Person person = application.getPerson();
         final AbsencePeriod.AbsenceStatus status = toAbsenceStatus(application.getStatus());
         final Integer vacationTypeId = application.getVacationType().getId();
+        final boolean visibleToEveryone = application.getVacationType().isVisibleToEveryone();
 
         if (tuple.publicHolidayDayLength.isHalfDay()) {
             final AbsencePeriod.RecordMorning morning;
             final AbsencePeriod.RecordNoon noon;
             if (tuple.publicHolidayDayLength.equals(DayLength.MORNING)) {
                 morning = null;
-                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId);
+                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
             } else if (tuple.publicHolidayDayLength.equals(DayLength.NOON)) {
-                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId);
+                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
                 noon = null;
             } else {
-                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId);
-                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId);
+                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
+                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
             }
             return new AbsencePeriod.Record(tuple.date, person, morning, noon);
         }
@@ -209,16 +210,16 @@ public class AbsenceServiceImpl implements AbsenceService {
         final AbsencePeriod.RecordNoonVacation noon;
 
         if (DayLength.MORNING.equals(application.getDayLength())) {
-            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId);
+            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
             noon = null;
         }
         else if (DayLength.NOON.equals(application.getDayLength())) {
             morning = null;
-            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId);
+            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
         }
         else {
-            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId);
-            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId);
+            morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
+            noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
         }
 
         return new AbsencePeriod.Record(tuple.date, person, morning, noon);
