@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 import static java.time.DayOfWeek.SATURDAY;
@@ -148,13 +149,10 @@ public class AbsenceOverviewViewController {
         final List<VacationType> vacationTypes = vacationTypeService.getAllVacationTypes();
         final Map<Integer, VacationType> vacationTypesById = vacationTypes.stream().collect(toMap(VacationType::getId, Function.identity()));
 
-        // use active vacation types instead of all to avoid too much items in the legend.
+        // use active vacation types instead of all to avoid too many items in the legend.
         // (there could be non-active vacation types visible in the absence-overview)
         // the legend will be removed soon -> therefore display just the active items
-        final List<VacationType> activeVacationTypes = vacationTypes.stream().filter(VacationType::isActive).collect(toUnmodifiableList());
-        final List<VacationTypeColorDto> vacationTypeColorDtos = isSignedInUserAllowedToSeeAbsences
-            ? activeVacationTypes.stream().map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(toUnmodifiableList())
-            : activeVacationTypes.stream().filter(VacationType::isVisibleToEveryone).map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(toUnmodifiableList());
+        List<VacationTypeColorDto> vacationTypeColorDtos = prepareVacationTypeColorsForLegend(isSignedInUserAllowedToSeeAbsences, vacationTypes);
         model.addAttribute("vacationTypeColors", vacationTypeColorDtos);
 
         // TODO this information should be part of the domain imho. (`AbsencePeriod.RecordInfo`)
@@ -170,6 +168,22 @@ public class AbsenceOverviewViewController {
         model.addAttribute("absenceOverview", absenceOverview);
 
         return "thymeleaf/absences/absences-overview";
+    }
+
+    private List<VacationTypeColorDto> prepareVacationTypeColorsForLegend(boolean isSignedInUserAllowedToSeeAbsences, List<VacationType> vacationTypes) {
+        final List<VacationType> activeVacationTypes = vacationTypes.stream().filter(VacationType::isActive).collect(toUnmodifiableList());
+
+        List<VacationTypeColorDto> vacationTypeColorDtos;
+
+        if (isSignedInUserAllowedToSeeAbsences) {
+            vacationTypeColorDtos = activeVacationTypes.stream().map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(Collectors.toList());
+        } else {
+            vacationTypeColorDtos = activeVacationTypes.stream().filter(VacationType::isVisibleToEveryone).map(AbsenceOverviewViewController::toVacationTypeColorsDto).collect(Collectors.toList());
+            if (activeVacationTypes.stream().anyMatch(vacationType -> !vacationType.isVisibleToEveryone())) {
+                vacationTypeColorDtos.add(getAnonymizedAbsenceTypeColor());
+            }
+        }
+        return vacationTypeColorDtos;
     }
 
     private List<String> getSelectedDepartmentNames(List<String> rawSelectedDepartments, List<Department> departments) {
@@ -556,4 +570,9 @@ public class AbsenceOverviewViewController {
     private static VacationTypeColorDto toVacationTypeColorsDto(VacationType vacationType) {
         return new VacationTypeColorDto(vacationType.getMessageKey(), vacationType.getColor());
     }
+
+    private static VacationTypeColorDto getAnonymizedAbsenceTypeColor() {
+        return new VacationTypeColorDto("absences.overview.absence", ANONYMIZED_ABSENCE_COLOR);
+    }
+
 }

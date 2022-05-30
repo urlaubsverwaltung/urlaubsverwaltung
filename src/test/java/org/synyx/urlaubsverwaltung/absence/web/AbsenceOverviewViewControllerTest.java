@@ -17,7 +17,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.absence.AbsencePeriod;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -1080,6 +1082,8 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, absenceStatus, 1);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
@@ -1117,7 +1121,14 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ));
+            ))
+            .andExpect(model().attribute("vacationTypeColors", contains(
+                    allOf(
+                        hasProperty("messageKey", is("absences.overview.absence")),
+                        hasProperty("color", is(YELLOW))
+                    )
+
+            )));
     }
 
     @ParameterizedTest
@@ -1139,6 +1150,8 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, absenceStatus, 1);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
@@ -1177,7 +1190,14 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ));
+            ))
+            .andExpect(model().attribute("vacationTypeColors", contains(
+                allOf(
+                    hasProperty("messageKey", is("absences.overview.absence")),
+                    hasProperty("color", is(YELLOW))
+                )
+
+            )));;
     }
 
     @ParameterizedTest
@@ -1199,6 +1219,8 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, absenceStatus, 1);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, absenceStatus, 1);
@@ -1238,7 +1260,14 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ));
+            ))
+            .andExpect(model().attribute("vacationTypeColors", contains(
+                allOf(
+                    hasProperty("messageKey", is("absences.overview.absence")),
+                    hasProperty("color", is(YELLOW))
+                )
+
+            )));
     }
 
     // ---
@@ -1467,6 +1496,8 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
@@ -1504,7 +1535,14 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ));
+            ))
+            .andExpect(model().attribute("vacationTypeColors", contains(
+                allOf(
+                    hasProperty("messageKey", is("absences.overview.absence")),
+                    hasProperty("color", is(YELLOW))
+                )
+
+            )));
     }
 
     @Test
@@ -1525,6 +1563,8 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
@@ -1562,7 +1602,13 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ));
+            )).andExpect(model().attribute("vacationTypeColors", contains(
+                allOf(
+                    hasProperty("messageKey", is("absences.overview.absence")),
+                    hasProperty("color", is(YELLOW))
+                )
+
+            )));
     }
 
     @Test
@@ -1583,6 +1629,8 @@ class AbsenceOverviewViewControllerTest {
         final var department = department();
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
         final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1);
         final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1);
@@ -1621,7 +1669,13 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ));
+            )).andExpect(model().attribute("vacationTypeColors", contains(
+                allOf(
+                    hasProperty("messageKey", is("absences.overview.absence")),
+                    hasProperty("color", is(YELLOW))
+                )
+
+            )));
     }
 
     // ---
@@ -2544,7 +2598,14 @@ class AbsenceOverviewViewControllerTest {
                         ))
                     ))
                 ))
-            ));
+            ))
+            .andExpect(model().attribute("vacationTypeColors", contains(
+                allOf(
+                    hasProperty("messageKey", is("absences.overview.absence")),
+                    hasProperty("color", is(YELLOW))
+                )
+
+            )));
     }
 
     @Test

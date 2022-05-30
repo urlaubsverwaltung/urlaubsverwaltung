@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.absence.web;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 
-class VacationTypeColorDto {
+public class VacationTypeColorDto {
 
     private final String messageKey;
     private final VacationTypeColor color;
