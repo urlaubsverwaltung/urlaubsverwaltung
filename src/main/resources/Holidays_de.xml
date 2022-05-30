@@ -47,7 +47,7 @@
     <tns:Holidays>
       <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY"/>
       <tns:ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
-      <tns:ChristianHoliday type="WHIT_SUNDAY" descriptionPropertiesKey="christian.WHIT_SUNDAY"/>
+      <tns:ChristianHoliday type="PENTECOST" descriptionPropertiesKey="christian.PENTECOST"/>
     </tns:Holidays>
   </tns:SubConfigurations>
 
@@ -117,7 +117,7 @@
 
       <tns:ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
       <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
-      <tns:ChristianHoliday type="WHIT_SUNDAY" descriptionPropertiesKey="christian.WHIT_SUNDAY"/>
+      <tns:ChristianHoliday type="PENTECOST" descriptionPropertiesKey="christian.PENTECOST"/>
     </tns:Holidays>
   </tns:SubConfigurations>
 

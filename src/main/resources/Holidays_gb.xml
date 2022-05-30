@@ -7,26 +7,25 @@
     <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="BOXING_DAY">
       <tns:MovingCondition substitute="SATURDAY" with="NEXT" weekday="MONDAY"/>
       <tns:MovingCondition substitute="SUNDAY" with="NEXT" weekday="TUESDAY"/>
-      <tns:MovingCondition substitute="MONDAY" with="NEXT" weekday="TUESDAY"/>
     </tns:Fixed>
     <tns:Fixed month="DECEMBER" day="25" descriptionPropertiesKey="CHRISTMAS">
       <tns:MovingCondition substitute="SATURDAY" with="NEXT" weekday="MONDAY"/>
-      <tns:MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
+      <tns:MovingCondition substitute="SUNDAY" with="NEXT" weekday="TUESDAY"/>
     </tns:Fixed>
     <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE"/>
 
     <!-- The 2020 bank holiday was moved from the 4th to the 8th of May -->
-    <tns:Fixed month="MAY" day="8" validFrom="2020" validTo="2020" descriptionPropertiesKey="BANK_HOLIDAY"/>
-    <!-- The 2022 bank holiday was moved from the 4th of May to the second of June -->
-    <tns:Fixed month="JUNE" day="2" validFrom="2022" validTo="2022" descriptionPropertiesKey="BANK_HOLIDAY"/>
+    <tns:Fixed month="MAY" day="8" validFrom="2020" validTo="2020" descriptionPropertiesKey="EARLY_MAY_BANK_HOLIDAY"/>
+    <!-- The 2022 spring bank holiday was moved from the 4th of May to the second of June -->
+    <tns:Fixed month="JUNE" day="2" validFrom="2022" validTo="2022" descriptionPropertiesKey="SPRING_BANK_HOLIDAY"/>
     <tns:Fixed month="JUNE" day="3" validFrom="2022" validTo="2022" descriptionPropertiesKey="QUEENS_PLATINUM_JUBILEE"/>
 
     <tns:FixedWeekday which="FIRST" weekday="MONDAY" month="MAY" validFrom="1900" validTo="2019" descriptionPropertiesKey="EARLY_MAY_BANK_HOLIDAY"/>
     <tns:FixedWeekday which="SECOND" weekday="FRIDAY" month="MAY" validFrom="2020" validTo="2020" descriptionPropertiesKey="EARLY_MAY_BANK_HOLIDAY"/>
     <tns:FixedWeekday which="FIRST" weekday="MONDAY" month="MAY" validFrom="2021" descriptionPropertiesKey="EARLY_MAY_BANK_HOLIDAY"/>
 
-    <tns:FixedWeekday which="LAST" weekday="MONDAY" month="MAY" validTo="2021" descriptionPropertiesKey="BANK_HOLIDAY"/>
-    <tns:FixedWeekday which="LAST" weekday="MONDAY" month="MAY" validFrom="2023" descriptionPropertiesKey="BANK_HOLIDAY"/>
+    <tns:FixedWeekday which="LAST" weekday="MONDAY" month="MAY" validTo="2021" descriptionPropertiesKey="SPRING_BANK_HOLIDAY"/>
+    <tns:FixedWeekday which="LAST" weekday="MONDAY" month="MAY" validFrom="2023" descriptionPropertiesKey="SPRING_BANK_HOLIDAY"/>
 
     <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
   </tns:Holidays>
@@ -43,7 +42,7 @@
         <tns:MovingCondition substitute="SATURDAY" with="NEXT" weekday="MONDAY"/>
         <tns:MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
       </tns:Fixed>
-      <tns:FixedWeekday which="LAST" weekday="MONDAY" month="AUGUST" descriptionPropertiesKey="BANK_HOLIDAY"/>
+      <tns:FixedWeekday which="LAST" weekday="MONDAY" month="AUGUST" descriptionPropertiesKey="SUMMER_BANK_HOLIDAY"/>
       <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
@@ -81,7 +80,7 @@
         <tns:MovingCondition substitute="SATURDAY" with="NEXT" weekday="MONDAY"/>
         <tns:MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
       </tns:Fixed>
-      <tns:FixedWeekday which="LAST" weekday="MONDAY" month="AUGUST" descriptionPropertiesKey="BANK_HOLIDAY"/>
+      <tns:FixedWeekday which="LAST" weekday="MONDAY" month="AUGUST" descriptionPropertiesKey="SUMMER_BANK_HOLIDAY"/>
       <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
@@ -96,8 +95,8 @@
         <tns:MovingCondition substitute="SATURDAY" with="NEXT" weekday="MONDAY"/>
         <tns:MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
       </tns:Fixed>
-      <tns:Fixed month="NOVEMBER" day="11" descriptionPropertiesKey="ST_ANDREW"/>
-      <tns:FixedWeekday which="FIRST" weekday="MONDAY" month="AUGUST" descriptionPropertiesKey="BANK_HOLIDAY"/>
+      <tns:Fixed month="NOVEMBER" day="30" descriptionPropertiesKey="ST_ANDREW"/>
+      <tns:FixedWeekday which="FIRST" weekday="MONDAY" month="AUGUST" descriptionPropertiesKey="SUMMER_BANK_HOLIDAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
 
@@ -107,7 +106,7 @@
         <tns:MovingCondition substitute="SATURDAY" with="NEXT" weekday="MONDAY"/>
         <tns:MovingCondition substitute="SUNDAY" with="NEXT" weekday="MONDAY"/>
       </tns:Fixed>
-      <tns:FixedWeekday which="LAST" weekday="MONDAY" month="AUGUST" descriptionPropertiesKey="BANK_HOLIDAY"/>
+      <tns:FixedWeekday which="LAST" weekday="MONDAY" month="AUGUST" descriptionPropertiesKey="SUMMER_BANK_HOLIDAY"/>
       <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
