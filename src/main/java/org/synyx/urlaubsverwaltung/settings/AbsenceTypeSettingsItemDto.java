@@ -13,6 +13,7 @@ public class AbsenceTypeSettingsItemDto {
     private VacationCategory category;
     private boolean requiresApproval;
     private VacationTypeColor color;
+    private boolean visibleToEveryone;
 
     public Integer getId() {
         return id;
@@ -62,7 +63,16 @@ public class AbsenceTypeSettingsItemDto {
         this.color = color;
     }
 
-    public static AbsenceTypeSettingsItemDto.Builder builder() {
+
+    public boolean isVisibleToEveryone() {
+        return visibleToEveryone;
+    }
+
+    public void setVisibleToEveryone(boolean visibleToEveryone) {
+        this.visibleToEveryone = visibleToEveryone;
+    }
+
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -75,6 +85,7 @@ public class AbsenceTypeSettingsItemDto {
             ", category='" + category + '\'' +
             ", requiresApproval=" + requiresApproval +
             ", color=" + color +
+            ", visibleToEveryone=" + visibleToEveryone +
             '}';
     }
 
@@ -85,14 +96,16 @@ public class AbsenceTypeSettingsItemDto {
         AbsenceTypeSettingsItemDto that = (AbsenceTypeSettingsItemDto) o;
         return active == that.active
             && requiresApproval == that.requiresApproval
+            && visibleToEveryone == that.visibleToEveryone
             && Objects.equals(id, that.id)
             && Objects.equals(messageKey, that.messageKey)
-            && category == that.category;
+            && category == that.category
+            && Objects.equals(color, that.color);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, active, messageKey, category, requiresApproval, color);
+        return Objects.hash(id, active, messageKey, category, requiresApproval, color, visibleToEveryone);
     }
 
     static class Builder {
@@ -102,6 +115,7 @@ public class AbsenceTypeSettingsItemDto {
         private VacationCategory category;
         private boolean requiresApproval;
         private VacationTypeColor color;
+        private boolean visibleToEveryone;
 
         Builder setId(Integer id) {
             this.id = id;
@@ -133,6 +147,11 @@ public class AbsenceTypeSettingsItemDto {
             return this;
         }
 
+        Builder setVisibleToEveryone(boolean visibleToEveryone) {
+            this.visibleToEveryone = visibleToEveryone;
+            return this;
+        }
+
         AbsenceTypeSettingsItemDto build() {
             final AbsenceTypeSettingsItemDto dto = new AbsenceTypeSettingsItemDto();
             dto.setId(id);
@@ -141,6 +160,7 @@ public class AbsenceTypeSettingsItemDto {
             dto.setCategory(category);
             dto.setRequiresApproval(requiresApproval);
             dto.setColor(color);
+            dto.setVisibleToEveryone(visibleToEveryone);
             return dto;
         }
     }

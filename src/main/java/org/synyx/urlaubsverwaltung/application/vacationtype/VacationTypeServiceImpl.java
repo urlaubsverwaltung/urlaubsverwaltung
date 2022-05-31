@@ -62,6 +62,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
                 vacationType.setActive(vacationTypeUpdate.isActive());
                 vacationType.setRequiresApproval(vacationTypeUpdate.isRequiresApproval());
                 vacationType.setColor(vacationTypeUpdate.getColor());
+                vacationType.setVisibleToEveryone(vacationTypeUpdate.isVisibleToEveryone());
                 return vacationType;
             })
             .map(VacationTypeServiceImpl::convert)
@@ -71,7 +72,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     }
 
     private Function<VacationTypeEntity, VacationType> convertToVacationType() {
-        return vacationTypeEntity -> new VacationType(vacationTypeEntity.getId(), vacationTypeEntity.isActive(), vacationTypeEntity.getCategory(), vacationTypeEntity.getMessageKey(), vacationTypeEntity.isRequiresApproval(), vacationTypeEntity.getColor());
+        return vacationTypeEntity -> new VacationType(vacationTypeEntity.getId(), vacationTypeEntity.isActive(), vacationTypeEntity.getCategory(), vacationTypeEntity.getMessageKey(), vacationTypeEntity.isRequiresApproval(), vacationTypeEntity.getColor(), vacationTypeEntity.isVisibleToEveryone());
     }
 
     public static VacationTypeEntity convert(VacationType vacationType) {
@@ -82,10 +83,11 @@ public class VacationTypeServiceImpl implements VacationTypeService {
         vacationTypeEntity.setMessageKey(vacationType.getMessageKey());
         vacationTypeEntity.setRequiresApproval(vacationType.isRequiresApproval());
         vacationTypeEntity.setColor(vacationType.getColor());
+        vacationTypeEntity.setVisibleToEveryone(vacationType.isVisibleToEveryone());
         return vacationTypeEntity;
     }
 
     public static VacationType convert(VacationTypeEntity vacationTypeEntity) {
-        return new VacationType(vacationTypeEntity.getId(), vacationTypeEntity.isActive(), vacationTypeEntity.getCategory(), vacationTypeEntity.getMessageKey(), vacationTypeEntity.isRequiresApproval(), vacationTypeEntity.getColor());
+        return new VacationType(vacationTypeEntity.getId(), vacationTypeEntity.isActive(), vacationTypeEntity.getCategory(), vacationTypeEntity.getMessageKey(), vacationTypeEntity.isRequiresApproval(), vacationTypeEntity.getColor(), vacationTypeEntity.isVisibleToEveryone());
     }
 }

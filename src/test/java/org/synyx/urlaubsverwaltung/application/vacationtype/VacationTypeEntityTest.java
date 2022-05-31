@@ -56,7 +56,7 @@ class VacationTypeEntityTest {
         vacationType.setColor(YELLOW);
 
         final String vacationTypeToString = vacationType.toString();
-        assertThat(vacationTypeToString).isEqualTo("VacationTypeEntity{id=10, active=true, category=HOLIDAY, messageKey='messageKey', requiresApproval=false, color=YELLOW}");
+        assertThat(vacationTypeToString).isEqualTo("VacationTypeEntity{id=10, active=true, category=HOLIDAY, messageKey='messageKey', requiresApproval=false, color=YELLOW, visibleToEveryone=false}");
     }
 
     @Test

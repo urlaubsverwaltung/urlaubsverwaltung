@@ -32,6 +32,7 @@ public class AbsenceTypeSettingsDtoMapper {
             .setActive(vacationType.isActive())
             .setRequiresApproval(vacationType.isRequiresApproval())
             .setColor(vacationType.getColor())
+            .setVisibleToEveryone(vacationType.isVisibleToEveryone())
             .build();
     }
 }

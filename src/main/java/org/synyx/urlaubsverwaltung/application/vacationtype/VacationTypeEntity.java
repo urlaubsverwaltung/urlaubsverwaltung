@@ -32,6 +32,8 @@ public class VacationTypeEntity {
     @NotNull
     private VacationTypeColor color;
 
+    private boolean visibleToEveryone;
+
     public boolean isActive() {
         return active;
     }
@@ -84,6 +86,14 @@ public class VacationTypeEntity {
         return this.color;
     }
 
+    public boolean isVisibleToEveryone() {
+        return visibleToEveryone;
+    }
+
+    public void setVisibleToEveryone(boolean visibleToEveryone) {
+        this.visibleToEveryone = visibleToEveryone;
+    }
+
     @Override
     public String toString() {
         return "VacationTypeEntity{" +
@@ -93,6 +103,7 @@ public class VacationTypeEntity {
             ", messageKey='" + messageKey + '\'' +
             ", requiresApproval=" + requiresApproval +
             ", color=" + color +
+            ", visibleToEveryone=" + visibleToEveryone +
             '}';
     }
 

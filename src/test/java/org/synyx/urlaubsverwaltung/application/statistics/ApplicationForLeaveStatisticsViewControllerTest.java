@@ -149,7 +149,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(List.of());
 
-        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW));
+        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -183,13 +183,13 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         statistic.setPersonBasedata(new PersonBasedata(1, "42", "some additional information"));
         statistic.setLeftOvertime(Duration.ofHours(10));
         statistic.setLeftVacationDays(BigDecimal.valueOf(2));
-        statistic.addWaitingVacationDays(new VacationType(1, true, HOLIDAY, "message_key_holiday", false, YELLOW), BigDecimal.valueOf(3));
-        statistic.addAllowedVacationDays(new VacationType(1, true, OVERTIME, "message_key_overtime", false, YELLOW), BigDecimal.valueOf(4));
+        statistic.addWaitingVacationDays(new VacationType(1, true, HOLIDAY, "message_key_holiday", false, YELLOW, false), BigDecimal.valueOf(3));
+        statistic.addAllowedVacationDays(new VacationType(1, true, OVERTIME, "message_key_overtime", false, YELLOW, false), BigDecimal.valueOf(4));
 
         final List<ApplicationForLeaveStatistics> statistics = List.of(statistic);
         when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(statistics);
 
-        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW));
+        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
         final ResultActions resultActions = perform(get("/web/application/statistics")

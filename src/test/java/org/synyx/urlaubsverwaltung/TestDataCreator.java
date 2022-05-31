@@ -5,7 +5,6 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType;
@@ -40,6 +39,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.UNPAIDLEAVE;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
@@ -205,16 +205,16 @@ public final class TestDataCreator {
 
         final List<VacationType> vacationTypes = new ArrayList<>();
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true, VacationTypeColor.YELLOW);
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
         vacationTypes.add(holidayType);
 
-        final VacationType specialLeaveType = new VacationType(2000, true, SPECIALLEAVE, "application.data.vacationType.specialleave", true, VacationTypeColor.YELLOW);
+        final VacationType specialLeaveType = new VacationType(2000, true, SPECIALLEAVE, "application.data.vacationType.specialleave", true, YELLOW, false);
         vacationTypes.add(specialLeaveType);
 
-        final VacationType vacationType3 = new VacationType(3000, true, UNPAIDLEAVE, "application.data.vacationType.unpaidleave", true, VacationTypeColor.YELLOW);
+        final VacationType vacationType3 = new VacationType(3000, true, UNPAIDLEAVE, "application.data.vacationType.unpaidleave", true, YELLOW, false);
         vacationTypes.add(vacationType3);
 
-        final VacationType vacationType4 = new VacationType(4000, true, OVERTIME, "application.data.vacationType.overtime", true, VacationTypeColor.YELLOW);
+        final VacationType vacationType4 = new VacationType(4000, true, OVERTIME, "application.data.vacationType.overtime", true, YELLOW, false);
         vacationTypes.add(vacationType4);
 
         return vacationTypes;

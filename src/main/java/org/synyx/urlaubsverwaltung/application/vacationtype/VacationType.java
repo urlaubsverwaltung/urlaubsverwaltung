@@ -13,18 +13,20 @@ public class VacationType {
     private String messageKey;
     private boolean requiresApproval;
     private VacationTypeColor color;
+    private boolean visibleToEveryone;
 
     public VacationType() {
         // ok
     }
 
-    public VacationType(Integer id, boolean active, VacationCategory category, String messageKey, boolean requiresApproval, VacationTypeColor color) {
+    public VacationType(Integer id, boolean active, VacationCategory category, String messageKey, boolean requiresApproval, VacationTypeColor color, boolean visibleToEveryone) {
         this.id = id;
         this.active = active;
         this.category = category;
         this.messageKey = messageKey;
         this.requiresApproval = requiresApproval;
         this.color = color;
+        this.visibleToEveryone = visibleToEveryone;
     }
 
     public boolean isActive() {
@@ -79,6 +81,14 @@ public class VacationType {
         this.color = color;
     }
 
+    public boolean isVisibleToEveryone() {
+        return visibleToEveryone;
+    }
+
+    public void setVisibleToEveryone(boolean visibleToEveryone) {
+        this.visibleToEveryone = visibleToEveryone;
+    }
+
     @Override
     public String toString() {
         return "VacationType{" +
@@ -88,6 +98,7 @@ public class VacationType {
             ", messageKey='" + messageKey + '\'' +
             ", requiresApproval='" + requiresApproval + '\'' +
             ", color='" + color + '\'' +
+            ", visibleToEveryone=" + visibleToEveryone +
             '}';
     }
 
@@ -96,12 +107,11 @@ public class VacationType {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VacationType that = (VacationType) o;
-        return active == that.active && requiresApproval == that.requiresApproval && category == that.category && Objects.equals(messageKey, that.messageKey)
-            && Objects.equals(color, that.color);
+        return active == that.active && requiresApproval == that.requiresApproval && visibleToEveryone == that.visibleToEveryone && category == that.category && Objects.equals(messageKey, that.messageKey) && Objects.equals(color, that.color);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(active, category, messageKey, requiresApproval, color);
+        return Objects.hash(active, category, messageKey, requiresApproval, color, visibleToEveryone);
     }
 }

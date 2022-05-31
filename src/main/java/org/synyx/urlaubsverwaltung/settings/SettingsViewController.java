@@ -205,8 +205,8 @@ public class SettingsViewController {
             absenceTypeSettingsItemDto.getId(),
             absenceTypeSettingsItemDto.isActive(),
             absenceTypeSettingsItemDto.isRequiresApproval(),
-            absenceTypeSettingsItemDto.getColor()
-        );
+            absenceTypeSettingsItemDto.getColor(),
+            absenceTypeSettingsItemDto.isVisibleToEveryone());
     }
 
     private Settings processGoogleRefreshToken(Settings settingsUpdate) {

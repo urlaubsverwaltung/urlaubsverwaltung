@@ -6,12 +6,14 @@ public class VacationTypeUpdate {
     private final boolean active;
     private final boolean requiresApproval;
     private final VacationTypeColor color;
+    private final boolean visibleToEveryone;
 
-    public VacationTypeUpdate(Integer id, boolean active, boolean requiresApproval, VacationTypeColor color) {
+    public VacationTypeUpdate(Integer id, boolean active, boolean requiresApproval, VacationTypeColor color, boolean visibleToEveryone) {
         this.id = id;
         this.active = active;
         this.requiresApproval = requiresApproval;
         this.color = color;
+        this.visibleToEveryone = visibleToEveryone;
     }
 
     Integer getId() {
@@ -28,5 +30,9 @@ public class VacationTypeUpdate {
 
     public VacationTypeColor getColor() {
         return color;
+    }
+
+    public boolean isVisibleToEveryone() {
+        return visibleToEveryone;
     }
 }
