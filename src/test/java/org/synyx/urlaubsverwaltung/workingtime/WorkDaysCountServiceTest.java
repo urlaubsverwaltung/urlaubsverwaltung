@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import de.jollyday.HolidayManager;
+import de.focus_shift.HolidayManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import static de.jollyday.ManagerParameters.create;
+import static de.focus_shift.ManagerParameters.create;
 import static java.math.BigDecimal.TEN;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;

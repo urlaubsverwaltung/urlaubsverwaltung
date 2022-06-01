@@ -16,10 +16,10 @@ import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.threeten.extra.Days;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
@@ -683,7 +683,7 @@ class ApplicationMailService {
         for (Application application : applications) {
             final Map<String, Object> model = new HashMap<>();
             model.put(APPLICATION, application);
-            model.put("daysBeforeUpcomingApplication", Days.between(LocalDate.now(clock), application.getStartDate()).getAmount());
+            model.put("daysBeforeUpcomingApplication", ChronoUnit.DAYS.between(LocalDate.now(clock), application.getStartDate()));
 
             final Mail mailToUpcomingApplicationsPersons = Mail.builder()
                 .withRecipient(application.getPerson())
@@ -700,7 +700,7 @@ class ApplicationMailService {
 
                 final Map<String, Object> model = new HashMap<>();
                 model.put(APPLICATION, application);
-                model.put("daysBeforeUpcomingHolidayReplacement", Days.between(LocalDate.now(clock), application.getStartDate()).getAmount());
+                model.put("daysBeforeUpcomingHolidayReplacement", ChronoUnit.DAYS.between(LocalDate.now(clock), application.getStartDate()));
                 model.put("replacementNote", holidayReplacement.getNote());
 
                 final Mail mailToUpcomingHolidayReplacement = Mail.builder()
