@@ -36,14 +36,14 @@
                 </c:otherwise>
             </c:choose>
         </div>
-        <a href="mailto:<c:out value='${person.email}'/>" class="tw-mb-1 tw-inline-block tw-text-sm print:no-link">
+        <a href="mailto:<c:out value='${person.email}'/>" class="tw-inline-block tw-text-sm print:no-link">
             <span class="tw-flex tw-items-center">
                 <icon:mail className="tw-w-4 tw-h-4" />
                 &nbsp;<c:out value="${person.email}"/>
             </span>
         </a>
         <c:if test="${not empty departments}">
-            <ul class="tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-space-x-0.5">
+            <ul class="tw-mt-1 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-space-x-0.5">
                 <c:forEach items="${departments}" var="department">
                     <li class="tw-mb-1 tw-px-1.5 tw-rounded-full tw-bg-green-100 tw-text-green-800">
                         <c:out value="${department.name}" />
