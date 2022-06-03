@@ -30,13 +30,13 @@
                     <c:out value="${person.niceName}"/>
                 </c:when>
                 <c:otherwise>
-                    <a href="${URL_PREFIX}/person/${person.id}/overview" class="print:no-link">
+                    <a href="${URL_PREFIX}/person/${person.id}/overview" class="icon-link print:no-link">
                         <c:out value="${person.niceName}"/>
                     </a>
                 </c:otherwise>
             </c:choose>
         </div>
-        <a href="mailto:<c:out value='${person.email}'/>" class="tw-inline-block tw-text-sm print:no-link">
+        <a href="mailto:<c:out value='${person.email}'/>" class="icon-link tw-inline-block tw-text-sm print:no-link">
             <span class="tw-flex tw-items-center">
                 <icon:mail className="tw-w-4 tw-h-4" />
                 &nbsp;<c:out value="${person.email}"/>
