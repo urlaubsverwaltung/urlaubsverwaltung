@@ -30,7 +30,7 @@
               <span th:text="${holidayReplacement.person.niceName}"></span>
               <ul
                 th:if="${not #lists.isEmpty(holidayReplacement.departments)}"
-                class="tw-m-0 tw-ml-2 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-space-x-1"
+                class="tw-m-0 tw-mt-1.5 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
               >
                 <li
                   th:each="department : ${holidayReplacement.departments}"
@@ -40,7 +40,7 @@
                 </li>
               </ul>
             </div>
-            <div class="tw-flex">
+            <div class="tw-flex tw-mt-2">
               <button
                 type="submit"
                 class="tw-p-0 tw-bg-transparent"
