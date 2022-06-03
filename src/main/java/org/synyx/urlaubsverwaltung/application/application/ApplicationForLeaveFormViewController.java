@@ -114,7 +114,6 @@ class ApplicationForLeaveFormViewController {
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
-
         binder.registerCustomEditor(Time.class, new TimePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
@@ -128,13 +127,11 @@ class ApplicationForLeaveFormViewController {
                                      ApplicationForLeaveForm appForLeaveForm, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
-
-        Person person = ofNullable(appForLeaveForm.getPerson())
+        final Person person = ofNullable(appForLeaveForm.getPerson())
             .or(getPersonByRequestParam(personId))
             .orElse(signedInUser);
 
-        boolean isApplyingForOneSelf = person.equals(signedInUser);
-
+        final boolean isApplyingForOneSelf = person.equals(signedInUser);
         if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
             throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
         }
@@ -160,12 +157,10 @@ class ApplicationForLeaveFormViewController {
     public String addHolidayReplacement(ApplicationForLeaveForm applicationForLeaveForm, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
-
-        Person person = ofNullable(applicationForLeaveForm.getPerson())
+        final Person person = ofNullable(applicationForLeaveForm.getPerson())
             .orElse(signedInUser);
 
-        boolean isApplyingForOneSelf = person.equals(signedInUser);
-
+        final boolean isApplyingForOneSelf = person.equals(signedInUser);
         if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
             throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
         }
@@ -212,7 +207,6 @@ class ApplicationForLeaveFormViewController {
         final Person person = ofNullable(applicationForLeave.getPerson()).orElse(signedInUser);
 
         final boolean isApplyingForOneSelf = person.equals(signedInUser);
-
         if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
             throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
         }
@@ -246,12 +240,10 @@ class ApplicationForLeaveFormViewController {
                                            Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
-
-        Person person = ofNullable(applicationForLeaveForm.getPerson())
+        final Person person = ofNullable(applicationForLeaveForm.getPerson())
             .orElse(signedInUser);
 
-        boolean isApplyingForOneSelf = person.equals(signedInUser);
-
+        final boolean isApplyingForOneSelf = person.equals(signedInUser);
         if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
             throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
         }
@@ -321,7 +313,6 @@ class ApplicationForLeaveFormViewController {
 
     @GetMapping("/application/{applicationId}/edit")
     public String editApplicationForm(@PathVariable("applicationId") Integer applicationId, Model model) {
-
         return applicationInteractionService.get(applicationId)
             .filter(application -> WAITING.equals(application.getStatus()))
             .map(this::mapToApplicationForm)
