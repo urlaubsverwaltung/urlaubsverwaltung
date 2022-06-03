@@ -12,7 +12,7 @@
     </preConditions>
 
     <addColumn tableName="vacation_type">
-      <column name="color" type="VARCHAR(7)"/>
+      <column name="color" type="VARCHAR(7)" />
     </addColumn>
 
     <update tableName="vacation_type">
@@ -78,13 +78,15 @@
   </changeSet>
 
   <changeSet author="seber" id="use-vacation-type-color-default">
+    <validCheckSum>8:0303e465ca378e7d4c70feda830b785c</validCheckSum>
+
     <preConditions>
       <tableExists tableName="vacation_type"/>
       <columnExists tableName="vacation_type" columnName="color"/>
     </preConditions>
 
     <update tableName="vacation_type">
-      <column name="color" value="NEUTRAL" />
+      <column name="color" value="YELLOW" />
       <where>color is null</where>
     </update>
 
