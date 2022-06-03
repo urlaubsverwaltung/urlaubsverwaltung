@@ -89,18 +89,6 @@ class ColorPicker extends HTMLDivElement {
     };
 
     const handleClick = (event) => {
-      // update selected color visualisation
-      for (let index = 0; index < this.#colorOptions.length; index++) {
-        const option = this.#colorOptions[index];
-        const optionInput = option.querySelector("input");
-        if (optionInput.checked) {
-          this.#value = optionInput.value;
-          this.#focusedElementIndex = index;
-          this.#renderSelectedColor();
-          break;
-        }
-      }
-
       // toggle dialog state
       const dialogClicked = event.target.closest(".color-picker-dialog");
       const pickerButtonClicked = event.target.closest(".color-picker-button");
@@ -108,6 +96,31 @@ class ColorPicker extends HTMLDivElement {
         delete this.dataset.open;
       } else {
         this.dataset.open = "";
+      }
+    };
+
+    const handleColorSelectionClick = (event) => {
+      let target = event.target;
+      let clickedLabel = target.tag === "LABEL" ? target : target.closest("label");
+
+      if (clickedLabel) {
+        // prevent scrolling up to the absolute positioned checkbox.
+        event.preventDefault();
+
+        const checkbox = this.querySelector(`#${target.getAttribute("for")}`);
+        checkbox.checked = true;
+
+        // update selected color visualisation
+        for (let index = 0; index < this.#colorOptions.length; index++) {
+          const option = this.#colorOptions[index];
+          const optionInput = option.querySelector("input");
+          if (optionInput === checkbox) {
+            this.#value = optionInput.value;
+            this.#focusedElementIndex = index;
+            this.#renderSelectedColor();
+            break;
+          }
+        }
       }
     };
 
@@ -159,11 +172,13 @@ class ColorPicker extends HTMLDivElement {
     };
 
     this.#dialogToggleButton.addEventListener("click", handleDialogToggleButtonClick);
+    this.#dialog.addEventListener("click", handleColorSelectionClick);
     this.addEventListener("click", handleClick);
     this.addEventListener("keydown", handleKeyDown);
 
     this.cleanup = function () {
       this.#dialogToggleButton.removeEventListener("click", handleDialogToggleButtonClick);
+      this.#dialog.removeEventListener("click", handleColorSelectionClick);
       this.removeEventListener("click", handleClick);
       this.removeEventListener("keydown", handleKeyDown);
     };
