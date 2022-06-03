@@ -147,7 +147,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
 
         perform(get("/web/application/" + APPLICATION_ID))
-            .andExpect(model().attribute("departments", List.of(department)));
+            .andExpect(model().attribute("departmentsOfPerson", List.of(department)));
     }
 
     @Test

@@ -141,7 +141,7 @@
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/application/${application.id}?year="/>
                 </uv:section-heading>
 
-                <uv:person person="${application.person}" departments="${departments}" cssClass="tw-h-32 tw-mb-4" />
+                <uv:person person="${application.person}" departmentsOfPerson="${departments}" cssClass="tw-h-32 tw-mb-4" />
                 <uv:account-entitlement account="${account}" className="tw-mb-4" />
                 <uv:account-left account="${account}" vacationDaysLeft="${vacationDaysLeft}" beforeApril="${beforeApril}" className="tw-mb-4 lg:tw-mb-6"/>
 

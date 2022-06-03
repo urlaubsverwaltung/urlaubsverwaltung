@@ -120,7 +120,7 @@ class SickNoteViewController {
             model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE));
             model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE));
 
-            model.addAttribute("departments", departmentService.getAssignedDepartmentsOfMember(sickNote.getPerson()));
+            model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNote.getPerson()));
 
             return "sicknote/sick_note";
         }

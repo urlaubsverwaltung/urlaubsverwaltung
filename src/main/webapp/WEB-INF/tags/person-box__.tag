@@ -4,7 +4,7 @@
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 
 <%@attribute name="person" type="org.synyx.urlaubsverwaltung.person.Person" required="true" %>
-<%@attribute name="departments" type="java.util.List<org.synyx.urlaubsverwaltung.department.Department>" required="false" %>
+<%@attribute name="departmentsOfPerson" type="java.util.List<org.synyx.urlaubsverwaltung.department.Department>" required="false" %>
 <%@attribute name="cssClass" type="java.lang.String" required="false" %>
 <%@attribute name="nameIsNoLink" type="java.lang.Boolean" required="false" %>
 
@@ -42,9 +42,9 @@
                 &nbsp;<c:out value="${person.email}"/>
             </span>
         </a>
-        <c:if test="${not empty departments}">
+        <c:if test="${not empty departmentsOfPerson}">
             <ul class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-space-x-1">
-                <c:forEach items="${departments}" var="department">
+                <c:forEach items="${departmentsOfPerson}" var="department">
                     <li class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-lime-600 dark:tw-text-lime-600 dark:tw-bg-transparent">
                         <c:out value="${department.name}" />
                     </li>

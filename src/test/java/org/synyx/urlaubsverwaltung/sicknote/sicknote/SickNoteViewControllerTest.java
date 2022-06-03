@@ -213,7 +213,7 @@ class SickNoteViewControllerTest {
             .andExpect(model().attribute("sickNote", instanceOf(ExtendedSickNote.class)))
             .andExpect(model().attribute("comment", instanceOf(SickNoteCommentForm.class)))
             .andExpect(model().attribute("comments", instanceOf(List.class)))
-            .andExpect(model().attribute("departments", List.of(department)))
+            .andExpect(model().attribute("departmentsOfPerson", List.of(department)))
             .andExpect(view().name("sicknote/sick_note"));
     }
 
