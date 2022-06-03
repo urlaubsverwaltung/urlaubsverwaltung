@@ -369,6 +369,9 @@ class ApplicationForLeaveDetailsViewController {
         // signed in user
         model.addAttribute("signedInUser", signedInUser);
 
+        // person information with departments
+        model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(application.getPerson()));
+
         // COMMENTS
         final List<ApplicationComment> comments = commentService.getCommentsByApplication(application);
         model.addAttribute("comment", new ApplicationCommentForm());

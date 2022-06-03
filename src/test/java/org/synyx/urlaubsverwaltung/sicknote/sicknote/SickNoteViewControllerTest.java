@@ -13,10 +13,11 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -34,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
+import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -80,6 +81,8 @@ class SickNoteViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
+    private DepartmentService departmentService;
+    @Mock
     private WorkDaysCountService workDaysCountService;
     @Mock
     private SickNoteValidator sickNoteValidator;
@@ -94,15 +97,15 @@ class SickNoteViewControllerTest {
     void setUp() {
         sut = new SickNoteViewController(sickNoteService,
             sickNoteInteractionService, sickNoteCommentService, sickNoteTypeService,
-            vacationTypeService, vacationTypeViewModelService, personService, workDaysCountService, sickNoteValidator,
+            vacationTypeService, vacationTypeViewModelService, personService, departmentService, workDaysCountService, sickNoteValidator,
             sickNoteCommentFormValidator, sickNoteConvertFormValidator, settingsService, Clock.systemUTC());
     }
 
     @Test
     void ensureGetNewSickNoteProvidesCorrectModelAttributesAndView() throws Exception {
 
-        when(personService.getActivePersons()).thenReturn(Collections.singletonList(somePerson()));
-        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(Collections.singletonList(someSickNoteType()));
+        when(personService.getActivePersons()).thenReturn(List.of(somePerson()));
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(List.of(someSickNoteType()));
 
         perform(get("/web/sicknote/new"))
             .andExpect(status().isOk())
@@ -195,13 +198,22 @@ class SickNoteViewControllerTest {
     void ensureGetSickNoteDetailsProvidesCorrectModelAttributesAndView() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
-        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(Collections.emptyList());
+
+        final Person person = new Person();
+        final SickNote sickNote = someActiveSickNote();
+        sickNote.setPerson(person);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
+
+        final Department department = new Department();
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
             .andExpect(model().attribute("sickNote", instanceOf(ExtendedSickNote.class)))
             .andExpect(model().attribute("comment", instanceOf(SickNoteCommentForm.class)))
             .andExpect(model().attribute("comments", instanceOf(List.class)))
+            .andExpect(model().attribute("departmentsOfPerson", List.of(department)))
             .andExpect(view().name("sicknote/sick_note"));
     }
 
@@ -210,7 +222,7 @@ class SickNoteViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
-        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(Collections.emptyList());
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
             .andExpect(view().name("sicknote/sick_note"))
@@ -222,7 +234,7 @@ class SickNoteViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
-        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(Collections.emptyList());
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
             .andExpect(view().name("sicknote/sick_note"))
@@ -234,7 +246,7 @@ class SickNoteViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
-        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(Collections.emptyList());
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
             .andExpect(view().name("sicknote/sick_note"))
@@ -246,7 +258,7 @@ class SickNoteViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
-        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(Collections.emptyList());
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
             .andExpect(view().name("sicknote/sick_note"))
@@ -561,7 +573,7 @@ class SickNoteViewControllerTest {
     private Person personWithRole(Role role) {
         final Person person = new Person();
         person.setId(1);
-        person.setPermissions(singletonList(role));
+        person.setPermissions(List.of(role));
         return person;
     }
 

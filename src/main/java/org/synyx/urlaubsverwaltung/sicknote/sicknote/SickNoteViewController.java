@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypePropertyEditor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
@@ -61,6 +62,7 @@ class SickNoteViewController {
     private final VacationTypeService vacationTypeService;
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final PersonService personService;
+    private final DepartmentService departmentService;
     private final WorkDaysCountService workDaysCountService;
     private final SickNoteValidator sickNoteValidator;
     private final SickNoteCommentFormValidator sickNoteCommentFormValidator;
@@ -72,7 +74,7 @@ class SickNoteViewController {
     SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
                            SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
                            VacationTypeService vacationTypeService, VacationTypeViewModelService vacationTypeViewModelService, PersonService personService,
-                           WorkDaysCountService workDaysCountService, SickNoteValidator sickNoteValidator,
+                           DepartmentService departmentService, WorkDaysCountService workDaysCountService, SickNoteValidator sickNoteValidator,
                            SickNoteCommentFormValidator sickNoteCommentFormValidator, SickNoteConvertFormValidator sickNoteConvertFormValidator,
                            SettingsService settingsService, Clock clock) {
 
@@ -83,6 +85,7 @@ class SickNoteViewController {
         this.vacationTypeService = vacationTypeService;
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.personService = personService;
+        this.departmentService = departmentService;
         this.workDaysCountService = workDaysCountService;
         this.sickNoteValidator = sickNoteValidator;
         this.sickNoteCommentFormValidator = sickNoteCommentFormValidator;
@@ -116,6 +119,8 @@ class SickNoteViewController {
             model.addAttribute("canConvertSickNote", signedInUser.hasRole(OFFICE));
             model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE));
             model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE));
+
+            model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNote.getPerson()));
 
             return "sicknote/sick_note";
         }

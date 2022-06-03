@@ -290,7 +290,7 @@
                             <spring:message code="sicknote.data.person"/>
                         </h2>
                     </uv:section-heading>
-                    <uv:person person="${sickNote.person}" />
+                    <uv:person person="${sickNote.person}" departmentsOfPerson="${departments}" />
                 </div>
             </div>
             <%-- End of second column --%>

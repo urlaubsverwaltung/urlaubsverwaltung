@@ -66,7 +66,7 @@
             <div class="col-xs-12">
                 <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
                     <div class="tw-w-full lg:tw-w-1/3">
-                        <uv:person-box-narrow person="${person}" nameIsNoLink="${true}" cssClass="tw-border-none" />
+                        <uv:person-box-narrow person="${person}" departmentsOfPerson="${departments}" nameIsNoLink="${true}" cssClass="tw-border-none" />
                     </div>
                     <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
                         <uv:account-entitlement-box-narrow account="${account}" className="tw-border-none" />

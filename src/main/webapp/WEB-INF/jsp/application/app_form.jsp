@@ -428,16 +428,16 @@
                                                                             <c:out value="${holidayReplacement.person.niceName}" />
                                                                         </span>
                                                                         <c:if test="${not empty holidayReplacement.departments}">
-                                                                            <ul class="tw-m-0 tw-ml-2 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-space-x-1">
+                                                                            <ul class="tw-m-0 tw-mt-1.5 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1">
                                                                                 <c:forEach items="${holidayReplacement.departments}" var="department">
-                                                                                    <li class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-lime-600 dark:tw-text-lime-600 dark:tw-bg-transparent">
+                                                                                    <li class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent">
                                                                                         <c:out value="${department}" />
                                                                                     </li>
                                                                                 </c:forEach>
                                                                             </ul>
                                                                         </c:if>
                                                                     </div>
-                                                                    <div class="tw-flex">
+                                                                    <div class="tw-flex tw-mt-2">
                                                                         <button
                                                                             type="submit"
                                                                             class="tw-p-0 tw-bg-transparent"

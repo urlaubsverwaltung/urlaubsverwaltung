@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
+import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -127,6 +128,26 @@ class ApplicationForLeaveDetailsViewControllerTest {
         perform(get("/web/application/" + APPLICATION_ID)
             .param("year", Integer.toString(requestedYear))
         ).andExpect(model().attribute("year", requestedYear));
+    }
+
+    @Test
+    void showApplicationDetailWithUserDepartments() throws Exception {
+
+        when(commentService.getCommentsByApplication(any())).thenReturn(singletonList(new ApplicationComment(somePerson(), clock)));
+        when(personService.getSignedInUser()).thenReturn(somePerson());
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        final Person person = new Person();
+        person.setId(1);
+        final Application application = someApplication();
+        application.setPerson(person);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+
+        final Department department = new Department();
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
+
+        perform(get("/web/application/" + APPLICATION_ID))
+            .andExpect(model().attribute("departmentsOfPerson", List.of(department)));
     }
 
     @Test
