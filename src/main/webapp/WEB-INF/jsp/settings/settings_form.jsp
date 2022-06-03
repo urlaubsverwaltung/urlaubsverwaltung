@@ -151,7 +151,7 @@
                 </div>
 
                 <div class="tab-pane" id="absenceTypes">
-                    <div class="form-section tw-mb-12">
+                    <div class="form-section tw-mb-12 tw-relative tw-z-10">
                         <jsp:include page="absence-types/absence-types.jsp" />
                     </div>
                     <div class="form-section">
