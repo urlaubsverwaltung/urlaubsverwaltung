@@ -13,7 +13,7 @@
         <spring:message code="person.form.permissions.header.title"/>
     </title>
     <uv:custom-head/>
-    <script defer src="<asset:url value='person_form.js' />"></script>
+    <script type="module" src="<asset:url value='person_form.js' />"></script>
 </head>
 
 <body>

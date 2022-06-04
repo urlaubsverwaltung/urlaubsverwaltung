@@ -12,7 +12,7 @@
         <spring:message code="overtime.header.title" arguments="${person.niceName}"/>
     </title>
     <uv:custom-head/>
-    <script defer src="<asset:url value='overtime_overview.js' />"></script>
+    <script type="module" src="<asset:url value='overtime_overview.js' />"></script>
 </head>
 <body>
 

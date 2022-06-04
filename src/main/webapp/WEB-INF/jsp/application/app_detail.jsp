@@ -27,10 +27,7 @@
         window.uv.startDate = "<fmt:formatDate pattern='yyyy/MM/dd' value='${parsedStartDate}' type="date" />";
         window.uv.endDate = "<fmt:formatDate pattern='yyyy/MM/dd' value='${parsedEndDate}' type="date" />";
     </script>
-    <script defer src="<asset:url value='npm.date-fns.js' />"></script>
-    <script defer src="<asset:url value='app_detail~app_form~person_overview.js' />"></script>
-    <script defer src="<asset:url value='account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~704d57c1.js' />"></script>
-    <script defer src="<asset:url value='app_detail.js' />"></script>
+    <script type="module" src="<asset:url value='app_detail.js' />"></script>
 </head>
 
 <body>

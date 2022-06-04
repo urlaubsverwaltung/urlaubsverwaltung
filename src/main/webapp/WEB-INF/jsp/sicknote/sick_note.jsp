@@ -18,7 +18,7 @@
         <spring:message code="sicknote.header.title" arguments="${SICK_NOTE_MESSAGEKEY}, ${sickNote.person.niceName}"/>
     </title>
     <uv:custom-head/>
-    <script defer src="<asset:url value='sick_note.js' />"></script>
+    <script type="module" src="<asset:url value='sick_note.js' />"></script>
 </head>
 <body>
 

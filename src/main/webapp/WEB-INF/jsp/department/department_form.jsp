@@ -22,7 +22,7 @@
         </c:choose>
     </title>
     <uv:custom-head/>
-    <script defer src="<asset:url value='department_form.js' />"></script>
+    <script type="module" src="<asset:url value='department_form.js' />"></script>
 </head>
 
 <spring:url var="URL_PREFIX" value="/web"/>

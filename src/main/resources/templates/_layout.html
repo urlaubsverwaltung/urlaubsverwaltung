@@ -30,8 +30,20 @@
   <meta th:if="${theme != 'dark'}" name="theme-color" content="#fafafa">
   <meta th:if="${theme == 'dark'}" name="theme-color" content="#18181b">
 
+  <link rel="preload" as="script" asset:href="npm.core-js.js" crossorigin />
+  <link rel="preload" as="script" asset:href="npm.babel.js" crossorigin />
+  <link rel="preload" as="script" asset:href="npm.jquery.js" crossorigin />
+  <link rel="preload" as="script" asset:href="npm.bootstrap.js" crossorigin />
+  <link rel="preload" as="script" asset:href="npm.underscore.js" crossorigin />
+  <link rel="preload" as="script" asset:href="npm.datalist_polyfill.js" crossorigin />
+  <link rel="preload" as="script" asset:href="npm.date-fns.js" crossorigin />
+  <link rel="preload" as="script" asset:href="npm.date-fns.de.js" th:if="${language == 'de'}" crossorigin />
+  <link rel="preload" as="script" asset:href="npm.date-fns.en.js" th:if="${language == 'en'}" crossorigin />
+  <link rel="preload" as="script" asset:href="npm.date-fns.el.js" th:if="${language == 'el'}" crossorigin />
+
   <link rel="stylesheet" type="text/css" asset:href="common.css"/>
   <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+  <link rel="stylesheet" type="text/css" asset:href="datepicker.css" />
   <th:block th:replace="${styles}"></th:block>
 
   <script th:if="${theme eq 'system'}">
@@ -73,18 +85,10 @@
     })();
   </script>
 
-  <script defer asset:src="runtime.js"></script>
-  <script defer asset:src="polyfill.js"></script>
-  <script defer asset:src="npm.core-js.js"></script>
-  <script defer asset:src="npm.babel.js"></script>
-  <script defer asset:src="npm.jquery.js"></script>
-  <script defer asset:src="npm.bootstrap.js"></script>
-  <script defer asset:src="npm.underscore.js"></script>
-  <script defer asset:src="npm.datalist-polyfill.js"></script>
-  <script defer asset:src="common.js"></script>
-  <script defer asset:src="date-fns-localized.js"></script>
-  <script defer asset:src="npm.ungap.js"></script>
-  <script defer asset:src="custom-elements-polyfill.js"></script>
+  <script type="module" asset:src="polyfill.js"></script>
+  <script type="module" asset:src="common.js"></script>
+  <script type="module" asset:src="date_fns_localized.js"></script>
+  <script type="module" asset:src="custom_elements_polyfill.js"></script>
 
   <th:block th:replace="${scripts}"></th:block>
 </head>

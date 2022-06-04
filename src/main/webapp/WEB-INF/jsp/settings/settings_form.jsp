@@ -15,7 +15,7 @@
         <spring:message code="settings.header.title"/>
     </title>
     <uv:custom-head/>
-    <script defer src="<asset:url value='settings_form.js' />"></script>
+    <script type="module" src="<asset:url value='settings_form.js' />"></script>
 </head>
 
 <body>

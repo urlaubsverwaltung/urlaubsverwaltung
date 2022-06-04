@@ -38,19 +38,23 @@
     </c:otherwise>
 </c:choose>
 
+<link rel="preload" as="script" href="<asset:url value='npm.core-js.js' />" crossorigin />
+<link rel="preload" as="script" href="<asset:url value='npm.babel.js' />" crossorigin />
+<link rel="preload" as="script" href="<asset:url value='npm.jquery.js' />" crossorigin />
+<link rel="preload" as="script" href="<asset:url value='npm.bootstrap.js' />" crossorigin />
+<link rel="preload" as="script" href="<asset:url value='npm.underscore.js' />" crossorigin />
+<link rel="preload" as="script" href="<asset:url value='npm.datalist_polyfill.js' />" crossorigin />
+<link rel="preload" as="script" href="<asset:url value='npm.date-fns.js' />" crossorigin />
+<c:if test="${language == 'de'}"><link rel="preload" as="script" href="<asset:url value='npm.date-fns.de.js'/>" crossorigin /></c:if>
+<c:if test="${language == 'en'}"><link rel="preload" as="script" href="<asset:url value='npm.date-fns.en.js'/>" crossorigin /></c:if>
+<c:if test="${language == 'el'}"><link rel="preload" as="script" href="<asset:url value='npm.date-fns.el.js'/>" crossorigin /></c:if>
+
 <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
+<link rel="stylesheet" type="text/css" href="<asset:url value='datepicker.css' />" />
 <uv:script-theme-toggler />
 
-<script defer src="<asset:url value='runtime.js' />"></script>
-<script defer src="<asset:url value='polyfill.js' />"></script>
-<script defer src="<asset:url value='npm.core-js.js' />"></script>
-<script defer src="<asset:url value='npm.babel.js' />"></script>
-<script defer src="<asset:url value='npm.jquery.js' />"></script>
-<script defer src="<asset:url value='npm.bootstrap.js' />"></script>
-<script defer src="<asset:url value='npm.underscore.js' />"></script>
-<script defer src="<asset:url value='npm.datalist-polyfill.js' />"></script>
-<script defer src="<asset:url value='common.js' />"></script>
-<script defer src="<asset:url value="date-fns-localized.js" />"></script>
-<script defer src="<asset:url value='npm.ungap.js' />"></script>
-<script defer src="<asset:url value='custom-elements-polyfill.js' />"></script>
+<script type="module" src="<asset:url value='polyfill.js' />"></script>
+<script type="module" src="<asset:url value='common.js' />"></script>
+<script type="module" src="<asset:url value="date_fns_localized.js" />"></script>
+<script type="modele" src="<asset:url value='custom_elements_polyfill.js' />"></script>

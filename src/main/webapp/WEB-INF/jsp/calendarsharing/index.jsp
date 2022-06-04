@@ -14,8 +14,8 @@
         <spring:message code="calendar.share.header.title"/>
     </title>
     <uv:custom-head/>
-    <script defer src="<asset:url value="copy_to_clipboard_input.js" />"></script>
-    <script defer src="<asset:url value="tabs.js" />"></script>
+    <script type="module" src="<asset:url value="copy_to_clipboard_input.js" />"></script>
+    <script type="module" src="<asset:url value="tabs.js" />"></script>
 </head>
 <body>
 
