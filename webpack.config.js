@@ -16,6 +16,7 @@ module.exports = {
 
   entry: {
     polyfill: "@babel/polyfill",
+    "custom-elements-polyfill": `@ungap/custom-elements`,
     "date-fns-localized": `${paths.src}/bundles/date-fns-localized.js`,
     app_detail: `${paths.src}/bundles/app-detail.js`,
     app_form: `${paths.src}/bundles/app-form.js`,

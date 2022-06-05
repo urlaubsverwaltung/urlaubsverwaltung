@@ -52,3 +52,5 @@
 <script defer src="<asset:url value='npm.datalist-polyfill.js' />"></script>
 <script defer src="<asset:url value='common.js' />"></script>
 <script defer src="<asset:url value="date-fns-localized.js" />"></script>
+<script defer src="<asset:url value='npm.ungap.js' />"></script>
+<script defer src="<asset:url value='custom-elements-polyfill.js' />"></script>
