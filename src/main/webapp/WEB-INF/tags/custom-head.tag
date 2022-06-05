@@ -46,6 +46,12 @@
 <c:if test="${language == 'de'}"><link rel="preload" as="script" href="<asset:url value='npm.date-fns.de.js'/>" crossorigin /></c:if>
 <c:if test="${language == 'en'}"><link rel="preload" as="script" href="<asset:url value='npm.date-fns.en.js'/>" crossorigin /></c:if>
 <c:if test="${language == 'el'}"><link rel="preload" as="script" href="<asset:url value='npm.date-fns.el.js'/>" crossorigin /></c:if>
+<link rel="preload" as="script" href="<asset:url value='absence-assertions.js' />" crossorigin />
+<link rel="preload" as="script" href="<asset:url value='locale-resolver.js' />" crossorigin />
+<link rel="preload" as="script" href="<asset:url value='fetch.js' />" crossorigin />
+<link rel="preload" as="script" href="<asset:url value='send-get-days-request-for-turn-of-the-year.js' />" crossorigin />
+<link rel="preload" as="script" href="<asset:url value='navigate.js' />" crossorigin />
+<link rel="preload" as="script" href="<asset:url value='npm.duetds.js' />" crossorigin />
 
 <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
