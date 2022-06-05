@@ -30,8 +30,6 @@
   <meta th:if="${theme != 'dark'}" name="theme-color" content="#fafafa">
   <meta th:if="${theme == 'dark'}" name="theme-color" content="#18181b">
 
-  <link rel="preload" as="script" asset:href="npm.core-js.js" crossorigin />
-  <link rel="preload" as="script" asset:href="npm.babel.js" crossorigin />
   <link rel="preload" as="script" asset:href="npm.jquery.js" crossorigin />
   <link rel="preload" as="script" asset:href="npm.bootstrap.js" crossorigin />
   <link rel="preload" as="script" asset:href="npm.underscore.js" crossorigin />
@@ -85,7 +83,6 @@
     })();
   </script>
 
-  <script type="module" asset:src="polyfill.js"></script>
   <script type="module" asset:src="common.js"></script>
   <script type="module" asset:src="date_fns_localized.js"></script>
   <script type="module" asset:src="custom_elements_polyfill.js"></script>

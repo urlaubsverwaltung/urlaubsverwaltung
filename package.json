@@ -32,7 +32,6 @@
   },
   "homepage": "https://github.com/synyx/urlaubsverwaltung#readme",
   "dependencies": {
-    "@babel/polyfill": "7.12.1",
     "@duetds/date-picker": "1.4.0",
     "@rollup/plugin-commonjs": "22.0.0",
     "@rollup/plugin-dynamic-import-vars": "1.4.3",

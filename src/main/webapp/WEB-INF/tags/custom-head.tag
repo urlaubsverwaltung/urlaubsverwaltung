@@ -38,8 +38,6 @@
     </c:otherwise>
 </c:choose>
 
-<link rel="preload" as="script" href="<asset:url value='npm.core-js.js' />" crossorigin />
-<link rel="preload" as="script" href="<asset:url value='npm.babel.js' />" crossorigin />
 <link rel="preload" as="script" href="<asset:url value='npm.jquery.js' />" crossorigin />
 <link rel="preload" as="script" href="<asset:url value='npm.bootstrap.js' />" crossorigin />
 <link rel="preload" as="script" href="<asset:url value='npm.underscore.js' />" crossorigin />
@@ -54,7 +52,6 @@
 <link rel="stylesheet" type="text/css" href="<asset:url value='datepicker.css' />" />
 <uv:script-theme-toggler />
 
-<script type="module" src="<asset:url value='polyfill.js' />"></script>
 <script type="module" src="<asset:url value='common.js' />"></script>
 <script type="module" src="<asset:url value="date_fns_localized.js" />"></script>
 <script type="modele" src="<asset:url value='custom_elements_polyfill.js' />"></script>
