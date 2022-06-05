@@ -172,7 +172,7 @@
   background-color: var(--absence-bar-color);
 }
 
-.datepicker-day:is(.datepicker-day-absence-morning, .datepicker-day-sick-note-morning)::after {
+.datepicker-day:is(.datepicker-day-absence-morning, .datepicker-day-sick-note-morning)::before {
   content: "";
   position: absolute;
   bottom: 0.375rem;
@@ -182,12 +182,12 @@
   border-radius: 99999px;
 }
 
-.datepicker-day.absence-morning--outline::after {
+.datepicker-day.absence-morning--outline::before {
   border: solid 1px var(--absence-bar-color-morning);
 }
 
-.datepicker-day.datepicker-day-sick-note-morning::after,
-.datepicker-day.absence-morning--solid::after {
+.datepicker-day.datepicker-day-sick-note-morning::before,
+.datepicker-day.absence-morning--solid::before {
   background-color: var(--absence-bar-color-morning);
 }
 
