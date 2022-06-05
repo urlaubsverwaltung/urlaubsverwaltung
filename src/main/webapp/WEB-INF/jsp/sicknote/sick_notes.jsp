@@ -14,7 +14,7 @@
         <spring:message code="sicknotes.header.title"/>
     </title>
     <uv:custom-head/>
-    <uv:asset-dependencies-preload asset="sick_notes.js" />
+    <uv:asset-dependencies-preload asset="sick-notes.js" />
     <link rel="stylesheet" href="<asset:url value='datepicker.css' />"/>
     <script>
         window.uv = {};
@@ -27,7 +27,7 @@
         window.uv.sickNote.person.id = "<c:out value="${sickNote.person.id}" />";
     </script>
     <uv:datepicker-localisation />
-    <script type="module" src="<asset:url value='sick_notes.js' />"></script>
+    <script type="module" src="<asset:url value='sick-notes.js' />"></script>
 </head>
 
 <body>

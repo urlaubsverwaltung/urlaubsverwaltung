@@ -37,7 +37,6 @@
     "@rollup/plugin-dynamic-import-vars": "1.4.3",
     "@rollup/plugin-inject": "4.0.4",
     "@rollup/plugin-node-resolve": "13.3.0",
-    "@rollup/plugin-replace": "4.0.0",
     "@ungap/custom-elements": "1.1.0",
     "bootstrap": "3.4.1",
     "datalist-polyfill": "1.25.0",

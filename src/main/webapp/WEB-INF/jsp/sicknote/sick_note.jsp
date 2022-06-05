@@ -18,8 +18,8 @@
         <spring:message code="sicknote.header.title" arguments="${SICK_NOTE_MESSAGEKEY}, ${sickNote.person.niceName}"/>
     </title>
     <uv:custom-head/>
-    <uv:asset-dependencies-preload asset="sick_note.js" />
-    <script type="module" src="<asset:url value='sick_note.js' />"></script>
+    <uv:asset-dependencies-preload asset="sick-note.js" />
+    <script type="module" src="<asset:url value='sick-note.js' />"></script>
 </head>
 <body>
 

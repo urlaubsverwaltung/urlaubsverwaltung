@@ -14,7 +14,7 @@
         <spring:message code="person.form.annualVacation.header.title" arguments="${person.niceName}"/>
     </title>
     <uv:custom-head/>
-    <uv:asset-dependencies-preload asset="account_form.js" />
+    <uv:asset-dependencies-preload asset="account-form.js" />
     <link rel="stylesheet" href="<asset:url value='datepicker.css' />"/>
     <script>
         window.uv = {};
@@ -24,7 +24,7 @@
     </script>
     <uv:datepicker-localisation />
     <uv:vacation-type-colors-script />
-    <script type="module" src="<asset:url value='account_form.js' />"></script>
+    <script type="module" src="<asset:url value='account-form.js' />"></script>
 </head>
 
 <body>

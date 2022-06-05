@@ -3,10 +3,10 @@
 <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
   <title th:text="#{person.form.basedata.title(${personBasedata.niceName})}"></title>
   <th:block th:fragment="preload">
-    <link rel="preload" th:replace="fragments/asset-dependency-preload::links('person_basedata.js')" />
+    <link rel="preload" th:replace="fragments/asset-dependency-preload::links('person-basedata.js')" />
   </th:block>
   <th:block th:fragment="scripts">
-    <script type="module" asset:src="person_basedata.js"></script>
+    <script type="module" asset:src="person-basedata.js"></script>
   </th:block>
 </head>
 <body th:replace="_layout::body(~{::main}, ~{})">

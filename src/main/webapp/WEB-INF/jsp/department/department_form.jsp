@@ -22,8 +22,8 @@
         </c:choose>
     </title>
     <uv:custom-head/>
-    <uv:asset-dependencies-preload asset="department_form.js" />
-    <script type="module" src="<asset:url value='department_form.js' />"></script>
+    <uv:asset-dependencies-preload asset="department-form.js" />
+    <script type="module" src="<asset:url value='department-form.js' />"></script>
 </head>
 
 <spring:url var="URL_PREFIX" value="/web"/>

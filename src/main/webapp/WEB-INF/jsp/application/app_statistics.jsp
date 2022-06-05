@@ -14,7 +14,7 @@
         <spring:message code="applications.statistics.header.title"/>
     </title>
     <uv:custom-head/>
-    <uv:asset-dependencies-preload asset="application_statistics.js" />
+    <uv:asset-dependencies-preload asset="application-statistics.js" />
     <link rel="stylesheet" href="<asset:url value='datepicker.css' />"/>
     <script>
         window.uv = {};
@@ -23,7 +23,7 @@
         window.uv.apiPrefix = "<spring:url value='/api' />";
     </script>
     <uv:datepicker-localisation />
-    <script type="module" src="<asset:url value='application_statistics.js' />"></script>
+    <script type="module" src="<asset:url value='application-statistics.js' />"></script>
 </head>
 
 <body>

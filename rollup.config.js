@@ -1,6 +1,5 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import replace from "@rollup/plugin-replace";
 import inject from "@rollup/plugin-inject";
 import dynamicImportVariables from "@rollup/plugin-dynamic-import-vars";
 import styles from "rollup-plugin-styles";
@@ -9,9 +8,8 @@ import assetsManifest from "./rollup-plugin-assets-manifest";
 import clean from "./rollup-plugin-clean";
 import glob from "fast-glob";
 
-const NODE_ENV = process.env.NODE_ENV;
-const MODE = process.env.MODE || NODE_ENV || "development";
-const isProduction = MODE === "production";
+const NODE_ENV = process.env.NODE_ENV || "development";
+const isProduction = NODE_ENV === "production";
 
 const paths = {
   src: "src/main/javascript",
@@ -38,11 +36,6 @@ export default {
   plugins: [
     clean({
       path: paths.dist,
-    }),
-    replace({
-      preventAssignment: true,
-      "process.env.NODE_ENV": JSON.stringify(NODE_ENV),
-      "process.env.MODE": JSON.stringify(MODE),
     }),
     inject({
       $: "jquery",
@@ -88,5 +81,5 @@ function inputFiles() {
 
 function entryName(file) {
   const filename = file.slice(Math.max(0, file.lastIndexOf("/") + 1));
-  return filename.slice(0, Math.max(0, filename.lastIndexOf("."))).replace(/-/g, "_");
+  return filename.slice(0, Math.max(0, filename.lastIndexOf(".")));
 }

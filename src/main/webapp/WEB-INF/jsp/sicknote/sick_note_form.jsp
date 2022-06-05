@@ -20,7 +20,7 @@
         </c:choose>
     </title>
     <uv:custom-head/>
-    <uv:asset-dependencies-preload asset="sick_note_form.js" />
+    <uv:asset-dependencies-preload asset="sick-note-form.js" />
     <link rel="stylesheet" href="<asset:url value='datepicker.css' />"/>
     <script>
         window.uv = {};
@@ -36,7 +36,7 @@
     </script>
     <uv:datepicker-localisation/>
     <uv:vacation-type-colors-script />
-    <script type="module" src="<asset:url value='sick_note_form.js' />"></script>
+    <script type="module" src="<asset:url value='sick-note-form.js' />"></script>
 </head>
 <body>
 

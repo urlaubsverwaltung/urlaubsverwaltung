@@ -11,8 +11,8 @@
         <spring:message code="overtime.details.header.title"/>
     </title>
     <uv:custom-head/>
-    <uv:asset-dependencies-preload asset="overtime_details.js" />
-    <script type="module" src="<asset:url value='overtime_details.js' />"></script>
+    <uv:asset-dependencies-preload asset="overtime-details.js" />
+    <script type="module" src="<asset:url value='overtime-details.js' />"></script>
 </head>
 <body>
 

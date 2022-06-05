@@ -3,13 +3,13 @@
 <head th:replace="_layout::head(~{::title}, ~{::styles}, ~{::scripts}, ~{::preload})">
   <title th:text="#{absences.overview.header.title}">Absence Overview</title>
   <th:block th:fragment="preload">
-    <link rel="preload" th:replace="fragments/asset-dependency-preload::links('absences_overview.js')" />
+    <link rel="preload" th:replace="fragments/asset-dependency-preload::links('absences-overview.js')" />
   </th:block>
   <th:block th:fragment="styles">
-    <link rel="stylesheet" type="text/css" asset:href="absences_overview.css"/>
+    <link rel="stylesheet" type="text/css" asset:href="absences-overview.css"/>
   </th:block>
   <th:block th:fragment="scripts">
-    <script type="module" asset:src="absences_overview.js"></script>
+    <script type="module" asset:src="absences-overview.js"></script>
   </th:block>
 </head>
 <body th:replace="_layout::body(~{::main}, ~{})">

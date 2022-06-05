@@ -29,7 +29,7 @@
         <spring:message code="overview.header.title" arguments="${person.niceName}, ${displayYear}"/>
     </title>
     <uv:custom-head/>
-    <uv:asset-dependencies-preload asset="person_overview.js" />
+    <uv:asset-dependencies-preload asset="person-overview.js" />
     <script>
         window.uv = {};
         window.uv.personId = '<c:out value="${person.id}" />';
@@ -39,7 +39,7 @@
         window.uv.weekStartsOn = 1;
     </script>
     <uv:vacation-type-colors-script />
-    <script type="module" src="<asset:url value="person_overview.js" />"></script>
+    <script type="module" src="<asset:url value="person-overview.js" />"></script>
 </head>
 
 <body>

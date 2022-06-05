@@ -3,10 +3,10 @@
   <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts}, ~{::preload})">
     <title th:text="#{applications.header.title}"></title>
     <th:block th:fragment="preload">
-      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('application_overview.js')" />
+      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('application-overview.js')" />
     </th:block>
     <th:block th:fragment="scripts">
-      <script type="module" asset:src="application_overview.js"></script>
+      <script type="module" asset:src="application-overview.js"></script>
     </th:block>
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">

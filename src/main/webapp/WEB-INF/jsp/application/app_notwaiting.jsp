@@ -13,8 +13,8 @@
         <spring:message code="application.error.notWaiting.title"/>
     </title>
     <uv:custom-head/>
-    <uv:asset-dependencies-preload asset="application_notwaiting.js" />
-    <script type="module" src="<asset:url value='application_notwaiting.js' />"></script>
+    <uv:asset-dependencies-preload asset="application-notwaiting.js" />
+    <script type="module" src="<asset:url value='application-notwaiting.js' />"></script>
 </head>
 
 <body>

@@ -18,8 +18,8 @@
     </title>
     <uv:custom-head/>
     <c:if test="${not empty persons}">
-    <uv:asset-dependencies-preload asset="person_view.js" />
-    <script type="module" src="<asset:url value='person_view.js' />"></script>
+    <uv:asset-dependencies-preload asset="person-view.js" />
+    <script type="module" src="<asset:url value='person-view.js' />"></script>
     </c:if>
 </head>
 
