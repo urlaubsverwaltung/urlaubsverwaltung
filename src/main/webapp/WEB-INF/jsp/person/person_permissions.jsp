@@ -13,7 +13,8 @@
         <spring:message code="person.form.permissions.header.title"/>
     </title>
     <uv:custom-head/>
-    <script type="module" src="<asset:url value='person_form.js' />"></script>
+    <uv:asset-dependencies-preload asset="person_permissions.js" />
+    <script type="module" src="<asset:url value='person_permissions.js' />"></script>
 </head>
 
 <body>

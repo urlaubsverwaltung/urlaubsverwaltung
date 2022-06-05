@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.web.jsp.tags;
 
 import org.springframework.web.servlet.tags.RequestContextAwareTag;
 import org.springframework.web.servlet.tags.UrlTag;
-import org.synyx.urlaubsverwaltung.web.thymeleaf.AssetFilenameHashMapper;
+import org.synyx.urlaubsverwaltung.web.AssetManifestService;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
@@ -37,7 +37,7 @@ public class AssetsHashResolverTag extends RequestContextAwareTag {
         return urlTag.doEndTag();
     }
 
-    private AssetFilenameHashMapper getAssetManifestBean() {
-        return new AssetFilenameHashMapper(getRequestContext().getWebApplicationContext());
+    private AssetManifestService getAssetManifestBean() {
+        return getRequestContext().getWebApplicationContext().getBean(AssetManifestService.class);
     }
 }

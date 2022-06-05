@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+<head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts}, ~{::preload})">
   <title th:text="#{user-settings.header.title}"></title>
+  <th:block th:fragment="preload">
+    <link rel="preload" th:replace="fragments/asset-dependency-preload::links('user_settings.js')" />
+  </th:block>
   <th:block th:fragment="scripts">
     <script type="module" asset:src="user_settings.js"></script>
   </th:block>

@@ -22,6 +22,7 @@
         </c:choose>
     </title>
     <uv:custom-head/>
+    <uv:asset-dependencies-preload asset="application_form.js" />
     <link rel="stylesheet" href="<asset:url value='datepicker.css' />"/>
     <script>
         if (!window.uv) {
@@ -43,8 +44,9 @@
     </script>
     <uv:datepicker-localisation/>
     <uv:vacation-type-colors-script />
-    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.timepicker.css' />"/>
-    <script type="module" src="<asset:url value='app_form.js' />"></script>
+    <!-- TODO css -->
+<%--    <link rel="stylesheet" type="text/css" href="<asset:url value='npm.timepicker.css' />"/>--%>
+    <script type="module" src="<asset:url value='application_form.js' />"></script>
 </head>
 
 <body>

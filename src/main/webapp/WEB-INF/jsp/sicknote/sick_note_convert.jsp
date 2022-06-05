@@ -13,6 +13,7 @@
         <spring:message code="sicknote.convert.header.title"/>
     </title>
     <uv:custom-head/>
+    <uv:asset-dependencies-preload asset="sick_note_convert.js" />
     <script type="module" src="<asset:url value='sick_note_convert.js' />"></script>
 </head>
 <body>

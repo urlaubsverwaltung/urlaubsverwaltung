@@ -18,6 +18,7 @@
         <spring:message code="application.data.header.title" arguments="${application.person.niceName}"/>
     </title>
     <uv:custom-head/>
+    <uv:asset-dependencies-preload asset="application_detail.js" />
     <script>
         window.uv = {};
         window.uv.personId = '<c:out value="${application.person.id}" />';
@@ -27,7 +28,7 @@
         window.uv.startDate = "<fmt:formatDate pattern='yyyy/MM/dd' value='${parsedStartDate}' type="date" />";
         window.uv.endDate = "<fmt:formatDate pattern='yyyy/MM/dd' value='${parsedEndDate}' type="date" />";
     </script>
-    <script type="module" src="<asset:url value='app_detail.js' />"></script>
+    <script type="module" src="<asset:url value='application_detail.js' />"></script>
 </head>
 
 <body>

@@ -1,55 +1,244 @@
 {
-  "absence-assertions.js": "/assets/absence-assertions-8e8efd3e.js",
-  "absences_overview.css": "/assets/absences_overview.7cf66e7a.css",
-  "absences_overview.js": "/assets/absences_overview.ea0692b5.js",
-  "account_form.js": "/assets/account_form.ac965eda.js",
-  "app_detail.js": "/assets/app_detail.4faeb7ee.js",
-  "app_form.js": "/assets/app_form.9cef2bdb.js",
-  "app_list.js": "/assets/app_list.c9616b34.js",
-  "app_statistics.js": "/assets/app_statistics.6627cf76.js",
-  "common.css": "/assets/common.f0dad516.css",
-  "common.js": "/assets/common.286b6971.js",
-  "copy_to_clipboard_input.js": "/assets/copy_to_clipboard_input.dad7d4a9.js",
-  "create-datepicker.js": "/assets/create-datepicker-efe059e0.js",
-  "custom_elements_polyfill.js": "/assets/custom_elements_polyfill.e029e438.js",
-  "date_fns_localized.js": "/assets/date_fns_localized.3de06c0e.js",
-  "datepicker.css": "/assets/create-datepicker.ae790cdf.css",
-  "department_form.js": "/assets/department_form.f095bd2b.js",
-  "department_list.js": "/assets/department_list.3faed60b.js",
-  "fetch.js": "/assets/fetch-f9c41865.js",
-  "filter-modal.js": "/assets/filter-modal-b755e6f9.js",
-  "index.js": "/assets/index-14ffb912.js",
-  "locale-resolver.js": "/assets/locale-resolver-485a3b5c.js",
-  "max-chars.js": "/assets/max-chars-e7d96e74.js",
-  "navigate.js": "/assets/navigate-d676e40b.js",
-  "npm.bootstrap.js": "/assets/npm.bootstrap-58076d6c.js",
-  "npm.datalist_polyfill.js": "/assets/npm.datalist_polyfill.592ffc0b.js",
-  "npm.date-fns.de.js": "/assets/npm.date-fns.de-a841eb94.js",
-  "npm.date-fns.el.js": "/assets/npm.date-fns.el-256cb8cb.js",
-  "npm.date-fns.js": "/assets/npm.date-fns-3ee4b4f9.js",
-  "npm.duetds.css": "/assets/npm.duetds.609f6a1d.css",
-  "npm.duetds.js": "/assets/npm.duetds-45209a5b.js",
-  "npm.jquery.js": "/assets/npm.jquery-56789539.js",
-  "npm.list.js.js": "/assets/npm.list.js-2a8cfc96.js",
-  "npm.string-natural-compare.js": "/assets/npm.string-natural-compare-eda8bc41.js",
-  "npm.tablesorter.js": "/assets/npm.tablesorter-be63df8d.js",
-  "npm.timepicker.css": "/assets/npm.timepicker.bbd0ca98.css",
-  "npm.timepicker.js": "/assets/npm.timepicker-ebd3f80e.js",
-  "npm.underscore.js": "/assets/npm.underscore-fcf23e24.js",
-  "overtime_form.js": "/assets/overtime_form.fca4780a.js",
-  "overtime_overview.js": "/assets/overtime_overview.6c2e7b01.js",
-  "parser-data-value-number.js": "/assets/parser-data-value-number-c7b1c8cf.js",
-  "person_basedata.js": "/assets/person_basedata.4f32dc38.js",
-  "person_form.js": "/assets/person_form.39e1b4f2.js",
-  "person_overview.js": "/assets/person_overview.daf0422a.js",
-  "person_view.js": "/assets/person_view.f1ad2276.js",
-  "send-get-days-request-for-turn-of-the-year.js": "/assets/send-get-days-request-for-turn-of-the-year-a19f8db5.js",
-  "settings_form.js": "/assets/settings_form.79791ae0.js",
-  "sick_note_convert.js": "/assets/sick_note_convert.da2a6e24.js",
-  "sick_note_form.js": "/assets/sick_note_form.757f887e.js",
-  "sick_note.js": "/assets/sick_note.e28adb4a.js",
-  "sick_notes.js": "/assets/sick_notes.50a1442c.js",
-  "tabs.js": "/assets/tabs.363e3a52.js",
-  "user_settings.js": "/assets/user_settings.281b50d0.js",
-  "workingtime_form.js": "/assets/workingtime_form.2f572049.js"
+  "absences_overview.css": {
+    "url": "/assets/absences_overview.7cf66e7a.css",
+    "dependencies": []
+  },
+  "absences_overview.js": {
+    "url": "/assets/absences_overview.5e6c6e1e.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/jquery.tablesorter.combined-1458faec.js"
+    ]
+  },
+  "account_form.js": {
+    "url": "/assets/account_form.67a42ebc.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/create-datepicker-4d41f8a7.js",
+      "/assets/index-14ffb912.js",
+      "/assets/max-chars-e7d96e74.js",
+      "/assets/index-83391db5.js",
+      "/assets/absence-assertions-25ef0c63.js",
+      "/assets/fetch-f3496a48.js"
+    ]
+  },
+  "application_detail.js": {
+    "url": "/assets/application_detail.d8a572f7.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/send-get-days-request-for-turn-of-the-year-9d538fda.js",
+      "/assets/max-chars-e7d96e74.js",
+      "/assets/index-83391db5.js",
+      "/assets/fetch-f3496a48.js"
+    ]
+  },
+  "application_form.css": {
+    "url": "/assets/application_form.479b3816.css",
+    "dependencies": []
+  },
+  "application_form.js": {
+    "url": "/assets/application_form.a07ecab2.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/create-datepicker-4d41f8a7.js",
+      "/assets/absence-assertions-25ef0c63.js",
+      "/assets/index-83391db5.js",
+      "/assets/send-get-days-request-for-turn-of-the-year-9d538fda.js",
+      "/assets/fetch-f3496a48.js",
+      "/assets/index-14ffb912.js",
+      "/assets/max-chars-e7d96e74.js"
+    ]
+  },
+  "application_notwaiting.js": {
+    "url": "/assets/application_notwaiting.59d99fd3.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js"
+    ]
+  },
+  "application_overview.js": {
+    "url": "/assets/application_overview.6c5ac34c.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/navigate-d676e40b.js"
+    ]
+  },
+  "application_statistics.js": {
+    "url": "/assets/application_statistics.2f32e14b.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/jquery.tablesorter.combined-1458faec.js",
+      "/assets/parser-data-value-number-c7b1c8cf.js",
+      "/assets/filter-modal-39373652.js",
+      "/assets/create-datepicker-4d41f8a7.js",
+      "/assets/index-83391db5.js",
+      "/assets/absence-assertions-25ef0c63.js",
+      "/assets/fetch-f3496a48.js"
+    ]
+  },
+  "calendar_sharing.js": {
+    "url": "/assets/calendar_sharing.79502152.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/index-f2b9af85.js"
+    ]
+  },
+  "common.css": {
+    "url": "/assets/common.f0dad516.css",
+    "dependencies": []
+  },
+  "datepicker.css": {
+    "url": "/assets/create-datepicker.ae790cdf.css",
+    "dependencies": []
+  },
+  "department_form.js": {
+    "url": "/assets/department_form.bf3a91db.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/max-chars-e7d96e74.js"
+    ]
+  },
+  "department_list.js": {
+    "url": "/assets/department_list.b5bc9d75.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/jquery.tablesorter.combined-1458faec.js"
+    ]
+  },
+  "overtime_details.js": {
+    "url": "/assets/overtime_details.70fe0ed7.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js"
+    ]
+  },
+  "overtime_form.js": {
+    "url": "/assets/overtime_form.875ab661.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/create-datepicker-4d41f8a7.js",
+      "/assets/index-14ffb912.js",
+      "/assets/max-chars-e7d96e74.js",
+      "/assets/index-83391db5.js",
+      "/assets/absence-assertions-25ef0c63.js",
+      "/assets/fetch-f3496a48.js"
+    ]
+  },
+  "overtime_overview.js": {
+    "url": "/assets/overtime_overview.06d50771.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/navigate-d676e40b.js"
+    ]
+  },
+  "person_basedata.js": {
+    "url": "/assets/person_basedata.f1a33a20.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/max-chars-e7d96e74.js",
+      "/assets/index-14ffb912.js"
+    ]
+  },
+  "person_detail.js": {
+    "url": "/assets/person_detail.603a11a3.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js"
+    ]
+  },
+  "person_overview.js": {
+    "url": "/assets/person_overview.7b0736c0.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/navigate-d676e40b.js",
+      "/assets/index-83391db5.js",
+      "/assets/send-get-days-request-for-turn-of-the-year-9d538fda.js",
+      "/assets/fetch-f3496a48.js",
+      "/assets/absence-assertions-25ef0c63.js"
+    ]
+  },
+  "person_permissions.js": {
+    "url": "/assets/person_permissions.f199fa56.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/index-14ffb912.js"
+    ]
+  },
+  "person_view.js": {
+    "url": "/assets/person_view.d2984ed1.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/jquery.tablesorter.combined-1458faec.js",
+      "/assets/parser-data-value-number-c7b1c8cf.js",
+      "/assets/navigate-d676e40b.js"
+    ]
+  },
+  "settings_form.js": {
+    "url": "/assets/settings_form.4bd65f3a.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/index-f2b9af85.js"
+    ]
+  },
+  "sick_note_convert.js": {
+    "url": "/assets/sick_note_convert.b75c4e9b.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/max-chars-e7d96e74.js"
+    ]
+  },
+  "sick_note_form.js": {
+    "url": "/assets/sick_note_form.b9047d38.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/create-datepicker-4d41f8a7.js",
+      "/assets/index-14ffb912.js",
+      "/assets/max-chars-e7d96e74.js",
+      "/assets/index-83391db5.js",
+      "/assets/absence-assertions-25ef0c63.js",
+      "/assets/fetch-f3496a48.js"
+    ]
+  },
+  "sick_note.js": {
+    "url": "/assets/sick_note.457598a1.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/max-chars-e7d96e74.js"
+    ]
+  },
+  "sick_notes_statistics.js": {
+    "url": "/assets/sick_notes_statistics.8af7dcaf.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js"
+    ]
+  },
+  "sick_notes.js": {
+    "url": "/assets/sick_notes.2e79102f.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/navigate-d676e40b.js",
+      "/assets/jquery.tablesorter.combined-1458faec.js",
+      "/assets/parser-data-value-number-c7b1c8cf.js",
+      "/assets/filter-modal-39373652.js",
+      "/assets/create-datepicker-4d41f8a7.js",
+      "/assets/index-83391db5.js",
+      "/assets/absence-assertions-25ef0c63.js",
+      "/assets/fetch-f3496a48.js"
+    ]
+  },
+  "user_settings.js": {
+    "url": "/assets/user_settings.a95138a4.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/fetch-f3496a48.js"
+    ]
+  },
+  "workingtime_form.js": {
+    "url": "/assets/workingtime_form.39acf827.js",
+    "dependencies": [
+      "/assets/common-8f5a31e1.js",
+      "/assets/create-datepicker-4d41f8a7.js",
+      "/assets/index-14ffb912.js",
+      "/assets/index-83391db5.js",
+      "/assets/absence-assertions-25ef0c63.js",
+      "/assets/fetch-f3496a48.js"
+    ]
+  }
 }

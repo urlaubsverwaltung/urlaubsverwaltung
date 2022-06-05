@@ -1,3 +1,4 @@
+import "../js/common";
 import "../components/color-picker";
 import "../components/tabs";
 import "../js/settings/settings-form";

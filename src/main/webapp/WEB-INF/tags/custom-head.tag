@@ -38,28 +38,10 @@
     </c:otherwise>
 </c:choose>
 
-<link rel="dns-prefetch" href="https://gravatar.com/" />
+<link rel="dns-prefetch" href="https://gravatar.com/" >
 <link rel="preconnect" href="https://gravatar.com/" crossorigin />
-<link rel="preload" as="script" href="<asset:url value='npm.jquery.js' />" crossorigin />
-<link rel="preload" as="script" href="<asset:url value='npm.bootstrap.js' />" crossorigin />
-<link rel="preload" as="script" href="<asset:url value='npm.underscore.js' />" crossorigin />
-<link rel="preload" as="script" href="<asset:url value='npm.datalist_polyfill.js' />" crossorigin />
-<link rel="preload" as="script" href="<asset:url value='npm.date-fns.js' />" crossorigin />
-<c:if test="${language == 'de'}"><link rel="preload" as="script" href="<asset:url value='npm.date-fns.de.js'/>" crossorigin /></c:if>
-<c:if test="${language == 'en'}"><link rel="preload" as="script" href="<asset:url value='npm.date-fns.en.js'/>" crossorigin /></c:if>
-<c:if test="${language == 'el'}"><link rel="preload" as="script" href="<asset:url value='npm.date-fns.el.js'/>" crossorigin /></c:if>
-<link rel="preload" as="script" href="<asset:url value='absence-assertions.js' />" crossorigin />
-<link rel="preload" as="script" href="<asset:url value='locale-resolver.js' />" crossorigin />
-<link rel="preload" as="script" href="<asset:url value='fetch.js' />" crossorigin />
-<link rel="preload" as="script" href="<asset:url value='send-get-days-request-for-turn-of-the-year.js' />" crossorigin />
-<link rel="preload" as="script" href="<asset:url value='navigate.js' />" crossorigin />
-<link rel="preload" as="script" href="<asset:url value='npm.duetds.js' />" crossorigin />
 
 <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
 <link rel="stylesheet" type="text/css" href="<asset:url value='datepicker.css' />" />
 <uv:script-theme-toggler />
-
-<script type="module" src="<asset:url value='common.js' />"></script>
-<script type="module" src="<asset:url value="date_fns_localized.js" />"></script>
-<script type="modele" src="<asset:url value='custom_elements_polyfill.js' />"></script>

@@ -20,10 +20,6 @@ const paths = {
 
 export default {
   input: {
-    custom_elements_polyfill: `@ungap/custom-elements`,
-    "npm.datalist_polyfill": `datalist-polyfill`,
-    copy_to_clipboard_input: `${paths.src}/components/copy-to-clipboard-input/index.js`,
-    tabs: `${paths.src}/components/tabs/index.js`,
     ...inputFiles(),
   },
   output: {
@@ -33,33 +29,6 @@ export default {
     entryFileNames: isProduction ? `[name].[hash].js` : `[name].js`,
     // custom assets like css files extracted by `rollup-plugin-styles`
     assetFileNames: "[name].[hash].[ext]",
-    manualChunks(id) {
-      if (id.includes("node_modules")) {
-        const packageName = id.match(/[/\\]node_modules[/\\](.*?)([/\\]|$)/)[1];
-
-        if (/node_modules\/jquery-ui\/ui\/i18n/.test(id)) {
-          const locale = id.match(/datepicker-(\w\w)/)[1];
-          // build separate bundles for jquery-ui-datepicker
-          // which can be included on demand in the view templates
-          // or used as dynamic import and handled by webpack
-          return `npm.${packageName}.datepicker.${locale}`;
-        }
-
-        if (packageName === "date-fns") {
-          // build separate bundles for dateFn locales
-          // which can be included on demand in the view templates
-          // or used as dynamic import and handled by webpack
-          const dateFunctionLocaleMatch = id.match(/node_modules\/date-fns\/esm\/locale\/((?!en)(?!_)\w\w)/);
-          if (dateFunctionLocaleMatch) {
-            const locale = dateFunctionLocaleMatch[1];
-            return `npm.${packageName}.${locale}`;
-          }
-        }
-
-        // npm package names are URL-safe, but some servers don't like @ symbols
-        return `npm.${packageName.replace("@", "")}`;
-      }
-    },
   },
   moduleContext(id) {
     if (id.includes("@duetds")) {

@@ -14,6 +14,7 @@
         <spring:message code="person.form.workingTime.header.title" arguments="${person.niceName}"/>
     </title>
     <uv:custom-head/>
+    <uv:asset-dependencies-preload asset="workingtime_form.js" />
     <link rel="stylesheet" href="<asset:url value='datepicker.css' />"/>
     <script>
         window.uv = {};

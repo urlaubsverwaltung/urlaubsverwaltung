@@ -29,6 +29,7 @@
         <spring:message code="overview.header.title" arguments="${person.niceName}, ${displayYear}"/>
     </title>
     <uv:custom-head/>
+    <uv:asset-dependencies-preload asset="person_overview.js" />
     <script>
         window.uv = {};
         window.uv.personId = '<c:out value="${person.id}" />';

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org" xmlns:asset="http://www.w3.org/1999/xhtml">
-<head th:fragment="head(title, styles, scripts)">
+<head th:fragment="head(title, styles, scripts, preload)">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title th:replace="${title}">Page Title</title>
@@ -30,22 +30,9 @@
   <meta th:if="${theme != 'dark'}" name="theme-color" content="#fafafa">
   <meta th:if="${theme == 'dark'}" name="theme-color" content="#18181b">
 
-  <link rel="dns-prefetch" href="https://gravatar.com/" />
+  <link rel="dns-prefetch" href="https://gravatar.com/" >
   <link rel="preconnect" href="https://gravatar.com/" crossorigin />
-  <link rel="preload" as="script" asset:href="npm.jquery.js" crossorigin />
-  <link rel="preload" as="script" asset:href="npm.bootstrap.js" crossorigin />
-  <link rel="preload" as="script" asset:href="npm.underscore.js" crossorigin />
-  <link rel="preload" as="script" asset:href="npm.datalist_polyfill.js" crossorigin />
-  <link rel="preload" as="script" asset:href="npm.date-fns.js" crossorigin />
-  <link rel="preload" as="script" asset:href="npm.date-fns.de.js" th:if="${language == 'de'}" crossorigin />
-  <link rel="preload" as="script" asset:href="npm.date-fns.en.js" th:if="${language == 'en'}" crossorigin />
-  <link rel="preload" as="script" asset:href="npm.date-fns.el.js" th:if="${language == 'el'}" crossorigin />
-  <link rel="preload" as="script" asset:href="absence-assertions.js" crossorigin />
-  <link rel="preload" as="script" asset:href="locale-resolver.js" crossorigin />
-  <link rel="preload" as="script" asset:href="fetch.js" crossorigin />
-  <link rel="preload" as="script" asset:href="send-get-days-request-for-turn-of-the-year.js" crossorigin />
-  <link rel="preload" as="script" asset:href="navigate.js" crossorigin />
-  <link rel="preload" as="script" asset:href="npm.duetds.js" crossorigin />
+  <th:block th:replace="${preload}"></th:block>
 
   <link rel="stylesheet" type="text/css" asset:href="common.css"/>
   <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
@@ -90,10 +77,6 @@
       }
     })();
   </script>
-
-  <script type="module" asset:src="common.js"></script>
-  <script type="module" asset:src="date_fns_localized.js"></script>
-  <script type="module" asset:src="custom_elements_polyfill.js"></script>
 
   <th:block th:replace="${scripts}"></th:block>
 </head>

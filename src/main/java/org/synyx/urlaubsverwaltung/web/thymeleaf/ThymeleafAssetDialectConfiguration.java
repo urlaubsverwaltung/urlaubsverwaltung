@@ -2,13 +2,13 @@ package org.synyx.urlaubsverwaltung.web.thymeleaf;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
+import org.synyx.urlaubsverwaltung.web.AssetManifestService;
 
 @Configuration
 class ThymeleafAssetDialectConfiguration {
 
     @Bean
-    AssetDialect assetDialect(ResourceLoader resourceLoader) {
-        return new AssetDialect(new AssetFilenameHashMapper(resourceLoader));
+    AssetDialect assetDialect(AssetManifestService assetManifestService) {
+        return new AssetDialect(assetManifestService);
     }
 }

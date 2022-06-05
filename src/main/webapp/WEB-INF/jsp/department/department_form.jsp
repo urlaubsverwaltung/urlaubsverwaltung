@@ -22,6 +22,7 @@
         </c:choose>
     </title>
     <uv:custom-head/>
+    <uv:asset-dependencies-preload asset="department_form.js" />
     <script type="module" src="<asset:url value='department_form.js' />"></script>
 </head>
 

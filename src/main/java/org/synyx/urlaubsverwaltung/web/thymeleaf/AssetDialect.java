@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.web.thymeleaf;
 
+import org.synyx.urlaubsverwaltung.web.AssetManifestService;
 import org.thymeleaf.dialect.AbstractProcessorDialect;
 import org.thymeleaf.processor.IProcessor;
 
@@ -7,18 +8,18 @@ import java.util.Set;
 
 class AssetDialect extends AbstractProcessorDialect {
 
-    private final AssetFilenameHashMapper assetFilenameHashMapper;
+    private final AssetManifestService assetManifestService;
 
-    AssetDialect(AssetFilenameHashMapper assetFilenameHashMapper) {
+    AssetDialect(AssetManifestService assetManifestService) {
         super("Asset Dialect", "asset", 1000);
-        this.assetFilenameHashMapper = assetFilenameHashMapper;
+        this.assetManifestService = assetManifestService;
     }
 
     @Override
     public Set<IProcessor> getProcessors(String dialectPrefix) {
         return Set.of(
-            new AssetAttributeTagProcessor(dialectPrefix, "href", assetFilenameHashMapper),
-            new AssetAttributeTagProcessor(dialectPrefix, "src", assetFilenameHashMapper)
+            new AssetAttributeTagProcessor(dialectPrefix, "href", assetManifestService),
+            new AssetAttributeTagProcessor(dialectPrefix, "src", assetManifestService)
         );
     }
 }

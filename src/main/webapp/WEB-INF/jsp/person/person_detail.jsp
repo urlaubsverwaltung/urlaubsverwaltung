@@ -14,6 +14,8 @@
         <spring:message code="person.account.header.title" arguments="${person.niceName}"/>
     </title>
     <uv:custom-head/>
+    <uv:asset-dependencies-preload asset="person_detail.js" />
+    <script type="module" src="<asset:url value='person_detail.js' />"></script>
 </head>
 
 <body>

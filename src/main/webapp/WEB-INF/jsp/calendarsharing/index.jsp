@@ -14,8 +14,8 @@
         <spring:message code="calendar.share.header.title"/>
     </title>
     <uv:custom-head/>
-    <script type="module" src="<asset:url value="copy_to_clipboard_input.js" />"></script>
-    <script type="module" src="<asset:url value="tabs.js" />"></script>
+    <uv:asset-dependencies-preload asset="calendar_sharing.js" />
+    <script type="module" src="<asset:url value="calendar_sharing.js" />"></script>
 </head>
 <body>
 

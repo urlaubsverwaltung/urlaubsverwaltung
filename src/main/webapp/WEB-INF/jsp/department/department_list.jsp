@@ -16,6 +16,7 @@
         <spring:message code="departments.header.title"/>
     </title>
     <uv:custom-head/>
+    <uv:asset-dependencies-preload asset="department_list.js" />
     <script type="module" src="<asset:url value='department_list.js' />"></script>
     <spring:url var="URL_PREFIX" value="/web"/>
 </head>

@@ -14,6 +14,7 @@
         <spring:message code="sicknotes.header.title"/>
     </title>
     <uv:custom-head/>
+    <uv:asset-dependencies-preload asset="sick_notes.js" />
     <link rel="stylesheet" href="<asset:url value='datepicker.css' />"/>
     <script>
         window.uv = {};

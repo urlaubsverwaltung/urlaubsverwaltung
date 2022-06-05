@@ -13,6 +13,8 @@
         <spring:message code="sicknotes.statistics.header.title" arguments="${statistics.year}"/>
     </title>
     <uv:custom-head/>
+    <uv:asset-dependencies-preload asset="sick_notes_statistics.js" />
+    <script type="module" src="<asset:url value='sick_notes_statistics.js' />"></script>
 </head>
 
 <body>

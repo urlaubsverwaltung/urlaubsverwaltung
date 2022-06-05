@@ -8,22 +8,50 @@ import fs from "node:fs";
  * @returns {{generateBundle(*, *): void, name: string}}
  */
 export default function assetManifest({ output, publicPath, key = () => {} }) {
+  function url(dep) {
+    return `${publicPath}/${dep}`;
+  }
+
   return {
     name: "generate-manifest",
     generateBundle(options, bundle) {
+      const bundleEntries = Object.entries(bundle);
+
+      function indexOfKey(key) {
+        return bundleEntries.findIndex(([k]) => k === key);
+      }
+
+      function getImportsOf(dep) {
+        const [, entry] = bundleEntries[indexOfKey(dep)];
+        return entry ? [...entry.imports.map((d) => url(d)), ...entry.imports.flatMap((d) => getImportsOf(d))] : [];
+      }
+
+      function transitiveDependencies(id) {
+        return [...new Set(getImportsOf(id))];
+      }
+
       const bundledEntryPoints = Object.entries(bundle)
         .map(([id, entry]) => {
-          if (entry.isEntry || entry.type === "chunk") {
-            return [key(id, entry) ?? `${entry.name}.js`, `${publicPath}/${entry.fileName}`];
+          if (entry.isEntry) {
+            const keyName = key(id, entry) ?? `${entry.name}.js`;
+            const dependencies = transitiveDependencies(id);
+            return [
+              keyName,
+              {
+                url: `${publicPath}/${entry.fileName}`,
+                dependencies,
+              },
+            ];
           }
           if (entry.type === "asset") {
-            return [key(id, entry) ?? entry.name, `${publicPath}/${entry.fileName}`];
-          }
-          if (entry.type === "chunk") {
-            // note: rollup generates multiple `index-$hash.js` chunks.
-            //       we are generating out assets-manifest with only one `index.js`, however.
-            //       this is fine, as long as we don't want to preload these chunks.
-            return [key(id, entry) ?? `${entry.name}.js`, `${publicPath}/${entry.fileName}`];
+            const keyName = key(id, entry) ?? entry.name;
+            return [
+              keyName,
+              {
+                url: `${publicPath}/${entry.fileName}`,
+                dependencies: [],
+              },
+            ];
           }
         })
         .filter(Boolean);

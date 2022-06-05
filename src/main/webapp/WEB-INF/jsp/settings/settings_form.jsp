@@ -15,6 +15,7 @@
         <spring:message code="settings.header.title"/>
     </title>
     <uv:custom-head/>
+    <uv:asset-dependencies-preload asset="settings_form.js" />
     <script type="module" src="<asset:url value='settings_form.js' />"></script>
 </head>
 
