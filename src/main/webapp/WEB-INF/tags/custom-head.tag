@@ -38,6 +38,8 @@
     </c:otherwise>
 </c:choose>
 
+<link rel="dns-prefetch" href="https://gravatar.com/" />
+<link rel="preconnect" href="https://gravatar.com/" crossorigin />
 <link rel="preload" as="script" href="<asset:url value='npm.jquery.js' />" crossorigin />
 <link rel="preload" as="script" href="<asset:url value='npm.bootstrap.js' />" crossorigin />
 <link rel="preload" as="script" href="<asset:url value='npm.underscore.js' />" crossorigin />
