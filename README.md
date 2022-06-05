@@ -411,37 +411,42 @@ d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der We
 
 ### Frontend Entwicklung
 
-Die User Experience einiger Seiten wird zur Laufzeit mit JavaScript weiter verbessert.
-
-Assets sind in `<root>/src/main/javascript` zu finden
-
-* `bundles` sind in den JSPs zu integrieren
-* `components` sind einzelne Komponenten zur Wiederverwendung wie z. B. der _datepicker_
-* `js` beinhaltet seitenspezifische Dinge
-* `lib` sind third-party Bibliotheken
-
-Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auch auf der Kommandozeile gebaut werden.
-
-* `npm run build`
-  * baut optimierte, minifizierte Assets
-  * Info: der Dateiname beinhaltet einen Hash welcher eindeutig zum Inhalt des Assets passt 
-* `npm run build:dev`
-  * baut nicht minifizierte Assets
-* `npm run build:watch`
-  * baut automatisch nach dem Editieren von JavaScript / CSS Dateien neue Assets
+Für jede Webseite der Urlaubsverwaltung existiert in `<root>/src/main/javascript/bundles` eine passende JavaScript Datei.
+Diese ist der Einstiegspunkt für alles was die Webseite an JavaScript benötigt.
 
 #### Long term caching von Assets
 
 Startet man den Maven Build oder baut man die Assets mit dem NPM Task `npm run build` wird eine JSON Datei `assets-manifest.json` angelegt.
-Das Manifest beschreibt ein Mapping der bundles zum generierten Dateinamen inklusive Hash. Dieser gemappte Dateiname muss
-in den JSPs integriert werden. Damit das nicht bei jeder Änderung manuell gemacht werden muss, kann der Dateiname mit Hilfe der
-Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit der JSP automatisiert werden.
+Das Manifest beschreibt ein Mapping der Bundles zum generierten Dateinamen und alle Abhängigkeiten des JavaScript Moduls. 
+Dieser gemappte Dateiname muss in den JSPs und Thymeleaf Templates integriert werden.
 
-```jsp
-<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
-
-<script defer src="<asset:url value='npm.jquery.js' />"></script>
-```
+* assets-manifest:
+    ```json
+    {
+      "awesome-page.js": {
+        "url": "/assets/awesome-page.054f54d3.js",
+        "dependencies": [
+          "/assets/dependency.1e12dfca.js"
+        ]
+      }
+    }
+    ```
+* JSP:
+    ```jsp
+    <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
+    
+    <head>
+      <uv:asset-dependencies-preload asset="awesome-page.js" />
+      <script defer src="<asset:url value='awesome-page.js' />"></script>
+    </head>
+    ```
+* Thymeleaf:
+    ```html
+    <head>
+      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('awesome-page.js')" />
+      <script type="module" asset:src="awesome-page.js"></script>
+    </head>
+    ```
 
 Während der Weiterentwicklung ist es sinnvoll das Caching zu deaktivieren. Wird das `demodata` Profil verwendet muss
 nichts weiter getan werden. Verwendest du das Profil nicht, kannst du das Caching mit folgenden application Properties

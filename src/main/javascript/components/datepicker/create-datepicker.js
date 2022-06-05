@@ -8,6 +8,7 @@ import { addAbsenceTypeStyleToNode, isNoWorkday, removeAbsenceTypeStyleFromNode 
 import "@duetds/date-picker/dist/collection/themes/default.css";
 import "./datepicker.css";
 import "../calendar/calendar.css";
+// TODO import? import "@ungap/custom-elements";
 
 // register @duet/datepicker
 defineCustomElements(window);

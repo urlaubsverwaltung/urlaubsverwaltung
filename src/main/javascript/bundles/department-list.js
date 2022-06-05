@@ -1,6 +1,7 @@
 import "../js/common";
 import $ from "jquery";
 import "tablesorter";
+import "../components/feedback";
 import "../components/popover";
 import { dateParser } from "../components/table-sortable/parser-date";
 

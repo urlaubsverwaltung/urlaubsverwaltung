@@ -1,4 +1,6 @@
 import "../js/common";
+import "../components/textarea";
+
 import count from "../js/count";
 import maxChars from "../js/max-chars";
 

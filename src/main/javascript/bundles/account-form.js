@@ -1,5 +1,6 @@
 import "../js/common";
 import "../js/account/account-form";
+import "../components/textarea";
 import "../components/back-button";
 
 import count from "../js/count";

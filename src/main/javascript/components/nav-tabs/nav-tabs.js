@@ -1,3 +1,5 @@
+import "@ungap/custom-elements";
+
 const activeSymbol = Symbol();
 
 class NavTabs extends HTMLUListElement {

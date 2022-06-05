@@ -1,3 +1,5 @@
+import "@ungap/custom-elements";
+
 class ColorPicker extends HTMLDivElement {
   static get observedAttributes() {
     return ["data-open"];
