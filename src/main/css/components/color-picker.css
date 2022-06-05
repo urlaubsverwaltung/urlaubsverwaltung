@@ -55,6 +55,14 @@
   transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
 }
 
+/* query detects safari. kudos: https://codepen.io/karlsson/pen/zYNYwNO */
+@media not all and (min-resolution: 0.001dpcm) {
+  [is="uv-color-picker"] > label.color-picker-button ~ [type="checkbox"] ~ .color-picker-dialog {
+    /* safari freezes sometimes while painting the color-picker transition...  */
+    transition: none;
+  }
+}
+
 [is="uv-color-picker"] > label.color-picker-button ~ [type="checkbox"]:checked ~ .color-picker-dialog {
   opacity: 1;
   @apply tw-scale-100;
