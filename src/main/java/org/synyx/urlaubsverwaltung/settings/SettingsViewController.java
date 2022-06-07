@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import javax.validation.Valid;
 import java.time.DayOfWeek;
 import java.util.List;
+import java.util.TimeZone;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -110,6 +111,7 @@ public class SettingsViewController {
         model.addAttribute("federalStateTypes", FederalState.federalStatesTypesByCountry());
         model.addAttribute("dayLengthTypes", DayLength.values());
         model.addAttribute("weekDays", DayOfWeek.values());
+        model.addAttribute("availableTimezones", List.of(TimeZone.getAvailableIDs()));
         model.addAttribute("version", applicationVersion);
     }
 
