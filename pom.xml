@@ -27,6 +27,7 @@
     <docker-publish-registry>registry.example.com</docker-publish-registry>
     <docker-publish-registry-username>username</docker-publish-registry-username>
     <docker-publish-registry-password>password</docker-publish-registry-password>
+    <docker-publish-registry-image-name>synyx/${project.artifactId}:${project.version}</docker-publish-registry-image-name>
   </properties>
 
   <scm>
@@ -374,7 +375,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
           <image>
-            <name>synyx/${project.artifactId}:${project.version}</name>
+            <name>${docker-publish-registry-image-name}</name>
           </image>
           <docker>
             <publishRegistry>
