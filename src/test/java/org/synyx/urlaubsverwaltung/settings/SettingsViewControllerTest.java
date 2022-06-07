@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.DayOfWeek;
 import java.util.List;
+import java.util.TimeZone;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -79,6 +80,7 @@ class SettingsViewControllerTest {
             .andExpect(model().attributeExists("settings"))
             .andExpect(model().attribute("federalStateTypes", FederalState.federalStatesTypesByCountry()))
             .andExpect(model().attribute("dayLengthTypes", DayLength.values()))
+            .andExpect(model().attribute("availableTimezones", List.of(TimeZone.getAvailableIDs())))
             .andExpect(model().attribute("weekDays", DayOfWeek.values()));
     }
 
