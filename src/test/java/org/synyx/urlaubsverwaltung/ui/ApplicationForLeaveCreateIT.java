@@ -7,7 +7,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -32,10 +32,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
@@ -101,7 +103,7 @@ class ApplicationForLeaveCreateIT {
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
@@ -149,7 +151,7 @@ class ApplicationForLeaveCreateIT {
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
@@ -198,7 +200,7 @@ class ApplicationForLeaveCreateIT {
         final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
@@ -264,7 +266,7 @@ class ApplicationForLeaveCreateIT {
 
         final int currentYear = LocalDate.now().getYear();
         final LocalDate validFrom = LocalDate.of(currentYear - 1, 1, 1);
-        final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).stream().map(DayOfWeek::getValue).collect(toList());
+        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).map(DayOfWeek::getValue).collect(toList());
         workingTimeWriteService.touch(workingDays, validFrom, savedPerson);
 
         final LocalDate firstDayOfYear = LocalDate.of(currentYear, JANUARY, 1);
