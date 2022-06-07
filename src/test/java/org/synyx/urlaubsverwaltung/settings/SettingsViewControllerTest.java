@@ -105,9 +105,6 @@ class SettingsViewControllerTest {
     @Test
     void ensureSavingWorkingTimeSettings() throws Exception {
 
-        final Settings storedSettings = someSettings();
-        when(settingsService.getSettings()).thenReturn(storedSettings);
-
         perform(
             post("/web/settings")
                 // required settings stuff for the form POST
