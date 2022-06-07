@@ -198,14 +198,6 @@
       <artifactId>ical4j</artifactId>
       <version>3.2.3</version>
     </dependency>
-    <dependency>
-      <groupId>org.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.cache</groupId>
-      <artifactId>cache-api</artifactId>
-    </dependency>
 
     <!-- Security -->
     <dependency>
