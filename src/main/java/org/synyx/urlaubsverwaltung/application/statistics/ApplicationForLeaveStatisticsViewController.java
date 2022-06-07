@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
-import liquibase.util.csv.CSVWriter;
+import com.opencsv.CSVWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -24,11 +24,12 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.opencsv.ICSVWriter.DEFAULT_LINE_END;
+import static com.opencsv.ICSVWriter.DEFAULT_QUOTE_CHARACTER;
+import static com.opencsv.ICSVWriter.NO_QUOTE_CHARACTER;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static liquibase.util.csv.CSVReader.DEFAULT_QUOTE_CHARACTER;
-import static liquibase.util.csv.opencsv.CSVWriter.NO_QUOTE_CHARACTER;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
@@ -126,7 +127,7 @@ class ApplicationForLeaveStatisticsViewController {
             os.write(UTF8_BOM);
 
             try (final PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, UTF_8))) {
-                try (final CSVWriter csvWriter = new CSVWriter(printWriter, SEPARATOR, NO_QUOTE_CHARACTER, DEFAULT_QUOTE_CHARACTER)) {
+                try (final CSVWriter csvWriter = new CSVWriter(printWriter, SEPARATOR, NO_QUOTE_CHARACTER, DEFAULT_QUOTE_CHARACTER, DEFAULT_LINE_END)) {
                     applicationForLeaveStatisticsCsvExportService.writeStatistics(period, statistics, csvWriter);
                 }
                 printWriter.flush();
