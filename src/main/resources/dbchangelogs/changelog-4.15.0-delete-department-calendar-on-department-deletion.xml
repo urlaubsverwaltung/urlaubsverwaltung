@@ -7,7 +7,7 @@
 
     <preConditions>
       <tableExists tableName="department_calendar"/>
-      <foreignKeyConstraintExists foreignKeyName="fk_department_calendar_department"/>
+      <foreignKeyConstraintExists foreignKeyTableName="department_calendar" foreignKeyName="fk_department_calendar_department"/>
     </preConditions>
 
     <dropForeignKeyConstraint
