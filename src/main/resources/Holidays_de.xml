@@ -10,8 +10,8 @@
     <tns:Fixed month="OCTOBER" day="31" validFrom="2017" validTo="2017" descriptionPropertiesKey="REFORMATION_DAY"/>
     <tns:Fixed month="DECEMBER" day="25" descriptionPropertiesKey="FIRST_CHRISTMAS_DAY"/>
     <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="SECOND_CHRISTMAS_DAY"/>
-    <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE"/>
-    <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE"/>
+    <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
+    <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
 
     <tns:RelativeToFixed validFrom="1934" validTo="1938" descriptionPropertiesKey="REPENTANCE_PRAYER">
       <tns:Weekday>WEDNESDAY</tns:Weekday>

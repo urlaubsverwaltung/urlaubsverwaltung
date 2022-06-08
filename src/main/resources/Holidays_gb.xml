@@ -3,7 +3,7 @@
                    xmlns:tns="http://www.example.org/Holiday" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.example.org/Holiday /Holiday.xsd">
   <tns:Holidays>
-    <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE"/>
+    <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
     <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="BOXING_DAY">
       <tns:MovingCondition substitute="SATURDAY" with="NEXT" weekday="MONDAY"/>
       <tns:MovingCondition substitute="SUNDAY" with="NEXT" weekday="TUESDAY"/>
@@ -12,7 +12,7 @@
       <tns:MovingCondition substitute="SATURDAY" with="NEXT" weekday="MONDAY"/>
       <tns:MovingCondition substitute="SUNDAY" with="NEXT" weekday="TUESDAY"/>
     </tns:Fixed>
-    <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE"/>
+    <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
 
     <!-- The 2020 bank holiday was moved from the 4th to the 8th of May -->
     <tns:Fixed month="MAY" day="8" validFrom="2020" validTo="2020" descriptionPropertiesKey="EARLY_MAY_BANK_HOLIDAY"/>
