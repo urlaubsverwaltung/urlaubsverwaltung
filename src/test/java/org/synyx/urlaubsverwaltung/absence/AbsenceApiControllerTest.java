@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -698,6 +699,40 @@ class AbsenceApiControllerTest {
             .andExpect(jsonPath("$.absences", hasSize(2)))
             .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
             .andExpect(jsonPath("$.absences[1].type", is("SICK_NOTE")));
+    }
+
+    @Test
+    void ensureNoWorkdaysInclusiveDoesNotMissOnTwoHalfDays() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+
+        final LocalDate date = LocalDate.of(2016, JANUARY, 1);
+
+        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1, false);
+        final AbsencePeriod.Record recordMorning = new AbsencePeriod.Record(date, person, morning);
+        final AbsencePeriod absencePeriodMorning = new AbsencePeriod(List.of(recordMorning));
+        final AbsencePeriod.RecordNoon noon = new AbsencePeriod.RecordNoonVacation(person, 42, WAITING, 1, false);
+        final AbsencePeriod.Record recordNoon = new AbsencePeriod.Record(date, person, noon);
+        final AbsencePeriod absencePeriodNoon = new AbsencePeriod(List.of(recordNoon));
+
+        when(absenceService.getOpenAbsences(person, date, date)).thenReturn(List.of(absencePeriodMorning, absencePeriodNoon));
+        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(date, date))).thenReturn(Map.of());
+
+        perform(get("/api/persons/23/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-01-01")
+            .param("noWorkdaysInclusive", "true"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json"))
+            .andExpect(jsonPath("$.absences").exists())
+            .andExpect(jsonPath("$.absences", hasSize(2)))
+            .andExpect(jsonPath("$.absences[0].type", is("VACATION")))
+            .andExpect(jsonPath("$.absences[0].status", is("WAITING")))
+            .andExpect(jsonPath("$.absences[0].absencePeriodName", is("MORNING")))
+            .andExpect(jsonPath("$.absences[1].type", is("VACATION")))
+            .andExpect(jsonPath("$.absences[1].status", is("WAITING")))
+            .andExpect(jsonPath("$.absences[1].absencePeriodName", is("NOON")));
     }
 
     @Test

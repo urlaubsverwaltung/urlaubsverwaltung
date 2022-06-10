@@ -132,9 +132,9 @@ public class AbsenceApiController {
         for (LocalDate date : new DateRange(start, end)) {
             final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
             final String formattedDate = dateTimeFormatter.format(date);
-            final Optional<DayAbsenceDto> maybeAbsenceDto = dayAbsenceDtoForDate(formattedDate, absences);
-            if (maybeAbsenceDto.isPresent()) {
-                absencesWithNoWorkdays.add(maybeAbsenceDto.get());
+            final List<DayAbsenceDto> maybeAbsenceDto = dayAbsenceDtoForDate(formattedDate, absences);
+            if (!maybeAbsenceDto.isEmpty()) {
+                absencesWithNoWorkdays.addAll(maybeAbsenceDto);
             } else if (!isWorkday(date, workingTimeList)) {
                 absencesWithNoWorkdays.add(new DayAbsenceDto(date, FULL.getDuration(), FULL.name(), DayAbsenceDto.Type.NO_WORKDAY.name(), "", null));
             }
@@ -151,8 +151,8 @@ public class AbsenceApiController {
             .map(w -> w.isWorkingDay(date.getDayOfWeek()))
             .orElse(false);
     }
-    private Optional<DayAbsenceDto> dayAbsenceDtoForDate(String formattedDate, List<DayAbsenceDto> absences) {
-        return absences.stream().filter(dayAbsenceDto -> dayAbsenceDto.getDate().equals(formattedDate)).findFirst();
+    private List<DayAbsenceDto> dayAbsenceDtoForDate(String formattedDate, List<DayAbsenceDto> absences) {
+        return absences.stream().filter(dayAbsenceDto -> dayAbsenceDto.getDate().equals(formattedDate)).collect(toList());
     }
 
     private Map<LocalDate, PublicHoliday> publicHolidaysByDate(Person person, LocalDate start, LocalDate end) {
