@@ -169,7 +169,7 @@
 
 .datepicker-day.datepicker-day-sick-note-full::after,
 .datepicker-day.absence-full--solid::after {
-  background-color: var(--absence-bar-color);
+  background: var(--absence-bar-color);
 }
 
 .datepicker-day:is(.datepicker-day-absence-morning, .datepicker-day-sick-note-morning)::before {
@@ -208,7 +208,7 @@
 
 .datepicker-day.datepicker-day-sick-note-noon::after,
 .datepicker-day.absence-noon--solid::after {
-  background-color: var(--absence-bar-color-noon);
+  background: var(--absence-bar-color-noon);
 }
 
 td.datepicker-day {
