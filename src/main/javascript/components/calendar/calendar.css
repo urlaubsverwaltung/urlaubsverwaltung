@@ -183,12 +183,13 @@
 }
 
 .datepicker-day.absence-morning--outline::before {
+  background: none !important; /* override @duetds hover background color */
   border: solid 1px var(--absence-bar-color-morning);
 }
 
 .datepicker-day.datepicker-day-sick-note-morning::before,
 .datepicker-day.absence-morning--solid::before {
-  background-color: var(--absence-bar-color-morning);
+  background: var(--absence-bar-color-morning) !important;
 }
 
 .datepicker-day:is(.datepicker-day-absence-noon, .datepicker-day-sick-note-noon)::after {
