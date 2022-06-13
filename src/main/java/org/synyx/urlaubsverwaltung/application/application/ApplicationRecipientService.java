@@ -63,6 +63,8 @@ class ApplicationRecipientService {
     List<Person> getRecipientsOfInterest(Application application) {
 
         /*
+         * FIXME: This is not true anymore.
+         *
          * NOTE:
          *
          * It's not possible that someone has both roles,
