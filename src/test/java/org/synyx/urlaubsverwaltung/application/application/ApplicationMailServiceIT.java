@@ -381,23 +381,37 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person sender = new Person("sender", "Grimes", "Rick", "rick@grimes.com");
 
         final Application application = createApplication(recipient);
+        application.setApplicationDate(LocalDate.of(2022, 5, 19));
+        application.setStartDate(LocalDate.of(2022, 5, 20));
+        application.setEndDate(LocalDate.of(2022, 5, 29));
 
         sut.sendReferApplicationNotification(application, recipient, sender);
 
         // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(recipient.getEmail());
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(recipient.getEmail());
         assertThat(inbox.length).isOne();
 
         // check content of user email
-        Message msg = inbox[0];
+        final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Hilfe bei der Entscheidung über eine zu genehmigende Abwesenheit");
         assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Max Muster");
-        assertThat(content).contains("Rick Grimes bittet dich um Hilfe bei der Entscheidung über eine Abwesenheit");
-        assertThat(content).contains("/web/application/1234");
+        final String content = (String) msg.getContent();
+        assertThat(content).isEqualTo("Hallo Max Muster," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Rick Grimes bittet dich um Hilfe bei der Bearbeitung eines Antrags von Max Muster." + EMAIL_LINE_BREAK +
+            "Bitte kümmere dich um die Bearbeitung dieses Antrags oder halte ggf. nochmals Rücksprache mit Rick Grimes." + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Max Muster" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            20.05.2022 bis 29.05.2022, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    19.05.2022" + EMAIL_LINE_BREAK +
+            "    Weitergeleitet von:  Rick Grimes" + EMAIL_LINE_BREAK);
     }
 
     @Test

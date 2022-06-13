@@ -49,6 +49,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 /**
  * Controller to manage applications for leave.
@@ -177,7 +178,7 @@ class ApplicationForLeaveDetailsViewController {
      * If a boss is not sure about the decision if an application should be allowed or rejected,
      * he can ask another boss to decide about this application (an email is sent).
      */
-    @PreAuthorize(IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY)
+    @PreAuthorize(IS_PRIVILEGED_USER)
     @PostMapping("/{applicationId}/refer")
     public String referApplication(@PathVariable("applicationId") Integer applicationId,
                                    @ModelAttribute("referredPerson") ReferredPerson referredPerson, RedirectAttributes redirectAttributes)
@@ -193,11 +194,12 @@ class ApplicationForLeaveDetailsViewController {
         final Person person = application.getPerson();
         final Person signedInUser = personService.getSignedInUser();
 
+        final boolean isOffice = signedInUser.hasRole(OFFICE);
         final boolean isBoss = signedInUser.hasRole(BOSS);
         final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
         final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
 
-        final boolean isAllowedToRefer = isBoss || ((isDepartmentHead || isSecondStageAuthority) && !isOwnApplication(application, signedInUser));
+        final boolean isAllowedToRefer = isBoss || isOffice || ((isDepartmentHead || isSecondStageAuthority) && !isOwnApplication(application, signedInUser));
         if (isAllowedToRefer) {
             applicationInteractionService.refer(application, recipient, signedInUser);
             redirectAttributes.addFlashAttribute("referSuccess", true);
@@ -380,7 +382,7 @@ class ApplicationForLeaveDetailsViewController {
 
         // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
         boolean isNotYetAllowed = application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED);
-        boolean isPrivilegedUser = signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD)
+        boolean isPrivilegedUser = signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(DEPARTMENT_HEAD)
             || signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
 
         if (isNotYetAllowed && isPrivilegedUser) {
