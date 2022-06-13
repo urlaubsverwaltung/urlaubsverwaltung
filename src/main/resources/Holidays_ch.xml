@@ -5,9 +5,9 @@
   <tns:Holidays>
     <tns:Fixed month="JANUARY" day="1" descriptionPropertiesKey="NEW_YEAR"/>
     <tns:Fixed month="AUGUST" day="1" descriptionPropertiesKey="NATIONAL_DAY"/>
-    <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE"/>
+    <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
     <tns:Fixed month="DECEMBER" day="25" descriptionPropertiesKey="CHRISTMAS"/>
-    <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE"/>
+    <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
     <tns:ChristianHoliday type="ASCENSION_DAY" descriptionPropertiesKey="christian.ASCENSION_DAY"/>
     <tns:ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
   </tns:Holidays>
