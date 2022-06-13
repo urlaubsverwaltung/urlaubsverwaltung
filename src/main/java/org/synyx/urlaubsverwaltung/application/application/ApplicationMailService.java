@@ -99,7 +99,7 @@ class ApplicationMailService {
         // Inform office that there is a new allowed application for leave
         final Mail mailToOffice = Mail.builder()
             .withRecipient(NOTIFICATION_OFFICE)
-            .withSubject("subject.application.allowed.office")
+            .withSubject("subject.application.allowed.office", application.getPerson().getNiceName())
             .withTemplate("allowed_office_boss", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();

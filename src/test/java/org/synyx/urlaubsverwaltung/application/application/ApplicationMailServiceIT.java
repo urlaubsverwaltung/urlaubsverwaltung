@@ -145,7 +145,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email office attributes
         final MimeMessage msgOffice = inboxOffice[0];
-        assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit");
+        assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -251,11 +251,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email office attributes
         final MimeMessage msgOffice = inboxOffice[0];
-        assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit");
+        assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "es liegt eine zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
+            "folgende Abwesenheit von Lieschen Mueller wurde genehmigt." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -339,11 +339,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check email office attributes
         final MimeMessage msgOffice = inboxOffice[0];
-        assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit");
+        assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "es liegt eine zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
+            "folgende Abwesenheit von Lieschen Mueller wurde genehmigt." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
