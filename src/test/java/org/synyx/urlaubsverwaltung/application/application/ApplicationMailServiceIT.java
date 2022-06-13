@@ -122,15 +122,26 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of user email
-        final String contentUser = readPlainContent(msg);
-        assertThat(contentUser).contains("Lieschen Mueller");
-        assertThat(contentUser).contains("gestellte Abwesenheit wurde von Hugo Boss genehmigt");
-        assertThat(contentUser).contains(comment.getText());
-        assertThat(contentUser).contains(comment.getPerson().getNiceName());
-        assertThat(contentUser).contains("/web/application/1234");
+        final MimeMessage msgUser = inboxUser[0];
+        assertThat(msgUser.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgUser.getAllRecipients()[0]);
+        assertThat(readPlainContent(msgUser)).isEqualTo("Hallo Lieschen Mueller," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Kommentar von Hugo Boss:" + EMAIL_LINE_BREAK +
+            "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachments = getAttachments(msg);
-        assertThat(attachments.get(0).getName()).contains("calendar.ics");
+        final List<DataSource> attachmentsUser = getAttachments(msgUser);
+        assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
         final MimeMessage msgOffice = inboxOffice[0];
@@ -216,20 +227,27 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxUser.length).isOne();
 
         // check email user attributes
-        MimeMessage msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
-        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        final MimeMessage msgUser = inboxUser[0];
+        assertThat(msgUser.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgUser.getAllRecipients()[0]);
+        assertThat(readPlainContent(msgUser)).isEqualTo("Hallo Lieschen Mueller," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Kommentar von Hugo Boss:" + EMAIL_LINE_BREAK +
+            "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
 
-        // check content of user email
-        String contentUser = readPlainContent(msg);
-        assertThat(contentUser).contains("Lieschen Mueller");
-        assertThat(contentUser).contains("gestellte Abwesenheit wurde von Hugo Boss genehmigt");
-        assertThat(contentUser).contains(comment.getText());
-        assertThat(contentUser).contains(comment.getPerson().getNiceName());
-        assertThat(contentUser).contains("/web/application/1234");
-
-        final List<DataSource> attachments = getAttachments(msg);
-        assertThat(attachments.get(0).getName()).contains("calendar.ics");
+        final List<DataSource> attachmentsUser = getAttachments(msgUser);
+        assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
         final MimeMessage msgOffice = inboxOffice[0];
@@ -296,21 +314,28 @@ class ApplicationMailServiceIT extends TestContainersBase {
         MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxUser.length).isOne();
 
-        // check email user attributes
-        MimeMessage msg = inboxUser[0];
-        assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
-        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
         // check content of user email
-        String contentUser = readPlainContent(msg);
-        assertThat(contentUser).contains("Lieschen Mueller");
-        assertThat(contentUser).contains("deine am 12.04.2021 gestellte Abwesenheit wurde von Hugo Boss genehmigt.");
-        assertThat(contentUser).contains(comment.getText());
-        assertThat(contentUser).contains(comment.getPerson().getNiceName());
-        assertThat(contentUser).contains("/web/application/1234");
+        final MimeMessage msgUser = inboxUser[0];
+        assertThat(msgUser.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgUser.getAllRecipients()[0]);
+        assertThat(readPlainContent(msgUser)).isEqualTo("Hallo Lieschen Mueller," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Kommentar von Hugo Boss:" + EMAIL_LINE_BREAK +
+            "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachments = getAttachments(msg);
-        assertThat(attachments.get(0).getName()).contains("calendar.ics");
+        final List<DataSource> attachmentsUser = getAttachments(msgUser);
+        assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
         final MimeMessage msgOffice = inboxOffice[0];
