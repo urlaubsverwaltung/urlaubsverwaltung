@@ -112,7 +112,7 @@ duet-date-picker.error {
 }
 
 .duet-date__day.datepicker-day-today {
-  box-shadow: inset 0 0 0 3px rgba(95, 95, 95, 0.3);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 1);
 }
 
 /* override styling for selected or currently focused day */
@@ -133,9 +133,12 @@ duet-date-picker.error {
   width: 100%;
 }
 
+/* override @duetds styling to not hide the absence-bars */
 .duet-date__day:hover::before,
 .duet-date__day.is-today::before {
   border-radius: 0;
+  opacity: 1; /* would be nearly opaque */
+  top: auto; /* absence-bar should be shown at the bottom */
 }
 
 .duet-date__toggle {
@@ -169,11 +172,4 @@ duet-date-picker.error {
   box-shadow: none !important;
   @apply tw-ring-2 !important;
   @apply tw-ring-blue-300 !important;
-}
-
-/* override @duetds styling to not hide the absence-bars */
-.duet-date__day:hover::before,
-.duet-date__day.is-today::before {
-  opacity: 1; /* would be nearly opaque */
-  top: auto; /* absence-bar should be shown at the bottom */
 }

@@ -223,7 +223,8 @@ td.datepicker-day {
 
 .datepicker-day-today,
 .datepicker-day:not(.datepicker-day-past):hover {
-  box-shadow: inset 0 0 0 3px rgba(95, 95, 95, 0.3);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .datepicker-day-today:hover,
@@ -231,7 +232,7 @@ td.datepicker-day {
 .datepicker-day-selected,
 .datepicker-day-selected[class*="-morning"],
 .datepicker-day-selected[class*="-noon"] {
-  box-shadow: inset 0 0 0 3px rgba(95, 95, 95, 0.6) !important;
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.5) !important;
 }
 
 .datepicker-day-sick-note-morning {
