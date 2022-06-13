@@ -153,10 +153,7 @@
                   class="tw-block tw-flex-1 tw-no-underline print:no-link"
                   th:classappend="${userRequestForLeave.cancellationRequested ? 'tw-text-black-almost' : ''}"
                 >
-                  <span
-                    class="hover:tw-underline tw-mb-1 tw-text-lg"
-                    th:classappend="${userRequestForLeave.vacationType.category}"
-                  >
+                  <span class="hover:tw-underline tw-mb-1 tw-text-lg">
                     <th:block th:if="${userRequestForLeave.cancellationRequested}">
                       <th:block th:text="#{applications.cancellationRequestPrefix}" />
                     </th:block>
@@ -366,7 +363,6 @@
                 >
                   <span
                     class="hover:tw-underline tw-mb-1 tw-text-lg"
-                    th:classappend="${otherRequestForLeave.vacationType.category}"
                     th:switch="${#strings.isEmpty(otherRequestForLeave.duration)}"
                   >
                     <th:block th:case="true">
@@ -487,7 +483,6 @@
                   >
                     <span
                       class="hover:tw-underline tw-mb-1 tw-text-lg"
-                      th:classappend="${cancellationRequest.vacationType.category}"
                       th:switch="${#strings.isEmpty(cancellationRequest.duration)}"
                     >
                       <th:block th:text="#{applications.cancellationRequestPrefix}" />

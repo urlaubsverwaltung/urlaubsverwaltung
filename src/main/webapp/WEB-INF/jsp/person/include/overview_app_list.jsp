@@ -52,7 +52,7 @@
                 </c:choose>
             </td>
             <td class="tw-py-6">
-                <a href="${URL_PREFIX}/application/${app.id}" class="tw-block tw-mb-1 tw-text-lg print:no-link ${app.vacationType.category}">
+                <a href="${URL_PREFIX}/application/${app.id}" class="tw-block tw-mb-1 tw-text-lg print:no-link">
                     <spring:message code="${app.vacationType.messageKey}"/>
                 </a>
                 <div>

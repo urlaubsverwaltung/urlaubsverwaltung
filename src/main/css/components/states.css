@@ -11,22 +11,6 @@
 }
 
 /**************************************************************************
-  VACATION TYPES FOR APPLICATION FOR LEAVE STATES
-**************************************************************************/
-
-.HOLIDAY {
-  /* OK */
-}
-
-.SPECIALLEAVE,
-.UNPAIDLEAVE,
-.OVERTIME,
-.OTHER {
-  color: #df771b;
-  @apply dark:tw-text-yellow-500 !important;
-}
-
-/**************************************************************************
   COLORS FOR APPLICATION FOR LEAVE STATES
 **************************************************************************/
 
