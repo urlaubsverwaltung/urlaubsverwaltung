@@ -22,6 +22,11 @@ public final class DateAndTimeFormat {
      */
     public static final String HH_MM = "HH:mm";
 
+    /**
+     * Should be used as fallback pattern. The user can then enter times with seconds.
+     */
+    public static final String HH_MM_SS = "HH:mm:ss";
+
     private DateAndTimeFormat() {
         // Hide constructor for util classes
     }
