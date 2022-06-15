@@ -209,6 +209,9 @@
                                         <form:input id="startTime" path="startTime" class="form-control"
                                                     cssErrorClass="form-control error" placeholder="${TIME_PATTERN}"
                                                     autocomplete="off"/>
+                                        <uv:error-text>
+                                            <form:errors path="startTime" />
+                                        </uv:error-text>
                                     </div>
                                 </div>
 
@@ -228,6 +231,9 @@
                                         <form:input id="endTime" path="endTime" class="form-control"
                                                     cssErrorClass="form-control error" placeholder="${TIME_PATTERN}"
                                                     autocomplete="off"/>
+                                        <uv:error-text>
+                                            <form:errors path="endTime" />
+                                        </uv:error-text>
                                     </div>
                                 </div>
 
