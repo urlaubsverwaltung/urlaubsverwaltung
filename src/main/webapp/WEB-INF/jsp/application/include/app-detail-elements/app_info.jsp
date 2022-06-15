@@ -130,17 +130,15 @@
         <td>
             <c:choose>
                 <c:when test="${application.startTime != null && application.endTime != null}">
-                    <p>
-                        <c:set var="APPLICATION_START_TIME">
-                            <uv:time dateTime="${application.startDateWithTime}"/>
-                        </c:set>
-                        <c:set var="APPLICATION_END_TIME">
-                            <uv:time dateTime="${application.endDateWithTime}"/>
-                        </c:set>
-                        <spring:message code="absence.period.time"
-                                        arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
-                                        argumentSeparator=";"/>
-                    </p>
+                    <c:set var="APPLICATION_START_TIME">
+                        <uv:time dateTime="${application.startDateWithTime}"/>
+                    </c:set>
+                    <c:set var="APPLICATION_END_TIME">
+                        <uv:time dateTime="${application.endDateWithTime}"/>
+                    </c:set>
+                    <spring:message code="absence.period.time"
+                                    arguments="${APPLICATION_START_TIME};${APPLICATION_END_TIME}"
+                                    argumentSeparator=";"/>
                 </c:when>
                 <c:otherwise>
                     <spring:message code="application.data.furtherInformation.notSpecified"/>
