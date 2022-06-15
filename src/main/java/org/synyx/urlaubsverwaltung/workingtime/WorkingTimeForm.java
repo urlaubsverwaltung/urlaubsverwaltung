@@ -11,9 +11,9 @@ import java.util.Objects;
 
 import static java.time.format.DateTimeFormatter.ISO_DATE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YY;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
 
 public class WorkingTimeForm {
 

@@ -8,9 +8,9 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ISO_DATE;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YY;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
 
 /**
  * View class representing an sick note.

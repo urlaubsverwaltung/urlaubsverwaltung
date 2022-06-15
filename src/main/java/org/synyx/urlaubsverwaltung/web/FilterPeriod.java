@@ -9,9 +9,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YY;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 

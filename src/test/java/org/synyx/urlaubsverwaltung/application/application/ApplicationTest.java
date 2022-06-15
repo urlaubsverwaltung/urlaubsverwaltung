@@ -91,7 +91,7 @@ class ApplicationTest {
 
         Application application = new Application();
         application.setStartDate(startDate);
-        application.setStartTime(Time.valueOf("11:15:00"));
+        application.setStartTime(LocalTime.of(11, 15, 0));
 
         ZonedDateTime startDateWithTime = application.getStartDateWithTime();
 
@@ -114,26 +114,22 @@ class ApplicationTest {
     @Test
     void ensureGetStartDateWithTimeReturnsNullIfStartDateIsNull() {
 
-        Application application = new Application();
+        final Application application = new Application();
         application.setStartDate(null);
-        application.setStartTime(Time.valueOf("10:15:00"));
+        application.setStartTime(LocalTime.of(10, 15, 0));
 
-        ZonedDateTime startDateWithTime = application.getStartDateWithTime();
-
+        final ZonedDateTime startDateWithTime = application.getStartDateWithTime();
         assertThat(startDateWithTime).isNull();
     }
 
     @Test
     void ensureGetEndDateWithTimeReturnsCorrectDateTime() {
 
-        LocalDate endDate = LocalDate.of(2016, 12, 21);
+        final Application application = new Application();
+        application.setEndDate(LocalDate.of(2016, 12, 21));
+        application.setEndTime(LocalTime.of(12, 30, 0));
 
-        Application application = new Application();
-        application.setEndDate(endDate);
-        application.setEndTime(Time.valueOf("12:30:00"));
-
-        ZonedDateTime endDateWithTime = application.getEndDateWithTime();
-
+        final ZonedDateTime endDateWithTime = application.getEndDateWithTime();
         final ZonedDateTime expected = ZonedDateTime.of(2016, 12, 21, 12, 30, 0, 0, endDateWithTime.getZone());
         assertThat(endDateWithTime).isEqualTo(expected);
     }
@@ -141,7 +137,7 @@ class ApplicationTest {
     @Test
     void ensureGetEndDateWithTimeReturnsNullIfEndTimeIsNull() {
 
-        Application application = new Application();
+        final Application application = new Application();
         application.setEndDate(LocalDate.now(UTC));
         application.setEndTime(null);
 
@@ -153,12 +149,11 @@ class ApplicationTest {
     @Test
     void ensureGetEndDateWithTimeReturnsNullIfEndDateIsNull() {
 
-        Application application = new Application();
+        final Application application = new Application();
         application.setEndDate(null);
-        application.setEndTime(Time.valueOf("10:15:00"));
+        application.setEndTime(LocalTime.of(10, 15, 0));
 
-        ZonedDateTime endDateWithTime = application.getEndDateWithTime();
-
+        final ZonedDateTime endDateWithTime = application.getEndDateWithTime();
         assertThat(endDateWithTime).isNull();
     }
 
@@ -195,8 +190,8 @@ class ApplicationTest {
         application.setRemindDate(LocalDate.MAX);
         application.setBoss(person);
         application.setEditedDate(LocalDate.MAX);
-        application.setEndTime(Time.valueOf(LocalTime.MAX));
-        application.setStartTime(Time.valueOf(LocalTime.MIN));
+        application.setEndTime(LocalTime.of(11, 15, 0));
+        application.setStartTime(LocalTime.of(12, 15, 0));
         application.setCanceller(person);
         application.setReason("Because");
         application.setAddress("Address");
@@ -204,13 +199,13 @@ class ApplicationTest {
         application.setTeamInformed(true);
 
         final String toString = application.toString();
-        assertThat(toString).isEqualTo("Application{person=Person{id='10'}, applier=Person{id='10'}, " +
-            "boss=Person{id='10'}, canceller=Person{id='10'}, twoStageApproval=true, startDate=-999999999-01-01, " +
-            "startTime=00:00:00, endDate=+999999999-12-31, endTime=23:59:59, " +
-            "vacationType=VacationTypeEntity{id=null, active=false, category=HOLIDAY, messageKey='null', requiresApproval=false, color=YELLOW, visibleToEveryone=false}, " +
-            "dayLength=FULL, holidayReplacements=[HolidayReplacement{, person=Person{id='10'}, note='hello myself'}], " +
-            "address='Address', applicationDate=1970-01-01, cancelDate=+999999999-12-31, editedDate=+999999999-12-31, " +
-            "remindDate=+999999999-12-31, status=ALLOWED, teamInformed=true, hours=PT10H}");
+        assertThat(toString).isEqualTo("Application{person=Person{id='10'}, applier=Person{id='10'}, boss=Person{id='10'}, " +
+            "canceller=Person{id='10'}, twoStageApproval=true, startDate=-999999999-01-01, startTime=12:15, endDate=+999999999-12-31, " +
+            "endTime=11:15, vacationType=VacationTypeEntity{id=null, active=false, category=HOLIDAY, messageKey='null', " +
+            "requiresApproval=false, color=YELLOW, visibleToEveryone=false}, dayLength=FULL, " +
+            "holidayReplacements=[HolidayReplacement{, person=Person{id='10'}, note='hello myself'}], address='Address', " +
+            "applicationDate=1970-01-01, cancelDate=+999999999-12-31, editedDate=+999999999-12-31, remindDate=+999999999-12-31, " +
+            "status=ALLOWED, teamInformed=true, hours=PT10H}");
     }
 
     @Test

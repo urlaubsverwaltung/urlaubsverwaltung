@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.util;
 
-public final class DateFormat {
+public final class DateAndTimeFormat {
 
     /**
      * The main date format used to display dates to the user.
@@ -17,8 +17,12 @@ public final class DateFormat {
      */
     public static final String D_M_YYYY = "d.M.yyyy";
 
-    private DateFormat() {
+    /**
+     * The main time format used to display times to the user.
+     */
+    public static final String HH_MM = "HH:mm";
 
+    private DateAndTimeFormat() {
         // Hide constructor for util classes
     }
 }

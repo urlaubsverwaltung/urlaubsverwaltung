@@ -12,7 +12,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.util.DateFormat;
+import org.synyx.urlaubsverwaltung.util.DateAndTimeFormat;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,7 +31,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     @MockBean
     private PersonService personService;
 
-    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DateFormat.DD_MM_YYYY);
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DateAndTimeFormat.DD_MM_YYYY);
 
     @Test
     @WithMockUser(authorities = "USER")

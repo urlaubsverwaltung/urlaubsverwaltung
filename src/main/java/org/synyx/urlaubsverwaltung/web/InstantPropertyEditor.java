@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.web;
 
 import org.springframework.util.StringUtils;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.util.DateFormat;
+import org.synyx.urlaubsverwaltung.util.DateAndTimeFormat;
 
 import java.beans.PropertyEditorSupport;
 import java.time.Clock;
@@ -21,7 +21,7 @@ public class InstantPropertyEditor extends PropertyEditorSupport {
 
         this.clock = clock;
         this.settingsService = settingsService;
-        this.formatter = DateTimeFormatter.ofPattern(DateFormat.DD_MM_YYYY);
+        this.formatter = DateTimeFormatter.ofPattern(DateAndTimeFormat.DD_MM_YYYY);
     }
 
     // Instant to String

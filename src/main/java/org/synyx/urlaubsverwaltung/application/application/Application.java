@@ -16,9 +16,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +80,7 @@ public class Application {
      *
      * @since 2.15.0
      */
-    private Time startTime;
+    private LocalTime startTime;
 
     /**
      * End date of the application for leave.
@@ -92,7 +92,7 @@ public class Application {
      *
      * @since 2.15.0
      */
-    private Time endTime;
+    private LocalTime endTime;
 
     /**
      * Type of vacation, e.g. holiday, special leave etc.
@@ -244,19 +244,19 @@ public class Application {
         this.endDate = endDate;
     }
 
-    public Time getStartTime() {
+    public LocalTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Time startTime) {
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    public Time getEndTime() {
+    public LocalTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Time endTime) {
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
 
@@ -379,10 +379,10 @@ public class Application {
     public ZonedDateTime getStartDateWithTime() {
 
         final LocalDate date = getStartDate();
-        final Time time = getStartTime();
+        final LocalTime time = getStartTime();
 
         if (date != null && time != null) {
-            return ZonedDateTime.of(date, time.toLocalTime(), UTC);
+            return ZonedDateTime.of(date, time, UTC);
         }
 
         return null;
@@ -396,10 +396,10 @@ public class Application {
     public ZonedDateTime getEndDateWithTime() {
 
         final LocalDate date = getEndDate();
-        final Time time = getEndTime();
+        final LocalTime time = getEndTime();
 
         if (date != null && time != null) {
-            return ZonedDateTime.of(date, time.toLocalTime(), UTC);
+            return ZonedDateTime.of(date, time, UTC);
         }
 
         return null;

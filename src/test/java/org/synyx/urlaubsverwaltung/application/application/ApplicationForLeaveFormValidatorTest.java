@@ -28,6 +28,7 @@ import java.sql.Time;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -316,7 +317,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(overlapService.checkOverlap(any(Application.class))).thenReturn(NO_OVERLAPPING);
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
-        appForm.setStartTime(Time.valueOf("09:15:00"));
+        appForm.setStartTime(LocalTime.of(9, 15, 0));
         appForm.setEndTime(null);
 
         sut.validate(appForm, errors);
@@ -336,7 +337,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
         appForm.setStartTime(null);
-        appForm.setEndTime(Time.valueOf("09:15:00"));
+        appForm.setEndTime(LocalTime.of(9, 15, 0));
 
         sut.validate(appForm, errors);
 
@@ -359,8 +360,8 @@ class ApplicationForLeaveFormValidatorTest {
         appForm.setDayLength(MORNING);
         appForm.setStartDate(date);
         appForm.setEndDate(date);
-        appForm.setStartTime(Time.valueOf("13:30:00"));
-        appForm.setEndTime(Time.valueOf("09:15:00"));
+        appForm.setStartTime(LocalTime.of(13, 30, 0));
+        appForm.setEndTime(LocalTime.of(9, 15, 0));
 
         sut.validate(appForm, errors);
 
@@ -368,7 +369,7 @@ class ApplicationForLeaveFormValidatorTest {
     }
 
     @Test
-    void ensureStartTimeAndEndTimeMustNotBeEquals() {
+    void ensureStartTimeAndEndTimeMustNotBeEqual() {
 
         setupOvertimeSettings();
 
@@ -379,7 +380,7 @@ class ApplicationForLeaveFormValidatorTest {
         when(calculationService.checkApplication(any(Application.class))).thenReturn(TRUE);
 
         final LocalDate date = LocalDate.now(UTC);
-        final Time time = Time.valueOf("13:30:00");
+        final LocalTime time = LocalTime.of(13, 30, 0);
 
         appForm.setDayLength(MORNING);
         appForm.setStartDate(date);
@@ -391,7 +392,6 @@ class ApplicationForLeaveFormValidatorTest {
 
         verify(errors).reject("error.entry.invalidPeriod");
     }
-
 
     @Test
     void ensureHalfDayIsRejectedWhenDisabled() {
@@ -409,7 +409,6 @@ class ApplicationForLeaveFormValidatorTest {
 
         verify(errors).rejectValue("dayLength", "application.error.halfDayPeriod.notAllowed");
     }
-
 
     // Validate reason -------------------------------------------------------------------------------------------------
     @Test
