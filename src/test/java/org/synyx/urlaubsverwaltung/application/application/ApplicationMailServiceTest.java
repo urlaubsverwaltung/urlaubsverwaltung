@@ -121,7 +121,6 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(1).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
     }
 
-
     @Test
     void sendRejectedNotification() {
 
@@ -182,9 +181,14 @@ class ApplicationMailServiceTest {
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(ALLOWED);
 
+        when(messageSource.getMessage(eq(application.getDayLength().name()), any(), any())).thenReturn("FULL");
+        when(messageSource.getMessage(eq(vacationType.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
+
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("recipient", recipient);
+        model.put("vacationType", "HOLIDAY");
+        model.put("dayLength", "FULL");
         model.put("sender", sender);
 
         sut.sendReferApplicationNotification(application, recipient, sender);

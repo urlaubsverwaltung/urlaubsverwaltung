@@ -8,6 +8,7 @@
 <c:set var="CAN_MANAGE" value="${isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson}"/>
 <c:set var="IS_OWN" value="${application.person.id == signedInUser.id}"/>
 <c:set var="IS_ALLOWED_TO_ALLOW" value="${isBoss || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !IS_OWN)}"/>
+<c:set var="IS_ALLOWED_TO_REFER" value="${isBoss || isOffice || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !IS_OWN)}"/>
 
 <c:if test="${application.status == 'ALLOWED'}">
     <c:if test="${isOffice || IS_OWN}">
@@ -22,6 +23,8 @@
     <c:if test="${IS_ALLOWED_TO_ALLOW}">
         <jsp:include page="actions/allow_form.jsp"/>
         <jsp:include page="actions/reject_form.jsp"/>
+    </c:if>
+    <c:if test="${IS_ALLOWED_TO_REFER}">
         <jsp:include page="actions/refer_form.jsp"/>
     </c:if>
     <c:if test="${isOffice || IS_OWN}">
@@ -36,6 +39,8 @@
     <c:if test="${IS_ALLOWED_TO_ALLOW}">
         <jsp:include page="actions/allow_form.jsp"/>
         <jsp:include page="actions/reject_form.jsp"/>
+    </c:if>
+    <c:if test="${IS_ALLOWED_TO_REFER}">
         <jsp:include page="actions/refer_form.jsp"/>
     </c:if>
     <c:if test="${isOffice || IS_OWN}">

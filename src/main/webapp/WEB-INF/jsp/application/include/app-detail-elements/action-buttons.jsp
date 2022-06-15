@@ -96,7 +96,7 @@
 </c:if>
 
 <%-- REFER ACTION --%>
-<c:set var="IS_ALLOWED_TO_REFER" value="${isBoss || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !IS_OWN)}"/>
+<c:set var="IS_ALLOWED_TO_REFER" value="${isBoss || isOffice || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !IS_OWN)}"/>
 <c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
     <c:if test="${IS_ALLOWED_TO_REFER}">
         <a href="#" class="icon-link tw-px-1" data-title="<spring:message code='action.refer'/>"

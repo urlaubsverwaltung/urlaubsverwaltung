@@ -556,6 +556,26 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
+    void referApplicationAccessibleForRoleOffice() throws Exception {
+
+        final Person signedInPerson = personWithRole(OFFICE);
+        final Person applicationPerson = somePerson();
+        final Person recipientPerson = somePerson();
+        final Application application = applicationOfPerson(applicationPerson);
+
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(true);
+
+        perform(post("/web/application/" + APPLICATION_ID + "/refer"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+
+        verify(applicationInteractionService).refer(application, recipientPerson, signedInPerson);
+    }
+
+    @Test
     void rejectApplicationForUnknownApplicationIdThrowsUnknownApplicationForLeaveException() {
 
         assertThatThrownBy(() ->

@@ -143,6 +143,8 @@ class ApplicationMailService {
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
         model.put(RECIPIENT, recipient);
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
         model.put("sender", sender);
 
         final Mail mailToApplicant = Mail.builder()
