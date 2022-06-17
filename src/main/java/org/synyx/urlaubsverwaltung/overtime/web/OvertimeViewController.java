@@ -295,7 +295,7 @@ public class OvertimeViewController {
     }
 
     private List<Application> getOvertimeAbsences(int year, Person person) {
-        final LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(year);
+        final LocalDate firstDayOfYear = Year.of(year).atDay(1);
         final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
 
         final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);

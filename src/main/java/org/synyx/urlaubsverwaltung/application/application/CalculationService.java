@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
 import static java.time.Month.MARCH;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
@@ -45,8 +45,8 @@ class CalculationService {
 
     @Autowired
     CalculationService(VacationDaysService vacationDaysService, AccountService accountService,
-                              AccountInteractionService accountInteractionService, WorkDaysCountService workDaysCountService,
-                              OverlapService overlapService, ApplicationService applicationService) {
+                       AccountInteractionService accountInteractionService, WorkDaysCountService workDaysCountService,
+                       OverlapService overlapService, ApplicationService applicationService) {
         this.vacationDaysService = vacationDaysService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
@@ -84,8 +84,8 @@ class CalculationService {
             final BigDecimal workDaysInOldYear = workDaysCountService.getWorkDaysCount(dayLength, startDate, getLastDayOfYear(yearOfStartDate), person).subtract(oldWorkDaysInOldYear);
 
             // ensure that applying for leave for the period in the new year is possible
-            final BigDecimal oldWorkDaysInNewYear = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), getFirstDayOfYear(savedApplication.getEndDate().getYear()), savedApplication.getEndDate(), savedApplication.getPerson())).orElse(ZERO);
-            final BigDecimal workDaysInNewYear = workDaysCountService.getWorkDaysCount(dayLength, getFirstDayOfYear(yearOfEndDate), endDate, person).subtract(oldWorkDaysInNewYear);
+            final BigDecimal oldWorkDaysInNewYear = maybeSavedApplication.map(savedApplication -> workDaysCountService.getWorkDaysCount(savedApplication.getDayLength(), Year.of(savedApplication.getEndDate().getYear()).atDay(1), savedApplication.getEndDate(), savedApplication.getPerson())).orElse(ZERO);
+            final BigDecimal workDaysInNewYear = workDaysCountService.getWorkDaysCount(dayLength, Year.of(yearOfEndDate).atDay(1), endDate, person).subtract(oldWorkDaysInNewYear);
 
             return accountHasEnoughVacationDaysLeft(person, yearOfStartDate, workDaysInOldYear, application)
                 && accountHasEnoughVacationDaysLeft(person, yearOfEndDate, workDaysInNewYear, application);
@@ -147,7 +147,7 @@ class CalculationService {
 
     private BigDecimal getWorkdaysBeforeApril(int year, Application application) {
         final List<DateRange> beforeApril = overlapService.getListOfOverlaps(
-            getFirstDayOfYear(year),
+            Year.of(year).atDay(1),
             YearMonth.of(year, MARCH).atEndOfMonth(),
             List.of(application),
             List.of()

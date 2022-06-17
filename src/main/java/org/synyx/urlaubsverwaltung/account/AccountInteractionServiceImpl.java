@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -18,7 +19,6 @@ import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
@@ -171,7 +171,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
         final BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(referenceAccount);
 
-        return updateOrCreateHolidaysAccount(referenceAccount.getPerson(), getFirstDayOfYear(nextYear),
+        return updateOrCreateHolidaysAccount(referenceAccount.getPerson(), Year.of(nextYear).atDay(1),
             getLastDayOfYear(nextYear), referenceAccount.getAnnualVacationDays(),
             referenceAccount.getAnnualVacationDays(), leftVacationDays, ZERO, referenceAccount.getComment());
     }

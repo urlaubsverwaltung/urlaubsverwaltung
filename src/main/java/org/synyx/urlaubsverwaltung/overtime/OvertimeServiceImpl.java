@@ -11,6 +11,8 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import javax.transaction.Transactional;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +23,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 
 /**
  * @since 2.11.0
@@ -58,7 +59,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year) {
-        return overtimeRepository.findByPersonAndStartDateBetweenOrderByStartDateDesc(person, getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year));
+        return overtimeRepository.findByPersonAndStartDateBetweenOrderByStartDateDesc(person, Year.of(year).atDay(1), DateUtil.getLastDayOfYear(year));
     }
 
     @Override
@@ -101,8 +102,9 @@ class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public Duration getTotalOvertimeForPersonBeforeYear(Person person, int year) {
-        final Duration totalOvertimeReductionBeforeYear = applicationService.getTotalOvertimeReductionOfPersonBefore(person, getFirstDayOfYear(year));
-        final Duration totalOvertimeBeforeYear = overtimeRepository.findByPersonAndStartDateIsBefore(person, getFirstDayOfYear(year)).stream()
+        final LocalDate firstDayOfYear = Year.of(year).atDay(1);
+        final Duration totalOvertimeReductionBeforeYear = applicationService.getTotalOvertimeReductionOfPersonBefore(person, firstDayOfYear);
+        final Duration totalOvertimeBeforeYear = overtimeRepository.findByPersonAndStartDateIsBefore(person, firstDayOfYear).stream()
             .map(Overtime::getDuration)
             .reduce(ZERO, Duration::plus);
 

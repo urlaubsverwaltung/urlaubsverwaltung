@@ -23,7 +23,6 @@ class DateUtilTest {
         assertThat(returnValue).isTrue();
     }
 
-
     @Test
     void ensureReturnsFalseIfGivenDayIsNotAWorkDay() {
 
@@ -36,17 +35,6 @@ class DateUtilTest {
     }
 
     @Test
-    void ensureReturnsCorrectFirstDayOfYear() {
-
-        int year = 2014;
-
-        LocalDate firstDayOfYear = LocalDate.of(year, 1, 1);
-
-        assertThat(DateUtil.getFirstDayOfYear(year)).isEqualTo(firstDayOfYear);
-    }
-
-
-    @Test
     void ensureReturnsCorrectLastDayOfYear() {
 
         int year = 2014;
@@ -55,7 +43,6 @@ class DateUtilTest {
 
         assertThat(DateUtil.getLastDayOfYear(year)).isEqualTo(lastDayOfYear);
     }
-
 
     @Test
     void ensureReturnsTrueForChristmasEve() {
@@ -67,7 +54,6 @@ class DateUtilTest {
         assertThat(returnValue).isTrue();
     }
 
-
     @Test
     void ensureReturnsFalseForNotChristmasEve() {
 
@@ -78,7 +64,6 @@ class DateUtilTest {
         assertThat(returnValue).isFalse();
     }
 
-
     @Test
     void ensureReturnsTrueForNewYearsEve() {
 
@@ -88,7 +73,6 @@ class DateUtilTest {
 
         assertThat(returnValue).isTrue();
     }
-
 
     @Test
     void ensureReturnsFalseForNotNewYearsEve() {

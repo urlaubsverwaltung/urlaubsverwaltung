@@ -30,6 +30,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -40,7 +41,6 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
@@ -144,7 +144,7 @@ public class OverviewViewController {
 
     private void prepareSickNoteList(Person person, int year, Model model) {
 
-        final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, getFirstDayOfYear(year), getLastDayOfYear(year));
+        final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, Year.of(year).atDay(1), getLastDayOfYear(year));
 
         final List<ExtendedSickNote> extendedSickNotes = sickNotes.stream()
             .map(input -> new ExtendedSickNote(input, workDaysCountService))
@@ -160,7 +160,7 @@ public class OverviewViewController {
 
         // get the person's applications for the given year
         final List<Application> applications =
-            applicationService.getApplicationsForACertainPeriodAndPerson(getFirstDayOfYear(year), getLastDayOfYear(year), person);
+            applicationService.getApplicationsForACertainPeriodAndPerson(Year.of(year).atDay(1), getLastDayOfYear(year), person);
 
         if (!applications.isEmpty()) {
             final List<ApplicationForLeave> applicationsForLeave = applications.stream()
