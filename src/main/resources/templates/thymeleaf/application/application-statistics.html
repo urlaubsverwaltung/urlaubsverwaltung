@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_layout::head(~{::title}, ~{::styles}, ~{::scripts})">
+  <title th:text="#{applications.statistics.header.title}">Abwesenheitsstatistik</title>
+  <th:block th:fragment="styles">
+    <link rel="stylesheet" type="text/css" asset:href="account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.css"/>
+    <link rel="stylesheet" type="text/css" asset:href="account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css"/>
+    <link rel="stylesheet" type="text/css" asset:href="absences_overview.css"/>
+  </th:block>
+  <th:block th:fragment="scripts">
+    <script defer asset:src="npm.duetds.js"></script>
+    <script defer asset:src="npm.date-fns.js"></script>
+    <script defer asset:src="npm.tablesorter.js"></script>
+    <script defer asset:src="account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.js"></script>
+    <script defer asset:src="account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.js"></script>
+    <script defer asset:src="account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~704d57c1.js"></script>
+    <script defer asset:src="app_statistics.js"></script>
+    <script defer asset:src="npm.tablesorter.js"></script>
+    <script defer asset:src="absences_overview.js"></script>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      window.uv = {};
+      window.uv.personId = /*[[${userId}]]*/ 'personId';
+      window.uv.webPrefix = /*[[@{/web}]]*/ '/web';
+      window.uv.apiPrefix = /*[[@{/api}]]*/ '/api';
+      /*]]>*/
+    </script>
+    <script th:replace="fragments/datepicker-localization"></script>
+  </th:block>
+</head>
+<body th:replace="_layout::body(~{::main}, ~{})">
+
+<main th:fragment="main">
+
+  <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
+    <div th:replace="fragments/section-heading::section-heading(~{::absences-statistics-heading-body}, ~{::absences-statistics-heading-actions})">
+      <th:block th:ref="absences-statistics-heading-body">
+        <h1 th:text="#{applications.statistics}">Abwesenheitsstatistik</h1>
+      </th:block>
+      <th:block th:ref="absences-statistics-heading-actions">
+        <a th:href="@{/web/application/statistics/download?from={fromIso}&to={toIso}(fromIso=${#temporals.formatISO(from)}, toIso=${#temporals.formatISO(to)})}" class="icon-link tw-px-1" th:data-title="#{action.download}">
+          <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
+        </a>
+        <a href="#" th:replace="fragments/print::button"></a>
+      </th:block>
+    </div>
+
+    <p class="tw-text-sm">
+      <a th:if="${errors}" th:text="#{applications.statistics.error.period}" href="#filterModal" data-toggle="modal"></a>
+      <a th:unless="${errors}" href="#filterModal" data-toggle="modal">
+        <span th:text="|#{filter.period}:|"></span>
+        <span th:replace="fragments/date-range::date-range(${from}, ${to})"></span>
+      </a>
+    </p>
+    <div th:replace="fragments/filter-modal::filter-modal('filterModal', @{'/web/application/statistics'}, ${#temporals.formatISO(from)}, ${#temporals.formatISO(to)}, ${period})"></div>
+
+    <div class="feedback" th:if="${filterPeriodIncorrect}">
+      <div th:text="#{filter.period.incorrect.warning}" class="alert alert-warning"></div>
+    </div>
+
+    <div th:if="${errors}" th:text="#{applications.statistics.error}" class="alert alert-danger"></div>
+    <table th:unless="${errors}" id="application-statistic-table" class="list-table sortable tablesorter tw-text-sm">
+      <thead class="tw-hidden lg:tw-table-header-group">
+      <tr>
+        <th scope="col"></th>
+        <th th:if="${showPersonnelNumberColumn}" th:text="#{person.account.basedata.personnelNumber.abbreviation}" scope="col" class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"></th>
+        <th th:text="#{person.data.firstName}" scope="col" class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"></th>
+        <th th:text="#{person.data.lastName}" scope="col" class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"></th>
+        <th scope="col" class="lg:tw-hidden print:tw-hidden"></th>
+        <th scope="col" class="md:tw-hidden print:tw-hidden"></th>
+        <th scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell"></th>
+        <th th:text="#{applications.statistics.allowed}" scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"></th>
+        <th th:text="#{applications.statistics.waiting}" scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"></th>
+        <th th:text="|#{applications.statistics.left} (${from.year})|" scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"></th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr th:each="statistic : ${statistics}">
+          <td class="tw-text-center">
+            <img th:replace="fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=mm&s=60'},username=${statistic.firstName},width='60px',height='60px')" alt=""/>
+          </td>
+          <td th:if="${showPersonnelNumberColumn}" th:text="${statistic.personnelNumber}" class="tw-hidden lg:tw-table-cell print:tw-table-cell tw-text-ellipsis tw-overflow-hidden tw-max-w-xs tw-text-center"></td>
+          <td th:text="${statistic.firstName}" class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
+          <td th:text="${statistic.lastName}" class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
+          <td th:text="${statistic.niceName}" class="lg:tw-hidden print:tw-hidden"></td>
+          <td class="md:tw-hidden print:tw-hidden">
+            <div class="tw-flex tw-items-center">
+              <span class="tw-w-6">
+                <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+              </span>
+              <span th:text="${statistic.totalAllowedVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 1)}"></span>
+            </div>
+            <div class="tw-flex tw-items-center">
+              <span class="tw-w-6">
+                <svg th:replace="icon/question-mark-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+              </span>
+              <span class="tw-font-bold" th:text="${statistic.totalWaitingVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 1)}"></span>
+            </div>
+          </td>
+
+          <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
+            <span th:text="|#{applications.statistics.total}:|" class="tw-inline-block"></span>
+            <div th:if="${statistic.hasVacationType(type)}" th:each="type : ${vacationTypes}">
+              <span class="tw-text-xs" th:text="|#{${type.messageKey}}:|"></span>
+            </div>
+          </td>
+
+          <td class="tw-hidden md:tw-table-cell print:tw-table-cell number" data-sortable-value="${statistic.totalAllowedVacationDays}">
+            <div>
+              <span class="tw-font-bold" th:text="${statistic.totalAllowedVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 1)}"></span>
+              <span th:text="#{duration.days}"></span>
+            </div>
+            <div th:if="${statistic.hasVacationType(type)}" th:each="type : ${vacationTypes}">
+              <span class="tw-text-xs" th:text="${statistic.getAllowedVacationDays(type)} % 1 == 0 ? ${#numbers.formatDecimal(statistic.getAllowedVacationDays(type), 1, 0)} : ${#numbers.formatDecimal(statistic.getAllowedVacationDays(type), 1, 1)}"></span>
+            </div>
+          </td>
+
+          <td class="tw-hidden md:tw-table-cell print:tw-table-cell number" data-sortable-value="${statistic.totalWaitingVacationDays}">
+            <div>
+              <span class="tw-font-bold" th:text="${statistic.totalWaitingVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 1)}"></span>
+              <span th:text="#{duration.days}"></span>
+            </div>
+            <div th:if="${statistic.hasVacationType(type)}" th:each="type : ${vacationTypes}">
+              <span class="tw-text-xs" th:text="${statistic.getWaitingVacationDays(type)} % 1 == 0 ? ${#numbers.formatDecimal(statistic.getWaitingVacationDays(type), 1, 0)} : ${#numbers.formatDecimal(statistic.getWaitingVacationDays(type), 1, 1)}"></span>
+            </div>
+          </td>
+
+          <td class="tw-hidden md:tw-table-cell print:tw-table-cell" data-sortable-value="${statistic.leftVacationDays}">
+            <div>
+              <span class="tw-font-bold" th:text="${statistic.leftVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.leftVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.leftVacationDays, 1, 1)}"></span>
+              <span th:text="#{duration.vacationDays}"></span>
+            </div>
+            <span>
+              <span class="tw-font-bold" th:text="${statistic.leftOvertime}"></span>
+              <span th:text="#{duration.overtime}"></span>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+</body>
+</html>

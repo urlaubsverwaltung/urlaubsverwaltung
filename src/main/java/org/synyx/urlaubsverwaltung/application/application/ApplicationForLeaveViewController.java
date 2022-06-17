@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.util.DurationUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
@@ -147,7 +148,7 @@ class ApplicationForLeaveViewController {
             .id(application.getId())
             .person(toViewPerson(person))
             .vacationType(toViewVacationType(application.getVacationType()))
-            .duration(toDurationString(application.getHours(), messageSource, locale))
+            .duration(DurationUtil.toDurationString(application.getHours(), messageSource, locale))
             .dayLength(application.getDayLength())
             .workDays(decimalToString(application.getWorkDays(), locale))
             .statusWaiting(isWaiting)
@@ -196,35 +197,6 @@ class ApplicationForLeaveViewController {
 
     private static ApplicationForLeaveDto.VacationType toViewVacationType(VacationTypeEntity vacationType) {
         return new ApplicationForLeaveDto.VacationType(vacationType.getCategory().name(), vacationType.getMessageKey());
-    }
-
-    private static String toDurationString(Duration javaTimeDuration, MessageSource messageSource, Locale locale) {
-        if (javaTimeDuration == null) {
-            return "";
-        }
-
-        final boolean negative = javaTimeDuration.isNegative();
-        final long hours = javaTimeDuration.abs().toHours();
-        final int minutes = javaTimeDuration.abs().toMinutesPart();
-
-        String value = "";
-
-        if (hours > 0) {
-            value += hours + " " + messageSource.getMessage("hours.abbr", new Object[]{}, locale);
-        }
-
-        if (minutes > 0) {
-            if (hours > 0) {
-                value += " ";
-            }
-            value += minutes + " " + messageSource.getMessage("minutes.abbr", new Object[]{}, locale);
-        }
-
-        if (hours == 0 && minutes == 0) {
-            value = messageSource.getMessage("overtime.person.zero", new Object[]{}, locale);
-        }
-
-        return negative ? "-" + value : value;
     }
 
     private static String decimalToString(BigDecimal decimal, Locale locale) {
@@ -350,7 +322,7 @@ class ApplicationForLeaveViewController {
             .person(toViewPerson(applicationPerson))
             .note(note)
             .pending(pending)
-            .duration(toDurationString(application.getHours(), messageSource, locale))
+            .duration(DurationUtil.toDurationString(application.getHours(), messageSource, locale))
             .workDays(decimalToString(workDays, locale))
             .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .dayLength(dayLength)

@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.util.Map;
 
 import static java.math.BigDecimal.ZERO;
@@ -25,12 +24,12 @@ public final class ApplicationForLeaveStatisticsDto {
 
     private final BigDecimal leftVacationDays;
 
-    private final Duration leftOvertime;
+    private final String leftOvertime;
 
     ApplicationForLeaveStatisticsDto(String firstName, String lastName, String niceName, String gravatarURL, String personnelNumber,
                                      BigDecimal totalAllowedVacationDays, Map<VacationType, BigDecimal> allowedVacationDays,
                                      BigDecimal totalWaitingVacationDays, Map<VacationType, BigDecimal> waitingVacationDays,
-                                     BigDecimal leftVacationDays, Duration leftOvertime) {
+                                     BigDecimal leftVacationDays, String leftOvertime) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
@@ -84,7 +83,7 @@ public final class ApplicationForLeaveStatisticsDto {
         return leftVacationDays;
     }
 
-    public Duration getLeftOvertime() {
+    public String getLeftOvertime() {
         return leftOvertime;
     }
 

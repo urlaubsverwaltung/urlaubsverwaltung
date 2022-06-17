@@ -10,10 +10,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
+import static java.util.Locale.ENGLISH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.allOf;
@@ -67,11 +68,13 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     private ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
     @Mock
     private VacationTypeService vacationTypeService;
+    @Mock
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveStatisticsViewController(applicationForLeaveStatisticsService,
-            applicationForLeaveStatisticsCsvExportService, vacationTypeService, new DateFormatAware());
+            applicationForLeaveStatisticsCsvExportService, vacationTypeService, new DateFormatAware(), messageSource);
     }
 
     @Test
@@ -137,7 +140,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .param("from", "01.01.2019")
             .param("to", "01.08.2020"))
             .andExpect(model().attribute("errors", "INVALID_PERIOD"))
-            .andExpect(view().name("application/app_statistics"));
+            .andExpect(view().name("thymeleaf/application/application-statistics"));
     }
 
     @Test
@@ -163,11 +166,13 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
             .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", vacationType))
-            .andExpect(view().name("application/app_statistics"));
+            .andExpect(view().name("thymeleaf/application/application-statistics"));
     }
 
     @Test
     void applicationForLeaveStatisticsSetsModelAndViewWithStatistics() throws Exception {
+
+        when(messageSource.getMessage("hours.abbr", new Object[]{}, ENGLISH)).thenReturn("Std.");
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-08-01");
@@ -213,13 +218,13 @@ class ApplicationForLeaveStatisticsViewControllerTest {
                     hasProperty("totalWaitingVacationDays", is(BigDecimal.valueOf(3))),
                     hasProperty("waitingVacationDays", aMapWithSize(1)),
                     hasProperty("leftVacationDays", is(BigDecimal.valueOf(2))),
-                    hasProperty("leftOvertime", is(Duration.ofHours(10)))
+                    hasProperty("leftOvertime", is("10 Std."))
                 )
             )))
             .andExpect(model().attribute("showPersonnelNumberColumn", true))
             .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", vacationType))
-            .andExpect(view().name("application/app_statistics"));
+            .andExpect(view().name("thymeleaf/application/application-statistics"));
     }
 
     @Test
