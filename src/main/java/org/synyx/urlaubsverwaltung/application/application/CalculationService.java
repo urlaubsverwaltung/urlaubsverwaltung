@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +25,6 @@ import static java.math.BigDecimal.ZERO;
 import static java.time.Month.MARCH;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfMonth;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
@@ -148,7 +148,7 @@ class CalculationService {
     private BigDecimal getWorkdaysBeforeApril(int year, Application application) {
         final List<DateRange> beforeApril = overlapService.getListOfOverlaps(
             getFirstDayOfYear(year),
-            getLastDayOfMonth(year, MARCH.getValue()),
+            YearMonth.of(year, MARCH).atEndOfMonth(),
             List.of(application),
             List.of()
         );

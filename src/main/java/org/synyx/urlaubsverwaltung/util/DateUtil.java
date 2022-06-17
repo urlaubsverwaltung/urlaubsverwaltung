@@ -87,28 +87,4 @@ public final class DateUtil {
 
         return ZonedDateTime.now(UTC).withYear(year).with(lastDayOfYear()).toLocalDate();
     }
-
-    /**
-     * Get the first day of the given month in the given year.
-     *
-     * @param year  of the month to get the first day of
-     * @param month to get the first day of
-     * @return the first day of the given month in the given year
-     */
-    public static LocalDate getFirstDayOfMonth(int year, int month) {
-
-        return ZonedDateTime.now(UTC).withYear(year).withMonth(month).with(firstDayOfMonth()).toLocalDate();
-    }
-
-    /**
-     * Get the last day of the given month in the given year.
-     *
-     * @param year  of the month to get the last day of
-     * @param month to get the first day of
-     * @return the last day of the given month in the given year
-     */
-    public static LocalDate getLastDayOfMonth(int year, int month) {
-
-        return ZonedDateTime.now(UTC).withYear(year).withMonth(month).with(lastDayOfMonth()).toLocalDate();
-    }
 }

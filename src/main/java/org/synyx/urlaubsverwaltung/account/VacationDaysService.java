@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,8 +24,6 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfMonth;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfMonth;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isBeforeApril;
 
 
@@ -124,14 +123,14 @@ public class VacationDaysService {
     }
 
     BigDecimal getUsedDaysBeforeApril(Account account) {
-        final LocalDate firstOfJanuary = getFirstDayOfMonth(account.getYear(), JANUARY.getValue());
-        final LocalDate lastOfMarch = getLastDayOfMonth(account.getYear(), MARCH.getValue());
+        final LocalDate firstOfJanuary = YearMonth.of(account.getYear(), JANUARY).atDay(1);
+        final LocalDate lastOfMarch = YearMonth.of(account.getYear(), MARCH).atEndOfMonth();
         return getUsedDaysBetweenTwoMilestones(account.getPerson(), firstOfJanuary, lastOfMarch);
     }
 
     BigDecimal getUsedDaysAfterApril(Account account) {
-        final LocalDate firstOfApril = getFirstDayOfMonth(account.getYear(), APRIL.getValue());
-        final LocalDate lastOfDecember = getLastDayOfMonth(account.getYear(), DECEMBER.getValue());
+        final LocalDate firstOfApril = YearMonth.of(account.getYear(), APRIL).atDay(1);
+        final LocalDate lastOfDecember = YearMonth.of(account.getYear(), DECEMBER).atEndOfMonth();
         return getUsedDaysBetweenTwoMilestones(account.getPerson(), firstOfApril, lastOfDecember);
     }
 

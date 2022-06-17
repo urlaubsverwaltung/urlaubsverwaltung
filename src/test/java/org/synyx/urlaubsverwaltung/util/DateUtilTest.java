@@ -35,43 +35,6 @@ class DateUtilTest {
         assertThat(returnValue).isFalse();
     }
 
-
-    @Test
-    void ensureReturnsCorrectFirstDayOfMonth() {
-
-        int year = 2014;
-        int month = 11;
-
-        LocalDate firstDayOfMonth = LocalDate.of(year, month, 1);
-
-        assertThat(DateUtil.getFirstDayOfMonth(year, month)).isEqualTo(firstDayOfMonth);
-    }
-
-
-    @Test
-    void ensureReturnsCorrectLastDayOfMonth() {
-
-        int year = 2014;
-        int month = 11;
-
-        LocalDate lastDayOfMonth = LocalDate.of(year, month, 30);
-
-        assertThat(DateUtil.getLastDayOfMonth(year, month)).isEqualTo(lastDayOfMonth);
-    }
-
-
-    @Test
-    void ensureReturnsCorrectLastDayOfMonthForSpecialMonths() {
-
-        int year = 2014;
-        int month = 2;
-
-        LocalDate lastDayOfMonth = LocalDate.of(year, month, 28);
-
-        assertThat(DateUtil.getLastDayOfMonth(year, month)).isEqualTo(lastDayOfMonth);
-    }
-
-
     @Test
     void ensureReturnsCorrectFirstDayOfYear() {
 
