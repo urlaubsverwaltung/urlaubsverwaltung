@@ -52,9 +52,7 @@ class ApplicationForLeaveStatisticsService {
 
     private Function<Person, ApplicationForLeaveStatistics> toApplicationForLeaveStatistics(FilterPeriod period, List<VacationType> activeVacationTypes) {
         return person -> {
-
             final Optional<PersonBasedata> personBasedata = personBasedataService.getBasedataByPersonId(person.getId());
-
             if (personBasedata.isPresent()) {
                 return applicationForLeaveStatisticsBuilder.build(person, personBasedata.get(), period.getStartDate(), period.getEndDate(), activeVacationTypes);
             } else {

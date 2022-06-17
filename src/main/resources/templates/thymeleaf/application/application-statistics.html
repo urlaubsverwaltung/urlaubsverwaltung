@@ -71,6 +71,7 @@
         <th scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell"></th>
         <th th:text="#{applications.statistics.allowed}" scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"></th>
         <th th:text="#{applications.statistics.waiting}" scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"></th>
+        <th th:text="#{applications.statistics.left}" scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"></th>
         <th th:text="|#{applications.statistics.left} (${from.year})|" scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"></th>
       </tr>
       </thead>
@@ -122,6 +123,13 @@
             </div>
             <div th:if="${statistic.hasVacationType(type)}" th:each="type : ${vacationTypes}">
               <span class="tw-text-xs" th:text="${statistic.getWaitingVacationDays(type)} % 1 == 0 ? ${#numbers.formatDecimal(statistic.getWaitingVacationDays(type), 1, 0)} : ${#numbers.formatDecimal(statistic.getWaitingVacationDays(type), 1, 1)}"></span>
+            </div>
+          </td>
+
+          <td class="tw-hidden md:tw-table-cell print:tw-table-cell" data-sortable-value="${statistic.leftVacationDays}">
+            <div>
+              <span class="tw-font-bold" th:text="${statistic.leftPeriodVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.leftPeriodVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.leftPeriodVacationDays, 1, 1)}"></span>
+              <span th:text="#{duration.vacationDays}"></span>
             </div>
           </td>
 

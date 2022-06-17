@@ -22,6 +22,7 @@ public final class ApplicationForLeaveStatisticsDto {
     private final BigDecimal totalWaitingVacationDays;
     private final Map<VacationType, BigDecimal> waitingVacationDays;
 
+    private final BigDecimal leftPeriodVacationDays;
     private final BigDecimal leftVacationDays;
 
     private final String leftOvertime;
@@ -29,7 +30,7 @@ public final class ApplicationForLeaveStatisticsDto {
     ApplicationForLeaveStatisticsDto(String firstName, String lastName, String niceName, String gravatarURL, String personnelNumber,
                                      BigDecimal totalAllowedVacationDays, Map<VacationType, BigDecimal> allowedVacationDays,
                                      BigDecimal totalWaitingVacationDays, Map<VacationType, BigDecimal> waitingVacationDays,
-                                     BigDecimal leftVacationDays, String leftOvertime) {
+                                     BigDecimal leftPeriodVacationDays, BigDecimal leftVacationDays, String leftOvertime) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
@@ -39,6 +40,7 @@ public final class ApplicationForLeaveStatisticsDto {
         this.allowedVacationDays = allowedVacationDays;
         this.totalWaitingVacationDays = totalWaitingVacationDays;
         this.waitingVacationDays = waitingVacationDays;
+        this.leftPeriodVacationDays = leftPeriodVacationDays;
         this.leftVacationDays = leftVacationDays;
         this.leftOvertime = leftOvertime;
     }
@@ -77,6 +79,10 @@ public final class ApplicationForLeaveStatisticsDto {
 
     public Map<VacationType, BigDecimal> getWaitingVacationDays() {
         return waitingVacationDays;
+    }
+
+    public BigDecimal getLeftPeriodVacationDays() {
+        return leftPeriodVacationDays;
     }
 
     public BigDecimal getLeftVacationDays() {

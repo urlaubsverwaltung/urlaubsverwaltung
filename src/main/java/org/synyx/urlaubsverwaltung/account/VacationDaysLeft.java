@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.account;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static java.math.BigDecimal.ZERO;
 import static org.synyx.urlaubsverwaltung.util.CalcUtil.isNegative;
 import static org.synyx.urlaubsverwaltung.util.CalcUtil.isPositive;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.isBeforeApril;
 
 
 /**
@@ -59,6 +61,15 @@ public final class VacationDaysLeft {
 
     public BigDecimal getVacationDaysUsedNextYear() {
         return vacationDaysUsedNextYear;
+    }
+
+    public BigDecimal getRemainingVacationDaysLeft(LocalDate today, int year) {
+        if (today.getYear() == year && isBeforeApril(today, year)) {
+            return remainingVacationDays;
+        } else {
+            // it's after April - only the left not expiring remaining vacation days must be used
+            return remainingVacationDaysNotExpiring;
+        }
     }
 
     /**
