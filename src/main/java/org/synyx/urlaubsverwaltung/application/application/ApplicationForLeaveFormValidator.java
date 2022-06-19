@@ -20,10 +20,10 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -282,7 +282,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateTime(Time startTime, Time endTime, Errors errors) {
+    private void validateTime(LocalTime startTime, LocalTime endTime, Errors errors) {
 
         final boolean startTimeIsProvided = startTime != null;
         final boolean endTimeIsProvided = endTime != null;
@@ -294,12 +294,9 @@ class ApplicationForLeaveFormValidator implements Validator {
             errors.reject(ERROR_PERIOD);
         }
 
-        if (startTimeIsProvided && endTimeIsProvided) {
-            final long timeDifference = endTime.getTime() - startTime.getTime();
-
-            if (timeDifference <= 0) {
-                errors.reject(ERROR_PERIOD);
-            }
+        if ((startTimeIsProvided && endTimeIsProvided) &&
+            (endTime.isBefore(startTime) || endTime.equals(startTime))) {
+            errors.reject(ERROR_PERIOD);
         }
     }
 

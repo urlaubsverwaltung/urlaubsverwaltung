@@ -12,9 +12,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static java.util.Objects.requireNonNullElse;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YY;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
 
 /**
  * View class to record overtime for a certain period of time.

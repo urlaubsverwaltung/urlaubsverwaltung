@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DateFormatAwareTest {
+class DateAndTimeFormatAwareTest {
 
     final DateFormatAware parser = new DateFormatAware();
 

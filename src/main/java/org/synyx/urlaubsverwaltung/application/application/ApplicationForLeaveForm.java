@@ -7,17 +7,19 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.DD_MM_YYYY;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YY;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.D_M_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.HH_MM;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.HH_MM_SS;
 
 /**
  * View class representing an application for leave.
@@ -31,12 +33,14 @@ public class ApplicationForLeaveForm {
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate startDate;
 
-    private Time startTime;
+    @DateTimeFormat(pattern = HH_MM, fallbackPatterns = HH_MM_SS)
+    private LocalTime startTime;
 
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate endDate;
 
-    private Time endTime;
+    @DateTimeFormat(pattern = HH_MM, fallbackPatterns = HH_MM_SS)
+    private LocalTime endTime;
 
     // Type of holiday, e.g. holiday, special leave, etc.
     private VacationType vacationType;
@@ -146,19 +150,19 @@ public class ApplicationForLeaveForm {
         this.startDate = startDate;
     }
 
-    public Time getStartTime() {
+    public LocalTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Time startTime) {
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    public Time getEndTime() {
+    public LocalTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Time endTime) {
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
 
@@ -247,9 +251,9 @@ public class ApplicationForLeaveForm {
 
         private Person person;
         private LocalDate startDate;
-        private Time startTime;
+        private LocalTime startTime;
         private LocalDate endDate;
-        private Time endTime;
+        private LocalTime endTime;
         private VacationType vacationType;
         private DayLength dayLength;
         private BigDecimal hours;
@@ -272,7 +276,7 @@ public class ApplicationForLeaveForm {
             return this;
         }
 
-        public ApplicationForLeaveForm.Builder startTime(Time startTime) {
+        public ApplicationForLeaveForm.Builder startTime(LocalTime startTime) {
             this.startTime = startTime;
             return this;
         }
@@ -282,7 +286,7 @@ public class ApplicationForLeaveForm {
             return this;
         }
 
-        public ApplicationForLeaveForm.Builder endTime(Time endTime) {
+        public ApplicationForLeaveForm.Builder endTime(LocalTime endTime) {
             this.endTime = endTime;
             return this;
         }

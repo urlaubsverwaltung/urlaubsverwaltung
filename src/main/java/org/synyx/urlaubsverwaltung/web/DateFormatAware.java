@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.util.DateFormat;
+import org.synyx.urlaubsverwaltung.util.DateAndTimeFormat;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -67,6 +67,6 @@ public class DateFormatAware {
     }
 
     private static DateTimeFormatter getUserSpecifiedDateFormat() {
-        return DateTimeFormatter.ofPattern(DateFormat.DD_MM_YYYY);
+        return DateTimeFormatter.ofPattern(DateAndTimeFormat.DD_MM_YYYY);
     }
 }
