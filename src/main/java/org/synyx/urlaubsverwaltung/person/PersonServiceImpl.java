@@ -10,12 +10,10 @@ import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -195,9 +193,5 @@ class PersonServiceImpl implements PersonService {
     @Override
     public int numberOfActivePersons() {
         return personRepository.countByPermissionsNotContaining(INACTIVE);
-    }
-
-    private Comparator<Person> personComparator() {
-        return Comparator.comparing(p -> p.getNiceName().toLowerCase());
     }
 }
