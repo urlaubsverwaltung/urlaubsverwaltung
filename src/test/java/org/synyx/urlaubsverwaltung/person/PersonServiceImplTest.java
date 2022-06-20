@@ -248,30 +248,23 @@ class PersonServiceImplTest {
     @Test
     void ensureGetPersonsByRoleReturnsOnlyPersonsWithTheGivenRole() {
 
-        final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        user.setPermissions(List.of(USER));
-
         final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(USER, BOSS));
 
-        final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        office.setPermissions(asList(USER, BOSS, OFFICE));
+        final Person bossOffice = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        bossOffice.setPermissions(asList(USER, BOSS, OFFICE));
 
-        when(personRepository.findAll()).thenReturn(asList(user, boss, office));
+        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(BOSS, INACTIVE)).thenReturn(asList(boss, bossOffice));
 
         final List<Person> filteredList = sut.getActivePersonsByRole(BOSS);
         assertThat(filteredList)
             .hasSize(2)
             .contains(boss)
-            .contains(office);
+            .contains(bossOffice);
     }
 
     @Test
     void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
-
-        final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        user.setPermissions(List.of(USER));
-        user.setNotifications(List.of(NOTIFICATION_USER));
 
         final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(USER, BOSS));
@@ -281,59 +274,13 @@ class PersonServiceImplTest {
         office.setPermissions(asList(USER, BOSS, OFFICE));
         office.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL, NOTIFICATION_OFFICE));
 
-        when(personRepository.findAll()).thenReturn(asList(user, boss, office));
+        when(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_BOSS_ALL)).thenReturn(List.of(boss, office));
 
         final List<Person> filteredList = sut.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
         assertThat(filteredList)
             .hasSize(2)
             .contains(boss)
             .contains(office);
-    }
-
-    @Test
-    void ensureGetActivePersonsReturnSortedList() {
-
-        final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
-        final Person carl = new Person("carl", "carl", "carl", "carl@example.org");
-        final Person rick = new Person("rick", "rick", "rick", "rick@example.org");
-
-        when(personRepository.findAll()).thenReturn(asList(shane, carl, rick));
-
-        final List<Person> sortedList = sut.getActivePersons();
-        assertThat(sortedList)
-            .containsExactly(carl, rick, shane);
-    }
-
-    @Test
-    void ensureGetPersonsByRoleReturnSortedList() {
-
-        final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
-        shane.setPermissions(List.of(USER));
-        final Person carl = new Person("carl", "carl", "carl", "carl@example.org");
-        carl.setPermissions(List.of(USER));
-        final Person rick = new Person("rick", "rick", "rick", "rick@example.org");
-        rick.setPermissions(List.of(USER));
-        when(personRepository.findAll()).thenReturn(asList(shane, carl, rick));
-
-        final List<Person> sortedList = sut.getActivePersonsByRole(USER);
-        assertThat(sortedList)
-            .containsExactly(carl, rick, shane);
-    }
-
-    @Test
-    void ensureGetPersonsByNotificationTypeReturnSortedList() {
-
-        final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
-        shane.setNotifications(List.of(NOTIFICATION_USER));
-        final Person carl = new Person("carl", "carl", "carl", "carl@example.org");
-        carl.setNotifications(List.of(NOTIFICATION_USER));
-        final Person rick = new Person("rick", "rick", "rick", "rick@example.org");
-        rick.setNotifications(List.of(NOTIFICATION_USER));
-        when(personRepository.findAll()).thenReturn(asList(shane, carl, rick));
-
-        final List<Person> sortedList = sut.getPersonsWithNotificationType(NOTIFICATION_USER);
-        assertThat(sortedList).
-            containsExactly(carl, rick, shane);
     }
 
     @Test
