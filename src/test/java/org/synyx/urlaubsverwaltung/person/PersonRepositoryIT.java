@@ -117,6 +117,44 @@ class PersonRepositoryIT extends TestContainersBase {
         final List<Person> personsWithUserRole = sut.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(USER);
         assertThat(personsWithUserRole).containsExactly(bettina, peter, xenia);
     }
+
+    @Test
+    void ensureFindByPersonByPermissionsContainingAndNotContaining() {
+
+        final Person marlene = new Person("marlene", "Muster", "Marlene", "muster@example.org");
+        marlene.setPermissions(List.of(USER, OFFICE, INACTIVE));
+        personService.save(marlene);
+
+        final Person peter = new Person("peter", "Muster", "Peter", "peter@example.org");
+        peter.setPermissions(List.of(USER, OFFICE));
+        personService.save(peter);
+
+        final Person bettina = new Person("bettina", "Muster", "bettina", "bettina@example.org");
+        bettina.setPermissions(List.of(USER));
+        personService.save(bettina);
+
+        final List<Person> personsWithOfficeRole = sut.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE, INACTIVE);
+        assertThat(personsWithOfficeRole).containsExactly(peter);
+    }
+
+    @Test
+    void ensureFindByPersonByPermissionsContainingAndNotContainingOrderingIsCorrect() {
+
+        final Person xenia = new Person("xenia", "Basta", "xenia", "xenia@example.org");
+        xenia.setPermissions(List.of(USER));
+        personService.save(xenia);
+
+        final Person peter = new Person("peter", "Muster", "Peter", "peter@example.org");
+        peter.setPermissions(List.of(USER));
+        personService.save(peter);
+
+        final Person bettina = new Person("bettina", "Muster", "bettina", "bettina@example.org");
+        bettina.setPermissions(List.of(USER));
+        personService.save(bettina);
+
+        final List<Person> personsWithUserRole = sut.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(USER, INACTIVE);
+        assertThat(personsWithUserRole).containsExactly(bettina, peter, xenia);
+    }
 }
 
 

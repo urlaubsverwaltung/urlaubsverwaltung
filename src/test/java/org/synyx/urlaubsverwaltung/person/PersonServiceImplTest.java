@@ -366,7 +366,7 @@ class PersonServiceImplTest {
     @Test
     void ensureCanAppointPersonAsOfficeUser() {
 
-        when(personRepository.findAll()).thenReturn(emptyList());
+        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE,INACTIVE)).thenReturn(emptyList());
         when(personRepository.save(any())).then(returnsFirstArg());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -384,7 +384,7 @@ class PersonServiceImplTest {
 
         final Person officePerson = new Person();
         officePerson.setPermissions(List.of(OFFICE));
-        when(personRepository.findAll()).thenReturn(List.of(officePerson));
+        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE,INACTIVE)).thenReturn(List.of(officePerson));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER));

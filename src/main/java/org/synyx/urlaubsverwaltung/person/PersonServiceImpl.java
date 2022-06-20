@@ -140,9 +140,7 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public List<Person> getActivePersonsByRole(final Role role) {
-        return getActivePersons().stream()
-            .filter(person -> person.hasRole(role))
-            .collect(toList());
+        return personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(role, INACTIVE);
     }
 
     @Override
