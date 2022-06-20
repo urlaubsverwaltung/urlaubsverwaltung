@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.synyx.urlaubsverwaltung.application.ApplicationProperties;
@@ -25,6 +26,8 @@ class ApplicationReminderMailConfigurationTest {
 
     @Mock
     private ScheduleLocking scheduleLocking;
+    @Mock
+    private ThreadPoolTaskScheduler taskScheduler;
 
     @Test
     void sendsWaitingApplicationReminderWithGivenCronJobInterval() {
@@ -35,7 +38,7 @@ class ApplicationReminderMailConfigurationTest {
 
         final ApplicationProperties properties = new ApplicationProperties();
         final ApplicationReminderMailService service = mock(ApplicationReminderMailService.class);
-        final ApplicationReminderMailConfiguration sut = new ApplicationReminderMailConfiguration(properties, service, scheduleLocking);
+        final ApplicationReminderMailConfiguration sut = new ApplicationReminderMailConfiguration(properties, service, scheduleLocking, taskScheduler);
 
         final ScheduledTaskRegistrar taskRegistrar = new ScheduledTaskRegistrar();
         sut.configureTasks(taskRegistrar);

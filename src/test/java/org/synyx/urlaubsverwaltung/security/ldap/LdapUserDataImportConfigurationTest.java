@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
@@ -24,6 +25,8 @@ class LdapUserDataImportConfigurationTest {
 
     @Mock
     private ScheduleLocking scheduleLocking;
+    @Mock
+    private ThreadPoolTaskScheduler taskScheduler;
 
     @Test
     void importsLdapUserDataWithGivenCronJobInterval() {
@@ -32,7 +35,7 @@ class LdapUserDataImportConfigurationTest {
 
         final DirectoryServiceSecurityProperties properties = new DirectoryServiceSecurityProperties();
         final LdapUserDataImporter importer = mock(LdapUserDataImporter.class);
-        final LdapUserDataImportConfiguration sut = new LdapUserDataImportConfiguration(properties, importer, scheduleLocking);
+        final LdapUserDataImportConfiguration sut = new LdapUserDataImportConfiguration(properties, importer, scheduleLocking, taskScheduler);
 
         final ScheduledTaskRegistrar taskRegistrar = new ScheduledTaskRegistrar();
         sut.configureTasks(taskRegistrar);

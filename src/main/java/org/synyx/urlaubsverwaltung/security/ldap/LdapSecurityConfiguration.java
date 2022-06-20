@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
@@ -98,8 +99,8 @@ public class LdapSecurityConfiguration {
         }
 
         @Bean
-        public LdapUserDataImportConfiguration ldapUserDataImportConfiguration(LdapUserDataImporter ldapUserDataImporter, ScheduleLocking scheduleLocking) {
-            return new LdapUserDataImportConfiguration(directoryServiceSecurityProperties, ldapUserDataImporter, scheduleLocking);
+        public LdapUserDataImportConfiguration ldapUserDataImportConfiguration(LdapUserDataImporter ldapUserDataImporter, ScheduleLocking scheduleLocking, ThreadPoolTaskScheduler taskScheduler) {
+            return new LdapUserDataImportConfiguration(directoryServiceSecurityProperties, ldapUserDataImporter, scheduleLocking, taskScheduler);
         }
 
         @Bean

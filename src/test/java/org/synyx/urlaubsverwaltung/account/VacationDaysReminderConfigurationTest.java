@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
@@ -28,10 +28,12 @@ class VacationDaysReminderConfigurationTest {
     private VacationDaysReminderService vacationDaysReminderService;
     @Mock
     private ScheduleLocking scheduleLocking;
+    @Mock
+    private ThreadPoolTaskScheduler taskScheduler;
 
     @BeforeEach
     void setUp() {
-        sut = new VacationDaysReminderConfiguration(new AccountProperties(), vacationDaysReminderService, scheduleLocking);
+        sut = new VacationDaysReminderConfiguration(new AccountProperties(), vacationDaysReminderService, scheduleLocking, taskScheduler);
     }
 
     @Test
