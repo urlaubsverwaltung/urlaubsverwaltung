@@ -86,11 +86,21 @@ class ApplicationMailService {
             .build();
         mailService.send(mailToApplicant);
 
+        // Inform all person of interest like boss or department head that the application for leave has been allowed
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
+        final Mail mailToRelevantRecipients = Mail.builder()
+            .withRecipient(relevantRecipientsToInform)
+            .withSubject("subject.application.allowed.boss", application.getPerson().getNiceName())
+            .withTemplate("allowed_office_boss", model)
+            .withAttachment(CALENDAR_ICS, calendarFile)
+            .build();
+        mailService.send(mailToRelevantRecipients);
+
         // Inform office that there is a new allowed application for leave
         final Mail mailToOffice = Mail.builder()
             .withRecipient(NOTIFICATION_OFFICE)
-            .withSubject("subject.application.allowed.office")
-            .withTemplate("allowed_office", model)
+            .withSubject("subject.application.allowed.office", application.getPerson().getNiceName())
+            .withTemplate("allowed_office_boss", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToOffice);

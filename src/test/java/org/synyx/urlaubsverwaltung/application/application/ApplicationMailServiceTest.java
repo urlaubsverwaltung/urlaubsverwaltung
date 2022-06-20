@@ -96,6 +96,9 @@ class ApplicationMailServiceTest {
 
         final ApplicationComment applicationComment = new ApplicationComment(person, clock);
 
+        final Person boss = new Person();
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss));
+
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("vacationType", "something");
@@ -105,7 +108,7 @@ class ApplicationMailServiceTest {
         sut.sendAllowedNotification(application, applicationComment);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService, times(2)).send(argument.capture());
+        verify(mailService, times(3)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.allowed.user");
@@ -113,12 +116,18 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
-        assertThat(mails.get(1).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
-        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.office");
-        assertThat(mails.get(1).getTemplateName()).isEqualTo("allowed_office");
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(boss));
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.boss");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("allowed_office_boss");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
         assertThat(mails.get(1).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
         assertThat(mails.get(1).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
+        assertThat(mails.get(2).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
+        assertThat(mails.get(2).getSubjectMessageKey()).isEqualTo("subject.application.allowed.office");
+        assertThat(mails.get(2).getTemplateName()).isEqualTo("allowed_office_boss");
+        assertThat(mails.get(2).getTemplateModel()).isEqualTo(model);
+        assertThat(mails.get(2).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
+        assertThat(mails.get(2).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
     }
 
     @Test
