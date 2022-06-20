@@ -142,7 +142,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public List<Person> getPersonsWithNotificationType(final MailNotification notification) {
+    public List<Person> getActivePersonsWithNotificationType(final MailNotification notification) {
         return personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, notification);
     }
 

@@ -74,10 +74,10 @@ class ApplicationRecipientService {
          */
 
         final Person applicationPerson = application.getPerson();
-        final List<Person> bosses = personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
+        final List<Person> bosses = personService.getActivePersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
 
         final List<Person> relevantBosses =
-            personService.getPersonsWithNotificationType(NOTIFICATION_BOSS_DEPARTMENTS).stream()
+            personService.getActivePersonsWithNotificationType(NOTIFICATION_BOSS_DEPARTMENTS).stream()
                 .filter(bossesForDepartmentOf(applicationPerson))
                 .collect(toList());
 
@@ -102,7 +102,7 @@ class ApplicationRecipientService {
      * @return list of recipients with NOTIFICATION_OFFICE
      */
     List<Person> getRecipientsWithOfficeNotifications() {
-        return personService.getPersonsWithNotificationType(NOTIFICATION_OFFICE);
+        return personService.getActivePersonsWithNotificationType(NOTIFICATION_OFFICE);
     }
 
     private Predicate<Person> bossesForDepartmentOf(Person applicationPerson) {
@@ -127,7 +127,7 @@ class ApplicationRecipientService {
         Predicate<Person> responsibleSecondStageAuthority = secondStageAuthority ->
             departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, applicationPerson);
 
-        return personService.getPersonsWithNotificationType(NOTIFICATION_SECOND_STAGE_AUTHORITY)
+        return personService.getActivePersonsWithNotificationType(NOTIFICATION_SECOND_STAGE_AUTHORITY)
             .stream()
             .filter(responsibleSecondStageAuthority)
             .filter(without(applicationPerson))
@@ -142,7 +142,7 @@ class ApplicationRecipientService {
         final Predicate<Person> responsibleDepartmentHeads = departmentHead ->
             departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, applicationPerson);
 
-        return personService.getPersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)
+        return personService.getActivePersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)
             .stream()
             .filter(responsibleDepartmentHeads)
             .filter(without(applicationPerson))

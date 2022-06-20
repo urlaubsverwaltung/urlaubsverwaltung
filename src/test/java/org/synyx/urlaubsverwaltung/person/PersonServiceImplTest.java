@@ -276,7 +276,7 @@ class PersonServiceImplTest {
 
         when(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_BOSS_ALL)).thenReturn(List.of(boss, office));
 
-        final List<Person> filteredList = sut.getPersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
+        final List<Person> filteredList = sut.getActivePersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
         assertThat(filteredList)
             .hasSize(2)
             .contains(boss)

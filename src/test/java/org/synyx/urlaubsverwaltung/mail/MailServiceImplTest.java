@@ -60,7 +60,7 @@ class MailServiceImplTest {
         final Person person = new Person();
         person.setEmail("mail@example.org");
         final List<Person> persons = List.of(person);
-        when(personService.getPersonsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(persons);
+        when(personService.getActivePersonsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(persons);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("someModel", "something");
@@ -216,7 +216,7 @@ class MailServiceImplTest {
 
         final Person hans = new Person();
         hans.setEmail("hans@example.org");
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_USER)).thenReturn(List.of(hans));
+        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_USER)).thenReturn(List.of(hans));
 
         final Person franz = new Person();
         franz.setEmail("franz@example.org");

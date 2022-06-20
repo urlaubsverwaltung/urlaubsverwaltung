@@ -99,7 +99,7 @@ public interface PersonService {
      * @param notification by which the persons are filtered
      * @return list of persons with the given notification type
      */
-    List<Person> getPersonsWithNotificationType(MailNotification notification);
+    List<Person> getActivePersonsWithNotificationType(MailNotification notification);
 
     /**
      * returns all active persons ordered by first name.
