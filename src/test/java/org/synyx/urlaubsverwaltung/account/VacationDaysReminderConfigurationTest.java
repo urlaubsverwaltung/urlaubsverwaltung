@@ -5,13 +5,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.synyx.urlaubsverwaltung.config.ScheduleLocking;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsSecondArg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class VacationDaysReminderConfigurationTest {
@@ -20,14 +26,21 @@ class VacationDaysReminderConfigurationTest {
 
     @Mock
     private VacationDaysReminderService vacationDaysReminderService;
+    @Mock
+    private ScheduleLocking scheduleLocking;
+    @Mock
+    private ThreadPoolTaskScheduler taskScheduler;
 
     @BeforeEach
     void setUp() {
-        sut = new VacationDaysReminderConfiguration(new AccountProperties(), vacationDaysReminderService);
+        sut = new VacationDaysReminderConfiguration(new AccountProperties(), vacationDaysReminderService, scheduleLocking, taskScheduler);
     }
 
     @Test
     void ensureCronTasksForReminderServiceAreAdded() {
+
+        when(scheduleLocking.withLock(eq("RemindForCurrentlyLeftVacationDays"), any(Runnable.class))).thenAnswer(returnsSecondArg());
+        when(scheduleLocking.withLock(eq("NotifyForExpiredRemainingVacationDays"), any(Runnable.class))).thenAnswer(returnsSecondArg());
 
         final ScheduledTaskRegistrar taskRegistrar = new ScheduledTaskRegistrar();
         sut.configureTasks(taskRegistrar);
