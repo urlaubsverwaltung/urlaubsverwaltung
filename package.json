@@ -52,7 +52,7 @@
     "@babel/eslint-parser": "7.18.2",
     "@babel/plugin-syntax-dynamic-import": "7.8.3",
     "@babel/preset-env": "7.18.2",
-    "@types/jest": "28.1.1",
+    "@types/jest": "28.1.2",
     "@urlaubsverwaltung/eslint-plugin": "1.2.0",
     "autoprefixer": "10.4.7",
     "babel-jest": "28.1.1",
