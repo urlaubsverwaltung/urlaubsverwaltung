@@ -212,9 +212,6 @@ class PersonServiceImplTest {
     @Test
     void ensureGetActivePersonsReturnsOnlyPersonsThatHaveNotInactiveRole() {
 
-        final Person inactive = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        inactive.setPermissions(List.of(INACTIVE));
-
         final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
         user.setPermissions(List.of(USER));
 
@@ -224,7 +221,7 @@ class PersonServiceImplTest {
         final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(USER, BOSS, OFFICE));
 
-        when(personRepository.findAll()).thenReturn(asList(inactive, user, boss, office));
+        when(personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE)).thenReturn(List.of(user, boss, office));
 
         final List<Person> activePersons = sut.getActivePersons();
         assertThat(activePersons)
@@ -312,23 +309,6 @@ class PersonServiceImplTest {
         when(personRepository.findAll()).thenReturn(asList(shane, carl, rick));
 
         final List<Person> sortedList = sut.getActivePersons();
-        assertThat(sortedList)
-            .containsExactly(carl, rick, shane);
-    }
-
-
-    @Test
-    void ensureGetInactivePersonsReturnSortedList() {
-
-        final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
-        shane.setPermissions(List.of(INACTIVE));
-        final Person carl = new Person("carl", "carl", "carl", "carl@example.org");
-        carl.setPermissions(List.of(INACTIVE));
-        final Person rick = new Person("rick", "rick", "rick", "rick@example.org");
-        rick.setPermissions(List.of(INACTIVE));
-        when(personRepository.findAll()).thenReturn(asList(shane, carl, rick));
-
-        final List<Person> sortedList = sut.getInactivePersons();
         assertThat(sortedList)
             .containsExactly(carl, rick, shane);
     }
