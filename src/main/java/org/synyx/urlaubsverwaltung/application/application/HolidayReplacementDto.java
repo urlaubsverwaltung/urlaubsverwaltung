@@ -38,7 +38,6 @@ public class HolidayReplacementDto {
     public String toString() {
         return "HolidayReplacementDto{" +
             ", person=" + person +
-            ", note='" + note + '\'' +
             ", departments='" + departments + '\'' +
             '}';
     }

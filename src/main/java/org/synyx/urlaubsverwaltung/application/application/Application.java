@@ -428,7 +428,6 @@ public class Application {
             ", vacationType=" + vacationType +
             ", dayLength=" + dayLength +
             ", holidayReplacements=" + holidayReplacements +
-            ", address='" + address + '\'' +
             ", applicationDate=" + applicationDate +
             ", cancelDate=" + cancelDate +
             ", editedDate=" + editedDate +

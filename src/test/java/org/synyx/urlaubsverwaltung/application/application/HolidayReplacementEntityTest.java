@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementDto;
-import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,5 +78,18 @@ class HolidayReplacementEntityTest {
             .isNotEqualTo(otherHolidayReplacement.hashCode())
             .isNotEqualTo(new Object().hashCode())
             .isNotEqualTo(holidayReplacementEntityOtherNote.hashCode());
+    }
+
+    @Test
+    void ensureDoNotLogNote() {
+        final Person holidayReplacement = new Person();
+        holidayReplacement.setId(1);
+        final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
+        holidayReplacementEntity.setPerson(holidayReplacement);
+        holidayReplacementEntity.setNote("This is some text for the replacement note");
+
+        assertThat(holidayReplacementEntity)
+            .hasToString("HolidayReplacementEntity{person=Person{id='1'}}");
+        assertThat(holidayReplacementEntity.toString()).doesNotContain("note");
     }
 }

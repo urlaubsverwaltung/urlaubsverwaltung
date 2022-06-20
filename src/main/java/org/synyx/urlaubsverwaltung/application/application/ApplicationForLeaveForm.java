@@ -242,7 +242,6 @@ public class ApplicationForLeaveForm {
             ", hours=" + hours +
             ", minutes=" + minutes +
             ", holidayReplacements=" + holidayReplacements +
-            ", address='" + address + '\'' +
             ", teamInformed=" + teamInformed +
             '}';
     }
