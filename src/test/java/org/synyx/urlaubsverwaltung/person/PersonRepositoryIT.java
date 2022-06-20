@@ -79,6 +79,44 @@ class PersonRepositoryIT extends TestContainersBase {
         final List<Person> notInactivePersons = sut.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
         assertThat(notInactivePersons).containsExactly(bettina, peter, xenia);
     }
+
+    @Test
+    void findByPersonByPermissionsContaining() {
+
+        final Person marlene = new Person("marlene", "Muster", "Marlene", "muster@example.org");
+        marlene.setPermissions(List.of(USER, INACTIVE));
+        personService.save(marlene);
+
+        final Person peter = new Person("peter", "Muster", "Peter", "peter@example.org");
+        peter.setPermissions(List.of(USER, OFFICE));
+        personService.save(peter);
+
+        final Person bettina = new Person("bettina", "Muster", "bettina", "bettina@example.org");
+        bettina.setPermissions(List.of(USER));
+        personService.save(bettina);
+
+        final List<Person> personsWithOfficeRole = sut.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(OFFICE);
+        assertThat(personsWithOfficeRole).containsExactly(peter);
+    }
+
+    @Test
+    void ensureFindByPersonByPermissionsContainingOrderingIsCorrect() {
+
+        final Person xenia = new Person("xenia", "Basta", "xenia", "xenia@example.org");
+        xenia.setPermissions(List.of(USER));
+        personService.save(xenia);
+
+        final Person peter = new Person("peter", "Muster", "Peter", "peter@example.org");
+        peter.setPermissions(List.of(USER));
+        personService.save(peter);
+
+        final Person bettina = new Person("bettina", "Muster", "bettina", "bettina@example.org");
+        bettina.setPermissions(List.of(USER));
+        personService.save(bettina);
+
+        final List<Person> personsWithUserRole = sut.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(USER);
+        assertThat(personsWithUserRole).containsExactly(bettina, peter, xenia);
+    }
 }
 
 

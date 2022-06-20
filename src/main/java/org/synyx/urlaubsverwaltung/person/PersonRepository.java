@@ -17,4 +17,6 @@ interface PersonRepository extends JpaRepository<Person, Integer> {
     int countByPermissionsNotContaining(Role permission);
 
     List<Person> findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(Role permission);
+
+    List<Person> findByPermissionsContainingOrderByFirstNameAscLastNameAsc(Role permission);
 }

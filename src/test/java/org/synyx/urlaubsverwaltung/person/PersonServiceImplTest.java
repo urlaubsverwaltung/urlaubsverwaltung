@@ -237,16 +237,7 @@ class PersonServiceImplTest {
         final Person inactive = new Person("muster", "Muster", "Marlene", "muster@example.org");
         inactive.setPermissions(List.of(INACTIVE));
 
-        final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        user.setPermissions(List.of(USER));
-
-        final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        boss.setPermissions(asList(USER, BOSS));
-
-        final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        office.setPermissions(asList(USER, BOSS, OFFICE));
-
-        when(personRepository.findAll()).thenReturn(asList(inactive, user, boss, office));
+        when(personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE)).thenReturn(List.of(inactive));
 
         List<Person> inactivePersons = sut.getInactivePersons();
         assertThat(inactivePersons)

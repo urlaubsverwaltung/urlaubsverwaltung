@@ -135,11 +135,7 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public List<Person> getInactivePersons() {
-        return personRepository.findAll()
-            .stream()
-            .filter(person -> person.hasRole(INACTIVE))
-            .sorted(personComparator())
-            .collect(toList());
+        return personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
     }
 
     @Override
