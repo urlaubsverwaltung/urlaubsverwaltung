@@ -131,10 +131,6 @@ class PersonServiceImpl implements PersonService {
         return personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
     }
 
-    @Override
-    public List<Person> getInactivePersons() {
-        return personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
-    }
 
     @Override
     public List<Person> getActivePersonsByRole(final Role role) {
@@ -144,6 +140,11 @@ class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getActivePersonsWithNotificationType(final MailNotification notification) {
         return personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, notification);
+    }
+
+    @Override
+    public List<Person> getInactivePersons() {
+        return personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
     }
 
     @Override
