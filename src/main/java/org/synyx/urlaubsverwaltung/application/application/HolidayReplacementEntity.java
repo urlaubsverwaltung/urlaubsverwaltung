@@ -56,9 +56,8 @@ public class HolidayReplacementEntity {
 
     @Override
     public String toString() {
-        return "HolidayReplacement{" +
-            ", person=" + person +
-            ", note='" + note + '\'' +
+        return "HolidayReplacementEntity{" +
+            "person=" + person +
             '}';
     }
 }
