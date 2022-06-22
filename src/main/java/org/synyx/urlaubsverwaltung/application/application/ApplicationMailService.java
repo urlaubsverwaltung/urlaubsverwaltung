@@ -563,7 +563,83 @@ class ApplicationMailService {
     }
 
     /**
-     * Send an email to the applicant if an application for leave got cancelled by office.
+     * Sends an email to the recipients of interest notifying
+     * that a application for leave was directly cancelled.
+     *
+     * @param application that was cancelled directly
+     * @param comment     additional comment for the application
+     */
+    void sendCancelledDirectlyInformationToRecipientOfInterest(Application application, ApplicationComment comment) {
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(COMMENT, comment);
+
+        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
+        final Mail mailToAllowAndRemind = Mail.builder()
+            .withRecipient(recipients)
+            .withSubject("subject.application.cancelledDirectly.information.recipients_of_interest", application.getPerson().getNiceName())
+            .withTemplate("cancelled_directly_information_recipient_of_interest", model)
+            .build();
+
+        mailService.send(mailToAllowAndRemind);
+    }
+
+    /**
+     * Sends an email to the applicant if an application for leave got cancelled directly by himself.
+     *
+     * @param application the application which got cancelled directly
+     * @param comment     describes the reason of the direct cancellation
+     */
+    void sendCancelledDirectlyConfirmationByApplicant(Application application, ApplicationComment comment) {
+
+        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(COMMENT, comment);
+
+        // send cancelled by office information to the applicant
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.cancelledDirectly.user")
+            .withTemplate("cancelled_directly_confirmation_applicant", model)
+            .withAttachment(CALENDAR_ICS, calendarFile)
+            .build();
+
+        mailService.send(mailToApplicant);
+    }
+
+    /**
+     * Sends an email to the person of the given application
+     * that the office has cancelled a application directly on behalf of himself.
+     *
+     * @param application confirmed application on behalf
+     * @param comment     additional comment for the application
+     */
+    void sendCancelledDirectlyConfirmationByOffice(Application application, ApplicationComment comment) {
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put(APPLICATION, application);
+        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
+        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(COMMENT, comment);
+
+        final Mail mailToApplicant = Mail.builder()
+            .withRecipient(application.getPerson())
+            .withSubject("subject.application.cancelledDirectly.office")
+            .withTemplate("cancelled_directly_confirmation_office", model)
+            .build();
+
+        mailService.send(mailToApplicant);
+    }
+
+    /**
+     * Sends an email to the applicant if an application for leave got cancelled by office.
      *
      * @param application the application which got cancelled
      * @param comment     describes the reason of the cancellation

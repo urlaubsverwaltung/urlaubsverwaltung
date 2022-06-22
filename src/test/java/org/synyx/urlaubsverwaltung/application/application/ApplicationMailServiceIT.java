@@ -39,6 +39,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypeEntity;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
@@ -1305,6 +1306,132 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
+    void ensuresDirectCancelInformsRecipientOfInterest() throws Exception {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
+        final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setDayLength(FULL);
+        application.setCanceller(person);
+
+        final ApplicationComment comment = new ApplicationComment(person, clock);
+        comment.setText("Cancelled");
+
+        final Person recipientOfInterest = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(recipientOfInterest));
+
+        sut.sendCancelledDirectlyInformationToRecipientOfInterest(application, comment);
+
+        // was email sent to applicant?
+        final MimeMessage[] inboxRecipientOfInterest = greenMail.getReceivedMessagesForDomain(recipientOfInterest.getEmail());
+        assertThat(inboxRecipientOfInterest.length).isOne();
+
+        final Message msg = inboxRecipientOfInterest[0];
+        assertThat(msg.getSubject()).isEqualTo("Eine Abwesenheit von Lieschen Müller wurde storniert");
+        assertThat(new InternetAddress(recipientOfInterest.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(msg.getContent()).isEqualTo("Hallo Relevant Person," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "die Abwesenheit von Lieschen Müller vom 16.04.2021 bis zum 16.04.2021 wurde von Lieschen Müller storniert." + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
+            "Cancelled" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    16.04.2021" + EMAIL_LINE_BREAK);
+    }
+
+    @Test
+    void ensureApplicantReceivesNotificationsIfApplicantCancel() throws Exception {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setDayLength(FULL);
+
+        final ApplicationComment comment = new ApplicationComment(person, clock);
+        comment.setText("Wrong information - cancelled");
+
+        sut.sendCancelledDirectlyConfirmationByApplicant(application, comment);
+
+        // was email sent to applicant
+        final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxApplicant.length).isOne();
+
+        final MimeMessage msg = inboxApplicant[0];
+        assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde storniert");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(readPlainContent(msg)).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde erfolgreich storniert." + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
+            "Wrong information - cancelled" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    16.04.2021" + EMAIL_LINE_BREAK);
+
+        final List<DataSource> attachmentsRelevantPerson = getAttachments(msg);
+        assertThat(attachmentsRelevantPerson.get(0).getName()).contains("calendar.ics");
+    }
+
+    @Test
+    void ensureApplicantReceivesNotificationsIfOfficeCancel() throws MessagingException,
+        IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setStartDate(LocalDate.of(2021, Month.APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
+
+        final Person office = new Person("office", "Person", "Office", "office@example.org");
+        application.setCanceller(office);
+
+        final ApplicationComment comment = new ApplicationComment(office, clock);
+        comment.setText("Wrong information - cancelled");
+
+        sut.sendCancelledDirectlyConfirmationByOffice(application, comment);
+
+        // was email sent to applicant
+        final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxApplicant.length).isOne();
+
+        final Message msg = inboxApplicant[0];
+        assertThat(msg.getSubject()).isEqualTo("Eine Abwesenheit wurde für dich storniert");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde von Office Person erfolgreich storniert." + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Kommentar von Office Person:" + EMAIL_LINE_BREAK +
+            "Wrong information - cancelled" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    16.04.2021" + EMAIL_LINE_BREAK);
+    }
+
+    @Test
     void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws Exception {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
@@ -2484,7 +2611,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Application application = new Application();
         application.setId(1234);
         application.setPerson(person);
-        application.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY, "application.data.vacationType.holiday"));
+        application.setVacationType(createVacationTypeEntity(HOLIDAY, "application.data.vacationType.holiday"));
         application.setDayLength(FULL);
         application.setApplicationDate(now);
         application.setStartDate(now);

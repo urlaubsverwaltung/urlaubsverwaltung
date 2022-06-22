@@ -759,6 +759,134 @@ class ApplicationMailServiceTest {
     }
 
     @Test
+    void sendCancelledDirectlyInformationToRecipientOfInterest() {
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final Person person = new Person();
+
+        final VacationTypeEntity vacationType = new VacationTypeEntity();
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("application.data.vacationType.holiday");
+
+        when(messageSource.getMessage(eq(vacationType.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setPerson(person);
+        application.setDayLength(dayLength);
+
+        final ApplicationComment comment = new ApplicationComment(person, clock);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", "HOLIDAY");
+        model.put("dayLength", "FULL");
+        model.put("comment", comment);
+
+        final Person recipientOfInterest = new Person();
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(recipientOfInterest));
+
+        sut.sendCancelledDirectlyInformationToRecipientOfInterest(application, comment);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(recipientOfInterest));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.cancelledDirectly.information.recipients_of_interest");
+        assertThat(mail.getTemplateName()).isEqualTo("cancelled_directly_information_recipient_of_interest");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
+    }
+
+    @Test
+    void sendCancelledDirectlyConfirmationByApplicant() {
+
+        final Settings settings = new Settings();
+        settings.setTimeSettings(new TimeSettings());
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
+        when(iCalService.getSingleAppointment(any(), any())).thenReturn(attachment);
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final VacationTypeEntity vacationType = new VacationTypeEntity();
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("application.data.vacationType.holiday");
+
+        when(messageSource.getMessage(eq(vacationType.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
+
+        final Person person = new Person();
+
+        final Application application = new Application();
+        application.setStartDate(LocalDate.of(2022, 3, 3));
+        application.setEndDate(LocalDate.of(2022, 3, 3));
+        application.setVacationType(vacationType);
+        application.setPerson(person);
+        application.setDayLength(FULL);
+
+        final ApplicationComment comment = new ApplicationComment(person, clock);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", "HOLIDAY");
+        model.put("dayLength", "FULL");
+        model.put("comment", comment);
+
+        sut.sendCancelledDirectlyConfirmationByApplicant(application, comment);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.cancelledDirectly.user");
+        assertThat(mail.getTemplateName()).isEqualTo("cancelled_directly_confirmation_applicant");
+        assertThat(mail.getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
+        assertThat(mail.getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
+    }
+
+    @Test
+    void sendCancelledDirectlyConfirmationByOffice() {
+
+        final DayLength dayLength = FULL;
+        when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
+
+        final Person person = new Person();
+
+        final VacationTypeEntity vacationType = new VacationTypeEntity();
+        vacationType.setCategory(HOLIDAY);
+        vacationType.setMessageKey("application.data.vacationType.holiday");
+
+        when(messageSource.getMessage(eq(vacationType.getMessageKey()), any(), any())).thenReturn("HOLIDAY");
+
+        final Application application = new Application();
+        application.setVacationType(vacationType);
+        application.setPerson(person);
+        application.setDayLength(dayLength);
+
+        final ApplicationComment comment = new ApplicationComment(person, clock);
+
+        final Map<String, Object> model = new HashMap<>();
+        model.put("application", application);
+        model.put("vacationType", "HOLIDAY");
+        model.put("dayLength", "FULL");
+        model.put("comment", comment);
+
+        sut.sendCancelledDirectlyConfirmationByOffice(application, comment);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.cancelledDirectly.office");
+        assertThat(mail.getTemplateName()).isEqualTo("cancelled_directly_confirmation_office");
+        assertThat(mail.getTemplateModel()).isEqualTo(model);
+    }
+
+    @Test
     void sendCancelledByOfficeNotification() {
 
         final Settings settings = new Settings();

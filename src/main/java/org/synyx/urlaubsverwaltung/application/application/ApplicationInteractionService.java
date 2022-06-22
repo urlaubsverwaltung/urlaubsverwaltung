@@ -65,6 +65,16 @@ public interface ApplicationInteractionService {
     Application cancel(Application application, Person canceller, Optional<String> comment);
 
     /**
+     * Sets the application's state to cancelled without an approval.
+     *
+     * @param application to cancel directly
+     * @param canceller   executes the application's cancellation
+     * @param comment     giving further information to cancellation of application for leave (is optional)
+     * @return the cancelled application for leave
+     */
+    Application directCancel(Application application, Person canceller, Optional<String> comment);
+
+    /**
      * Decline a cancellation request
      *
      * @param application to cancel the cancellation request

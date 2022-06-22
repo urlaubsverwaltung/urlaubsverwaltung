@@ -997,6 +997,74 @@ class ApplicationInteractionServiceImplTest {
         verify(accountInteractionService).updateRemainingVacationDays(2014, person);
     }
 
+    // DIRECT CANCEL APPLICATION FOR LEAVE -----------------------------------------------------------------------------
+
+    @Test
+    void ensureDirectCancelByApplicantChangesStateAndOtherAttributesAndSendsEmail() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+        final Optional<String> comment = of("Foo");
+
+        final Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
+
+        final ApplicationComment applicationComment = new ApplicationComment(person, clock);
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.CANCELLED_DIRECTLY, comment, person)).thenReturn(applicationComment);
+
+        final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
+        applicationForLeave.setHolidayReplacements(List.of(holidayReplacement));
+
+        final Application savedApplication = sut.directCancel(applicationForLeave, person, comment);
+        assertThat(savedApplication.getStatus()).isEqualTo(ApplicationStatus.CANCELLED);
+        assertThat(savedApplication.getPerson()).isEqualTo(person);
+        assertThat(savedApplication.getCanceller()).isEqualTo(person);
+        assertThat(savedApplication.getCancelDate()).isEqualTo(LocalDate.now(UTC));
+
+        verify(applicationMailService).sendCancelledDirectlyConfirmationByApplicant(savedApplication, applicationComment);
+        verify(applicationMailService).sendCancelledDirectlyInformationToRecipientOfInterest(savedApplication, applicationComment);
+
+        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
+
+        verify(accountInteractionService).updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
+    }
+
+    @Test
+    void ensureDirectCancelByOfficeChangesStateAndOtherAttributesAndSendsEmail() {
+
+        final Person office = new Person("office", "office", "orlanda", "office@example.org");
+        office.setId(1);
+        office.setPermissions(List.of(USER, OFFICE));
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(2);
+        final Optional<String> comment = of("Foo");
+
+        final Application applicationForLeave = getDummyApplication(person);
+        applicationForLeave.setStatus(WAITING);
+        when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
+
+        final ApplicationComment applicationComment = new ApplicationComment(office, clock);
+        when(commentService.create(applicationForLeave, ApplicationCommentAction.CANCELLED_DIRECTLY, comment, office)).thenReturn(applicationComment);
+
+        final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
+        applicationForLeave.setHolidayReplacements(List.of(holidayReplacement));
+
+        final Application savedApplication = sut.directCancel(applicationForLeave, office, comment);
+        assertThat(savedApplication.getStatus()).isEqualTo(ApplicationStatus.CANCELLED);
+        assertThat(savedApplication.getPerson()).isEqualTo(person);
+        assertThat(savedApplication.getCanceller()).isEqualTo(office);
+        assertThat(savedApplication.getCancelDate()).isEqualTo(LocalDate.now(UTC));
+
+        verify(applicationMailService).sendCancelledDirectlyConfirmationByOffice(savedApplication, applicationComment);
+        verify(applicationMailService).sendCancelledDirectlyInformationToRecipientOfInterest(savedApplication, applicationComment);
+
+        verify(applicationMailService).notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
+
+        verify(accountInteractionService).updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
+    }
+
     // decline cancellation request -------------------------------------------------------------------------------------
     @Test
     void declineCancellationRequest() {

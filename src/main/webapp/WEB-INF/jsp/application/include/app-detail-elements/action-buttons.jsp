@@ -60,7 +60,7 @@
 <c:if test="${((application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED') && IS_OWN) || (isOffice && (application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED' || application.status == 'ALLOWED_CANCELLATION_REQUESTED'))}">
 
     <c:choose>
-        <c:when test="${!isOffice && (application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED')}">
+        <c:when test="${application.vacationType.requiresApproval == true && !isOffice && (application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED')}">
             <c:set var="CANCEL_TITLE">
                 <spring:message code='action.delete.request'/>
             </c:set>

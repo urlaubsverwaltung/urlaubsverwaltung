@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -826,6 +827,22 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
+    void cancelApplicationAllowedIfSignedInUserIsApplicationUserAndDoesNotRequireApproval() throws Exception {
+
+        final Person signedInPerson = somePerson();
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Application application = applicationOfPerson(signedInPerson);
+        application.getVacationType().setRequiresApproval(false);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+
+        perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(status().isFound());
+
+        verify(applicationInteractionService).directCancel(eq(application), eq(signedInPerson), any());
+    }
+
+    @Test
     void cancelApplicationRedirectsToApplicationIfValidationFails() throws Exception {
 
         final Person signedInPerson = somePerson();
@@ -1047,14 +1064,14 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     private static Application applicationOfPerson(Person person) {
-
-        Application application = new Application();
-
+        final Application application = new Application();
         application.setPerson(person);
         application.setStartDate(LocalDate.now().plusDays(10));
         application.setEndDate(LocalDate.now().plusDays(30));
         application.setStatus(WAITING);
-
+        final VacationTypeEntity vacationType = new VacationTypeEntity();
+        vacationType.setRequiresApproval(true);
+        application.setVacationType(vacationType);
         return application;
     }
 
