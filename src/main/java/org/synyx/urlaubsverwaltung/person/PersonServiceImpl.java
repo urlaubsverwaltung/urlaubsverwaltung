@@ -10,12 +10,10 @@ import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -130,34 +128,23 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public List<Person> getActivePersons() {
-        return personRepository.findAll()
-            .stream()
-            .filter(person -> !person.hasRole(INACTIVE))
-            .sorted(personComparator())
-            .collect(toList());
+        return personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
+    }
+
+
+    @Override
+    public List<Person> getActivePersonsByRole(final Role role) {
+        return personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(role, INACTIVE);
+    }
+
+    @Override
+    public List<Person> getActivePersonsWithNotificationType(final MailNotification notification) {
+        return personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, notification);
     }
 
     @Override
     public List<Person> getInactivePersons() {
-        return personRepository.findAll()
-            .stream()
-            .filter(person -> person.hasRole(INACTIVE))
-            .sorted(personComparator())
-            .collect(toList());
-    }
-
-    @Override
-    public List<Person> getActivePersonsByRole(final Role role) {
-        return getActivePersons().stream()
-            .filter(person -> person.hasRole(role))
-            .collect(toList());
-    }
-
-    @Override
-    public List<Person> getPersonsWithNotificationType(final MailNotification notification) {
-        return getActivePersons().stream()
-            .filter(person -> person.hasNotificationType(notification))
-            .collect(toList());
+        return personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
     }
 
     @Override
@@ -207,9 +194,5 @@ class PersonServiceImpl implements PersonService {
     @Override
     public int numberOfActivePersons() {
         return personRepository.countByPermissionsNotContaining(INACTIVE);
-    }
-
-    private Comparator<Person> personComparator() {
-        return Comparator.comparing(p -> p.getNiceName().toLowerCase());
     }
 }

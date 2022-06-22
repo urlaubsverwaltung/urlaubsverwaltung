@@ -61,7 +61,7 @@ class MailServiceImpl implements MailService {
     private List<Person> getRecipients(Mail mail) {
 
         final List<Person> recipients = new ArrayList<>();
-        mail.getMailNotificationRecipients().ifPresent(mailNotification -> recipients.addAll(personService.getPersonsWithNotificationType(mailNotification)));
+        mail.getMailNotificationRecipients().ifPresent(mailNotification -> recipients.addAll(personService.getActivePersonsWithNotificationType(mailNotification)));
         mail.getMailAddressRecipients().ifPresent(recipients::addAll);
 
         if (mail.isSendToTechnicalMail()) {

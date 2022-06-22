@@ -86,6 +86,13 @@ public interface PersonService {
     Optional<Person> getPersonByMailAddress(String mailAddress);
 
     /**
+     * returns all active persons ordered by first name.
+     *
+     * @return returns all active persons
+     */
+    List<Person> getActivePersons();
+
+    /**
      * finds all {@link Person}s in the database that have the given {@link Role}.
      *
      * @param role {@link Role}
@@ -99,14 +106,7 @@ public interface PersonService {
      * @param notification by which the persons are filtered
      * @return list of persons with the given notification type
      */
-    List<Person> getPersonsWithNotificationType(MailNotification notification);
-
-    /**
-     * returns all active persons ordered by first name.
-     *
-     * @return returns all active persons
-     */
-    List<Person> getActivePersons();
+    List<Person> getActivePersonsWithNotificationType(MailNotification notification);
 
     /**
      * returns all inactive persons ordered by first name.
