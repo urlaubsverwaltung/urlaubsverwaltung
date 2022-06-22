@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -115,9 +116,13 @@ class ApplicationRecipientService {
     }
 
     private List<Person> getBossesWithDepartmentNotification(Person applicationPerson) {
+        final List<Department> applicationPersonDepartments = departmentService.getAssignedDepartmentsOfMember(applicationPerson);
+
         return personService.getActivePersonsWithNotificationType(NOTIFICATION_BOSS_DEPARTMENTS).stream()
-            .filter(boss -> departmentService.getAssignedDepartmentsOfMember(applicationPerson).stream()
-                .anyMatch(department -> departmentService.getAssignedDepartmentsOfMember(boss).contains(department)))
+            .filter(boss -> {
+                final List<Department> bossDepartments = departmentService.getAssignedDepartmentsOfMember(boss);
+                return applicationPersonDepartments.stream().anyMatch(bossDepartments::contains);
+            })
             .collect(toList());
     }
 }
