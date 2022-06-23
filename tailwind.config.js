@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 const plugin = require("tailwindcss/plugin");
 const defaultConfig = require("tailwindcss/defaultConfig.js");
 
