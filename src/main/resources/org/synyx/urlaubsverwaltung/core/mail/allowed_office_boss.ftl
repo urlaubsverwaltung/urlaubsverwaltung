@@ -1,6 +1,6 @@
 Hallo ${recipient.niceName},
 
-folgende Abwesenheit von ${application.person.niceName} wurde genehmigt.
+folgende Abwesenheit von ${application.person.niceName} wurde von ${application.boss.niceName} genehmigt.
 
     ${baseLinkURL}web/application/${application.id?c}
 
