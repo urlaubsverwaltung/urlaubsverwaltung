@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
@@ -152,14 +153,9 @@ public class VacationDaysService {
             return ZERO;
         }
 
-        // get all applications for leave for a person
-        final List<Application> allApplicationsForLeave = applicationService.getApplicationsForACertainPeriodAndPerson(firstMilestone, lastMilestone, person);
-
         // filter them since only WAITING, TEMPORARY_ALLOWED, ALLOWED and ALLOWED_CANCELLATION_REQUESTED applications for leave of type holiday are relevant
-        final List<Application> applicationsForLeave = allApplicationsForLeave.stream()
-            .filter(application -> HOLIDAY.equals(application.getVacationType().getCategory()))
-            .filter(application -> application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
-            .collect(toList());
+        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        final List<Application> applicationsForLeave = applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstMilestone, lastMilestone, person, statuses, HOLIDAY);
 
         BigDecimal usedDays = ZERO;
         for (final Application application : applicationsForLeave) {
