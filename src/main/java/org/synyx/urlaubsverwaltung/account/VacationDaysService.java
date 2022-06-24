@@ -22,6 +22,7 @@ import static java.time.Month.MARCH;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.isBeforeApril;
@@ -139,11 +140,10 @@ public class VacationDaysService {
         // get all applications for leave for a person
         final List<Application> allApplicationsForLeave = applicationService.getApplicationsForACertainPeriodAndPerson(firstMilestone, lastMilestone, person);
 
-        // TODO We need application.hasStatus(TEMPORARY_ALLOWED)
-        // filter them since only WAITING, ALLOWED and ALLOWED_CANCELLATION_REQUESTED applications for leave of type holiday are relevant
+        // filter them since only WAITING, TEMPORARY_ALLOWED, ALLOWED and ALLOWED_CANCELLATION_REQUESTED applications for leave of type holiday are relevant
         final List<Application> applicationsForLeave = allApplicationsForLeave.stream()
             .filter(application -> HOLIDAY.equals(application.getVacationType().getCategory()))
-            .filter(application -> application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
+            .filter(application -> application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
             .collect(toList());
 
         BigDecimal usedDays = ZERO;

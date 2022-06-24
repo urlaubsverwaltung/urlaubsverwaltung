@@ -54,6 +54,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
@@ -105,6 +106,15 @@ class VacationDaysServiceTest {
         a1.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
         a1.setPerson(person);
 
+        // 1 day
+        final Application a11 = new Application();
+        a11.setStartDate(LocalDate.of(2012, MARCH, 1));
+        a11.setEndDate(LocalDate.of(2012, MARCH, 1));
+        a11.setDayLength(FULL);
+        a11.setStatus(TEMPORARY_ALLOWED);
+        a11.setVacationType(TestDataCreator.createVacationTypeEntity(HOLIDAY));
+        a11.setPerson(person);
+
         // 5 days
         final Application a2 = new Application();
         a2.setStartDate(LocalDate.of(2012, MARCH, 12));
@@ -142,11 +152,11 @@ class VacationDaysServiceTest {
         a5.setPerson(person);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
-            .thenReturn(List.of(a1, a2, a3, a4, a5));
+            .thenReturn(List.of(a1, a2, a3, a4, a5, a11));
 
         // must be: 2 + 5 + 1 + 4 + 2 = 13
         final BigDecimal days = sut.getUsedVacationDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
-        assertThat(days).isEqualTo(new BigDecimal("14.0"));
+        assertThat(days).isEqualTo(new BigDecimal("15.0"));
     }
 
     @Test
