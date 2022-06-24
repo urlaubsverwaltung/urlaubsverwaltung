@@ -20,7 +20,6 @@ import static java.math.BigDecimal.ZERO;
 import static java.time.Month.APRIL;
 import static java.time.Month.MARCH;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -153,17 +152,15 @@ public class VacationDaysService {
             return ZERO;
         }
 
-        // filter them since only WAITING, TEMPORARY_ALLOWED, ALLOWED and ALLOWED_CANCELLATION_REQUESTED applications for leave of type holiday are relevant
         final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        final List<Application> applicationsForLeave = applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstMilestone, lastMilestone, person, statuses, HOLIDAY);
+        return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstMilestone, lastMilestone, person, statuses, HOLIDAY).stream()
+            .map(application -> getUsedVacationDays(application, person, firstMilestone, lastMilestone))
+            .reduce(ZERO, BigDecimal::add);
+    }
 
-        BigDecimal usedDays = ZERO;
-        for (final Application application : applicationsForLeave) {
-            final LocalDate startDate = application.getStartDate().isBefore(firstMilestone) ? firstMilestone : application.getStartDate();
-            final LocalDate endDate = application.getEndDate().isAfter(lastMilestone) ? lastMilestone : application.getEndDate();
-            usedDays = usedDays.add(workDaysCountService.getWorkDaysCount(application.getDayLength(), startDate, endDate, person));
-        }
-
-        return usedDays;
+    private BigDecimal getUsedVacationDays(Application application, Person person, LocalDate firstMilestone, LocalDate lastMilestone) {
+        final LocalDate startDate = application.getStartDate().isBefore(firstMilestone) ? firstMilestone : application.getStartDate();
+        final LocalDate endDate = application.getEndDate().isAfter(lastMilestone) ? lastMilestone : application.getEndDate();
+        return workDaysCountService.getWorkDaysCount(application.getDayLength(), startDate, endDate, person);
     }
 }
