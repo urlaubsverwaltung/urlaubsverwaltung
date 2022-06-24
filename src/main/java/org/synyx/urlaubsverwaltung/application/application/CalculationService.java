@@ -106,7 +106,7 @@ class CalculationService {
         // we also need to look at the next year, because "remaining days" from this year may already have been booked then
         // call accountService directly to avoid auto-creating a new account for next year
         final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
-        final BigDecimal vacationDaysAlreadyUsedNextYear = vacationDaysService.getRemainingVacationDaysAlreadyUsed(accountNextYear);
+        final BigDecimal vacationDaysAlreadyUsedNextYear = vacationDaysService.getUsedRemainingVacationDays(accountNextYear);
 
         final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear);
         LOG.debug("vacation days left of years {} and {} are {} days", year, year + 1, vacationDaysLeft);

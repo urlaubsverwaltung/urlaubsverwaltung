@@ -145,7 +145,7 @@ class VacationDaysServiceTest {
             .thenReturn(List.of(a1, a2, a3, a4, a5));
 
         // must be: 2 + 5 + 1 + 4 + 2 = 13
-        final BigDecimal days = sut.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
+        final BigDecimal days = sut.getUsedVacationDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
         assertThat(days).isEqualTo(new BigDecimal("14.0"));
     }
 
@@ -193,7 +193,7 @@ class VacationDaysServiceTest {
             .thenReturn(List.of(a1, a2, a4));
 
         // must be: 2.5 + 5 + 4 = 11.5
-        final BigDecimal days = sut.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
+        final BigDecimal days = sut.getUsedVacationDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
         assertThat(days).isEqualTo(new BigDecimal("11.5"));
     }
 
@@ -241,7 +241,7 @@ class VacationDaysServiceTest {
             .thenReturn(List.of(cancelledHoliday, rejectedHoliday, waitingSpecialLeave, allowedSpecialLeave,
                 waitingUnpaidLeave, allowedUnpaidLeave, waitingOvertime, allowedOvertime));
 
-        final BigDecimal days = sut.getUsedDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
+        final BigDecimal days = sut.getUsedVacationDaysBetweenTwoMilestones(person, firstMilestone, lastMilestone);
         assertThat(days).isEqualTo(ZERO);
     }
 
@@ -291,7 +291,7 @@ class VacationDaysServiceTest {
 
     @Test
     void testGetVacationDaysUsedOfEmptyAccount() {
-        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getRemainingVacationDaysAlreadyUsed(Optional.empty());
+        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getUsedRemainingVacationDays(Optional.empty());
         assertThat(remainingVacationDaysAlreadyUsed).isEqualTo(ZERO);
     }
 
@@ -301,7 +301,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setRemainingVacationDays(ZERO);
 
-        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getRemainingVacationDaysAlreadyUsed(Optional.of(account));
+        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getUsedRemainingVacationDays(Optional.of(account));
         assertThat(remainingVacationDaysAlreadyUsed).isEqualTo(ZERO);
     }
 
@@ -316,7 +316,7 @@ class VacationDaysServiceTest {
         account.get().setRemainingVacationDays(new BigDecimal("10"));
         account.get().setRemainingVacationDaysNotExpiring(new BigDecimal("0"));
 
-        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getRemainingVacationDaysAlreadyUsed(account);
+        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getUsedRemainingVacationDays(account);
         assertThat(remainingVacationDaysAlreadyUsed).isEqualTo(TEN);
     }
 
@@ -403,7 +403,7 @@ class VacationDaysServiceTest {
         account.setValidFrom(LocalDate.now(clock));
         account.setValidTo(ZonedDateTime.now(clock).plusDays(10).toLocalDate());
 
-        final BigDecimal usedDaysBeforeApril = sut.getUsedDaysBeforeApril(account);
+        final BigDecimal usedDaysBeforeApril = sut.getUsedVacationDaysBeforeApril(account);
         assertThat(usedDaysBeforeApril).isEqualTo(new BigDecimal(expectedUsedDays));
     }
 
@@ -427,7 +427,7 @@ class VacationDaysServiceTest {
         account.setValidFrom(LocalDate.now(clock));
         account.setValidTo(ZonedDateTime.now(clock).plusDays(10).toLocalDate());
 
-        final BigDecimal usedDaysAfterApril = sut.getUsedDaysAfterApril(account);
+        final BigDecimal usedDaysAfterApril = sut.getUsedVacationDaysAfterApril(account);
         assertThat(usedDaysAfterApril).isEqualTo(new BigDecimal(expectedUsedDays));
     }
 
@@ -446,12 +446,12 @@ class VacationDaysServiceTest {
         sut = new VacationDaysService(mock(WorkDaysCountService.class), applicationService, Clock.systemUTC()) {
 
             @Override
-            protected BigDecimal getUsedDaysBeforeApril(Account account) {
+            protected BigDecimal getUsedVacationDaysBeforeApril(Account account) {
                 return new BigDecimal(daysBeforeApril);
             }
 
             @Override
-            protected BigDecimal getUsedDaysAfterApril(Account account) {
+            protected BigDecimal getUsedVacationDaysAfterApril(Account account) {
                 return new BigDecimal(daysAfterApril);
             }
         };
