@@ -139,11 +139,11 @@ public class VacationDaysService {
         // get all applications for leave for a person
         final List<Application> allApplicationsForLeave = applicationService.getApplicationsForACertainPeriodAndPerson(firstMilestone, lastMilestone, person);
 
+        // TODO We need application.hasStatus(TEMPORARY_ALLOWED)
         // filter them since only WAITING, ALLOWED and ALLOWED_CANCELLATION_REQUESTED applications for leave of type holiday are relevant
         final List<Application> applicationsForLeave = allApplicationsForLeave.stream()
-            .filter(application -> HOLIDAY.equals(application.getVacationType().getCategory()) &&
-                // TODO and what is with the TEMPORARY_ALLOWED?
-                (application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)))
+            .filter(application -> HOLIDAY.equals(application.getVacationType().getCategory()))
+            .filter(application -> application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
             .collect(toList());
 
         BigDecimal usedDays = ZERO;
