@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
-import org.synyx.urlaubsverwaltung.util.DurationUtil;
+import org.synyx.urlaubsverwaltung.util.DurationFormatter;
 
 import java.util.Locale;
 
@@ -24,7 +24,7 @@ final class ApplicationForLeaveStatisticsMapper {
             applicationForLeaveStatistics.getTotalWaitingVacationDays(),
             applicationForLeaveStatistics.getWaitingVacationDays(),
             applicationForLeaveStatistics.getLeftVacationDays(),
-            DurationUtil.toDurationString(applicationForLeaveStatistics.getLeftOvertime(), messageSource, locale)
+            DurationFormatter.toDurationString(applicationForLeaveStatistics.getLeftOvertime(), messageSource, locale)
         );
     }
 }

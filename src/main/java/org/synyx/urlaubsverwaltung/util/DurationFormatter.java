@@ -5,7 +5,7 @@ import org.springframework.context.MessageSource;
 import java.time.Duration;
 import java.util.Locale;
 
-public class DurationUtil {
+public class DurationFormatter {
 
     public static String toDurationString(Duration javaTimeDuration, MessageSource messageSource, Locale locale) {
         if (javaTimeDuration == null) {
@@ -36,7 +36,7 @@ public class DurationUtil {
         return negative ? "-" + value : value;
     }
 
-    private DurationUtil() {
+    private DurationFormatter() {
         // ok
     }
 }

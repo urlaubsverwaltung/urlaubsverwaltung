@@ -11,14 +11,13 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.util.DurationUtil;
+import org.synyx.urlaubsverwaltung.util.DurationFormatter;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.Clock;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -148,7 +147,7 @@ class ApplicationForLeaveViewController {
             .id(application.getId())
             .person(toViewPerson(person))
             .vacationType(toViewVacationType(application.getVacationType()))
-            .duration(DurationUtil.toDurationString(application.getHours(), messageSource, locale))
+            .duration(DurationFormatter.toDurationString(application.getHours(), messageSource, locale))
             .dayLength(application.getDayLength())
             .workDays(decimalToString(application.getWorkDays(), locale))
             .statusWaiting(isWaiting)
@@ -322,7 +321,7 @@ class ApplicationForLeaveViewController {
             .person(toViewPerson(applicationPerson))
             .note(note)
             .pending(pending)
-            .duration(DurationUtil.toDurationString(application.getHours(), messageSource, locale))
+            .duration(DurationFormatter.toDurationString(application.getHours(), messageSource, locale))
             .workDays(decimalToString(workDays, locale))
             .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .dayLength(dayLength)

@@ -6,9 +6,6 @@ import java.time.Month;
 import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
-import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
-import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 
 public final class DateUtil {

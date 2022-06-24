@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class DurationUtilTest {
+class DurationFormatterTest {
 
     public static final Locale GERMAN = Locale.GERMAN;
 
@@ -27,7 +27,7 @@ class DurationUtilTest {
         when(messageSource.getMessage("minutes.abbr", new Object[]{}, GERMAN)).thenReturn("Min.");
 
         final Duration duration = Duration.ofMinutes(23*60+32);
-        final String durationString = DurationUtil.toDurationString(duration, messageSource, GERMAN);
+        final String durationString = DurationFormatter.toDurationString(duration, messageSource, GERMAN);
         assertThat(durationString).isEqualTo("23 Std. 32 Min.");
     }
 
@@ -38,7 +38,7 @@ class DurationUtilTest {
         when(messageSource.getMessage("minutes.abbr", new Object[]{}, GERMAN)).thenReturn("Min.");
 
         final Duration duration = Duration.ofDays(2).plus(Duration.ofHours(2)).plus(Duration.ofMinutes(61));
-        final String durationString = DurationUtil.toDurationString(duration, messageSource, GERMAN);
+        final String durationString = DurationFormatter.toDurationString(duration, messageSource, GERMAN);
         assertThat(durationString).isEqualTo("51 Std. 1 Min.");
     }
 
@@ -48,7 +48,7 @@ class DurationUtilTest {
         when(messageSource.getMessage("minutes.abbr", new Object[]{}, GERMAN)).thenReturn("Min.");
 
         final Duration duration = Duration.ofMinutes(1);
-        final String durationString = DurationUtil.toDurationString(duration, messageSource, GERMAN);
+        final String durationString = DurationFormatter.toDurationString(duration, messageSource, GERMAN);
         assertThat(durationString).isEqualTo("1 Min.");
     }
 
@@ -58,13 +58,13 @@ class DurationUtilTest {
         when(messageSource.getMessage("hours.abbr", new Object[]{}, GERMAN)).thenReturn("Std.");
 
         final Duration duration = Duration.ofDays(-1);
-        final String durationString = DurationUtil.toDurationString(duration, messageSource, GERMAN);
+        final String durationString = DurationFormatter.toDurationString(duration, messageSource, GERMAN);
         assertThat(durationString).isEqualTo("-24 Std.");
     }
 
     @Test
     void ensuresEmptyStringOnNull() {
-        final String durationString = DurationUtil.toDurationString(null, messageSource, GERMAN);
+        final String durationString = DurationFormatter.toDurationString(null, messageSource, GERMAN);
         assertThat(durationString).isEmpty();
     }
 
@@ -73,7 +73,7 @@ class DurationUtilTest {
 
         when(messageSource.getMessage("overtime.person.zero", new Object[]{}, GERMAN)).thenReturn("keine");
 
-        final String durationString = DurationUtil.toDurationString(Duration.ofSeconds(0), messageSource, GERMAN);
+        final String durationString = DurationFormatter.toDurationString(Duration.ofSeconds(0), messageSource, GERMAN);
         assertThat(durationString).isEqualTo("keine");
     }
 }
