@@ -149,7 +149,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "folgende Abwesenheit von Lieschen Mueller wurde genehmigt." + EMAIL_LINE_BREAK +
+            "folgende Abwesenheit von Lieschen Mueller wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -172,7 +172,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msgBoss.getAllRecipients()[0]);
         assertThat(readPlainContent(msgBoss)).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "folgende Abwesenheit von Lieschen Mueller wurde genehmigt." + EMAIL_LINE_BREAK +
+            "folgende Abwesenheit von Lieschen Mueller wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -255,7 +255,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "folgende Abwesenheit von Lieschen Mueller wurde genehmigt." + EMAIL_LINE_BREAK +
+            "folgende Abwesenheit von Lieschen Mueller wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -343,7 +343,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "folgende Abwesenheit von Lieschen Mueller wurde genehmigt." + EMAIL_LINE_BREAK +
+            "folgende Abwesenheit von Lieschen Mueller wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
