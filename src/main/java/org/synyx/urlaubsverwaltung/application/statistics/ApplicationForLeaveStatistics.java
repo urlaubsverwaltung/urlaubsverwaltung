@@ -95,23 +95,13 @@ public class ApplicationForLeaveStatistics {
     }
 
     public BigDecimal getTotalWaitingVacationDays() {
-
-        BigDecimal total = ZERO;
-        for (BigDecimal days : getWaitingVacationDays().values()) {
-            total = total.add(days);
-        }
-
-        return total;
+        return getWaitingVacationDays().values().stream()
+            .reduce(ZERO, BigDecimal::add);
     }
 
     public BigDecimal getTotalAllowedVacationDays() {
-
-        BigDecimal total = ZERO;
-        for (BigDecimal days : getAllowedVacationDays().values()) {
-            total = total.add(days);
-        }
-
-        return total;
+        return getAllowedVacationDays().values().stream()
+            .reduce(ZERO, BigDecimal::add);
     }
 
     public void addWaitingVacationDays(VacationType vacationType, BigDecimal waitingVacationDays) {
