@@ -47,20 +47,16 @@ public final class VacationDaysLeft {
         return new Builder();
     }
 
+    public BigDecimal getLeftVacationDays(LocalDate today, int year){
+        return vacationDays.add(getRemainingVacationDaysLeft(today, year));
+    }
+
     public BigDecimal getVacationDays() {
         return vacationDays;
     }
 
     public BigDecimal getRemainingVacationDays() {
         return remainingVacationDays;
-    }
-
-    public BigDecimal getRemainingVacationDaysNotExpiring() {
-        return remainingVacationDaysNotExpiring;
-    }
-
-    public BigDecimal getVacationDaysUsedNextYear() {
-        return vacationDaysUsedNextYear;
     }
 
     public BigDecimal getRemainingVacationDaysLeft(LocalDate today, int year) {
@@ -70,6 +66,14 @@ public final class VacationDaysLeft {
             // it's after April - only the left not expiring remaining vacation days must be used
             return remainingVacationDaysNotExpiring;
         }
+    }
+
+    public BigDecimal getRemainingVacationDaysNotExpiring() {
+        return remainingVacationDaysNotExpiring;
+    }
+
+    public BigDecimal getVacationDaysUsedNextYear() {
+        return vacationDaysUsedNextYear;
     }
 
     /**

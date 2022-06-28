@@ -25,7 +25,9 @@ public class ApplicationForLeaveStatistics {
     private final Map<VacationType, BigDecimal> allowedVacationDays = new HashMap<>();
 
     private BigDecimal leftVacationDays = ZERO;
+    private BigDecimal leftRemainingVacationDays = ZERO;
     private BigDecimal leftPeriodVacationDays = ZERO;
+    private BigDecimal leftRemainingPeriodVacationDays = ZERO;
     private Duration leftOvertime = Duration.ZERO;
 
     ApplicationForLeaveStatistics(Person person) {
@@ -60,12 +62,28 @@ public class ApplicationForLeaveStatistics {
         this.leftVacationDays = leftVacationDays;
     }
 
+    public BigDecimal getLeftRemainingVacationDays() {
+        return leftRemainingVacationDays;
+    }
+
+    public void setLeftRemainingVacationDays(BigDecimal leftRemainingVacationDays) {
+        this.leftRemainingVacationDays = leftRemainingVacationDays;
+    }
+
     public BigDecimal getLeftPeriodVacationDays() {
         return leftPeriodVacationDays;
     }
 
     public void setLeftPeriodVacationDays(BigDecimal leftPeriodVacationDays) {
         this.leftPeriodVacationDays = leftPeriodVacationDays;
+    }
+
+    public BigDecimal getLeftRemainingPeriodVacationDays() {
+        return leftRemainingPeriodVacationDays;
+    }
+
+    public void setLeftRemainingPeriodVacationDays(BigDecimal leftRemainingPeriodVacationDays) {
+        this.leftRemainingPeriodVacationDays = leftRemainingPeriodVacationDays;
     }
 
     public Duration getLeftOvertime() {

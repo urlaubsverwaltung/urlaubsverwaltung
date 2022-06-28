@@ -23,14 +23,17 @@ public final class ApplicationForLeaveStatisticsDto {
     private final Map<VacationType, BigDecimal> waitingVacationDays;
 
     private final BigDecimal leftPeriodVacationDays;
+    private final BigDecimal remainingLeftPeriodVacationDays;
     private final BigDecimal leftVacationDays;
+    private final BigDecimal remainingLeftVacationDays;
 
     private final String leftOvertime;
 
     ApplicationForLeaveStatisticsDto(String firstName, String lastName, String niceName, String gravatarURL, String personnelNumber,
                                      BigDecimal totalAllowedVacationDays, Map<VacationType, BigDecimal> allowedVacationDays,
                                      BigDecimal totalWaitingVacationDays, Map<VacationType, BigDecimal> waitingVacationDays,
-                                     BigDecimal leftPeriodVacationDays, BigDecimal leftVacationDays, String leftOvertime) {
+                                     BigDecimal leftPeriodVacationDays, BigDecimal remainingLeftPeriodVacationDays, BigDecimal leftVacationDays,
+                                     BigDecimal remainingLeftVacationDays, String leftOvertime) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
@@ -41,7 +44,9 @@ public final class ApplicationForLeaveStatisticsDto {
         this.totalWaitingVacationDays = totalWaitingVacationDays;
         this.waitingVacationDays = waitingVacationDays;
         this.leftPeriodVacationDays = leftPeriodVacationDays;
+        this.remainingLeftPeriodVacationDays = remainingLeftPeriodVacationDays;
         this.leftVacationDays = leftVacationDays;
+        this.remainingLeftVacationDays = remainingLeftVacationDays;
         this.leftOvertime = leftOvertime;
     }
 
@@ -85,8 +90,16 @@ public final class ApplicationForLeaveStatisticsDto {
         return leftPeriodVacationDays;
     }
 
+    public BigDecimal getRemainingLeftPeriodVacationDays() {
+        return remainingLeftPeriodVacationDays;
+    }
+
     public BigDecimal getLeftVacationDays() {
         return leftVacationDays;
+    }
+
+    public BigDecimal getRemainingLeftVacationDays() {
+        return remainingLeftVacationDays;
     }
 
     public String getLeftOvertime() {

@@ -3,8 +3,8 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
@@ -19,11 +19,11 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static java.util.Optional.empty;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -67,12 +67,23 @@ class ApplicationForLeaveStatisticsBuilder {
 
     public ApplicationForLeaveStatistics build(Person person, LocalDate from, LocalDate to, List<VacationType> vacationTypes) {
 
-        final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(from.getYear(), person);
         final LocalDate today = LocalDate.now(clock);
-
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
-        statistics.setLeftVacationDays(calculateLeftVacationDays(from.with(firstDayOfYear()), to.with(lastDayOfYear()), today, holidaysAccount));
-        statistics.setLeftPeriodVacationDays(calculateLeftVacationDays(from, to, to, holidaysAccount));
+
+        accountService.getHolidaysAccount(from.getYear(), person)
+            .ifPresent(account -> {
+                final LocalDate firstDayOfYear = from.with(firstDayOfYear());
+                final LocalDate lastDayOfYear = to.with(lastDayOfYear());
+                final VacationDaysLeft vacationDaysLeftYear = vacationDaysService.getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, empty());
+                statistics.setLeftVacationDays(vacationDaysLeftYear.getLeftVacationDays(today, account.getYear()));
+                statistics.setLeftRemainingVacationDays(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.getYear()));
+
+                final VacationDaysLeft vacationDaysLeftPeriod = vacationDaysService.getVacationDaysLeft(from, to, account, empty());
+                statistics.setLeftPeriodVacationDays(vacationDaysLeftPeriod.getLeftVacationDays(today, account.getYear()));
+                statistics.setLeftRemainingPeriodVacationDays(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.getYear()));
+
+            });
+
         statistics.setLeftOvertime(overtimeService.getLeftOvertimeForPerson(person));
 
         for (VacationType type : vacationTypes) {
@@ -100,11 +111,5 @@ class ApplicationForLeaveStatisticsBuilder {
         final LocalDate endDate = application.getEndDate().isAfter(to) ? to : application.getEndDate();
 
         return workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person);
-    }
-
-    private BigDecimal calculateLeftVacationDays(LocalDate start, LocalDate end, LocalDate today, Optional<Account> maybeAccount) {
-        return maybeAccount
-            .map(account -> vacationDaysService.calculateTotalLeftVacationDays(start, end, today, account))
-            .orElse(ZERO);
     }
 }

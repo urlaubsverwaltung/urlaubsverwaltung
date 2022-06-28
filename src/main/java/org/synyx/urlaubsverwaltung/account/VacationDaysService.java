@@ -62,8 +62,7 @@ public class VacationDaysService {
     }
 
     public BigDecimal calculateTotalLeftVacationDays(LocalDate start, LocalDate end, LocalDate today, Account account) {
-        final VacationDaysLeft vacationDaysLeft = getVacationDaysLeft(start, end, account, Optional.empty());
-        return vacationDaysLeft.getVacationDays().add(vacationDaysLeft.getRemainingVacationDaysLeft(today, account.getYear()));
+        return getVacationDaysLeft(start, end, account, Optional.empty()).getLeftVacationDays(today, account.getYear());
     }
 
     /**

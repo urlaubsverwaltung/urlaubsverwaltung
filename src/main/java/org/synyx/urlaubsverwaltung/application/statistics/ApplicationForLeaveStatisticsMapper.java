@@ -6,8 +6,6 @@ import org.synyx.urlaubsverwaltung.util.DurationFormatter;
 
 import java.util.Locale;
 
-import java.math.BigDecimal;
-
 final class ApplicationForLeaveStatisticsMapper {
 
     private ApplicationForLeaveStatisticsMapper() {
@@ -15,22 +13,20 @@ final class ApplicationForLeaveStatisticsMapper {
     }
 
     static ApplicationForLeaveStatisticsDto mapToApplicationForLeaveStatisticsDto(ApplicationForLeaveStatistics statistics, Locale locale, MessageSource messageSource) {
-
-        final BigDecimal totalAllowedVacationDays = statistics.getTotalAllowedVacationDays();
-        final BigDecimal totalWaitingVacationDays = statistics.getTotalWaitingVacationDays();
-
         return new ApplicationForLeaveStatisticsDto(
             statistics.getPerson().getFirstName(),
             statistics.getPerson().getLastName(),
             statistics.getPerson().getNiceName(),
             statistics.getPerson().getGravatarURL(),
             statistics.getPersonBasedata().map(PersonBasedata::getPersonnelNumber).orElse(""),
-            totalAllowedVacationDays,
+            statistics.getTotalAllowedVacationDays(),
             statistics.getAllowedVacationDays(),
-            totalWaitingVacationDays,
+            statistics.getTotalWaitingVacationDays(),
             statistics.getWaitingVacationDays(),
             statistics.getLeftPeriodVacationDays(),
+            statistics.getLeftRemainingPeriodVacationDays(),
             statistics.getLeftVacationDays(),
+            statistics.getLeftRemainingVacationDays(),
             DurationFormatter.toDurationString(statistics.getLeftOvertime(), messageSource, locale)
         );
     }
