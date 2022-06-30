@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>year-selector</title>
+</head>
+<body>
+
+<div th:fragment="year-selector(id, year, hrefPrefix)" th:id="${id}"
+  class="tw-leading-6 dropdown tw-inline-block">
+    <a
+        id="year-selector-dropdown-link"
+        href="#"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        role="button"
+        aria-expanded="false"
+        class="tw-text-current"
+    >
+      <span th:text="${year}"></span>
+      <span class="tw-ml-0.5 dropdown-caret tw-opacity-70"></span>
+    </a>
+
+    <ul class="dropdown-menu" role="menu" aria-labelledby="year-selector-dropdown-link">
+        <li th:each="i, status: ${#numbers.sequence(0, 10)}">
+          <a th:text="${#dates.year(#dates.createNow()) + 2 - status.count}" th:href="|${hrefPrefix}${y}|"></a>
+        </li>
+    </ul>
+</div>
+
+</body>
+</html>
