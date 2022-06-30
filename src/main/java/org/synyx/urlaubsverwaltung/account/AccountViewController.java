@@ -81,7 +81,7 @@ public class AccountViewController {
 
         addVacationTypeColorsToModel(model);
 
-        return "account/account_form";
+        return "thymeleaf/account/account_form";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -101,7 +101,7 @@ public class AccountViewController {
 
             addVacationTypeColorsToModel(model);
 
-            return "account/account_form";
+            return "thymeleaf/account/account_form";
         }
 
         final LocalDate validFrom = accountForm.getHolidaysAccountValidFrom();
