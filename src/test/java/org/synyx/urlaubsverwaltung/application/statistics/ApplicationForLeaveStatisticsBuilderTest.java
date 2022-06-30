@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
@@ -28,10 +29,11 @@ import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
+import static java.math.BigDecimal.ZERO;
 import static java.time.LocalDate.of;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
-import static java.time.Month.JUNE;
+import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.ArgumentMatchers.any;
@@ -87,11 +89,9 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final LocalDate validFrom = of(2014, JANUARY, 1);
         final LocalDate validTo = of(2014, DECEMBER, 31);
-        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
-        final LocalDate today = of(2014, JUNE, 24);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
-        when(vacationDaysService.calculateTotalLeftVacationDays(validFrom, validTo, today, account)).thenReturn(TEN);
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofHours(9));
 
         final Application holidayWaiting = new Application();
@@ -170,28 +170,37 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
 
+        final VacationDaysLeft vacationDaysLeftYear = VacationDaysLeft.builder()
+            .withAnnualVacation(TEN)
+            .withRemainingVacation(ZERO)
+            .notExpiring(ZERO)
+            .forUsedDaysBeforeApril(ZERO)
+            .forUsedDaysAfterApril(ZERO)
+            .build();
+        when(vacationDaysService.getVacationDaysLeft(validFrom, validTo, account, empty())).thenReturn(vacationDaysLeftYear);
+
         final ApplicationForLeaveStatistics statistics = sut.build(person, null, from, to, List.of(type));
         assertThat(statistics.getPerson()).isEqualTo(person);
-        assertThat(statistics.getTotalWaitingVacationDays()).isEqualTo(new BigDecimal("4"));
-        assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(new BigDecimal("3"));
+        assertThat(statistics.getTotalWaitingVacationDays()).isEqualTo(BigDecimal.valueOf(4));
+        assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(BigDecimal.valueOf(3));
         assertThat(statistics.getLeftVacationDays()).isEqualTo(TEN);
     }
 
     @Test
-    void ensureCallsCalendarServiceToCalculatePartialVacationDaysOfVacationsSpanningOverTheGivenPeriod() {
+    void ensureCallsWorkDaysCountServiceToCalculatePartialVacationDaysOfVacationsSpanningOverTheGivenPeriod() {
 
         final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
 
         final Person person = new Person();
         final LocalDate validFrom = of(2021, 1, 1);
         final LocalDate validTo = of(2021, 12, 31);
-        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        // 20 vacation days (10 anual, 10 remaining, not exp. vacation days)
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, null);
         when(accountService.getHolidaysAccount(2021, person)).thenReturn(Optional.of(account));
 
-        final LocalDate today = of(2015, 6, 24);
-        when(vacationDaysService.calculateTotalLeftVacationDays(validFrom, validTo, today, account)).thenReturn(TEN);
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofHours(9));
 
+        // application (25.04.2021-30.04.2021) with 3 work days
         final Application applicationSpanningIntoPeriod = new Application();
         applicationSpanningIntoPeriod.setPerson(person);
         applicationSpanningIntoPeriod.setStatus(ALLOWED);
@@ -202,6 +211,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         when(workDaysCountService.getWorkDaysCount(FULL, of(2021, 4, 28), of(2021, 4, 30), person))
             .thenReturn(BigDecimal.valueOf(3));
 
+        // application (21.05.2021-10.06.2021) with 8 work days
         final Application applicationSpanningOutOfPeriod = new Application();
         applicationSpanningOutOfPeriod.setPerson(person);
         applicationSpanningOutOfPeriod.setStatus(WAITING);
@@ -212,6 +222,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         when(workDaysCountService.getWorkDaysCount(FULL, of(2021, 5, 21), of(2021, 5, 28), person))
             .thenReturn(BigDecimal.valueOf(8));
 
+        // application (28.04.2021-05.05.2021) with 8 work days
         final Application applicationInPeriod = new Application();
         applicationInPeriod.setPerson(person);
         applicationInPeriod.setStatus(WAITING);
@@ -226,12 +237,22 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final LocalDate periodTo = of(2021, 5, 28);
         when(applicationService.getApplicationsForACertainPeriodAndPerson(periodFrom, periodTo, person)).thenReturn(List.of(applicationSpanningIntoPeriod, applicationInPeriod, applicationSpanningOutOfPeriod));
 
+        final VacationDaysLeft vacationDaysLeftYear = VacationDaysLeft.builder()
+            .withAnnualVacation(TEN)
+            .withRemainingVacation(TEN)
+            .notExpiring(TEN)
+            .forUsedDaysBeforeApril(ZERO)
+            .forUsedDaysAfterApril(BigDecimal.valueOf(19))
+            .build();
+        when(vacationDaysService.getVacationDaysLeft(validFrom, validTo, account, empty())).thenReturn(vacationDaysLeftYear);
+        when(vacationDaysService.getVacationDaysLeft(periodFrom, periodTo, account, empty())).thenReturn(vacationDaysLeftYear);
+
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = sut.build(person, null, periodFrom, periodTo, List.of(type));
-        assertThat(statistics.getTotalWaitingVacationDays()).isEqualTo(BigDecimal.valueOf(16));
-        assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(BigDecimal.valueOf(3));
-        assertThat(statistics.getLeftVacationDays()).isEqualTo(TEN);
+        assertThat(statistics.getTotalWaitingVacationDays()).isEqualByComparingTo(BigDecimal.valueOf(16));
+        assertThat(statistics.getTotalAllowedVacationDays()).isEqualByComparingTo(BigDecimal.valueOf(3));
+        assertThat(statistics.getLeftVacationDays()).isEqualByComparingTo(ONE);
     }
 
     @Test
@@ -244,17 +265,25 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Person person = new Person();
         final LocalDate validFrom = of(2015, JANUARY, 1);
         final LocalDate validTo = of(2015, DECEMBER, 31);
-        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofMinutes(390));
-        when(vacationDaysService.calculateTotalLeftVacationDays(periodFrom, periodTo, today, account)).thenReturn(new BigDecimal("8.5"));
+
+        final VacationDaysLeft vacationDaysLeftYear = VacationDaysLeft.builder()
+            .withAnnualVacation(TEN)
+            .withRemainingVacation(ZERO)
+            .notExpiring(ZERO)
+            .forUsedDaysBeforeApril(ZERO)
+            .forUsedDaysAfterApril(BigDecimal.valueOf(1.5))
+            .build();
+        when(vacationDaysService.getVacationDaysLeft(validFrom, validTo, account, empty())).thenReturn(vacationDaysLeftYear);
 
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = sut.build(person, null, periodFrom, periodTo, List.of(type));
         assertThat(statistics.getLeftOvertime()).isEqualTo(Duration.ofMinutes(390));
-        assertThat(statistics.getLeftVacationDays()).isEqualTo(new BigDecimal("8.5"));
+        assertThat(statistics.getLeftVacationDays()).isEqualTo(BigDecimal.valueOf(8.5));
     }
 
     @Test
@@ -267,12 +296,26 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final LocalDate periodTo = of(2015, 12, 31);
 
         final Person person = new Person();
-        final LocalDate validFrom = of(2015, JANUARY, 1);
-        final LocalDate validTo = of(2015, DECEMBER, 31);
-        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        final LocalDate validFrom = of(2015, 1, 1);
+        final LocalDate validTo = of(2015, 12, 31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
-        when(vacationDaysService.calculateTotalLeftVacationDays(periodFrom, periodTo, periodTo, account)).thenReturn(new BigDecimal("8.5"));
+
+        final VacationDaysLeft vacationDaysLeftYear = VacationDaysLeft.builder()
+            .withAnnualVacation(TEN)
+            .withRemainingVacation(ZERO)
+            .notExpiring(ZERO)
+            .forUsedDaysBeforeApril(BigDecimal.valueOf(1.5))
+            .forUsedDaysAfterApril(ZERO)
+            .build();
+        when(vacationDaysService.getVacationDaysLeft(periodFrom, periodTo, account, empty())).thenReturn(vacationDaysLeftYear);
+
+        final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
+
+        final ApplicationForLeaveStatistics statistics = sut.build(person, null, periodFrom, periodTo, List.of(type));
+        assertThat(statistics.getLeftPeriodVacationDays()).isEqualTo(BigDecimal.valueOf(8.5));
+    }
 
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
 
