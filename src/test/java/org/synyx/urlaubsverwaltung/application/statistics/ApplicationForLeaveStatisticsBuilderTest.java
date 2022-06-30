@@ -314,7 +314,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = sut.build(person, null, periodFrom, periodTo, List.of(type));
-        assertThat(statistics.getLeftPeriodVacationDays()).isEqualTo(BigDecimal.valueOf(8.5));
+        assertThat(statistics.getLeftVacationDaysForPeriod()).isEqualTo(BigDecimal.valueOf(8.5));
     }
 
     @Test
@@ -360,6 +360,6 @@ class ApplicationForLeaveStatisticsBuilderTest {
         // for the period (01.07.-31.12.2022):
         // 10 remaining - 0 used day before april = 10
         // 5 remaining, not expiring - 1 used days after april = 4
-        assertThat(statistics.getLeftRemainingPeriodVacationDays()).isEqualTo(BigDecimal.valueOf(4));
+        assertThat(statistics.getLeftRemainingVacationDaysForPeriod()).isEqualTo(BigDecimal.valueOf(4));
     }
 }

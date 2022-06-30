@@ -23,8 +23,8 @@ final class ApplicationForLeaveStatisticsMapper {
             statistics.getAllowedVacationDays(),
             statistics.getTotalWaitingVacationDays(),
             statistics.getWaitingVacationDays(),
-            statistics.getLeftPeriodVacationDays(),
-            statistics.getLeftRemainingPeriodVacationDays(),
+            statistics.getLeftVacationDaysForPeriod(),
+            statistics.getLeftRemainingVacationDaysForPeriod(),
             statistics.getLeftVacationDays(),
             statistics.getLeftRemainingVacationDays(),
             DurationFormatter.toDurationString(statistics.getLeftOvertime(), messageSource, locale)

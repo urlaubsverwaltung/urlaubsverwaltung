@@ -26,8 +26,8 @@ public class ApplicationForLeaveStatistics {
 
     private BigDecimal leftVacationDays = ZERO;
     private BigDecimal leftRemainingVacationDays = ZERO;
-    private BigDecimal leftPeriodVacationDays = ZERO;
-    private BigDecimal leftRemainingPeriodVacationDays = ZERO;
+    private BigDecimal leftVacationDaysForPeriod = ZERO;
+    private BigDecimal leftRemainingVacationDaysForPeriod = ZERO;
     private Duration leftOvertime = Duration.ZERO;
 
     ApplicationForLeaveStatistics(Person person) {
@@ -70,20 +70,20 @@ public class ApplicationForLeaveStatistics {
         this.leftRemainingVacationDays = leftRemainingVacationDays;
     }
 
-    public BigDecimal getLeftPeriodVacationDays() {
-        return leftPeriodVacationDays;
+    public BigDecimal getLeftVacationDaysForPeriod() {
+        return leftVacationDaysForPeriod;
     }
 
-    public void setLeftPeriodVacationDays(BigDecimal leftPeriodVacationDays) {
-        this.leftPeriodVacationDays = leftPeriodVacationDays;
+    public void setLeftVacationDaysForPeriod(BigDecimal leftVacationDaysForPeriod) {
+        this.leftVacationDaysForPeriod = leftVacationDaysForPeriod;
     }
 
-    public BigDecimal getLeftRemainingPeriodVacationDays() {
-        return leftRemainingPeriodVacationDays;
+    public BigDecimal getLeftRemainingVacationDaysForPeriod() {
+        return leftRemainingVacationDaysForPeriod;
     }
 
-    public void setLeftRemainingPeriodVacationDays(BigDecimal leftRemainingPeriodVacationDays) {
-        this.leftRemainingPeriodVacationDays = leftRemainingPeriodVacationDays;
+    public void setLeftRemainingVacationDaysForPeriod(BigDecimal leftRemainingVacationDaysForPeriod) {
+        this.leftRemainingVacationDaysForPeriod = leftRemainingVacationDaysForPeriod;
     }
 
     public Duration getLeftOvertime() {
