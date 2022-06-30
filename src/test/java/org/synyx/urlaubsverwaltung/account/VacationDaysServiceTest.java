@@ -1,40 +1,25 @@
 package org.synyx.urlaubsverwaltung.account;
 
-import de.focus_shift.HolidayManager;
-import de.focus_shift.ManagerParameter;
-import de.focus_shift.ManagerParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
 import java.math.BigDecimal;
-import java.net.URL;
 import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.YearMonth;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
-import static java.time.DayOfWeek.FRIDAY;
-import static java.time.DayOfWeek.MONDAY;
-import static java.time.DayOfWeek.THURSDAY;
-import static java.time.DayOfWeek.TUESDAY;
-import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
@@ -42,23 +27,20 @@ import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
 import static java.time.Month.SEPTEMBER;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypeEntity;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.UNPAIDLEAVE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 @ExtendWith(MockitoExtension.class)
 class VacationDaysServiceTest {
@@ -495,5 +477,77 @@ class VacationDaysServiceTest {
         // 30 = 30 + 0
         final BigDecimal leftDays = sut.calculateTotalLeftVacationDays(account);
         assertThat(leftDays).isEqualTo(new BigDecimal("30"));
+    }
+
+    @Test
+    void ensureVacationDaysLeftStartAfterFirstDayOfAprilUsesOnlyApplicationsAfterApril() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final LocalDate today = LocalDate.now();
+        final LocalDate start = YearMonth.of(today.getYear(), MAY).atDay(1);
+        final LocalDate end = today.with(lastDayOfYear());
+
+        final Account account = new Account();
+        account.setPerson(person);
+        account.setValidFrom(LocalDate.of(today.getYear(), 1, 1));
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setActualVacationDays(new BigDecimal("30"));
+        account.setRemainingVacationDays(new BigDecimal("7"));
+        account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
+
+        sut.getVacationDaysLeft(start, end, account, Optional.empty());
+
+        // called only one time there are no days before april and no next year account
+        verify(applicationService).getApplicationsForACertainPeriodAndPersonAndVacationCategory(eq(start), eq(end), any(), any(), any());
+    }
+
+    @Test
+    void ensureVacationDaysLeftEndBeforeFirstDayOfAprilUsesOnlyApplicationsBeforeApril() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final LocalDate today = LocalDate.now();
+        final LocalDate start = today.with(firstDayOfYear());
+        final LocalDate end = YearMonth.of(today.getYear(), FEBRUARY).atDay(1);
+
+        final Account account = new Account();
+        account.setPerson(person);
+        account.setValidFrom(LocalDate.of(today.getYear(), 1, 1));
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setActualVacationDays(new BigDecimal("30"));
+        account.setRemainingVacationDays(new BigDecimal("7"));
+        account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
+
+        sut.getVacationDaysLeft(start, end, account, Optional.empty());
+
+        // called only one time there are no days after april and no next year account
+        verify(applicationService).getApplicationsForACertainPeriodAndPersonAndVacationCategory(eq(start), eq(end), any(), any(), any());
+    }
+
+    @Test
+    void ensureUsesRemainingVacationDaysWithInconsistentTimeRangeReturnsZero() {
+        final LocalDate today = LocalDate.now();
+        final LocalDate start = today.with(lastDayOfYear());
+        final LocalDate end = today.with(firstDayOfYear());
+
+        assertThat(sut.getUsedRemainingVacationDays(start, end, Optional.empty())).isEqualTo(ZERO);
+    }
+
+    @Test
+    void ensureUsesRemainingVacationDaysWithNegativeRemainingUsedReturnsZero() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final LocalDate today = LocalDate.now();
+        final LocalDate start = today.with(firstDayOfYear());
+        final LocalDate end = today.with(lastDayOfYear());
+
+        final Account account = new Account();
+        account.setPerson(person);
+        account.setValidFrom(LocalDate.of(today.getYear(), 1, 1));
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setActualVacationDays(new BigDecimal("30"));
+        account.setRemainingVacationDays(new BigDecimal("7"));
+        account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
+
+        assertThat(sut.getUsedRemainingVacationDays(start, end, Optional.of(account))).isEqualTo(ZERO);
     }
 }
