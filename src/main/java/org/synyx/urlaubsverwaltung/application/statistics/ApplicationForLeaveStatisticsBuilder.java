@@ -80,7 +80,7 @@ class ApplicationForLeaveStatisticsBuilder {
 
                 final VacationDaysLeft vacationDaysLeftPeriod = vacationDaysService.getVacationDaysLeft(from, to, account, empty());
                 statistics.setLeftPeriodVacationDays(vacationDaysLeftPeriod.getLeftVacationDays(today, account.getYear()));
-                statistics.setLeftRemainingPeriodVacationDays(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.getYear()));
+                statistics.setLeftRemainingPeriodVacationDays(vacationDaysLeftPeriod.getRemainingVacationDaysLeft(today, account.getYear()));
 
             });
 
