@@ -37,6 +37,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.ALLOWED_DIRECTLY;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.APPLIED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCELLED;
+import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCELLED_DIRECTLY;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCEL_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.CANCEL_REQUESTED_DECLINED;
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.EDITED;
@@ -321,6 +322,43 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         return application;
     }
 
+    @Override
+    public Application directCancel(Application application, Person canceller, Optional<String> comment) {
+
+        application.setStatus(ApplicationStatus.CANCELLED);
+        application.setCanceller(canceller);
+        application.setCancelDate(LocalDate.now(clock));
+
+        final Application savedApplication = applicationService.save(application);
+        LOG.info("Cancelled application for leave without approval (directly): {}", savedApplication);
+
+        // Comment
+        final ApplicationComment createdComment = commentService.create(savedApplication, CANCELLED_DIRECTLY, comment, canceller);
+
+        // E-Mails
+        final Person person = application.getPerson();
+        if (person.equals(canceller)) {
+            // person himself applies for leave
+            // person gets a confirmation email with the data of the application for leave
+            applicationMailService.sendCancelledDirectlyConfirmationByApplicant(savedApplication, createdComment);
+        } else if (canceller.hasRole(OFFICE)) {
+            // if a person with the office role applies for leave on behalf of the person.
+            // The person gets an email that someone else has applied for leave on behalf
+            applicationMailService.sendCancelledDirectlyConfirmationByOffice(savedApplication, createdComment);
+        }
+
+        applicationMailService.sendCancelledDirectlyInformationToRecipientOfInterest(savedApplication, createdComment);
+
+        for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
+            applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
+        }
+
+        // update remaining vacation days (if there is already a holidays account for next year
+        // TODO - wann brachen wir das? Nur wenn die category HOLIDAY ist?
+        accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
+
+        return savedApplication;
+    }
 
     private void revokeApplication(Application application, Person canceller, Optional<String> comment) {
 

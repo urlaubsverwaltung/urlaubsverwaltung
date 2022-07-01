@@ -297,7 +297,11 @@ class ApplicationForLeaveDetailsViewController {
             return REDIRECT_WEB_APPLICATION + applicationId + "?action=cancel";
         }
 
-        applicationInteractionService.cancel(application, signedInUser, Optional.ofNullable(comment.getText()));
+        if (application.getVacationType().isRequiresApproval()) {
+            applicationInteractionService.cancel(application, signedInUser, Optional.ofNullable(comment.getText()));
+        } else {
+            applicationInteractionService.directCancel(application, signedInUser, Optional.ofNullable(comment.getText()));
+        }
         return REDIRECT_WEB_APPLICATION + applicationId;
     }
 
