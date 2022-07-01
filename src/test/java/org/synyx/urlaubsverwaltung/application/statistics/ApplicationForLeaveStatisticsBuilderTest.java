@@ -260,7 +260,6 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final LocalDate periodFrom = of(2015, 1, 1);
         final LocalDate periodTo = of(2015, 12, 31);
-        final LocalDate today = of(2015, 6, 24);
 
         final Person person = new Person();
         final LocalDate validFrom = of(2015, JANUARY, 1);
@@ -361,5 +360,39 @@ class ApplicationForLeaveStatisticsBuilderTest {
         // 10 remaining - 0 used day before april = 10
         // 5 remaining, not expiring - 1 used days after april = 4
         assertThat(statistics.getLeftRemainingVacationDaysForPeriod()).isEqualTo(BigDecimal.valueOf(4));
+    }
+
+    @Test
+    void ensureCorrectLeftRemainingVacationDaysPeriodBeforeApril() {
+
+        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, workDaysCountService,
+            vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2022-12-31T16:02:42.00Z"), ZoneOffset.UTC));
+
+        final Person person = new Person();
+        final LocalDate firstDayOfYear = of(2022, 1, 1);
+        final LocalDate lastDayOfYear = of(2022, 12, 31);
+        final Account account = new Account(person, firstDayOfYear, lastDayOfYear, TEN, TEN, TEN, null);
+
+        when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account));
+
+        final LocalDate periodFrom = of(2022, 1, 1);
+        final LocalDate periodTo = of(2022, 3, 31);
+
+        final VacationDaysLeft vacationDaysLeftPeriod = VacationDaysLeft.builder()
+            .withAnnualVacation(TEN)
+            .withRemainingVacation(TEN)
+            .notExpiring(BigDecimal.valueOf(5))
+            .forUsedDaysBeforeApril(BigDecimal.valueOf(4))
+            .forUsedDaysAfterApril(ZERO)
+            .build();
+        when(vacationDaysService.getVacationDaysLeft(of(2022, 1, 1), of(2022, 12, 31), account, empty())).thenReturn(VacationDaysLeft.builder().build());
+        when(vacationDaysService.getVacationDaysLeft(periodFrom, periodTo, account, empty())).thenReturn(vacationDaysLeftPeriod);
+
+        final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
+
+        final ApplicationForLeaveStatistics statistics = sut.build(person, null, periodFrom, periodTo, List.of(type));
+        // for the period (01.01.-31.03.2022):
+        // 10 remaining - 4 used day before april = 6
+        assertThat(statistics.getLeftRemainingVacationDaysForPeriod()).isEqualTo(BigDecimal.valueOf(6));
     }
 }

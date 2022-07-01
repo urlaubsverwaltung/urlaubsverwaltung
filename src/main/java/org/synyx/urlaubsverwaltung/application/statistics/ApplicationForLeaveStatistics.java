@@ -26,9 +26,9 @@ public class ApplicationForLeaveStatistics {
 
     private BigDecimal leftVacationDays = ZERO;
     private BigDecimal leftRemainingVacationDays = ZERO;
+    private Duration leftOvertime = Duration.ZERO;
     private BigDecimal leftVacationDaysForPeriod = ZERO;
     private BigDecimal leftRemainingVacationDaysForPeriod = ZERO;
-    private Duration leftOvertime = Duration.ZERO;
 
     ApplicationForLeaveStatistics(Person person) {
         this.person = person;
