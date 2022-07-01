@@ -87,8 +87,8 @@ class ApplicationForLeaveStatisticsCsvExportService {
             csvRow[3] = translatedTextTotal;
             csvRow[4] = decimalFormat.format(applicationForLeaveStatistics.getTotalAllowedVacationDays());
             csvRow[5] = decimalFormat.format(applicationForLeaveStatistics.getTotalWaitingVacationDays());
-            csvRow[6] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDays());
-            csvRow[7] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertime().toMinutes() / 60));
+            csvRow[6] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDaysForYear());
+            csvRow[7] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertimeForYear().toMinutes() / 60));
             csvRow[8] = applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::getAdditionalInformation).orElse("");
             csvWriter.writeNext(csvRow);
 

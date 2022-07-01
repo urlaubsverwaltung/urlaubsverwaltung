@@ -29,8 +29,8 @@ class ApplicationForLeaveStatisticsTest {
         assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(ZERO);
 
         // Left
-        assertThat(statistics.getLeftVacationDays()).isEqualTo(ZERO);
-        assertThat(statistics.getLeftOvertime()).isEqualTo(Duration.ZERO);
+        assertThat(statistics.getLeftVacationDaysForYear()).isEqualTo(ZERO);
+        assertThat(statistics.getLeftOvertimeForYear()).isEqualTo(Duration.ZERO);
 
         // Per vacation type
         for (VacationType type : createVacationTypes()) {
@@ -43,9 +43,9 @@ class ApplicationForLeaveStatisticsTest {
     void ensureCanSetTotalLeftVacationDays() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
-        statistics.setLeftVacationDays(ONE);
+        statistics.setLeftVacationDaysForYear(ONE);
 
-        assertThat(statistics.getLeftVacationDays()).isEqualByComparingTo(ONE);
+        assertThat(statistics.getLeftVacationDaysForYear()).isEqualByComparingTo(ONE);
     }
 
     @Test
@@ -150,8 +150,8 @@ class ApplicationForLeaveStatisticsTest {
     void ensureCanSetTotalLeftOvertime() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(person);
-        statistics.setLeftOvertime(Duration.ofHours(1));
-        assertThat(statistics.getLeftOvertime()).isEqualTo(Duration.ofHours(1));
+        statistics.setLeftOvertimeForYear(Duration.ofHours(1));
+        assertThat(statistics.getLeftOvertimeForYear()).isEqualTo(Duration.ofHours(1));
     }
 
     @Test

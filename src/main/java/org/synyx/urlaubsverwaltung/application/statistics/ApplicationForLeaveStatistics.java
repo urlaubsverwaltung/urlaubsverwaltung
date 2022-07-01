@@ -24,9 +24,9 @@ public class ApplicationForLeaveStatistics {
     private final Map<VacationType, BigDecimal> waitingVacationDays = new HashMap<>();
     private final Map<VacationType, BigDecimal> allowedVacationDays = new HashMap<>();
 
-    private BigDecimal leftVacationDays = ZERO;
-    private BigDecimal leftRemainingVacationDays = ZERO;
-    private Duration leftOvertime = Duration.ZERO;
+    private BigDecimal leftVacationDaysForYear = ZERO;
+    private BigDecimal leftRemainingVacationDaysForYear = ZERO;
+    private Duration leftOvertimeForYear = Duration.ZERO;
     private BigDecimal leftVacationDaysForPeriod = ZERO;
     private BigDecimal leftRemainingVacationDaysForPeriod = ZERO;
 
@@ -54,20 +54,20 @@ public class ApplicationForLeaveStatistics {
         return allowedVacationDays;
     }
 
-    public BigDecimal getLeftVacationDays() {
-        return leftVacationDays;
+    public BigDecimal getLeftVacationDaysForYear() {
+        return leftVacationDaysForYear;
     }
 
-    public void setLeftVacationDays(BigDecimal leftVacationDays) {
-        this.leftVacationDays = leftVacationDays;
+    public void setLeftVacationDaysForYear(BigDecimal leftVacationDaysForYear) {
+        this.leftVacationDaysForYear = leftVacationDaysForYear;
     }
 
-    public BigDecimal getLeftRemainingVacationDays() {
-        return leftRemainingVacationDays;
+    public BigDecimal getLeftRemainingVacationDaysForYear() {
+        return leftRemainingVacationDaysForYear;
     }
 
-    public void setLeftRemainingVacationDays(BigDecimal leftRemainingVacationDays) {
-        this.leftRemainingVacationDays = leftRemainingVacationDays;
+    public void setLeftRemainingVacationDaysForYear(BigDecimal leftRemainingVacationDaysForYear) {
+        this.leftRemainingVacationDaysForYear = leftRemainingVacationDaysForYear;
     }
 
     public BigDecimal getLeftVacationDaysForPeriod() {
@@ -86,12 +86,12 @@ public class ApplicationForLeaveStatistics {
         this.leftRemainingVacationDaysForPeriod = leftRemainingVacationDaysForPeriod;
     }
 
-    public Duration getLeftOvertime() {
-        return leftOvertime;
+    public Duration getLeftOvertimeForYear() {
+        return leftOvertimeForYear;
     }
 
-    public void setLeftOvertime(Duration leftOvertime) {
-        this.leftOvertime = leftOvertime;
+    public void setLeftOvertimeForYear(Duration leftOvertimeForYear) {
+        this.leftOvertimeForYear = leftOvertimeForYear;
     }
 
     public BigDecimal getTotalWaitingVacationDays() {

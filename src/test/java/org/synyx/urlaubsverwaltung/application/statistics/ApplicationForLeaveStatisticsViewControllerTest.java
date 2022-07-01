@@ -186,8 +186,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person);
         statistic.setPersonBasedata(new PersonBasedata(1, "42", "some additional information"));
-        statistic.setLeftOvertime(Duration.ofHours(10));
-        statistic.setLeftVacationDays(BigDecimal.valueOf(2));
+        statistic.setLeftOvertimeForYear(Duration.ofHours(10));
+        statistic.setLeftVacationDaysForYear(BigDecimal.valueOf(2));
         statistic.addWaitingVacationDays(new VacationType(1, true, HOLIDAY, "message_key_holiday", false, YELLOW, false), BigDecimal.valueOf(3));
         statistic.addAllowedVacationDays(new VacationType(1, true, OVERTIME, "message_key_overtime", false, YELLOW, false), BigDecimal.valueOf(4));
 

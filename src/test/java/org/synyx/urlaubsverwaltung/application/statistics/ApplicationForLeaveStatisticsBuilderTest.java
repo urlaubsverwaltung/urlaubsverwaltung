@@ -183,7 +183,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         assertThat(statistics.getPerson()).isEqualTo(person);
         assertThat(statistics.getTotalWaitingVacationDays()).isEqualTo(BigDecimal.valueOf(4));
         assertThat(statistics.getTotalAllowedVacationDays()).isEqualTo(BigDecimal.valueOf(3));
-        assertThat(statistics.getLeftVacationDays()).isEqualTo(TEN);
+        assertThat(statistics.getLeftVacationDaysForYear()).isEqualTo(TEN);
     }
 
     @Test
@@ -252,7 +252,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final ApplicationForLeaveStatistics statistics = sut.build(person, null, periodFrom, periodTo, List.of(type));
         assertThat(statistics.getTotalWaitingVacationDays()).isEqualByComparingTo(BigDecimal.valueOf(16));
         assertThat(statistics.getTotalAllowedVacationDays()).isEqualByComparingTo(BigDecimal.valueOf(3));
-        assertThat(statistics.getLeftVacationDays()).isEqualByComparingTo(ONE);
+        assertThat(statistics.getLeftVacationDaysForYear()).isEqualByComparingTo(ONE);
     }
 
     @Test
@@ -281,8 +281,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = sut.build(person, null, periodFrom, periodTo, List.of(type));
-        assertThat(statistics.getLeftOvertime()).isEqualTo(Duration.ofMinutes(390));
-        assertThat(statistics.getLeftVacationDays()).isEqualTo(BigDecimal.valueOf(8.5));
+        assertThat(statistics.getLeftOvertimeForYear()).isEqualTo(Duration.ofMinutes(390));
+        assertThat(statistics.getLeftVacationDaysForYear()).isEqualTo(BigDecimal.valueOf(8.5));
     }
 
     @Test
@@ -355,7 +355,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         // for the hole year:
         // 10 remaining - 1 used day before april = 4
         // 4 remaining, not expiring - 3 used days after april = 1
-        assertThat(statistics.getLeftRemainingVacationDays()).isEqualTo(ONE);
+        assertThat(statistics.getLeftRemainingVacationDaysForYear()).isEqualTo(ONE);
         // for the period (01.07.-31.12.2022):
         // 10 remaining - 0 used day before april = 10
         // 5 remaining, not expiring - 1 used days after april = 4

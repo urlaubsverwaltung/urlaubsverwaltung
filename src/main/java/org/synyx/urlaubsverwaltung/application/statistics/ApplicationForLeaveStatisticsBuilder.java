@@ -75,8 +75,8 @@ class ApplicationForLeaveStatisticsBuilder {
                 final LocalDate firstDayOfYear = from.with(firstDayOfYear());
                 final LocalDate lastDayOfYear = to.with(lastDayOfYear());
                 final VacationDaysLeft vacationDaysLeftYear = vacationDaysService.getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, empty());
-                statistics.setLeftVacationDays(vacationDaysLeftYear.getLeftVacationDays(today, account.getYear()));
-                statistics.setLeftRemainingVacationDays(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.getYear()));
+                statistics.setLeftVacationDaysForYear(vacationDaysLeftYear.getLeftVacationDays(today, account.getYear()));
+                statistics.setLeftRemainingVacationDaysForYear(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.getYear()));
 
                 final VacationDaysLeft vacationDaysLeftPeriod = vacationDaysService.getVacationDaysLeft(from, to, account, empty());
                 statistics.setLeftVacationDaysForPeriod(vacationDaysLeftPeriod.getLeftVacationDays(to, account.getYear()));
@@ -84,7 +84,7 @@ class ApplicationForLeaveStatisticsBuilder {
 
             });
 
-        statistics.setLeftOvertime(overtimeService.getLeftOvertimeForPerson(person));
+        statistics.setLeftOvertimeForYear(overtimeService.getLeftOvertimeForPerson(person));
 
         for (VacationType type : vacationTypes) {
             statistics.addWaitingVacationDays(type, ZERO);
