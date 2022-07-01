@@ -85,6 +85,7 @@ class ApplicationForLeaveStatisticsBuilder {
             });
 
         statistics.setLeftOvertimeForYear(overtimeService.getLeftOvertimeForPerson(person));
+        statistics.setLeftOvertimeForPeriod(overtimeService.getLeftOvertimeForPerson(person, from, to));
 
         for (VacationType type : vacationTypes) {
             statistics.addWaitingVacationDays(type, ZERO);

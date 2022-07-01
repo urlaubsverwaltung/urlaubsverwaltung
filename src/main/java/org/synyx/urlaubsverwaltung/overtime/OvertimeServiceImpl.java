@@ -3,10 +3,12 @@ package org.synyx.urlaubsverwaltung.overtime;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
 import javax.transaction.Transactional;
 import java.time.Clock;
@@ -17,12 +19,14 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.math.RoundingMode.HALF_EVEN;
 import static java.time.Duration.ZERO;
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
 /**
  * @since 2.11.0
@@ -117,6 +121,28 @@ class OvertimeServiceImpl implements OvertimeService {
         final Duration overtimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
 
         return totalOvertime.minus(overtimeReduction);
+    }
+
+    @Override
+    public Duration getLeftOvertimeForPerson(Person person, LocalDate start, LocalDate end) {
+
+        final Duration totalOvertimeBeforeYear = getTotalOvertimeForPersonBeforeYear(person, start.getYear());
+
+        final DateRange dateRangeOfPeriod = new DateRange(start, end);
+        final Duration overtimeForPeriod = overtimeRepository.findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, start, end).stream()
+            .map(overtime -> {
+                final DateRange overtimeDateRange = new DateRange(overtime.getStartDate(), overtime.getEndDate());
+                final Duration durationOfOverlap = dateRangeOfPeriod.overlap(overtimeDateRange).map(DateRange::duration).orElse(ZERO);
+                return toFormattedDecimal(overtime.getDuration())
+                    .divide(toFormattedDecimal(overtimeDateRange.duration()), HALF_EVEN)
+                    .multiply(toFormattedDecimal(durationOfOverlap)).setScale(0, HALF_EVEN);
+            })
+            .map(DecimalConverter::toDuration)
+            .reduce(ZERO, Duration::plus);
+
+        final Duration overtimeReductionForPeriod = applicationService.getTotalOvertimeReductionOfPerson(person, start, end);
+
+        return totalOvertimeBeforeYear.plus(overtimeForPeriod).minus(overtimeReductionForPeriod);
     }
 
     /**

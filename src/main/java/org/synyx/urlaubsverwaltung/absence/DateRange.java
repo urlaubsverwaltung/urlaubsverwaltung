@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.absence;
 
 import org.springframework.util.Assert;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -128,6 +129,24 @@ public final class DateRange implements Iterable<LocalDate> {
         return startDate == null || endDate == null;
     }
 
+    /**
+     * Calculates the days between the start and the end date (inclusive start and end date)
+     * <p>
+     * examples:
+     * 2022-10-10 until 2022-10-10 is one day.
+     * 2022-10-10 until 2022-10-20 are eleven days.
+     *
+     * @return duration of days between start and end date (inclusive start and end date)
+     */
+    public Duration duration() {
+
+        if (this.isEmpty()) {
+            return Duration.ZERO;
+        }
+
+        return Duration.ofDays(startDate.until(endDate).getDays()).plusDays(1);
+    }
+
 
     @Override
     public Iterator<LocalDate> iterator() {
@@ -138,10 +157,23 @@ public final class DateRange implements Iterable<LocalDate> {
         return StreamSupport.stream(spliterator(), false);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DateRange that = (DateRange) o;
+        return Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startDate, endDate);
+    }
+
     private static final class DateRangeIterator implements Iterator<LocalDate> {
 
-        private LocalDate cursor;
         private final LocalDate endDate;
+        private LocalDate cursor;
 
         DateRangeIterator(LocalDate startDate, LocalDate endDate) {
             this.cursor = startDate;
@@ -164,18 +196,5 @@ public final class DateRange implements Iterable<LocalDate> {
             cursor = cursor.plusDays(1);
             return current;
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DateRange that = (DateRange) o;
-        return Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(startDate, endDate);
     }
 }

@@ -29,6 +29,7 @@ public class ApplicationForLeaveStatistics {
     private Duration leftOvertimeForYear = Duration.ZERO;
     private BigDecimal leftVacationDaysForPeriod = ZERO;
     private BigDecimal leftRemainingVacationDaysForPeriod = ZERO;
+    private Duration leftOvertimeForPeriod = Duration.ZERO;
 
     ApplicationForLeaveStatistics(Person person) {
         this.person = person;
@@ -92,6 +93,14 @@ public class ApplicationForLeaveStatistics {
 
     public void setLeftOvertimeForYear(Duration leftOvertimeForYear) {
         this.leftOvertimeForYear = leftOvertimeForYear;
+    }
+
+    public Duration getLeftOvertimeForPeriod() {
+        return leftOvertimeForPeriod;
+    }
+
+    public void setLeftOvertimeForPeriod(Duration leftOvertimeForPeriod) {
+        this.leftOvertimeForPeriod = leftOvertimeForPeriod;
     }
 
     public BigDecimal getTotalWaitingVacationDays() {

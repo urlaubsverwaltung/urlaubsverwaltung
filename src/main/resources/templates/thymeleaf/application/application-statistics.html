@@ -128,13 +128,17 @@
 
           <td class="tw-hidden md:tw-table-cell print:tw-table-cell" data-sortable-value="${statistic.leftVacationDays}">
             <div>
-              <span class="tw-font-bold" th:text="${statistic.leftPeriodVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.leftPeriodVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.leftPeriodVacationDays, 1, 1)}"></span>
+              <span class="tw-font-bold" th:text="${statistic.leftVacationDaysForPeriod} % 1 == 0 ? ${#numbers.formatDecimal(statistic.leftVacationDaysForPeriod, 1, 0)} : ${#numbers.formatDecimal(statistic.leftVacationDaysForPeriod, 1, 1)}"></span>
               <span th:text="#{duration.vacationDays}"></span>
             </div>
             <div class="tw-text-xs">
               <span th:text="#{duration.vacationDays.remaining.one}"></span>
-              <span class="tw-font-bold" th:text="${statistic.remainingLeftPeriodVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.remainingLeftPeriodVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.remainingLeftPeriodVacationDays, 1, 1)}"></span>
+              <span class="tw-font-bold" th:text="${statistic.remainingLeftVacationDaysForPeriod} % 1 == 0 ? ${#numbers.formatDecimal(statistic.remainingLeftVacationDaysForPeriod, 1, 0)} : ${#numbers.formatDecimal(statistic.remainingLeftVacationDaysForPeriod, 1, 1)}"></span>
               <span th:text="#{duration.vacationDays.remaining.two}"></span>
+            </div>
+            <div th:class="tw-mt-2">
+              <span class="tw-font-bold" th:text="${statistic.leftOvertimeForPeriod}"></span>
+              <span th:text="#{duration.overtime}"></span>
             </div>
           </td>
 

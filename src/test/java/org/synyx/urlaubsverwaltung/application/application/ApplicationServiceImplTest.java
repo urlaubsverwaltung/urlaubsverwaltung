@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationServiceImplTest {
@@ -125,6 +127,91 @@ class ApplicationServiceImplTest {
         verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
 
         assertThat(totalHours).isEqualTo(Duration.ofHours(1));
+    }
+
+    @Test
+    void ensureTotalOvertimeReductionOfPersonIsZeroIfNoApplicationIsFound() {
+
+        final List<ApplicationStatus> waitingAndAllowedStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        final Person person = new Person();
+        final LocalDate start = LocalDate.of(2022, 10, 10);
+        final LocalDate end = LocalDate.of(2022, 10, 20);
+        when(applicationRepository.findByPersonAndVacationTypeCategoryAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, OVERTIME, waitingAndAllowedStatus, start, end)).thenReturn(List.of());
+
+        final Duration totalOvertimeReduction = sut.getTotalOvertimeReductionOfPerson(person, start, end);
+        assertThat(totalOvertimeReduction).isZero();
+    }
+
+    @Test
+    void ensureTotalOvertimeReductionOfPersonWithApplicationInRange() {
+
+        final List<ApplicationStatus> waitingAndAllowedStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+
+        final Person person = new Person();
+        final LocalDate start = LocalDate.of(2022, 10, 10);
+        final LocalDate end = LocalDate.of(2022, 10, 20);
+
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setCategory(HOLIDAY);
+
+        final Application application = new Application();
+        application.setStartDate(LocalDate.of(2022, 10, 10));
+        application.setEndDate(LocalDate.of(2022, 10, 12));
+        application.setStatus(WAITING);
+        application.setVacationType(vacationTypeEntity);
+        application.setHours(Duration.ofHours(10));
+        when(applicationRepository.findByPersonAndVacationTypeCategoryAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, OVERTIME, waitingAndAllowedStatus, start, end)).thenReturn(List.of(application));
+
+        final Duration totalOvertimeReduction = sut.getTotalOvertimeReductionOfPerson(person, start, end);
+        assertThat(totalOvertimeReduction).isEqualTo(Duration.ofHours(10));
+    }
+
+    @Test
+    void ensureTotalOvertimeReductionOfPersonWithApplicationStartOfRange() {
+
+        final List<ApplicationStatus> waitingAndAllowedStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+
+        final Person person = new Person();
+        final LocalDate start = LocalDate.of(2022, 10, 10);
+        final LocalDate end = LocalDate.of(2022, 10, 20);
+
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setCategory(HOLIDAY);
+
+        final Application application = new Application();
+        application.setStartDate(LocalDate.of(2022, 10, 8));
+        application.setEndDate(LocalDate.of(2022, 10, 12));
+        application.setStatus(WAITING);
+        application.setVacationType(vacationTypeEntity);
+        application.setHours(Duration.ofHours(12));
+        when(applicationRepository.findByPersonAndVacationTypeCategoryAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, OVERTIME, waitingAndAllowedStatus, start, end)).thenReturn(List.of(application));
+
+        final Duration totalOvertimeReduction = sut.getTotalOvertimeReductionOfPerson(person, start, end);
+        assertThat(totalOvertimeReduction).isEqualTo(Duration.parse("PT7H12M"));
+    }
+
+    @Test
+    void ensureTotalOvertimeReductionOfPersonWithApplicationEndOfRange() {
+
+        final List<ApplicationStatus> waitingAndAllowedStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+
+        final Person person = new Person();
+        final LocalDate start = LocalDate.of(2022, 10, 10);
+        final LocalDate end = LocalDate.of(2022, 10, 20);
+
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setCategory(HOLIDAY);
+
+        final Application application = new Application();
+        application.setStartDate(LocalDate.of(2022, 10, 20));
+        application.setEndDate(LocalDate.of(2022, 10, 22));
+        application.setStatus(WAITING);
+        application.setVacationType(vacationTypeEntity);
+        application.setHours(Duration.ofHours(12));
+        when(applicationRepository.findByPersonAndVacationTypeCategoryAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, OVERTIME, waitingAndAllowedStatus, start, end)).thenReturn(List.of(application));
+
+        final Duration totalOvertimeReduction = sut.getTotalOvertimeReductionOfPerson(person, start, end);
+        assertThat(totalOvertimeReduction).isEqualTo(Duration.parse("PT4H"));
     }
 
     @Test
