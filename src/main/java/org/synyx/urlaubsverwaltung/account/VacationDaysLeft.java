@@ -81,11 +81,11 @@ public final class VacationDaysLeft {
      */
     public static class Builder {
 
-        private BigDecimal annualVacationDays;
-        private BigDecimal remainingVacationDays;
-        private BigDecimal remainingVacationDaysNotExpiring;
-        private BigDecimal usedDaysBeforeApril;
-        private BigDecimal usedDaysAfterApril;
+        private BigDecimal annualVacationDays = ZERO;
+        private BigDecimal remainingVacationDays = ZERO;
+        private BigDecimal remainingVacationDaysNotExpiring = ZERO;
+        private BigDecimal usedDaysBeforeApril = ZERO;
+        private BigDecimal usedDaysAfterApril = ZERO;
         private BigDecimal vacationDaysUsedNextYear = ZERO;
 
         public Builder withAnnualVacation(BigDecimal annualVacation) {

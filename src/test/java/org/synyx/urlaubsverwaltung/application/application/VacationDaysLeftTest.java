@@ -28,6 +28,19 @@ class VacationDaysLeftTest {
     }
 
     @Test
+    void ensureEmptyVacationDaysLeft() {
+        final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder().build();
+
+        final LocalDate now = LocalDate.now();
+        assertThat(vacationDaysLeft.getLeftVacationDays(now, now.getYear())).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(now, now.getYear())).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getVacationDaysUsedNextYear()).isEqualByComparingTo(ZERO);
+    }
+
+    @Test
     void ensureBuildsCorrectVacationDaysLeftObject() {
 
         final VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
