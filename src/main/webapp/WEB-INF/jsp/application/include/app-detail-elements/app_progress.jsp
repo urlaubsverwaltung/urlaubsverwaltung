@@ -44,7 +44,7 @@
                             <c:when test="${comment.action == 'ALLOWED_DIRECTLY'}">
                                 <uv:date date="${application.applicationDate}"/>
                             </c:when>
-                            <c:when test="${comment.action == 'CANCELLED' || comment.action == 'REVOKED'}">
+                            <c:when test="${comment.action == 'CANCELLED' || comment.action == 'CANCELLED_DIRECTLY' || comment.action == 'REVOKED'}">
                                 <uv:date date="${application.cancelDate}"/>
                             </c:when>
                             <c:when test="${comment.action == 'REFERRED' || comment.action == 'CANCEL_REQUESTED' || comment.action == 'CANCEL_REQUESTED_DECLINED'}">
