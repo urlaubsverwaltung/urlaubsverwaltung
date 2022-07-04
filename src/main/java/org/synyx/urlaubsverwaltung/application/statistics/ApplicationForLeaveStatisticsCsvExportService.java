@@ -95,9 +95,9 @@ class ApplicationForLeaveStatisticsCsvExportService {
             for (VacationType type : allVacationTypes) {
                 if (applicationForLeaveStatistics.hasVacationType(type)) {
                     final String[] csvRowVacationTypes = new String[csvHeader.length];
-                    csvRowVacationTypes[4] = getTranslation(type.getMessageKey());
-                    csvRowVacationTypes[5] = decimalFormat.format(applicationForLeaveStatistics.getAllowedVacationDays(type));
-                    csvRowVacationTypes[6] = decimalFormat.format(applicationForLeaveStatistics.getWaitingVacationDays(type));
+                    csvRowVacationTypes[3] = getTranslation(type.getMessageKey());
+                    csvRowVacationTypes[4] = decimalFormat.format(applicationForLeaveStatistics.getAllowedVacationDays(type));
+                    csvRowVacationTypes[5] = decimalFormat.format(applicationForLeaveStatistics.getWaitingVacationDays(type));
                     csvWriter.writeNext(csvRowVacationTypes);
                 }
             }
