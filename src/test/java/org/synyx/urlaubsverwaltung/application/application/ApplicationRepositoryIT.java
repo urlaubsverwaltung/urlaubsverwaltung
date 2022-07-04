@@ -369,17 +369,29 @@ class ApplicationRepositoryIT extends TestContainersBase {
 
         final LocalDate now = LocalDate.now(UTC);
 
-        // Allowed overtime reduction (8 hours) ------------------------------------------------------------------------
-        Application fullDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
-        fullDayOvertimeReduction.setHours(Duration.ofHours(8));
-        fullDayOvertimeReduction.setStatus(ALLOWED);
-        sut.save(fullDayOvertimeReduction);
-
         // Waiting overtime reduction (2.5 hours) ----------------------------------------------------------------------
         final Application halfDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now.plusDays(5), now.plusDays(10), MORNING);
         halfDayOvertimeReduction.setHours(Duration.ofMinutes(150));
         halfDayOvertimeReduction.setStatus(WAITING);
         sut.save(halfDayOvertimeReduction);
+
+        // Temporary Allowed overtime reduction (8 hours) ------------------------------------------------------------------------
+        Application fullDayTemporaryAllowedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        fullDayTemporaryAllowedOvertimeReduction.setHours(Duration.ofHours(8));
+        fullDayTemporaryAllowedOvertimeReduction.setStatus(TEMPORARY_ALLOWED);
+        sut.save(fullDayTemporaryAllowedOvertimeReduction);
+
+        // Allowed overtime reduction (8 hours) ------------------------------------------------------------------------
+        Application fullDayAllowedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        fullDayAllowedOvertimeReduction.setHours(Duration.ofHours(8));
+        fullDayAllowedOvertimeReduction.setStatus(ALLOWED);
+        sut.save(fullDayAllowedOvertimeReduction);
+
+        // Allowed overtime reduction (8 hours) ------------------------------------------------------------------------
+        Application fullDayAllowedCancellationRequestedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        fullDayAllowedCancellationRequestedOvertimeReduction.setHours(Duration.ofHours(8));
+        fullDayAllowedCancellationRequestedOvertimeReduction.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        sut.save(fullDayAllowedCancellationRequestedOvertimeReduction);
 
         // Cancelled overtime reduction (1 hour) ----------------------------------------------------------------------
         final Application cancelledOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
@@ -415,7 +427,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
         // Let's calculate! --------------------------------------------------------------------------------------------
 
         BigDecimal totalHours = sut.calculateTotalOvertimeReductionOfPerson(person);
-        assertThat(totalHours).isEqualTo(BigDecimal.valueOf(10.5));
+        assertThat(totalHours).isEqualTo(BigDecimal.valueOf(26.5));
     }
 
     @Test
@@ -430,15 +442,25 @@ class ApplicationRepositoryIT extends TestContainersBase {
         final LocalDate now = LocalDate.now(UTC);
 
         // Should be in the calculation
-        Application fullDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
-        fullDayOvertimeReduction.setHours(Duration.ofHours(8));
-        fullDayOvertimeReduction.setStatus(ALLOWED);
-        sut.save(fullDayOvertimeReduction);
+        final Application halfDayWaitingOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(10), MORNING);
+        halfDayWaitingOvertimeReduction.setHours(Duration.ofMinutes(150));
+        halfDayWaitingOvertimeReduction.setStatus(WAITING);
+        sut.save(halfDayWaitingOvertimeReduction);
 
-        final Application halfDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(10), MORNING);
-        halfDayOvertimeReduction.setHours(Duration.ofMinutes(150));
-        halfDayOvertimeReduction.setStatus(WAITING);
-        sut.save(halfDayOvertimeReduction);
+        Application fullDayTemporaryAllowedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        fullDayTemporaryAllowedOvertimeReduction.setHours(Duration.ofHours(8));
+        fullDayTemporaryAllowedOvertimeReduction.setStatus(TEMPORARY_ALLOWED);
+        sut.save(fullDayTemporaryAllowedOvertimeReduction);
+
+        Application fullDayAllowedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        fullDayAllowedOvertimeReduction.setHours(Duration.ofHours(8));
+        fullDayAllowedOvertimeReduction.setStatus(ALLOWED);
+        sut.save(fullDayAllowedOvertimeReduction);
+
+        Application fullDayAllowedCancellationRequestedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        fullDayAllowedCancellationRequestedOvertimeReduction.setHours(Duration.ofHours(8));
+        fullDayAllowedCancellationRequestedOvertimeReduction.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        sut.save(fullDayAllowedCancellationRequestedOvertimeReduction);
 
         // Should NOT be in the calculation
         final Application cancelledOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
@@ -471,7 +493,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
 
         // Let's calculate! --------------------------------------------------------------------------------------------
         final BigDecimal totalHours = sut.calculateTotalOvertimeReductionOfPersonBefore(person, LocalDate.of(2022, 1, 1));
-        assertThat(totalHours).isEqualTo(BigDecimal.valueOf(10.5));
+        assertThat(totalHours).isEqualTo(BigDecimal.valueOf(26.5));
     }
 
     @Test
