@@ -8,13 +8,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,10 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person);
         applicationForLeaveStatistics.setPersonBasedata(basedata);
+        applicationForLeaveStatistics.setLeftVacationDaysForPeriod(BigDecimal.valueOf(10));
+        applicationForLeaveStatistics.setLeftOvertimeForPeriod(Duration.ofHours(2));
+        applicationForLeaveStatistics.setLeftVacationDaysForYear(BigDecimal.valueOf(20));
+        applicationForLeaveStatistics.setLeftOvertimeForYear(Duration.ofHours(4));
         applicationForLeaveStatistics.addWaitingVacationDays(vacationType, ONE);
         statistics.add(applicationForLeaveStatistics);
 
@@ -83,10 +88,10 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         sut.writeStatistics(period, statistics, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{absence.period}: 01.01.2018 - 31.12.2018"});
-        verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left} (2018)", "", "{person.account.basedata.additionalInformation}"});
-        verify(csvWriter).writeNext(new String[]{"", "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}"});
-        verify(csvWriter).writeNext(new String[]{null, null, null, "{holiday}", "0", "1", null, null, null});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "1", "0", "0", "OneInformation"});
+        verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left}", "", "{applications.statistics.left} (2018)", "", "{person.account.basedata.additionalInformation}"});
+        verify(csvWriter).writeNext(new String[]{"", "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}", "{duration.vacationDays}", "{duration.overtime}"});
+        verify(csvWriter).writeNext(new String[]{null, null, null, "{holiday}", "0", "1", null, null, null, null, null});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "1", "10", "2", "20", "4", "OneInformation"});
     }
 
     @Test
@@ -111,6 +116,10 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         final ApplicationForLeaveStatistics personOneStatistics = new ApplicationForLeaveStatistics(personOne);
         personOneStatistics.setPersonBasedata(basedataOne);
         personOneStatistics.addWaitingVacationDays(vacationType, ONE);
+        personOneStatistics.setLeftVacationDaysForPeriod(BigDecimal.valueOf(10));
+        personOneStatistics.setLeftOvertimeForPeriod(Duration.ofHours(2));
+        personOneStatistics.setLeftVacationDaysForYear(BigDecimal.valueOf(20));
+        personOneStatistics.setLeftOvertimeForYear(Duration.ofHours(4));
         statistics.add(personOneStatistics);
 
         final ApplicationForLeaveStatistics personTwoStatistics = new ApplicationForLeaveStatistics(personTwo);
@@ -135,12 +144,15 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         sut.writeStatistics(period, statistics, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{absence.period}: 02.01.2019 - 24.12.2019"});
-        verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left} (2019)", "", "{person.account.basedata.additionalInformation}"});
-        verify(csvWriter).writeNext(new String[]{"", "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}"});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "1", "0", "0", "OneInformation"});
-        verify(csvWriter).writeNext(new String[]{null, null, null, "{holiday}", "0", "1", null, null, null});
-        verify(csvWriter).writeNext(new String[]{"42", "personTwoFirstName", "personTwoLastName", "{applications.statistics.total}", "10", "0", "0", "0", "SecondInformation"});
-        verify(csvWriter).writeNext(new String[]{null, null, null, "{holiday}", "10", "0", null, null, null});
+        verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}",
+            "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}",
+            "{applications.statistics.left}", "", "{applications.statistics.left} (2019)", "",
+            "{person.account.basedata.additionalInformation}"});
+        verify(csvWriter).writeNext(new String[]{"", "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}", "{duration.vacationDays}", "{duration.overtime}"});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "{applications.statistics.total}", "0", "1", "10", "2", "20", "4", "OneInformation"});
+        verify(csvWriter).writeNext(new String[]{null, null, null, "{holiday}", "0", "1", null, null, null, null, null});
+        verify(csvWriter).writeNext(new String[]{"42", "personTwoFirstName", "personTwoLastName", "{applications.statistics.total}", "10", "0", "0", "0", "0", "0", "SecondInformation"});
+        verify(csvWriter).writeNext(new String[]{null, null, null, "{holiday}", "10", "0", null, null, null, null, null});
     }
 
     @Test
