@@ -263,7 +263,7 @@
                                 </span>
                             </a>
                         </li>
-                        <c:if test="${navigationSickNoteAccess}">
+                        <c:if test="${navigationSickNoteStatisticsAccess}">
                         <li class="tw-flex tw-items-center">
                             <a href="${URL_PREFIX}/sicknote" class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base" data-test-id="navigation-sick-notes-link">
                                 <span class="tw-flex tw-items-center">
