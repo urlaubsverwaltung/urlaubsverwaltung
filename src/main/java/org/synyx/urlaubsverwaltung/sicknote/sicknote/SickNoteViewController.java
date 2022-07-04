@@ -108,7 +108,7 @@ class SickNoteViewController {
 
         final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
-        if (signedInUser.hasRole(OFFICE) || sickNote.getPerson().equals(signedInUser)) {
+        if (signedInUser.hasRole(OFFICE) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson()) || sickNote.getPerson().equals(signedInUser)) {
             model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
             model.addAttribute("comment", new SickNoteCommentForm());
 
@@ -130,12 +130,22 @@ class SickNoteViewController {
             signedInUser.getId(), sickNote.getPerson().getId()));
     }
 
-    @PreAuthorize(IS_OFFICE)
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'DEPARTMENT_HEAD')")
     @GetMapping("/sicknote/new")
     public String newSickNote(Model model) {
 
+        final Person signedInUser = personService.getSignedInUser();
+
         model.addAttribute(SICK_NOTE, new SickNoteForm());
-        model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
+
+        final List<Person> managedPersons;
+        if (signedInUser.hasRole(OFFICE)) {
+            managedPersons = personService.getActivePersons();
+        } else {
+            managedPersons = departmentService.getMembersForDepartmentHead(signedInUser);
+        }
+
+        model.addAttribute(PERSONS_ATTRIBUTE, managedPersons);
         model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
 
         addVacationTypeColorsToModel(model);
@@ -143,11 +153,14 @@ class SickNoteViewController {
         return SICKNOTE_SICK_NOTE_FORM;
     }
 
-    @PreAuthorize(IS_OFFICE)
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'DEPARTMENT_HEAD')")
     @PostMapping("/sicknote")
     public String newSickNote(@ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) {
 
+        final Person signedInUser = personService.getSignedInUser();
+
         final SickNote sickNote = sickNoteForm.generateSickNote();
+        sickNote.setApplier(signedInUser);
 
         sickNoteValidator.validate(sickNote, errors);
         if (errors.hasErrors()) {
@@ -161,7 +174,7 @@ class SickNoteViewController {
             return SICKNOTE_SICK_NOTE_FORM;
         }
 
-        sickNoteInteractionService.create(sickNote, personService.getSignedInUser(), sickNoteForm.getComment());
+        sickNoteInteractionService.create(sickNote, signedInUser, sickNoteForm.getComment());
 
         return REDIRECT_WEB_SICKNOTE + sickNote.getId();
     }

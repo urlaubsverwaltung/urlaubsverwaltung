@@ -67,12 +67,12 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     }
 
     @Override
-    public SickNote create(SickNote sickNote, Person creator, String comment) {
+    public SickNote create(SickNote sickNote, Person applier, String comment) {
 
         sickNote.setStatus(ACTIVE);
         saveSickNote(sickNote);
 
-        commentService.create(sickNote, SickNoteCommentAction.CREATED, creator, comment);
+        commentService.create(sickNote, SickNoteCommentAction.CREATED, applier, comment);
 
         LOG.info("Created sick note: {}", sickNote);
 

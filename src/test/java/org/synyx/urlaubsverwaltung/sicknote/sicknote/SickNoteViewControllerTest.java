@@ -31,7 +31,6 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +55,9 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteViewControllerTest {
@@ -102,16 +103,40 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetNewSickNoteProvidesCorrectModelAttributesAndView() throws Exception {
+    void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewForOfficeUser() throws Exception {
 
-        when(personService.getActivePersons()).thenReturn(List.of(somePerson()));
-        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(List.of(someSickNoteType()));
+        final Person officePerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(officePerson);
+
+        final List<Person> activePersons = of(somePerson());
+        when(personService.getActivePersons()).thenReturn(activePersons);
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
 
         perform(get("/web/sicknote/new"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
-            .andExpect(model().attribute("persons", personService.getActivePersons()))
-            .andExpect(model().attribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes()))
+            .andExpect(model().attribute("persons", activePersons))
+            .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
+            .andExpect(view().name("sicknote/sick_note_form"));
+    }
+
+    @Test
+    void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewForDepartmentHead() throws Exception {
+
+        final Person departmentHead = personWithRole(DEPARTMENT_HEAD);
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final List<Person> departmentPersons = of(somePerson());
+        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(departmentPersons);
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
+
+        perform(get("/web/sicknote/new"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("persons", departmentPersons))
+            .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(view().name("sicknote/sick_note_form"));
     }
 
@@ -121,10 +146,13 @@ class SickNoteViewControllerTest {
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
+
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
-            .andExpect(model().attribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes()))
+            .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("sicknote/sick_note_form"));
     }
@@ -156,31 +184,54 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetSickNoteDetailsAccessableForPersonWithRoleOfficeOrSickNoteOwner() throws Exception {
-
-        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
-
-        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
-            .andExpect(status().isOk());
+    void ensureGetSickNoteDetailsAccessibleForSickNoteOwner() throws Exception {
 
         final Person somePerson = somePerson();
         when(personService.getSignedInUser()).thenReturn(somePerson);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(somePerson)));
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
+    }
 
-        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
-            .andExpect(status().isOk());
+    @Test
+    void ensureGetSickNoteDetailsAccessibleForPersonWithRoleOffice() throws Exception {
 
         final Person officePerson = personWithRole(OFFICE);
         when(personService.getSignedInUser()).thenReturn(officePerson);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(officePerson)));
 
-        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
-            .andExpect(status().isOk());
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
     }
 
     @Test
-    void ensureGetSickNoteDetailsNotAccessableForOtherPersonIfNotRoleOffice() {
+    void ensureGetSickNoteDetailsAccessibleForPersonWithRoleDepartmentHead() throws Exception {
+
+        final Person departmentHeadPerson = personWithRole(DEPARTMENT_HEAD);
+        when(personService.getSignedInUser()).thenReturn(departmentHeadPerson);
+        final Person person = personWithRole(USER);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsIsNotAccessibleForPersonWithDepartmentHeadForWrongUser() throws Exception {
+
+        final Person departmentHeadPerson = personWithRole(DEPARTMENT_HEAD);
+        departmentHeadPerson.setId(1);
+        when(personService.getSignedInUser()).thenReturn(departmentHeadPerson);
+        final Person person = personWithRole(USER);
+        person.setId(2);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(false);
+
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsNotAccessibleForOtherPersonIfNotRoleOffice() {
 
         final int somePersonId = 1;
         when(personService.getSignedInUser()).thenReturn(personWithId(somePersonId));

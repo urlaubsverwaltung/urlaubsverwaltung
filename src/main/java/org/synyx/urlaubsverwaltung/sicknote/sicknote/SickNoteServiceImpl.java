@@ -9,7 +9,6 @@ import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
