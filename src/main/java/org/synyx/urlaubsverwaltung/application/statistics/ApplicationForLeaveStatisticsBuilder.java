@@ -81,7 +81,6 @@ class ApplicationForLeaveStatisticsBuilder {
                 final VacationDaysLeft vacationDaysLeftPeriod = vacationDaysService.getVacationDaysLeft(from, to, account, empty());
                 statistics.setLeftVacationDaysForPeriod(vacationDaysLeftPeriod.getLeftVacationDays(to, account.getYear()));
                 statistics.setLeftRemainingVacationDaysForPeriod(vacationDaysLeftPeriod.getRemainingVacationDaysLeft(to, account.getYear()));
-
             });
 
         statistics.setLeftOvertimeForYear(overtimeService.getLeftOvertimeForPerson(person));

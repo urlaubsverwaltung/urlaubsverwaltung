@@ -126,9 +126,8 @@ class OvertimeServiceImpl implements OvertimeService {
     @Override
     public Duration getLeftOvertimeForPerson(Person person, LocalDate start, LocalDate end) {
 
-        final Duration totalOvertimeBeforeYear = getTotalOvertimeForPersonBeforeYear(person, start.getYear());
-
         final DateRange dateRangeOfPeriod = new DateRange(start, end);
+
         final Duration overtimeForPeriod = overtimeRepository.findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, start, end).stream()
             .map(overtime -> {
                 final DateRange overtimeDateRange = new DateRange(overtime.getStartDate(), overtime.getEndDate());
@@ -142,6 +141,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
         final Duration overtimeReductionForPeriod = applicationService.getTotalOvertimeReductionOfPerson(person, start, end);
 
+        final Duration totalOvertimeBeforeYear = getTotalOvertimeForPersonBeforeYear(person, start.getYear());
         return totalOvertimeBeforeYear.plus(overtimeForPeriod).minus(overtimeReductionForPeriod);
     }
 

@@ -5,7 +5,6 @@
   <th:block th:fragment="styles">
     <link rel="stylesheet" type="text/css" asset:href="account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.css"/>
     <link rel="stylesheet" type="text/css" asset:href="account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css"/>
-    <link rel="stylesheet" type="text/css" asset:href="absences_overview.css"/>
   </th:block>
   <th:block th:fragment="scripts">
     <script defer asset:src="npm.duetds.js"></script>
@@ -15,8 +14,6 @@
     <script defer asset:src="account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.js"></script>
     <script defer asset:src="account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~704d57c1.js"></script>
     <script defer asset:src="app_statistics.js"></script>
-    <script defer asset:src="npm.tablesorter.js"></script>
-    <script defer asset:src="absences_overview.js"></script>
     <script th:inline="javascript">
       /*<![CDATA[*/
       window.uv = {};
@@ -32,7 +29,7 @@
 
 <main th:fragment="main">
 
-  <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
+  <div class="tw-max-w-[93.75rem] tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
     <div th:replace="fragments/section-heading::section-heading(~{::absences-statistics-heading-body}, ~{::absences-statistics-heading-actions})">
       <th:block th:ref="absences-statistics-heading-body">
         <h1 th:text="#{applications.statistics}">Abwesenheitsstatistik</h1>
@@ -45,7 +42,7 @@
       </th:block>
     </div>
 
-    <p class="tw-text-sm">
+    <p class="tw-text-sm -tw-translate-y-4">
       <a th:if="${errors}" th:text="#{applications.statistics.error.period}" href="#filterModal" data-toggle="modal"></a>
       <a th:unless="${errors}" href="#filterModal" data-toggle="modal">
         <span th:text="|#{filter.period}:|"></span>
@@ -101,32 +98,32 @@
 
           <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
             <span th:text="|#{applications.statistics.total}:|" class="tw-inline-block"></span>
-            <div th:if="${statistic.hasVacationType(type)}" th:each="type : ${vacationTypes}">
+            <div class="tw-whitespace-nowrap" th:each="type : ${vacationTypes}" th:if="${statistic.hasVacationType(type)}">
               <span class="tw-text-xs" th:text="|#{${type.messageKey}}:|"></span>
             </div>
           </td>
 
-          <td class="tw-hidden md:tw-table-cell print:tw-table-cell number" data-sortable-value="${statistic.totalAllowedVacationDays}">
-            <div>
+          <td class="tw-hidden md:tw-table-cell print:tw-table-cell" th:data-sortable-value="${statistic.totalAllowedVacationDays}">
+            <div class="tw-whitespace-nowrap">
               <span class="tw-font-bold" th:text="${statistic.totalAllowedVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 1)}"></span>
               <span th:text="#{duration.days}"></span>
             </div>
-            <div th:if="${statistic.hasVacationType(type)}" th:each="type : ${vacationTypes}">
+            <div class="tw-whitespace-nowrap" th:if="${statistic.hasVacationType(type)}" th:each="type : ${vacationTypes}">
               <span class="tw-text-xs" th:text="${statistic.getAllowedVacationDays(type)} % 1 == 0 ? ${#numbers.formatDecimal(statistic.getAllowedVacationDays(type), 1, 0)} : ${#numbers.formatDecimal(statistic.getAllowedVacationDays(type), 1, 1)}"></span>
             </div>
           </td>
 
-          <td class="tw-hidden md:tw-table-cell print:tw-table-cell number" data-sortable-value="${statistic.totalWaitingVacationDays}">
-            <div>
+          <td class="tw-hidden md:tw-table-cell print:tw-table-cell" th:data-sortable-value="${statistic.totalWaitingVacationDays}">
+            <div class="tw-whitespace-nowrap">
               <span class="tw-font-bold" th:text="${statistic.totalWaitingVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 1)}"></span>
               <span th:text="#{duration.days}"></span>
             </div>
-            <div th:if="${statistic.hasVacationType(type)}" th:each="type : ${vacationTypes}">
+            <div class="tw-whitespace-nowrap" th:if="${statistic.hasVacationType(type)}" th:each="type : ${vacationTypes}">
               <span class="tw-text-xs" th:text="${statistic.getWaitingVacationDays(type)} % 1 == 0 ? ${#numbers.formatDecimal(statistic.getWaitingVacationDays(type), 1, 0)} : ${#numbers.formatDecimal(statistic.getWaitingVacationDays(type), 1, 1)}"></span>
             </div>
           </td>
 
-          <td class="tw-hidden md:tw-table-cell print:tw-table-cell" data-sortable-value="${statistic.leftVacationDays}">
+          <td class="tw-hidden md:tw-table-cell print:tw-table-cell" th:data-sortable-value="${statistic.leftVacationDaysForPeriod}">
             <div>
               <span class="tw-font-bold" th:text="${statistic.leftVacationDaysForPeriod} % 1 == 0 ? ${#numbers.formatDecimal(statistic.leftVacationDaysForPeriod, 1, 0)} : ${#numbers.formatDecimal(statistic.leftVacationDaysForPeriod, 1, 1)}"></span>
               <span th:text="#{duration.vacationDays}"></span>
@@ -142,7 +139,7 @@
             </div>
           </td>
 
-          <td class="tw-hidden md:tw-table-cell print:tw-table-cell" data-sortable-value="${statistic.leftVacationDays}">
+          <td class="tw-hidden md:tw-table-cell print:tw-table-cell" th:data-sortable-value="${statistic.leftVacationDays}">
             <div>
               <span class="tw-font-bold" th:text="${statistic.leftVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.leftVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.leftVacationDays, 1, 1)}"></span>
               <span th:text="#{duration.vacationDays}"></span>
