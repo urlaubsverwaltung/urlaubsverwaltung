@@ -7,12 +7,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.Month.DECEMBER;
@@ -30,6 +32,10 @@ import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.NO_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
  * Unit test for {@link SickNoteValidator}.
@@ -44,10 +50,94 @@ class SickNoteValidatorTest {
     private OverlapService overlapService;
     @Mock
     private WorkingTimeService workingTimeService;
+    @Mock
+    private DepartmentService departmentService;
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteValidator(overlapService, workingTimeService, Clock.systemUTC());
+        sut = new SickNoteValidator(overlapService, workingTimeService, departmentService, Clock.systemUTC());
+    }
+
+    @Test
+    void ensureApplierWithWrongRoleReturnsError() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Person applier = new Person("dh", "department", "head", "department@example.org");
+        applier.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        sickNote.setApplier(applier);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isOne();
+    }
+
+    @Test
+    void ensureDepartmentHeadApplierForWrongDepartmentReturnsError() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Person applier = new Person("dh", "department", "head", "department@example.org");
+        applier.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        sickNote.setApplier(applier);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)).thenReturn(false);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isOne();
+    }
+
+    @Test
+    void ensureValidOfficeApplierHasNoErrors() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getWorkingTime(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Person applier = new Person("dh", "department", "head", "department@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isZero();
+    }
+
+    @Test
+    void ensreValidDepartmentHeadApplierHasNoErrors() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getWorkingTime(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Person applier = new Person("dh", "department", "head", "department@example.org");
+        applier.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        sickNote.setApplier(applier);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)).thenReturn(true);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isZero();
     }
 
     @Test
@@ -62,6 +152,10 @@ class SickNoteValidatorTest {
             LocalDate.of(2013, NOVEMBER, 20),
             FULL);
 
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getErrorCount()).isZero();
@@ -75,6 +169,10 @@ class SickNoteValidatorTest {
             LocalDate.of(2013, NOVEMBER, 20),
             null);
 
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getFieldErrors("dayLength").get(0).getCode()).isEqualTo("error.entry.mandatory");
@@ -86,6 +184,10 @@ class SickNoteValidatorTest {
             null,
             LocalDate.of(2013, NOVEMBER, 20),
             FULL);
+
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -99,6 +201,10 @@ class SickNoteValidatorTest {
             null,
             FULL);
 
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getFieldErrors("endDate").get(0).getCode()).isEqualTo("error.entry.mandatory");
@@ -110,6 +216,10 @@ class SickNoteValidatorTest {
             LocalDate.of(2013, DECEMBER, 10),
             LocalDate.of(2013, DECEMBER, 1),
             FULL);
+
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -125,6 +235,10 @@ class SickNoteValidatorTest {
             LocalDate.of(2013, NOVEMBER, 21),
             NOON);
 
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getFieldErrors("endDate").get(0).getCode()).isEqualTo("sicknote.error.halfDayPeriod");
@@ -136,6 +250,10 @@ class SickNoteValidatorTest {
             LocalDate.of(2013, NOVEMBER, 19),
             LocalDate.of(2013, NOVEMBER, 21),
             MORNING);
+
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -149,6 +267,10 @@ class SickNoteValidatorTest {
             LocalDate.of(2013, NOVEMBER, 19),
             MORNING);
 
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getFieldErrors("endDate").get(0).getCode()).isEqualTo("error.entry.invalidPeriod");
@@ -160,6 +282,10 @@ class SickNoteValidatorTest {
             LocalDate.of(2013, NOVEMBER, 21),
             LocalDate.of(2013, NOVEMBER, 19),
             NOON);
+
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -180,6 +306,10 @@ class SickNoteValidatorTest {
         sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 20));
         sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 19));
 
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getFieldErrors("aubEndDate").get(0).getCode()).isEqualTo("error.entry.invalidPeriod");
@@ -198,6 +328,10 @@ class SickNoteValidatorTest {
             FULL);
         sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 19));
         sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 20));
+
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -218,6 +352,10 @@ class SickNoteValidatorTest {
         sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
         sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 30));
 
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getErrorCount()).isZero();
@@ -236,6 +374,10 @@ class SickNoteValidatorTest {
             FULL);
         sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
         sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 10));
+
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -256,6 +398,10 @@ class SickNoteValidatorTest {
         sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 20));
         sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 30));
 
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getErrorCount()).isZero();
@@ -274,6 +420,10 @@ class SickNoteValidatorTest {
             FULL);
         sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
         sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 20));
+
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -294,6 +444,10 @@ class SickNoteValidatorTest {
         sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 20));
         sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 30));
 
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getFieldErrors("aubEndDate").get(0).getCode()).isEqualTo("sicknote.error.aubInvalidPeriod");
@@ -312,6 +466,10 @@ class SickNoteValidatorTest {
             FULL);
         sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
         sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 9));
+
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -332,6 +490,10 @@ class SickNoteValidatorTest {
         sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
         sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 1));
 
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getErrorCount()).isZero();
@@ -351,6 +513,10 @@ class SickNoteValidatorTest {
         sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 2));
         sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 2));
 
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getFieldErrors("aubStartDate").get(0).getCode()).isEqualTo("sicknote.error.aubInvalidPeriod");
@@ -368,6 +534,10 @@ class SickNoteValidatorTest {
             FULL);
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(FULLY_OVERLAPPING);
 
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getGlobalErrors().get(0).getCode()).isEqualTo("application.error.overlap");
@@ -381,8 +551,11 @@ class SickNoteValidatorTest {
             LocalDate.of(2015, MARCH, 10),
             FULL);
 
-        when(workingTimeService.getWorkingTime(any(Person.class),
-            any(LocalDate.class))).thenReturn(Optional.empty());
+        when(workingTimeService.getWorkingTime(any(Person.class), any(LocalDate.class))).thenReturn(Optional.empty());
+
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -398,6 +571,10 @@ class SickNoteValidatorTest {
             FULL);
         sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 1));
         sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 2));
+
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -417,6 +594,10 @@ class SickNoteValidatorTest {
             FULL);
         sickNote.setAubStartDate(LocalDate.of(2013, NOVEMBER, 2));
         sickNote.setAubEndDate(LocalDate.of(2013, NOVEMBER, 1));
+
+        final Person applier = new Person("office", "office", "office", "office@example.org");
+        applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
