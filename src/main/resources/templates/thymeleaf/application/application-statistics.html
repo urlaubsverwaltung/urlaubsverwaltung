@@ -31,12 +31,6 @@
         asset:src="account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~704d57c1.js"
       ></script>
       <script defer asset:src="app_statistics.js"></script>
-      <script th:inline="javascript">
-        window.uv = window.uv || {};
-        window.uv.personId = /*[[${userId}]]*/ "personId";
-        window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
-        window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
-      </script>
       <script th:replace="fragments/datepicker-localization"></script>
     </th:block>
   </head>
