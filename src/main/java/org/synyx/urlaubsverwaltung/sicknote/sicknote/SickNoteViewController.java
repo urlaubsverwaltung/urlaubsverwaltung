@@ -36,10 +36,12 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteMapper.merge;
 
 /**
  * Controller for {@link SickNote} purposes.
@@ -108,14 +110,15 @@ class SickNoteViewController {
 
         final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
-        if (signedInUser.hasRole(OFFICE) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson()) || sickNote.getPerson().equals(signedInUser)) {
+        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson());
+        if (signedInUser.hasRole(OFFICE) || isDepartmentHeadOfPerson || sickNote.getPerson().equals(signedInUser)) {
             model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
             model.addAttribute("comment", new SickNoteCommentForm());
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
-            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE));
+            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || isDepartmentHeadOfPerson);
             model.addAttribute("canConvertSickNote", signedInUser.hasRole(OFFICE));
             model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE));
             model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE));
@@ -179,7 +182,7 @@ class SickNoteViewController {
         return REDIRECT_WEB_SICKNOTE + sickNote.getId();
     }
 
-    @PreAuthorize(IS_OFFICE)
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'DEPARTMENT_HEAD')")
     @GetMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException,
         SickNoteAlreadyInactiveException {
@@ -199,13 +202,18 @@ class SickNoteViewController {
         return SICKNOTE_SICK_NOTE_FORM;
     }
 
-    @PreAuthorize(IS_OFFICE)
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'DEPARTMENT_HEAD')")
     @PostMapping("/sicknote/{id}/edit")
-    public String editSickNote(@PathVariable("id") Integer id,
-                               @ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) {
+    public String editSickNote(@PathVariable("id") Integer sickNoteId,
+                               @ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) throws UnknownSickNoteException {
 
-        final SickNote sickNote = sickNoteForm.generateSickNote();
-        sickNoteValidator.validate(sickNote, errors);
+        final Optional<SickNote> maybeSickNote = sickNoteService.getById(sickNoteId);
+        if (maybeSickNote.isEmpty()) {
+            throw new UnknownSickNoteException(sickNoteId);
+        }
+        final SickNote persistedSickNote = maybeSickNote.get();
+        final SickNote editedSickNote = merge(persistedSickNote, sickNoteForm);
+        sickNoteValidator.validate(editedSickNote, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute(ATTRIBUTE_ERRORS, errors);
@@ -217,9 +225,10 @@ class SickNoteViewController {
             return SICKNOTE_SICK_NOTE_FORM;
         }
 
-        sickNoteInteractionService.update(sickNote, personService.getSignedInUser(), sickNoteForm.getComment());
+        final Person signedInUser = personService.getSignedInUser();
+        sickNoteInteractionService.update(editedSickNote, signedInUser, sickNoteForm.getComment());
 
-        return REDIRECT_WEB_SICKNOTE + id;
+        return REDIRECT_WEB_SICKNOTE + sickNoteId;
     }
 
     @PreAuthorize(IS_OFFICE)

@@ -269,7 +269,7 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetSickNoteDetailsCanEditSickNotes() throws Exception {
+    void ensureGetSickNoteDetailsCanEditSickNotesOffice() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
@@ -278,6 +278,39 @@ class SickNoteViewControllerTest {
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
             .andExpect(view().name("sicknote/sick_note"))
             .andExpect(model().attribute("canEditSickNote", true));
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsCanEditSickNotesDepartmentHead() throws Exception {
+
+        final Person departmentHead = personWithRole(DEPARTMENT_HEAD);
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person person = new Person();
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
+            .andExpect(view().name("sicknote/sick_note"))
+            .andExpect(model().attribute("canEditSickNote", true));
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsCanNotEditSickNotesDepartmentHeadOfDifferentDepartment() throws Exception {
+
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+
+        final Person departmentHead = personWithRole(DEPARTMENT_HEAD);
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person person = new Person();
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(false);
+
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -380,6 +413,7 @@ class SickNoteViewControllerTest {
     @Test
     void editPostSickNoteShowsFormIfValidationFails() throws Exception {
 
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         doAnswer(invocation -> {
@@ -396,6 +430,8 @@ class SickNoteViewControllerTest {
     @Test
     void editPostSickNoteUpdatesSickNoteIfValidationSuccessful() throws Exception {
 
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+
         final Person signedInPerson = somePerson();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
@@ -407,14 +443,25 @@ class SickNoteViewControllerTest {
     @Test
     void editPostSickNoteRedirectsToCreatedSickNote() throws Exception {
 
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
 
     @Test
-    void ensurePostAddCommentThrowsUnknownSickNoteException() {
+    void editPostSickNoteThrowsUnknownSickNoteException() {
 
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+        ).hasCauseInstanceOf(UnknownSickNoteException.class);
+    }
+
+    @Test
+    void ensurePostAddCommentThrowsUnknownSickNoteException() {
         assertThatThrownBy(() ->
             perform(post("/web/sicknote/" + UNKNOWN_SICK_NOTE_ID + "/comment"))
         ).hasCauseInstanceOf(UnknownSickNoteException.class);
