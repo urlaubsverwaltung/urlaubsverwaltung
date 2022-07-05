@@ -32,12 +32,10 @@
       ></script>
       <script defer asset:src="app_statistics.js"></script>
       <script th:inline="javascript">
-        /*<![CDATA[*/
         window.uv = window.uv || {};
         window.uv.personId = /*[[${userId}]]*/ "personId";
         window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
         window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
-        /*]]>*/
       </script>
       <script th:replace="fragments/datepicker-localization"></script>
     </th:block>
