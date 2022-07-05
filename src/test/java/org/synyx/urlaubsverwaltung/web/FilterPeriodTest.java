@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 class FilterPeriodTest {
@@ -49,7 +49,7 @@ class FilterPeriodTest {
     void ensureStartDateSetterIsOk() {
 
         final LocalDate now = LocalDate.now(Clock.systemUTC());
-        final LocalDate firstDayOfYear = getFirstDayOfYear(now.getYear());
+        final LocalDate firstDayOfYear = Year.of(now.getYear()).atDay(1);
 
         final FilterPeriod filterPeriod = new FilterPeriod(null, LocalDate.of(2199, MAY, 19));
 

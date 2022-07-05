@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.util.Map;
 
 import static java.math.BigDecimal.ZERO;
@@ -23,14 +22,20 @@ public final class ApplicationForLeaveStatisticsDto {
     private final BigDecimal totalWaitingVacationDays;
     private final Map<VacationType, BigDecimal> waitingVacationDays;
 
+    private final BigDecimal leftVacationDaysForPeriod;
+    private final BigDecimal remainingLeftVacationDaysForPeriod;
     private final BigDecimal leftVacationDays;
+    private final BigDecimal remainingLeftVacationDays;
 
-    private final Duration leftOvertime;
+    private final String leftOvertime;
+
+    private final String leftOvertimeForPeriod;
 
     ApplicationForLeaveStatisticsDto(String firstName, String lastName, String niceName, String gravatarURL, String personnelNumber,
                                      BigDecimal totalAllowedVacationDays, Map<VacationType, BigDecimal> allowedVacationDays,
                                      BigDecimal totalWaitingVacationDays, Map<VacationType, BigDecimal> waitingVacationDays,
-                                     BigDecimal leftVacationDays, Duration leftOvertime) {
+                                     BigDecimal leftVacationDaysForPeriod, BigDecimal remainingLeftVacationDaysForPeriod, BigDecimal leftVacationDays,
+                                     BigDecimal remainingLeftVacationDays, String leftOvertime, String leftOvertimeForPeriod) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
@@ -40,8 +45,12 @@ public final class ApplicationForLeaveStatisticsDto {
         this.allowedVacationDays = allowedVacationDays;
         this.totalWaitingVacationDays = totalWaitingVacationDays;
         this.waitingVacationDays = waitingVacationDays;
+        this.leftVacationDaysForPeriod = leftVacationDaysForPeriod;
+        this.remainingLeftVacationDaysForPeriod = remainingLeftVacationDaysForPeriod;
         this.leftVacationDays = leftVacationDays;
+        this.remainingLeftVacationDays = remainingLeftVacationDays;
         this.leftOvertime = leftOvertime;
+        this.leftOvertimeForPeriod = leftOvertimeForPeriod;
     }
 
     public String getFirstName() {
@@ -80,12 +89,28 @@ public final class ApplicationForLeaveStatisticsDto {
         return waitingVacationDays;
     }
 
+    public BigDecimal getLeftVacationDaysForPeriod() {
+        return leftVacationDaysForPeriod;
+    }
+
+    public BigDecimal getRemainingLeftVacationDaysForPeriod() {
+        return remainingLeftVacationDaysForPeriod;
+    }
+
     public BigDecimal getLeftVacationDays() {
         return leftVacationDays;
     }
 
-    public Duration getLeftOvertime() {
+    public BigDecimal getRemainingLeftVacationDays() {
+        return remainingLeftVacationDays;
+    }
+
+    public String getLeftOvertime() {
         return leftOvertime;
+    }
+
+    public String getLeftOvertimeForPeriod() {
+        return leftOvertimeForPeriod;
     }
 
     public boolean hasVacationType(VacationType type) {

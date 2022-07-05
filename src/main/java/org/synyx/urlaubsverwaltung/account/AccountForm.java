@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
@@ -29,7 +30,7 @@ public class AccountForm {
 
     AccountForm(int year) {
         this.holidaysAccountYear = year;
-        this.holidaysAccountValidFrom = DateUtil.getFirstDayOfYear(year);
+        this.holidaysAccountValidFrom = Year.of(year).atDay(1);
         this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
     }
 

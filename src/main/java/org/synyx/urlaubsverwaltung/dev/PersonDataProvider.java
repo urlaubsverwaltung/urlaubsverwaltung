@@ -36,7 +36,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
@@ -92,7 +91,7 @@ class PersonDataProvider {
         personBasedataService.update(new PersonBasedata(person.getId(), String.valueOf(personnelNumber), ""));
 
         final int currentYear = Year.now(clock).getValue();
-        final LocalDate firstDayOfYear = getFirstDayOfYear(currentYear);
+        final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);
 
         final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).stream().map(DayOfWeek::getValue).collect(toList());
         workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);

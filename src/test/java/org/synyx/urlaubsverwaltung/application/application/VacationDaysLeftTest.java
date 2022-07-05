@@ -5,8 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
+import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -21,6 +25,19 @@ class VacationDaysLeftTest {
         builder = VacationDaysLeft.builder().withAnnualVacation(new BigDecimal("28"))
             .withRemainingVacation(new BigDecimal("5"))
             .notExpiring(new BigDecimal("2"));
+    }
+
+    @Test
+    void ensureEmptyVacationDaysLeft() {
+        final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder().build();
+
+        final LocalDate now = LocalDate.now();
+        assertThat(vacationDaysLeft.getLeftVacationDays(now, now.getYear())).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getVacationDays()).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(now, now.getYear())).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getVacationDaysUsedNextYear()).isEqualByComparingTo(ZERO);
     }
 
     @Test
@@ -151,5 +168,34 @@ class VacationDaysLeftTest {
         assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("28"));
         assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualTo(ZERO);
         assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
+    }
+
+    @Test
+    void getRemainingVacationDaysLeftForThisYearAndBeforeApril() {
+        final VacationDaysLeft vacationDaysLeft = builder
+            .withAnnualVacation(new BigDecimal("10"))
+            .withRemainingVacation(new BigDecimal("5"))
+            .notExpiring(new BigDecimal("0"))
+            .forUsedDaysBeforeApril(ONE)
+            .forUsedDaysAfterApril(ZERO)
+            .build();
+
+        final LocalDate someDayBeforeApril = LocalDate.now().with(firstDayOfYear());
+        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(someDayBeforeApril, someDayBeforeApril.getYear())).isEqualByComparingTo("4");
+    }
+
+    @Test
+    void getRemainingVacationDaysLeftForThisYearAndAfterApril() {
+        final VacationDaysLeft vacationDaysLeft = builder
+            .withAnnualVacation(new BigDecimal("10"))
+            .withRemainingVacation(new BigDecimal("5"))
+            .notExpiring(new BigDecimal("5"))
+            .forUsedDaysBeforeApril(ONE)
+            .forUsedDaysAfterApril(ONE)
+            .build();
+
+        final LocalDate someDayBeforeApril = LocalDate.now().with(lastDayOfYear());
+        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(someDayBeforeApril, someDayBeforeApril.getYear())).isEqualByComparingTo("3");
+
     }
 }

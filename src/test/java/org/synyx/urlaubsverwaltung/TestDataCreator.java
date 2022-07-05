@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -166,7 +167,7 @@ public final class TestDataCreator {
     public static Account createHolidaysAccount(Person person, int year, BigDecimal annualVacationDays,
                                                 BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
-        LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(year);
+        LocalDate firstDayOfYear = Year.of(year).atDay(1);
         LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
 
         return new Account(person, firstDayOfYear, lastDayOfYear, annualVacationDays, remainingVacationDays,

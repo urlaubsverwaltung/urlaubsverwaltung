@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,6 +85,17 @@ public interface OvertimeService {
      * @since 2.13.0
      */
     Duration getLeftOvertimeForPerson(Person person);
+
+    /**
+     * Get the left overtime hours of the given person: the difference between the total overtime at start and the
+     * overtime reduction of period between start and end
+     *
+     * @param person to get the left overtime for
+     * @param start of period
+     * @param end of period
+     * @return the left overtime, never {@code null}
+     */
+    Duration getLeftOvertimeForPerson(Person person, LocalDate start, LocalDate end);
 
     /**
      * Is signedInUser allowed to write (create or update) overtime records of given personOfOvertime.

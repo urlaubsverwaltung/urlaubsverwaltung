@@ -45,6 +45,8 @@ class ApplicationForLeaveStatisticsCsvExportService {
             "",
             getTranslation("applications.statistics.allowed"),
             getTranslation("applications.statistics.waiting"),
+            getTranslation("applications.statistics.left"),
+            "",
             getTranslation("applications.statistics.left") + " (" + period.getStartDate().getYear() + ")",
             "",
             getTranslation("person.account.basedata.additionalInformation")
@@ -56,6 +58,8 @@ class ApplicationForLeaveStatisticsCsvExportService {
             "",
             "",
             "",
+            getTranslation("duration.vacationDays"),
+            getTranslation("duration.overtime"),
             getTranslation("duration.vacationDays"),
             getTranslation("duration.overtime")
         };
@@ -87,17 +91,22 @@ class ApplicationForLeaveStatisticsCsvExportService {
             csvRow[3] = translatedTextTotal;
             csvRow[4] = decimalFormat.format(applicationForLeaveStatistics.getTotalAllowedVacationDays());
             csvRow[5] = decimalFormat.format(applicationForLeaveStatistics.getTotalWaitingVacationDays());
-            csvRow[6] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDays());
-            csvRow[7] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertime().toMinutes() / 60));
-            csvRow[8] = applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::getAdditionalInformation).orElse("");
+
+            csvRow[6] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDaysForPeriod());
+            csvRow[7] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertimeForPeriod().toMinutes() / 60));
+
+            csvRow[8] = decimalFormat.format(applicationForLeaveStatistics.getLeftVacationDaysForYear());
+            csvRow[9] = decimalFormat.format(BigDecimal.valueOf((double) applicationForLeaveStatistics.getLeftOvertimeForYear().toMinutes() / 60));
+
+            csvRow[10] = applicationForLeaveStatistics.getPersonBasedata().map(PersonBasedata::getAdditionalInformation).orElse("");
             csvWriter.writeNext(csvRow);
 
-            for (VacationType type : allVacationTypes) {
+            for (final VacationType type : allVacationTypes) {
                 if (applicationForLeaveStatistics.hasVacationType(type)) {
                     final String[] csvRowVacationTypes = new String[csvHeader.length];
-                    csvRowVacationTypes[4] = getTranslation(type.getMessageKey());
-                    csvRowVacationTypes[5] = decimalFormat.format(applicationForLeaveStatistics.getAllowedVacationDays(type));
-                    csvRowVacationTypes[6] = decimalFormat.format(applicationForLeaveStatistics.getWaitingVacationDays(type));
+                    csvRowVacationTypes[3] = getTranslation(type.getMessageKey());
+                    csvRowVacationTypes[4] = decimalFormat.format(applicationForLeaveStatistics.getAllowedVacationDays(type));
+                    csvRowVacationTypes[5] = decimalFormat.format(applicationForLeaveStatistics.getWaitingVacationDays(type));
                     csvWriter.writeNext(csvRowVacationTypes);
                 }
             }

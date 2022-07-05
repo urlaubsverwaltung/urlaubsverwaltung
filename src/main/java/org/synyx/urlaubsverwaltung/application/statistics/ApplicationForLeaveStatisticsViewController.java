@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 
 import liquibase.util.csv.CSVWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
@@ -30,6 +32,7 @@ import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static liquibase.util.csv.CSVReader.DEFAULT_QUOTE_CHARACTER;
 import static liquibase.util.csv.opencsv.CSVWriter.NO_QUOTE_CHARACTER;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatisticsMapper.mapToApplicationForLeaveStatisticsDto;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 /**
@@ -46,17 +49,19 @@ class ApplicationForLeaveStatisticsViewController {
     private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
     private final VacationTypeService vacationTypeService;
     private final DateFormatAware dateFormatAware;
+    private final MessageSource messageSource;
 
     @Autowired
     ApplicationForLeaveStatisticsViewController(
         ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService,
         ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService,
-        VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {
+        VacationTypeService vacationTypeService, DateFormatAware dateFormatAware, MessageSource messageSource) {
 
         this.applicationForLeaveStatisticsService = applicationForLeaveStatisticsService;
         this.applicationForLeaveStatisticsCsvExportService = applicationForLeaveStatisticsCsvExportService;
         this.vacationTypeService = vacationTypeService;
         this.dateFormatAware = dateFormatAware;
+        this.messageSource = messageSource;
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
@@ -75,18 +80,19 @@ class ApplicationForLeaveStatisticsViewController {
 
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping
-    public String applicationForLeaveStatistics(@RequestParam(value = "from", defaultValue = "") String from,
+    public String applicationForLeaveStatistics(Locale locale,
+                                                @RequestParam(value = "from", defaultValue = "") String from,
                                                 @RequestParam(value = "to", defaultValue = "") String to, Model model) {
 
         final FilterPeriod period = toFilterPeriod(from, to);
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
             model.addAttribute("period", period);
             model.addAttribute("errors", "INVALID_PERIOD");
-            return "application/app_statistics";
+            return "thymeleaf/application/application-statistics";
         }
 
         final List<ApplicationForLeaveStatisticsDto> statisticsDtos = applicationForLeaveStatisticsService.getStatistics(period).stream()
-            .map(ApplicationForLeaveStatisticsMapper::mapToApplicationForLeaveStatisticsDto).collect(toList());
+            .map(applicationForLeaveStatistics -> mapToApplicationForLeaveStatisticsDto(applicationForLeaveStatistics, locale, messageSource)).collect(toList());
 
         final boolean showPersonnelNumberColumn = statisticsDtos.stream()
             .anyMatch(statisticsDto -> hasText(statisticsDto.getPersonnelNumber()));
@@ -98,7 +104,7 @@ class ApplicationForLeaveStatisticsViewController {
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("vacationTypes", vacationTypeService.getAllVacationTypes());
 
-        return "application/app_statistics";
+        return "thymeleaf/application/application-statistics";
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)

@@ -17,6 +17,7 @@
     "css:dev": "cross-env NODE_ENV=development postcss src/main/css/style.css --dir target/classes/static/css",
     "css:watch": "onchange -i src/main/css -- npm run css:dev",
     "format": "concurrently 'npm:format:*'",
+    "format:html": "prettier --write src/main/resources/templates",
     "format:js": "prettier --write src/main/javascript",
     "format:css": "prettier --write src/main/css"
   },

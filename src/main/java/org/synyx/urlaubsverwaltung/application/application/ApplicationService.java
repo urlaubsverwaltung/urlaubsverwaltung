@@ -143,6 +143,8 @@ public interface ApplicationService {
      */
     Duration getTotalOvertimeReductionOfPerson(Person person);
 
+    Duration getTotalOvertimeReductionOfPerson(Person person, LocalDate start, LocalDate end);
+
     Duration getTotalOvertimeReductionOfPersonBefore(Person person, LocalDate before);
 
     /**

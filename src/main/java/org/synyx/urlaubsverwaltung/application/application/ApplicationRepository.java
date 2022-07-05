@@ -31,16 +31,16 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
 
     @Query(
         "select x from Application x "
-            + "where x.status = ?3 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
-            + "or (x.startDate < ?1 and x.endDate > ?2)) "
+            + "where x.status = ?3 "
+            + "and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
             + "order by x.startDate"
     )
     List<Application> getApplicationsForACertainTimeAndState(LocalDate startDate, LocalDate endDate, ApplicationStatus status);
 
     @Query(
         "select x from Application x "
-            + "where x.person = ?3 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
-            + "or (x.startDate < ?1 and x.endDate > ?2)) "
+            + "where x.person = ?3 "
+            + "and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
             + "order by x.startDate"
     )
     List<Application> getApplicationsForACertainTimeAndPerson(LocalDate startDate, LocalDate endDate, Person person);
@@ -49,8 +49,9 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
 
     @Query(
         "select x from Application x "
-            + "where x.person = ?3 and x.status = ?4 and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) "
-            + "or (x.startDate < ?1 and x.endDate > ?2)) "
+            + "where x.person = ?3 "
+            + "and x.status = ?4 "
+            + "and ((x.startDate between ?1 and ?2) or (x.endDate between ?1 and ?2) or (x.startDate < ?1 and x.endDate > ?2)) "
             + "order by x.startDate"
     )
     List<Application> getApplicationsForACertainTimeAndPersonAndState(LocalDate startDate, LocalDate endDate, Person person, ApplicationStatus status);
@@ -61,6 +62,9 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
             + "AND (application.status = 'WAITING' OR application.status = 'TEMPORARY_ALLOWED' OR application.status = 'ALLOWED' OR application.status = 'ALLOWED_CANCELLATION_REQUESTED')"
     )
     BigDecimal calculateTotalOvertimeReductionOfPerson(@Param("person") Person person);
+
+    List<Application> findByPersonAndVacationTypeCategoryAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(
+        Person person, VacationCategory category, List<ApplicationStatus> statuses, LocalDate start, LocalDate end);
 
     @Query(
         "SELECT SUM(application.hours) FROM Application application WHERE application.person = :person "

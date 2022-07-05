@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -169,6 +170,25 @@ class DateRangeTest {
     void dateRangeIsNotEmpty() {
         final boolean isEmpty = new DateRange(LocalDate.MIN, LocalDate.MAX).isEmpty();
         assertThat(isEmpty).isFalse();
+    }
+
+    @Test
+    void dateRangeDurationReturnsCorrectValueIfNotEmpty() {
+        final Duration duration = new DateRange(LocalDate.of(2022,10, 10), LocalDate.of(2022,10, 20)).duration();
+        assertThat(duration).isEqualTo(Duration.ofDays(11));
+    }
+
+    @Test
+    void dateRangeDurationReturnsOneOnSameDay() {
+        final LocalDate date = LocalDate.of(2022, 10, 10);
+        final Duration duration = new DateRange(date, date).duration();
+        assertThat(duration).isEqualTo(Duration.ofDays(1));
+    }
+
+    @Test
+    void dateRangeDurationReturnsZeroIfEmpty() {
+        final Duration duration = new DateRange(null, null).duration();
+        assertThat(duration).isZero();
     }
 
     @Test

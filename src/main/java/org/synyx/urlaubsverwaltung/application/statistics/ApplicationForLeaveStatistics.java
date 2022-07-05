@@ -24,8 +24,12 @@ public class ApplicationForLeaveStatistics {
     private final Map<VacationType, BigDecimal> waitingVacationDays = new HashMap<>();
     private final Map<VacationType, BigDecimal> allowedVacationDays = new HashMap<>();
 
-    private BigDecimal leftVacationDays = ZERO;
-    private Duration leftOvertime = Duration.ZERO;
+    private BigDecimal leftVacationDaysForYear = ZERO;
+    private BigDecimal leftRemainingVacationDaysForYear = ZERO;
+    private Duration leftOvertimeForYear = Duration.ZERO;
+    private BigDecimal leftVacationDaysForPeriod = ZERO;
+    private BigDecimal leftRemainingVacationDaysForPeriod = ZERO;
+    private Duration leftOvertimeForPeriod = Duration.ZERO;
 
     ApplicationForLeaveStatistics(Person person) {
         this.person = person;
@@ -51,40 +55,62 @@ public class ApplicationForLeaveStatistics {
         return allowedVacationDays;
     }
 
-    public BigDecimal getLeftVacationDays() {
-        return leftVacationDays;
+    public BigDecimal getLeftVacationDaysForYear() {
+        return leftVacationDaysForYear;
     }
 
-    public void setLeftVacationDays(BigDecimal leftVacationDays) {
-        this.leftVacationDays = leftVacationDays;
+    public void setLeftVacationDaysForYear(BigDecimal leftVacationDaysForYear) {
+        this.leftVacationDaysForYear = leftVacationDaysForYear;
     }
 
-    public Duration getLeftOvertime() {
-        return leftOvertime;
+    public BigDecimal getLeftRemainingVacationDaysForYear() {
+        return leftRemainingVacationDaysForYear;
     }
 
-    public void setLeftOvertime(Duration leftOvertime) {
-        this.leftOvertime = leftOvertime;
+    public void setLeftRemainingVacationDaysForYear(BigDecimal leftRemainingVacationDaysForYear) {
+        this.leftRemainingVacationDaysForYear = leftRemainingVacationDaysForYear;
+    }
+
+    public BigDecimal getLeftVacationDaysForPeriod() {
+        return leftVacationDaysForPeriod;
+    }
+
+    public void setLeftVacationDaysForPeriod(BigDecimal leftVacationDaysForPeriod) {
+        this.leftVacationDaysForPeriod = leftVacationDaysForPeriod;
+    }
+
+    public BigDecimal getLeftRemainingVacationDaysForPeriod() {
+        return leftRemainingVacationDaysForPeriod;
+    }
+
+    public void setLeftRemainingVacationDaysForPeriod(BigDecimal leftRemainingVacationDaysForPeriod) {
+        this.leftRemainingVacationDaysForPeriod = leftRemainingVacationDaysForPeriod;
+    }
+
+    public Duration getLeftOvertimeForYear() {
+        return leftOvertimeForYear;
+    }
+
+    public void setLeftOvertimeForYear(Duration leftOvertimeForYear) {
+        this.leftOvertimeForYear = leftOvertimeForYear;
+    }
+
+    public Duration getLeftOvertimeForPeriod() {
+        return leftOvertimeForPeriod;
+    }
+
+    public void setLeftOvertimeForPeriod(Duration leftOvertimeForPeriod) {
+        this.leftOvertimeForPeriod = leftOvertimeForPeriod;
     }
 
     public BigDecimal getTotalWaitingVacationDays() {
-
-        BigDecimal total = ZERO;
-        for (BigDecimal days : getWaitingVacationDays().values()) {
-            total = total.add(days);
-        }
-
-        return total;
+        return getWaitingVacationDays().values().stream()
+            .reduce(ZERO, BigDecimal::add);
     }
 
     public BigDecimal getTotalAllowedVacationDays() {
-
-        BigDecimal total = ZERO;
-        for (BigDecimal days : getAllowedVacationDays().values()) {
-            total = total.add(days);
-        }
-
-        return total;
+        return getAllowedVacationDays().values().stream()
+            .reduce(ZERO, BigDecimal::add);
     }
 
     public void addWaitingVacationDays(VacationType vacationType, BigDecimal waitingVacationDays) {
@@ -105,5 +131,7 @@ public class ApplicationForLeaveStatistics {
         return waitingVacationDays.getOrDefault(type, ZERO);
     }
 
-    public BigDecimal getAllowedVacationDays(VacationType type) {return allowedVacationDays.getOrDefault(type, ZERO);}
+    public BigDecimal getAllowedVacationDays(VacationType type) {
+        return allowedVacationDays.getOrDefault(type, ZERO);
+    }
 }

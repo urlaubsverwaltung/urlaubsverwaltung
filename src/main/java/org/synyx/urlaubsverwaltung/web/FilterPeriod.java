@@ -12,7 +12,6 @@ import java.util.Optional;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getFirstDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
@@ -29,7 +28,7 @@ public final class FilterPeriod {
 
         final int currentYear = Year.now(Clock.systemUTC()).getValue();
 
-        this.startDate = startDate == null ? getFirstDayOfYear(currentYear) : startDate;
+        this.startDate = startDate == null ? Year.of(currentYear).atDay(1) : startDate;
         this.endDate = endDate == null ? getLastDayOfYear(currentYear) : endDate;
     }
 

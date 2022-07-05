@@ -6,7 +6,7 @@ $(document).ready(function () {
   $.tablesorter.addParser(dataValueNumberParser);
 
   const { length: columnCount } = document.querySelectorAll("#application-statistic-table thead th");
-  const isPersonnelNumberColumnRendered = columnCount === 10;
+  const isPersonnelNumberColumnRendered = columnCount === 11;
 
   if (isPersonnelNumberColumnRendered) {
     $("#application-statistic-table").tablesorter({
@@ -17,6 +17,7 @@ $(document).ready(function () {
         5: { sorter: dataValueNumberParser.id },
         6: { sorter: dataValueNumberParser.id },
         7: { sorter: dataValueNumberParser.id },
+        8: { sorter: dataValueNumberParser.id },
       },
     });
   } else {
@@ -28,6 +29,7 @@ $(document).ready(function () {
         4: { sorter: dataValueNumberParser.id },
         5: { sorter: dataValueNumberParser.id },
         6: { sorter: dataValueNumberParser.id },
+        7: { sorter: dataValueNumberParser.id },
       },
     });
   }

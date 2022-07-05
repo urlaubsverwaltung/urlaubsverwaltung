@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.account;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import static java.math.BigDecimal.ZERO;
 import static org.synyx.urlaubsverwaltung.util.CalcUtil.isNegative;
 import static org.synyx.urlaubsverwaltung.util.CalcUtil.isPositive;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.isBeforeApril;
 
 
 /**
@@ -45,12 +47,25 @@ public final class VacationDaysLeft {
         return new Builder();
     }
 
+    public BigDecimal getLeftVacationDays(LocalDate today, int year){
+        return vacationDays.add(getRemainingVacationDaysLeft(today, year));
+    }
+
     public BigDecimal getVacationDays() {
         return vacationDays;
     }
 
     public BigDecimal getRemainingVacationDays() {
         return remainingVacationDays;
+    }
+
+    public BigDecimal getRemainingVacationDaysLeft(LocalDate today, int year) {
+        if (today.getYear() == year && isBeforeApril(today, year)) {
+            return remainingVacationDays;
+        } else {
+            // it's after April - only the left not expiring remaining vacation days must be used
+            return remainingVacationDaysNotExpiring;
+        }
     }
 
     public BigDecimal getRemainingVacationDaysNotExpiring() {
@@ -66,11 +81,11 @@ public final class VacationDaysLeft {
      */
     public static class Builder {
 
-        private BigDecimal annualVacationDays;
-        private BigDecimal remainingVacationDays;
-        private BigDecimal remainingVacationDaysNotExpiring;
-        private BigDecimal usedDaysBeforeApril;
-        private BigDecimal usedDaysAfterApril;
+        private BigDecimal annualVacationDays = ZERO;
+        private BigDecimal remainingVacationDays = ZERO;
+        private BigDecimal remainingVacationDaysNotExpiring = ZERO;
+        private BigDecimal usedDaysBeforeApril = ZERO;
+        private BigDecimal usedDaysAfterApril = ZERO;
         private BigDecimal vacationDaysUsedNextYear = ZERO;
 
         public Builder withAnnualVacation(BigDecimal annualVacation) {
