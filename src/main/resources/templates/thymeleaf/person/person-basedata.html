@@ -1,147 +1,145 @@
 <!DOCTYPE html>
-<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
-  <title th:text="#{person.form.basedata.title(${personBasedata.niceName})}"></title>
-  <th:block th:fragment="scripts">
-    <script defer asset:src="person_basedata.js"></script>
-  </th:block>
-</head>
-<body th:replace="_layout::body(~{::main}, ~{})">
-
-<main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5 tw-pb-32">
-  <div
-    th:replace="fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{::person-basedata-heading-actions})"
-  >
-    <th:block th:ref="person-basedata-heading-body">
-      <h1 th:text="#{person.form.basedata.title(${personBasedata.niceName})}">Person Base data</h1>
+<html
+  lang="en"
+  th:lang="${language}"
+  th:class="|tw-${theme}|"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+    <title th:text="#{person.form.basedata.title(${personBasedata.niceName})}"></title>
+    <th:block th:fragment="scripts">
+      <script defer asset:src="person_basedata.js"></script>
     </th:block>
-  </div>
-
-  <div class="tw-mt-4 md:tw-mt-6">
-    <div class="tw-flex tw-items-center tw-gap-4 sm:tw-gap-6 tw-mb-4 md:tw-mb-12">
-      <div class="tw-p-1">
-        <span class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-rounded-full tw-p-1 tw-inline-block">
-          <img
-            src="#"
-            th:src="${personBasedata.gravatarURL + '?d=mm&s=120'}"
-            alt="avatar image"
-            th:alt="#{gravatar.alt(${personBasedata.niceName})}"
-            class="gravatar gravatar--medium tw-rounded-full"
-            width="60px"
-            height="60px"
-            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-          />
-        </span>
+  </head>
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5 tw-pb-32">
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::person-basedata-heading-body}, ~{::person-basedata-heading-actions})"
+      >
+        <th:block th:ref="person-basedata-heading-body">
+          <h1 th:text="#{person.form.basedata.title(${personBasedata.niceName})}">Person Base data</h1>
+        </th:block>
       </div>
-      <div>
-        <div class="tw-mb-1">
-          <a
-            href="${URL_PREFIX}/person/${personBasedata.personId}/overview"
-            class="tw-text-lg print:no-link"
-            th:text="${personBasedata.niceName}"
-          >
-            John Doe
-          </a>
-        </div>
-        <a
-          href="mailto:john.doe@example.org"
-          th:href="${'mailto:' + personBasedata.email}"
-          class="tw-text-sm print:no-link"
-        >
-          <span class="tw-flex tw-items-center">
-            <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4')"></svg>
-            &nbsp;<th:block th:text="${personBasedata.email}">john.doe@example.org</th:block>
-          </span>
-        </a>
-      </div>
-    </div>
-  </div>
 
-  <div class="tw-mt-8">
-    <form
-      class="tw-flex tw-flex-col"
-      action="#"
-      th:action="@{/web/person/{personId}/basedata (personId=${personBasedata.personId})}"
-      method="post"
-      th:object="${personBasedata}"
-    >
-      <input type="hidden" th:field="*{personId}"></input>
-      <input type="hidden" th:field="*{niceName}"></input>
-      <input type="hidden" th:field="*{gravatarURL}"></input>
-      <input type="hidden" th:field="*{email}"></input>
-
-      <div>
-        <div class="md:tw-flex tw-max-w-3xl">
-          <label
-            class="tw-m-0 tw-mb-0.5 md:tw-mb-0 md:tw-w-1/4"
-            for="personnelNumber"
-            th:for="${#ids.next('personnelNumber')}"
-            th:text="#{person.form.basedata.personnelNumber}"
-          >
-            Personnel Number
-          </label>
-          <div class="tw-flex-1">
-            <input
-              type="text"
-              id="personnelNumber"
-              th:field="*{personnelNumber}"
-              class="tw-form-control"
-              th:errorclass="error"
+      <div class="tw-mt-4 md:tw-mt-6">
+        <div class="tw-flex tw-items-center tw-gap-4 sm:tw-gap-6 tw-mb-4 md:tw-mb-12">
+          <div class="tw-p-1">
+            <span
+              class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-rounded-full tw-p-1 tw-inline-block"
             >
-            <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('personnelNumber')}">
-              <th:block th:errors="*{personnelNumber}">
-                Personnel Number Error
-              </th:block>
-            </div>
-          </div>
-        </div>
-        <div class="tw-mt-5 md:tw-mt-6 md:tw-flex tw-max-w-3xl">
-          <label
-            class="tw-m-0 tw-mb-0.5 md:tw-mb-0 md:tw-w-1/4"
-            for="additionalInfo"
-            th:for="${#ids.next('additionalInfo')}"
-            th:text="#{person.form.basedata.additionalInformation}"
-          >
-            Additional Information
-          </label>
-          <div class="tw-flex-1">
-            <div class="tw-flex tw-flex-col tw-space-y-1">
-              <textarea
-                id="additionalInfo"
-                class="tw-form-control"
-                th:errorclass="error"
-                rows="4"
-                onkeyup="count(this.value, 'text-additional-info');"
-                onkeydown="maxChars(this,500); count(this.value, 'text-additional-info');"
-                th:field="*{additionalInfo}"
+              <img
+                src="#"
+                th:src="${personBasedata.gravatarURL + '?d=mm&s=120'}"
+                alt="avatar image"
+                th:alt="#{gravatar.alt(${personBasedata.niceName})}"
+                class="gravatar gravatar--medium tw-rounded-full"
+                width="60px"
+                height="60px"
+                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
               />
-              <small class="tw-self-end">
-                <span id="text-additional-info"></span><th:block th:text="#{person.form.basedata.additionalInformation.maxChars}"></th:block>
-              </small>
+            </span>
+          </div>
+          <div>
+            <div class="tw-mb-1">
+              <a
+                href="${URL_PREFIX}/person/${personBasedata.personId}/overview"
+                class="tw-text-lg print:no-link"
+                th:text="${personBasedata.niceName}"
+              >
+                John Doe
+              </a>
             </div>
-            <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('additionalInfo')}">
-              <th:block th:errors="*{additionalInfo}">
-                Additional Information Error
-              </th:block>
-            </div>
+            <a
+              href="mailto:john.doe@example.org"
+              th:href="${'mailto:' + personBasedata.email}"
+              class="tw-text-sm print:no-link"
+            >
+              <span class="tw-flex tw-items-center">
+                <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4')"></svg>
+                &nbsp;<th:block th:text="${personBasedata.email}">john.doe@example.org</th:block>
+              </span>
+            </a>
           </div>
         </div>
       </div>
 
-      <hr class="tw-w-full tw-m-0 tw-mt-6" />
+      <div class="tw-mt-8">
+        <form
+          class="tw-flex tw-flex-col"
+          action="#"
+          th:action="@{/web/person/{personId}/basedata (personId=${personBasedata.personId})}"
+          method="post"
+          th:object="${personBasedata}"
+        >
+          <input type="hidden" th:field="*{personId}" />
+          <input type="hidden" th:field="*{niceName}" />
+          <input type="hidden" th:field="*{gravatarURL}" />
+          <input type="hidden" th:field="*{email}" />
 
-      <div class="tw-mt-6 tw-flex tw-justify-between">
-        <button type="submit" class="button-main-green" th:text="#{action.save}">
-          Speichern
-        </button>
-        <button data-back-button type="button" class="button" th:text="#{action.cancel}">
-          Cancel
-        </button>
+          <div>
+            <div class="md:tw-flex tw-max-w-3xl">
+              <label
+                class="tw-m-0 tw-mb-0.5 md:tw-mb-0 md:tw-w-1/4"
+                for="personnelNumber"
+                th:for="${#ids.next('personnelNumber')}"
+                th:text="#{person.form.basedata.personnelNumber}"
+              >
+                Personnel Number
+              </label>
+              <div class="tw-flex-1">
+                <input
+                  type="text"
+                  id="personnelNumber"
+                  th:field="*{personnelNumber}"
+                  class="tw-form-control"
+                  th:errorclass="error"
+                />
+                <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('personnelNumber')}">
+                  <th:block th:errors="*{personnelNumber}"> Personnel Number Error </th:block>
+                </div>
+              </div>
+            </div>
+            <div class="tw-mt-5 md:tw-mt-6 md:tw-flex tw-max-w-3xl">
+              <label
+                class="tw-m-0 tw-mb-0.5 md:tw-mb-0 md:tw-w-1/4"
+                for="additionalInfo"
+                th:for="${#ids.next('additionalInfo')}"
+                th:text="#{person.form.basedata.additionalInformation}"
+              >
+                Additional Information
+              </label>
+              <div class="tw-flex-1">
+                <div class="tw-flex tw-flex-col tw-space-y-1">
+                  <textarea
+                    id="additionalInfo"
+                    class="tw-form-control"
+                    th:errorclass="error"
+                    rows="4"
+                    onkeyup="count(this.value, 'text-additional-info');"
+                    onkeydown="maxChars(this,500); count(this.value, 'text-additional-info');"
+                    th:field="*{additionalInfo}"
+                  />
+                  <small class="tw-self-end">
+                    <span id="text-additional-info"></span
+                    ><th:block th:text="#{person.form.basedata.additionalInformation.maxChars}"></th:block>
+                  </small>
+                </div>
+                <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('additionalInfo')}">
+                  <th:block th:errors="*{additionalInfo}"> Additional Information Error </th:block>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <hr class="tw-w-full tw-m-0 tw-mt-6" />
+
+          <div class="tw-mt-6 tw-flex tw-justify-between">
+            <button type="submit" class="button-main-green" th:text="#{action.save}">Speichern</button>
+            <button data-back-button type="button" class="button" th:text="#{action.cancel}">Cancel</button>
+          </div>
+        </form>
       </div>
-
-    </form>
-  </div>
-</main>
-
-</body>
+    </main>
+  </body>
 </html>

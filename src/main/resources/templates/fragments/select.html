@@ -1,44 +1,42 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>select</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>select</title>
+  </head>
+  <body>
+    <span th:fragment="one(id, name, options)" class="tw-inline-block tw-relative tw-w-full" th:classappend="${class}">
+      <select th:id="${id}" th:name="${name}" class="form-control tw-appearance-none tw-pr-8">
+        <option th:replace="${options}"></option>
+      </select>
+      <span
+        class="select-caret tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-px-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          width="16"
+          height="16"
+          class="tw-fill-current tw-h-4 tw-w-4"
+        >
+          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+        </svg>
+      </span>
+    </span>
 
-<span
-  th:fragment="one(id, name, options)"
-  class="tw-inline-block tw-relative tw-w-full"
-  th:classappend="${class}"
->
-  <select th:id="${id}" th:name="${name}" class="form-control tw-appearance-none tw-pr-8">
-    <option th:replace="${options}"></option>
-  </select>
-  <span class="select-caret tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-px-2">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 20 20"
-      width="16"
-      height="16"
-      class="tw-fill-current tw-h-4 tw-w-4"
+    <span
+      th:fragment="multi(id, name, options)"
+      class="tw-inline-block tw-relative tw-w-full"
+      th:classappend="${class}"
     >
-      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-    </svg>
-  </span>
-</span>
-
-<span
-  th:fragment="multi(id, name, options)"
-  class="tw-inline-block tw-relative tw-w-full"
-  th:classappend="${class}"
->
-  <select multiple th:id="${id}" th:name="${name}" class="form-control tw-appearance-none tw-pr-8">
-    <option th:replace="${options}"></option>
-  </select>
-  <span class="select-caret tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-px-2">
-    <svg th:replace="icon/dots-horizontal::svg(className='tw-h-4 tw-w-4')" />
-  </span>
-</span>
-
-</body>
+      <select multiple th:id="${id}" th:name="${name}" class="form-control tw-appearance-none tw-pr-8">
+        <option th:replace="${options}"></option>
+      </select>
+      <span
+        class="select-caret tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-px-2"
+      >
+        <svg th:replace="icon/dots-horizontal::svg(className='tw-h-4 tw-w-4')" />
+      </span>
+    </span>
+  </body>
 </html>

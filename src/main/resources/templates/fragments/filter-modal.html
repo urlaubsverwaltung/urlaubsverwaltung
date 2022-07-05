@@ -1,43 +1,64 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>filter-modal</title>
-</head>
-<body>
-
-<div th:fragment="filter-modal(id, url, startDate, endDate, period)" th:id="${id}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-          <svg th:replace="icon/x-circle::svg(className='tw-w-8 tw-h-8')"></svg>
-        </button>
-        <h4 class="tw-text-2xl" th:text="#{filter.title}" id="filterModalLabel"></h4>
+  <head>
+    <meta charset="UTF-8" />
+    <title>filter-modal</title>
+  </head>
+  <body>
+    <div
+      th:fragment="filter-modal(id, url, startDate, endDate, period)"
+      th:id="${id}"
+      class="modal fade"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="filterModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              <svg th:replace="icon/x-circle::svg(className='tw-w-8 tw-h-8')"></svg>
+            </button>
+            <h4 class="tw-text-2xl" th:text="#{filter.title}" id="filterModalLabel"></h4>
+          </div>
+          <form method="post" th:action="${url}" th:object="${period}" class="form-horizontal">
+            <div class="modal-body">
+              <div class="form-group is-required">
+                <label th:text="|#{filter.period.startDate}: |" class="control-label col-md-3" for="startDate"></label>
+                <div class="col-md-9">
+                  <input
+                    id="startDate"
+                    th:field="*{startDate}"
+                    th:data-iso-value="${period.startDateIsoValue}"
+                    class="form-control"
+                    th:errorclass="form-control error"
+                    th:placeholder="#{pattern.date}"
+                  />
+                  <span class="help-block"></span>
+                </div>
+              </div>
+              <div class="form-group is-required">
+                <label th:text="|#{filter.period.endDate}: |" class="control-label col-md-3" for="endDate"></label>
+                <div class="col-md-9">
+                  <input
+                    id="endDate"
+                    th:field="*{endDate}"
+                    th:data-iso-value="${period.endDateIsoValue}"
+                    class="form-control"
+                    th:errorclass="form-control error"
+                    th:placeholder="#{pattern.date}"
+                  />
+                  <span class="help-block"></span>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button th:text="#{action.confirm}" class="button-main" type="submit"></button>
+            </div>
+          </form>
+        </div>
       </div>
-      <form method="post" th:action="${url}" th:object="${period}" class="form-horizontal">
-        <div class="modal-body">
-          <div class="form-group is-required">
-            <label th:text="|#{filter.period.startDate}: |" class="control-label col-md-3" for="startDate"></label>
-            <div class="col-md-9">
-              <input id="startDate" th:field="*{startDate}" th:data-iso-value="${period.startDateIsoValue}" class="form-control" th:errorclass="form-control error" th:placeholder="#{pattern.date}"/>
-              <span class="help-block"></span>
-            </div>
-          </div>
-          <div class="form-group is-required">
-            <label th:text="|#{filter.period.endDate}: |" class="control-label col-md-3" for="endDate"></label>
-            <div class="col-md-9">
-              <input id="endDate" th:field="*{endDate}" th:data-iso-value="${period.endDateIsoValue}" class="form-control" th:errorclass="form-control error" th:placeholder="#{pattern.date}"/>
-              <span class="help-block"></span>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button th:text="#{action.confirm}" class="button-main" type="submit"></button>
-        </div>
-      </form>
     </div>
-  </div>
-</div>
-</body>
+  </body>
 </html>
