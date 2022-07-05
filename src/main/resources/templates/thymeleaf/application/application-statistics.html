@@ -83,7 +83,12 @@
           <div th:text="#{filter.period.incorrect.warning}" class="alert alert-warning"></div>
         </div>
 
-        <div th:if="${errors}" th:text="#{applications.statistics.error}" class="alert alert-danger"></div>
+        <div
+          th:if="${errors}"
+          th:text="#{applications.statistics.error}"
+          class="alert alert-danger"
+        ></div>
+
         <table
           th:unless="${errors}"
           id="application-statistic-table"
@@ -94,42 +99,51 @@
               <th scope="col"></th>
               <th
                 th:if="${showPersonnelNumberColumn}"
+                scope="col"
+                class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
                 th:text="#{person.account.basedata.personnelNumber.abbreviation}"
-                scope="col"
-                class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
               ></th>
               <th
+                scope="col"
+                class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
                 th:text="#{person.data.firstName}"
-                scope="col"
-                class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
               ></th>
               <th
+                scope="col"
+                class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
                 th:text="#{person.data.lastName}"
-                scope="col"
-                class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
               ></th>
-              <th scope="col" class="lg:tw-hidden print:tw-hidden"></th>
-              <th scope="col" class="md:tw-hidden print:tw-hidden"></th>
-              <th scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell"></th>
               <th
+                scope="col"
+                class="lg:tw-hidden print:tw-hidden"
+              ></th>
+              <th
+                scope="col"
+                class="md:tw-hidden print:tw-hidden"
+              ></th>
+              <th
+                scope="col"
+                class="tw-hidden md:tw-table-cell print:tw-table-cell"
+              ></th>
+              <th
+                scope="col"
+                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
                 th:text="#{applications.statistics.allowed}"
-                scope="col"
-                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
               ></th>
               <th
+                scope="col"
+                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
                 th:text="#{applications.statistics.waiting}"
-                scope="col"
-                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
               ></th>
               <th
+                scope="col"
+                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
                 th:text="#{applications.statistics.left}"
-                scope="col"
-                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
               ></th>
               <th
-                th:text="|#{applications.statistics.left} (${from.year})|"
                 scope="col"
                 class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
+                th:text="|#{applications.statistics.left} (${from.year})|"
               ></th>
             </tr>
           </thead>
@@ -139,6 +153,7 @@
                 <img
                   th:replace="fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=mm&s=60'},username=${statistic.firstName},width='60px',height='60px')"
                   alt=""
+                  src=""
                 />
               </td>
               <td
