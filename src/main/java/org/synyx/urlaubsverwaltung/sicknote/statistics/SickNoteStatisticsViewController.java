@@ -7,12 +7,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Clock;
 import java.time.Year;
 import java.time.ZonedDateTime;
-
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 /**
  * Controller for statistics of sick notes resp. sick days.
@@ -22,20 +22,23 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 class SickNoteStatisticsViewController {
 
     private final SickNoteStatisticsService statisticsService;
+    private final PersonService personService;
     private final Clock clock;
 
     @Autowired
-    SickNoteStatisticsViewController(SickNoteStatisticsService statisticsService, Clock clock) {
+    SickNoteStatisticsViewController(SickNoteStatisticsService statisticsService, PersonService personService, Clock clock) {
         this.statisticsService = statisticsService;
+        this.personService = personService;
         this.clock = clock;
     }
 
-    @PreAuthorize(IS_OFFICE)
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'DEPARTMENT_HEAD')")
     @GetMapping("/sicknote/statistics")
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear, Model model) {
 
+        final Person signedInUser = personService.getSignedInUser();
         final Clock clockOfRequestedYear = getClockOfRequestedYear(requestedYear);
-        final SickNoteStatistics statistics = statisticsService.createStatistics(clockOfRequestedYear);
+        final SickNoteStatistics statistics = statisticsService.createStatisticsForPerson(signedInUser, clockOfRequestedYear);
 
         model.addAttribute("statistics", statistics);
 
