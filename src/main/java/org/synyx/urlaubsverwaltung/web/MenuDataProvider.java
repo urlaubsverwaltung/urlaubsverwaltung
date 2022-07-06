@@ -54,7 +54,7 @@ public class MenuDataProvider implements HandlerInterceptor {
             modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled(user));
 
             modelAndView.addObject("navigationSickNoteAccess", user.hasRole(OFFICE) || user.hasRole(DEPARTMENT_HEAD));
-            modelAndView.addObject("navigationSickNoteStatisticsAccess", user.hasRole(OFFICE));
+            modelAndView.addObject("navigationSickNoteStatisticsAccess", user.hasRole(OFFICE) || user.hasRole(DEPARTMENT_HEAD));
             modelAndView.addObject("navigationSettingsAccess", user.hasRole(OFFICE));
             modelAndView.addObject("navigationPersonListAccess", user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY));
             modelAndView.addObject("navigationDepartmentAccess", user.hasRole(OFFICE) || user.hasRole(BOSS));

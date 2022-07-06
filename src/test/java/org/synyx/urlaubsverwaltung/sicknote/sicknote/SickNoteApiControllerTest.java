@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteApiControllerTest {
@@ -53,7 +54,7 @@ class SickNoteApiControllerTest {
         final SickNote sickNote2 = createSickNote(person);
         final SickNote sickNote3 = createSickNote(person);
 
-        when(sickNoteService.getByPeriod(any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of(sickNote1, sickNote2, sickNote3));
+        when(sickNoteService.getActiveByPeriodAndPersonHasRole(any(LocalDate.class), any(LocalDate.class), eq(List.of(USER)))).thenReturn(List.of(sickNote1, sickNote2, sickNote3));
 
         perform(get("/api/sicknotes")
             .param("from", "2016-01-01")

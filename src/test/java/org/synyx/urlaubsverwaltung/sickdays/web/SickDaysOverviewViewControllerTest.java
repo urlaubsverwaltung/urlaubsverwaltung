@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -37,7 +38,6 @@ import static java.math.BigDecimal.TEN;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasProperty;
@@ -51,6 +51,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
@@ -63,18 +66,20 @@ class SickDaysOverviewViewControllerTest {
     @Mock
     private SickNoteService sickNoteService;
     @Mock
-    private PersonService personService;
-    @Mock
     private PersonBasedataService personBasedataService;
     @Mock
     private WorkDaysCountService workDaysCountService;
+    @Mock
+    private DepartmentService departmentService;
+    @Mock
+    private PersonService personService;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SickDaysOverviewViewController(sickNoteService, personService, personBasedataService, workDaysCountService,
-            new DateFormatAware(), clock);
+        sut = new SickDaysOverviewViewController(sickNoteService, personBasedataService, workDaysCountService,
+            departmentService, personService, new DateFormatAware(), clock);
     }
 
     @Test
@@ -133,11 +138,17 @@ class SickDaysOverviewViewControllerTest {
     }
 
     @Test
-    void periodsSickNotesWithDateRange() throws Exception {
+    void periodsSickNotesWithDateRangeWithOfficeRole() throws Exception {
+
+        final Person office = new Person();
+        office.setId(1);
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
 
         final Person person = new Person();
         person.setId(1);
-        final List<Person> persons = singletonList(person);
+        person.setPermissions(List.of(USER));
+        final List<Person> persons = List.of(person);
         when(personService.getActivePersons()).thenReturn(persons);
 
         final SickNoteType childSickType = new SickNoteType();
@@ -170,7 +181,69 @@ class SickDaysOverviewViewControllerTest {
 
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
-        when(sickNoteService.getByPeriod(requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
+        when(sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
+
+        perform(get("/web/sicknote")
+            .param("from", requestStartDate.toString())
+            .param("to", requestEndDate.toString()))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("TOTAL", TEN)))))
+            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(15L))))))
+            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("TOTAL", ONE)))))
+            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(5L))))))
+            .andExpect(model().attribute("persons", persons))
+            .andExpect(model().attribute("from", requestStartDate))
+            .andExpect(model().attribute("to", requestEndDate))
+            .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
+            .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
+            .andExpect(view().name("sicknote/sick_notes"));
+    }
+
+    @Test
+    void periodsSickNotesWithDateRangeWithDepartmentHeadRole() throws Exception {
+
+        final Person departmentHead = new Person();
+        departmentHead.setId(1);
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        final List<Person> persons = List.of(person);
+        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(persons);
+
+        final SickNoteType childSickType = new SickNoteType();
+        childSickType.setCategory(SICK_NOTE_CHILD);
+        final SickNote childSickNote = new SickNote();
+        childSickNote.setStartDate(LocalDate.of(2019, 2, 1));
+        childSickNote.setEndDate(LocalDate.of(2019, 3, 1));
+        childSickNote.setDayLength(FULL);
+        childSickNote.setStatus(ACTIVE);
+        childSickNote.setSickNoteType(childSickType);
+        childSickNote.setPerson(person);
+        childSickNote.setAubStartDate(LocalDate.of(2019, 2, 10));
+        childSickNote.setAubEndDate(LocalDate.of(2019, 2, 15));
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 1), person)).thenReturn(ONE);
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 2, 15), person)).thenReturn(BigDecimal.valueOf(5L));
+
+        final SickNoteType sickType = new SickNoteType();
+        sickType.setCategory(SICK_NOTE);
+        final SickNote sickNote = new SickNote();
+        sickNote.setStartDate(LocalDate.of(2019, 4, 1));
+        sickNote.setEndDate(LocalDate.of(2019, 5, 1));
+        sickNote.setDayLength(FULL);
+        sickNote.setStatus(ACTIVE);
+        sickNote.setSickNoteType(sickType);
+        sickNote.setPerson(person);
+        sickNote.setAubStartDate(LocalDate.of(2019, 4, 10));
+        sickNote.setAubEndDate(LocalDate.of(2019, 4, 20));
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 15), person)).thenReturn(TEN);
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 10), LocalDate.of(2019, 4, 15), person)).thenReturn(BigDecimal.valueOf(15L));
+
+        final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
+        final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
+        when(sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
 
         perform(get("/web/sicknote")
             .param("from", requestStartDate.toString())
@@ -191,6 +264,11 @@ class SickDaysOverviewViewControllerTest {
     @Test
     void periodsSickNotesWithDateWithoutRange() throws Exception {
 
+        final Person office = new Person();
+        office.setId(1);
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+
         final int year = Year.now(clock).getValue();
         final LocalDate startDate = ZonedDateTime.now(clock).withYear(year).with(firstDayOfYear()).toLocalDate();
         final LocalDate endDate = ZonedDateTime.now(clock).withYear(year).with(lastDayOfYear()).toLocalDate();
@@ -209,10 +287,10 @@ class SickDaysOverviewViewControllerTest {
     @Test
     void sickNotesWithoutPersonnelNumberColumn() throws Exception {
 
-        final Person person = new Person();
-        person.setId(1);
-        final List<Person> persons = singletonList(person);
-        when(personService.getActivePersons()).thenReturn(persons);
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        signedInUser.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
@@ -220,7 +298,6 @@ class SickDaysOverviewViewControllerTest {
         perform(get("/web/sicknote")
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
-            .andExpect(model().attribute("persons", persons))
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
             .andExpect(view().name("sicknote/sick_notes"));
     }
@@ -228,9 +305,14 @@ class SickDaysOverviewViewControllerTest {
     @Test
     void sickNotesWithPersonnelNumberColumn() throws Exception {
 
+        final Person office = new Person();
+        office.setId(1);
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
+
         final Person person = new Person();
         person.setId(1);
-        final List<Person> persons = singletonList(person);
+        final List<Person> persons = List.of(person);
         when(personService.getActivePersons()).thenReturn(persons);
         when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(new PersonBasedata(1, "42", null)));
 
