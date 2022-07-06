@@ -42,7 +42,7 @@ class SickNoteStatisticsViewController {
 
         model.addAttribute("statistics", statistics);
 
-        return "sicknote/sick_notes_statistics";
+        return "thymeleaf/sicknote/sick_notes_statistics";
     }
 
     private Clock getClockOfRequestedYear(Integer requestedYear) {
