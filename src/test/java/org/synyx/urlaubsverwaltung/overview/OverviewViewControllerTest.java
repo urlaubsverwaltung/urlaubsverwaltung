@@ -261,14 +261,30 @@ class OverviewViewControllerTest {
     }
 
     @Test
-    void showOverviewCanAddSickNoteForAnotherUser() throws Exception {
-        final Person person = new Person();
-        person.setId(1);
-        person.setPermissions(List.of(USER, OFFICE));
-        when(personService.getSignedInUser()).thenReturn(person);
+    void ensureOverviewCanAddSickNoteForAnotherUserIfOfficeRole() throws Exception {
+        final Person office = new Person();
+        office.setId(1);
+        office.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(office);
 
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canAddSickNoteAnotherUser", true));
+    }
+
+    @Test
+    void ensureOverviewCanAddSickNoteForAnotherUserIfDepartmentRoleAndDepartmentMember() throws Exception {
+        final Person departmentHead = new Person();
+        departmentHead.setId(1);
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person person = new Person();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
             .andExpect(model().attribute("canAddSickNoteAnotherUser", true));
