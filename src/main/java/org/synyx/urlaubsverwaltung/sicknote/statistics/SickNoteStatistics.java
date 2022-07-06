@@ -25,7 +25,7 @@ public class SickNoteStatistics {
     private final BigDecimal totalNumberOfSickDays;
     private final Long numberOfPersonsWithMinimumOneSickNote;
 
-    SickNoteStatistics(Clock clock, SickNoteService sickNoteService, WorkDaysCountService calendarService) {
+    SickNoteStatistics(Clock clock, SickNoteService sickNoteService, WorkDaysCountService workDaysCountService) {
 
         this.year = Year.now(clock).getValue();
         this.numberOfPersonsWithMinimumOneSickNote = sickNoteService.getNumberOfPersonsWithMinimumOneSickNote(year);
@@ -34,7 +34,7 @@ public class SickNoteStatistics {
         List<SickNote> sickNotes = sickNoteService.getAllActiveByYear(year);
 
         this.totalNumberOfSickNotes = sickNotes.size();
-        this.totalNumberOfSickDays = calculateTotalNumberOfSickDays(calendarService, sickNotes);
+        this.totalNumberOfSickDays = calculateTotalNumberOfSickDays(workDaysCountService, sickNotes);
     }
 
     public int getTotalNumberOfSickNotes() {
@@ -70,7 +70,7 @@ public class SickNoteStatistics {
         }
     }
 
-    private BigDecimal calculateTotalNumberOfSickDays(WorkDaysCountService calendarService, List<SickNote> sickNotes) {
+    private BigDecimal calculateTotalNumberOfSickDays(WorkDaysCountService workDaysCountService, List<SickNote> sickNotes) {
 
         BigDecimal numberOfSickDays = BigDecimal.ZERO;
         for (SickNote sickNote : sickNotes) {
@@ -95,7 +95,7 @@ public class SickNoteStatistics {
                 endDate = sickNoteStartDate.with(lastDayOfYear());
             }
 
-            BigDecimal workDays = calendarService.getWorkDaysCount(sickNote.getDayLength(), startDate, endDate,
+            BigDecimal workDays = workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), startDate, endDate,
                 sickNote.getPerson());
 
             numberOfSickDays = numberOfSickDays.add(workDays);
