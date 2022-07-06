@@ -129,7 +129,7 @@ class MenuDataProviderTest {
 
         sut.postHandle(null, null, null, modelAndView);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", false);

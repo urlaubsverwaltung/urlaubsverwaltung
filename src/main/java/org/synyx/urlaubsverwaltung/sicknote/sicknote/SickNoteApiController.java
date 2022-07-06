@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
@@ -53,18 +54,17 @@ public class SickNoteApiController {
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate startDate,
+        LocalDate startDate,
         @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate endDate) {
+        LocalDate endDate) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
         }
 
-        final List<SickNoteDto> sickNoteResponse = sickNoteService.getByPeriod(startDate, endDate).stream()
-            .filter(SickNote::isActive)
+        final List<SickNoteDto> sickNoteResponse = sickNoteService.getActiveByPeriodAndPersonHasRole(startDate, endDate, List.of(USER)).stream()
             .map(SickNoteDto::new)
             .collect(toList());
 
@@ -74,22 +74,22 @@ public class SickNoteApiController {
     @Operation(
         summary = "Get all sick notes for a certain period and person",
         description = "Get all sick notes for a certain period and person. "
-            + "Information only reachable for users with role office and for own sicknotes."
+            + "Information only reachable for users with role office and for own sick notes."
     )
     @GetMapping("/persons/{personId}/" + SICKNOTES)
     @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public SickNotesDto personsSickNotes(
         @Parameter(description = "ID of the person")
         @PathVariable("personId")
-            Integer personId,
+        Integer personId,
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate startDate,
+        LocalDate startDate,
         @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate endDate) {
+        LocalDate endDate) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
