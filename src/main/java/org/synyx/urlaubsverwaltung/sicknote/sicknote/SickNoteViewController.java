@@ -37,10 +37,14 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -145,17 +149,7 @@ class SickNoteViewController {
 
         model.addAttribute(SICK_NOTE, new SickNoteForm());
 
-        final List<Person> managedPersons;
-        if (signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS)) {
-            managedPersons = personService.getActivePersons();
-        } else if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            managedPersons = departmentService.getMembersForDepartmentHead(signedInUser);
-        } else if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
-            managedPersons = departmentService.getMembersForSecondStageAuthority(signedInUser);
-        } else {
-            managedPersons = List.of();
-        }
-
+        final List<Person> managedPersons = getManagedPersons(signedInUser);
         model.addAttribute(PERSONS_ATTRIBUTE, managedPersons);
         model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
 
@@ -305,6 +299,27 @@ class SickNoteViewController {
         sickNoteInteractionService.cancel(sickNote, personService.getSignedInUser());
 
         return REDIRECT_WEB_SICKNOTE + id;
+    }
+
+    private List<Person> getManagedPersons(Person signedInUser) {
+
+        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
+            return personService.getActivePersons();
+        }
+
+        final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
+            ? departmentService.getMembersForDepartmentHead(signedInUser)
+            : List.of();
+
+        final List<Person> memberForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
+            ? departmentService.getMembersForSecondStageAuthority(signedInUser)
+            : List.of();
+
+        return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
+            .filter(person -> !person.hasRole(INACTIVE))
+            .distinct()
+            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+            .collect(toList());
     }
 
     private List<VacationType> getActiveVacationTypes() {

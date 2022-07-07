@@ -30,11 +30,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -97,21 +101,8 @@ public class SickDaysOverviewViewController {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        final List<SickNote> sickNotes;
-        final List<Person> persons;
-        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            persons = departmentService.getMembersForDepartmentHead(signedInUser);
-            sickNotes = sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), period.getStartDate(), period.getEndDate());
-        } else if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
-            persons = departmentService.getMembersForSecondStageAuthority(signedInUser);
-            sickNotes = sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), period.getStartDate(), period.getEndDate());
-        } else if (signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS)) {
-            persons = personService.getActivePersons();
-            sickNotes = sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), period.getStartDate(), period.getEndDate());
-        } else {
-            persons = List.of();
-            sickNotes = List.of();
-        }
+        final List<Person> persons = getManagedPersons(signedInUser);
+        final List<SickNote> sickNotes = sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), period.getStartDate(), period.getEndDate());
 
         fillModel(model, sickNotes, period, persons);
 
@@ -174,5 +165,25 @@ public class SickDaysOverviewViewController {
             final BigDecimal workDaysWithAUB = workDaysCountService.getWorkDaysCount(dayLength, startDateAub, endDateAub, person);
             sickDays.computeIfAbsent(person, unused -> new SickDays()).addDays(WITH_AUB, workDaysWithAUB);
         }
+    }
+    private List<Person> getManagedPersons(Person signedInUser) {
+
+        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
+            return personService.getActivePersons();
+        }
+
+        final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
+            ? departmentService.getMembersForDepartmentHead(signedInUser)
+            : List.of();
+
+        final List<Person> memberForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
+            ? departmentService.getMembersForSecondStageAuthority(signedInUser)
+            : List.of();
+
+        return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
+            .filter(person -> !person.hasRole(INACTIVE))
+            .distinct()
+            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+            .collect(toList());
     }
 }

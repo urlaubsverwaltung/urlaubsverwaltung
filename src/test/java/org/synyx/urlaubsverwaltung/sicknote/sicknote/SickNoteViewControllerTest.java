@@ -164,6 +164,94 @@ class SickNoteViewControllerTest {
     }
 
     @Test
+    void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewForDepartmentHeadAndSecondStageAuthority() throws Exception {
+
+        final Person departmentHeadAndSsa = new Person();
+        departmentHeadAndSsa.setId(1);
+        departmentHeadAndSsa.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSsa);
+
+        final Person person = somePerson();
+        person.setId(2);
+        person.setFirstName("firstname");
+        person.setLastName("lastname");
+        when(departmentService.getMembersForDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
+
+        final Person person2 = somePerson();
+        person2.setId(3);
+        person2.setFirstName("firstname two");
+        person2.setLastName("lastname two");
+        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSsa)).thenReturn(of(person2));
+
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
+
+        perform(get("/web/sicknote/new"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("persons", of(person, person2)))
+            .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
+            .andExpect(view().name("sicknote/sick_note_form"));
+    }
+
+    @Test
+    void ensureGetNewSickNoteManagedMembersDistinct() throws Exception {
+
+        final Person departmentHeadAndSsa = new Person();
+        departmentHeadAndSsa.setId(1);
+        departmentHeadAndSsa.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSsa);
+
+        final Person person = somePerson();
+        person.setId(2);
+        person.setFirstName("firstname");
+        person.setLastName("lastname");
+        when(departmentService.getMembersForDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
+        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSsa)).thenReturn(of(person));
+
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
+
+        perform(get("/web/sicknote/new"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("persons", of(person)))
+            .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
+            .andExpect(view().name("sicknote/sick_note_form"));
+    }
+
+    @Test
+    void ensureGetNewSickNoteManagedMembersIsOrdered() throws Exception {
+
+        final Person departmentHeadAndSsa = new Person();
+        departmentHeadAndSsa.setId(1);
+        departmentHeadAndSsa.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(departmentHeadAndSsa);
+
+        final Person person = somePerson();
+        person.setId(2);
+        person.setFirstName("B");
+        person.setLastName("B");
+        when(departmentService.getMembersForDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
+
+        final Person person2 = somePerson();
+        person2.setId(3);
+        person2.setFirstName("A");
+        person2.setLastName("A");
+        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSsa)).thenReturn(of(person2));
+
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
+
+        perform(get("/web/sicknote/new"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("persons", of(person2, person)))
+            .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
+            .andExpect(view().name("sicknote/sick_note_form"));
+    }
+
+    @Test
     void ensureGetEditHasCorrectModelAttributes() throws Exception {
 
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));

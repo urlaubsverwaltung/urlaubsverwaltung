@@ -328,6 +328,77 @@ class SickDaysOverviewViewControllerTest {
     }
 
     @Test
+    void periodsSickNotesWithDateRangeWithSecondStageAuthorityAndDepartmentRole() throws Exception {
+
+        final Person dhAndSsa = new Person();
+        dhAndSsa.setId(1);
+        dhAndSsa.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(dhAndSsa);
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setFirstName("FirstName");
+        person.setLastName("Lastname");
+        person.setPermissions(List.of(USER));
+        when(departmentService.getMembersForSecondStageAuthority(dhAndSsa)).thenReturn(List.of(person));
+
+        final SickNoteType childSickType = new SickNoteType();
+        childSickType.setCategory(SICK_NOTE_CHILD);
+        final SickNote childSickNote = new SickNote();
+        childSickNote.setStartDate(LocalDate.of(2019, 2, 1));
+        childSickNote.setEndDate(LocalDate.of(2019, 3, 1));
+        childSickNote.setDayLength(FULL);
+        childSickNote.setStatus(ACTIVE);
+        childSickNote.setSickNoteType(childSickType);
+        childSickNote.setPerson(person);
+        childSickNote.setAubStartDate(LocalDate.of(2019, 2, 10));
+        childSickNote.setAubEndDate(LocalDate.of(2019, 2, 15));
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 1), person)).thenReturn(ONE);
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 2, 15), person)).thenReturn(BigDecimal.valueOf(5L));
+
+
+        final Person person2 = new Person();
+        person2.setId(2);
+        person2.setFirstName("FirstName two");
+        person2.setLastName("Lastname two");
+        person2.setPermissions(List.of(USER));
+        when(departmentService.getMembersForDepartmentHead(dhAndSsa)).thenReturn(List.of(person2));
+
+        final SickNoteType sickType = new SickNoteType();
+        sickType.setCategory(SICK_NOTE);
+        final SickNote sickNote = new SickNote();
+        sickNote.setStartDate(LocalDate.of(2019, 4, 1));
+        sickNote.setEndDate(LocalDate.of(2019, 5, 1));
+        sickNote.setDayLength(FULL);
+        sickNote.setStatus(ACTIVE);
+        sickNote.setSickNoteType(sickType);
+        sickNote.setPerson(person2);
+        sickNote.setAubStartDate(LocalDate.of(2019, 4, 10));
+        sickNote.setAubEndDate(LocalDate.of(2019, 4, 20));
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 15), person2)).thenReturn(TEN);
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 10), LocalDate.of(2019, 4, 15), person2)).thenReturn(BigDecimal.valueOf(15L));
+
+        final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
+        final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
+        when(sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), List.of(person, person2), List.of(USER), requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
+
+        perform(get("/web/sicknote")
+            .param("from", requestStartDate.toString())
+            .param("to", requestEndDate.toString()))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("TOTAL", TEN)))))
+            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(15L))))))
+            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("TOTAL", ONE)))))
+            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(5L))))))
+            .andExpect(model().attribute("persons", List.of(person, person2)))
+            .andExpect(model().attribute("from", requestStartDate))
+            .andExpect(model().attribute("to", requestEndDate))
+            .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
+            .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
+            .andExpect(view().name("sicknote/sick_notes"));
+    }
+
+    @Test
     void periodsSickNotesWithDateWithoutRange() throws Exception {
 
         final Person office = new Person();
