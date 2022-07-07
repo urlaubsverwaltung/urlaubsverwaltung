@@ -166,6 +166,7 @@ public class SickDaysOverviewViewController {
             sickDays.computeIfAbsent(person, unused -> new SickDays()).addDays(WITH_AUB, workDaysWithAUB);
         }
     }
+
     private List<Person> getManagedPersons(Person signedInUser) {
 
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {

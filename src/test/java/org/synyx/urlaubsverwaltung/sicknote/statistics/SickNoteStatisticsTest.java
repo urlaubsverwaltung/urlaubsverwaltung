@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,8 +13,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.math.BigDecimal.ZERO;

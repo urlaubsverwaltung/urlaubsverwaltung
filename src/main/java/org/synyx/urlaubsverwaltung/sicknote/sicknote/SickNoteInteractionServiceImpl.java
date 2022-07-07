@@ -49,8 +49,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     @Autowired
     SickNoteInteractionServiceImpl(SickNoteService sickNoteService, SickNoteCommentService commentService,
-                                          ApplicationInteractionService applicationInteractionService, CalendarSyncService calendarSyncService,
-                                          AbsenceMappingService absenceMappingService, SettingsService settingsService, Clock clock) {
+                                   ApplicationInteractionService applicationInteractionService, CalendarSyncService calendarSyncService,
+                                   AbsenceMappingService absenceMappingService, SettingsService settingsService, Clock clock) {
 
         this.sickNoteService = sickNoteService;
         this.commentService = commentService;
