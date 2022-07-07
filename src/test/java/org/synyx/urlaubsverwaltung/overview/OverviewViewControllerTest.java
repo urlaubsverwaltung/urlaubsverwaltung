@@ -4,6 +4,8 @@ package org.synyx.urlaubsverwaltung.overview;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
@@ -22,6 +24,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
@@ -262,12 +265,13 @@ class OverviewViewControllerTest {
             .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
     }
 
-    @Test
-    void ensureOverviewCanAddSickNoteForAnotherUserIfOfficeRole() throws Exception {
-        final Person office = new Person();
-        office.setId(1);
-        office.setPermissions(List.of(USER, OFFICE));
-        when(personService.getSignedInUser()).thenReturn(office);
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+    void ensureOverviewCanAddSickNoteForAnotherUserIfRole(Role role) throws Exception {
+        final Person personWithRole = new Person();
+        personWithRole.setId(1);
+        personWithRole.setPermissions(List.of(USER, role));
+        when(personService.getSignedInUser()).thenReturn(personWithRole);
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);

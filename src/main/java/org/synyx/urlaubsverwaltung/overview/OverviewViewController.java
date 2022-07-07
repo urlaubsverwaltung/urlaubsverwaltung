@@ -137,7 +137,7 @@ public class OverviewViewController {
         model.addAttribute("canAccessAbsenceOverview", person.equals(signedInUser));
         model.addAttribute("canAccessCalendarShare", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS));
         model.addAttribute("canAddApplicationForLeaveForAnotherUser", signedInUser.hasRole(OFFICE));
-        model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person));
+        model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person));
 
         return "thymeleaf/person/person-overview";
     }
