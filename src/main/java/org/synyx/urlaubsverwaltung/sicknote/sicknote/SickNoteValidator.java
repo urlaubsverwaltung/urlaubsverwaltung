@@ -78,6 +78,9 @@ public class SickNoteValidator implements Validator {
 
     private void validateApplier(SickNote sickNote, Errors errors) {
         final Person applier = sickNote.getApplier();
+        if (applier == null) {
+            return;
+        }
 
         if (!applier.hasRole(OFFICE) && !applier.hasRole(BOSS) && !applier.hasRole(DEPARTMENT_HEAD) && !applier.hasRole(SECOND_STAGE_AUTHORITY)) {
             errors.reject(ERROR_ROLES);
