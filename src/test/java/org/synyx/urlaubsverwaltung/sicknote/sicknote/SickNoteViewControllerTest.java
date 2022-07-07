@@ -58,6 +58,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
@@ -132,6 +133,25 @@ class SickNoteViewControllerTest {
 
         final List<Person> departmentPersons = of(somePerson());
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(departmentPersons);
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
+
+        perform(get("/web/sicknote/new"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("persons", departmentPersons))
+            .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
+            .andExpect(view().name("sicknote/sick_note_form"));
+    }
+
+    @Test
+    void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewForSecondStageAuthority() throws Exception {
+
+        final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY);
+        when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
+
+        final List<Person> departmentPersons = of(somePerson());
+        when(departmentService.getMembersForDepartmentHead(secondStageAuthority)).thenReturn(departmentPersons);
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
 
@@ -228,6 +248,34 @@ class SickNoteViewControllerTest {
         person.setId(2);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(false);
+
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsAccessibleForPersonWithRoleSecondStageAuthority() throws Exception {
+
+        final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY);
+        when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
+        final Person person = personWithRole(USER);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsIsNotAccessibleForPersonWithSecondStageAuthorityForWrongUser() {
+
+        final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY);
+        secondStageAuthority.setId(1);
+        when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
+        final Person person = personWithRole(USER);
+        person.setId(2);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(false);
 
         assertThatThrownBy(() ->
             perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
