@@ -4,6 +4,10 @@ import org.springframework.beans.BeanUtils;
 
 public class SickNoteMapper {
 
+    private SickNoteMapper() {
+        // ok
+    }
+
     static SickNote merge(SickNote sickNote, SickNoteForm sickNoteForm) {
 
         final SickNote newSickNote = new SickNote();
