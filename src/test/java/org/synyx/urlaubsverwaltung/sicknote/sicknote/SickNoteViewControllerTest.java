@@ -151,7 +151,7 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
 
         final List<Person> departmentPersons = of(somePerson());
-        when(departmentService.getMembersForDepartmentHead(secondStageAuthority)).thenReturn(departmentPersons);
+        when(departmentService.getMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(departmentPersons);
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
 
@@ -360,6 +360,39 @@ class SickNoteViewControllerTest {
         final Person person = new Person();
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(false);
+
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsCanEditSickNotesSecondStageAuthority() throws Exception {
+
+        final Person ssa = personWithRole(SECOND_STAGE_AUTHORITY);
+        when(personService.getSignedInUser()).thenReturn(ssa);
+
+        final Person person = new Person();
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
+            .andExpect(view().name("sicknote/sick_note"))
+            .andExpect(model().attribute("canEditSickNote", true));
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsCanNotEditSickNotesSecondStageAuthorityOfDifferentDepartment() {
+
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+
+        final Person ssa = personWithRole(SECOND_STAGE_AUTHORITY);
+        when(personService.getSignedInUser()).thenReturn(ssa);
+
+        final Person person = new Person();
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(false);
 
         assertThatThrownBy(() ->
             perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
