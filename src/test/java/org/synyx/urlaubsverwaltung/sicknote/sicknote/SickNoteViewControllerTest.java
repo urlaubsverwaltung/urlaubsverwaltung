@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -58,6 +59,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteViewControllerTest {
@@ -102,11 +104,12 @@ class SickNoteViewControllerTest {
             sickNoteCommentFormValidator, sickNoteConvertFormValidator, settingsService, Clock.systemUTC());
     }
 
-    @Test
-    void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewForOfficeUser() throws Exception {
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+    void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewForRole(Role role) throws Exception {
 
-        final Person officePerson = personWithRole(OFFICE);
-        when(personService.getSignedInUser()).thenReturn(officePerson);
+        final Person personWithRole = personWithRole(role);
+        when(personService.getSignedInUser()).thenReturn(personWithRole);
 
         final List<Person> activePersons = of(somePerson());
         when(personService.getActivePersons()).thenReturn(activePersons);
@@ -192,10 +195,11 @@ class SickNoteViewControllerTest {
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
     }
 
-    @Test
-    void ensureGetSickNoteDetailsAccessibleForPersonWithRoleOffice() throws Exception {
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+    void ensureGetSickNoteDetailsAccessibleForPersonWithRole(Role role) throws Exception {
 
-        final Person officePerson = personWithRole(OFFICE);
+        final Person officePerson = personWithRole(role);
         when(personService.getSignedInUser()).thenReturn(officePerson);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(officePerson)));
 
@@ -215,7 +219,7 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetSickNoteDetailsIsNotAccessibleForPersonWithDepartmentHeadForWrongUser() throws Exception {
+    void ensureGetSickNoteDetailsIsNotAccessibleForPersonWithDepartmentHeadForWrongUser() {
 
         final Person departmentHeadPerson = personWithRole(DEPARTMENT_HEAD);
         departmentHeadPerson.setId(1);
@@ -297,7 +301,7 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureGetSickNoteDetailsCanNotEditSickNotesDepartmentHeadOfDifferentDepartment() throws Exception {
+    void ensureGetSickNoteDetailsCanNotEditSickNotesDepartmentHeadOfDifferentDepartment() {
 
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
@@ -676,14 +680,16 @@ class SickNoteViewControllerTest {
     }
 
     private SickNote someInactiveSickNote() {
-        SickNote sickNote = new SickNote();
+        final SickNote sickNote = new SickNote();
+        sickNote.setPerson(new Person());
         sickNote.setStatus(SickNoteStatus.CANCELLED);
         return sickNote;
     }
 
     private SickNote someActiveSickNote() {
-        SickNote sickNote = new SickNote();
-        sickNote.setStatus(SickNoteStatus.ACTIVE);
+        final SickNote sickNote = new SickNote();
+        sickNote.setPerson(new Person());
+        sickNote.setStatus(ACTIVE);
         return sickNote;
     }
 

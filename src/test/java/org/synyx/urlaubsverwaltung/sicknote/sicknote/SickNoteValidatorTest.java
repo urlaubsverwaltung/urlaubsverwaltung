@@ -32,6 +32,7 @@ import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.NO_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -108,8 +109,30 @@ class SickNoteValidatorTest {
             LocalDate.of(2013, NOVEMBER, 20),
             FULL);
 
-        final Person applier = new Person("dh", "department", "head", "department@example.org");
+        final Person applier = new Person("office", "office", "office", "office@example.org");
         applier.setPermissions(List.of(USER, OFFICE));
+        sickNote.setApplier(applier);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isZero();
+    }
+
+    @Test
+    void ensureValidBossApplierHasNoErrors() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getWorkingTime(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Person applier = new Person("boss", "boss", "boss", "boss@example.org");
+        applier.setPermissions(List.of(USER, BOSS));
         sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");

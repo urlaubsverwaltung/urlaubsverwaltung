@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteMapper.merge;
@@ -107,11 +108,11 @@ class SickNoteViewController {
     public String sickNoteDetails(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException {
 
         final Person signedInUser = personService.getSignedInUser();
-
         final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
         final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson());
-        if (signedInUser.hasRole(OFFICE) || isDepartmentHeadOfPerson || sickNote.getPerson().equals(signedInUser)) {
+        final boolean isSamePerson = sickNote.getPerson().equals(signedInUser);
+        if (isSamePerson || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson) {
             model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
             model.addAttribute("comment", new SickNoteCommentForm());
 
@@ -133,7 +134,7 @@ class SickNoteViewController {
             signedInUser.getId(), sickNote.getPerson().getId()));
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'DEPARTMENT_HEAD')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD')")
     @GetMapping("/sicknote/new")
     public String newSickNote(Model model) {
 
@@ -142,7 +143,7 @@ class SickNoteViewController {
         model.addAttribute(SICK_NOTE, new SickNoteForm());
 
         final List<Person> managedPersons;
-        if (signedInUser.hasRole(OFFICE)) {
+        if (signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS)) {
             managedPersons = personService.getActivePersons();
         } else {
             managedPersons = departmentService.getMembersForDepartmentHead(signedInUser);
@@ -156,7 +157,7 @@ class SickNoteViewController {
         return SICKNOTE_SICK_NOTE_FORM;
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'DEPARTMENT_HEAD')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD')")
     @PostMapping("/sicknote")
     public String newSickNote(@ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) {
 
