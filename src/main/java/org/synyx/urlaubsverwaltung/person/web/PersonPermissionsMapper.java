@@ -60,6 +60,7 @@ final class PersonPermissionsMapper {
                     mappedToRoles.add(Role.SICK_NOTE_ADD);
                     mappedToRoles.add(Role.SICK_NOTE_EDIT);
                     mappedToRoles.add(Role.SICK_NOTE_CANCEL);
+                    mappedToRoles.add(Role.SICK_NOTE_COMMENT);
                     break;
                 default:
                     break;
@@ -98,6 +99,7 @@ final class PersonPermissionsMapper {
                 case SICK_NOTE_ADD:
                 case SICK_NOTE_EDIT:
                 case SICK_NOTE_CANCEL:
+                case SICK_NOTE_COMMENT:
                     mappedToRolesDto.add(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT);
                     break;
                 default:

@@ -61,6 +61,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_COMMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -650,6 +651,10 @@ class SickNoteViewControllerTest {
 
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
+        final Person signedInPerson = somePerson();
+        signedInPerson.setPermissions(List.of(USER, BOSS, SICK_NOTE_COMMENT));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
         doAnswer(invocation -> {
             final Errors errors = invocation.getArgument(1);
             errors.rejectValue("text", "errors");
@@ -666,6 +671,7 @@ class SickNoteViewControllerTest {
     void ensurePostAddCommentCreatesSickNoteCommentIfValidationSuccessful() throws Exception {
 
         final Person signedInPerson = somePerson();
+        signedInPerson.setPermissions(List.of(USER, BOSS, SICK_NOTE_COMMENT));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
@@ -675,13 +681,44 @@ class SickNoteViewControllerTest {
         verify(sickNoteCommentService).create(any(SickNote.class), any(), eq(signedInPerson), any());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"comment", "convert"})
-    void ensureRedirectToSickNote(String path) throws Exception {
+    @Test
+    void ensureGetSickNoteCannotBeCommentedWithoutPermissions() {
+
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = someActiveSickNote();
+        sickNote.setId(1);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void ensureRedirectToSickNoteAfterConvert() throws Exception {
 
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
-        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/" + path))
+        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
+    }
+
+    @Test
+    void ensureRedirectToSickNoteAfterComment() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(USER, BOSS, SICK_NOTE_COMMENT));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = someActiveSickNote();
+        sickNote.setId(15);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+
+        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
