@@ -24,6 +24,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
  * Class for validating {@link SickNote} object.
@@ -78,15 +79,17 @@ public class SickNoteValidator implements Validator {
     private void validateApplier(SickNote sickNote, Errors errors) {
         final Person applier = sickNote.getApplier();
 
-        if (!applier.hasRole(OFFICE) && !applier.hasRole(BOSS) && !applier.hasRole(DEPARTMENT_HEAD)) {
+        if (!applier.hasRole(OFFICE) && !applier.hasRole(BOSS) && !applier.hasRole(DEPARTMENT_HEAD) && !applier.hasRole(SECOND_STAGE_AUTHORITY)) {
             errors.reject(ERROR_ROLES);
         }
 
-        if (applier.hasRole(DEPARTMENT_HEAD)) {
-            final Person person = sickNote.getPerson();
-            if (!departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)) {
-                errors.reject(ERROR_ROLES);
-            }
+        final Person person = sickNote.getPerson();
+        if (applier.hasRole(DEPARTMENT_HEAD) && !departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)) {
+            errors.reject(ERROR_ROLES);
+        }
+
+        if (applier.hasRole(SECOND_STAGE_AUTHORITY) && !departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person)) {
+            errors.reject(ERROR_ROLES);
         }
     }
 

@@ -32,6 +32,7 @@ import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.NO_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.person.Role.ADMIN;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -69,7 +70,7 @@ class SickNoteValidatorTest {
             FULL);
 
         final Person applier = new Person("dh", "department", "head", "department@example.org");
-        applier.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        applier.setPermissions(List.of(USER, ADMIN));
         sickNote.setApplier(applier);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
@@ -90,6 +91,25 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         sickNote.setApplier(applier);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)).thenReturn(false);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isOne();
+    }
+
+    @Test
+    void ensureSecondStageAuthorityApplierForWrongDepartmentReturnsError() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Person applier = new Person("ssa", "ssa", "ssa", "ssa@example.org");
+        applier.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        sickNote.setApplier(applier);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person)).thenReturn(false);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
@@ -141,7 +161,7 @@ class SickNoteValidatorTest {
     }
 
     @Test
-    void ensreValidDepartmentHeadApplierHasNoErrors() {
+    void ensureValidDepartmentHeadApplierHasNoErrors() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
@@ -157,6 +177,29 @@ class SickNoteValidatorTest {
         applier.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         sickNote.setApplier(applier);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)).thenReturn(true);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isZero();
+    }
+
+    @Test
+    void ensureValidSecondStageAuthorityApplierHasNoErrors() {
+
+        when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
+        when(workingTimeService.getWorkingTime(any(Person.class),
+            any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Person applier = new Person("ssa", "second stage authority", "second stage authority", "ssa@example.org");
+        applier.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        sickNote.setApplier(applier);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person)).thenReturn(true);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
