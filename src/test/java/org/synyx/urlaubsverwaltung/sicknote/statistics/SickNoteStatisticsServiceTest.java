@@ -28,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
@@ -72,6 +73,34 @@ class SickNoteStatisticsServiceTest {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);
 
         final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(departmentHead, fixedClock);
+        assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
+        assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
+    }
+
+    @Test
+    void ensureCreateStatisticsForPersonWithRoleSecondStageAuthorityOnlyForMembers() {
+
+        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+
+        final Person ssa = new Person();
+        ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
+        final Person member1 = new Person();
+        final Person member2 = new Person();
+        final List<Person> members = List.of(member1, member2);
+        when(departmentService.getMembersForSecondStageAuthority(ssa)).thenReturn(members);
+
+        final LocalDate firstDayOfYear = Year.now(fixedClock).atDay(1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+        final SickNote sickNote = new SickNote();
+        sickNote.setPerson(member1);
+        sickNote.setStartDate(LocalDate.of(2022, 10, 10));
+        sickNote.setEndDate(LocalDate.of(2022, 10, 10));
+        final List<SickNote> sickNotes = List.of(sickNote);
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
+        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);
+
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(ssa, fixedClock);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
     }
