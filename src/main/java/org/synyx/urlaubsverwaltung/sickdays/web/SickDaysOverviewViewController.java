@@ -33,6 +33,7 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -69,7 +70,7 @@ public class SickDaysOverviewViewController {
         this.clock = clock;
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'DEPARTMENT_HEAD')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD')")
     @PostMapping("/sicknote/filter")
     public String filterSickNotes(@ModelAttribute("period") FilterPeriod period, Errors errors, RedirectAttributes redirectAttributes) {
 
@@ -83,7 +84,7 @@ public class SickDaysOverviewViewController {
         return "redirect:/web/sicknote?from=" + startDateIsoString + "&to=" + endDateISoString;
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'DEPARTMENT_HEAD')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD')")
     @GetMapping("/sicknote")
     public String periodsSickNotes(@RequestParam(value = "from", defaultValue = "") String from,
                                    @RequestParam(value = "to", defaultValue = "") String to,
@@ -100,7 +101,7 @@ public class SickDaysOverviewViewController {
         if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             persons = departmentService.getMembersForDepartmentHead(signedInUser);
             sickNotes = sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), period.getStartDate(), period.getEndDate());
-        } else if (signedInUser.hasRole(OFFICE)) {
+        } else if (signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS)) {
             persons = personService.getActivePersons();
             sickNotes = sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), period.getStartDate(), period.getEndDate());
         } else {
