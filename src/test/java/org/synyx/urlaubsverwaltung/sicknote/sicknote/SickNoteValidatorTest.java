@@ -61,6 +61,20 @@ class SickNoteValidatorTest {
     }
 
     @Test
+    void ensureNoApplierReturnsNoErrorOnEdit() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isOne();
+    }
+
+    @Test
     void ensureApplierWithWrongRoleReturnsError() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
