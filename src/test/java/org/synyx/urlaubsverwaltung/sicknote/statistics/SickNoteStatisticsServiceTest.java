@@ -3,10 +3,13 @@ package org.synyx.urlaubsverwaltung.sicknote.statistics;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -73,13 +76,14 @@ class SickNoteStatisticsServiceTest {
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
     }
 
-    @Test
-    void ensureCreateStatisticsForPersonWithRoleOffice() {
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+    void ensureCreateStatisticsForPersonWithRole(Role role) {
 
         final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
-        final Person office = new Person();
-        office.setPermissions(List.of(USER, OFFICE));
+        final Person personWithRole = new Person();
+        personWithRole.setPermissions(List.of(USER, role));
 
         final Person person = new Person();
         final SickNote sickNote = new SickNote();
@@ -90,7 +94,7 @@ class SickNoteStatisticsServiceTest {
         when(sickNoteService.getAllActiveByYear(Year.now(fixedClock).getValue())).thenReturn(sickNotes);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);
 
-        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(office, fixedClock);
+        final SickNoteStatistics sickNoteStatistics = sut.createStatisticsForPerson(personWithRole, fixedClock);
         assertThat(sickNoteStatistics.getTotalNumberOfSickNotes()).isOne();
         assertThat(sickNoteStatistics.getNumberOfPersonsWithMinimumOneSickNote()).isOne();
     }
