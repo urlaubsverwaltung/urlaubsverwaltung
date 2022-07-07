@@ -21,6 +21,7 @@ import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -77,7 +78,7 @@ public class SickNoteValidator implements Validator {
     private void validateApplier(SickNote sickNote, Errors errors) {
         final Person applier = sickNote.getApplier();
 
-        if (!applier.hasRole(OFFICE) && !applier.hasRole(DEPARTMENT_HEAD)) {
+        if (!applier.hasRole(OFFICE) && !applier.hasRole(BOSS) && !applier.hasRole(DEPARTMENT_HEAD)) {
             errors.reject(ERROR_ROLES);
         }
 
