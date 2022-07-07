@@ -14,17 +14,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
 @RestControllerAdviceMarker
 @Tag(name = "sick notes", description = "Sick Notes: Get all sick notes for a certain period")
@@ -36,20 +46,22 @@ public class SickNoteApiController {
 
     private final PersonService personService;
     private final SickNoteService sickNoteService;
+    private final DepartmentService departmentService;
 
     @Autowired
-    SickNoteApiController(SickNoteService sickNoteService, PersonService personService) {
+    SickNoteApiController(SickNoteService sickNoteService, PersonService personService, DepartmentService departmentService) {
         this.personService = personService;
         this.sickNoteService = sickNoteService;
+        this.departmentService = departmentService;
     }
 
     @Operation(
         summary = "Get all sick notes for a certain period",
         description = "Get all sick notes for a certain period. "
-            + "Information only reachable for users with role office."
+            + "Information only reachable for users with role office or for users with the 'SICK_NOTE_VIEW' role."
     )
     @GetMapping(SICKNOTES)
-    @PreAuthorize(IS_OFFICE)
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
     public SickNotesDto getSickNotes(
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
@@ -64,7 +76,10 @@ public class SickNoteApiController {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
         }
 
-        final List<SickNoteDto> sickNoteResponse = sickNoteService.getActiveByPeriodAndPersonHasRole(startDate, endDate, List.of(USER)).stream()
+        final Person signedInUser = personService.getSignedInUser();
+        final List<Person> managedPersons = getManagedPersons(signedInUser);
+
+        final List<SickNoteDto> sickNoteResponse = sickNoteService.getForStatesAndPerson(List.of(ACTIVE), managedPersons, startDate, endDate).stream()
             .map(SickNoteDto::new)
             .collect(toList());
 
@@ -77,7 +92,7 @@ public class SickNoteApiController {
             + "Information only reachable for users with role office and for own sick notes."
     )
     @GetMapping("/persons/{personId}/" + SICKNOTES)
-    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public SickNotesDto personsSickNotes(
         @Parameter(description = "ID of the person")
         @PathVariable("personId")
@@ -101,11 +116,43 @@ public class SickNoteApiController {
         }
 
         final Person person = optionalPerson.get();
-        final List<SickNoteDto> sickNoteResponse = sickNoteService.getByPersonAndPeriod(person, startDate, endDate).stream()
-            .filter(SickNote::isActive)
+        final Person signedInUser = personService.getSignedInUser();
+        if (!isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person)) {
+            throw new ResponseStatusException(FORBIDDEN, "Not allowed to access data of the person with the ID=" + personId);
+        }
+
+        final List<SickNoteDto> sickNoteResponse = sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(person), startDate, endDate).stream()
             .map(SickNoteDto::new)
             .collect(toList());
 
         return new SickNotesDto(sickNoteResponse);
+    }
+
+    private boolean isPersonAllowedToExecuteRoleOn(Person requestPerson, Role role, Person person) {
+        final boolean isBossOrDepartmentHeadOrSecondStageAuthority = requestPerson.hasRole(BOSS)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(requestPerson, person)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(requestPerson, person);
+        return requestPerson.equals(person) || requestPerson.hasRole(OFFICE) || (requestPerson.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority);
+    }
+
+    private List<Person> getManagedPersons(Person signedInUser) {
+
+        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
+            return personService.getActivePersons();
+        }
+
+        final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
+            ? departmentService.getMembersForDepartmentHead(signedInUser)
+            : List.of();
+
+        final List<Person> memberForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
+            ? departmentService.getMembersForSecondStageAuthority(signedInUser)
+            : List.of();
+
+        return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
+            .filter(person -> !person.hasRole(INACTIVE))
+            .distinct()
+            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+            .collect(toList());
     }
 }
