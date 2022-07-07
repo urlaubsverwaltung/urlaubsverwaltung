@@ -32,7 +32,7 @@ class SickNoteStatisticsViewController {
         this.clock = clock;
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
     @GetMapping("/sicknote/statistics")
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear, Model model) {
 
