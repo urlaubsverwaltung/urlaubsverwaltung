@@ -50,6 +50,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_COMMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -133,7 +134,7 @@ class SickNoteViewController {
             model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNote));
             model.addAttribute("canConvertSickNote", signedInUser.hasRole(OFFICE));
             model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNote));
-            model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE));
+            model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNote));
 
             model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNote.getPerson()));
 
@@ -237,20 +238,28 @@ class SickNoteViewController {
         return REDIRECT_WEB_SICKNOTE + sickNoteId;
     }
 
-    @PreAuthorize(IS_OFFICE)
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_COMMENT')")
     @PostMapping("/sicknote/{id}/comment")
     public String addComment(@PathVariable("id") Integer id,
                              @ModelAttribute("comment") SickNoteCommentForm comment, Errors errors, RedirectAttributes redirectAttributes)
         throws UnknownSickNoteException {
 
         final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
-        sickNoteCommentFormValidator.validate(comment, errors);
+        final Person signedInUser = personService.getSignedInUser();
 
+        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNote)) {
+            throw new AccessDeniedException(format(
+                "User '%s' has not the correct permissions to comment the sick note of user '%s'",
+                signedInUser.getId(), sickNote.getPerson().getId()));
+        }
+
+        sickNoteCommentFormValidator.validate(comment, errors);
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
-        } else {
-            sickNoteCommentService.create(sickNote, SickNoteCommentAction.COMMENTED, personService.getSignedInUser(), comment.getText());
+            return REDIRECT_WEB_SICKNOTE + id;
         }
+
+        sickNoteCommentService.create(sickNote, SickNoteCommentAction.COMMENTED, signedInUser, comment.getText());
 
         return REDIRECT_WEB_SICKNOTE + id;
     }
