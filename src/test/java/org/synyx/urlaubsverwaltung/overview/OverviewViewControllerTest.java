@@ -31,7 +31,6 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
@@ -68,6 +67,7 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -291,6 +291,22 @@ class OverviewViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canAddSickNoteAnotherUser", true));
+    }
+
+    @Test
+    void ensureOverviewCanAddSickNoteForAnotherUserIfSAARoleAndDepartmentMember() throws Exception {
+        final Person ssa = new Person();
+        ssa.setId(1);
+        ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(ssa);
+
+        final Person person = new Person();
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
             .andExpect(model().attribute("canAddSickNoteAnotherUser", true));
