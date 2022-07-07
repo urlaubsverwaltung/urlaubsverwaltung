@@ -59,6 +59,54 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
         resultActions.andExpect(status().isOk());
     }
 
+    @Test
+    @WithMockUser(authorities = {"USER", "BOSS"})
+    void periodsSickNotesWithBossRole() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(
+            get("/web/sicknote")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(1))));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER", "SECOND_STAGE_AUTHORITY"})
+    void periodsSickNotesWithSSARole() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(
+            get("/web/sicknote")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(1))));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER", "DEPARTMENT_HEAD"})
+    void periodsSickNotesWithDHRole() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(
+            get("/web/sicknote")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(1))));
+        resultActions.andExpect(status().isOk());
+    }
+
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build().perform(builder);
     }

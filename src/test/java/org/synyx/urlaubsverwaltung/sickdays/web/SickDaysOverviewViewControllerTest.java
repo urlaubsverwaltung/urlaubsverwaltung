@@ -55,6 +55,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
@@ -215,6 +216,68 @@ class SickDaysOverviewViewControllerTest {
         person.setPermissions(List.of(USER));
         final List<Person> persons = List.of(person);
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(persons);
+
+        final SickNoteType childSickType = new SickNoteType();
+        childSickType.setCategory(SICK_NOTE_CHILD);
+        final SickNote childSickNote = new SickNote();
+        childSickNote.setStartDate(LocalDate.of(2019, 2, 1));
+        childSickNote.setEndDate(LocalDate.of(2019, 3, 1));
+        childSickNote.setDayLength(FULL);
+        childSickNote.setStatus(ACTIVE);
+        childSickNote.setSickNoteType(childSickType);
+        childSickNote.setPerson(person);
+        childSickNote.setAubStartDate(LocalDate.of(2019, 2, 10));
+        childSickNote.setAubEndDate(LocalDate.of(2019, 2, 15));
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 1), person)).thenReturn(ONE);
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 2, 15), person)).thenReturn(BigDecimal.valueOf(5L));
+
+        final SickNoteType sickType = new SickNoteType();
+        sickType.setCategory(SICK_NOTE);
+        final SickNote sickNote = new SickNote();
+        sickNote.setStartDate(LocalDate.of(2019, 4, 1));
+        sickNote.setEndDate(LocalDate.of(2019, 5, 1));
+        sickNote.setDayLength(FULL);
+        sickNote.setStatus(ACTIVE);
+        sickNote.setSickNoteType(sickType);
+        sickNote.setPerson(person);
+        sickNote.setAubStartDate(LocalDate.of(2019, 4, 10));
+        sickNote.setAubEndDate(LocalDate.of(2019, 4, 20));
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 15), person)).thenReturn(TEN);
+        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 10), LocalDate.of(2019, 4, 15), person)).thenReturn(BigDecimal.valueOf(15L));
+
+        final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
+        final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
+        when(sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
+
+        perform(get("/web/sicknote")
+            .param("from", requestStartDate.toString())
+            .param("to", requestEndDate.toString()))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("TOTAL", TEN)))))
+            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(15L))))))
+            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("TOTAL", ONE)))))
+            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(5L))))))
+            .andExpect(model().attribute("persons", persons))
+            .andExpect(model().attribute("from", requestStartDate))
+            .andExpect(model().attribute("to", requestEndDate))
+            .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
+            .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
+            .andExpect(view().name("sicknote/sick_notes"));
+    }
+
+    @Test
+    void periodsSickNotesWithDateRangeWithSecondStageAuthorityRole() throws Exception {
+
+        final Person ssa = new Person();
+        ssa.setId(1);
+        ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(ssa);
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        final List<Person> persons = List.of(person);
+        when(departmentService.getMembersForSecondStageAuthority(ssa)).thenReturn(persons);
 
         final SickNoteType childSickType = new SickNoteType();
         childSickType.setCategory(SICK_NOTE_CHILD);
