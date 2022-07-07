@@ -36,8 +36,8 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
-    public void save(SickNote sickNote) {
-        sickNoteRepository.save(sickNote);
+    public SickNote save(SickNote sickNote) {
+        return sickNoteRepository.save(sickNote);
     }
 
     @Override

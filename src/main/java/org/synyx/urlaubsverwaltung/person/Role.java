@@ -16,7 +16,8 @@ public enum Role {
     INACTIVE,
     SICK_NOTE_VIEW,
     SICK_NOTE_ADD,
-    SICK_NOTE_EDIT;
+    SICK_NOTE_EDIT,
+    SICK_NOTE_CANCEL;
 
     public static List<Role> privilegedRoles() {
         return List.of(DEPARTMENT_HEAD, BOSS, OFFICE, SECOND_STAGE_AUTHORITY);

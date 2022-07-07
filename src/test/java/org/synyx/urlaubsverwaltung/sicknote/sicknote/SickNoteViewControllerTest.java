@@ -56,9 +56,11 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -674,12 +676,29 @@ class SickNoteViewControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"comment", "convert", "cancel"})
+    @ValueSource(strings = {"comment", "convert"})
     void ensureRedirectToSickNote(String path) throws Exception {
 
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/" + path))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
+    }
+
+    @Test
+    void ensureRedirectToSickNoteAfterCancel() throws Exception {
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER, BOSS, SICK_NOTE_CANCEL));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final SickNote sickNote = someActiveSickNote();
+        sickNote.setId(15);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(sickNoteInteractionService.cancel(sickNote, person)).thenReturn(sickNote);
+
+        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
@@ -819,17 +838,68 @@ class SickNoteViewControllerTest {
     }
 
     @Test
-    void ensureCancelSickNoteCancelsSickNoteCorrectly() throws Exception {
+    void ensureCancelSickNoteCancelsSickNoteCorrectlyByBoss() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(USER, BOSS, SICK_NOTE_CANCEL));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final SickNote sickNote = someActiveSickNote();
+        sickNote.setId(1);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(sickNoteInteractionService.cancel(sickNote, signedInUser)).thenReturn(sickNote);
+        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))
+            .andExpect(view().name("redirect:/web/sicknote/1"));
+    }
+
+    @Test
+    void ensureCancelSickNoteCancelsSickNoteCorrectlyByDH() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_CANCEL));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = someActiveSickNote();
+        sickNote.setId(1);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(sickNoteInteractionService.cancel(sickNote, signedInUser)).thenReturn(sickNote);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson())).thenReturn(true);
+
+        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))
+            .andExpect(view().name("redirect:/web/sicknote/1"));
+    }
+
+    @Test
+    void ensureCancelSickNoteCancelsSickNoteCorrectlyBySSA() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_CANCEL));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = someActiveSickNote();
+        sickNote.setId(1);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(sickNoteInteractionService.cancel(sickNote, signedInUser)).thenReturn(sickNote);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNote.getPerson())).thenReturn(true);
+
+        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))
+            .andExpect(view().name("redirect:/web/sicknote/1"));
+    }
+
+    @Test
+    void ensureGetSickNoteCannotBeCancelledWithoutPermissions() {
+
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final SickNote sickNote = someActiveSickNote();
+        sickNote.setId(1);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
 
-        final Person signedInPerson = somePerson();
-        when(personService.getSignedInUser()).thenReturn(signedInPerson);
-
-        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"));
-
-        verify(sickNoteInteractionService).cancel(sickNote, signedInPerson);
+        assertThatThrownBy(() ->
+            perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     private void overtimeActive(boolean active) {

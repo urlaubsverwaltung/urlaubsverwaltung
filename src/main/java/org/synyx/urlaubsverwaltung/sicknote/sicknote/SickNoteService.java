@@ -16,8 +16,9 @@ public interface SickNoteService {
      * Persists the given sick note.
      *
      * @param sickNote to be persisted
+     * @return saved sick note
      */
-    void save(SickNote sickNote);
+    SickNote save(SickNote sickNote);
 
     /**
      * Gets the sick note with the given id.
