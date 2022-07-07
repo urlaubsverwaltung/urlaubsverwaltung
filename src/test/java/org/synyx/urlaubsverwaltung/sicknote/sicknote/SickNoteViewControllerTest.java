@@ -272,10 +272,11 @@ class SickNoteViewControllerTest {
             .andExpect(view().name("sicknote/sick_note"));
     }
 
-    @Test
-    void ensureGetSickNoteDetailsCanEditSickNotesOffice() throws Exception {
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+    void ensureGetSickNoteDetailsCanEditSickNotesWithRole(Role role) throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(role));
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
