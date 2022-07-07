@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -187,6 +188,7 @@ class SickNoteInteractionServiceImplTest {
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = getSickNote();
+        when(sickNoteService.save(any())).then(returnsFirstArg());
 
         final SickNote cancelledSickNote = sut.cancel(sickNote, creator);
         assertThat(cancelledSickNote).isNotNull();
@@ -205,6 +207,7 @@ class SickNoteInteractionServiceImplTest {
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = getSickNote();
+        when(sickNoteService.save(any())).then(returnsFirstArg());
 
         sut.cancel(sickNote, creator);
 

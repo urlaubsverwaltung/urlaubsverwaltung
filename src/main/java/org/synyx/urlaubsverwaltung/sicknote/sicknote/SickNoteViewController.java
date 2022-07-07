@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewMode
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
@@ -47,6 +49,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -118,19 +121,18 @@ class SickNoteViewController {
         final Person signedInUser = personService.getSignedInUser();
         final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
 
-        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson());
-        final boolean isSecondStageOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNote.getPerson());
         final boolean isSamePerson = sickNote.getPerson().equals(signedInUser);
-        if (isSamePerson || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(SICK_NOTE_VIEW) && (signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageOfPerson)) {
+
+        if (isSamePerson || signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNote)) {
             model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
             model.addAttribute("comment", new SickNoteCommentForm());
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
-            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageOfPerson));
+            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNote));
             model.addAttribute("canConvertSickNote", signedInUser.hasRole(OFFICE));
-            model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE));
+            model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNote));
             model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE));
 
             model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNote.getPerson()));
@@ -138,7 +140,7 @@ class SickNoteViewController {
             return "sicknote/sick_note";
         }
 
-        throw new AccessDeniedException(String.format(
+        throw new AccessDeniedException(format(
             "User '%s' has not the correct permissions to see the sick note of user '%s'",
             signedInUser.getId(), sickNote.getPerson().getId()));
     }
@@ -293,14 +295,28 @@ class SickNoteViewController {
         return REDIRECT_WEB_SICKNOTE + id;
     }
 
-    @PreAuthorize(IS_OFFICE)
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_CANCEL')")
     @PostMapping("/sicknote/{id}/cancel")
     public String cancelSickNote(@PathVariable("id") Integer id) throws UnknownSickNoteException {
 
         final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
-        sickNoteInteractionService.cancel(sickNote, personService.getSignedInUser());
+        final Person signedInUser = personService.getSignedInUser();
 
-        return REDIRECT_WEB_SICKNOTE + id;
+        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNote)) {
+            throw new AccessDeniedException(format(
+                "User '%s' has not the correct permissions to cancel the sick note of user '%s'",
+                signedInUser.getId(), sickNote.getPerson().getId()));
+        }
+
+        final SickNote cancelledSickNote = sickNoteInteractionService.cancel(sickNote, signedInUser);
+        return REDIRECT_WEB_SICKNOTE + cancelledSickNote.getId();
+    }
+
+    private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, SickNote sickNote) {
+        final boolean isBossOrDepartmentHeadOrSecondStageAuthority = person.hasRole(BOSS)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(person, sickNote.getPerson())
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(person, sickNote.getPerson());
+        return person.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority;
     }
 
     private List<Person> getManagedPersons(Person signedInUser) {

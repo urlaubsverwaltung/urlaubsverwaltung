@@ -131,18 +131,18 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     public SickNote cancel(SickNote sickNote, Person canceller) {
 
         sickNote.setStatus(CANCELLED);
-        saveSickNote(sickNote);
-        LOG.info("Cancelled sick note: {}", sickNote);
+        final SickNote savedSickNote = saveSickNote(sickNote);
+        LOG.info("Cancelled sick note: {}", savedSickNote);
 
         commentService.create(sickNote, SickNoteCommentAction.CANCELLED, canceller);
 
-        final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE);
+        final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(savedSickNote.getId(), SICKNOTE);
         if (absenceMapping.isPresent()) {
             calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
             absenceMappingService.delete(absenceMapping.get());
         }
 
-        return sickNote;
+        return savedSickNote;
     }
 
     private void updateAbsence(SickNote sickNote) {
@@ -171,8 +171,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         return settingsService.getSettings().getTimeSettings();
     }
 
-    private void saveSickNote(SickNote sickNote) {
+    private SickNote saveSickNote(SickNote sickNote) {
         sickNote.setLastEdited(LocalDate.now(clock));
-        sickNoteService.save(sickNote);
+        return sickNoteService.save(sickNote);
     }
 }
