@@ -122,7 +122,7 @@ class SickNoteViewController {
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
-            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson);
+            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageOfPerson);
             model.addAttribute("canConvertSickNote", signedInUser.hasRole(OFFICE));
             model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE));
             model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE));
@@ -190,7 +190,7 @@ class SickNoteViewController {
         return REDIRECT_WEB_SICKNOTE + sickNote.getId();
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
     @GetMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException,
         SickNoteAlreadyInactiveException {
@@ -210,7 +210,7 @@ class SickNoteViewController {
         return SICKNOTE_SICK_NOTE_FORM;
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
     @PostMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer sickNoteId,
                                @ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) throws UnknownSickNoteException {
