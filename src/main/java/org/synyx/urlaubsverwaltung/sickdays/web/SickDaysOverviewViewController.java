@@ -75,7 +75,7 @@ public class SickDaysOverviewViewController {
         this.clock = clock;
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
     @PostMapping("/sicknote/filter")
     public String filterSickNotes(@ModelAttribute("period") FilterPeriod period, Errors errors, RedirectAttributes redirectAttributes) {
 
@@ -89,7 +89,7 @@ public class SickDaysOverviewViewController {
         return "redirect:/web/sicknote?from=" + startDateIsoString + "&to=" + endDateISoString;
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
     @GetMapping("/sicknote")
     public String periodsSickNotes(@RequestParam(value = "from", defaultValue = "") String from,
                                    @RequestParam(value = "to", defaultValue = "") String to,

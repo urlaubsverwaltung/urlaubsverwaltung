@@ -111,7 +111,10 @@
                                     <form:hidden path="notifications" value="NOTIFICATION_USER"/>
                                 </div>
 
-                                <div class="checkbox tw-pb-2 tw-mb-2">
+                                <h2 class="tw-mb-2 tw-block">
+                                    <spring:message code="person.form.permissions.roles.basic_roles.description"/>
+                                </h2>
+                                <div class="checkbox tw-pb-2 tw-pl-4 tw-mb-2">
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD"/>
                                     </strong>
@@ -141,7 +144,7 @@
                                     </label>
                                 </div>
 
-                                <div class="checkbox tw-pb-2 tw-mb-2">
+                                <div class="checkbox tw-pb-2 tw-pl-4 tw-mb-2">
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY"/>
                                     </strong>
@@ -174,7 +177,7 @@
                                     </label>
                                 </div>
 
-                                <div class="checkbox tw-pb-2 tw-mb-2">
+                                <div class="checkbox tw-pb-2 tw-pl-4 tw-mb-2">
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.BOSS"/>
                                     </strong>
@@ -196,7 +199,7 @@
                                     </label>
                                 </div>
 
-                                <div class="checkbox">
+                                <div class="checkbox tw-pb-4 tw-pl-4 tw-mb-4">
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.OFFICE"/>
                                     </strong>
@@ -211,6 +214,21 @@
                                     <label class="tw-leading-snug tw-ml-5 tw-pb-2">
                                         <form:checkbox path="notifications" value="OVERTIME_NOTIFICATION_OFFICE"/>
                                         <spring:message code="person.form.notifications.OFFICE.overtime"/>
+                                    </label>
+                                </div>
+
+                                <div class="checkbox">
+                                    <h2 class="tw-mb-2 tw-block">
+                                        <spring:message code="person.form.permissions.roles.additional_roles.description"/>
+                                    </h2>
+                                    <label class="tw-leading-snug tw-mb-2">
+                                        <strong>
+                                            <spring:message code="person.form.permissions.roles.SICK_NOTE_VIEW_ADD_EDIT"/>
+                                        </strong>
+                                    </label>
+                                    <label class="tw-leading-snug tw-ml-5 tw-pb-2">
+                                        <form:checkbox path="permissions" value="SICK_NOTE_VIEW_ADD_EDIT"/>
+                                        <spring:message code="person.form.permissions.roles.SICK_NOTE_VIEW_ADD_EDIT.description" arguments="${person.niceName}"/>
                                     </label>
                                 </div>
                             </div>

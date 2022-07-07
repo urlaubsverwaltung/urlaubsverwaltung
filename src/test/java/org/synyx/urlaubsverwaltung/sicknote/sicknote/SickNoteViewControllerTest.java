@@ -59,6 +59,8 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
@@ -412,7 +414,7 @@ class SickNoteViewControllerTest {
     @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
     void ensureGetSickNoteDetailsCanEditSickNotesWithRole(Role role) throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(personWithRole(role));
+        when(personService.getSignedInUser()).thenReturn(personWithRole(role, SICK_NOTE_VIEW, SICK_NOTE_EDIT));
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
@@ -424,7 +426,7 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsCanEditSickNotesDepartmentHead() throws Exception {
 
-        final Person departmentHead = personWithRole(DEPARTMENT_HEAD);
+        final Person departmentHead = personWithRole(DEPARTMENT_HEAD, SICK_NOTE_VIEW, SICK_NOTE_EDIT);
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
         final Person person = new Person();
@@ -457,7 +459,7 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsCanEditSickNotesSecondStageAuthority() throws Exception {
 
-        final Person ssa = personWithRole(SECOND_STAGE_AUTHORITY);
+        final Person ssa = personWithRole(SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW, SICK_NOTE_EDIT);
         when(personService.getSignedInUser()).thenReturn(ssa);
 
         final Person person = new Person();
@@ -842,7 +844,7 @@ class SickNoteViewControllerTest {
         return sickNote;
     }
 
-    private Person personWithRole(Role role) {
+    private Person personWithRole(Role... role) {
         final Person person = new Person();
         person.setId(1);
         person.setPermissions(List.of(role));

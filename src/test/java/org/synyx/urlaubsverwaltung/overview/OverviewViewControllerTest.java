@@ -66,6 +66,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -268,7 +269,7 @@ class OverviewViewControllerTest {
     void ensureOverviewCanAddSickNoteForAnotherUserIfRole(Role role) throws Exception {
         final Person personWithRole = new Person();
         personWithRole.setId(1);
-        personWithRole.setPermissions(List.of(USER, role));
+        personWithRole.setPermissions(List.of(USER, role, SICK_NOTE_ADD));
         when(personService.getSignedInUser()).thenReturn(personWithRole);
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
@@ -282,7 +283,7 @@ class OverviewViewControllerTest {
     void ensureOverviewCanAddSickNoteForAnotherUserIfDepartmentRoleAndDepartmentMember() throws Exception {
         final Person departmentHead = new Person();
         departmentHead.setId(1);
-        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_ADD));
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
         final Person person = new Person();
@@ -298,7 +299,7 @@ class OverviewViewControllerTest {
     void ensureOverviewCanAddSickNoteForAnotherUserIfSAARoleAndDepartmentMember() throws Exception {
         final Person ssa = new Person();
         ssa.setId(1);
-        ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD));
         when(personService.getSignedInUser()).thenReturn(ssa);
 
         final Person person = new Person();

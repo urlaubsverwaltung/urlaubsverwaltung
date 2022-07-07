@@ -60,7 +60,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
-    @WithMockUser(authorities = {"USER", "BOSS"})
+    @WithMockUser(authorities = {"USER", "BOSS", "SICK_NOTE_VIEW"})
     void periodsSickNotesWithBossRole() throws Exception {
 
         final Person person = new Person();
@@ -76,7 +76,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
-    @WithMockUser(authorities = {"USER", "SECOND_STAGE_AUTHORITY"})
+    @WithMockUser(authorities = {"USER", "SECOND_STAGE_AUTHORITY", "SICK_NOTE_VIEW"})
     void periodsSickNotesWithSSARole() throws Exception {
 
         final Person person = new Person();
@@ -92,7 +92,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
-    @WithMockUser(authorities = {"USER", "DEPARTMENT_HEAD"})
+    @WithMockUser(authorities = {"USER", "DEPARTMENT_HEAD", "SICK_NOTE_VIEW"})
     void periodsSickNotesWithDHRole() throws Exception {
 
         final Person person = new Person();
