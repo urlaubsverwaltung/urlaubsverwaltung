@@ -15,6 +15,7 @@ import java.time.Year;
 import java.util.List;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
@@ -47,7 +48,7 @@ public class SickNoteStatisticsService {
             final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
             final List<Person> members = departmentService.getMembersForDepartmentHead(person);
             sickNotes = sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear);
-        } else if (person.hasRole(OFFICE)) {
+        } else if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
             sickNotes = sickNoteService.getAllActiveByYear(year.getValue());
         } else {
             sickNotes = List.of();
