@@ -47,6 +47,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteMapper.merge;
 
@@ -119,14 +121,14 @@ class SickNoteViewController {
         final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson());
         final boolean isSecondStageOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNote.getPerson());
         final boolean isSamePerson = sickNote.getPerson().equals(signedInUser);
-        if (isSamePerson || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageOfPerson) {
+        if (isSamePerson || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(SICK_NOTE_VIEW) && (signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageOfPerson)) {
             model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
             model.addAttribute("comment", new SickNoteCommentForm());
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
             model.addAttribute("comments", comments);
 
-            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageOfPerson);
+            model.addAttribute("canEditSickNote", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(SICK_NOTE_EDIT) && (signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageOfPerson));
             model.addAttribute("canConvertSickNote", signedInUser.hasRole(OFFICE));
             model.addAttribute("canDeleteSickNote", signedInUser.hasRole(OFFICE));
             model.addAttribute("canCommentSickNote", signedInUser.hasRole(OFFICE));
@@ -141,7 +143,7 @@ class SickNoteViewController {
             signedInUser.getId(), sickNote.getPerson().getId()));
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_ADD')")
     @GetMapping("/sicknote/new")
     public String newSickNote(Model model) {
 
@@ -158,7 +160,7 @@ class SickNoteViewController {
         return SICKNOTE_SICK_NOTE_FORM;
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_ADD')")
     @PostMapping("/sicknote")
     public String newSickNote(@ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) {
 
@@ -184,7 +186,7 @@ class SickNoteViewController {
         return REDIRECT_WEB_SICKNOTE + sickNote.getId();
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
     @GetMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException,
         SickNoteAlreadyInactiveException {
@@ -204,7 +206,7 @@ class SickNoteViewController {
         return SICKNOTE_SICK_NOTE_FORM;
     }
 
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'BOSS', 'DEPARTMENT_HEAD', 'SECOND_STAGE_AUTHORITY')")
+    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
     @PostMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer sickNoteId,
                                @ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) throws UnknownSickNoteException {

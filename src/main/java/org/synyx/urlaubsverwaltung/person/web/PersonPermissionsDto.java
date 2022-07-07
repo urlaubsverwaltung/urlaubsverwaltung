@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
 import org.synyx.urlaubsverwaltung.person.MailNotification;
-import org.synyx.urlaubsverwaltung.person.Role;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,8 +13,8 @@ public class PersonPermissionsDto {
     private String gravatarURL;
     private String email;
 
-    private List<Role> permissions;
-    private List<MailNotification> notifications;
+    private List<PersonPermissionsRoleDto> permissions = new ArrayList<>();
+    private List<MailNotification> notifications = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -50,11 +50,11 @@ public class PersonPermissionsDto {
         return this;
     }
 
-    public List<Role> getPermissions() {
+    public List<PersonPermissionsRoleDto> getPermissions() {
         return permissions;
     }
 
-    public void setPermissions(List<Role> permissions) {
+    public void setPermissions(List<PersonPermissionsRoleDto> permissions) {
         this.permissions = permissions;
     }
 

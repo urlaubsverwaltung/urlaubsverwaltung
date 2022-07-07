@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class PersonPermissionsViewControllerTest {
@@ -158,7 +159,9 @@ class PersonPermissionsViewControllerTest {
     @Test
     void editPersonPermissionsAndNotificationsRedirectsToUpdatedPerson() throws Exception {
 
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithId(PERSON_ID)));
+        final Person person = personWithId(PERSON_ID);
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/" + PERSON_ID + "/permissions"))
             .andExpect(status().isFound())

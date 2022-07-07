@@ -97,12 +97,12 @@
                     </jsp:attribute>
                     <jsp:body>
                         <dl class="tw-m-0">
-                            <c:forEach items="${person.permissions}" var="role" varStatus="loop">
+                            <c:forEach items="${permissions}" var="role" varStatus="loop">
                                 <dt class="tw-mb-2 tw-font-medium">
                                     <spring:message code="person.form.permissions.roles.${role}"/>
                                 </dt>
                                 <dd class="tw-text-sm ${not loop.last ? 'tw-mb-8' : ''}">
-                                    <spring:message code="person.form.permissions.roles.${role}.description"/>
+                                    <spring:message code="person.form.permissions.roles.${role}.description" arguments="${person.niceName}"/>
                                 </dd>
                             </c:forEach>
                         </dl>
