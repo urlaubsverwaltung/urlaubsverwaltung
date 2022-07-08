@@ -191,16 +191,21 @@ class SickNoteViewController {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
     @GetMapping("/sicknote/{id}/edit")
-    public String editSickNote(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException,
-        SickNoteAlreadyInactiveException {
+    public String editSickNote(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
         final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
-        final SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
-
         if (!sickNote.isActive()) {
             throw new SickNoteAlreadyInactiveException(id);
         }
 
+        final Person signedInUser = personService.getSignedInUser();
+        if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_EDIT, sickNote)) {
+            throw new AccessDeniedException(format(
+                "User '%s' has not the correct permissions to edit the sick note of user '%s'",
+                signedInUser.getId(), sickNote.getPerson().getId()));
+        }
+
+        final SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
         model.addAttribute(SICK_NOTE, sickNoteForm);
         model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
 
