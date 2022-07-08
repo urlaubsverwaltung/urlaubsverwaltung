@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
@@ -32,12 +33,16 @@ class SickNoteStatisticsViewControllerTest {
     private SickNoteService sickNoteService;
     @Mock
     private WorkDaysCountService workDaysCountService;
+    @Mock
+    private SickNoteStatisticsCsvExportService sickNoteStatisticsCsvExportService;
+    @Mock
+    private DateFormatAware dateFormatAware;
 
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteStatisticsViewController(statisticsService, clock);
+        sut = new SickNoteStatisticsViewController(statisticsService, sickNoteStatisticsCsvExportService, dateFormatAware, clock);
     }
 
     @Test
