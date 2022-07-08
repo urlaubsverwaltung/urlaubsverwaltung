@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -214,7 +215,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final Person secondStageAuthority = new Person();
-        secondStageAuthority.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
+        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW));
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
 
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
