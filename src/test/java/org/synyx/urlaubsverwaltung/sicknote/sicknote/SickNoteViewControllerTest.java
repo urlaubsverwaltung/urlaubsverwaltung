@@ -259,6 +259,10 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetEditHasCorrectModelAttributes() throws Exception {
 
+        final Person office = personWithRole(USER, OFFICE);
+        office.setId(1);
+        when(personService.getSignedInUser()).thenReturn(office);
+
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
@@ -271,6 +275,76 @@ class SickNoteViewControllerTest {
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("sicknote/sick_note_form"));
+    }
+
+    @Test
+    void ensureGetEditIsAccessibleForOffice() throws Exception {
+
+        final Person office = personWithRole(USER, OFFICE);
+        office.setId(1);
+        when(personService.getSignedInUser()).thenReturn(office);
+
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void ensureGetEditIsAccessibleForDepartmentHead() throws Exception {
+
+        final Person departmentHead = personWithRole(USER, DEPARTMENT_HEAD, SICK_NOTE_EDIT);
+        departmentHead.setId(1);
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final SickNote sickNote = someActiveSickNote();
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, sickNote.getPerson())).thenReturn(true);
+
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void ensureGetEditIsAccessibleForSecondStageAuthority() throws Exception {
+
+        final Person ssa = personWithRole(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_EDIT);
+        ssa.setId(1);
+        when(personService.getSignedInUser()).thenReturn(ssa);
+
+        final SickNote sickNote = someActiveSickNote();
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, sickNote.getPerson())).thenReturn(true);
+
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void ensureGetEditIsAccessibleForBoss() throws Exception {
+
+        final Person departmentHead = personWithRole(USER, BOSS, SICK_NOTE_EDIT);
+        departmentHead.setId(1);
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final SickNote sickNote = someActiveSickNote();
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -289,6 +363,106 @@ class SickNoteViewControllerTest {
         assertThatThrownBy(() ->
             perform(get("/web/sicknote/" + UNKNOWN_SICK_NOTE_ID + "/edit"))
         ).hasCauseInstanceOf(SickNoteAlreadyInactiveException.class);
+    }
+
+    @Test
+    void ensureGetSickNoteEditIsNotAccessibleForPerson() {
+
+        final Person signedInUser = personWithRole(USER);
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = personWithRole(USER);
+        person.setId(2);
+
+        final SickNote sickNote = sickNoteOfPerson(person);
+        sickNote.setStatus(ACTIVE);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(false);
+
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void ensureGetSickNoteEditIsNotAccessibleForPersonWithDepartmentHeadWithoutEditRole() {
+
+        final Person departmentHeadPerson = personWithRole(USER, DEPARTMENT_HEAD);
+        departmentHeadPerson.setId(1);
+        when(personService.getSignedInUser()).thenReturn(departmentHeadPerson);
+
+        final Person person = personWithRole(USER);
+        person.setId(2);
+
+        final SickNote sickNote = sickNoteOfPerson(person);
+        sickNote.setStatus(ACTIVE);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
+
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void ensureGetSickNoteEditIsNotAccessibleForPersonWithDepartmentHeadForWrongUser() {
+
+        final Person departmentHeadPerson = personWithRole(USER, DEPARTMENT_HEAD, SICK_NOTE_EDIT);
+        departmentHeadPerson.setId(1);
+        when(personService.getSignedInUser()).thenReturn(departmentHeadPerson);
+
+        final Person person = personWithRole(USER);
+        person.setId(2);
+
+        final SickNote sickNote = sickNoteOfPerson(person);
+        sickNote.setStatus(ACTIVE);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(false);
+
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void ensureGetSickNoteEditIsNotAccessibleForPersonWithSecondStageAuthorityForWrongUser() {
+
+        final Person departmentHeadPerson = personWithRole(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_EDIT);
+        departmentHeadPerson.setId(1);
+        when(personService.getSignedInUser()).thenReturn(departmentHeadPerson);
+
+        final Person person = personWithRole(USER);
+        person.setId(2);
+
+        final SickNote sickNote = sickNoteOfPerson(person);
+        sickNote.setStatus(ACTIVE);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(false);
+
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void ensureGetSickNoteEditIsNotAccessibleForPersonWithSecondStageAuthorityWithoutEditRole() {
+
+        final Person departmentHeadPerson = personWithRole(USER, SECOND_STAGE_AUTHORITY);
+        departmentHeadPerson.setId(1);
+        when(personService.getSignedInUser()).thenReturn(departmentHeadPerson);
+
+        final Person person = personWithRole(USER);
+        person.setId(2);
+
+        final SickNote sickNote = sickNoteOfPerson(person);
+        sickNote.setStatus(ACTIVE);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
+
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
