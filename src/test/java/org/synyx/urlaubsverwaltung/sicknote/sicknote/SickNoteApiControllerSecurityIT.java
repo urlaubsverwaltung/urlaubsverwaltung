@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -148,7 +147,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     @WithMockUser(authorities = "OFFICE")
-    void personsSickNotesWithOfficeUserIsOk() throws Exception {
+    void personsSickNotesWithOfficeUserOnlyIsOk() throws Exception {
 
         final Person person = new Person();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
@@ -169,7 +168,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     @WithMockUser(authorities = {"BOSS", "SICK_NOTE_VIEW"})
-    void personsSickNotesWithBossUserIsOk() throws Exception {
+    void personsSickNotesWithBossUserAndSickNoteViewAuthorityIsOk() throws Exception {
         final Person person = new Person();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -189,7 +188,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     @WithMockUser(authorities = {"DEPARTMENT_HEAD", "SICK_NOTE_VIEW"})
-    void personsSickNotesWithDepartmentHeadUserIsOk() throws Exception {
+    void personsSickNotesWithDepartmentHeadUserAndSickNoteViewAuthorityIsOk() throws Exception {
         final Person person = new Person();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -209,24 +208,57 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
-    @WithMockUser(authorities = {"SECOND_STAGE_AUTHORITY", "SICK_NOTE_VIEW"})
-    void personsSickNotesWithSecondStageUserIsOk() throws Exception {
+    @WithMockUser(authorities = {"BOSS"})
+    void personsSickNotesWithBossUserWithoutSickNoteViewAuthorityIsForbidden() throws Exception {
         final Person person = new Person();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        final Person secondStageAuthority = new Person();
-        secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW));
-        when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
-
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
-        when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(new SickNote()));
+        final Person signedInPerson = new Person();
+        signedInPerson.setPermissions(List.of(USER, BOSS));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
             .param("from", dtf.format(now))
             .param("to", dtf.format(now.plusDays(5))));
 
-        resultActions.andExpect(status().isOk());
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"DEPARTMENT_HEAD"})
+    void personsSickNotesWithDepartmentHeadUserWithoutSickNoteViewAuthorityIsForbidden() throws Exception {
+        final Person person = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))));
+
+        resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"SECOND_STAGE_AUTHORITY"})
+    void personsSickNotesWithSecondStageUserWithoutSickNoteViewAuthorityIsForbidden() throws Exception {
+        final Person person = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))));
+
+        resultActions.andExpect(status().isForbidden());
     }
 
     @Test
