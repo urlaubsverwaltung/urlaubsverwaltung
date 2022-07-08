@@ -4,7 +4,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
@@ -30,7 +32,7 @@ final class PersonPermissionsMapper {
         return person;
     }
 
-    private static List<Role> mapPermissionsDtoToRole(List<PersonPermissionsRoleDto> permissionsRoleDto) {
+    static List<Role> mapPermissionsDtoToRole(List<PersonPermissionsRoleDto> permissionsRoleDto) {
         final List<Role> mappedToRoles = new ArrayList<>();
         permissionsRoleDto.forEach(roleDto -> {
             switch (roleDto) {
@@ -71,7 +73,7 @@ final class PersonPermissionsMapper {
     }
 
     static List<PersonPermissionsRoleDto> mapRoleToPermissionsDto(List<Role> roles) {
-        final List<PersonPermissionsRoleDto> mappedToRolesDto = new ArrayList<>();
+        final Set<PersonPermissionsRoleDto> mappedToRolesDto = new HashSet<>();
         roles.forEach(role -> {
             switch (role) {
                 case USER:
@@ -107,8 +109,6 @@ final class PersonPermissionsMapper {
             }
         });
 
-        return mappedToRolesDto.stream()
-            .distinct()
-            .collect(toList());
+        return new ArrayList<>(mappedToRolesDto);
     }
 }
