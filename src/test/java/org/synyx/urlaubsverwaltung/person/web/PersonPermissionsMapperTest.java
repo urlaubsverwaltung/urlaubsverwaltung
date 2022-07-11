@@ -7,9 +7,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +32,8 @@ class PersonPermissionsMapperTest {
                 Role.SICK_NOTE_EDIT,
                 Role.SICK_NOTE_CANCEL,
                 Role.SICK_NOTE_COMMENT
-            ))
+            )),
+            arguments(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL, List.of(Role.APPLICATION_ADD, Role.APPLICATION_CANCEL))
         );
     }
 
@@ -65,7 +64,9 @@ class PersonPermissionsMapperTest {
             arguments(Role.SICK_NOTE_ADD, List.of(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT)),
             arguments(Role.SICK_NOTE_EDIT, List.of(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT)),
             arguments(Role.SICK_NOTE_CANCEL, List.of(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT)),
-            arguments(Role.SICK_NOTE_COMMENT, List.of(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT))
+            arguments(Role.SICK_NOTE_COMMENT, List.of(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT)),
+            arguments(Role.APPLICATION_ADD, List.of(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL)),
+            arguments(Role.APPLICATION_CANCEL, List.of(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL))
         );
     }
 
