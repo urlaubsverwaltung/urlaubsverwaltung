@@ -11,7 +11,7 @@
 <c:set var="IS_ALLOWED_TO_REFER" value="${isBoss || isOffice || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !IS_OWN)}"/>
 
 <c:if test="${application.status == 'ALLOWED'}">
-    <c:if test="${isOffice || IS_OWN}">
+    <c:if test="${isOffice || ((isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && isAllowedToCancelApplication) || IS_OWN}">
         <jsp:include page="actions/cancel_form.jsp"/>
     </c:if>
 </c:if>
@@ -27,7 +27,7 @@
     <c:if test="${IS_ALLOWED_TO_REFER}">
         <jsp:include page="actions/refer_form.jsp"/>
     </c:if>
-    <c:if test="${isOffice || IS_OWN}">
+    <c:if test="${isOffice || ((isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && isAllowedToCancelApplication) || IS_OWN}">
         <jsp:include page="actions/cancel_form.jsp"/>
     </c:if>
 </c:if>
@@ -43,14 +43,16 @@
     <c:if test="${IS_ALLOWED_TO_REFER}">
         <jsp:include page="actions/refer_form.jsp"/>
     </c:if>
-    <c:if test="${isOffice || IS_OWN}">
+    <c:if test="${isOffice || ((isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && isAllowedToCancelApplication) || IS_OWN}">
         <jsp:include page="actions/cancel_form.jsp"/>
     </c:if>
 </c:if>
 
 <c:if test="${application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
-    <c:if test="${isOffice}">
+    <c:if test="${isOffice || ((isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && isAllowedToCancelApplication)}">
         <jsp:include page="actions/cancel_form.jsp"/>
+    </c:if>
+    <c:if test="${isOffice}">
         <jsp:include page="actions/decline_cancellation_request_form.jsp"/>
     </c:if>
 </c:if>

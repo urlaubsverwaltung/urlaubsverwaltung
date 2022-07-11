@@ -44,7 +44,9 @@ import static org.synyx.urlaubsverwaltung.application.comment.ApplicationComment
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.REVOKED;
 import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @Service
 @Transactional
@@ -377,9 +379,9 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
     private void cancelApplication(Application application, Person canceller, Optional<String> comment) {
 
-        if (canceller.hasRole(OFFICE)) {
+        if (canceller.hasRole(OFFICE) || canceller.hasRole(BOSS) || canceller.hasRole(DEPARTMENT_HEAD) || canceller.hasRole(SECOND_STAGE_AUTHORITY)) {
             /*
-             * Only Office can cancel allowed applications for leave directly,
+             * Only privileged users can cancel allowed applications for leave directly,
              * users have to request cancellation
              */
 
@@ -548,4 +550,5 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             || !oldApplication.getEndDate().equals(savedEditedApplication.getEndDate())
             || !oldApplication.getDayLength().equals(savedEditedApplication.getDayLength());
     }
+
 }
