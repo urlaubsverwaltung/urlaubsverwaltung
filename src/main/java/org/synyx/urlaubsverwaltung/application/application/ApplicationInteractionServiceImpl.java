@@ -528,9 +528,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     }
 
     private List<HolidayReplacementEntity> replacementAdded(Application oldApplication, Application savedEditedApplication) {
-
         final List<HolidayReplacementEntity> oldReplacements = oldApplication.getHolidayReplacements();
-
         return savedEditedApplication.getHolidayReplacements()
             .stream()
             .filter(not(oldReplacements::contains))
@@ -538,9 +536,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     }
 
     private List<HolidayReplacementEntity> replacementDeleted(Application oldApplication, Application savedEditedApplication) {
-
         final List<HolidayReplacementEntity> newReplacements = savedEditedApplication.getHolidayReplacements();
-
         return oldApplication.getHolidayReplacements()
             .stream()
             .filter(not(newReplacements::contains))
