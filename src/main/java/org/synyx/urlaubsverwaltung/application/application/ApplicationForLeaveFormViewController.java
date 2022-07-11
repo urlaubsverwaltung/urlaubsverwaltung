@@ -313,16 +313,24 @@ class ApplicationForLeaveFormViewController {
 
     @GetMapping("/application/{applicationId}/edit")
     public String editApplicationForm(@PathVariable("applicationId") Integer applicationId, Model model) {
-        return applicationInteractionService.get(applicationId)
-            .filter(application -> WAITING.equals(application.getStatus()))
-            .map(this::mapToApplicationForm)
-            .map(applicationForLeaveForm -> this.editApplicationForm(applicationForLeaveForm, model))
-            .orElse("application/app_notwaiting");
-    }
 
-    private String editApplicationForm(ApplicationForLeaveForm applicationForLeaveForm, Model model) {
+        final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
+        if (maybeApplication.isEmpty()) {
+            return "application/app_notwaiting";
+        }
+
+        final Application application = maybeApplication.get();
+        if (!WAITING.equals(application.getStatus())) {
+            return "application/app_notwaiting";
+        }
+
         final Person signedInUser = personService.getSignedInUser();
+        final boolean isApplyingForOneSelf = application.getPerson().equals(signedInUser);
+        if (!isApplyingForOneSelf) {
+            throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), application.getPerson().getId()));
+        }
 
+        final ApplicationForLeaveForm applicationForLeaveForm = mapToApplicationForm(application);
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(Year.now(clock).getValue(), signedInUser);
         if (holidaysAccount.isPresent()) {
             prepareApplicationForLeaveForm(signedInUser, applicationForLeaveForm, model);
