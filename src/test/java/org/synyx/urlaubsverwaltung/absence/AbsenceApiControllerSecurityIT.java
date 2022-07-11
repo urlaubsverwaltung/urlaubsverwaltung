@@ -95,11 +95,7 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getPersonByUsername("departmentHead")).thenReturn(Optional.of(departmentHead));
-
-        final Department department = new Department();
-        department.setMembers(List.of(person));
-        final List<Department> departments = List.of(department);
-        when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(departments);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         when(absenceService.getOpenAbsences(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(emptyList());
@@ -141,11 +137,7 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         final Person ssa = new Person();
         ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         when(personService.getPersonByUsername("ssa")).thenReturn(Optional.of(ssa));
-
-        final Department department = new Department();
-        department.setMembers(List.of(person));
-        final List<Department> departments = List.of(department);
-        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(ssa)).thenReturn(departments);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
         when(absenceService.getOpenAbsences(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(emptyList());

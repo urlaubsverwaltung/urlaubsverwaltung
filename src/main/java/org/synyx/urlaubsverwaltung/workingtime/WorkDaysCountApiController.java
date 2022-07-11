@@ -25,7 +25,7 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNullElse;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @RestControllerAdviceMarker
 @Tag(name = "work days", description = "Work Days: Get information about work day in a certain period")
@@ -58,22 +58,25 @@ public class WorkDaysCountApiController {
         description = "The calculation depends on the working time of the person."
     )
     @GetMapping(WORKDAYS)
-    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    @PreAuthorize(IS_BOSS_OR_OFFICE +
+        " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public WorkDaysCountDto personsWorkDays(
         @Parameter(description = "ID of the person")
         @PathVariable("personId")
-            Integer personId,
+        Integer personId,
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate startDate,
+        LocalDate startDate,
         @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate endDate,
+        LocalDate endDate,
         @Parameter(description = "Day Length")
         @RequestParam(value = "length", required = false)
-            DayLength length) {
+        DayLength length) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");

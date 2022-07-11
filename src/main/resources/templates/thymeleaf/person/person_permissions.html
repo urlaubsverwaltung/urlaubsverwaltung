@@ -200,13 +200,13 @@
                   </div>
                   <div class="checkbox">
                     <strong
-                      th:text="#{person.form.permissions.roles.APPLICATION_VIEW_ADD_EDIT}"
+                      th:text="#{person.form.permissions.roles.APPLICATION_ADD_CANCEL}"
                       class="tw-mb-2 tw-block"
                     ></strong>
                     <label class="tw-leading-snug tw-ml-5 tw-pb-2">
-                      <input type="checkbox" th:field="*{permissions}" value="APPLICATION_VIEW_ADD_EDIT" />
+                      <input type="checkbox" th:field="*{permissions}" value="APPLICATION_ADD_CANCEL" />
                       <th:block
-                        th:text="#{person.form.permissions.roles.APPLICATION_VIEW_ADD_EDIT.description(${person.niceName})}"
+                        th:text="#{person.form.permissions.roles.APPLICATION_ADD_CANCEL.description(${person.niceName})}"
                       />
                     </label>
                   </div>
