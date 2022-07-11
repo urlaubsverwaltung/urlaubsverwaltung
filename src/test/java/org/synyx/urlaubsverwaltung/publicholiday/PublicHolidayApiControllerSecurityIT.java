@@ -9,7 +9,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
-import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -27,7 +26,6 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN;
@@ -163,11 +161,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getPersonByUsername("departmentHead")).thenReturn(Optional.of(departmentHead));
-
-        final Department department = new Department();
-        department.setMembers(List.of(person));
-        final List<Department> departments = List.of(department);
-        when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(departments);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         when(workingTimeService.getFederalStateForPerson(eq(person), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 
@@ -187,12 +181,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
         final Person ssa = new Person();
         ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         when(personService.getPersonByUsername("ssa")).thenReturn(Optional.of(ssa));
-
-        final Department department = new Department();
-        department.setMembers(List.of(person));
-        final List<Department> departments = List.of(department);
-        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(ssa)).thenReturn(departments);
-
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
         when(workingTimeService.getFederalStateForPerson(eq(person), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 
         final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")

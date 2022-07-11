@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @RestControllerAdviceMarker
 @Tag(name = "vacations", description = "Vacations: Get all vacations for a certain period")
@@ -57,19 +57,22 @@ public class VacationApiController {
             + "Information only reachable for users with role office and for your own data."
     )
     @GetMapping
-    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    @PreAuthorize(IS_BOSS_OR_OFFICE +
+        " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public VacationsDto getVacations(
         @Parameter(description = "ID of the person")
         @PathVariable("id")
-            Integer personId,
+        Integer personId,
         @Parameter(description = "end of interval to get vacations from (inclusive)")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate startDate,
+        LocalDate startDate,
         @Parameter(description = "end of interval to get vacations from (inclusive)")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate endDate) {
+        LocalDate endDate) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
@@ -90,22 +93,25 @@ public class VacationApiController {
             + "Information only reachable for users with role office and for your own data."
     )
     @GetMapping(params = "ofDepartmentMembers")
-    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    @PreAuthorize(IS_BOSS_OR_OFFICE +
+        " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public VacationsDto getVacationsOfOthersOrDepartmentColleagues(
         @Parameter(description = "ID of the person")
         @PathVariable("id")
-            Integer personId,
+        Integer personId,
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate startDate,
+        LocalDate startDate,
         @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate endDate,
+        LocalDate endDate,
         @Parameter(description = "If defined returns only the vacations of the department members of the person")
         @RequestParam(value = "ofDepartmentMembers", defaultValue = "true")
-            boolean ofDepartmentMembers) {
+        boolean ofDepartmentMembers) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");

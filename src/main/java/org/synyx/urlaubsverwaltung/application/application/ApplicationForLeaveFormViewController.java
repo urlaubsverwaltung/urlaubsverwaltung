@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
@@ -45,15 +46,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Collections.emptyList;
+import static java.util.Comparator.comparing;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toUnmodifiableList;
+import static java.util.stream.Stream.concat;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.mapToApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.merge;
@@ -61,7 +65,12 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.SpecialLeaveDtoMapper.mapToSpecialLeaveSettingsDto;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
  * Controller to apply for leave.
@@ -71,6 +80,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 class ApplicationForLeaveFormViewController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
     private static final String APP_FORM = "application/app_form";
     private static final String NO_HOLIDAYS_ACCOUNT = "noHolidaysAccount";
@@ -125,11 +135,6 @@ class ApplicationForLeaveFormViewController {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = getPersonByRequestParam(personId).orElse(signedInUser);
 
-        final boolean isApplyingForOneSelf = person.equals(signedInUser);
-        if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
-            throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
-        }
-
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
 
@@ -140,7 +145,7 @@ class ApplicationForLeaveFormViewController {
             appForLeaveForm.setStartDate(startDate);
             appForLeaveForm.setEndDate(endDate);
 
-            prepareApplicationForLeaveForm(person, appForLeaveForm, model);
+            prepareApplicationForLeaveForm(signedInUser, person, appForLeaveForm, model);
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements(not(isEqual(person))));
         }
 
@@ -155,8 +160,7 @@ class ApplicationForLeaveFormViewController {
         final Person person = ofNullable(applicationForLeaveForm.getPerson())
             .orElse(signedInUser);
 
-        final boolean isApplyingForOneSelf = person.equals(signedInUser);
-        if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
+        if (!isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person)) {
             throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
         }
 
@@ -187,7 +191,7 @@ class ApplicationForLeaveFormViewController {
                 addSelectableHolidayReplacementsToModel(model, nextSelectableReplacements);
             }
 
-            prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
+            prepareApplicationForLeaveForm(signedInUser, person, applicationForLeaveForm, model);
         }
 
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
@@ -201,8 +205,7 @@ class ApplicationForLeaveFormViewController {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = ofNullable(applicationForLeave.getPerson()).orElse(signedInUser);
 
-        final boolean isApplyingForOneSelf = person.equals(signedInUser);
-        if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
+        if (!isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person)) {
             throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
         }
 
@@ -235,11 +238,9 @@ class ApplicationForLeaveFormViewController {
                                            Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
-        final Person person = ofNullable(applicationForLeaveForm.getPerson())
-            .orElse(signedInUser);
+        final Person person = ofNullable(applicationForLeaveForm.getPerson()).orElse(signedInUser);
 
-        final boolean isApplyingForOneSelf = person.equals(signedInUser);
-        if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
+        if (!isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person)) {
             throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
         }
 
@@ -250,7 +251,7 @@ class ApplicationForLeaveFormViewController {
                 .filter(holidayReplacementDto -> !holidayReplacementDto.getPerson().getId().equals(personIdToRemove))
                 .collect(toList());
             applicationForLeaveForm.setHolidayReplacements(newList);
-            prepareApplicationForLeaveForm(person, applicationForLeaveForm, model);
+            prepareApplicationForLeaveForm(signedInUser, person, applicationForLeaveForm, model);
 
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
                 personEquals(personIdToRemove)
@@ -270,17 +271,23 @@ class ApplicationForLeaveFormViewController {
                                  Model model, RedirectAttributes redirectAttributes) {
         LOG.info("POST new application received: {}", appForm);
 
+        final Person applier = personService.getSignedInUser();
+        final Person person = ofNullable(appForm.getPerson()).orElse(applier);
+
+        if (!isPersonAllowedToExecuteRoleOn(applier, APPLICATION_ADD, person)) {
+            throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, applier.getId(), person.getId()));
+        }
+
         applicationForLeaveFormValidator.validate(appForm, errors);
 
         if (errors.hasErrors()) {
-            final Person person = ofNullable(appForm.getPerson()).orElseGet(personService::getSignedInUser);
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacementDtos = selectableHolidayReplacements(
                 not(containsPerson(holidayReplacementPersonsOfApplication(appForm)))
                     .and(not(isEqual(person)))
             );
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacementDtos);
 
-            prepareApplicationForLeaveForm(appForm.getPerson(), appForm, model);
+            prepareApplicationForLeaveForm(applier, appForm.getPerson(), appForm, model);
 
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
@@ -291,7 +298,6 @@ class ApplicationForLeaveFormViewController {
         }
 
         final Application app = mapToApplication(appForm);
-        final Person applier = personService.getSignedInUser();
 
         final Application savedApplicationForLeave;
         if (app.getVacationType().isRequiresApproval()) {
@@ -328,7 +334,7 @@ class ApplicationForLeaveFormViewController {
         final ApplicationForLeaveForm applicationForLeaveForm = mapToApplicationForm(application);
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(Year.now(clock).getValue(), signedInUser);
         if (holidaysAccount.isPresent()) {
-            prepareApplicationForLeaveForm(signedInUser, applicationForLeaveForm, model);
+            prepareApplicationForLeaveForm(signedInUser, signedInUser, applicationForLeaveForm, model);
 
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
                 not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
@@ -365,7 +371,7 @@ class ApplicationForLeaveFormViewController {
         applicationForLeaveFormValidator.validate(appForm, errors);
 
         if (errors.hasErrors()) {
-            prepareApplicationForLeaveForm(appForm.getPerson(), appForm, model);
+            prepareApplicationForLeaveForm(appForm.getPerson(), appForm.getPerson(), appForm, model);
             if (errors.hasGlobalErrors()) {
                 model.addAttribute("errors", errors);
             }
@@ -401,12 +407,12 @@ class ApplicationForLeaveFormViewController {
         return personService.getPersonByID(personId);
     }
 
-    private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
+    private void prepareApplicationForLeaveForm(Person applier, Person person, ApplicationForLeaveForm appForm, Model model) {
 
-        final List<Person> persons = personService.getActivePersons();
         model.addAttribute("person", person);
-        model.addAttribute("persons", persons);
-        model.addAttribute("canAddApplicationForLeaveForAnotherUser", personService.getSignedInUser().hasRole(OFFICE));
+        final List<Person> managedPersons = getManagedPersons(applier);
+        model.addAttribute("persons", managedPersons);
+        model.addAttribute("canAddApplicationForLeaveForAnotherUser", !(managedPersons.size() == 1 && managedPersons.contains(applier)));
 
         final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
         model.addAttribute("overtimeActive", overtimeActive);
@@ -468,7 +474,6 @@ class ApplicationForLeaveFormViewController {
     }
 
     private static List<Person> holidayReplacementPersonsOfApplication(ApplicationForLeaveForm applicationForLeaveForm) {
-
         return ofNullable(applicationForLeaveForm.getHolidayReplacements())
             .orElse(emptyList()).stream()
             .map(HolidayReplacementDto::getPerson)
@@ -477,7 +482,6 @@ class ApplicationForLeaveFormViewController {
 
     private void appendDepartmentsToReplacements(ApplicationForLeaveForm appForm) {
         final List<Department> departments = departmentService.getAllDepartments();
-
         for (HolidayReplacementDto replacementDto : appForm.getHolidayReplacements()) {
             List<String> departmentNames = departmentNamesForPerson(replacementDto.getPerson(), departments);
             replacementDto.setDepartments(departmentNames);
@@ -522,5 +526,41 @@ class ApplicationForLeaveFormViewController {
         holidayReplacementDto.setNote(holidayReplacementEntity.getNote());
         holidayReplacementDto.setDepartments(departmentNamesForPerson(holidayReplacementEntity.getPerson(), departments));
         return holidayReplacementDto;
+    }
+
+    private boolean isPersonAllowedToExecuteRoleOn(Person applier, Role role, Person person) {
+
+        if (applier.equals(person) || applier.hasRole(OFFICE)) {
+            return true;
+        }
+
+        if (applier.hasRole(role)) {
+            return applier.hasRole(BOSS)
+                || departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)
+                || departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person);
+        }
+
+        return false;
+    }
+
+    private List<Person> getManagedPersons(Person signedInUser) {
+
+        if (signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(BOSS) && signedInUser.hasRole(APPLICATION_ADD))) {
+            return personService.getActivePersons();
+        }
+
+        final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) && signedInUser.hasRole(APPLICATION_ADD)
+            ? departmentService.getManagedMembersOfDepartmentHead(signedInUser)
+            : List.of();
+
+        final List<Person> memberForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) && signedInUser.hasRole(APPLICATION_ADD)
+            ? departmentService.getManagedMembersForSecondStageAuthority(signedInUser)
+            : List.of();
+
+        return concat(concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream()), Stream.of(signedInUser))
+            .filter(person -> !person.hasRole(INACTIVE))
+            .distinct()
+            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+            .collect(toList());
     }
 }
