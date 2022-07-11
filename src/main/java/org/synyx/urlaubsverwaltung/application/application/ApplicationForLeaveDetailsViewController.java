@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidat
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -44,6 +45,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -279,11 +281,11 @@ class ApplicationForLeaveDetailsViewController {
         // security check: only two cases where cancelling is possible
         // 1: user can cancel her own applications for leave if it has not been allowed yet
         // 2: user can request cancellation if the application is already allowed.
-        // 3: office can cancel all applications for leave that has the state waiting or allowed, even for other persons
+        // 3: office or bos, dh and ssa with APPLICATION_CANCEL can cancel all applications for leave that has the state waiting or allowed, even for other persons
         if (isOwnApplication(application, signedInUser)) {
             // user can cancel only her own waiting applications, so the comment is NOT mandatory
             comment.setMandatory(false);
-        } else if (signedInUser.hasRole(OFFICE) && (isWaiting || isAllowed || isTemporaryAllowed || isAllowedCancellationRequest)) {
+        } else if (isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_CANCEL, application) && (isWaiting || isAllowed || isTemporaryAllowed || isAllowedCancellationRequest)) {
             // office cancels application of other users, state can be waiting or allowed, so the comment is mandatory
             comment.setMandatory(true);
         } else {
@@ -426,6 +428,7 @@ class ApplicationForLeaveDetailsViewController {
         model.addAttribute("isSecondStageAuthorityOfPerson", isSecondStageAuthority);
         model.addAttribute("isBoss", signedInUser.hasRole(BOSS));
         model.addAttribute("isOffice", signedInUser.hasRole(OFFICE));
+        model.addAttribute("isAllowedToCancelApplication", signedInUser.hasRole(APPLICATION_CANCEL));
 
         // UNSPECIFIC ATTRIBUTES
         model.addAttribute("year", year);
@@ -435,5 +438,12 @@ class ApplicationForLeaveDetailsViewController {
 
     private boolean isOwnApplication(Application application, Person signedInUser) {
         return signedInUser.equals(application.getPerson());
+    }
+
+    private boolean isPersonAllowedToExecuteRoleOn(Person requestPerson, Role role, Application application) {
+        final boolean isBossOrDepartmentHeadOrSecondStageAuthority = requestPerson.hasRole(BOSS)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(requestPerson, application.getPerson())
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(requestPerson, application.getPerson());
+        return requestPerson.hasRole(OFFICE) || (requestPerson.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority);
     }
 }
