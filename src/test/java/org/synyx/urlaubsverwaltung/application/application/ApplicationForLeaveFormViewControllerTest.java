@@ -866,6 +866,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Integer applicationId = 1;
         final Application application = new Application();
+        application.setPerson(person);
         application.setId(applicationId);
         application.setStatus(WAITING);
         application.setVacationType(createVacationTypeEntity(HOLIDAY));
@@ -877,6 +878,29 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(model().attribute("showHalfDayOption", is(true)))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("application/app_form"));
+    }
+
+    @Test
+    void editApplicationFormForAnotherUserIsDenied() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2);
+        final Integer applicationId = 1;
+        final Application application = new Application();
+        application.setPerson(person);
+        application.setId(applicationId);
+        application.setStatus(WAITING);
+        application.setVacationType(createVacationTypeEntity(HOLIDAY));
+        when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
+
+        assertThatThrownBy(() ->
+            perform(get("/web/application/1/edit")
+                .param("person", "1"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -900,6 +924,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Integer applicationId = 1;
         final Application application = new Application();
+        application.setPerson(person);
         application.setId(applicationId);
         application.setStatus(WAITING);
         application.setVacationType(createVacationTypeEntity(HOLIDAY));
@@ -933,6 +958,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Integer applicationId = 1;
         final Application application = new Application();
+        application.setPerson(person);
         application.setId(applicationId);
         application.setStatus(WAITING);
         application.setDayLength(DayLength.MORNING);
@@ -982,6 +1008,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Integer applicationId = 1;
         final Application application = new Application();
+        application.setPerson(person);
         application.setId(applicationId);
         application.setStatus(WAITING);
         application.setVacationType(createVacationTypeEntity(HOLIDAY));
