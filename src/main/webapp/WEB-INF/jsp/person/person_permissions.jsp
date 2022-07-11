@@ -233,12 +233,12 @@
 
                                     <label class="tw-leading-snug tw-mb-2">
                                         <strong>
-                                            <spring:message code="person.form.permissions.roles.APPLICATION_VIEW_ADD_EDIT"/>
+                                            <spring:message code="person.form.permissions.roles.APPLICATION_ADD_CANCEL"/>
                                         </strong>
                                     </label>
                                     <label class="tw-leading-snug tw-ml-5 tw-pb-2">
-                                        <form:checkbox path="permissions" value="APPLICATION_VIEW_ADD_EDIT"/>
-                                        <spring:message code="person.form.permissions.roles.APPLICATION_VIEW_ADD_EDIT.description" arguments="${person.niceName}"/>
+                                        <form:checkbox path="permissions" value="APPLICATION_ADD_CANCEL"/>
+                                        <spring:message code="person.form.permissions.roles.APPLICATION_ADD_CANCEL.description" arguments="${person.niceName}"/>
                                     </label>
                                 </div>
                             </div>
