@@ -79,7 +79,11 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -309,9 +313,11 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Person person = new Person();
         person.setId(1);
-
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
+
+        final Person applier = personWithRole(USER, OFFICE);
+        applier.setId(3);
+        when(personService.getSignedInUser()).thenReturn(applier);
 
         final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
         final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
@@ -319,8 +325,108 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), person)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
+        final Person managedPerson = new Person();
+        managedPerson.setId(2);
+        when(personService.getActivePersons()).thenReturn(List.of(person, managedPerson));
+
         perform(get("/web/application/new")
             .param("person", "1"))
+            .andExpect(model().attribute("persons", List.of(person, managedPerson, applier)))
+            .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
+    }
+
+    @Test
+    void getNewApplicationFormBossUserCanAddForAnotherUser() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Person applier = personWithRole(USER, BOSS, APPLICATION_ADD);
+        applier.setId(3);
+        when(personService.getSignedInUser()).thenReturn(applier);
+
+        final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
+        final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), person)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person managedPerson = new Person();
+        managedPerson.setId(2);
+        when(personService.getActivePersons()).thenReturn(List.of(person, managedPerson));
+
+        perform(get("/web/application/new")
+            .param("person", "1"))
+            .andExpect(model().attribute("persons", List.of(person, managedPerson, applier)))
+            .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
+    }
+
+    @Test
+    void getNewApplicationFormUserWithRoleDepartmentHeadCanAddForAnotherUser() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setFirstName("Person One");
+        person.setLastName("Lastname One");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Person applier = personWithRole(USER, DEPARTMENT_HEAD, APPLICATION_ADD);
+        applier.setId(3);
+        applier.setFirstName("Applier");
+        applier.setLastName("Name");
+        when(personService.getSignedInUser()).thenReturn(applier);
+
+        final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
+        final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), person)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person managedPerson = new Person();
+        managedPerson.setId(2);
+        managedPerson.setFirstName("Person Two");
+        managedPerson.setLastName("Lastname Two");
+        when(departmentService.getMembersForDepartmentHead(applier)).thenReturn(List.of(person, managedPerson));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)).thenReturn(true);
+
+        perform(get("/web/application/new")
+            .param("person", "1"))
+            .andExpect(model().attribute("persons", List.of(person, managedPerson, applier)))
+            .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
+    }
+
+    @Test
+    void getNewApplicationFormUserWithRoleSecondStageAuthorityCanAddForAnotherUser() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setFirstName("Person One");
+        person.setLastName("Lastname One");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Person applier = personWithRole(USER, SECOND_STAGE_AUTHORITY, APPLICATION_ADD);
+        applier.setId(3);
+        applier.setFirstName("Applier");
+        applier.setLastName("Name");
+        when(personService.getSignedInUser()).thenReturn(applier);
+
+        final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
+        final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
+        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, "comment");
+        when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), person)).thenReturn(Optional.of(account));
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person managedPerson = new Person();
+        managedPerson.setId(2);
+        managedPerson.setFirstName("Person Two");
+        managedPerson.setLastName("Lastname Two");
+        when(departmentService.getMembersForSecondStageAuthority(applier)).thenReturn(List.of(person, managedPerson));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person)).thenReturn(true);
+
+        perform(get("/web/application/new")
+            .param("person", "1"))
+            .andExpect(model().attribute("persons", List.of(person, managedPerson, applier)))
             .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
     }
 
@@ -339,21 +445,6 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(get("/web/application/new").param("person", "1"))
             .andExpect(model().attribute("person", hasProperty("id", is(1337))));
-    }
-
-    @Test
-    void getNewApplicationFormThrowsAccessDeniedExceptionIfGivenPersonNotSignedInPersonAndNotOffice() {
-
-        final Person signedInPerson = new Person();
-        when(personService.getSignedInUser()).thenReturn(signedInPerson);
-
-        final Person person = personWithId(PERSON_ID);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
-
-        assertThatThrownBy(() ->
-            perform(get("/web/application/new")
-                .param("person", Integer.toString(PERSON_ID)))
-        ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
     @Test
@@ -1293,6 +1384,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Person signedInPerson = new Person();
         signedInPerson.setId(1);
+        signedInPerson.setPermissions(List.of(USER, OFFICE));
 
         final Person bruce = new Person();
         bruce.setId(42);
@@ -1310,11 +1402,13 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Application application = new Application();
         application.setId(7);
+        application.setApplier(signedInPerson);
         application.setStatus(WAITING);
         when(applicationInteractionService.get(7)).thenReturn(Optional.of(application));
 
         final ResultActions perform = perform(post("/web/application/7")
             .param("vacationType.category", "HOLIDAY")
+            .param("person.id", "1")
             .param("id", "7"));
 
         perform
@@ -1328,7 +1422,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(view().name("application/app_form"));
     }
 
-    private Person personWithRole(Role role) {
+    private Person personWithRole(Role... role) {
         final Person person = new Person();
         person.setPermissions(List.of(role));
 
