@@ -151,7 +151,6 @@ class ApplicationForLeaveDetailsViewController {
 
         if (errors.hasErrors()) {
             redirectAttributes.addFlashAttribute(ATTRIBUTE_ERRORS, errors);
-
             return REDIRECT_WEB_APPLICATION + applicationId + "?action=allow";
         }
 
@@ -422,10 +421,27 @@ class ApplicationForLeaveDetailsViewController {
         }
 
         // Signed in person is allowed to manage
-        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, application.getPerson());
-        model.addAttribute("isDepartmentHeadOfPerson", isDepartmentHead);
-        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, application.getPerson());
-        model.addAttribute("isSecondStageAuthorityOfPerson", isSecondStageAuthority);
+        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, application.getPerson());
+        final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, application.getPerson());
+        final boolean requiresApproval = application.getVacationType().isRequiresApproval();
+
+        model.addAttribute("isAllowedToAllowWaitingApplication", isAllowedToAllowWaitingApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
+        model.addAttribute("isAllowedToAllowTemporaryAllowedApplication", isAllowedToAllowTemporaryAllowedApplication(application, signedInUser, isSecondStageAuthorityOfPerson));
+
+        model.addAttribute("isAllowedToRejectApplication", isAllowedToRejectApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
+
+        model.addAttribute("isAllowedToRevokeApplication", isAllowedToRevokeApplication(application, signedInUser, requiresApproval));
+        model.addAttribute("isAllowedToCancelApplication", isAllowedToCancelApplication(application, signedInUser));
+        model.addAttribute("isAllowedToStartCancellationRequest", isAllowedToStartCancellationRequest(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApproval));
+
+        model.addAttribute("isAllowedToDeclineCancellationRequest", isAllowedToDeclineCancellationRequest(application, signedInUser));
+
+        model.addAttribute("isAllowedToEditApplication", isAllowedToEditApplication(application, signedInUser));
+        model.addAttribute("isAllowedToRemindApplication", isAllowedToRemindApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
+        model.addAttribute("isAllowedToReferApplication", isAllowedToReferApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
+
+        model.addAttribute("isDepartmentHeadOfPerson", isDepartmentHeadOfPerson);
+        model.addAttribute("isSecondStageAuthorityOfPerson", isSecondStageAuthorityOfPerson);
         model.addAttribute("isBoss", signedInUser.hasRole(BOSS));
         model.addAttribute("isOffice", signedInUser.hasRole(OFFICE));
         model.addAttribute("isAllowedToCancelApplication", signedInUser.hasRole(APPLICATION_CANCEL));
@@ -435,6 +451,59 @@ class ApplicationForLeaveDetailsViewController {
         model.addAttribute("action", action);
         model.addAttribute("shortcut", shortcut);
     }
+
+
+    private boolean isAllowedToAllowWaitingApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
+        return application.hasStatus(WAITING)
+            && (signedInUser.hasRole(BOSS) || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !application.getPerson().equals(signedInUser)));
+    }
+
+    private boolean isAllowedToAllowTemporaryAllowedApplication(Application application, Person signedInUser, boolean isSecondStageAuthorityOfPerson) {
+        return application.hasStatus(TEMPORARY_ALLOWED)
+            && (signedInUser.hasRole(BOSS) || (isSecondStageAuthorityOfPerson && !application.getPerson().equals(signedInUser)));
+    }
+
+    private boolean isAllowedToRejectApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
+        return (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED))
+            && !application.getPerson().equals(signedInUser)
+            && (signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson);
+    }
+
+    private boolean isAllowedToRevokeApplication(Application application, Person signedInUser, boolean requiresApproval) {
+        return application.hasStatus(WAITING)
+            && requiresApproval
+            && (application.getPerson().equals(signedInUser) || signedInUser.hasRole(OFFICE));
+    }
+
+    private boolean isAllowedToCancelApplication(Application application, Person signedInUser) {
+        return (application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
+            && signedInUser.hasRole(OFFICE);
+    }
+
+    private boolean isAllowedToStartCancellationRequest(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson, boolean requiresApproval) {
+        return (application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
+            && requiresApproval
+            && !(signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL)));
+    }
+
+    private boolean isAllowedToDeclineCancellationRequest(Application application, Person signedInUser) {
+        return application.hasStatus(ALLOWED_CANCELLATION_REQUESTED) && signedInUser.hasRole(OFFICE);
+    }
+
+    private boolean isAllowedToEditApplication(Application application, Person signedInUser) {
+        return application.hasStatus(WAITING) && application.getPerson().equals(signedInUser);
+    }
+
+    private boolean isAllowedToRemindApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
+        return (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED))
+            && (application.getPerson().equals(signedInUser) && !(signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson));
+    }
+
+    private boolean isAllowedToReferApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
+        return (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED))
+            && signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE) || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !application.getPerson().equals(signedInUser));
+    }
+
 
     private boolean isOwnApplication(Application application, Person signedInUser) {
         return signedInUser.equals(application.getPerson());
