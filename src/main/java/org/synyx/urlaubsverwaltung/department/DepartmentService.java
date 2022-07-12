@@ -108,7 +108,7 @@ public interface DepartmentService {
 
     /**
      * Get all distinct members of the departments where the given person is department head.
-     * (including the given person)
+     * (including the given person and second stage authorities)
      *
      * @param departmentHead to know all the members of the department
      * @return all unique members of the departments where the given person is department head.
@@ -136,6 +136,16 @@ public interface DepartmentService {
     boolean isDepartmentHeadAllowedToManagePerson(Person departmentHead, Person person);
 
     /**
+     * Get all distinct managed members of the department head.
+     * Managed members are all persons for which the department head are responsible for and can
+     * perform actions for this person.
+     *
+     * @param departmentHead to know all the members of the department
+     * @return all managed members of the department head
+     */
+    List<Person> getManagedMembersOfDepartmentHead(Person departmentHead);
+
+    /**
      * Check if the given secondStageAuthority is responsible for the department that the given person is assigned to.
      *
      * @param secondStageAuthority to be checked if he is responsible for a department that the given person is
@@ -145,6 +155,16 @@ public interface DepartmentService {
      * assigned to, else {@code false}
      */
     boolean isSecondStageAuthorityAllowedToManagePerson(Person secondStageAuthority, Person person);
+
+    /**
+     * Get all distinct managed members of the second stage authority.
+     * Managed members are all persons for which the second stage authority are responsible for and can
+     * perform actions for this person.
+     *
+     * @param secondStageAuthority to know all the members of the department
+     * @return all managed members of the second stage authority
+     */
+    List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority);
 
     /**
      * Check if the given signed in user is allowed to access the data of the given person.
