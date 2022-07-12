@@ -77,7 +77,7 @@ public class SickNoteApiController {
         }
 
         final Person signedInUser = personService.getSignedInUser();
-        final List<Person> managedPersons = getManagedPersons(signedInUser);
+        final List<Person> managedPersons = getMembersOfPersons(signedInUser);
 
         final List<SickNoteDto> sickNoteResponse = sickNoteService.getForStatesAndPerson(List.of(ACTIVE), managedPersons, startDate, endDate).stream()
             .map(SickNoteDto::new)
@@ -135,7 +135,7 @@ public class SickNoteApiController {
         return requestPerson.equals(person) || requestPerson.hasRole(OFFICE) || (requestPerson.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority);
     }
 
-    private List<Person> getManagedPersons(Person signedInUser) {
+    private List<Person> getMembersOfPersons(Person signedInUser) {
 
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             return personService.getActivePersons();

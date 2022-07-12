@@ -101,7 +101,7 @@ public class SickDaysOverviewViewController {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        final List<Person> persons = getManagedPersons(signedInUser);
+        final List<Person> persons = getMembersOfPersons(signedInUser);
         final List<SickNote> sickNotes = sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), period.getStartDate(), period.getEndDate());
 
         fillModel(model, sickNotes, period, persons);
@@ -167,7 +167,7 @@ public class SickDaysOverviewViewController {
         }
     }
 
-    private List<Person> getManagedPersons(Person signedInUser) {
+    private List<Person> getMembersOfPersons(Person signedInUser) {
 
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             return personService.getActivePersons();
