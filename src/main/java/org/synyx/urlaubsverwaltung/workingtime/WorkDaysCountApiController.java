@@ -58,7 +58,10 @@ public class WorkDaysCountApiController {
         description = "The calculation depends on the working time of the person."
     )
     @GetMapping(WORKDAYS)
-    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    @PreAuthorize(IS_OFFICE +
+        " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public WorkDaysCountDto personsWorkDays(
         @Parameter(description = "ID of the person")
         @PathVariable("personId")
