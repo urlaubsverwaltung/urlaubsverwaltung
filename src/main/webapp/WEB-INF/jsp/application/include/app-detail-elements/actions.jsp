@@ -21,7 +21,7 @@
     <jsp:include page="actions/refer_form.jsp"/>
 </c:if>
 
-<c:if test="${isAllowedToRevokeApplication || isAllowedToCancelApplication || isAllowedToStartCancellationRequest}">
+<c:if test="${isAllowedToRevokeApplication || isAllowedToCancelApplication || isAllowedToCancelDirectlyApplication || isAllowedToStartCancellationRequest}">
     <jsp:include page="actions/cancel_form.jsp"/>
 </c:if>
 
