@@ -830,6 +830,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
     void cancelApplicationAllowedIfSignedInUserIsApplicationUserAndDoesNotRequireApproval() throws Exception {
 
         final Person signedInPerson = somePerson();
+        signedInPerson.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Application application = applicationOfPerson(signedInPerson);
