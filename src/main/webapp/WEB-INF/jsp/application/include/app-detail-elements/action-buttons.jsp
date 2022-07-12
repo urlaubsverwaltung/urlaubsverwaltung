@@ -46,7 +46,7 @@
 </c:if>
 
 <%-- CANCEL ACTION --%>
-<c:if test="${isAllowedToRevokeApplication || isAllowedToCancelApplication}">
+<c:if test="${isAllowedToRevokeApplication || isAllowedToCancelApplication || isAllowedToCancelDirectlyApplication}">
     <button class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-red-500" data-title="<spring:message code='action.delete'/>"
        onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#decline-cancellation-request').hide(); $('#cancel').show();">
         <icon:trash className="tw-w-5 tw-h-5" />
