@@ -57,7 +57,10 @@ public class VacationApiController {
             + "Information only reachable for users with role office and for your own data."
     )
     @GetMapping
-    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    @PreAuthorize(IS_OFFICE +
+        " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public VacationsDto getVacations(
         @Parameter(description = "ID of the person")
         @PathVariable("id")
@@ -90,7 +93,10 @@ public class VacationApiController {
             + "Information only reachable for users with role office and for your own data."
     )
     @GetMapping(params = "ofDepartmentMembers")
-    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    @PreAuthorize(IS_OFFICE +
+        " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public VacationsDto getVacationsOfOthersOrDepartmentColleagues(
         @Parameter(description = "ID of the person")
         @PathVariable("id")
