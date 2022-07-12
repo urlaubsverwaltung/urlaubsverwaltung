@@ -137,7 +137,7 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
         final List<Person> departmentPersons = of(somePerson());
-        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(departmentPersons);
+        when(departmentService.getManagedMembersOfDepartmentHead(departmentHead)).thenReturn(departmentPersons);
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
 
@@ -156,7 +156,7 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
 
         final List<Person> departmentPersons = of(somePerson());
-        when(departmentService.getMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(departmentPersons);
+        when(departmentService.getManagedMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(departmentPersons);
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
 
@@ -180,13 +180,13 @@ class SickNoteViewControllerTest {
         person.setId(2);
         person.setFirstName("firstname");
         person.setLastName("lastname");
-        when(departmentService.getMembersForDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
+        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
 
         final Person person2 = somePerson();
         person2.setId(3);
         person2.setFirstName("firstname two");
         person2.setLastName("lastname two");
-        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSsa)).thenReturn(of(person2));
+        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSsa)).thenReturn(of(person2));
 
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
@@ -211,8 +211,8 @@ class SickNoteViewControllerTest {
         person.setId(2);
         person.setFirstName("firstname");
         person.setLastName("lastname");
-        when(departmentService.getMembersForDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
-        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSsa)).thenReturn(of(person));
+        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
+        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSsa)).thenReturn(of(person));
 
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
@@ -237,13 +237,13 @@ class SickNoteViewControllerTest {
         person.setId(2);
         person.setFirstName("B");
         person.setLastName("B");
-        when(departmentService.getMembersForDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
+        when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
 
         final Person person2 = somePerson();
         person2.setId(3);
         person2.setFirstName("A");
         person2.setLastName("A");
-        when(departmentService.getMembersForSecondStageAuthority(departmentHeadAndSsa)).thenReturn(of(person2));
+        when(departmentService.getManagedMembersForSecondStageAuthority(departmentHeadAndSsa)).thenReturn(of(person2));
 
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
