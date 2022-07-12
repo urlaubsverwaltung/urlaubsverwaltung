@@ -340,11 +340,11 @@ class SickNoteViewController {
         }
 
         final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
-            ? departmentService.getMembersForDepartmentHead(signedInUser)
+            ? departmentService.getManagedMembersOfDepartmentHead(signedInUser)
             : List.of();
 
         final List<Person> memberForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
-            ? departmentService.getMembersForSecondStageAuthority(signedInUser)
+            ? departmentService.getManagedMembersForSecondStageAuthority(signedInUser)
             : List.of();
 
         return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
