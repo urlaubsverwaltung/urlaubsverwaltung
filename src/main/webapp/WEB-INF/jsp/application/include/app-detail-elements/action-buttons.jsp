@@ -9,36 +9,26 @@
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
-<%-- SETTING VARIABLES --%>
-<c:set var="CAN_MANAGE" value="${isBoss || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson}"/>
-<c:set var="IS_OWN" value="${application.person.id == signedInUser.id}"/>
-
-<%-- ALLOW ACTION --%>
-<c:set var="IS_ALLOWED_TO_ALLOW_WAITING" value="${application.status == 'WAITING' && (isBoss || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !IS_OWN))}"/>
-<c:set var="IS_ALLOWED_TO_ALLOW_TEMPORARY_ALLOWED" value="${application.status == 'TEMPORARY_ALLOWED' && (isBoss || (isSecondStageAuthorityOfPerson && !IS_OWN))}"/>
-<c:if test="${IS_ALLOWED_TO_ALLOW_WAITING || IS_ALLOWED_TO_ALLOW_TEMPORARY_ALLOWED}">
-    <c:choose>
-        <c:when test="${application.twoStageApproval && application.status == 'WAITING' && (isDepartmentHeadOfPerson && !IS_OWN) && !isBoss && !isSecondStageAuthorityOfPerson}">
-            <c:set var="ALLOW_DATA_TITLE">
-                <spring:message code='action.temporary_allow'/>
-            </c:set>
-        </c:when>
-        <c:otherwise>
-            <c:set var="ALLOW_DATA_TITLE">
-                <spring:message code='action.allow'/>
-            </c:set>
-        </c:otherwise>
-    </c:choose>
-
-    <button class="icon-link tw-bg-transparent tw-px-1 tw-py-0 hover:tw-text-emerald-500" data-title="${ALLOW_DATA_TITLE}"
+<%-- ALLOW TEMPORARY_ALLOWED APPLICATION ACTION --%>
+<c:if test="${isAllowedToAllowTemporaryAllowedApplication}">
+    <button class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-emerald-500" data-title="<spring:message code='action.allow'/>"
        onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#allow').show();">
         <icon:check className="tw-w-5 tw-h-5" solid="true" />
-        <span class="tw-sr-only"><c:out value="${ALLOW_DATA_TITLE}" /></span>
+        <span class="tw-sr-only"><spring:message code='action.allow'/></span>
+    </button>
+</c:if>
+
+<%-- ALLOW WAITING APPLICATION ACTION --%>
+<c:if test="${isAllowedToAllowWaitingApplication}">
+    <button class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-emerald-500" data-title="<spring:message code='action.temporary_allow'/>"
+       onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#allow').show();">
+        <icon:check className="tw-w-5 tw-h-5" solid="true" />
+        <span class="tw-sr-only"><spring:message code='action.temporary_allow'/></span>
     </button>
 </c:if>
 
 <%-- REJECT ACTION --%>
-<c:if test="${(application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED') && !IS_OWN && CAN_MANAGE}">
+<c:if test="${isAllowedToRejectApplication}">
     <button class="icon-link tw-bg-transparent tw-px-1 tw-py-0 hover:tw-text-red-500" data-title="<spring:message code='action.reject'/>"
        onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#reject').show();">
         <icon:ban className="tw-w-5 tw-h-5" solid="true" />
@@ -47,43 +37,34 @@
 </c:if>
 
 <%-- EDIT ACTION --%>
-<c:if test="${application.status == 'WAITING' && IS_OWN}">
-    <a
-        href="${URL_PREFIX}/application/${application.id}/edit"
-        class="icon-link tw-px-1"
-        data-title="<spring:message code="action.edit"/>"
-        data-test-id="application-edit-button"
-    >
+<c:if test="${isAllowedToEditApplication}">
+    <a href="${URL_PREFIX}/application/${application.id}/edit" class="icon-link tw-px-1"
+       data-title="<spring:message code="action.edit"/>" data-test-id="application-edit-button">
         <icon:pencil className="tw-w-5 tw-h-5" />
         <span class="tw-sr-only"><spring:message code='action.edit'/></span>
     </a>
 </c:if>
 
 <%-- CANCEL ACTION --%>
-<c:if test="${((application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED') && IS_OWN) || (isOffice && (application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED' || application.status == 'ALLOWED_CANCELLATION_REQUESTED'))}">
-
-    <c:choose>
-        <c:when test="${application.vacationType.requiresApproval == true && !isOffice && (application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED')}">
-            <c:set var="CANCEL_TITLE">
-                <spring:message code='action.delete.request'/>
-            </c:set>
-        </c:when>
-        <c:otherwise>
-            <c:set var="CANCEL_TITLE">
-                <spring:message code='action.delete'/>
-            </c:set>
-        </c:otherwise>
-    </c:choose>
-
-    <button class="icon-link tw-bg-transparent tw-px-1 tw-py-0 hover:tw-text-red-500" data-title="${CANCEL_TITLE}"
+<c:if test="${isAllowedToRevokeApplication || isAllowedToCancelApplication}">
+    <button class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-red-500" data-title="<spring:message code='action.delete'/>"
        onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#decline-cancellation-request').hide(); $('#cancel').show();">
         <icon:trash className="tw-w-5 tw-h-5" />
-        <span class="tw-sr-only"><c:out value="${CANCEL_TITLE}" /></span>
+        <span class="tw-sr-only"><spring:message code='action.delete'/></span>
+    </button>
+</c:if>
+
+<%-- CANCELLATION REQUST ACTION --%>
+<c:if test="${isAllowedToStartCancellationRequest}">
+    <button class="icon-link tw-bg-transparent tw-px-1 tw-py-0 hover:tw-text-red-500" data-title="<spring:message code='action.delete.request'/>"
+       onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#decline-cancellation-request').hide(); $('#cancel').show();">
+        <icon:trash className="tw-w-5 tw-h-5" />
+        <span class="tw-sr-only"><spring:message code='action.delete.request'/></span>
     </button>
 </c:if>
 
 <%-- DECLINE CANCELLATION REQUEST ACTION --%>
-<c:if test="${isOffice && application.status == 'ALLOWED_CANCELLATION_REQUESTED' }">
+<c:if test="${isAllowedToDeclineCancellationRequest}">
     <button class="icon-link tw-bg-transparent tw-px-1 tw-py-0 hover:tw-text-red-500" data-title="<spring:message code='action.cancellationRequest'/>"
        onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').show();">
         <icon:ban className="tw-w-5 tw-h-5" />
@@ -92,25 +73,20 @@
 </c:if>
 
 <%-- REMIND ACTION --%>
-<c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
-    <c:if test="${IS_OWN && !CAN_MANAGE}">
-        <button class="icon-link tw-bg-transparent tw-px-1 tw-py-0" data-title="<spring:message code='action.remind'/>" onclick="$('form#remind').submit();">
-            <icon:speakerphone className="tw-w-5 tw-h-5" />
-            <span class="tw-sr-only"><spring:message code='action.remind'/></span>
-        </button>
-    </c:if>
+<c:if test="${isAllowedToRemindApplication}">
+    <button class="icon-link tw-bg-transparent tw-px-1 tw-py-0" data-title="<spring:message code='action.remind'/>" onclick="$('form#remind').submit();">
+        <icon:speakerphone className="tw-w-5 tw-h-5" />
+        <span class="tw-sr-only"><spring:message code='action.remind'/></span>
+    </button>
 </c:if>
 
 <%-- REFER ACTION --%>
-<c:set var="IS_ALLOWED_TO_REFER" value="${isBoss || isOffice || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !IS_OWN)}"/>
-<c:if test="${application.status == 'WAITING' || application.status == 'TEMPORARY_ALLOWED'}">
-    <c:if test="${IS_ALLOWED_TO_REFER}">
-        <button class="icon-link tw-bg-transparent tw-px-1 tw-py-0" data-title="<spring:message code='action.refer'/>"
-           onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#refer').show();">
-            <icon:share className="tw-w-5 tw-h-5" />
-            <span class="tw-sr-only"><spring:message code='action.refer'/></span>
-        </button>
-    </c:if>
+<c:if test="${isAllowedToReferApplication}">
+    <button class="icon-link tw-bg-transparent tw-px-1 tw-py-0" data-title="<spring:message code='action.refer'/>"
+       onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#refer').show();">
+        <icon:share className="tw-w-5 tw-h-5" />
+        <span class="tw-sr-only"><spring:message code='action.refer'/></span>
+    </button>
 </c:if>
 
 <%-- PRINT ACTION --%>
