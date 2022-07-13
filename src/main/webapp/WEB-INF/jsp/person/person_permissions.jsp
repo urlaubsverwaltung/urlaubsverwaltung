@@ -217,10 +217,10 @@
                                     </label>
                                 </div>
 
+                                <h2 class="tw-mb-2 tw-block">
+                                    <spring:message code="person.form.permissions.roles.additional_roles.description"/>
+                                </h2>
                                 <div class="checkbox">
-                                    <h2 class="tw-mb-2 tw-block">
-                                        <spring:message code="person.form.permissions.roles.additional_roles.description"/>
-                                    </h2>
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.SICK_NOTE_VIEW_ADD_EDIT"/>
                                     </strong>
