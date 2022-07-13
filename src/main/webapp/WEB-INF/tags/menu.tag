@@ -64,7 +64,7 @@
                                                         </span>
                                                     </a>
                                                 </li>
-                                                <c:if test="${navigationSickNoteAccess}">
+                                                <c:if test="${navigationSickNoteAddAccess}">
                                                     <li role="none">
                                                         <a
                                                             href="${URL_PREFIX}/sicknote/new"
