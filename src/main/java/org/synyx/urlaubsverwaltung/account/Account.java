@@ -29,6 +29,8 @@ public class Account {
 
     private LocalDate expiryDate;
 
+    private LocalDate expiryNotificationSentDate;
+
     // theoretical number of vacation days a person has, i.e. it's the annual entitlement, but it is possible that
     // person e.g. will quit soon the company so he has not the full holidays entitlement; the actual number of vacation
     // days for a year describes the field vacationDays
@@ -128,6 +130,14 @@ public class Account {
 
     public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public LocalDate getExpiryNotificationSentDate() {
+        return expiryNotificationSentDate;
+    }
+
+    public void setExpiryNotificationSentDate(LocalDate expiryDateNotificationSent) {
+        this.expiryNotificationSentDate = expiryDateNotificationSent;
     }
 
     public int getYear() {
