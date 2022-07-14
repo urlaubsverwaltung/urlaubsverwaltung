@@ -100,7 +100,7 @@ public class VacationDaysReminderService {
             accountService.getHolidaysAccount(year, person).ifPresent(account -> {
 
                 final LocalDate expiryDate = account.getExpiryDate();
-                if (now.isEqual(expiryDate) || now.isAfter(expiryDate)) {
+                if (account.getExpiryNotificationSentDate() == null && (now.isEqual(expiryDate) || now.isAfter(expiryDate))) {
 
                     final Optional<Account> accountOfNextYear = accountService.getHolidaysAccount(year + 1, person);
                     final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountOfNextYear);
@@ -109,8 +109,12 @@ public class VacationDaysReminderService {
                         .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
                     if (expiredRemainingVacationDays.compareTo(ZERO) > 0) {
                         final BigDecimal totalLeftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(account);
+
                         sendNotificationForExpiredRemainingVacationDays(person, expiredRemainingVacationDays, totalLeftVacationDays, vacationDaysLeft.getRemainingVacationDaysNotExpiring(), account.getExpiryDate());
                         LOG.info("Notified person with id {} for {} expired remaining vacation days in year {}.", person.getId(), expiredRemainingVacationDays, year);
+
+                        account.setExpiryNotificationSentDate(now);
+                        accountService.save(account);
                     }
                 }
             });

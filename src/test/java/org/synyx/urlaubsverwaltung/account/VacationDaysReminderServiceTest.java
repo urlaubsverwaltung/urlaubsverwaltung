@@ -176,13 +176,24 @@ class VacationDaysReminderServiceTest {
         account2022.setExpiryDate(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
-        final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
-            .withAnnualVacation(ZERO)
-            .withRemainingVacation(TEN)
-            .notExpiring(TEN)
-            .forUsedVacationDaysBeforeExpiry(ZERO)
-            .forUsedVacationDaysAfterExpiry(ZERO)
-            .build();
+        sut.notifyForExpiredRemainingVacationDays();
+        verifyNoInteractions(mailService);
+    }
+
+    @Test
+    void ensureNoNotificationWhenNotificationWasAlreadySent() {
+
+        final Clock clock = Clock.fixed(Instant.parse("2022-04-02T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
+
+        final Person person = person();
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        final Account account2022 = new Account();
+        account2022.setPerson(person);
+        account2022.setExpiryDate(LocalDate.of(2022, 4, 2));
+        account2022.setExpiryNotificationSentDate(LocalDate.of(2022, 4, 1));
+        when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         sut.notifyForExpiredRemainingVacationDays();
 
