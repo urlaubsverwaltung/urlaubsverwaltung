@@ -28,17 +28,6 @@ public final class DateUtil {
     }
 
     /**
-     * Check if given date is before April of the given year
-     *
-     * @param date to check
-     * @param year the year whose April the date will be compared to
-     * @return {@code true} if the given date is before April of the given year, {@code false} if it is in or after that April
-     */
-    public static boolean isBeforeApril(LocalDate date, int year) {
-        return date.getMonth().getValue() < Month.APRIL.getValue() || date.getYear() < year;
-    }
-
-    /**
      * Check if given date is on Christmas Eve.
      *
      * @param date to check

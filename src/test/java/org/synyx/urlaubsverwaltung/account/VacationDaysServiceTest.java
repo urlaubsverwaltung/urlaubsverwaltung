@@ -58,7 +58,7 @@ class VacationDaysServiceTest {
     }
 
     @Test
-    void testGetDaysBeforeApril() {
+    void testGetDaysExpiryDate() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -212,6 +212,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setPerson(person);
         account.setValidFrom(LocalDate.of(2022, 1, 1));
+        account.setExpiryDate(LocalDate.of(2022, 4, 1));
         account.setAnnualVacationDays(new BigDecimal("30"));
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("6"));
@@ -275,6 +276,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setPerson(person);
         account.setValidFrom(LocalDate.of(2022, 1, 1));
+        account.setExpiryDate(LocalDate.of(2022, 4, 1));
         account.setAnnualVacationDays(new BigDecimal("30"));
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("6"));
@@ -284,6 +286,7 @@ class VacationDaysServiceTest {
         final Account nextYear = new Account();
         nextYear.setPerson(person);
         nextYear.setValidFrom(LocalDate.of(2023, 1, 1));
+        nextYear.setExpiryDate(LocalDate.of(2023, 4, 1));
         nextYear.setAnnualVacationDays(new BigDecimal("12"));
         nextYear.setActualVacationDays(new BigDecimal("12"));
         nextYear.setRemainingVacationDays(new BigDecimal("20"));
@@ -318,17 +321,17 @@ class VacationDaysServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final Application application20DaysBeforeApril = new Application();
-        application20DaysBeforeApril.setStartDate(LocalDate.of(2022, JANUARY, 3));
-        application20DaysBeforeApril.setEndDate(LocalDate.of(2022, JANUARY, 28));
-        application20DaysBeforeApril.setDayLength(FULL);
-        application20DaysBeforeApril.setPerson(person);
-        application20DaysBeforeApril.setStatus(ALLOWED);
-        application20DaysBeforeApril.setVacationType(createVacationTypeEntity(HOLIDAY));
-        when(workDaysCountService.getWorkDaysCount(application20DaysBeforeApril.getDayLength(), application20DaysBeforeApril.getStartDate(), application20DaysBeforeApril.getEndDate(), application20DaysBeforeApril.getPerson())).thenReturn(BigDecimal.valueOf(20L));
+        final Application application20DaysBeforeExpiryDate = new Application();
+        application20DaysBeforeExpiryDate.setStartDate(LocalDate.of(2022, JANUARY, 3));
+        application20DaysBeforeExpiryDate.setEndDate(LocalDate.of(2022, JANUARY, 28));
+        application20DaysBeforeExpiryDate.setDayLength(FULL);
+        application20DaysBeforeExpiryDate.setPerson(person);
+        application20DaysBeforeExpiryDate.setStatus(ALLOWED);
+        application20DaysBeforeExpiryDate.setVacationType(createVacationTypeEntity(HOLIDAY));
+        when(workDaysCountService.getWorkDaysCount(application20DaysBeforeExpiryDate.getDayLength(), application20DaysBeforeExpiryDate.getStartDate(), application20DaysBeforeExpiryDate.getEndDate(), application20DaysBeforeExpiryDate.getPerson())).thenReturn(BigDecimal.valueOf(20L));
         final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
         when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 3, 31), person, statuses, HOLIDAY))
-            .thenReturn(List.of(application20DaysBeforeApril));
+            .thenReturn(List.of(application20DaysBeforeExpiryDate));
 
         final Application application20DaysAfterApril = new Application();
         application20DaysAfterApril.setStartDate(LocalDate.of(2022, APRIL, 2));
@@ -341,15 +344,16 @@ class VacationDaysServiceTest {
         when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate.of(2022, 4, 1), LocalDate.of(2022, 12, 31), person, statuses, HOLIDAY))
             .thenReturn(List.of(application20DaysAfterApril));
 
-        final Optional<Account> account = Optional.of(new Account());
-        account.get().setPerson(person);
-        account.get().setValidFrom(LocalDate.of(2022, 1, 1));
-        account.get().setAnnualVacationDays(new BigDecimal("30"));
-        account.get().setActualVacationDays(new BigDecimal("30"));
-        account.get().setRemainingVacationDays(new BigDecimal("10"));
-        account.get().setRemainingVacationDaysNotExpiring(new BigDecimal("0"));
+        final Account account = new Account();
+        account.setPerson(person);
+        account.setValidFrom(LocalDate.of(2022, 1, 1));
+        account.setExpiryDate(LocalDate.of(2022, 4, 1));
+        account.setAnnualVacationDays(new BigDecimal("30"));
+        account.setActualVacationDays(new BigDecimal("30"));
+        account.setRemainingVacationDays(new BigDecimal("10"));
+        account.setRemainingVacationDaysNotExpiring(new BigDecimal("0"));
 
-        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getUsedRemainingVacationDays(account);
+        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getUsedRemainingVacationDays(Optional.of(account));
         assertThat(remainingVacationDaysAlreadyUsed).isEqualTo(TEN);
     }
 
@@ -384,6 +388,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setPerson(person);
         account.setValidFrom(LocalDate.of(2022, 1, 1));
+        account.setExpiryDate(LocalDate.of(2022, 4, 1));
         account.setAnnualVacationDays(new BigDecimal("30"));
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("6"));
@@ -396,7 +401,7 @@ class VacationDaysServiceTest {
     }
 
     @Test
-    void testGetTotalVacationDaysForThisYearBeforeApril() {
+    void testGetTotalVacationDaysForThisYearExpiryDate() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -426,6 +431,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setPerson(person);
         account.setValidFrom(LocalDate.of(2022, 1, 1));
+        account.setExpiryDate(LocalDate.of(2022, 4, 1));
         account.setAnnualVacationDays(new BigDecimal("30"));
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
@@ -468,6 +474,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setPerson(person);
         account.setValidFrom(LocalDate.of(2022, 1, 1));
+        account.setExpiryDate(LocalDate.of(2022, 4, 1));
         account.setAnnualVacationDays(new BigDecimal("30"));
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
@@ -490,6 +497,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setPerson(person);
         account.setValidFrom(LocalDate.of(today.getYear(), 1, 1));
+        account.setExpiryDate(LocalDate.of(today.getYear(), 4, 1));
         account.setAnnualVacationDays(new BigDecimal("30"));
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
@@ -502,7 +510,7 @@ class VacationDaysServiceTest {
     }
 
     @Test
-    void ensureVacationDaysLeftEndBeforeFirstDayOfAprilUsesOnlyApplicationsBeforeApril() {
+    void ensureVacationDaysLeftEndBeforeFirstDayOfAprilUsesOnlyApplicationsExpiryDate() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate today = LocalDate.now();
@@ -512,6 +520,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setPerson(person);
         account.setValidFrom(LocalDate.of(today.getYear(), 1, 1));
+        account.setExpiryDate(LocalDate.of(today.getYear(), 4, 1));
         account.setAnnualVacationDays(new BigDecimal("30"));
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
@@ -543,6 +552,7 @@ class VacationDaysServiceTest {
         final Account account = new Account();
         account.setPerson(person);
         account.setValidFrom(LocalDate.of(today.getYear(), 1, 1));
+        account.setExpiryDate(LocalDate.of(today.getYear(), 4, 1));
         account.setAnnualVacationDays(new BigDecimal("30"));
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));

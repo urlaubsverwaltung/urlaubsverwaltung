@@ -47,6 +47,7 @@ import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.LocalDate.now;
+import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.util.Locale.GERMAN;
@@ -270,8 +271,9 @@ class ApplicationForLeaveCreateIT {
 
         final LocalDate firstDayOfYear = LocalDate.of(currentYear, JANUARY, 1);
         final LocalDate lastDayOfYear = LocalDate.of(currentYear, DECEMBER, 31);
-        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, TEN, TEN, TEN, ZERO, null);
-        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), TEN, TEN, TEN, ZERO, null);
+        final LocalDate expiryDate = LocalDate.of(currentYear, APRIL, 1);
+        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, expiryDate, TEN, TEN, TEN, ZERO, null);
+        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), expiryDate.plusYears(1), TEN, TEN, TEN, ZERO, null);
 
         return savedPerson;
     }

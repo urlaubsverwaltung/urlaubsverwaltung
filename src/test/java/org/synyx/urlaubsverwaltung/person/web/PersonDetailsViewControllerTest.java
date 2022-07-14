@@ -25,6 +25,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
+import static java.time.Month.APRIL;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -35,6 +36,7 @@ import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -721,7 +723,8 @@ class PersonDetailsViewControllerTest {
     }
 
     private static Account accountForPerson(Person person) {
-        return new Account(person, LocalDate.now(clock), LocalDate.now(clock), ONE, TEN, TEN, "");
+        final LocalDate expiryDate = LocalDate.now(clock).withMonth(APRIL.getValue()).with(firstDayOfMonth());
+        return new Account(person, LocalDate.now(clock), LocalDate.now(clock), expiryDate, ONE, TEN, TEN, "");
     }
 
     private static Person personWithRole(Role... role) {

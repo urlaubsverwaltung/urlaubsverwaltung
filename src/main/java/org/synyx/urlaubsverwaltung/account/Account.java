@@ -27,15 +27,15 @@ public class Account {
 
     private LocalDate validTo;
 
+    private LocalDate expiryDate;
+
     // theoretical number of vacation days a person has, i.e. it's the annual entitlement, but it is possible that
     // person e.g. will quit soon the company so he has not the full holidays entitlement; the actual number of vacation
     // days for a year describes the field vacationDays
     private BigDecimal annualVacationDays;
     private BigDecimal actualVacationDays;
 
-    // remaining vacation days from the last year, if it's after 1st April, only the not expiring remaining vacation
-    // days may be used
-
+    // remaining vacation days from the last year, if it's expiry day, only the not expiring remaining vacation days may be used
     private BigDecimal remainingVacationDays;
     private BigDecimal remainingVacationDaysNotExpiring;
 
@@ -45,12 +45,13 @@ public class Account {
         /* OK */
     }
 
-    public Account(Person person, LocalDate validFrom, LocalDate validTo, BigDecimal annualVacationDays,
+    public Account(Person person, LocalDate validFrom, LocalDate validTo, LocalDate expiryDate, BigDecimal annualVacationDays,
                    BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         this.person = person;
         this.validFrom = validFrom;
         this.validTo = validTo;
+        this.expiryDate = expiryDate;
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
@@ -121,6 +122,14 @@ public class Account {
         this.validTo = validTo;
     }
 
+    public LocalDate getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
     public int getYear() {
         return this.validFrom.getYear();
     }
@@ -139,6 +148,7 @@ public class Account {
             "person=" + person +
             ", validFrom=" + validFrom +
             ", validTo=" + validTo +
+            ", expiryDate=" + expiryDate +
             ", annualVacationDays=" + annualVacationDays +
             ", actualVacationDays=" + actualVacationDays +
             ", remainingVacationDays=" + remainingVacationDays +

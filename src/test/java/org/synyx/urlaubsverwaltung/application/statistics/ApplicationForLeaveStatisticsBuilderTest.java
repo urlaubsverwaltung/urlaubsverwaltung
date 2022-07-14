@@ -31,6 +31,7 @@ import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.LocalDate.of;
+import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.util.Optional.empty;
@@ -89,7 +90,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final LocalDate validFrom = of(2014, JANUARY, 1);
         final LocalDate validTo = of(2014, DECEMBER, 31);
-        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, null);
+        final LocalDate expiryDate = of(2014, APRIL, 1);
+        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofHours(9));
@@ -174,8 +176,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
             .withAnnualVacation(TEN)
             .withRemainingVacation(ZERO)
             .notExpiring(ZERO)
-            .forUsedDaysBeforeApril(ZERO)
-            .forUsedDaysAfterApril(ZERO)
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
         when(vacationDaysService.getVacationDaysLeft(validFrom, validTo, account, empty())).thenReturn(vacationDaysLeftYear);
 
@@ -194,8 +196,9 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Person person = new Person();
         final LocalDate validFrom = of(2021, 1, 1);
         final LocalDate validTo = of(2021, 12, 31);
+        final LocalDate expiryDate = of(2021, APRIL, 1);
         // 20 vacation days (10 anual, 10 remaining, not exp. vacation days)
-        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, null);
+        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, null);
         when(accountService.getHolidaysAccount(2021, person)).thenReturn(Optional.of(account));
 
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofHours(9));
@@ -241,8 +244,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
             .withAnnualVacation(TEN)
             .withRemainingVacation(TEN)
             .notExpiring(TEN)
-            .forUsedDaysBeforeApril(ZERO)
-            .forUsedDaysAfterApril(BigDecimal.valueOf(19))
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(BigDecimal.valueOf(19))
             .build();
         when(vacationDaysService.getVacationDaysLeft(validFrom, validTo, account, empty())).thenReturn(vacationDaysLeftYear);
         when(vacationDaysService.getVacationDaysLeft(periodFrom, periodTo, account, empty())).thenReturn(vacationDaysLeftYear);
@@ -264,7 +267,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Person person = new Person();
         final LocalDate validFrom = of(2015, JANUARY, 1);
         final LocalDate validTo = of(2015, DECEMBER, 31);
-        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, null);
+        final LocalDate expiryDate = of(2015, APRIL, 1);
+        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofMinutes(390));
@@ -273,8 +277,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
             .withAnnualVacation(TEN)
             .withRemainingVacation(ZERO)
             .notExpiring(ZERO)
-            .forUsedDaysBeforeApril(ZERO)
-            .forUsedDaysAfterApril(BigDecimal.valueOf(1.5))
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(BigDecimal.valueOf(1.5))
             .build();
         when(vacationDaysService.getVacationDaysLeft(validFrom, validTo, account, empty())).thenReturn(vacationDaysLeftYear);
 
@@ -297,7 +301,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Person person = new Person();
         final LocalDate validFrom = of(2015, 1, 1);
         final LocalDate validTo = of(2015, 12, 31);
-        final Account account = new Account(person, validFrom, validTo, TEN, TEN, TEN, null);
+        final LocalDate expiryDate = of(2015, APRIL, 1);
+        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
 
@@ -305,8 +310,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
             .withAnnualVacation(TEN)
             .withRemainingVacation(ZERO)
             .notExpiring(ZERO)
-            .forUsedDaysBeforeApril(BigDecimal.valueOf(1.5))
-            .forUsedDaysAfterApril(ZERO)
+            .forUsedVacationDaysBeforeExpiry(BigDecimal.valueOf(1.5))
+            .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
         when(vacationDaysService.getVacationDaysLeft(periodFrom, periodTo, account, empty())).thenReturn(vacationDaysLeftYear);
 
@@ -325,7 +330,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Person person = new Person();
         final LocalDate firstDayOfYear = of(2022, 1, 1);
         final LocalDate lastDayOfYear = of(2022, 12, 31);
-        final Account account = new Account(person, firstDayOfYear, lastDayOfYear, TEN, TEN, TEN, null);
+        final LocalDate expiryDate = of(2022, APRIL, 1);
+        final Account account = new Account(person, firstDayOfYear, lastDayOfYear, expiryDate, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account));
 
@@ -336,15 +342,15 @@ class ApplicationForLeaveStatisticsBuilderTest {
             .withAnnualVacation(TEN)
             .withRemainingVacation(TEN)
             .notExpiring(BigDecimal.valueOf(5))
-            .forUsedDaysBeforeApril(BigDecimal.valueOf(6))
-            .forUsedDaysAfterApril(BigDecimal.valueOf(3))
+            .forUsedVacationDaysBeforeExpiry(BigDecimal.valueOf(6))
+            .forUsedVacationDaysAfterExpiry(BigDecimal.valueOf(3))
             .build();
         final VacationDaysLeft vacationDaysLeftPeriod = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
             .withRemainingVacation(TEN)
             .notExpiring(BigDecimal.valueOf(5))
-            .forUsedDaysBeforeApril(ZERO)
-            .forUsedDaysAfterApril(ONE)
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(ONE)
             .build();
         when(vacationDaysService.getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, empty())).thenReturn(vacationDaysLeftYear);
         when(vacationDaysService.getVacationDaysLeft(periodFrom, periodTo, account, empty())).thenReturn(vacationDaysLeftPeriod);
@@ -363,7 +369,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
     }
 
     @Test
-    void ensureCorrectLeftRemainingVacationDaysPeriodBeforeApril() {
+    void ensureCorrectLeftRemainingVacationDaysPeriodbeforeExpiryDate() {
 
         final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, workDaysCountService,
             vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2022-12-31T16:02:42.00Z"), ZoneOffset.UTC));
@@ -371,7 +377,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Person person = new Person();
         final LocalDate firstDayOfYear = of(2022, 1, 1);
         final LocalDate lastDayOfYear = of(2022, 12, 31);
-        final Account account = new Account(person, firstDayOfYear, lastDayOfYear, TEN, TEN, TEN, null);
+        final LocalDate expiryDate = of(2022, APRIL, 1);
+        final Account account = new Account(person, firstDayOfYear, lastDayOfYear, expiryDate, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account));
 
@@ -382,8 +389,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
             .withAnnualVacation(TEN)
             .withRemainingVacation(TEN)
             .notExpiring(BigDecimal.valueOf(5))
-            .forUsedDaysBeforeApril(BigDecimal.valueOf(4))
-            .forUsedDaysAfterApril(ZERO)
+            .forUsedVacationDaysBeforeExpiry(BigDecimal.valueOf(4))
+            .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
         when(vacationDaysService.getVacationDaysLeft(of(2022, 1, 1), of(2022, 12, 31), account, empty())).thenReturn(VacationDaysLeft.builder().build());
         when(vacationDaysService.getVacationDaysLeft(periodFrom, periodTo, account, empty())).thenReturn(vacationDaysLeftPeriod);

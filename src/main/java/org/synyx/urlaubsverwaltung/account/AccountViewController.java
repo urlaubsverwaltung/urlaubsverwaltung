@@ -106,6 +106,7 @@ public class AccountViewController {
 
         final LocalDate validFrom = accountForm.getHolidaysAccountValidFrom();
         final LocalDate validTo = accountForm.getHolidaysAccountValidTo();
+        final LocalDate expiryDate = accountForm.getExpiryDate();
         final BigDecimal annualVacationDays = accountForm.getAnnualVacationDays();
         final BigDecimal actualVacationDays = accountForm.getActualVacationDays();
         final BigDecimal remainingVacationDays = accountForm.getRemainingVacationDays();
@@ -116,10 +117,10 @@ public class AccountViewController {
         final Optional<Account> account = accountService.getHolidaysAccount(validFrom.getYear(), person);
 
         if (account.isPresent()) {
-            accountInteractionService.editHolidaysAccount(account.get(), validFrom, validTo, annualVacationDays,
+            accountInteractionService.editHolidaysAccount(account.get(), validFrom, validTo, expiryDate, annualVacationDays,
                 actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
         } else {
-            accountInteractionService.updateOrCreateHolidaysAccount(person, validFrom, validTo, annualVacationDays,
+            accountInteractionService.updateOrCreateHolidaysAccount(person, validFrom, validTo, expiryDate, annualVacationDays,
                 actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
         }
 

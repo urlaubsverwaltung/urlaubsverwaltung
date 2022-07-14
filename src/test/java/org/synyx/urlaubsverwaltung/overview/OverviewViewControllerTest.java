@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
@@ -39,6 +38,8 @@ import java.util.Optional;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
+import static java.time.Month.APRIL;
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -397,7 +398,10 @@ class OverviewViewControllerTest {
     }
 
     private Account someAccount() {
-        return new Account(somePerson(), LocalDate.now().minusDays(10), LocalDate.now().plusDays(10), TEN, TEN, TEN, "comment");
+        final LocalDate expiryDate = LocalDate.now(clock).withMonth(APRIL.getValue()).with(firstDayOfMonth());
+        final LocalDate validFrom = LocalDate.now().minusDays(10);
+        final LocalDate validTo = LocalDate.now().plusDays(10);
+        return new Account(somePerson(), validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
     }
 
     private VacationDaysLeft someVacationDaysLeft() {
@@ -405,8 +409,8 @@ class OverviewViewControllerTest {
         return VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
             .withRemainingVacation(TEN)
-            .forUsedDaysBeforeApril(ZERO)
-            .forUsedDaysAfterApril(ZERO)
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(ZERO)
             .withVacationDaysUsedNextYear(ZERO)
             .notExpiring(ZERO)
             .build();
