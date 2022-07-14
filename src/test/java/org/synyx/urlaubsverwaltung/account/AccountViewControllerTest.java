@@ -172,7 +172,7 @@ class AccountViewControllerTest {
         perform(post("/web/person/" + SOME_PERSON_ID + "/account")
             .flashAttr("account", accountForm));
 
-        verify(accountInteractionService).editHolidaysAccount(eq(account), any(), any(), any(), any(), any(), any(), any());
+        verify(accountInteractionService).editHolidaysAccount(eq(account), any(), any(), any(), any(), any(), any(), any(), any());
     }
 
     @Test
@@ -189,7 +189,7 @@ class AccountViewControllerTest {
         perform(post("/web/person/" + SOME_PERSON_ID + "/account")
             .flashAttr("account", mockedAccountForm));
 
-        verify(accountInteractionService).updateOrCreateHolidaysAccount(eq(person), any(), any(), any(), any(), any(), any(), any());
+        verify(accountInteractionService).updateOrCreateHolidaysAccount(eq(person), any(), any(), any(), any(), any(), any(), any(), any());
     }
 
     @Test

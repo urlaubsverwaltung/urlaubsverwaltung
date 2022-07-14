@@ -110,8 +110,16 @@
                             </label>
 
                             <div class="col-md-9">
-                                <form:input id="holidaysAccountValidTo" path="holidaysAccountValidTo" data-iso-value="${account.holidaysAccountValidToIsoValue}"
-                                            class="form-control" cssErrorClass="form-control error" placeholder="${DATE_PATTERN}"/>
+                                <form:input
+                                    id="holidaysAccountValidTo"
+                                    path="holidaysAccountValidTo"
+                                    data-iso-value="${account.holidaysAccountValidToIsoValue}"
+                                    data-min="${year}-01-01"
+                                    data-max="${year}-12-31"
+                                    placeholder="${DATE_PATTERN}"
+                                    class="form-control"
+                                    cssErrorClass="form-control error"
+                                />
                                 <uv:error-text>
                                     <form:errors path="holidaysAccountValidTo" />
                                 </uv:error-text>
@@ -150,6 +158,29 @@
                             </div>
                         </div>
 
+                        <br/>
+                        <div class="form-group is-required">
+                            <label for="expiryDate" class="control-label col-md-3 tw-leading-snug">
+                                <spring:message code="person.form.annualVacation.remainingVacation.expiryDate"/>:
+                            </label>
+
+                            <div class="col-md-9">
+                                <form:input
+                                    id="expiryDate"
+                                    path="expiryDate"
+                                    data-iso-value="${account.expiryDateToIsoValue}"
+                                    data-min="${year}-01-01"
+                                    data-max="${year}-12-31"
+                                    placeholder="${DATE_PATTERN}"
+                                    class="form-control"
+                                    cssErrorClass="form-control error"
+                                />
+                                <uv:error-text>
+                                    <form:errors path="expiryDate" />
+                                </uv:error-text>
+                            </div>
+                        </div>
+
                         <div class="form-group is-required">
                             <label class="control-label col-md-3 tw-leading-snug" for="remainingVacationDays">
                                 <spring:message code="person.form.annualVacation.remainingVacation"/>:
@@ -180,6 +211,7 @@
                             </div>
                         </div>
 
+                        <br/>
                         <div class="form-group">
                             <label class="control-label col-md-3 tw-leading-snug" for="comment">
                                 <spring:message code='person.form.annualVacation.comment'/>:

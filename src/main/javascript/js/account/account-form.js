@@ -9,3 +9,4 @@ function getPersonId() {
 
 createDatepicker("#holidaysAccountValidFrom", { urlPrefix, getPersonId });
 createDatepicker("#holidaysAccountValidTo", { urlPrefix, getPersonId });
+createDatepicker("#expiryDate", { urlPrefix, getPersonId });

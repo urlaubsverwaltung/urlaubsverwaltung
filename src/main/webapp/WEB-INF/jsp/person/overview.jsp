@@ -75,7 +75,7 @@
                         <uv:account-left-box-narrow
                             account="${account}"
                             vacationDaysLeft="${vacationDaysLeft}"
-                            beforeApril="${beforeApril}"
+                            beforeExpiryDate="${isBeforeExpiryDate}"
                             className="tw-border-none"
                         />
                     </div>

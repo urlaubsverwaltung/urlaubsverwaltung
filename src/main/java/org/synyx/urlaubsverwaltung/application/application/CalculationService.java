@@ -17,13 +17,11 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
-import static java.time.Month.MARCH;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
@@ -98,8 +96,8 @@ class CalculationService {
             return true;
         }
 
-        final Optional<Account> account = getHolidaysAccount(year, person);
-        if (account.isEmpty()) {
+        final Optional<Account> maybeAccount = getHolidaysAccount(year, person);
+        if (maybeAccount.isEmpty()) {
             return false;
         }
 
@@ -108,22 +106,22 @@ class CalculationService {
         final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
         final BigDecimal vacationDaysAlreadyUsedNextYear = vacationDaysService.getUsedRemainingVacationDays(accountNextYear);
 
-        final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear);
+        final Account account = maybeAccount.get();
+        final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountNextYear);
         LOG.debug("vacation days left of years {} and {} are {} days", year, year + 1, vacationDaysLeft);
 
         // now we need to consider which remaining vacation days expire
-        final BigDecimal vacationDaysRequestedBeforeApril = getWorkdaysBeforeApril(year, application);
-        final BigDecimal vacationDaysLeftUntilApril = vacationDaysLeft.getVacationDays()
+        final BigDecimal vacationDaysRequestedBeforeExpiryDate = getWorkdaysBeforeExpiryDate(account, application);
+        final BigDecimal vacationDaysLeftUntilExpiryDate = vacationDaysLeft.getVacationDays()
             .add(vacationDaysLeft.getRemainingVacationDays())
-            .subtract(vacationDaysRequestedBeforeApril)
+            .subtract(vacationDaysRequestedBeforeExpiryDate)
             .subtract(vacationDaysAlreadyUsedNextYear);
 
-        final BigDecimal vacationDaysRequestedAfterApril = workDays.subtract(vacationDaysRequestedBeforeApril);
-        final BigDecimal vacationDaysLeftAfterApril = getVacationDaysLeftAfterApril(vacationDaysLeft, vacationDaysLeftUntilApril, vacationDaysRequestedAfterApril);
+        final BigDecimal vacationDaysRequestedAfterExpiryDate = workDays.subtract(vacationDaysRequestedBeforeExpiryDate);
+        final BigDecimal vacationDaysLeftAfterExpiryDate = getVacationDaysLeftAfterExpiryDate(vacationDaysLeft, vacationDaysLeftUntilExpiryDate, vacationDaysRequestedAfterExpiryDate);
 
-        LOG.debug("vacation days left until april are {} and after april are {}", vacationDaysLeftUntilApril, vacationDaysLeftAfterApril);
-
-        if (vacationDaysLeftUntilApril.signum() < 0 || vacationDaysLeftAfterApril.signum() < 0) {
+        LOG.debug("vacation days left until expiry {} date are {} and after expiry date are {}", account.getExpiryDate(), vacationDaysLeftUntilExpiryDate, vacationDaysLeftAfterExpiryDate);
+        if (vacationDaysLeftUntilExpiryDate.signum() < 0 || vacationDaysLeftAfterExpiryDate.signum() < 0) {
             if (vacationDaysAlreadyUsedNextYear.signum() > 0) {
                 LOG.info("Rejecting application by {} for {} days in {} because {} remaining days " +
                     "have already been used in {}", person, workDays, year, vacationDaysAlreadyUsedNextYear, year + 1);
@@ -134,31 +132,31 @@ class CalculationService {
         return true;
     }
 
-    private BigDecimal getVacationDaysLeftAfterApril(VacationDaysLeft vacationDaysLeft, BigDecimal vacationDaysLeftUntilApril, BigDecimal vacationDaysRequestedAfterApril) {
-        BigDecimal vacationDaysLeftAfterApril = ZERO;
-        if (vacationDaysRequestedAfterApril.signum() > 0) {
-            vacationDaysLeftAfterApril = vacationDaysLeftUntilApril
-                .subtract(vacationDaysRequestedAfterApril)
+    private BigDecimal getVacationDaysLeftAfterExpiryDate(VacationDaysLeft vacationDaysLeft, BigDecimal vacationDaysLeftUntilExpiryDate, BigDecimal vacationDaysRequestedAfterExpiryDate) {
+        BigDecimal vacationDaysLeftAfterExpiryDate = ZERO;
+        if (vacationDaysRequestedAfterExpiryDate.signum() > 0) {
+            vacationDaysLeftAfterExpiryDate = vacationDaysLeftUntilExpiryDate
+                .subtract(vacationDaysRequestedAfterExpiryDate)
                 .subtract(vacationDaysLeft.getRemainingVacationDays())
                 .add(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
         }
-        return vacationDaysLeftAfterApril;
+        return vacationDaysLeftAfterExpiryDate;
     }
 
-    private BigDecimal getWorkdaysBeforeApril(int year, Application application) {
-        final List<DateRange> beforeApril = overlapService.getListOfOverlaps(
-            Year.of(year).atDay(1),
-            YearMonth.of(year, MARCH).atEndOfMonth(),
+    private BigDecimal getWorkdaysBeforeExpiryDate(Account account, Application application) {
+        final List<DateRange> beforeExpiryDate = overlapService.getListOfOverlaps(
+            Year.of(account.getYear()).atDay(1),
+            account.getExpiryDate().minusDays(1),
             List.of(application),
             List.of()
         );
 
-        return beforeApril.isEmpty() ? ZERO : calculateWorkDaysBeforeApril(application, beforeApril);
+        return beforeExpiryDate.isEmpty() ? ZERO : calculateWorkDaysBeforeExpiryDate(application, beforeExpiryDate);
     }
 
-    private BigDecimal calculateWorkDaysBeforeApril(Application application, List<DateRange> beforeApril) {
-        final LocalDate start = beforeApril.get(0).getStartDate();
-        final LocalDate end = beforeApril.get(0).getEndDate();
+    private BigDecimal calculateWorkDaysBeforeExpiryDate(Application application, List<DateRange> beforeExpiryDate) {
+        final LocalDate start = beforeExpiryDate.get(0).getStartDate();
+        final LocalDate end = beforeExpiryDate.get(0).getEndDate();
         return workDaysCountService.getWorkDaysCount(
             application.getDayLength(),
             LocalDate.of(start.getYear(), start.getMonth(), start.getDayOfMonth()),

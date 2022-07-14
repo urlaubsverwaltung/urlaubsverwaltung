@@ -1,0 +1,23 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="add-account-expiry-date">
+    <preConditions>
+      <tableExists tableName="account"/>
+      <not>
+        <columnExists tableName="account" columnName="expiry_date"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="account">
+      <column name="expiry_date" type="date"/>
+    </addColumn>
+
+    <sql>UPDATE account set expiry_date = CONCAT(YEAR(valid_from),'-04-01')</sql>
+
+    <addNotNullConstraint tableName="account" columnName="expiry_date" columnDataType="date"/>
+
+  </changeSet>
+</databaseChangeLog>

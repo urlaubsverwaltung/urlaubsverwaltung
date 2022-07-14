@@ -5,7 +5,7 @@
 
 <%@attribute name="account" type="org.synyx.urlaubsverwaltung.account.Account" required="true" %>
 <%@attribute name="vacationDaysLeft" type="org.synyx.urlaubsverwaltung.account.VacationDaysLeft" required="true" %>
-<%@attribute name="beforeApril" type="java.lang.Boolean" required="true" %>
+<%@attribute name="beforeExpiryDate" type="java.lang.Boolean" required="true" %>
 <%@attribute name="className" type="java.lang.String" required="false" %>
 
 <uv:box__ className="${className}">
@@ -18,7 +18,7 @@
         <c:choose>
             <c:when test="${account != null}">
                 <c:choose>
-                    <c:when test="${beforeApril}">
+                    <c:when test="${beforeExpiryDate}">
                         <c:set var="remainingVacationDays" value="${vacationDaysLeft.remainingVacationDays}" />
                     </c:when>
                     <c:otherwise>

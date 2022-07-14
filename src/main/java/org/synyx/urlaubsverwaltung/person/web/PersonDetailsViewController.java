@@ -47,7 +47,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.web.PersonDetailsBasedataDtoMapper.mapToPersonDetailsBasedataDto;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.isBeforeApril;
 
 /**
  * Controller for management of {@link Person} entities.
@@ -56,7 +55,6 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.isBeforeApril;
 @RequestMapping("/web")
 public class PersonDetailsViewController {
 
-    private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
     private static final String PERSON_ATTRIBUTE = "person";
 
     private final PersonService personService;
@@ -101,7 +99,7 @@ public class PersonDetailsViewController {
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
         final Optional<PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(person.getId());
-        if(basedataByPersonId.isPresent()) {
+        if (basedataByPersonId.isPresent()) {
 
             final PersonDetailsBasedataDto personDetailsBasedataDto = mapToPersonDetailsBasedataDto(basedataByPersonId.get());
             model.addAttribute("personBasedata", personDetailsBasedataDto);
@@ -238,10 +236,8 @@ public class PersonDetailsViewController {
     private void preparePersonView(Person signedInUser, List<Person> persons, int year, Model model) {
 
         final LocalDate now = LocalDate.now(clock);
-        final boolean beforeApril = isBeforeApril(now, year);
 
         final List<PersonDto> personDtos = new ArrayList<>(persons.size());
-
         for (Person person : persons) {
             final PersonDto.Builder personDtoBuilder = PersonDto.builder();
 
@@ -251,7 +247,9 @@ public class PersonDetailsViewController {
                 final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
                 final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(holidaysAccount, accountNextYear);
 
-                double remainingVacationDays = beforeApril
+                final boolean beforeExpiryDate = now.isBefore(holidaysAccount.getExpiryDate());
+                model.addAttribute("isBeforeExpiryDate", beforeExpiryDate);
+                double remainingVacationDays = beforeExpiryDate
                     ? vacationDaysLeft.getRemainingVacationDays().doubleValue()
                     : vacationDaysLeft.getRemainingVacationDaysNotExpiring().doubleValue();
 
@@ -287,7 +285,6 @@ public class PersonDetailsViewController {
 
         model.addAttribute("persons", personDtos);
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
-        model.addAttribute(BEFORE_APRIL_ATTRIBUTE, isBeforeApril(now, year));
         model.addAttribute("year", year);
         model.addAttribute("now", now);
         model.addAttribute("departments", getRelevantDepartmentsSortedByName(signedInUser));
