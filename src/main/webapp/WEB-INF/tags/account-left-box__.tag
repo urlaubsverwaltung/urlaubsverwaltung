@@ -5,6 +5,8 @@
 
 <%@attribute name="account" type="org.synyx.urlaubsverwaltung.account.Account" required="true" %>
 <%@attribute name="vacationDaysLeft" type="org.synyx.urlaubsverwaltung.account.VacationDaysLeft" required="true" %>
+<%@attribute name="expiredRemainingVacationDays" type="java.math.BigDecimal" required="true" %>
+<%@attribute name="expiryDate" type="java.time.LocalDate" required="true" %>
 <%@attribute name="beforeExpiryDate" type="java.lang.Boolean" required="true" %>
 <%@attribute name="className" type="java.lang.String" required="false" %>
 
@@ -32,9 +34,13 @@
                     <spring:message code="person.account.vacation.left.2" arguments="${vacationDaysLeft.vacationDays + remainingVacationDays}" />
                 </span>
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">
-                    <spring:message code="person.account.vacation.left.remaining" arguments="${remainingVacationDays}"
-                    />
+                    <spring:message code="person.account.vacation.left.remaining" arguments="${remainingVacationDays}"/>
                 </span>
+                <c:if test="${not beforeExpiryDate && expiredRemainingVacationDays > 0}">
+                <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">
+                    <spring:message code="person.account.vacation.left.remainingExpired" arguments="${expiredRemainingVacationDays}"/>
+                </span>
+                </c:if>
                 <c:if test="${vacationDaysLeft.vacationDaysUsedNextYear.unscaledValue() != 0}">
                 <span class="tw-text-sm tw-text-black tw-text-opacity-75">
                     <spring:message

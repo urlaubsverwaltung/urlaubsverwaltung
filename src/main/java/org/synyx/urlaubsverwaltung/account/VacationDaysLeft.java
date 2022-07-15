@@ -35,27 +35,14 @@ public final class VacationDaysLeft {
 
     private VacationDaysLeft(BigDecimal vacationDays, BigDecimal remainingVacationDays,
                              BigDecimal remainingVacationDaysNotExpiring, BigDecimal vacationDaysUsedNextYear) {
-
         this.vacationDays = vacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
         this.vacationDaysUsedNextYear = vacationDaysUsedNextYear;
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public BigDecimal getLeftVacationDays(LocalDate today, LocalDate expiryDate) {
         return vacationDays.add(getRemainingVacationDaysLeft(today, expiryDate));
-    }
-
-    public BigDecimal getVacationDays() {
-        return vacationDays;
-    }
-
-    public BigDecimal getRemainingVacationDays() {
-        return remainingVacationDays;
     }
 
     public BigDecimal getRemainingVacationDaysLeft(LocalDate today, LocalDate expiryDate) {
@@ -67,12 +54,31 @@ public final class VacationDaysLeft {
         }
     }
 
+    public BigDecimal getExpiredRemainingVacationDays(LocalDate today, LocalDate expiryDate) {
+        if (today.isBefore(expiryDate)) {
+            return ZERO;
+        }
+        return remainingVacationDays.subtract(remainingVacationDaysNotExpiring);
+    }
+
+    public BigDecimal getVacationDays() {
+        return vacationDays;
+    }
+
+    public BigDecimal getRemainingVacationDays() {
+        return remainingVacationDays;
+    }
+
     public BigDecimal getRemainingVacationDaysNotExpiring() {
         return remainingVacationDaysNotExpiring;
     }
 
     public BigDecimal getVacationDaysUsedNextYear() {
         return vacationDaysUsedNextYear;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**

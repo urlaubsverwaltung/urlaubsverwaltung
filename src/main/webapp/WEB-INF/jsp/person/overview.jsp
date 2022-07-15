@@ -75,6 +75,8 @@
                         <uv:account-left-box-narrow
                             account="${account}"
                             vacationDaysLeft="${vacationDaysLeft}"
+                            expiredRemainingVacationDays="${expiredRemainingVacationDays}"
+                            expiryDate="${expiryDate}"
                             beforeExpiryDate="${isBeforeExpiryDate}"
                             className="tw-border-none"
                         />
