@@ -707,7 +707,9 @@ class SickNoteViewControllerTest {
     @Test
     void ensurePostNewSickNoteShowsFormIfValidationFails() throws Exception {
 
+        when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(personService.getActivePersons()).thenReturn(List.of(new Person()));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
