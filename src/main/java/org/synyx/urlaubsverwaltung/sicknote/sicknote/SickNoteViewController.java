@@ -176,7 +176,7 @@ class SickNoteViewController {
         if (errors.hasErrors()) {
             model.addAttribute(ATTRIBUTE_ERRORS, errors);
             model.addAttribute(SICK_NOTE, sickNoteForm);
-            model.addAttribute(PERSONS_ATTRIBUTE, personService.getActivePersons());
+            model.addAttribute(PERSONS_ATTRIBUTE, getManagedPersons(signedInUser));
             model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
 
             addVacationTypeColorsToModel(model);

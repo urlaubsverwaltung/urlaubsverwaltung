@@ -58,8 +58,10 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_COMMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
@@ -716,6 +718,123 @@ class SickNoteViewControllerTest {
         perform(post("/web/sicknote"))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("sicknote/sick_note_form"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+    void ensurePostNewSickNoteShowsFormWithAllActivePersonsWhenValidationFails(Role role) throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(USER, role));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person john = new Person("john", "Doe", "John", "john@example.org");
+        john.setId(1);
+
+        final Person jane = new Person("jane", "Doe", "Jane", "jane@example.org");
+        jane.setId(2);
+
+        when(personService.getActivePersons()).thenReturn(List.of(jane, john));
+
+        doAnswer(invocation -> {
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("person", "error");
+            return null;
+        }).when(sickNoteValidator).validate(any(), any());
+
+        perform(post("/web/sicknote"))
+            .andExpect(model().attribute("persons", equalTo(List.of(jane, john))));
+    }
+
+    @Test
+    void ensurePostNewSickNoteShowsFormForDepartmentHeadWhenValidationFails() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_ADD));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person john = new Person("john", "Doe", "John", "john@example.org");
+        john.setId(1);
+
+        final Person jane = new Person("jane", "Doe", "Jane", "jane@example.org");
+        jane.setId(2);
+
+        final Person inactivePerson = new Person("inactive", "", "", "");
+        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setId(3);
+
+        when(departmentService.getManagedMembersOfDepartmentHead(signedInUser)).thenReturn(List.of(jane, john, inactivePerson));
+
+        doAnswer(invocation -> {
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("person", "error");
+            return null;
+        }).when(sickNoteValidator).validate(any(), any());
+
+        perform(post("/web/sicknote"))
+            .andExpect(model().attribute("persons", equalTo(List.of(jane, john))));
+    }
+
+    @Test
+    void ensurePostNewSickNoteShowsFormForSecondStageAuthorityWhenValidationFails() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person john = new Person("john", "Doe", "John", "john@example.org");
+        john.setId(1);
+
+        final Person jane = new Person("jane", "Doe", "Jane", "jane@example.org");
+        jane.setId(2);
+
+        final Person inactivePerson = new Person("inactive", "", "", "");
+        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setId(3);
+
+        when(departmentService.getManagedMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(jane, john, inactivePerson));
+
+        doAnswer(invocation -> {
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("person", "error");
+            return null;
+        }).when(sickNoteValidator).validate(any(), any());
+
+        perform(post("/web/sicknote"))
+            .andExpect(model().attribute("persons", equalTo(List.of(jane, john))));
+    }
+
+    @Test
+    void ensurePostNewSickNoteShowsFormForDepartmentHeadAndSecondStageAuthorityWhenValidationFails() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person john = new Person("john", "Doe", "John", "john@example.org");
+        john.setId(1);
+
+        final Person jane = new Person("jane", "Doe", "Jane", "jane@example.org");
+        jane.setId(2);
+
+        final Person distinctPerson = new Person("distinct", "", "", "");
+        distinctPerson.setId(3);
+
+        final Person inactivePerson = new Person("inactive", "", "", "");
+        inactivePerson.setPermissions(List.of(INACTIVE));
+        inactivePerson.setId(4);
+
+        when(departmentService.getManagedMembersOfDepartmentHead(signedInUser)).thenReturn(List.of(jane, inactivePerson, distinctPerson));
+        when(departmentService.getManagedMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(distinctPerson, john));
+
+        doAnswer(invocation -> {
+            Errors errors = invocation.getArgument(1);
+            errors.rejectValue("person", "error");
+            return null;
+        }).when(sickNoteValidator).validate(any(), any());
+
+        perform(post("/web/sicknote"))
+            .andExpect(model().attribute("persons", equalTo(List.of(distinctPerson, jane, john))));
     }
 
     @Test
