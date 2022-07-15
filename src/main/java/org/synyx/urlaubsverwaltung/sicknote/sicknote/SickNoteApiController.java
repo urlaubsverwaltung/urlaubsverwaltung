@@ -129,10 +129,18 @@ public class SickNoteApiController {
     }
 
     private boolean isPersonAllowedToExecuteRoleOn(Person requestPerson, Role role, Person person) {
-        final boolean isBossOrDepartmentHeadOrSecondStageAuthority = requestPerson.hasRole(BOSS)
-            || departmentService.isDepartmentHeadAllowedToManagePerson(requestPerson, person)
-            || departmentService.isSecondStageAuthorityAllowedToManagePerson(requestPerson, person);
-        return requestPerson.equals(person) || requestPerson.hasRole(OFFICE) || (requestPerson.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority);
+
+        if (requestPerson.equals(person) || requestPerson.hasRole(OFFICE)) {
+            return true;
+        }
+
+        if (requestPerson.hasRole(role)) {
+            return requestPerson.hasRole(BOSS)
+                || departmentService.isDepartmentHeadAllowedToManagePerson(requestPerson, person)
+                || departmentService.isSecondStageAuthorityAllowedToManagePerson(requestPerson, person);
+        }
+
+        return false;
     }
 
     private List<Person> getMembersOfPersons(Person signedInUser) {
