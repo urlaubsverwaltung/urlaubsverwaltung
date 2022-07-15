@@ -184,13 +184,6 @@
 
         <div class="row tw-mb-4 lg:tw-mb-6">
 
-            <c:set var="holidayLeave"
-                   value="${usedDaysOverview.holidayDays.days['WAITING'] + usedDaysOverview.holidayDays.days['TEMPORARY_ALLOWED'] + usedDaysOverview.holidayDays.days['ALLOWED'] + 0}"/>
-            <c:set var="holidayLeaveAllowed" value="${usedDaysOverview.holidayDays.days['ALLOWED'] + 0}"/>
-            <c:set var="otherLeave"
-                   value="${usedDaysOverview.otherDays.days['WAITING'] + usedDaysOverview.otherDays.days['TEMPORARY_ALLOWED'] + usedDaysOverview.otherDays.days['ALLOWED'] + 0}"/>
-            <c:set var="otherLeaveAllowed" value="${usedDaysOverview.otherDays.days['ALLOWED'] + 0}"/>
-
             <div class="col-xs-12">
                 <div class="tw-flex tw-flex-wrap tw-space-y-8 sm:tw-space-y-0">
                 <div class="tw-w-full sm:tw-w-1/2">
@@ -205,14 +198,14 @@
                                 <spring:message code="overview.vacations.holidayLeave.1" />
                             </span>
                             <span class="tw-my-1 tw-text-lg tw-font-medium">
-                                <spring:message code="overview.vacations.holidayLeave.2" arguments="${holidayLeave}"/>
+                                <spring:message code="overview.vacations.holidayLeave.2" arguments="${usedDaysOverview.holidayDays.sum}"/>
                             </span>
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">
                                 <span class="tw-flex tw-items-center">
                                     <span class="tw-text-emerald-500 tw-flex tw-items-center">
                                         <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                     </span>
-                                    &nbsp;<spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${holidayLeaveAllowed}"/>
+                                    &nbsp;<spring:message code="overview.vacations.holidayLeaveAllowed" arguments="${usedDaysOverview.holidayDaysAllowed.sum}"/>
                                 </span>
                             </span>
                         </jsp:body>
@@ -230,14 +223,14 @@
                                 <spring:message code="overview.vacations.otherLeave.1" />
                             </span>
                             <span class="tw-my-1 tw-text-lg tw-font-medium">
-                                <spring:message code="overview.vacations.otherLeave.2" arguments="${otherLeave}"/>
+                                <spring:message code="overview.vacations.otherLeave.2" arguments="${usedDaysOverview.otherDays.sum}"/>
                             </span>
                             <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">
                                 <span class="tw-flex tw-items-center">
                                     <span class="tw-text-emerald-500 tw-flex tw-items-center">
                                         <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                     </span>
-                                    &nbsp;<spring:message code="overview.vacations.otherLeaveAllowed" arguments="${otherLeaveAllowed}"/>
+                                    &nbsp;<spring:message code="overview.vacations.otherLeaveAllowed" arguments="${usedDaysOverview.otherDaysAllowed.sum}"/>
                                 </span>
                             </span>
                         </jsp:body>

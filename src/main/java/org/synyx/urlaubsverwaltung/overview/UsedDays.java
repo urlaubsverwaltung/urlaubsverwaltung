@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.math.BigDecimal.ZERO;
+
 /**
  * Represents number of days for specific application states.
  */
@@ -18,12 +20,16 @@ public class UsedDays {
         days = new HashMap<>();
 
         for (ApplicationStatus applicationStatus : status) {
-            days.put(applicationStatus.name(), BigDecimal.ZERO);
+            days.put(applicationStatus.name(), ZERO);
         }
     }
 
     public Map<String, BigDecimal> getDays() {
         return days;
+    }
+
+    public BigDecimal getSum() {
+        return days.values().stream().reduce(ZERO, BigDecimal::add);
     }
 
     void addDays(ApplicationStatus status, BigDecimal days) {
