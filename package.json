@@ -71,7 +71,7 @@
     "file-loader": "6.2.0",
     "imports-loader": "1.2.0",
     "jest": "28.1.2",
-    "jest-environment-jsdom": "28.1.2",
+    "jest-environment-jsdom": "28.1.3",
     "less": "4.1.3",
     "less-loader": "7.3.0",
     "merge": "2.1.1",
