@@ -76,11 +76,7 @@
           <div th:text="#{filter.period.incorrect.warning}" class="alert alert-warning"></div>
         </div>
 
-        <div
-          th:if="${errors}"
-          th:text="#{applications.statistics.error}"
-          class="alert alert-danger"
-        ></div>
+        <div th:if="${errors}" th:text="#{applications.statistics.error}" class="alert alert-danger"></div>
 
         <table
           th:unless="${errors}"
@@ -106,18 +102,9 @@
                 class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
                 th:text="#{person.data.lastName}"
               ></th>
-              <th
-                scope="col"
-                class="lg:tw-hidden print:tw-hidden"
-              ></th>
-              <th
-                scope="col"
-                class="md:tw-hidden print:tw-hidden"
-              ></th>
-              <th
-                scope="col"
-                class="tw-hidden md:tw-table-cell print:tw-table-cell"
-              ></th>
+              <th scope="col" class="lg:tw-hidden print:tw-hidden"></th>
+              <th scope="col" class="md:tw-hidden print:tw-hidden"></th>
+              <th scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell"></th>
               <th
                 scope="col"
                 class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
