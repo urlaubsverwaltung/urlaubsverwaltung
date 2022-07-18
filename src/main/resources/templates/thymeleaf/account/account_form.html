@@ -32,7 +32,7 @@
       <script defer asset:src="account_form.js"></script>
       <script th:inline="javascript">
         /*<![CDATA[*/
-        window.uv = {};
+        window.uv = window.uv || {};
         window.uv.personId = /*[[${userId}]]*/ "personId";
         window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
         window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
