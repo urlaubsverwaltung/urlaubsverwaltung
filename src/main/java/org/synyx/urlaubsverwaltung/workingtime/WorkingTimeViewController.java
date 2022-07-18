@@ -128,7 +128,7 @@ public class WorkingTimeViewController {
         final List<WorkingTimeHistoryDto> workingTimeHistoryDtos = new ArrayList<>();
         LocalDate lastValidTo = null;
         for (final WorkingTime workingTime : workingTimes) {
-            final boolean isValid = currentWorkingTime.equals(workingTime);
+            final boolean isValid = workingTime.equals(currentWorkingTime);
             final FederalState federalState = workingTime.getFederalState();
             final List<String> workDays = workingTime.getWorkingDays().stream().map(Enum::toString).collect(toList());
             workingTimeHistoryDtos.add(new WorkingTimeHistoryDto(workingTime.getValidFrom(), lastValidTo, workDays, federalState.getCountry(), federalState.toString(), isValid));
