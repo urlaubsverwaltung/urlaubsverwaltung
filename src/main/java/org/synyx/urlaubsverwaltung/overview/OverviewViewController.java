@@ -180,11 +180,11 @@ public class OverviewViewController {
         // get person's holidays account and entitlement for the given year
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
         if (maybeAccount.isPresent()) {
-            final Account acc = maybeAccount.get();
+            final Account account = maybeAccount.get();
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
-            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(acc, accountNextYear));
-            model.addAttribute("account", acc);
-            model.addAttribute("isBeforeExpiryDate", LocalDate.now(clock).isBefore(acc.getExpiryDate()));
+            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account, accountNextYear));
+            model.addAttribute("account", account);
+            model.addAttribute("isBeforeExpiryDate", LocalDate.now(clock).isBefore(account.getExpiryDate()));
         }
     }
 
