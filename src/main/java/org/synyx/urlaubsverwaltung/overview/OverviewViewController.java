@@ -25,7 +25,6 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
@@ -51,7 +50,6 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 @RequestMapping("/")
 public class OverviewViewController {
 
-    private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
     private static final String PERSON_ATTRIBUTE = "person";
 
     private final PersonService personService;
@@ -180,13 +178,13 @@ public class OverviewViewController {
     private void prepareHolidayAccounts(Person person, int year, Model model) {
 
         // get person's holidays account and entitlement for the given year
-        final Optional<Account> account = accountService.getHolidaysAccount(year, person);
-        if (account.isPresent()) {
-            Account acc = account.get();
+        final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
+        if (maybeAccount.isPresent()) {
+            final Account account = maybeAccount.get();
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
-            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
-            model.addAttribute("account", acc);
-            model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(clock), acc.getYear()));
+            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account, accountNextYear));
+            model.addAttribute("account", account);
+            model.addAttribute("isBeforeExpiryDate", LocalDate.now(clock).isBefore(account.getExpiryDate()));
         }
     }
 

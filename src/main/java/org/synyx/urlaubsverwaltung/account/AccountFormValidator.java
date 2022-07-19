@@ -29,6 +29,7 @@ class AccountFormValidator implements Validator {
     private static final String ATTRIBUTE_COMMENT = "comment";
     private static final String ATTR_HOLIDAYS_ACCOUNT_VALID_FROM = "holidaysAccountValidFrom";
     private static final String ATTR_HOLIDAYS_ACCOUNT_VALID_TO = "holidaysAccountValidTo";
+    private static final String ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE = "expiryDate";
     private static final String ERROR_ENTRY_MIN = "error.entry.min";
 
     private final SettingsService settingsService;
@@ -52,17 +53,10 @@ class AccountFormValidator implements Validator {
         validatePeriod(form, errors);
         validateAnnualVacation(form, errors, maxAnnualVacationDays);
         validateActualVacation(form, errors);
+        validateExpiryDate(form, errors);
         validateRemainingVacationDays(form, errors, maxAnnualVacationDays);
         validateRemainingVacationDaysNotExpiring(form, errors);
         validateComment(form, errors);
-    }
-
-    void validateComment(AccountForm form, Errors errors) {
-
-        final String comment = form.getComment();
-        if (comment != null && comment.length() > 200) {
-            errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_COMMENT_TO_LONG);
-        }
     }
 
     void validatePeriod(AccountForm form, Errors errors) {
@@ -142,6 +136,21 @@ class AccountFormValidator implements Validator {
         }
     }
 
+    void validateExpiryDate(AccountForm form, Errors errors) {
+
+        final LocalDate expiryDate = form.getExpiryDate();
+        validateDateNotNull(expiryDate, ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE, errors);
+
+        if (expiryDate != null) {
+            final int year = form.getHolidaysAccountYear();
+            final int expiryYear = expiryDate.getYear();
+
+            if (expiryYear != year) {
+                reject(errors, ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE, msg("expiryDate.invalidYear"), String.valueOf(year));
+            }
+        }
+    }
+
     void validateRemainingVacationDays(AccountForm form, Errors errors, BigDecimal maxAnnualVacationDays) {
 
         final BigDecimal remainingVacationDays = form.getRemainingVacationDays();
@@ -178,6 +187,14 @@ class AccountFormValidator implements Validator {
                     reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, msg("remainingVacationDaysNotExpiring.tooBig"), asIntString(remainingVacationDays));
                 }
             }
+        }
+    }
+
+    void validateComment(AccountForm form, Errors errors) {
+
+        final String comment = form.getComment();
+        if (comment != null && comment.length() > 200) {
+            errors.rejectValue(ATTRIBUTE_COMMENT, ERROR_COMMENT_TO_LONG);
         }
     }
 

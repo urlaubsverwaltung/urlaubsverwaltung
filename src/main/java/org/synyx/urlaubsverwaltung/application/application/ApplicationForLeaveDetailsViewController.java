@@ -25,7 +25,6 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
@@ -58,7 +57,6 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
 @Controller
 class ApplicationForLeaveDetailsViewController {
 
-    private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
     private static final String ATTRIBUTE_ERRORS = "errors";
 
@@ -416,7 +414,7 @@ class ApplicationForLeaveDetailsViewController {
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson());
             model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
             model.addAttribute("account", acc);
-            model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(clock), acc.getYear()));
+            model.addAttribute("isBeforeExpiryDate", LocalDate.now(clock).isBefore(acc.getExpiryDate()));
         }
 
         // Signed in person is allowed to manage

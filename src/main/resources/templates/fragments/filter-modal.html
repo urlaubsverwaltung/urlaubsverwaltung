@@ -32,7 +32,7 @@
                     th:field="*{startDate}"
                     th:data-iso-value="${period.startDateIsoValue}"
                     class="form-control"
-                    th:errorclass="form-control error"
+                    th:errorclass="error"
                     th:placeholder="#{pattern.date}"
                   />
                   <span class="help-block"></span>
@@ -46,7 +46,7 @@
                     th:field="*{endDate}"
                     th:data-iso-value="${period.endDateIsoValue}"
                     class="form-control"
-                    th:errorclass="form-control error"
+                    th:errorclass="error"
                     th:placeholder="#{pattern.date}"
                   />
                   <span class="help-block"></span>

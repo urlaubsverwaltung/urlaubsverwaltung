@@ -104,4 +104,5 @@
   <include file="dbchangelogs/changelog-4.39.0-add-vacation-type-color.xml"/>
   <include file="dbchangelogs/changelog-4.39.0-add-vacation-type-visible-to-everyone.xml"/>
   <include file="dbchangelogs/changelog-4.41.0-add-shedlock.xml"/>
+  <include file="dbchangelogs/changelog-4.43.0-add-account-expiry-date.xml"/>
 </databaseChangeLog>

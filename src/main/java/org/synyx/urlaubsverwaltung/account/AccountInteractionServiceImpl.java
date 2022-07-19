@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
+import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -66,6 +67,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             person,
             today.with(firstDayOfYear()), //from the first day of year...
             today.with(lastDayOfYear()), //...until end of year
+            today.withMonth(APRIL.getValue()).with(firstDayOfMonth()), // default expiry date on first April
             BigDecimal.valueOf(defaultVacationDays),
             remainingVacationDaysForThisYear,
             ZERO, // For initial user creation there are no remaining vacation days from last year
@@ -74,7 +76,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
-    public Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo,
+    public Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo, LocalDate expiryDate,
                                                  BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                                  BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
                                                  String comment) {
@@ -83,12 +85,13 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         final Optional<Account> optionalAccount = accountService.getHolidaysAccount(validFrom.getYear(), person);
         if (optionalAccount.isPresent()) {
             account = optionalAccount.get();
+            account.setExpiryDate(expiryDate);
             account.setAnnualVacationDays(annualVacationDays);
             account.setRemainingVacationDays(remainingVacationDays);
             account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
             account.setComment(comment);
         } else {
-            account = new Account(person, validFrom, validTo, annualVacationDays, remainingVacationDays,
+            account = new Account(person, validFrom, validTo, expiryDate, annualVacationDays, remainingVacationDays,
                 remainingVacationDaysNotExpiring, comment);
         }
 
@@ -102,12 +105,13 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
-    public Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo,
+    public Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, LocalDate expiryDate,
                                        BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingVacationDays,
                                        BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
+        account.setExpiryDate(expiryDate);
         account.setAnnualVacationDays(annualVacationDays);
         account.setActualVacationDays(actualVacationDays);
         account.setRemainingVacationDays(remainingVacationDays);
@@ -115,9 +119,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         account.setComment(comment);
 
         final Account savedAccount = accountService.save(account);
-
         LOG.info("Updated holidays account: {}", savedAccount);
-
         return savedAccount;
     }
 
@@ -169,11 +171,22 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             return nextYearAccount;
         }
 
+        final LocalDate validFrom = Year.of(nextYear).atDay(1);
+        final LocalDate validTo = getLastDayOfYear(nextYear);
+        final LocalDate expiryDate = referenceAccount.getExpiryDate().withYear(nextYear);
         final BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(referenceAccount);
 
-        return updateOrCreateHolidaysAccount(referenceAccount.getPerson(), Year.of(nextYear).atDay(1),
-            getLastDayOfYear(nextYear), referenceAccount.getAnnualVacationDays(),
-            referenceAccount.getAnnualVacationDays(), leftVacationDays, ZERO, referenceAccount.getComment());
+        return updateOrCreateHolidaysAccount(
+            referenceAccount.getPerson(),
+            validFrom,
+            validTo,
+            expiryDate,
+            referenceAccount.getAnnualVacationDays(),
+            referenceAccount.getAnnualVacationDays(),
+            leftVacationDays,
+            ZERO,
+            referenceAccount.getComment()
+        );
     }
 
     /**

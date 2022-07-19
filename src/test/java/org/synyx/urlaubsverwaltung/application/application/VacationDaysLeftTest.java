@@ -6,9 +6,11 @@ import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Month;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,10 +34,10 @@ class VacationDaysLeftTest {
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder().build();
 
         final LocalDate now = LocalDate.now();
-        assertThat(vacationDaysLeft.getLeftVacationDays(now, now.getYear())).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getLeftVacationDays(now, now)).isEqualByComparingTo(ZERO);
         assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualByComparingTo(ZERO);
         assertThat(vacationDaysLeft.getVacationDays()).isEqualByComparingTo(ZERO);
-        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(now, now.getYear())).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(now, now)).isEqualByComparingTo(ZERO);
         assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualByComparingTo(ZERO);
         assertThat(vacationDaysLeft.getVacationDaysUsedNextYear()).isEqualByComparingTo(ZERO);
     }
@@ -43,8 +45,8 @@ class VacationDaysLeftTest {
     @Test
     void ensureBuildsCorrectVacationDaysLeftObject() {
 
-        final VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
-            .forUsedDaysAfterApril(new BigDecimal("10"))
+        final VacationDaysLeft vacationDaysLeft = builder.forUsedVacationDaysBeforeExpiry(new BigDecimal("5"))
+            .forUsedVacationDaysAfterExpiry(new BigDecimal("10"))
             .build();
 
         assertThat(vacationDaysLeft).isNotNull();
@@ -53,8 +55,8 @@ class VacationDaysLeftTest {
     @Test
     void ensureCorrectVacationDaysLeftWithUsedDaysBeforeAndAfterApril() {
 
-        final VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
-            .forUsedDaysAfterApril(new BigDecimal("10"))
+        final VacationDaysLeft vacationDaysLeft = builder.forUsedVacationDaysBeforeExpiry(new BigDecimal("5"))
+            .forUsedVacationDaysAfterExpiry(new BigDecimal("10"))
             .build();
 
         assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("18"));
@@ -65,8 +67,8 @@ class VacationDaysLeftTest {
     @Test
     void ensureCorrectVacationDaysLeftWithOnlyUsedDaysAfterApril() {
 
-        final VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(ZERO)
-            .forUsedDaysAfterApril(new BigDecimal("10"))
+        final VacationDaysLeft vacationDaysLeft = builder.forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(new BigDecimal("10"))
             .build();
 
         assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("20"));
@@ -75,10 +77,10 @@ class VacationDaysLeftTest {
     }
 
     @Test
-    void ensureCorrectVacationDaysLeftWithUsedDaysBeforeAprilGreaterThanRemainingVacationDays() {
+    void ensureCorrectVacationDaysLeftWithUsedDaysbeforeExpiryDateGreaterThanRemainingVacationDays() {
 
-        final VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("10"))
-            .forUsedDaysAfterApril(new BigDecimal("5"))
+        final VacationDaysLeft vacationDaysLeft = builder.forUsedVacationDaysBeforeExpiry(new BigDecimal("10"))
+            .forUsedVacationDaysAfterExpiry(new BigDecimal("5"))
             .build();
 
         assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("18"));
@@ -89,8 +91,8 @@ class VacationDaysLeftTest {
     @Test
     void ensureCorrectVacationDaysLeftWithUsedDaysLessThanRemainingVacationDays() {
 
-        final VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("2"))
-            .forUsedDaysAfterApril(new BigDecimal("2"))
+        final VacationDaysLeft vacationDaysLeft = builder.forUsedVacationDaysBeforeExpiry(new BigDecimal("2"))
+            .forUsedVacationDaysAfterExpiry(new BigDecimal("2"))
             .build();
 
         assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("28"));
@@ -99,10 +101,10 @@ class VacationDaysLeftTest {
     }
 
     @Test
-    void ensureCorrectVacationDaysLeftWithOnlyUsedDaysBeforeAprilLessThanRemainingVacationDays() {
+    void ensureCorrectVacationDaysLeftWithOnlyUsedDaysbeforeExpiryDateLessThanRemainingVacationDays() {
 
-        final VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("3"))
-            .forUsedDaysAfterApril(ZERO)
+        final VacationDaysLeft vacationDaysLeft = builder.forUsedVacationDaysBeforeExpiry(new BigDecimal("3"))
+            .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
 
         assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("28"));
@@ -113,8 +115,8 @@ class VacationDaysLeftTest {
     @Test
     void ensureCorrectVacationDaysLeftWithUsingDifferenceOfNotExpiringRemainingVacationDays() {
 
-        final VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4"))
-            .forUsedDaysAfterApril(ZERO)
+        final VacationDaysLeft vacationDaysLeft = builder.forUsedVacationDaysBeforeExpiry(new BigDecimal("4"))
+            .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
 
         assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("28"));
@@ -125,8 +127,8 @@ class VacationDaysLeftTest {
     @Test
     void ensureCorrectVacationDaysLeftWithUsingNotExpiringRemainingVacationDays() {
 
-        final VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4"))
-            .forUsedDaysAfterApril(new BigDecimal("2"))
+        final VacationDaysLeft vacationDaysLeft = builder.forUsedVacationDaysBeforeExpiry(new BigDecimal("4"))
+            .forUsedVacationDaysAfterExpiry(new BigDecimal("2"))
             .build();
 
         assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("27"));
@@ -135,10 +137,10 @@ class VacationDaysLeftTest {
     }
 
     @Test
-    void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysBeforeApril() {
+    void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysbeforeExpiryDate() {
 
-        final VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
-            .forUsedDaysAfterApril(new BigDecimal("2"))
+        final VacationDaysLeft vacationDaysLeft = builder.forUsedVacationDaysBeforeExpiry(new BigDecimal("5"))
+            .forUsedVacationDaysAfterExpiry(new BigDecimal("2"))
             .build();
 
         assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("26"));
@@ -147,10 +149,10 @@ class VacationDaysLeftTest {
     }
 
     @Test
-    void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysBeforeAprilWithoutUsedDaysAfterApril() {
+    void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysbeforeExpiryDateWithoutUsedDaysAfterApril() {
 
-        final VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("5"))
-            .forUsedDaysAfterApril(ZERO)
+        final VacationDaysLeft vacationDaysLeft = builder.forUsedVacationDaysBeforeExpiry(new BigDecimal("5"))
+            .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
 
         assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("28"));
@@ -161,8 +163,8 @@ class VacationDaysLeftTest {
     @Test
     void ensureCorrectVacationDaysLeftWithUsingAllRemainingVacationDaysExpiringAndNotExpiring() {
 
-        final VacationDaysLeft vacationDaysLeft = builder.forUsedDaysBeforeApril(new BigDecimal("4"))
-            .forUsedDaysAfterApril(new BigDecimal("1"))
+        final VacationDaysLeft vacationDaysLeft = builder.forUsedVacationDaysBeforeExpiry(new BigDecimal("4"))
+            .forUsedVacationDaysAfterExpiry(new BigDecimal("1"))
             .build();
 
         assertThat(vacationDaysLeft.getVacationDays()).isEqualTo(new BigDecimal("28"));
@@ -171,17 +173,18 @@ class VacationDaysLeftTest {
     }
 
     @Test
-    void getRemainingVacationDaysLeftForThisYearAndBeforeApril() {
+    void getRemainingVacationDaysLeftForThisYearAndbeforeExpiryDate() {
         final VacationDaysLeft vacationDaysLeft = builder
             .withAnnualVacation(new BigDecimal("10"))
             .withRemainingVacation(new BigDecimal("5"))
             .notExpiring(new BigDecimal("0"))
-            .forUsedDaysBeforeApril(ONE)
-            .forUsedDaysAfterApril(ZERO)
+            .forUsedVacationDaysBeforeExpiry(ONE)
+            .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
 
-        final LocalDate someDayBeforeApril = LocalDate.now().with(firstDayOfYear());
-        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(someDayBeforeApril, someDayBeforeApril.getYear())).isEqualByComparingTo("4");
+        final LocalDate someDaybeforeExpiryDate = LocalDate.now().with(firstDayOfYear());
+        final LocalDate expiryDate = LocalDate.now().withMonth(Month.APRIL.getValue()).with(firstDayOfMonth());
+        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(someDaybeforeExpiryDate, expiryDate)).isEqualByComparingTo("4");
     }
 
     @Test
@@ -190,12 +193,13 @@ class VacationDaysLeftTest {
             .withAnnualVacation(new BigDecimal("10"))
             .withRemainingVacation(new BigDecimal("5"))
             .notExpiring(new BigDecimal("5"))
-            .forUsedDaysBeforeApril(ONE)
-            .forUsedDaysAfterApril(ONE)
+            .forUsedVacationDaysBeforeExpiry(ONE)
+            .forUsedVacationDaysAfterExpiry(ONE)
             .build();
 
-        final LocalDate someDayBeforeApril = LocalDate.now().with(lastDayOfYear());
-        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(someDayBeforeApril, someDayBeforeApril.getYear())).isEqualByComparingTo("3");
+        final LocalDate someDaybeforeExpiryDate = LocalDate.now().with(lastDayOfYear());
+        final LocalDate expiryDate = LocalDate.now().withMonth(Month.APRIL.getValue()).with(firstDayOfMonth());
+        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(someDaybeforeExpiryDate, expiryDate)).isEqualByComparingTo("3");
 
     }
 }

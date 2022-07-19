@@ -187,6 +187,7 @@ class AccountFormValidatorTest {
             Arguments.of("11", "11.000000000000001")
         );
     }
+
     @ParameterizedTest
     @MethodSource("wrongAnnualAndActualVacationDays")
     void ensureActualVacationMustBeIntegerOrHalf(final BigDecimal annualVacationDays, final BigDecimal actualVacationDays) {
@@ -206,6 +207,7 @@ class AccountFormValidatorTest {
             Arguments.of("30", "28.5")
         );
     }
+
     @ParameterizedTest
     @MethodSource("annualAndActualSource")
     void ensureValidActualVacationHasNoValidationErrorForFullHour(final BigDecimal annualVacationDay, final BigDecimal actualVacationDay) {
@@ -390,6 +392,33 @@ class AccountFormValidatorTest {
         form.setHolidaysAccountValidTo(LocalDate.of(2013, 5, 5));
 
         sut.validatePeriod(form, errors);
+        verifyNoInteractions(errors);
+    }
+
+    @Test
+    void ensureHolidaysAccountExpiryDateMustNotBeNull() {
+        final AccountForm form = new AccountForm(2013);
+        form.setExpiryDate(null);
+
+        sut.validateExpiryDate(form, errors);
+        verify(errors).rejectValue("expiryDate", "error.entry.mandatory");
+    }
+
+    @Test
+    void ensureInvalidExpiryDateWrongYear() {
+        final AccountForm form = new AccountForm(2021);
+        form.setExpiryDate(LocalDate.of(2022, Month.MARCH, 1));
+
+        sut.validateExpiryDate(form, errors);
+        verify(errors).rejectValue("expiryDate", "person.form.annualVacation.error.expiryDate.invalidYear", new Object[]{"2021"}, "");
+    }
+
+    @Test
+    void ensureExpiryDateHasNoValidationError() {
+        final AccountForm form = new AccountForm(2013);
+        form.setExpiryDate(LocalDate.of(2013, 5, 1));
+
+        sut.validateExpiryDate(form, errors);
         verifyNoInteractions(errors);
     }
 
