@@ -102,11 +102,35 @@ class WorkingTimeViewControllerTest {
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("valid", equalTo(true)))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("federalState", equalTo("GERMANY_BERLIN")))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("validFrom", equalTo(LocalDate.of(2020, 10, 2))))))
+            .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("validTo", equalTo(null)))))
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("workingDays", hasItem("MONDAY")))))
             .andExpect(model().attribute("defaultFederalState", equalTo(GERMANY_BADEN_WUERTTEMBERG)))
             .andExpect(model().attribute("federalStateTypes", equalTo(FederalState.federalStatesTypesByCountry())))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(model().attribute("weekDays", equalTo(DayOfWeek.values())));
+    }
+
+    @Test
+    void editWorkingTimePresetsFormWorksWithActualInvalidState() throws Exception {
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Person person = new Person();
+        when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(person));
+
+        final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2020, 10, 2), GERMANY_BERLIN, false);
+        workingTime.setWorkingDays(List.of(MONDAY), DayLength.FULL);
+
+        // this results in `null` in the implementation at time of writing this.
+        // and we want to ensure that no NullPointer is thrown anywhere
+        when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.empty());
+
+        when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
+
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+
+        perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
+            .andExpect(status().isOk())
+            .andExpect(view().name("thymeleaf/workingtime/workingtime_form"));
     }
 
     @Test
@@ -129,7 +153,7 @@ class WorkingTimeViewControllerTest {
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(new Person()));
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
-            .andExpect(view().name("workingtime/workingtime_form"));
+            .andExpect(view().name("thymeleaf/workingtime/workingtime_form"));
     }
 
     @Test
@@ -154,7 +178,7 @@ class WorkingTimeViewControllerTest {
 
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("workingtime/workingtime_form"));
+            .andExpect(view().name("thymeleaf/workingtime/workingtime_form"));
 
         verify(workingTimeWriteService, never()).touch(any(), any(), any(), any());
     }

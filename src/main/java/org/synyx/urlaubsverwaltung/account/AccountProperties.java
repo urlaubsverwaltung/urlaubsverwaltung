@@ -56,7 +56,7 @@ public class AccountProperties {
     public static class Update {
 
         /**
-         * Update remaining vacation days for each account by default on 1st January at 05:00 am
+         * Creates or updates the users account for the new year by default on 1st January at 05:00 am
          */
         @CronExpression
         private String cron = "0 0 5 1 1 *";
@@ -79,18 +79,10 @@ public class AccountProperties {
         private String vacationDaysLeftCron = "0 0 6 1 10 *";
 
         /**
-         * Remind for expired remaining vacation days by default on 1st April at 06:00 am
+         * Remind for expired remaining vacation days by default every day at 06:00
          */
         @CronExpression
-        private String expiredRemainingVacationDaysCron = "0 0 6 1 4 *";
-
-        public String getExpiredRemainingVacationDaysCron() {
-            return expiredRemainingVacationDaysCron;
-        }
-
-        public void setExpiredRemainingVacationDaysCron(String expiredRemainingVacationDaysCron) {
-            this.expiredRemainingVacationDaysCron = expiredRemainingVacationDaysCron;
-        }
+        private String expiredRemainingVacationDaysCron = "0 0 6 * * *";
 
         public String getVacationDaysLeftCron() {
             return vacationDaysLeftCron;
@@ -98,6 +90,14 @@ public class AccountProperties {
 
         public void setVacationDaysLeftCron(String vacationDaysLeftCron) {
             this.vacationDaysLeftCron = vacationDaysLeftCron;
+        }
+
+        public String getExpiredRemainingVacationDaysCron() {
+            return expiredRemainingVacationDaysCron;
+        }
+
+        public void setExpiredRemainingVacationDaysCron(String expiredRemainingVacationDaysCron) {
+            this.expiredRemainingVacationDaysCron = expiredRemainingVacationDaysCron;
         }
     }
 }

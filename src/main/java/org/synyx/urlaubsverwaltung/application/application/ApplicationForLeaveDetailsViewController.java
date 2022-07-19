@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentForm;
@@ -25,11 +26,11 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -58,7 +59,6 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
 @Controller
 class ApplicationForLeaveDetailsViewController {
 
-    private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
     private static final String ATTRIBUTE_ERRORS = "errors";
 
@@ -414,9 +414,17 @@ class ApplicationForLeaveDetailsViewController {
         if (account.isPresent()) {
             final Account acc = account.get();
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, application.getPerson());
-            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
+
+            final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(acc, accountNextYear);
+            model.addAttribute("vacationDaysLeft", vacationDaysLeft);
+
+            final LocalDate now = LocalDate.now(clock);
+            final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, acc.getExpiryDate());
+            model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
+            model.addAttribute("expiryDate", acc.getExpiryDate());
+
             model.addAttribute("account", acc);
-            model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(clock), acc.getYear()));
+            model.addAttribute("isBeforeExpiryDate", now.isBefore(acc.getExpiryDate()));
         }
 
         // Signed in person is allowed to manage

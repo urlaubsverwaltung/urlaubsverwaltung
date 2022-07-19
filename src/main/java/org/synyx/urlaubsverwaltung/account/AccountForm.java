@@ -6,8 +6,9 @@ import org.synyx.urlaubsverwaltung.util.DateUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.format.DateTimeFormatter;
 
+import static java.time.Month.APRIL;
+import static java.time.format.DateTimeFormatter.ISO_DATE;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
@@ -19,6 +20,8 @@ public class AccountForm {
     private LocalDate holidaysAccountValidFrom;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate holidaysAccountValidTo;
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
+    private LocalDate expiryDate;
     private BigDecimal annualVacationDays;
     private BigDecimal actualVacationDays;
     private BigDecimal remainingVacationDays;
@@ -32,12 +35,14 @@ public class AccountForm {
         this.holidaysAccountYear = year;
         this.holidaysAccountValidFrom = Year.of(year).atDay(1);
         this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
+        this.expiryDate = LocalDate.of(year, APRIL, 1);
     }
 
     AccountForm(Account holidaysAccount) {
         this.holidaysAccountYear = holidaysAccount.getValidFrom().getYear();
         this.holidaysAccountValidFrom = holidaysAccount.getValidFrom();
         this.holidaysAccountValidTo = holidaysAccount.getValidTo();
+        this.expiryDate = holidaysAccount.getExpiryDate();
         this.annualVacationDays = holidaysAccount.getAnnualVacationDays();
         this.actualVacationDays = holidaysAccount.getActualVacationDays();
         this.remainingVacationDays = holidaysAccount.getRemainingVacationDays();
@@ -58,7 +63,7 @@ public class AccountForm {
             return "";
         }
 
-        return holidaysAccountValidFrom.format(DateTimeFormatter.ISO_DATE);
+        return holidaysAccountValidFrom.format(ISO_DATE);
     }
 
     public LocalDate getHolidaysAccountValidFrom() {
@@ -74,7 +79,7 @@ public class AccountForm {
             return "";
         }
 
-        return holidaysAccountValidTo.format(DateTimeFormatter.ISO_DATE);
+        return holidaysAccountValidTo.format(ISO_DATE);
     }
 
     public LocalDate getHolidaysAccountValidTo() {
@@ -83,6 +88,22 @@ public class AccountForm {
 
     public void setHolidaysAccountValidTo(LocalDate holidaysAccountValidTo) {
         this.holidaysAccountValidTo = holidaysAccountValidTo;
+    }
+
+    public String getExpiryDateToIsoValue() {
+        if (expiryDate == null) {
+            return "";
+        }
+
+        return expiryDate.format(ISO_DATE);
+    }
+
+    public LocalDate getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
     }
 
     public BigDecimal getAnnualVacationDays() {

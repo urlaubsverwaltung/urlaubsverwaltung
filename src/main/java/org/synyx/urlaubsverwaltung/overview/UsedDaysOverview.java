@@ -28,18 +28,23 @@ public class UsedDaysOverview {
 
     // used days for vacation type HOLIDAY
     private final UsedDays holidayDays;
+    private final UsedDays holidayDaysAllowed;
 
     // used days for all the other vacation types except HOLIDAY
     private final UsedDays otherDays;
+    private final UsedDays otherDaysAllowed;
 
     UsedDaysOverview(List<Application> applications, int year, WorkDaysCountService calendarService) {
 
         this.year = year;
-        this.holidayDays = new UsedDays(WAITING, ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        this.otherDays = new UsedDays(WAITING, ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        this.holidayDays = new UsedDays(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        this.holidayDaysAllowed = new UsedDays(ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
 
-        for (Application application : applications) {
-            if (application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
+        this.otherDays = new UsedDays(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        this.otherDaysAllowed = new UsedDays(ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+
+        for (final Application application : applications) {
+            if (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
                 final BigDecimal vacationDays = getVacationDays(application, calendarService);
                 final ApplicationStatus status = application.getStatus();
 
@@ -47,6 +52,14 @@ public class UsedDaysOverview {
                     this.holidayDays.addDays(status, vacationDays);
                 } else {
                     this.otherDays.addDays(status, vacationDays);
+                }
+
+                if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
+                    if (application.getVacationType().isOfCategory(HOLIDAY)) {
+                        this.holidayDaysAllowed.addDays(status, vacationDays);
+                    } else {
+                        this.otherDaysAllowed.addDays(status, vacationDays);
+                    }
                 }
             }
         }
@@ -56,8 +69,16 @@ public class UsedDaysOverview {
         return holidayDays;
     }
 
+    public UsedDays getHolidayDaysAllowed() {
+        return holidayDaysAllowed;
+    }
+
     public UsedDays getOtherDays() {
         return otherDays;
+    }
+
+    public UsedDays getOtherDaysAllowed() {
+        return otherDaysAllowed;
     }
 
     private BigDecimal getVacationDays(Application application, WorkDaysCountService calendarService) {

@@ -25,10 +25,10 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -82,7 +82,7 @@ public class WorkingTimeViewController {
 
         fillModel(model, person);
 
-        return "workingtime/workingtime_form";
+        return "thymeleaf/workingtime/workingtime_form";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -98,7 +98,7 @@ public class WorkingTimeViewController {
         if (errors.hasErrors()) {
             fillModel(model, person);
 
-            return "workingtime/workingtime_form";
+            return "thymeleaf/workingtime/workingtime_form";
         }
 
         workingTimeWriteService.touch(workingTimeForm.getWorkingDays(), workingTimeForm.getValidFrom(), person, workingTimeForm.getFederalState());
@@ -124,17 +124,17 @@ public class WorkingTimeViewController {
     }
 
     private List<WorkingTimeHistoryDto> toWorkingTimeHistoryDtos(WorkingTime currentWorkingTime, List<WorkingTime> workingTimes) {
-        return workingTimes.stream()
-            .map(toWorkingTimeHistoryDto(currentWorkingTime))
-            .collect(toList());
-    }
 
-    private Function<WorkingTime, WorkingTimeHistoryDto> toWorkingTimeHistoryDto(WorkingTime currentWorkingTime) {
-        return workingTime -> {
-            final boolean isValid = currentWorkingTime.equals(workingTime);
+        final List<WorkingTimeHistoryDto> workingTimeHistoryDtos = new ArrayList<>();
+        LocalDate lastValidTo = null;
+        for (final WorkingTime workingTime : workingTimes) {
+            final boolean isValid = workingTime.equals(currentWorkingTime);
             final FederalState federalState = workingTime.getFederalState();
             final List<String> workDays = workingTime.getWorkingDays().stream().map(Enum::toString).collect(toList());
-            return new WorkingTimeHistoryDto(workingTime.getValidFrom(), workDays, federalState.getCountry(), federalState.toString(), isValid);
-        };
+            workingTimeHistoryDtos.add(new WorkingTimeHistoryDto(workingTime.getValidFrom(), lastValidTo, workDays, federalState.getCountry(), federalState.toString(), isValid));
+            lastValidTo = workingTime.getValidFrom().minusDays(1);
+        }
+
+        return workingTimeHistoryDtos;
     }
 }

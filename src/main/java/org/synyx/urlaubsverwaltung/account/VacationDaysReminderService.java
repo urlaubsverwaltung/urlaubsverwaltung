@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ public class VacationDaysReminderService {
 
     @Autowired
     VacationDaysReminderService(PersonService personService, AccountService accountService, VacationDaysService vacationDaysService,
-                                       MailService mailService, Clock clock) {
+                                MailService mailService, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.vacationDaysService = vacationDaysService;
@@ -80,7 +81,7 @@ public class VacationDaysReminderService {
                     .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
 
                 if (remainingVacationDaysLeft.compareTo(ZERO) > 0) {
-                    sendReminderForRemainingVacationDaysNotification(person, remainingVacationDaysLeft, year);
+                    sendReminderForRemainingVacationDaysNotification(person, remainingVacationDaysLeft, account.getExpiryDate().minusDays(1));
                     LOG.info("Reminded person with id {} for {} remaining vacation days in year {}.", person.getId(), remainingVacationDaysLeft, year);
                 }
             });
@@ -91,22 +92,30 @@ public class VacationDaysReminderService {
      * Notify about expired remaining vacation days
      */
     void notifyForExpiredRemainingVacationDays() {
-        final int year = Year.now(clock).getValue();
+        final LocalDate now = LocalDate.now(clock);
+        final int year = now.getYear();
+
         final List<Person> persons = personService.getActivePersons();
-
         for (Person person : persons) {
-
             accountService.getHolidaysAccount(year, person).ifPresent(account -> {
 
-                final Optional<Account> accountOfNextYear = accountService.getHolidaysAccount(year + 1, person);
-                final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountOfNextYear);
+                final LocalDate expiryDate = account.getExpiryDate();
+                if (account.getExpiryNotificationSentDate() == null && (now.isEqual(expiryDate) || now.isAfter(expiryDate))) {
 
-                final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getRemainingVacationDays()
-                    .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-                if (expiredRemainingVacationDays.compareTo(ZERO) > 0) {
-                    final BigDecimal totalLeftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(account);
-                    sendNotificationForExpiredRemainingVacationDays(person, expiredRemainingVacationDays, totalLeftVacationDays, vacationDaysLeft.getRemainingVacationDaysNotExpiring(), year);
-                    LOG.info("Notified person with id {} for {} expired remaining vacation days in year {}.", person.getId(), expiredRemainingVacationDays, year);
+                    final Optional<Account> accountOfNextYear = accountService.getHolidaysAccount(year + 1, person);
+                    final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountOfNextYear);
+
+                    final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getRemainingVacationDays()
+                        .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+                    if (expiredRemainingVacationDays.compareTo(ZERO) > 0) {
+                        final BigDecimal totalLeftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(account);
+
+                        sendNotificationForExpiredRemainingVacationDays(person, expiredRemainingVacationDays, totalLeftVacationDays, vacationDaysLeft.getRemainingVacationDaysNotExpiring(), account.getExpiryDate());
+                        LOG.info("Notified person with id {} for {} expired remaining vacation days in year {}.", person.getId(), expiredRemainingVacationDays, year);
+
+                        account.setExpiryNotificationSentDate(now);
+                        accountService.save(account);
+                    }
                 }
             });
         }
@@ -120,20 +129,20 @@ public class VacationDaysReminderService {
         sendMail(person, "subject.account.remindForCurrentlyLeftVacationDays", "remind_currently_left_vacation_days", model);
     }
 
-    private void sendReminderForRemainingVacationDaysNotification(Person person, BigDecimal remainingVacationDays, int year) {
+    private void sendReminderForRemainingVacationDaysNotification(Person person, BigDecimal remainingVacationDays, LocalDate dayBeforeExpiryDate) {
         final Map<String, Object> model = new HashMap<>();
         model.put("remainingVacationDays", remainingVacationDays);
-        model.put("year", year);
+        model.put("dayBeforeExpiryDate", dayBeforeExpiryDate);
 
         sendMail(person, "subject.account.remindForRemainingVacationDays", "remind_remaining_vacation_days", model);
     }
 
-    private void sendNotificationForExpiredRemainingVacationDays(Person person, BigDecimal expiredRemainingVacationDays, BigDecimal totalLeftVacationDays, BigDecimal remainingVacationDaysNotExpiring, int year) {
+    private void sendNotificationForExpiredRemainingVacationDays(Person person, BigDecimal expiredRemainingVacationDays, BigDecimal totalLeftVacationDays, BigDecimal remainingVacationDaysNotExpiring, LocalDate expiryDate) {
         final Map<String, Object> model = new HashMap<>();
         model.put("expiredRemainingVacationDays", expiredRemainingVacationDays);
         model.put("totalLeftVacationDays", totalLeftVacationDays);
         model.put("remainingVacationDaysNotExpiring", remainingVacationDaysNotExpiring);
-        model.put("year", year);
+        model.put("expiryDate", expiryDate);
 
         sendMail(person, "subject.account.notifyForExpiredRemainingVacationDays", "notify_expired_remaining_vacation_days", model);
     }

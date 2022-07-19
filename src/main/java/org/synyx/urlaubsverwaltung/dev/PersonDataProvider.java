@@ -17,6 +17,7 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -24,6 +25,7 @@ import static java.time.DayOfWeek.MONDAY;
 import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
+import static java.time.Month.APRIL;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
@@ -93,13 +95,20 @@ class PersonDataProvider {
         final int currentYear = Year.now(clock).getValue();
         final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);
 
-        final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).stream().map(DayOfWeek::getValue).collect(toList());
+        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).map(DayOfWeek::getValue).collect(toList());
         workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
 
         final LocalDate lastDayOfYear = getLastDayOfYear(currentYear);
-        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear,
-            lastDayOfYear, BigDecimal.valueOf(30), BigDecimal.valueOf(30), BigDecimal.valueOf(5),
-            ZERO, null);
+        accountInteractionService.updateOrCreateHolidaysAccount(
+            savedPerson,
+            firstDayOfYear,
+            lastDayOfYear,
+            LocalDate.of(currentYear, APRIL, 1),
+            BigDecimal.valueOf(30),
+            BigDecimal.valueOf(30),
+            BigDecimal.valueOf(5),
+            ZERO,
+            null);
 
         return savedPerson;
     }

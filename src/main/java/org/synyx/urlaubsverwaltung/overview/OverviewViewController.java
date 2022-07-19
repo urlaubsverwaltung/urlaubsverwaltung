@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
@@ -25,9 +26,9 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
@@ -51,7 +52,6 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 @RequestMapping("/")
 public class OverviewViewController {
 
-    private static final String BEFORE_APRIL_ATTRIBUTE = "beforeApril";
     private static final String PERSON_ATTRIBUTE = "person";
 
     private final PersonService personService;
@@ -123,7 +123,7 @@ public class OverviewViewController {
         model.addAttribute("vacationTypeColors", vacationTypeColors);
 
         prepareApplications(person, yearToShow, model);
-        prepareHolidayAccounts(person, yearToShow, model);
+        prepareHolidayAccounts(person, yearToShow, now, model);
         prepareSickNoteList(person, yearToShow, model);
         prepareSettings(model);
 
@@ -177,16 +177,23 @@ public class OverviewViewController {
         model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
     }
 
-    private void prepareHolidayAccounts(Person person, int year, Model model) {
+    private void prepareHolidayAccounts(Person person, int year, ZonedDateTime now, Model model) {
 
         // get person's holidays account and entitlement for the given year
-        final Optional<Account> account = accountService.getHolidaysAccount(year, person);
-        if (account.isPresent()) {
-            Account acc = account.get();
+        final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
+        if (maybeAccount.isPresent()) {
+            final Account account = maybeAccount.get();
             final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
-            model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountNextYear));
-            model.addAttribute("account", acc);
-            model.addAttribute(BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(LocalDate.now(clock), acc.getYear()));
+
+            final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountNextYear);
+            model.addAttribute("vacationDaysLeft", vacationDaysLeft);
+
+            final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now.toLocalDate(), account.getExpiryDate());
+            model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
+            model.addAttribute("expiryDate", account.getExpiryDate());
+
+            model.addAttribute("account", account);
+            model.addAttribute("isBeforeExpiryDate", LocalDate.now(clock).isBefore(account.getExpiryDate()));
         }
     }
 
