@@ -15,7 +15,9 @@
   },
   "rules": {
     "unicorn/no-fn-reference-in-iterator": "off",
-    "unicorn/prefer-reflect-apply": "off"
+    "unicorn/prefer-reflect-apply": "off",
+    /* our webpack build cannot handle top-level-await atm */
+    "unicorn/prefer-top-level-await": "off"
   },
   "overrides": [
     {
