@@ -191,6 +191,7 @@ public class OverviewViewController {
             final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now.toLocalDate(), account.getExpiryDate());
             model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
             model.addAttribute("expiryDate", account.getExpiryDate());
+            model.addAttribute("remainingVacationDays", account.getRemainingVacationDays());
 
             model.addAttribute("account", account);
             model.addAttribute("isBeforeExpiryDate", LocalDate.now(clock).isBefore(account.getExpiryDate()));

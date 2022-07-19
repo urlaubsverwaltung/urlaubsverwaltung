@@ -18,7 +18,7 @@
                 </span>
                 <span>
                     <c:set var="expired"><uv:number number="${expiredRemainingVacationDays}"/></c:set>
-                    <c:set var="remaining"><uv:number number="${vacationDaysLeft.remainingVacationDays}"/></c:set>
+                    <c:set var="remaining"><uv:number number="${remainingVacationDays}"/></c:set>
                     <spring:message code="overview.vacations.expired.description" arguments="${expired};${remaining}" argumentSeparator=";" />
                 </span>
             </td>
