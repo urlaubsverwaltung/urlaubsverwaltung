@@ -7,6 +7,33 @@
 
 <table class="list-table selectable-table tw-text-sm">
     <tbody>
+
+    <c:if test="${!isBeforeExpiryDate && expiredRemainingVacationDays > 0}">
+        <tr class="active">
+            <td>
+            </td>
+            <td class="tw-py-4">
+                <span class="tw-block tw-mb-1 tw-text-lg">
+                    <spring:message code="overview.vacations.expired"/>
+                </span>
+                <span>
+                    <c:set var="expired"><uv:number number="${expiredRemainingVacationDays}"/></c:set>
+                    <c:set var="remaining"><uv:number number="${vacationDaysLeft.remainingVacationDays}"/></c:set>
+                    <spring:message code="overview.vacations.expired.description" arguments="${expired};${remaining}" argumentSeparator=";" />
+                </span>
+            </td>
+            <td class="is-centered">
+                <uv:number number="${expiredRemainingVacationDays}"/> <spring:message code="duration.days"/>
+            </td>
+            <td class="is-centered hidden-xs print:tw-hidden">
+                <div class="tw-flex tw-items-center">
+                    <icon:clock className="tw-w-4 tw-h-4" />&nbsp;
+                    <spring:message code="application.progress.EXPIRED"/> <uv:date date="${expiryDate}"/>
+                </div>
+            </td>
+        </tr>
+    </c:if>
+
     <c:forEach items="${applications}" var="app" varStatus="loopStatus">
 
         <c:choose>
