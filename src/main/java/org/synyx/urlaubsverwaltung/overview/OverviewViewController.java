@@ -116,7 +116,7 @@ public class OverviewViewController {
 
         model.addAttribute(PERSON_ATTRIBUTE, person);
 
-        final ZonedDateTime now = ZonedDateTime.now(clock);
+        final LocalDate now = LocalDate.now(clock);
         final int yearToShow = year == null ? now.getYear() : year;
 
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
@@ -177,7 +177,7 @@ public class OverviewViewController {
         model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
     }
 
-    private void prepareHolidayAccounts(Person person, int year, ZonedDateTime now, Model model) {
+    private void prepareHolidayAccounts(Person person, int year, LocalDate now, Model model) {
 
         // get person's holidays account and entitlement for the given year
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
@@ -188,13 +188,13 @@ public class OverviewViewController {
             final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountNextYear);
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
 
-            final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now.toLocalDate(), account.getExpiryDate());
+            final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate());
             model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
             model.addAttribute("expiryDate", account.getExpiryDate());
+            model.addAttribute("isBeforeExpiryDate", now.isBefore(account.getExpiryDate()));
             model.addAttribute("remainingVacationDays", account.getRemainingVacationDays());
 
             model.addAttribute("account", account);
-            model.addAttribute("isBeforeExpiryDate", LocalDate.now(clock).isBefore(account.getExpiryDate()));
         }
     }
 
