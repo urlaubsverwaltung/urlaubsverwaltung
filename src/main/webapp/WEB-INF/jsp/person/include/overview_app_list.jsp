@@ -12,8 +12,15 @@
         <tr class="active">
             <td>
             </td>
-            <td class="tw-py-4 tw-text-base">
-                <spring:message code="overview.vacations.expired"/>
+            <td class="tw-py-4">
+                <span class="tw-block tw-mb-1 tw-text-lg">
+                    <spring:message code="overview.vacations.expired"/>
+                </span>
+                <span>
+                    <c:set var="expired"><uv:number number="${expiredRemainingVacationDays}"/></c:set>
+                    <c:set var="remaining"><uv:number number="${vacationDaysLeft.remainingVacationDays}"/></c:set>
+                    <spring:message code="overview.vacations.expired.description" arguments="${expired};${remaining}" argumentSeparator=";" />
+                </span>
             </td>
             <td class="is-centered">
                 <uv:number number="${expiredRemainingVacationDays}"/> <spring:message code="duration.days"/>
