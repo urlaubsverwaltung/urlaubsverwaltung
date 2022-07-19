@@ -248,8 +248,6 @@ public class PersonDetailsViewController {
                 final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(holidaysAccount, accountNextYear);
 
                 final boolean beforeExpiryDate = now.isBefore(holidaysAccount.getExpiryDate());
-                model.addAttribute("isBeforeExpiryDate", beforeExpiryDate);
-
                 final double remainingVacationDays = beforeExpiryDate
                     ? vacationDaysLeft.getRemainingVacationDays().doubleValue()
                     : vacationDaysLeft.getRemainingVacationDaysNotExpiring().doubleValue();
