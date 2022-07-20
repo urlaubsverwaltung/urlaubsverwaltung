@@ -39,7 +39,7 @@
               <div class="tw-text-lg tw-mb-1" th:text="${person.niceName}">Marlene Muster</div>
               <a href="#" th:href="|mailto:${person.email}|" class="icon-link tw-inline-block tw-text-sm print:no-link">
                 <span class="tw-flex tw-items-center">
-                  <svg th:replace="icon/mail" />&nbsp;<span th:text="${person.email}"></span>
+                  <svg th:replace="icon/mail::svg" />&nbsp;<span th:text="${person.email}"></span>
                 </span>
               </a>
               <ul class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1">
