@@ -6,20 +6,18 @@
   </head>
   <body>
     <div th:fragment="year-selector(id, year, hrefPrefix)" th:id="${id}" class="tw-leading-6 dropdown tw-inline-block">
-      <a
-        id="year-selector-dropdown-link"
-        href="#"
+      <button
+        id="year-selector-dropdown-button"
         data-toggle="dropdown"
         aria-haspopup="true"
-        role="button"
         aria-expanded="false"
-        class="tw-text-current"
+        class="tw-text-current tw-bg-transparent tw-p-0"
       >
         <span th:text="${year}"></span>
         <span class="tw-ml-0.5 dropdown-caret tw-opacity-70"></span>
-      </a>
+      </button>
 
-      <ul class="dropdown-menu" role="menu" aria-labelledby="year-selector-dropdown-link">
+      <ul class="dropdown-menu" role="menu" aria-labelledby="year-selector-dropdown-button">
         <li
           th:each="i, status: ${#numbers.sequence(0, 10)}"
           th:with="selectableYear=${#dates.year(#dates.createNow()) + 2 - status.count}"
