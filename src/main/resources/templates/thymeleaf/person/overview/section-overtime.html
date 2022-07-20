@@ -34,61 +34,57 @@
         </th:block>
       </div>
 
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
-            <div class="tw-w-full lg:tw-w-1/3"></div>
-            <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
-              <div class="box tw-flex tw-items-start tw-p-0 tw-border-none">
-                <div class="tw-mr-6 tw-p-1">
-                  <div
-                    class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16 tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900"
-                  >
-                    <svg th:replace="icon/briefcase::svg(className='tw-w-8 tw-h-8 tw-stroke-2')"></svg>
-                  </div>
-                </div>
-                <div class="box-text tw-flex-1 tw-flex tw-flex-col">
-                  <span
-                    class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
-                    th:text="#{overtime.person.total.1}"
-                  >
-                    In diesem Jahr
-                  </span>
-                  <span class="tw-my-1 tw-text-lg tw-font-medium" th:text="${{overtimeTotal}}"></span>
-                  <span
-                    class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
-                    th:text="#{overtime.person.total.2}"
-                  >
-                    Überstunden eingetragen.
-                  </span>
-                </div>
+      <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
+        <div class="tw-w-full lg:tw-w-1/3"></div>
+        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+          <div class="box tw-flex tw-items-start tw-p-0 tw-border-none">
+            <div class="tw-mr-6 tw-p-1">
+              <div
+                class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16 tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900"
+              >
+                <svg th:replace="icon/briefcase::svg(className='tw-w-8 tw-h-8 tw-stroke-2')"></svg>
               </div>
             </div>
-            <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
-              <div class="box tw-flex tw-items-start tw-p-0 tw-border-none tw-p-0">
-                <div class="tw-mr-6 tw-p-1">
-                  <div
-                    class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16 tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900"
-                  >
-                    <svg th:replace="icon/sort-descending::svg(className='tw-w-8 tw-h-8 tw-stroke-2')"></svg>
-                  </div>
-                </div>
-                <div class="box-text tw-flex-1 tw-flex tw-flex-col">
-                  <span
-                    class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
-                    th:text="#{overtime.person.left.1}"
-                  >
-                    Es können
-                  </span>
-                  <span class="tw-my-1 tw-text-lg tw-font-medium" th:text="${{overtimeLeft}}"></span>
-                  <span
-                    class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
-                    th:text="#{overtime.person.left.2}"
-                  >
-                    Überstunden abgebaut werden.
-                  </span>
-                </div>
+            <div class="box-text tw-flex-1 tw-flex tw-flex-col">
+              <span
+                class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                th:text="#{overtime.person.total.1}"
+              >
+                In diesem Jahr
+              </span>
+              <span class="tw-my-1 tw-text-lg tw-font-medium" th:text="${{overtimeTotal}}"></span>
+              <span
+                class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                th:text="#{overtime.person.total.2}"
+              >
+                Überstunden eingetragen.
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+          <div class="box tw-flex tw-items-start tw-p-0 tw-border-none tw-p-0">
+            <div class="tw-mr-6 tw-p-1">
+              <div
+                class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16 tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900"
+              >
+                <svg th:replace="icon/sort-descending::svg(className='tw-w-8 tw-h-8 tw-stroke-2')"></svg>
               </div>
+            </div>
+            <div class="box-text tw-flex-1 tw-flex tw-flex-col">
+              <span
+                class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                th:text="#{overtime.person.left.1}"
+              >
+                Es können
+              </span>
+              <span class="tw-my-1 tw-text-lg tw-font-medium" th:text="${{overtimeLeft}}"></span>
+              <span
+                class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                th:text="#{overtime.person.left.2}"
+              >
+                Überstunden abgebaut werden.
+              </span>
             </div>
           </div>
         </div>
