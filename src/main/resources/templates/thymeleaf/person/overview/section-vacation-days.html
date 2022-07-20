@@ -25,6 +25,7 @@
             th:data-title="#{action.account.title(${person.niceName})}"
           >
             <svg th:replace="icon/user-circle::svg(className='tw-h-5 tw-w-5')" />
+            <span class="tw-sr-only" th:text="#{action.account.title(${person.niceName})}"></span>
           </a>
           <a href="" th:replace="fragments/print::button"></a>
         </th:block>
