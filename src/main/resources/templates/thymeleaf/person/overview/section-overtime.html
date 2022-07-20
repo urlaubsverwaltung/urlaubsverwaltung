@@ -17,7 +17,6 @@
             href="#"
             th:href="@{/web/overtime/new (person=${person.id})}"
             class="icon-link tw-px-1"
-            aria-hidden="true"
             th:data-title="#{action.overtime.new}"
           >
             <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
@@ -27,7 +26,6 @@
             href="#"
             th:href="@{/web/overtime (person=${person.id}, year=${displayYear})}"
             class="icon-link tw-px-1"
-            aria-hidden="true"
             th:data-title="#{action.overtime.list}"
           >
             <svg th:replace="icon/view-grid::svg(className='tw-w-5 tw-h-5')"></svg>

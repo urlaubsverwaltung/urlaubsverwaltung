@@ -16,7 +16,6 @@
             <a
               th:if="${canAccessAbsenceOverview}"
               class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
-              aria-hidden="true"
               href="#"
               th:href="@{/web/absences}"
             >
@@ -26,7 +25,6 @@
             <a
               th:if="${canAccessCalendarShare}"
               class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
-              aria-hidden="true"
               href="#"
               th:href="@{/web/calendars/share/persons/{personId} (personId=${person.id})}"
             >
