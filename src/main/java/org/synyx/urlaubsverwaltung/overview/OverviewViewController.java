@@ -32,7 +32,6 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -129,6 +128,7 @@ public class OverviewViewController {
 
         model.addAttribute("year", now.getYear());
         model.addAttribute("currentYear", now.getYear());
+        model.addAttribute("selectedYear", yearToShow);
         model.addAttribute("currentMonth", now.getMonthValue());
         model.addAttribute("signedInUser", signedInUser);
         model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
@@ -139,7 +139,7 @@ public class OverviewViewController {
         model.addAttribute("canAddApplicationForLeaveForAnotherUser", signedInUser.hasRole(OFFICE));
         model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE));
 
-        return "person/overview";
+        return "thymeleaf/person/person-overview";
     }
 
     private void prepareSickNoteList(Person person, int year, Model model) {

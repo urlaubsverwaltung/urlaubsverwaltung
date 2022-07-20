@@ -365,13 +365,15 @@ class OverviewViewControllerTest {
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(asList(sickNote, sickNote2));
 
         final ResultActions resultActions = perform(get("/web/person/1/overview").param("year", "2021"));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(view().name("person/overview"));
-        resultActions.andExpect(model().attribute("applications", hasSize(3)));
-        resultActions.andExpect(model().attribute("sickNotes", hasSize(2)));
-        resultActions.andExpect(model().attribute("signedInUser", person));
-        resultActions.andExpect(model().attribute("userIsAllowedToWriteOvertime", true));
-        resultActions.andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))));
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(view().name("thymeleaf/person/person-overview"))
+            .andExpect(model().attribute("applications", hasSize(3)))
+            .andExpect(model().attribute("sickNotes", hasSize(2)))
+            .andExpect(model().attribute("signedInUser", person))
+            .andExpect(model().attribute("userIsAllowedToWriteOvertime", true))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))));
     }
 
 

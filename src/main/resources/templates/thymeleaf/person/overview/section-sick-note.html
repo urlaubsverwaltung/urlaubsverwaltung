@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title></title>
+</head>
+<body>
+
+<th:block th:fragment="section">
+<div th:replace="fragments/section-heading::section-heading(~{::absences-heading-body}, ~{::absences-heading-actions})">
+  <th:block th:ref="absences-heading-body">
+    <h2 id="anchorSickNotes" th:text="#{sicknotes.title}">
+      Krankmeldungen
+    </h2>
+  </th:block>
+  <th:block th:ref="absences-heading-actions">
+    <a
+      th:if="${canAddSickNoteAnotherUser}"
+      class="icon-link tw-px-1"
+      href="#"
+      th:href="@{/web/sicknote/new (person=${person.id})}"
+      th:data-title="#{action.apply.sicknote}"
+    >
+      <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
+    </a>
+  </th:block>
+</div>
+
+<div class="row tw-mb-4 lg:tw-mb-6">
+  <div class="col-xs-12">
+    <div class="tw-flex tw-flex-wrap tw-space-y-8 sm:tw-space-y-0">
+      <div class="tw-w-full sm:tw-w-1/2">
+        <div class="box tw-flex tw-items-start tw-p-0 tw-border-none">
+          <div class="tw-mr-6 tw-p-1">
+            <div class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16 tw-bg-red-500 tw-text-white dark:tw-bg-red-600 dark:tw-text-zinc-900">
+              <svg th:replace="icon/medkit::svg(className='tw-w-8 tw-h-8')"></svg>
+            </div>
+          </div>
+          <div class="box-text tw-flex-1 tw-flex tw-flex-col">
+            <span
+              class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+              th:text="#{overview.sicknotes.sickdays.1}"
+            >
+              Es bestehen
+            </span>
+            <span
+              class="tw-my-1 tw-text-lg tw-font-medium"
+              th:text="#{overview.sicknotes.sickdays.2(${sickDaysOverview.sickDays.days['TOTAL']})}"
+            >
+              5,5 Krankheitstage
+            </span>
+            <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">
+              <span class="tw-flex tw-items-center">
+                <span class="tw-text-emerald-500 tw-flex tw-items-center">
+                  <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+                </span>
+                <span th:text="#{overview.sicknotes.sickdays.aub(${sickDaysOverview.sickDays.days['WITH_AUB']})}"></span>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="tw-w-full sm:tw-w-1/2">
+        <div class="box tw-flex tw-items-start tw-p-0 tw-border-none">
+          <div class="tw-mr-6 tw-p-1">
+            <div class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16 tw-bg-red-500 tw-text-white dark:tw-bg-red-600 dark:tw-text-zinc-900">
+              <svg th:replace="icon/child::svg(className='tw-w-8 tw-h-8')"></svg>
+            </div>
+          </div>
+          <div class="box-text tw-flex-1 tw-flex tw-flex-col">
+            <span
+              class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+              th:text="#{overview.sicknotes.sickdays.child.1}"
+            >
+              Es bestehen
+            </span>
+            <span
+              class="tw-my-1 tw-text-lg tw-font-medium"
+              th:text="#{overview.sicknotes.sickdays.child.2(${sickDaysOverview.childSickDays.days['TOTAL']})}"
+            >
+              3.0 Kind-Krankheitstage
+            </span>
+            <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">
+              <span class="tw-flex tw-items-center">
+                <span class="tw-text-emerald-500 tw-flex tw-items-center">
+                  <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+                </span>
+                <span th:text="#{overview.sicknotes.sickdays.aub(${sickDaysOverview.childSickDays.days['WITH_AUB']})}"></span>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <table class="list-table selectable-table tw-text-sm">
+      <tbody>
+        <tr
+          th:each="sickNote,loopStatus : ${sickNotes}"
+          th:class="${sickNote.active ? 'active' : 'inactive'}"
+          th:onclick="|navigate('/web/sicknote/${sickNote.id}');|"
+        >
+          <td class="is-centered print:tw-hidden state ${sickNote.status}">
+            <th:block th:if="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
+              <svg th:replace="icon/child::svg(className='tw-w-6 tw-h-6')"></svg>
+            </th:block>
+            <th:block th:if="${sickNote.sickNoteType.category != 'SICK_NOTE_CHILD'}">
+              <svg th:replace="icon/medkit::svg(className='tw-w-6 tw-h-6')"></svg>
+            </th:block>
+          </td>
+          <td class="tw-py-6">
+            <a
+              th:href="@{/web/sicknote/{sickNote} (sickNote=${sickNote.id})}"
+              class="tw-block tw-mb-1 tw-text-lg print:no-link"
+              th:text="${#messages.msg(sickNote.sickNoteType.messageKey)}"
+            ></a>
+            <div class="tw-flex tw-flex-col lg:tw-flex-row">
+              <th:block th:if="${sickNote.startDate == sickNote.endDate}">
+                <th:block th:text="|${#messages.msg(sickNote.weekDayOfStartDate + '.short')}|"></th:block>,
+                <th:block th:replace="fragments/date::date(${sickNote.startDate})"></th:block>,&nbsp;
+                <th:block th:text="${#messages.msg(sickNote.dayLength)}"></th:block>
+              </th:block>
+              <th:block th:if="${sickNote.startDate != sickNote.endDate}">
+                <span th:replace="fragments/date-range::date-range(from=${sickNote.startDate}, to=${sickNote.endDate}, pattern='E, dd.MM.yyyy')"></span>
+              </th:block>
+              <span th:if="${sickNote.aubPresent == true}" class="tw-flex tw-items-center">
+                <span class="tw-hidden lg:tw-inline">&nbsp;</span>
+                (<span class="tw-text-emerald-500 tw-flex tw-items-center"><svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4')"></svg></span>
+                &nbsp;<th:block th:text="#{sicknote.data.aub.short}"></th:block>)
+              </span>
+            </div>
+          </td>
+          <td class="is-centered">
+            <span th:replace="fragments/number::number(${sickNote.workDays})"></span> <span th:text="#{duration.days}"></span>
+          </td>
+          <td class="print:tw-hidden is-centered hidden-xs">
+            <div class="tw-flex tw-items-center">
+              <svg th:replace="icon/clock::svg(className='tw-w-4 tw-h-4')"></svg>&nbsp;
+              <span>
+                <th:block th:text="#{sicknote.progress.lastEdited}"></th:block>&nbsp;
+                <th:block th:replace="fragments/date::date(${sickNote.lastEdited})"></th:block>
+              </span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</th:block>
+
+</body>
+</html>

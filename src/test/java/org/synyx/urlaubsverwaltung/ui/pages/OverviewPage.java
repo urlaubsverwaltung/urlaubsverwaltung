@@ -31,7 +31,7 @@ public class OverviewPage implements Page {
     }
 
     public boolean isVisibleForPerson(String username, int year) {
-        final String titleText = messageSource.getMessage("overview.header.title", new Object[]{username, String.valueOf(year)}, locale);
+        final String titleText = messageSource.getMessage("overview.header.title", new Object[]{username, year}, locale);
         return driver.getTitle().contains(titleText);
     }
 }
