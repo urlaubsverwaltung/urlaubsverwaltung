@@ -16,7 +16,7 @@
     >
         <c:out value="${year}" /><span class="tw-ml-0.5 dropdown-caret tw-opacity-70"></span>
     </button>
-    <ul class="dropdown-menu" role="menu" aria-labelledby="year-selector-dropdown-button">
+    <ul class="dropdown-menu" aria-labelledby="year-selector-dropdown-button">
         <c:forEach begin="0" end="10" varStatus="loop">
             <c:set var="y" value="${date.year + 1900 + 2 - loop.count}" />
             <li><a href="${hrefPrefix.concat(y)}"><c:out value="${y}" /></a></li>

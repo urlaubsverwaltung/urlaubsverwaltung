@@ -5,24 +5,33 @@
     <title>year-selector</title>
   </head>
   <body>
-    <div th:fragment="year-selector(id, year, hrefPrefix)" th:id="${id}" class="tw-leading-6 dropdown tw-inline-block">
+    <div
+      th:fragment="year-selector(id, year, hrefPrefix, selectedYear)"
+      th:id="${id}"
+      class="tw-leading-6 dropdown tw-inline-block"
+    >
       <button
         id="year-selector-dropdown-button"
         data-toggle="dropdown"
-        aria-haspopup="true"
         aria-expanded="false"
         class="tw-text-current tw-bg-transparent tw-p-0"
       >
-        <span th:text="${year}"></span>
+        <span th:text="#{overview.year.selection.button(${year})}" class="tw-sr-only"></span>
+        <span th:text="${year}" aria-hidden="true"></span>
         <span class="tw-ml-0.5 dropdown-caret tw-opacity-70"></span>
       </button>
-
-      <ul class="dropdown-menu" role="menu" aria-labelledby="year-selector-dropdown-button">
+      <ul class="dropdown-menu">
         <li
           th:each="i, status: ${#numbers.sequence(0, 10)}"
           th:with="selectableYear=${#dates.year(#dates.createNow()) + 2 - status.count}"
         >
-          <a th:text="${selectableYear}" th:href="|${hrefPrefix}${selectableYear}|"></a>
+          <a
+            th:href="|${hrefPrefix}${selectableYear}|"
+            th:attr="aria-current=${selectableYear == selectedYear ? 'page' : ''}"
+          >
+            <span th:text="#{overview.year.selection.item.link(${selectableYear})}" class="tw-sr-only"></span>
+            <span th:text="${selectableYear}" aria-hidden="true"></span>
+          </a>
         </li>
       </ul>
     </div>

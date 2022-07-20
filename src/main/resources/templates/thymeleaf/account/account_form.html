@@ -58,7 +58,7 @@
               <th:block th:ref="account-form-heading-body">
                 <h1 th:text="#{person.form.annualVacation.title(${person.niceName})}"></h1>
                 <div
-                  th:replace="fragments/year-selector::year-selector(id='year-selection', year=${year}, hrefPrefix=|/person/${person.id}/account?year=|)"
+                  th:replace="fragments/year-selector::year-selector(id='year-selection', year=${year}, hrefPrefix=|/person/${person.id}/account?year=|, selectedYear=${year})"
                 ></div>
               </th:block>
             </div>
