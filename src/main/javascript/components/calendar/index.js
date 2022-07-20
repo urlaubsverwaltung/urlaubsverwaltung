@@ -106,8 +106,8 @@ $(function () {
   };
 
   const icons = {
-    chevronRight: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw-w-6 tw-h-6"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>`,
-    chevronLeft: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw-w-6 tw-h-6"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>`,
+    chevronRight: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw-w-6 tw-h-6" role="img" aria-hidden="true"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>`,
+    chevronLeft: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw-w-6 tw-h-6" role="img" aria-hidden="true"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>`,
   };
 
   function getDateFromElement(element) {
@@ -477,6 +477,7 @@ $(function () {
 
   const View = (function () {
     let assert;
+    let i18n = () => "";
 
     const TMPL = {
       container: '{{previousButton}}<div class="datepicker-months-container">{{months}}</div>{{nextButton}}',
@@ -518,8 +519,18 @@ $(function () {
       let monthsToShow = numberOfMonths;
 
       return render(TMPL.container, {
-        previousButton: renderButton(CSS.previous, `<span>${icons.chevronLeft}</span>`),
-        nextButton: renderButton(CSS.next, `<span>${icons.chevronRight}</span>`),
+        previousButton: renderButton(
+          CSS.previous,
+          `<span>${icons.chevronLeft}<span class="tw-sr-only">${i18n(
+            "overview.calendar.button.previous.label",
+          )}</span></span>`,
+        ),
+        nextButton: renderButton(
+          CSS.next,
+          `<span>${icons.chevronRight}<span class="tw-sr-only">${i18n(
+            "overview.calendar.button.next.label",
+          )}</span></span>`,
+        ),
 
         months: function () {
           let html = "";
@@ -744,8 +755,9 @@ $(function () {
     };
 
     return {
-      create: function (_assert) {
+      create: function (_assert, _i18n) {
         assert = _assert;
+        i18n = _i18n;
         return View;
       },
     };
@@ -942,11 +954,11 @@ $(function () {
     let date;
 
     return {
-      init: function (holidayService, referenceDate) {
+      init: function (holidayService, referenceDate, i18n) {
         date = referenceDate;
 
         const a = Assertion.create(holidayService);
-        view = View.create(a);
+        view = View.create(a, i18n);
         const c = Controller.create(holidayService, view);
 
         view.display(date);

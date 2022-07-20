@@ -11,8 +11,10 @@ exports[`calendar renders 1`] = `
     >
       <span>
         <svg
+          aria-hidden="true"
           class="tw-w-6 tw-h-6"
           fill="currentColor"
+          role="img"
           viewBox="0 0 20 20"
         >
           <path
@@ -21,6 +23,11 @@ exports[`calendar renders 1`] = `
             fill-rule="evenodd"
           />
         </svg>
+        <span
+          class="tw-sr-only"
+        >
+          i18n:overview.calendar.button.previous.label
+        </span>
       </span>
     </button>
     <div
@@ -7100,8 +7107,10 @@ exports[`calendar renders 1`] = `
     >
       <span>
         <svg
+          aria-hidden="true"
           class="tw-w-6 tw-h-6"
           fill="currentColor"
+          role="img"
           viewBox="0 0 20 20"
         >
           <path
@@ -7110,6 +7119,11 @@ exports[`calendar renders 1`] = `
             fill-rule="evenodd"
           />
         </svg>
+        <span
+          class="tw-sr-only"
+        >
+          i18n:overview.calendar.button.next.label
+        </span>
       </span>
     </button>
   </div>

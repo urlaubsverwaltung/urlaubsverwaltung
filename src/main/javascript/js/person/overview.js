@@ -9,6 +9,10 @@ $(document).ready(function () {
   const webPrefix = window.uv.webPrefix;
   const apiPrefix = window.uv.apiPrefix;
 
+  function i18n(messageKey) {
+    return window.uv.i18n[messageKey] || `/i18n:${messageKey}/`;
+  }
+
   function initCalendar() {
     const year = getUrlParameter("year");
     let date = new Date();
@@ -34,7 +38,7 @@ $(document).ready(function () {
       holidayService.fetchPublic(yearOfEndDate),
       holidayService.fetchAbsences(yearOfEndDate),
     ).always(function () {
-      Urlaubsverwaltung.Calendar.init(holidayService, date);
+      Urlaubsverwaltung.Calendar.init(holidayService, date, i18n);
     });
   }
 
