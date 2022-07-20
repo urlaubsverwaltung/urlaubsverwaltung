@@ -9,7 +9,10 @@
         th:replace="fragments/section-heading::section-heading(~{::overview-heading-body}, ~{::overview-heading-actions})"
       >
         <th:block th:ref="overview-heading-body">
-          <h1 th:text="#{overview.title}">Übersicht für</h1>
+          <h1>
+            <th:block th:text="#{overview.title}"></th:block>
+            <span class="tw-sr-only" th:text="${selectedYear}" />
+          </h1>
           <div
             th:replace="fragments/year-selector::year-selector(id='year-selection', year=${selectedYear}, hrefPrefix=|/web/person/${person.id}/overview?year=|)"
           ></div>
