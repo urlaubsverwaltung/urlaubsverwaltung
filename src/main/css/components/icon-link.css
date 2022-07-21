@@ -1,5 +1,9 @@
 .icon-link {
   @apply tw-flex !important;
+}
+
+.icon-link,
+.text-link {
   @apply tw-text-zinc-700 !important;
   @apply tw-no-underline !important;
   @apply hover:tw-text-black !important;

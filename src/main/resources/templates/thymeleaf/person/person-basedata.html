@@ -43,8 +43,9 @@
           <div>
             <div class="tw-mb-1">
               <a
-                href="${URL_PREFIX}/person/${personBasedata.personId}/overview"
-                class="tw-text-lg print:no-link"
+                href="#"
+                th:href="@{/web/person/{personId}/overview (personId=${personBasedata.personId})}"
+                class="text-link tw-text-lg print:no-link"
                 th:text="${personBasedata.niceName}"
               >
                 John Doe
@@ -53,12 +54,10 @@
             <a
               href="mailto:john.doe@example.org"
               th:href="${'mailto:' + personBasedata.email}"
-              class="tw-text-sm print:no-link"
+              class="icon-link tw-text-sm print:no-link"
             >
-              <span class="tw-flex tw-items-center">
-                <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4')"></svg>
-                &nbsp;<th:block th:text="${personBasedata.email}">john.doe@example.org</th:block>
-              </span>
+              <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4')"></svg>
+              &nbsp;<th:block th:text="${personBasedata.email}">john.doe@example.org</th:block>
             </a>
           </div>
         </div>
