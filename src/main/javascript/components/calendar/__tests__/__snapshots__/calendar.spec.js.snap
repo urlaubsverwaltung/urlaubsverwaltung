@@ -46,26 +46,75 @@ exports[`calendar renders 1`] = `
           </caption>
           <thead>
             <tr>
-              <th>
-                Mo
+              <th
+                aria-label="Monday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Mo
+                </span>
               </th>
-              <th>
-                Tu
+              <th
+                aria-label="Tuesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Tu
+                </span>
               </th>
-              <th>
-                We
+              <th
+                aria-label="Wednesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  We
+                </span>
               </th>
-              <th>
-                Th
+              <th
+                aria-label="Thursday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Th
+                </span>
               </th>
-              <th>
-                Fr
+              <th
+                aria-label="Friday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Fr
+                </span>
               </th>
-              <th>
-                Sa
+              <th
+                aria-label="Saturday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Sa
+                </span>
               </th>
-              <th>
-                Su
+              <th
+                aria-label="Sunday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Su
+                </span>
               </th>
             </tr>
           </thead>
@@ -759,26 +808,75 @@ exports[`calendar renders 1`] = `
           </caption>
           <thead>
             <tr>
-              <th>
-                Mo
+              <th
+                aria-label="Monday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Mo
+                </span>
               </th>
-              <th>
-                Tu
+              <th
+                aria-label="Tuesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Tu
+                </span>
               </th>
-              <th>
-                We
+              <th
+                aria-label="Wednesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  We
+                </span>
               </th>
-              <th>
-                Th
+              <th
+                aria-label="Thursday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Th
+                </span>
               </th>
-              <th>
-                Fr
+              <th
+                aria-label="Friday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Fr
+                </span>
               </th>
-              <th>
-                Sa
+              <th
+                aria-label="Saturday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Sa
+                </span>
               </th>
-              <th>
-                Su
+              <th
+                aria-label="Sunday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Su
+                </span>
               </th>
             </tr>
           </thead>
@@ -1454,26 +1552,75 @@ exports[`calendar renders 1`] = `
           </caption>
           <thead>
             <tr>
-              <th>
-                Mo
+              <th
+                aria-label="Monday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Mo
+                </span>
               </th>
-              <th>
-                Tu
+              <th
+                aria-label="Tuesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Tu
+                </span>
               </th>
-              <th>
-                We
+              <th
+                aria-label="Wednesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  We
+                </span>
               </th>
-              <th>
-                Th
+              <th
+                aria-label="Thursday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Th
+                </span>
               </th>
-              <th>
-                Fr
+              <th
+                aria-label="Friday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Fr
+                </span>
               </th>
-              <th>
-                Sa
+              <th
+                aria-label="Saturday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Sa
+                </span>
               </th>
-              <th>
-                Su
+              <th
+                aria-label="Sunday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Su
+                </span>
               </th>
             </tr>
           </thead>
@@ -2190,26 +2337,75 @@ exports[`calendar renders 1`] = `
           </caption>
           <thead>
             <tr>
-              <th>
-                Mo
+              <th
+                aria-label="Monday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Mo
+                </span>
               </th>
-              <th>
-                Tu
+              <th
+                aria-label="Tuesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Tu
+                </span>
               </th>
-              <th>
-                We
+              <th
+                aria-label="Wednesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  We
+                </span>
               </th>
-              <th>
-                Th
+              <th
+                aria-label="Thursday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Th
+                </span>
               </th>
-              <th>
-                Fr
+              <th
+                aria-label="Friday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Fr
+                </span>
               </th>
-              <th>
-                Sa
+              <th
+                aria-label="Saturday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Sa
+                </span>
               </th>
-              <th>
-                Su
+              <th
+                aria-label="Sunday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Su
+                </span>
               </th>
             </tr>
           </thead>
@@ -2885,26 +3081,75 @@ exports[`calendar renders 1`] = `
           </caption>
           <thead>
             <tr>
-              <th>
-                Mo
+              <th
+                aria-label="Monday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Mo
+                </span>
               </th>
-              <th>
-                Tu
+              <th
+                aria-label="Tuesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Tu
+                </span>
               </th>
-              <th>
-                We
+              <th
+                aria-label="Wednesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  We
+                </span>
               </th>
-              <th>
-                Th
+              <th
+                aria-label="Thursday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Th
+                </span>
               </th>
-              <th>
-                Fr
+              <th
+                aria-label="Friday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Fr
+                </span>
               </th>
-              <th>
-                Sa
+              <th
+                aria-label="Saturday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Sa
+                </span>
               </th>
-              <th>
-                Su
+              <th
+                aria-label="Sunday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Su
+                </span>
               </th>
             </tr>
           </thead>
@@ -3598,26 +3843,75 @@ exports[`calendar renders 1`] = `
           </caption>
           <thead>
             <tr>
-              <th>
-                Mo
+              <th
+                aria-label="Monday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Mo
+                </span>
               </th>
-              <th>
-                Tu
+              <th
+                aria-label="Tuesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Tu
+                </span>
               </th>
-              <th>
-                We
+              <th
+                aria-label="Wednesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  We
+                </span>
               </th>
-              <th>
-                Th
+              <th
+                aria-label="Thursday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Th
+                </span>
               </th>
-              <th>
-                Fr
+              <th
+                aria-label="Friday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Fr
+                </span>
               </th>
-              <th>
-                Sa
+              <th
+                aria-label="Saturday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Sa
+                </span>
               </th>
-              <th>
-                Su
+              <th
+                aria-label="Sunday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Su
+                </span>
               </th>
             </tr>
           </thead>
@@ -4311,26 +4605,75 @@ exports[`calendar renders 1`] = `
           </caption>
           <thead>
             <tr>
-              <th>
-                Mo
+              <th
+                aria-label="Monday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Mo
+                </span>
               </th>
-              <th>
-                Tu
+              <th
+                aria-label="Tuesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Tu
+                </span>
               </th>
-              <th>
-                We
+              <th
+                aria-label="Wednesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  We
+                </span>
               </th>
-              <th>
-                Th
+              <th
+                aria-label="Thursday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Th
+                </span>
               </th>
-              <th>
-                Fr
+              <th
+                aria-label="Friday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Fr
+                </span>
               </th>
-              <th>
-                Sa
+              <th
+                aria-label="Saturday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Sa
+                </span>
               </th>
-              <th>
-                Su
+              <th
+                aria-label="Sunday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Su
+                </span>
               </th>
             </tr>
           </thead>
@@ -4970,26 +5313,75 @@ exports[`calendar renders 1`] = `
           </caption>
           <thead>
             <tr>
-              <th>
-                Mo
+              <th
+                aria-label="Monday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Mo
+                </span>
               </th>
-              <th>
-                Tu
+              <th
+                aria-label="Tuesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Tu
+                </span>
               </th>
-              <th>
-                We
+              <th
+                aria-label="Wednesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  We
+                </span>
               </th>
-              <th>
-                Th
+              <th
+                aria-label="Thursday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Th
+                </span>
               </th>
-              <th>
-                Fr
+              <th
+                aria-label="Friday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Fr
+                </span>
               </th>
-              <th>
-                Sa
+              <th
+                aria-label="Saturday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Sa
+                </span>
               </th>
-              <th>
-                Su
+              <th
+                aria-label="Sunday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Su
+                </span>
               </th>
             </tr>
           </thead>
@@ -5683,26 +6075,75 @@ exports[`calendar renders 1`] = `
           </caption>
           <thead>
             <tr>
-              <th>
-                Mo
+              <th
+                aria-label="Monday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Mo
+                </span>
               </th>
-              <th>
-                Tu
+              <th
+                aria-label="Tuesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Tu
+                </span>
               </th>
-              <th>
-                We
+              <th
+                aria-label="Wednesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  We
+                </span>
               </th>
-              <th>
-                Th
+              <th
+                aria-label="Thursday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Th
+                </span>
               </th>
-              <th>
-                Fr
+              <th
+                aria-label="Friday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Fr
+                </span>
               </th>
-              <th>
-                Sa
+              <th
+                aria-label="Saturday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Sa
+                </span>
               </th>
-              <th>
-                Su
+              <th
+                aria-label="Sunday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Su
+                </span>
               </th>
             </tr>
           </thead>
@@ -6401,26 +6842,75 @@ exports[`calendar renders 1`] = `
           </caption>
           <thead>
             <tr>
-              <th>
-                Mo
+              <th
+                aria-label="Monday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Mo
+                </span>
               </th>
-              <th>
-                Tu
+              <th
+                aria-label="Tuesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Tu
+                </span>
               </th>
-              <th>
-                We
+              <th
+                aria-label="Wednesday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  We
+                </span>
               </th>
-              <th>
-                Th
+              <th
+                aria-label="Thursday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Th
+                </span>
               </th>
-              <th>
-                Fr
+              <th
+                aria-label="Friday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Fr
+                </span>
               </th>
-              <th>
-                Sa
+              <th
+                aria-label="Saturday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Sa
+                </span>
               </th>
-              <th>
-                Su
+              <th
+                aria-label="Sunday"
+                scope="row"
+              >
+                <span
+                  aria-hidden="true"
+                >
+                  Su
+                </span>
               </th>
             </tr>
           </thead>

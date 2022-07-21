@@ -487,8 +487,10 @@ $(function () {
       month:
         '<div class="datepicker-month {{css}}" data-datepicker-month="{{month}}" data-datepicker-year="{{year}}"><table class="datepicker-table"><caption>{{caption}}</caption><thead>{{weekdays}}</thead><tbody>{{weeks}}</tbody></table></div>',
 
-      // <tr><th>{{0}}</th>......<th>{{6}}</th></tr>
-      weekdays: "<tr><th>{{" + [0, 1, 2, 3, 4, 5, 6].join("}}</th><th>{{") + "}}</th></tr>",
+      // <tr>{{0}}......{{6}}</tr>
+      weekdays: `<tr>{{${[0, 1, 2, 3, 4, 5, 6].join("}}{{")}}}</tr>`,
+
+      weekday: '<th scope="row" aria-label="{{ariaLabel}}"><span aria-hidden="true">{{text}}</span></th>',
 
       // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
       week: "<tr><td>{{" + [0, 1, 2, 3, 4, 5, 6].join("}}</td><td>{{") + "}}</td></tr>",
@@ -573,16 +575,24 @@ $(function () {
     }
 
     function renderWeekdaysHeader(date) {
-      const d = startOfWeek(date);
+      const startOfWeekDate = startOfWeek(date);
+
+      const renderWeekday = (day) =>
+        render(TMPL.weekday, {
+          // abbreviation (e.g. Mo)
+          text: format(day, "EEEEEE"),
+          // long word (e.g. Monday)
+          ariaLabel: format(day, "EEEE"),
+        });
 
       return render(TMPL.weekdays, {
-        0: format(d, "EEEEEE"),
-        1: format(addDays(d, 1), "EEEEEE"),
-        2: format(addDays(d, 2), "EEEEEE"),
-        3: format(addDays(d, 3), "EEEEEE"),
-        4: format(addDays(d, 4), "EEEEEE"),
-        5: format(addDays(d, 5), "EEEEEE"),
-        6: format(addDays(d, 6), "EEEEEE"),
+        0: renderWeekday(startOfWeekDate),
+        1: renderWeekday(addDays(startOfWeekDate, 1)),
+        2: renderWeekday(addDays(startOfWeekDate, 2)),
+        3: renderWeekday(addDays(startOfWeekDate, 3)),
+        4: renderWeekday(addDays(startOfWeekDate, 4)),
+        5: renderWeekday(addDays(startOfWeekDate, 5)),
+        6: renderWeekday(addDays(startOfWeekDate, 6)),
       });
     }
 
