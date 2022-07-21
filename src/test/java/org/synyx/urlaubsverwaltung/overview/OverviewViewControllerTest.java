@@ -28,6 +28,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
@@ -43,8 +44,8 @@ import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -276,7 +277,7 @@ class OverviewViewControllerTest {
     }
 
     @Test
-    void showOverviewDoesNotAddApplicationsToModelIfThereAreNoApplications() throws Exception {
+    void ensureModelWhenThereAreNoApplications() throws Exception {
         final Person person = new Person();
         person.setId(1);
         person.setPermissions(List.of(DEPARTMENT_HEAD));
@@ -287,7 +288,12 @@ class OverviewViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), any())).thenReturn(Collections.emptyList());
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-            .andExpect(model().attribute("applications", nullValue()));
+            .andExpect(model().attribute("applications", equalTo(List.of())))
+            .andExpect(model().attribute("usedDaysOverview",
+                hasProperty("holidayDays",
+                    hasProperty("sum", equalTo(ZERO))
+                )
+            ));
     }
 
     @Test

@@ -162,17 +162,22 @@ public class OverviewViewController {
         final List<Application> applications =
             applicationService.getApplicationsForACertainPeriodAndPerson(Year.of(year).atDay(1), getLastDayOfYear(year), person);
 
-        if (!applications.isEmpty()) {
-            final List<ApplicationForLeave> applicationsForLeave = applications.stream()
+        final List<ApplicationForLeave> applicationsForLeave;
+        final UsedDaysOverview usedDaysOverview;
+
+        if (applications.isEmpty()) {
+            applicationsForLeave = List.of();
+            usedDaysOverview = new UsedDaysOverview(List.of(), year, workDaysCountService);
+        } else {
+            applicationsForLeave = applications.stream()
                 .map(application -> new ApplicationForLeave(application, workDaysCountService))
                 .sorted(Comparator.comparing(ApplicationForLeave::getStartDate).reversed())
                 .collect(toList());
-            model.addAttribute("applications", applicationsForLeave);
-
-            final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, year, workDaysCountService);
-            model.addAttribute("usedDaysOverview", usedDaysOverview);
+            usedDaysOverview = new UsedDaysOverview(applications, year, workDaysCountService);
         }
 
+        model.addAttribute("applications", applicationsForLeave);
+        model.addAttribute("usedDaysOverview", usedDaysOverview);
         model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, year));
         model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
     }
