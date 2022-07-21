@@ -30,6 +30,7 @@
                             <a href="${URL_PREFIX}/overtime/new?person=${person.id}" class="icon-link tw-px-1"
                                data-title="<spring:message code="action.overtime.new"/>">
                                 <icon:plus-circle className="tw-w-5 tw-h-5"/>
+                                <span class="tw-sr-only"><spring:message code='action.overtime.new'/></span>
                             </a>
                         </c:if>
                     </jsp:attribute>

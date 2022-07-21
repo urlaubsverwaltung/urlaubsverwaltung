@@ -33,6 +33,7 @@
     <a href="#" class="icon-link tw-px-1 hover:tw-text-emerald-500" data-title="${ALLOW_DATA_TITLE}"
        onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#allow').show();">
         <icon:check className="tw-w-5 tw-h-5" solid="true" />
+        <span class="tw-sr-only"><c:out value="${ALLOW_DATA_TITLE}" /></span>
     </a>
 </c:if>
 
@@ -41,6 +42,7 @@
     <a href="#" class="icon-link tw-px-1 hover:tw-text-red-500" data-title="<spring:message code='action.reject'/>"
        onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#reject').show();">
         <icon:ban className="tw-w-5 tw-h-5" solid="true" />
+        <span class="tw-sr-only"><spring:message code='action.reject'/></span>
     </a>
 </c:if>
 
@@ -53,6 +55,7 @@
         data-test-id="application-edit-button"
     >
         <icon:pencil className="tw-w-5 tw-h-5" />
+        <span class="tw-sr-only"><spring:message code='action.edit'/></span>
     </a>
 </c:if>
 
@@ -75,6 +78,7 @@
     <a href="#" class="icon-link tw-px-1 hover:tw-text-red-500" data-title="${CANCEL_TITLE}"
        onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#decline-cancellation-request').hide(); $('#cancel').show();">
         <icon:trash className="tw-w-5 tw-h-5" />
+        <span class="tw-sr-only"><c:out value="${CANCEL_TITLE}" /></span>
     </a>
 </c:if>
 
@@ -83,6 +87,7 @@
     <a href="#" class="icon-link tw-px-1 hover:tw-text-red-500" data-title="<spring:message code='action.cancellationRequest'/>"
        onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').show();">
         <icon:ban className="tw-w-5 tw-h-5" />
+        <span class="tw-sr-only"><spring:message code='action.cancellationRequest'/></span>
     </a>
 </c:if>
 
@@ -91,6 +96,7 @@
     <c:if test="${IS_OWN && !CAN_MANAGE}">
         <a href="#" class="icon-link tw-px-1" data-title="<spring:message code='action.remind'/>" onclick="$('form#remind').submit();">
             <icon:speakerphone className="tw-w-5 tw-h-5" />
+            <span class="tw-sr-only"><spring:message code='action.remind'/></span>
         </a>
     </c:if>
 </c:if>
@@ -102,6 +108,7 @@
         <a href="#" class="icon-link tw-px-1" data-title="<spring:message code='action.refer'/>"
            onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#refer').show();">
             <icon:share className="tw-w-5 tw-h-5" />
+            <span class="tw-sr-only"><spring:message code='action.refer'/></span>
         </a>
     </c:if>
 </c:if>

@@ -40,16 +40,19 @@
                             <c:if test="${canEditSickNote}">
                             <a href="${URL_PREFIX}/sicknote/${sickNote.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
+                                <span class="tw-sr-only"><spring:message code='action.edit'/></span>
                             </a>
                             </c:if>
                             <c:if test="${canConvertSickNote}">
                             <a href="${URL_PREFIX}/sicknote/${sickNote.id}/convert" class="icon-link tw-px-1" data-title="<spring:message code="action.convert"/>">
                                 <icon:refresh className="tw-w-5 tw-h-5" />
+                                <span class="tw-sr-only"><spring:message code='action.convert'/></span>
                             </a>
                             </c:if>
                             <c:if test="${canDeleteSickNote}">
                             <a href="#modal-cancel" role="button" data-toggle="modal" class="icon-link tw-px-1" data-title="<spring:message code="action.delete"/>">
                                 <icon:trash className="tw-w-5 tw-h-5" />
+                                <span class="tw-sr-only"><spring:message code='action.delete'/></span>
                             </a>
                             </c:if>
                             <uv:print/>
@@ -191,6 +194,7 @@
                         <c:if test="${canCommentSickNote}">
                             <a href="#" class="icon-link tw-px-1" onclick="$('div#comment-form').show();" data-title="<spring:message code="action.comment.new" />">
                                 <icon:annotation className="tw-w-5 tw-h-5" />
+                                <span class="tw-sr-only"><spring:message code='action.comment.new'/></span>
                             </a>
                         </c:if>
                     </jsp:attribute>

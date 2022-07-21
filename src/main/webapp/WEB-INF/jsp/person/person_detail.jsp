@@ -43,6 +43,7 @@
                         <c:if test="${canEditBasedata}">
                             <a href="${URL_PREFIX}/person/${person.id}/basedata" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
+                                <span class="tw-sr-only"><spring:message code='action.edit'/></span>
                             </a>
                         </c:if>
                     </jsp:attribute>
@@ -78,6 +79,7 @@
                         <c:if test="${canEditPermissions}">
                             <a href="${URL_PREFIX}/person/${person.id}/permissions" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
+                                <span class="tw-sr-only"><spring:message code='action.edit'/></span>
                             </a>
                         </c:if>
                     </jsp:attribute>
@@ -166,6 +168,7 @@
                         <c:if test="${canEditAccounts}">
                             <a href="${URL_PREFIX}/person/${person.id}/account?year=${year}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
+                                <span class="tw-sr-only"><spring:message code='action.edit'/></span>
                             </a>
                         </c:if>
                     </jsp:attribute>
@@ -184,6 +187,7 @@
                         <c:if test="${canEditWorkingtime}">
                             <a href="${URL_PREFIX}/person/${person.id}/workingtime" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
+                                <span class="tw-sr-only"><spring:message code='action.edit'/></span>
                             </a>
                         </c:if>
                     </jsp:attribute>
@@ -312,6 +316,7 @@
                         <c:if test="${canEditWorkingtime}">
                             <a href="${URL_PREFIX}/person/${person.id}/workingtime" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
+                                <span class="tw-sr-only"><spring:message code='action.edit'/></span>
                             </a>
                         </c:if>
                     </jsp:attribute>

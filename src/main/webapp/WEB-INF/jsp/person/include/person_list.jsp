@@ -143,7 +143,7 @@
                             data-title="<spring:message code="action.account.title" arguments="${person.niceName}"/>"
                         >
                             <icon:user-circle className="tw-w-5 tw-h-5 tw-mr-1"/>
-                            <spring:message code="action.account"/>
+                            <spring:message code="action.account.title" arguments="${person.niceName}" />
                         </a>
                     </div>
                 </td>

@@ -49,12 +49,15 @@
             <jsp:attribute name="actions">
                 <a href="${URL_PREFIX}/sicknote/new" class="icon-link tw-px-1" data-title="<spring:message code="action.apply.sicknote"/>">
                     <icon:plus-circle className="tw-w-5 tw-h-5" />
+                    <span class="tw-sr-only"><spring:message code='action.apply.sicknote'/></span>
                 </a>
                 <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
                     <icon:calendar className="tw-w-5 tw-h-5" />
+                    <span class="tw-sr-only"><spring:message code='action.applications.absences_overview'/></span>
                 </a>
                 <a href="${URL_PREFIX}/sicknote/statistics" class="icon-link tw-px-1" data-title="<spring:message code="action.sicknotes.statistics"/>">
                     <icon:presentation-chart-bar className="tw-w-5 tw-h-5" />
+                    <span class="tw-sr-only"><spring:message code='action.sicknotes.statistics'/></span>
                 </a>
                 <uv:print/>
             </jsp:attribute>
