@@ -495,7 +495,7 @@ $(function () {
       // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
       week: "<tr><td>{{" + [0, 1, 2, 3, 4, 5, 6].join("}}</td><td>{{") + "}}</td></tr>",
 
-      day: '<div class="datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span>{{day}}</span>{{icon}}</div>',
+      day: '<div class="datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span class="tw-sr-only print:tw-hidden">{{ariaDay}}</span><span aria-hidden="true">{{day}}</span>{{icon}}</div>',
 
       iconPlaceholder: '<span class="tw-w-3 tw-h-3 tw-inline-block"></span>',
 
@@ -707,6 +707,7 @@ $(function () {
       return render(TMPL.day, {
         date: format(date, "yyyy-MM-dd"),
         day: format(date, "dd"),
+        ariaDay: format(date, "dd. MMMM"),
         css: classes(),
         style: style(),
         selectable: isSelectable(),
