@@ -192,10 +192,10 @@
                 <uv:section-heading>
                     <jsp:attribute name="actions">
                         <c:if test="${canCommentSickNote}">
-                            <a href="#" class="icon-link tw-px-1" onclick="$('div#comment-form').show();" data-title="<spring:message code="action.comment.new" />">
+                            <button class="icon-link tw-bg-transparent tw-px-1 tw-py-0" onclick="$('div#comment-form').show();" data-title="<spring:message code="action.comment.new" />">
                                 <icon:annotation className="tw-w-5 tw-h-5" />
                                 <span class="tw-sr-only"><spring:message code='action.comment.new'/></span>
-                            </a>
+                            </button>
                         </c:if>
                     </jsp:attribute>
                     <jsp:body>

@@ -57,17 +57,15 @@
                     </c:choose>
                 </c:set>
                 <div class="dropdown tw-inline-block">
-                    <a
+                    <button
                         id="active-state"
-                        href="#"
                         data-toggle="dropdown"
                         aria-haspopup="true"
-                        role="button"
                         aria-expanded="false"
-                        class="tw-text-current tw-m-0"
+                        class="tw-bg-transparent tw-text-current tw-m-0 tw-p-0"
                     >
                         ${visiblePersonsDropdownText}<span class="tw-ml-0.5 dropdown-caret tw-opacity-70"></span>
-                    </a>
+                    </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
                         <li>
                             <a href="${URL_PREFIX}/person?active=true&year=${year}" class="tw-flex tw-items-center">
