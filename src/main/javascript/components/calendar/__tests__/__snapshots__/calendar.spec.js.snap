@@ -38,12 +38,12 @@ exports[`calendar renders 1`] = `
         data-datepicker-month="7"
         data-datepicker-year="2017"
       >
-        <h3>
-          August 2017
-        </h3>
         <table
           class="datepicker-table"
         >
+          <caption>
+            August 2017
+          </caption>
           <thead>
             <tr>
               <th>
@@ -751,12 +751,12 @@ exports[`calendar renders 1`] = `
         data-datepicker-month="8"
         data-datepicker-year="2017"
       >
-        <h3>
-          September 2017
-        </h3>
         <table
           class="datepicker-table"
         >
+          <caption>
+            September 2017
+          </caption>
           <thead>
             <tr>
               <th>
@@ -1446,12 +1446,12 @@ exports[`calendar renders 1`] = `
         data-datepicker-month="9"
         data-datepicker-year="2017"
       >
-        <h3>
-          October 2017
-        </h3>
         <table
           class="datepicker-table"
         >
+          <caption>
+            October 2017
+          </caption>
           <thead>
             <tr>
               <th>
@@ -2182,12 +2182,12 @@ exports[`calendar renders 1`] = `
         data-datepicker-month="10"
         data-datepicker-year="2017"
       >
-        <h3>
-          November 2017
-        </h3>
         <table
           class="datepicker-table"
         >
+          <caption>
+            November 2017
+          </caption>
           <thead>
             <tr>
               <th>
@@ -2877,12 +2877,12 @@ exports[`calendar renders 1`] = `
         data-datepicker-month="11"
         data-datepicker-year="2017"
       >
-        <h3>
-          December 2017
-        </h3>
         <table
           class="datepicker-table"
         >
+          <caption>
+            December 2017
+          </caption>
           <thead>
             <tr>
               <th>
@@ -3590,12 +3590,12 @@ exports[`calendar renders 1`] = `
         data-datepicker-month="0"
         data-datepicker-year="2018"
       >
-        <h3>
-          January 2018
-        </h3>
         <table
           class="datepicker-table"
         >
+          <caption>
+            January 2018
+          </caption>
           <thead>
             <tr>
               <th>
@@ -4303,12 +4303,12 @@ exports[`calendar renders 1`] = `
         data-datepicker-month="1"
         data-datepicker-year="2018"
       >
-        <h3>
-          February 2018
-        </h3>
         <table
           class="datepicker-table"
         >
+          <caption>
+            February 2018
+          </caption>
           <thead>
             <tr>
               <th>
@@ -4962,12 +4962,12 @@ exports[`calendar renders 1`] = `
         data-datepicker-month="2"
         data-datepicker-year="2018"
       >
-        <h3>
-          March 2018
-        </h3>
         <table
           class="datepicker-table"
         >
+          <caption>
+            March 2018
+          </caption>
           <thead>
             <tr>
               <th>
@@ -5675,12 +5675,12 @@ exports[`calendar renders 1`] = `
         data-datepicker-month="3"
         data-datepicker-year="2018"
       >
-        <h3>
-          April 2018
-        </h3>
         <table
           class="datepicker-table"
         >
+          <caption>
+            April 2018
+          </caption>
           <thead>
             <tr>
               <th>
@@ -6393,12 +6393,12 @@ exports[`calendar renders 1`] = `
         data-datepicker-month="4"
         data-datepicker-year="2018"
       >
-        <h3>
-          May 2018
-        </h3>
         <table
           class="datepicker-table"
         >
+          <caption>
+            May 2018
+          </caption>
           <thead>
             <tr>
               <th>

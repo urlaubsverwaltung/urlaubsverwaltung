@@ -87,7 +87,7 @@
   left: calc(6 * var(--width));
 }
 
-.datepicker-month h3 {
+.datepicker-table caption {
   margin: 0;
   margin-bottom: 0.5rem;
   color: theme("textColor.calendar.DEFAULT");

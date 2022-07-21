@@ -485,9 +485,7 @@ $(function () {
       button: '<button class="{{css}}">{{text}}</button>',
 
       month:
-        '<div class="datepicker-month {{css}}" data-datepicker-month="{{month}}" data-datepicker-year="{{year}}">{{title}}<table class="datepicker-table"><thead>{{weekdays}}</thead><tbody>{{weeks}}</tbody></table></div>',
-
-      title: "<h3>{{title}}</h3>",
+        '<div class="datepicker-month {{css}}" data-datepicker-month="{{month}}" data-datepicker-year="{{year}}"><table class="datepicker-table"><caption>{{caption}}</caption><thead>{{weekdays}}</thead><tbody>{{weeks}}</tbody></table></div>',
 
       // <tr><th>{{0}}</th>......<th>{{6}}</th></tr>
       weekdays: "<tr><th>{{" + [0, 1, 2, 3, 4, 5, 6].join("}}</th><th>{{") + "}}</th></tr>",
@@ -557,9 +555,9 @@ $(function () {
 
       return render(TMPL.month, {
         css: cssClasses || "",
+        caption: format(d, "MMMM yyyy"),
         month: getMonth(d),
         year: getYear(d),
-        title: renderMonthTitle(d),
         weekdays: renderWeekdaysHeader(d),
 
         weeks: function () {
@@ -571,12 +569,6 @@ $(function () {
           }
           return html;
         },
-      });
-    }
-
-    function renderMonthTitle(date) {
-      return render(TMPL.title, {
-        title: format(date, "MMMM yyyy"),
       });
     }
 
