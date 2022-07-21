@@ -43,7 +43,8 @@
           <div>
             <div class="tw-mb-1">
               <a
-                href="${URL_PREFIX}/person/${personBasedata.personId}/overview"
+                href="#"
+                th:href="@{/web/person/{personId}/overview (personId=${personBasedata.personId})}"
                 class="tw-text-lg print:no-link"
                 th:text="${personBasedata.niceName}"
               >
