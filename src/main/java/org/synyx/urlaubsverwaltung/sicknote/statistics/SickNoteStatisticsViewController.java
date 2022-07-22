@@ -8,8 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -23,7 +21,6 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static liquibase.util.csv.CSVReader.DEFAULT_QUOTE_CHARACTER;
@@ -40,16 +37,16 @@ class SickNoteStatisticsViewController {
 
     protected static final byte[] UTF8_BOM = new byte[]{(byte) 239, (byte) 187, (byte) 191};
     public static final char SEPARATOR = ';';
-    private final SickNoteStatisticsService statisticsService;
-    private final SickNoteStatisticsCsvExportService sickNoteStatisticsCsvExportService;
+    private final SickNoteDetailedStatisticsService statisticsService;
+    private final SickNoteDetailedStatisticsCsvExportService sickNoteDetailedStatisticsCsvExportService;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
     @Autowired
-    SickNoteStatisticsViewController(SickNoteStatisticsService statisticsService,
-                                     SickNoteStatisticsCsvExportService sickNoteStatisticsCsvExportService, DateFormatAware dateFormatAware, Clock clock) {
+    SickNoteStatisticsViewController(SickNoteDetailedStatisticsService statisticsService,
+                                     SickNoteDetailedStatisticsCsvExportService sickNoteDetailedStatisticsCsvExportService, DateFormatAware dateFormatAware, Clock clock) {
         this.statisticsService = statisticsService;
-        this.sickNoteStatisticsCsvExportService = sickNoteStatisticsCsvExportService;
+        this.sickNoteDetailedStatisticsCsvExportService = sickNoteDetailedStatisticsCsvExportService;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
     }
@@ -74,19 +71,19 @@ class SickNoteStatisticsViewController {
 
         final FilterPeriod period = toFilterPeriod(from, to);
 
-        final String fileName = sickNoteStatisticsCsvExportService.getFileName(period);
+        final String fileName = sickNoteDetailedStatisticsCsvExportService.getFileName(period);
         response.setContentType("text/csv");
         response.setCharacterEncoding(UTF_8.name());
         response.setHeader("Content-disposition", "attachment;filename=" + fileName);
 
-        final Map<Person, List<SickNote>> allSicknotes = statisticsService.getAllSicknotes(period);
+        List<SickNoteDetailedStatistics> allDetailedSicknotes = statisticsService.getAllSicknotes(period);
 
         try (final OutputStream os = response.getOutputStream()) {
             os.write(UTF8_BOM);
 
             try (final PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, UTF_8))) {
                 try (final CSVWriter csvWriter = new CSVWriter(printWriter, SEPARATOR, NO_QUOTE_CHARACTER, DEFAULT_QUOTE_CHARACTER)) {
-                    sickNoteStatisticsCsvExportService.writeStatistics(period, allSicknotes, csvWriter);
+                    sickNoteDetailedStatisticsCsvExportService.writeStatistics(period, allDetailedSicknotes, csvWriter);
                 }
                 printWriter.flush();
             }

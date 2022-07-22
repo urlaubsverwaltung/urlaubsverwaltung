@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.sicknote.statistics;
 import liquibase.util.csv.CSVWriter;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -13,13 +12,12 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 @Component
-public class SickNoteStatisticsCsvExportService {
+public class SickNoteDetailedStatisticsCsvExportService {
 
     private static final Locale LOCALE = Locale.GERMAN;
     private static final String DATE_FORMAT = "ddMMyyyy";
@@ -27,8 +25,8 @@ public class SickNoteStatisticsCsvExportService {
     private final MessageSource messageSource;
     private final DateFormatAware dateFormatAware;
 
-    public SickNoteStatisticsCsvExportService(MessageSource messageSource,
-                                              DateFormatAware dateFormatAware) {
+    public SickNoteDetailedStatisticsCsvExportService(MessageSource messageSource,
+                                                      DateFormatAware dateFormatAware) {
         this.messageSource = messageSource;
         this.dateFormatAware = dateFormatAware;
     }
@@ -38,7 +36,7 @@ public class SickNoteStatisticsCsvExportService {
             period.getEndDate().format(ofPattern(DATE_FORMAT)));
     }
 
-    void writeStatistics(FilterPeriod period, Map<Person, List<SickNote>> sickNotesByPerson, CSVWriter csvWriter) {
+    void writeStatistics(FilterPeriod period, List<SickNoteDetailedStatistics> allDetailedSicknotes, CSVWriter csvWriter) {
         final String[] csvHeader = {
             getTranslation("person.account.basedata.personnelNumber"),
             getTranslation("person.data.firstName"),
@@ -63,15 +61,15 @@ public class SickNoteStatisticsCsvExportService {
         csvWriter.writeNext(new String[]{headerNote});
         csvWriter.writeNext(csvHeader);
 
-        sickNotesByPerson.forEach((person, sickNotes) -> {
+        allDetailedSicknotes.forEach(detailedSickNote -> {
 
             final String[] personCsvRow = new String[csvHeader.length];
-            personCsvRow[0] = ""; // todo: discuss if needed
-            personCsvRow[1] = person.getFirstName();
-            personCsvRow[2] = person.getLastName();
+            personCsvRow[0] = detailedSickNote.getPersonalNumber();
+            personCsvRow[1] = detailedSickNote.getFirstName();
+            personCsvRow[2] = detailedSickNote.getLastName();
             csvWriter.writeNext(personCsvRow);
 
-            sickNotes.forEach(sickNote -> {
+            detailedSickNote.getSickNotes().forEach(sickNote -> {
                 final String[] sickNoteCsvRow = new String[csvHeader.length];
                 sickNoteCsvRow[3] = dateFormatAware.format(sickNote.getStartDate());
                 sickNoteCsvRow[4] = dateFormatAware.format(sickNote.getEndDate());

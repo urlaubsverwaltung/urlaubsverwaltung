@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface PersonBasedataService {
@@ -19,4 +21,6 @@ public interface PersonBasedataService {
      * @param personBasedata to update
      */
     void update(PersonBasedata personBasedata);
+
+    Map<Integer, PersonBasedata> getBasedataByPersonIds(List<Integer> personIds);
 }

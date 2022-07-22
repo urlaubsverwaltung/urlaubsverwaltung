@@ -28,13 +28,13 @@ class SickNoteStatisticsViewControllerTest {
     private SickNoteStatisticsViewController sut;
 
     @Mock
-    private SickNoteStatisticsService statisticsService;
+    private SickNoteDetailedStatisticsService statisticsService;
     @Mock
     private SickNoteService sickNoteService;
     @Mock
     private WorkDaysCountService workDaysCountService;
     @Mock
-    private SickNoteStatisticsCsvExportService sickNoteStatisticsCsvExportService;
+    private SickNoteDetailedStatisticsCsvExportService sickNoteDetailedStatisticsCsvExportService;
     @Mock
     private DateFormatAware dateFormatAware;
 
@@ -42,7 +42,7 @@ class SickNoteStatisticsViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteStatisticsViewController(statisticsService, sickNoteStatisticsCsvExportService, dateFormatAware, clock);
+        sut = new SickNoteStatisticsViewController(statisticsService, sickNoteDetailedStatisticsCsvExportService, dateFormatAware, clock);
     }
 
     @Test
