@@ -42,7 +42,21 @@ public interface ApplicationService {
     List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person);
 
     /**
-     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given status and vacation category
+     * Returns all {@link Application}s with vacation time starting in between startDate x and endDate y for the given
+     * status and filters by the person, status and vacation category
+     *
+     * @param startDate {@link LocalDate}
+     * @param endDate {@link LocalDate}
+     * @param person {@link Person}
+     * @param statuses {@link ApplicationStatus} that should be filtered for
+     * @param vacationCategory {@link VacationCategory} that should be filtered for
+     * @return filters {@link Application}s by status of the given person with vacation category between startDate x and endDate y
+     */
+    List<Application> getApplicationsStartingInACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory);
+
+    /**
+     * Returns all {@link Application}s where their start or end date is overlapping with the given period between startDate and endDate
+     * and filters by the person, status and vacation category
      *
      * @param startDate {@link LocalDate}
      * @param endDate {@link LocalDate}
@@ -53,14 +67,7 @@ public interface ApplicationService {
      */
     List<Application> getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory);
 
-    /**
-     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given state.
-     *
-     * @param startDate {@link LocalDate}
-     * @param endDate   {@link LocalDate}
-     * @param status    {@link ApplicationStatus}
-     * @return all {@link Application}s with the given state and vacation time between startDate x and endDate y
-     */
+
     List<Application> getApplicationsForACertainPeriodAndState(LocalDate startDate, LocalDate endDate, ApplicationStatus status);
 
     /**
