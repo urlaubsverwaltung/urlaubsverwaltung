@@ -521,15 +521,11 @@ $(function () {
       return render(TMPL.container, {
         previousButton: renderButton(
           CSS.previous,
-          `<span>${icons.chevronLeft}<span class="tw-sr-only">${i18n(
-            "overview.calendar.button.previous.label",
-          )}</span></span>`,
+          `${icons.chevronLeft}<span class="sm:tw-sr-only">${i18n("overview.calendar.button.previous.label")}</span>`,
         ),
         nextButton: renderButton(
           CSS.next,
-          `<span>${icons.chevronRight}<span class="tw-sr-only">${i18n(
-            "overview.calendar.button.next.label",
-          )}</span></span>`,
+          `${icons.chevronRight}<span class="sm:tw-sr-only">${i18n("overview.calendar.button.next.label")}</span>`,
         ),
 
         months: function () {
