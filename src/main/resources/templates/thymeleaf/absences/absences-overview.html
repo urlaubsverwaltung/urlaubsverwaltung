@@ -195,10 +195,12 @@
                   scope="row"
                   class="tw-p-0.5 print:tw-hidden tw-sticky tw--left-px tw-bg-gradient-to-r tw-from-white dark:tw-from-zinc-900 dark:tw-via-zinc-900 tw-z-40 tw-border-l-0 tw-z-10"
                 >
-                  <img
-                    th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=32'},username=${person.firstName + ' ' + person.lastName},width='32',height='32')"
-                    alt=""
-                  />
+                  <div class="print:tw-hidden">
+                    <img
+                      th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=32'},username=${person.firstName + ' ' + person.lastName},width='32',height='32')"
+                      alt=""
+                    />
+                  </div>
                 </th>
                 <th scope="row" class="tw-py-0.5 tw-pl-2 tw-pr-4 print:tw-py-1.5">
                   <div class="tw-flex tw-flex-col tw-justify-center tw-leading-tight">

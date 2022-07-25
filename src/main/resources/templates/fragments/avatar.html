@@ -11,7 +11,7 @@
       th:src="${url}"
       alt=""
       th:alt="#{gravatar.alt(${username})}"
-      class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
+      class="gravatar gravatar--medium tw-rounded-full"
       th:width="${width == null ? '32px' : width}"
       th:height="${height == null ? '32px' : height}"
       onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
