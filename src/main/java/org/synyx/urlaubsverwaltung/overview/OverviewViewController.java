@@ -32,7 +32,6 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -129,6 +128,7 @@ public class OverviewViewController {
 
         model.addAttribute("year", now.getYear());
         model.addAttribute("currentYear", now.getYear());
+        model.addAttribute("selectedYear", yearToShow);
         model.addAttribute("currentMonth", now.getMonthValue());
         model.addAttribute("signedInUser", signedInUser);
         model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
@@ -139,7 +139,7 @@ public class OverviewViewController {
         model.addAttribute("canAddApplicationForLeaveForAnotherUser", signedInUser.hasRole(OFFICE));
         model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE));
 
-        return "person/overview";
+        return "thymeleaf/person/person-overview";
     }
 
     private void prepareSickNoteList(Person person, int year, Model model) {
@@ -162,17 +162,22 @@ public class OverviewViewController {
         final List<Application> applications =
             applicationService.getApplicationsForACertainPeriodAndPerson(Year.of(year).atDay(1), getLastDayOfYear(year), person);
 
-        if (!applications.isEmpty()) {
-            final List<ApplicationForLeave> applicationsForLeave = applications.stream()
+        final List<ApplicationForLeave> applicationsForLeave;
+        final UsedDaysOverview usedDaysOverview;
+
+        if (applications.isEmpty()) {
+            applicationsForLeave = List.of();
+            usedDaysOverview = new UsedDaysOverview(List.of(), year, workDaysCountService);
+        } else {
+            applicationsForLeave = applications.stream()
                 .map(application -> new ApplicationForLeave(application, workDaysCountService))
                 .sorted(Comparator.comparing(ApplicationForLeave::getStartDate).reversed())
                 .collect(toList());
-            model.addAttribute("applications", applicationsForLeave);
-
-            final UsedDaysOverview usedDaysOverview = new UsedDaysOverview(applications, year, workDaysCountService);
-            model.addAttribute("usedDaysOverview", usedDaysOverview);
+            usedDaysOverview = new UsedDaysOverview(applications, year, workDaysCountService);
         }
 
+        model.addAttribute("applications", applicationsForLeave);
+        model.addAttribute("usedDaysOverview", usedDaysOverview);
         model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, year));
         model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
     }

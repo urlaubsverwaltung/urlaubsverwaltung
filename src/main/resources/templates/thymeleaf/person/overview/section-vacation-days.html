@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="section">
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::overview-heading-body}, ~{::overview-heading-actions})"
+      >
+        <th:block th:ref="overview-heading-body">
+          <h1 th:text="#{overview.title}">Übersicht für</h1>
+          <div
+            th:replace="fragments/year-selector::year-selector(id='year-selection', year=${selectedYear}, hrefPrefix=|/web/person/${person.id}/overview?year=|)"
+          ></div>
+        </th:block>
+        <th:block th:ref="overview-heading-actions">
+          <a
+            class="icon-link tw-px-1"
+            href="#"
+            th:href="@{/web/person/{personId} (personId=${person.id}, year=${selectedYear})}"
+            th:data-title="#{action.account.title(${person.niceName})}"
+          >
+            <svg th:replace="icon/user-circle::svg(className='tw-h-5 tw-w-5')" />
+          </a>
+          <a href="" th:replace="fragments/print::button"></a>
+        </th:block>
+      </div>
+
+      <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
+        <div class="tw-w-full lg:tw-w-1/3">
+          <div class="box tw-flex tw-items-start tw-items-center tw-p-0 tw-border-none">
+            <div class="tw-mr-6 tw-p-1">
+              <img
+                th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL},username=${person.niceName},width='60px',height='60px')"
+              />
+            </div>
+            <div class="box-text tw-flex-1 tw-flex tw-flex-col">
+              <div class="tw-text-lg tw-mb-1" th:text="${person.niceName}">Marlene Muster</div>
+              <a href="#" th:href="|mailto:${person.email}|" class="icon-link tw-inline-block tw-text-sm print:no-link">
+                <span class="tw-flex tw-items-center">
+                  <svg th:replace="icon/mail::svg" />&nbsp;<span th:text="${person.email}"></span>
+                </span>
+              </a>
+              <ul class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1">
+                <li
+                  class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent"
+                  th:each="department : ${departmentsOfPerson}"
+                  th:text="${department.name}"
+                >
+                  Geschäftsführung
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+          <div class="box tw-flex tw-items-start tw-p-0 tw-border-none">
+            <div class="tw-mr-6 tw-p-1">
+              <div
+                class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16 tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900"
+              >
+                <svg th:replace="icon/calendar::svg(className='tw-w-8 tw-h-8')"></svg>
+              </div>
+            </div>
+            <div class="box-text tw-flex-1 tw-flex tw-flex-col">
+              <th:block th:if="${account != null}">
+                <span
+                  class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                  th:text="#{person.account.vacation.entitlement.1}"
+                >
+                  Anspruch auf
+                </span>
+                <span
+                  class="tw-my-1 tw-text-lg tw-font-medium"
+                  th:text="#{person.account.vacation.entitlement.2(${account.actualVacationDays + account.remainingVacationDays})}"
+                >
+                  32,5 Urlaubstage
+                </span>
+                <span
+                  class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                  th:text="#{person.account.vacation.entitlement.remaining(${account.remainingVacationDays})}"
+                >
+                  davon 5 Tage Resturlaub
+                </span>
+              </th:block>
+              <th:block th:if="${account == null}">
+                <span class="tw-text-sm" th:text="#{person.account.vacation.noInformation}"></span>
+              </th:block>
+            </div>
+          </div>
+        </div>
+        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+          <div th:if="${account != null}" class="box tw-flex tw-items-start tw-p-0 tw-border-none">
+            <div class="tw-mr-6 tw-p-1">
+              <div
+                class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16 tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900"
+              >
+                <svg th:replace="icon/presentation-chart-bar::svg(className='tw-w-8 tw-h-8')"></svg>
+              </div>
+            </div>
+            <div class="box-text tw-flex-1 tw-flex tw-flex-col">
+              <th:block
+                th:if="${account != null}"
+                th:with="remainingVacationDays=${isBeforeExpiryDate ? vacationDaysLeft.remainingVacationDays : vacationDaysLeft.remainingVacationDaysNotExpiring}"
+              >
+                <span
+                  class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                  th:text="#{person.account.vacation.left.1}"
+                >
+                  Es verbleiben
+                </span>
+                <span
+                  class="tw-my-1 tw-text-lg tw-font-medium"
+                  th:text="#{person.account.vacation.left.2(${vacationDaysLeft.vacationDays + remainingVacationDays})}"
+                >
+                  14 Urlaubstage
+                </span>
+                <span
+                  class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                  th:text="#{person.account.vacation.left.remaining(${remainingVacationDays})}"
+                >
+                  davon 0 Tage Resturlaub
+                </span>
+                <span
+                  th:if="${not isBeforeExpiryDate && expiredRemainingVacationDays > 0}"
+                  th:text="#{person.account.vacation.left.remainingExpired(${expiredRemainingVacationDays})}"
+                  class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                ></span>
+                <span
+                  th:if="${vacationDaysLeft.vacationDaysUsedNextYear.unscaledValue() != 0}"
+                  th:text="#{person.account.vacation.left.alreadyUsedNextYear(${vacationDaysLeft.vacationDaysUsedNextYear})}"
+                  class="tw-text-sm tw-text-black tw-text-opacity-75"
+                >
+                </span>
+              </th:block>
+              <th:block th:if="${account == null}">
+                <span class="tw-text-sm" th:text="#{person.account.vacation.noInformation}"></span>
+              </th:block>
+            </div>
+          </div>
+        </div>
+      </div>
+    </th:block>
+  </body>
+</html>

@@ -130,11 +130,13 @@
           <tbody>
             <tr th:each="statistic : ${statistics}">
               <td class="tw-text-center">
-                <img
-                  th:replace="fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=mm&s=60'},username=${statistic.firstName},width='60px',height='60px')"
-                  alt=""
-                  src=""
-                />
+                <div class="print:tw-hidden">
+                  <img
+                    th:replace="fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=mm&s=60'},username=${statistic.firstName},width='60px',height='60px')"
+                    alt=""
+                    src=""
+                  />
+                </div>
               </td>
               <td
                 th:if="${showPersonnelNumberColumn}"

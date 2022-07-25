@@ -2,13 +2,13 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
-    <title>date-range</title>
+    <title>date</title>
   </head>
   <body>
     <th:block
-      th:fragment="date-range(from, to)"
+      th:fragment="date(date)"
       th:with="pattern=${pattern == null ? #messages.msg('pattern.date') : pattern}"
-      th:text="#{date.range(${#temporals.format(from, pattern)}, ${#temporals.format(to, pattern)})}"
+      th:text="${#temporals.format(date, pattern)}"
     >
     </th:block>
   </body>

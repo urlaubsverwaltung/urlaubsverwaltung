@@ -110,10 +110,12 @@
             style="top: 3.25rem"
           >
             <div class="tw-flex tw-space-x-5 lg:tw-space-x-6">
-              <img
-                th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=mm&s=104'},username=${signedInUser.niceName},width='52px',height='52px')"
-                alt=""
-              />
+              <span class="print:tw-hidden">
+                <img
+                  th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=mm&s=104'},username=${signedInUser.niceName},width='52px',height='52px')"
+                  alt=""
+                />
+              </span>
               <span class="tw-flex-1 tw-flex tw-flex-wrap md:tw-flex-col">
                 <span class="tw-text-lg tw-break-words tw-w-full">
                   <th:block th:text="${signedInUser.niceName}"></th:block>&nbsp;
@@ -217,10 +219,12 @@
             style="top: 3.25rem"
           >
             <div class="tw-flex tw-space-x-5 md:tw-space-x-6">
-              <img
-                th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=mm&s=104'},username=${signedInUser.niceName},width='52px',height='52px')"
-                alt=""
-              />
+              <span class="print:tw-hidden">
+                <img
+                  th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=mm&s=104'},username=${signedInUser.niceName},width='52px',height='52px')"
+                  alt=""
+                />
+              </span>
               <span class="tw-flex tw-flex-wrap md:tw-flex-col">
                 <span class="tw-text-lg"> <th:block th:text="${signedInUser.niceName}"></th:block>&nbsp; </span>
                 <span class="tw-text-lg lg:tw-text-sm" th:text="#{application.applier.represents}"></span>
@@ -295,7 +299,7 @@
             class="tw-relative md:tw-flex md:tw-items-top lg:tw-items-center md:tw-space-x-12 lg:tw-p-2 dark:tw-rounded"
           >
             <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
-              <span class="tw-absolute tw-left-0 tw-top-0 md:tw-static">
+              <span class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden">
                 <img
                   th:replace="fragments/avatar::avatar-bordered(url=${otherRequestForLeave.person.avatarUrl + '?d=mm&s=104'},username=${otherRequestForLeave.person.name},width='52px',height='52px')"
                   alt=""
@@ -413,7 +417,7 @@
               class="tw-relative md:tw-flex md:tw-items-top lg:tw-items-center md:tw-space-x-12 lg:tw-p-2 dark:tw-rounded"
             >
               <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
-                <span class="tw-absolute tw-left-0 tw-top-0 md:tw-static">
+                <span class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden">
                   <img
                     th:replace="fragments/avatar::avatar-bordered(url=${cancellationRequest.person.avatarUrl + '?d=mm&s=104'},username=${cancellationRequest.person.name},width='52px',height='52px')"
                     alt=""

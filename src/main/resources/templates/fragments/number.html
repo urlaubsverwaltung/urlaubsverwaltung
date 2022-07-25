@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>number</title>
+  </head>
+  <body>
+    <th:block
+      th:fragment="number(number)"
+      th:text="${number % 1 == 0 ? #numbers.formatDecimal(number, 1, 0) : #numbers.formatDecimal(number, 1, 1)}"
+    >
+    </th:block>
+  </body>
+</html>

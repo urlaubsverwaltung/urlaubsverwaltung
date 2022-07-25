@@ -78,7 +78,6 @@
               </div>
 
               <div class="col-md-8 col-md-pull-4">
-
                 <div class="form-group is-required">
                   <label
                     th:text="|#{person.form.annualVacation.period.start}:|"
@@ -126,9 +125,7 @@
                 </div>
 
                 <fieldset class="tw-mt-8">
-                  <legend th:text="#{person.form.annualVacation.annualVacation.group.legend}">
-                    Urlaubsanspruch
-                  </legend>
+                  <legend th:text="#{person.form.annualVacation.annualVacation.group.legend}">Urlaubsanspruch</legend>
                   <div class="form-group is-required">
                     <label
                       th:text="|#{person.form.annualVacation.annualVacation}|"
@@ -172,16 +169,15 @@
                   </div>
                 </fieldset>
 
-                <fieldset class="tw-mt-8 ">
-                  <legend th:text="#{person.form.annualVacation.remainingVacation}">
-                    Resturlaub
-                  </legend>
+                <fieldset class="tw-mt-8">
+                  <legend th:text="#{person.form.annualVacation.remainingVacation}">Resturlaub</legend>
                   <div class="form-group is-required">
                     <label
                       class="control-label col-md-3 tw-leading-snug"
                       th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|"
                       for="expiryDate"
-                    >Resturlaubstage:</label>
+                      >Resturlaubstage:</label
+                    >
 
                     <div class="col-md-9">
                       <input
