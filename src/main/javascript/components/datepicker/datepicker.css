@@ -112,7 +112,11 @@ duet-date-picker.error {
 }
 
 .duet-date__day.datepicker-day-today {
-  box-shadow: inset 0 0 0 3px rgba(95, 95, 95, 0.3);
+  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
+  @apply tw-shadow-cyan-600;
+}
+.tw-dark .duet-date__day.datepicker-day-today {
+  @apply tw-shadow-sky-400;
 }
 
 /* override styling for selected or currently focused day */

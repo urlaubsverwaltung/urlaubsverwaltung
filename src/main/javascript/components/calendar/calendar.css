@@ -246,17 +246,36 @@ td.datepicker-day {
   cursor: pointer;
 }
 
-.datepicker-day-today,
-.datepicker-day:not(.datepicker-day-past):hover {
-  box-shadow: inset 0 0 0 3px rgba(95, 95, 95, 0.3);
+.datepicker-day {
+  --uv-cal-selection-box-width: 1px;
 }
 
-.datepicker-day-today:hover,
+.datepicker-day-today {
+  /* define selection-box-width after `.datepicker-day` to override value */
+  --uv-cal-selection-box-width: 2px;
+  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
+  @apply tw-shadow-cyan-700;
+}
+
+.tw-dark .datepicker-day-today {
+  @apply tw-shadow-sky-400;
+}
+
+.datepicker-day:not(.datepicker-day-today):not(.datepicker-day-past):not(.datepicker-day-weekend):not(.datepicker-day-public-holiday-full):hover,
 .datepicker-day-today.datepicker-day-selected,
 .datepicker-day-selected,
 .datepicker-day-selected[class*="-morning"],
 .datepicker-day-selected[class*="-noon"] {
-  box-shadow: inset 0 0 0 3px rgba(95, 95, 95, 0.6) !important;
+  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
+  @apply tw-shadow-cyan-600;
+}
+
+.tw-dark .datepicker-day:not(.datepicker-day-today):not(.datepicker-day-past):not(.datepicker-day-weekend):not(.datepicker-day-public-holiday-full):hover,
+.tw-dark .datepicker-day-today.datepicker-day-selected,
+.tw-dark .datepicker-day-selected,
+.tw-dark .datepicker-day-selected[class*="-morning"],
+.tw-dark .datepicker-day-selected[class*="-noon"] {
+  @apply tw-shadow-sky-400;
 }
 
 .datepicker-day-sick-note-morning {
@@ -275,20 +294,44 @@ td.datepicker-day {
   /* important is required since `.datepicker-day-public-holiday-noon.datepicker-day-past` is a more specific selector which wins otherwise */
   --font-color: theme("textColor.calendar.weekend") !important;
 }
+.datepicker-day-weekend:not(.datepicker-day-past):hover,
+.datepicker-day-weekend.datepicker-day-today,
+.datepicker-day-weekend.datepicker-day-selected {
+  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
+  @apply tw-shadow-cyan-600;
+  --background-color-left: rgba(var(--uv-cal-weekend-bg), 0.85);
+  --background-color-right: rgba(var(--uv-cal-weekend-bg), 0.85);
+}
+.tw-dark .datepicker-day-weekend:not(.datepicker-day-past):hover,
+.tw-dark .datepicker-day-weekend.datepicker-day-today,
+.tw-dark .datepicker-day-weekend.datepicker-day-selected {
+  @apply tw-shadow-sky-400/80;
+}
 
 /* public holidays must be the last calendar day treatment */
 /* to override all other absences */
 /* note: except for weekend which follows beneath */
 .datepicker-day-public-holiday-morning {
-  --background-color-left: theme("backgroundColor.calendar.public-holiday");
+  --background-color-left: rgb(var(--uv-cal-public-holiday-bg));
 }
 .datepicker-day-public-holiday-noon {
-  --background-color-right: theme("backgroundColor.calendar.public-holiday");
+  --background-color-right: rgb(var(--uv-cal-public-holiday-bg));
 }
 .datepicker-day-public-holiday-full {
-  --background-color-left: theme("backgroundColor.calendar.public-holiday");
-  --background-color-right: theme("backgroundColor.calendar.public-holiday");
+  --background-color-left: rgb(var(--uv-cal-public-holiday-bg));
+  --background-color-right: rgb(var(--uv-cal-public-holiday-bg));
   --font-color: theme("textColor.calendar.public-holiday");
+}
+.datepicker-day-public-holiday-full:not(.datepicker-day-past):hover,
+.datepicker-day-public-holiday-full.datepicker-day-selected {
+  box-shadow: inset 0 0 0 var(--uv-cal-selection-box-width) var(--tw-shadow-color);
+  @apply tw-shadow-cyan-600;
+  --background-color-left: rgba(var(--uv-cal-public-holiday-bg), 0.85);
+  --background-color-right: rgba(var(--uv-cal-public-holiday-bg), 0.85);
+}
+.tw-dark .datepicker-day-public-holiday-full:not(.datepicker-day-past):hover,
+.tw-dark .datepicker-day-public-holiday-full.datepicker-day-selected {
+  @apply tw-shadow-sky-400/80;
 }
 
 /**************************************************************************
