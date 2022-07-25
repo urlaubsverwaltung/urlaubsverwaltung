@@ -1,13 +1,20 @@
 package org.synyx.urlaubsverwaltung.department.web;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 import java.util.Objects;
+
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
 
 public class DepartmentOverviewDto {
 
     private Integer id;
     private String name;
     private String description;
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate lastModification;
     private boolean twoStageApproval;
     private int activeMembersCount;

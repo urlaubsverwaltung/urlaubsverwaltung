@@ -85,7 +85,7 @@ class DepartmentViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         perform(get("/web/department"))
-            .andExpect(view().name("department/department_list"))
+            .andExpect(view().name("thymeleaf/department/department_list"))
             .andExpect(model().attribute("canCreateAndModifyDepartment", false));
     }
 

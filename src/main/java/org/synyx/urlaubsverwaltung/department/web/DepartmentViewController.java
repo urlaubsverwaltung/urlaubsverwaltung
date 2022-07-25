@@ -66,7 +66,7 @@ public class DepartmentViewController {
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("canCreateAndModifyDepartment", signedInUser.hasRole(OFFICE));
 
-        return "department/department_list";
+        return "thymeleaf/department/department_list";
     }
 
     @PreAuthorize(IS_OFFICE)
