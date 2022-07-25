@@ -243,7 +243,7 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-calendar</artifactId>
-      <version>v3-rev20220520-1.32.1</version>
+      <version>v3-rev20220715-1.32.1</version>
     </dependency>
 
     <!-- Security -->
