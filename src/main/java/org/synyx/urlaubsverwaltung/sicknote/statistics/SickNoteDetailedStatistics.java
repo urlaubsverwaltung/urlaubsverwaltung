@@ -11,12 +11,14 @@ public class SickNoteDetailedStatistics {
     private final String firstName;
     private final String lastName;
     private final List<SickNote> sickNotes;
+    private final List<String> departments;
 
-    public SickNoteDetailedStatistics(String personalNumber, String firstName, String lastName, List<SickNote> sickNotes) {
+    public SickNoteDetailedStatistics(String personalNumber, String firstName, String lastName, List<SickNote> sickNotes, List<String> departments) {
         this.personalNumber = personalNumber;
         this.firstName = firstName;
         this.lastName = lastName;
         this.sickNotes = sickNotes;
+        this.departments = departments;
     }
 
     public String getPersonalNumber() {
@@ -33,5 +35,9 @@ public class SickNoteDetailedStatistics {
 
     public List<SickNote> getSickNotes() {
         return sickNotes;
+    }
+
+    public List<String> getDepartments() {
+        return departments;
     }
 }

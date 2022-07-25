@@ -16,4 +16,5 @@ interface DepartmentRepository extends JpaRepository<DepartmentEntity, Integer> 
     List<DepartmentEntity> findBySecondStageAuthorities(Person person);
 
     List<DepartmentEntity> findByMembersPerson(Person person);
+    List<DepartmentEntity> findDistinctByMembersPersonIn(List<Person> person);
 }

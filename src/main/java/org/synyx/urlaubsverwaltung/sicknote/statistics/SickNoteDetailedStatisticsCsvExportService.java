@@ -41,6 +41,7 @@ public class SickNoteDetailedStatisticsCsvExportService {
             getTranslation("person.account.basedata.personnelNumber"),
             getTranslation("person.data.firstName"),
             getTranslation("person.data.lastName"),
+            getTranslation("sicknote.statistics.departments"),
             getTranslation("sicknote.statistics.from"),
             getTranslation("sicknote.statistics.to"),
             getTranslation("sicknote.statistics.type"),
@@ -67,14 +68,15 @@ public class SickNoteDetailedStatisticsCsvExportService {
             personCsvRow[0] = detailedSickNote.getPersonalNumber();
             personCsvRow[1] = detailedSickNote.getFirstName();
             personCsvRow[2] = detailedSickNote.getLastName();
+            personCsvRow[3] = String.join(", ", detailedSickNote.getDepartments());
             csvWriter.writeNext(personCsvRow);
 
             detailedSickNote.getSickNotes().forEach(sickNote -> {
                 final String[] sickNoteCsvRow = new String[csvHeader.length];
-                sickNoteCsvRow[3] = dateFormatAware.format(sickNote.getStartDate());
-                sickNoteCsvRow[4] = dateFormatAware.format(sickNote.getEndDate());
-                sickNoteCsvRow[5] = getTranslation(sickNote.getSickNoteType().getMessageKey());
-                sickNoteCsvRow[6] = setAub(sickNote);
+                sickNoteCsvRow[4] = dateFormatAware.format(sickNote.getStartDate());
+                sickNoteCsvRow[5] = dateFormatAware.format(sickNote.getEndDate());
+                sickNoteCsvRow[6] = getTranslation(sickNote.getSickNoteType().getMessageKey());
+                sickNoteCsvRow[7] = setAub(sickNote);
                 csvWriter.writeNext(sickNoteCsvRow);
             });
         });
