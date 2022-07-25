@@ -11,7 +11,7 @@
         <th:block th:ref="overview-heading-body">
           <h1 th:text="#{overview.title}">Übersicht für</h1>
           <div
-            th:replace="fragments/year-selector::year-selector(id='year-selection', year=${year}, hrefPrefix=|/web/person/${person.id}/overview?year=|)"
+            th:replace="fragments/year-selector::year-selector(id='year-selection', year=${selectedYear}, hrefPrefix=|/web/person/${person.id}/overview?year=|)"
           ></div>
         </th:block>
         <th:block th:ref="overview-heading-actions">
