@@ -12,12 +12,17 @@
     <th:block th:fragment="scripts">
       <script th:inline="javascript">
         /*<![CDATA[*/
-        window.uv = {};
+        window.uv = window.uv || {};
         window.uv.personId = /*[[${person.id}]]*/ "personId";
         window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
         window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
         // 0=sunday, 1=monday
         window.uv.weekStartsOn = 1;
+
+        window.uv.i18n = window.uv.i18n || {};
+        window.uv.i18n["overview.calendar.button.previous.label"] =
+          /*[[#{overview.calendar.button.previous.label}]]*/ "";
+        window.uv.i18n["overview.calendar.button.next.label"] = /*[[#{overview.calendar.button.next.label}]]*/ "";
         /*]]>*/
       </script>
       <script th:replace="fragments/vacation-type-colors-script :: vacation-type-colors-script"></script>

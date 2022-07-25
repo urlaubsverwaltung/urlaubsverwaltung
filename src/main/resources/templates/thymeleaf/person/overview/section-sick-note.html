@@ -20,6 +20,7 @@
             th:data-title="#{action.apply.sicknote}"
           >
             <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
+            <span class="tw-sr-only" th:text="#{action.apply.sicknote}"></span>
           </a>
         </th:block>
       </div>
@@ -121,28 +122,32 @@
             <td class="tw-py-6">
               <a
                 th:href="@{/web/sicknote/{sickNote} (sickNote=${sickNote.id})}"
-                class="tw-block tw-mb-1 tw-text-lg print:no-link"
-                th:text="${#messages.msg(sickNote.sickNoteType.messageKey)}"
-              ></a>
-              <div class="tw-flex tw-flex-col lg:tw-flex-row">
-                <th:block th:if="${sickNote.startDate == sickNote.endDate}">
-                  <th:block th:text="|${#messages.msg(sickNote.weekDayOfStartDate + '.short')}|"></th:block>,
-                  <th:block th:replace="fragments/date::date(${sickNote.startDate})"></th:block>,&nbsp;
-                  <th:block th:text="${#messages.msg(sickNote.dayLength)}"></th:block>
-                </th:block>
-                <th:block th:if="${sickNote.startDate != sickNote.endDate}">
-                  <span
-                    th:replace="fragments/date-range::date-range(from=${sickNote.startDate}, to=${sickNote.endDate}, pattern='E, dd.MM.yyyy')"
-                  ></span>
-                </th:block>
-                <span th:if="${sickNote.aubPresent == true}" class="tw-flex tw-items-center">
-                  <span class="tw-hidden lg:tw-inline">&nbsp;</span>
-                  (<span class="tw-text-emerald-500 tw-flex tw-items-center"
-                    ><svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4')"></svg
-                  ></span>
-                  &nbsp;<th:block th:text="#{sicknote.data.aub.short}"></th:block>)
+                class="print:no-link hover:tw-no-underline tw-group"
+              >
+                <span
+                  class="tw-block tw-mb-1 tw-text-lg group-hover:tw-underline group-focus:tw-underline"
+                  th:text="${#messages.msg(sickNote.sickNoteType.messageKey)}"
+                ></span>
+                <span class="tw-flex tw-flex-col lg:tw-flex-row tw-text-[#444444] dark:tw-text-zinc-200">
+                  <th:block th:if="${sickNote.startDate == sickNote.endDate}">
+                    <th:block th:text="|${#messages.msg(sickNote.weekDayOfStartDate + '.short')}|"></th:block>,
+                    <th:block th:replace="fragments/date::date(${sickNote.startDate})"></th:block>,&nbsp;
+                    <th:block th:text="${#messages.msg(sickNote.dayLength)}"></th:block>
+                  </th:block>
+                  <th:block th:if="${sickNote.startDate != sickNote.endDate}">
+                    <span
+                      th:replace="fragments/date-range::date-range(from=${sickNote.startDate}, to=${sickNote.endDate}, pattern='E, dd.MM.yyyy')"
+                    ></span>
+                  </th:block>
+                  <span th:if="${sickNote.aubPresent == true}" class="tw-flex tw-items-center">
+                    <span class="tw-hidden lg:tw-inline">&nbsp;</span>
+                    (<span class="tw-text-emerald-500 tw-flex tw-items-center"
+                      ><svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4')"></svg
+                    ></span>
+                    &nbsp;<th:block th:text="#{sicknote.data.aub.short}"></th:block>)
+                  </span>
                 </span>
-              </div>
+              </a>
             </td>
             <td class="is-centered">
               <span th:replace="fragments/number::number(${sickNote.workDays})"></span>

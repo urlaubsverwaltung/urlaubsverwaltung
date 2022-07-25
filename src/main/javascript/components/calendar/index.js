@@ -106,8 +106,8 @@ $(function () {
   };
 
   const icons = {
-    chevronRight: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw-w-6 tw-h-6"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>`,
-    chevronLeft: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw-w-6 tw-h-6"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>`,
+    chevronRight: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw-w-6 tw-h-6" role="img" aria-hidden="true"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>`,
+    chevronLeft: `<svg viewBox="0 0 20 20" fill="currentColor" class="tw-w-6 tw-h-6" role="img" aria-hidden="true"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>`,
   };
 
   function getDateFromElement(element) {
@@ -477,6 +477,7 @@ $(function () {
 
   const View = (function () {
     let assert;
+    let i18n = () => "";
 
     const TMPL = {
       container: '{{previousButton}}<div class="datepicker-months-container">{{months}}</div>{{nextButton}}',
@@ -484,17 +485,17 @@ $(function () {
       button: '<button class="{{css}}">{{text}}</button>',
 
       month:
-        '<div class="datepicker-month {{css}}" data-datepicker-month="{{month}}" data-datepicker-year="{{year}}">{{title}}<table class="datepicker-table"><thead>{{weekdays}}</thead><tbody>{{weeks}}</tbody></table></div>',
+        '<div class="datepicker-month {{css}}" data-datepicker-month="{{month}}" data-datepicker-year="{{year}}"><table class="datepicker-table"><caption>{{caption}}</caption><thead>{{weekdays}}</thead><tbody>{{weeks}}</tbody></table></div>',
 
-      title: "<h3>{{title}}</h3>",
+      // <tr>{{0}}......{{6}}</tr>
+      weekdays: `<tr>{{${[0, 1, 2, 3, 4, 5, 6].join("}}{{")}}}</tr>`,
 
-      // <tr><th>{{0}}</th>......<th>{{6}}</th></tr>
-      weekdays: "<tr><th>{{" + [0, 1, 2, 3, 4, 5, 6].join("}}</th><th>{{") + "}}</th></tr>",
+      weekday: '<th scope="row" aria-label="{{ariaLabel}}"><span aria-hidden="true">{{text}}</span></th>',
 
       // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
       week: "<tr><td>{{" + [0, 1, 2, 3, 4, 5, 6].join("}}</td><td>{{") + "}}</td></tr>",
 
-      day: '<div class="datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span>{{day}}</span>{{icon}}</div>',
+      day: '<div class="datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span class="tw-sr-only print:tw-hidden">{{ariaDay}}</span><span aria-hidden="true">{{day}}</span>{{icon}}</div>',
 
       iconPlaceholder: '<span class="tw-w-3 tw-h-3 tw-inline-block"></span>',
 
@@ -518,8 +519,18 @@ $(function () {
       let monthsToShow = numberOfMonths;
 
       return render(TMPL.container, {
-        previousButton: renderButton(CSS.previous, `<span>${icons.chevronLeft}</span>`),
-        nextButton: renderButton(CSS.next, `<span>${icons.chevronRight}</span>`),
+        previousButton: renderButton(
+          CSS.previous,
+          `<span>${icons.chevronLeft}<span class="tw-sr-only">${i18n(
+            "overview.calendar.button.previous.label",
+          )}</span></span>`,
+        ),
+        nextButton: renderButton(
+          CSS.next,
+          `<span>${icons.chevronRight}<span class="tw-sr-only">${i18n(
+            "overview.calendar.button.next.label",
+          )}</span></span>`,
+        ),
 
         months: function () {
           let html = "";
@@ -546,9 +557,9 @@ $(function () {
 
       return render(TMPL.month, {
         css: cssClasses || "",
+        caption: format(d, "MMMM yyyy"),
         month: getMonth(d),
         year: getYear(d),
-        title: renderMonthTitle(d),
         weekdays: renderWeekdaysHeader(d),
 
         weeks: function () {
@@ -563,23 +574,25 @@ $(function () {
       });
     }
 
-    function renderMonthTitle(date) {
-      return render(TMPL.title, {
-        title: format(date, "MMMM yyyy"),
-      });
-    }
-
     function renderWeekdaysHeader(date) {
-      const d = startOfWeek(date);
+      const startOfWeekDate = startOfWeek(date);
+
+      const renderWeekday = (day) =>
+        render(TMPL.weekday, {
+          // abbreviation (e.g. Mo)
+          text: format(day, "EEEEEE"),
+          // long word (e.g. Monday)
+          ariaLabel: format(day, "EEEE"),
+        });
 
       return render(TMPL.weekdays, {
-        0: format(d, "EEEEEE"),
-        1: format(addDays(d, 1), "EEEEEE"),
-        2: format(addDays(d, 2), "EEEEEE"),
-        3: format(addDays(d, 3), "EEEEEE"),
-        4: format(addDays(d, 4), "EEEEEE"),
-        5: format(addDays(d, 5), "EEEEEE"),
-        6: format(addDays(d, 6), "EEEEEE"),
+        0: renderWeekday(startOfWeekDate),
+        1: renderWeekday(addDays(startOfWeekDate, 1)),
+        2: renderWeekday(addDays(startOfWeekDate, 2)),
+        3: renderWeekday(addDays(startOfWeekDate, 3)),
+        4: renderWeekday(addDays(startOfWeekDate, 4)),
+        5: renderWeekday(addDays(startOfWeekDate, 5)),
+        6: renderWeekday(addDays(startOfWeekDate, 6)),
       });
     }
 
@@ -694,6 +707,7 @@ $(function () {
       return render(TMPL.day, {
         date: format(date, "yyyy-MM-dd"),
         day: format(date, "dd"),
+        ariaDay: format(date, "dd. MMMM"),
         css: classes(),
         style: style(),
         selectable: isSelectable(),
@@ -744,8 +758,9 @@ $(function () {
     };
 
     return {
-      create: function (_assert) {
+      create: function (_assert, _i18n) {
         assert = _assert;
+        i18n = _i18n;
         return View;
       },
     };
@@ -942,11 +957,11 @@ $(function () {
     let date;
 
     return {
-      init: function (holidayService, referenceDate) {
+      init: function (holidayService, referenceDate, i18n) {
         date = referenceDate;
 
         const a = Assertion.create(holidayService);
-        view = View.create(a);
+        view = View.create(a, i18n);
         const c = Controller.create(holidayService, view);
 
         view.display(date);
