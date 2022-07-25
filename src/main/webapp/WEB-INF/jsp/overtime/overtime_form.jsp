@@ -69,6 +69,7 @@
                             <jsp:attribute name="actions">
                                 <a href="${URL_PREFIX}/overtime?person=${overtime.person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.list"/>">
                                     <icon:view-grid className="tw-w-5 tw-h-5" />
+                                    <span class="tw-sr-only"><spring:message code='action.overtime.list'/></span>
                                 </a>
                             </jsp:attribute>
                             <jsp:body>

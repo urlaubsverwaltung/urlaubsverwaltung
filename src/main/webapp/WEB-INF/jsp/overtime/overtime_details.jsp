@@ -36,10 +36,12 @@
                         <c:if test="${userIsAllowedToWriteOvertime}">
                             <a href="${URL_PREFIX}/overtime/${record.id}/edit" class="icon-link tw-px-1" data-title="<spring:message code="action.edit"/>">
                                 <icon:pencil className="tw-w-5 tw-h-5" />
+                                <span class="tw-sr-only"><spring:message code='action.edit'/></span>
                             </a>
                         </c:if>
                         <a href="${URL_PREFIX}/overtime?person=${record.person.id}" class="icon-link tw-px-1" aria-hidden="true" data-title="<spring:message code="action.overtime.list"/>">
                             <icon:view-grid className="tw-w-5 tw-h-5" />
+                            <span class="tw-sr-only"><spring:message code='action.overtime.list'/></span>
                         </a>
                     </jsp:attribute>
                     <jsp:body>

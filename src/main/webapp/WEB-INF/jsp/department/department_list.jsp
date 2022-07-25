@@ -30,10 +30,12 @@
                 <c:if test="${canCreateAndModifyDepartment}">
                 <a href="${URL_PREFIX}/department/new" class="icon-link tw-px-1" data-title="<spring:message code="action.department.create"/>">
                     <icon:plus-circle className="tw-w-5 tw-h-5" />
+                    <span class="tw-sr-only"><spring:message code='action.department.create'/></span>
                 </a>
                 </c:if>
                 <a href="${URL_PREFIX}/absences" class="icon-link tw-px-1" data-title="<spring:message code="action.applications.absences_overview"/>">
                     <icon:calendar className="tw-w-5 tw-h-5" />
+                    <span class="tw-sr-only"><spring:message code='action.applications.absences_overview'/></span>
                 </a>
                 <uv:print/>
             </jsp:attribute>
