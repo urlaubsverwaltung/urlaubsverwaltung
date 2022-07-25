@@ -183,7 +183,7 @@
                 <div>
                   <th:block th:if="${app.startDate == app.endDate}">
                     <th:block th:text="|${#messages.msg(app.weekDayOfStartDate + '.short')}|"></th:block>,
-                    <th:block th:replace="fragments/date::date(${app.startDate})"></th:block>
+                    <th:block th:replace="fragments/date::date(${app.startDate})"></th:block>,
                     <th:block
                       th:if="${app.startTime != null && app.endTime != null}"
                       th:with="APPLICATION_START_TIME=${#dates.format(app.startDateWithTime, #messages.msg('pattern.time'))}, APPLICATION_END_TIME=${#dates.format(app.endDateWithTime, #messages.msg('pattern.time'))}"
