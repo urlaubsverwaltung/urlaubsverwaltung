@@ -118,7 +118,7 @@ class DepartmentViewControllerTest {
     void getNewDepartmentFormUsesCorrectView() throws Exception {
 
         perform(get("/web/department/new"))
-            .andExpect(view().name("department/department_form"));
+            .andExpect(view().name("thymeleaf/department/department_form"));
     }
 
     @Test
@@ -132,7 +132,7 @@ class DepartmentViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/department"))
-            .andExpect(view().name("department/department_form"));
+            .andExpect(view().name("thymeleaf/department/department_form"));
 
         verify(departmentService, never()).create(any());
     }
@@ -200,7 +200,7 @@ class DepartmentViewControllerTest {
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(new Department()));
 
         perform(get("/web/department/" + SOME_DEPARTMENT_ID + "/edit"))
-            .andExpect(view().name("department/department_form"));
+            .andExpect(view().name("thymeleaf/department/department_form"));
     }
 
     @Test
@@ -225,7 +225,7 @@ class DepartmentViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID))
-            .andExpect(view().name("department/department_form"));
+            .andExpect(view().name("thymeleaf/department/department_form"));
 
         verify(departmentService, never()).update(any());
     }

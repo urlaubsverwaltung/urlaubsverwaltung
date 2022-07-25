@@ -38,7 +38,7 @@ public class DepartmentViewController {
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String REDIRECT_WEB_DEPARTMENT = "redirect:/web/department/";
     private static final String DEPARTMENT = "department";
-    private static final String DEPARTMENT_DEPARTMENT_FORM = "department/department_form";
+    private static final String DEPARTMENT_DEPARTMENT_FORM = "thymeleaf/department/department_form";
 
     private final DepartmentService departmentService;
     private final PersonService personService;
