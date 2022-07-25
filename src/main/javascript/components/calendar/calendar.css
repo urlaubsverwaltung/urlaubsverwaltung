@@ -15,6 +15,8 @@
 
 #datepicker {
   min-height: 19.688rem;
+  @apply tw-flex-wrap;
+  @apply sm:tw-flex-nowrap;
 }
 
 /* BUTTONS */
@@ -29,16 +31,35 @@
 }
 
 .datepicker-prev {
-  margin-right: 1.125rem;
+  order: 1;
+  flex-basis: 50%;
+  @apply tw-mb-4;
+  @apply sm:tw-mb-0;
+  @apply sm:tw-order-none;
+  @apply sm:tw-basis-auto;
+  @apply sm:tw-mr-5;
+  @apply tw-flex;
+  @apply tw-items-center;
 }
 
 .datepicker-next {
-  margin-left: 1.125rem;
+  order: 2;
+  flex-basis: 50%;
+  @apply tw-mb-4;
+  @apply sm:tw-mb-0;
+  @apply sm:tw-order-none;
+  @apply sm:tw-basis-auto;
+  @apply sm:tw-ml-5;
+  @apply tw-flex;
+  @apply tw-items-center;
+  @apply tw-flex-row-reverse;
 }
 
 /* MONTHS */
 
 .datepicker-months-container {
+  order: 0;
+  @apply sm:tw-order-none;
   position: relative;
   /* months outside this div should not be visible */
   overflow: hidden;
@@ -140,7 +161,11 @@
   --font-color: theme("textColor.calendar.DEFAULT");
   display: flex;
   align-items: center;
-  padding: 0.5rem 0.375rem 0.875rem 0.5rem;
+  @apply tw-px-0;
+  @apply tw-pt-2;
+  @apply tw-pb-3.5;
+  @apply sm:tw-pr-1.5;
+  @apply sm:tw-pl-2;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
   color: var(--font-color);
@@ -274,10 +299,6 @@ td.datepicker-day {
 
 /* Show only current month on small devices! */
 @media (max-width: 767px) {
-  .datepicker-day {
-    padding: 0.563rem;
-  }
-
   .datepicker-table {
     width: 100%;
   }
