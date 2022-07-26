@@ -52,7 +52,7 @@ class SickNoteStatisticsViewController {
     }
 
     @PreAuthorize(IS_OFFICE)
-    @GetMapping("/")
+    @GetMapping
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear, Model model) {
 
         final Clock clockOfRequestedYear = getClockOfRequestedYear(requestedYear);
