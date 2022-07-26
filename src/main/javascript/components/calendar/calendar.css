@@ -96,8 +96,8 @@
 
 @screen md {
   .datepicker-month {
-    --width: 46.3% !important; /* `important` to also override :nth-child(5) from above */
-    --gap: 2.5rem;
+    --width: 43% !important; /* `important` to also override :nth-child(5) from above */
+    --gap: 5rem;
     display: block;
   }
   .datepicker-month:nth-child(4) {
@@ -137,8 +137,8 @@
 
 @media (min-width: 992px) {
   .datepicker-month {
-    --width: 32.3% !important; /* `important` to also override :nth-child(5) from above */
-    --gap: 1rem;
+    --width: 30% !important; /* `important` to also override :nth-child(5) from above */
+    --gap: 3rem;
   }
   .datepicker-month:nth-child(4) {
     left: 0;
