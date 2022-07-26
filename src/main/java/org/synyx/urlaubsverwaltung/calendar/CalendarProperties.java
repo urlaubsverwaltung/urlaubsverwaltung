@@ -26,6 +26,8 @@ public class CalendarProperties {
     @NotEmpty
     private String organizer;
 
+    private String url;
+
     /**
      * Defines a refresh interval for iCal Feed.
      * This property specifies a suggested minimum interval for polling for changes of the calendar data from
@@ -51,6 +53,12 @@ public class CalendarProperties {
 
     public void setOrganizer(String organizer) {
         this.organizer = organizer;
+    }
+
+    public String getUrl() { return url; }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Duration getRefreshInterval() {

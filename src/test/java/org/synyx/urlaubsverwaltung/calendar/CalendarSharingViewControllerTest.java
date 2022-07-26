@@ -54,10 +54,12 @@ class CalendarSharingViewControllerTest {
     private DepartmentService departmentService;
     @Mock
     private CalendarAccessibleService calendarAccessibleService;
+    @Mock
+    private CalendarProperties calendarProperties;
 
     @BeforeEach
     void setUp() {
-        sut = new CalendarSharingViewController(personCalendarService, departmentCalendarService, companyCalendarService, personService, departmentService, calendarAccessibleService);
+        sut = new CalendarSharingViewController(personCalendarService, departmentCalendarService, companyCalendarService, personService, departmentService, calendarAccessibleService, calendarProperties);
     }
 
     @Test

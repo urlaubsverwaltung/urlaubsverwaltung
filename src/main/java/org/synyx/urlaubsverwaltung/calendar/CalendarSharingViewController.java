@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -40,17 +41,19 @@ public class CalendarSharingViewController {
     private final PersonService personService;
     private final DepartmentService departmentService;
     private final CalendarAccessibleService calendarAccessibleService;
+    private final CalendarProperties calendarProperties;
 
     @Autowired
     public CalendarSharingViewController(PersonCalendarService personCalendarService, DepartmentCalendarService departmentCalendarService,
                                          CompanyCalendarService companyCalendarService, PersonService personService, DepartmentService departmentService,
-                                         CalendarAccessibleService calendarAccessibleService) {
+                                         CalendarAccessibleService calendarAccessibleService, CalendarProperties calendarProperties) {
         this.personCalendarService = personCalendarService;
         this.departmentCalendarService = departmentCalendarService;
         this.companyCalendarService = companyCalendarService;
         this.personService = personService;
         this.departmentService = departmentService;
         this.calendarAccessibleService = calendarAccessibleService;
+        this.calendarProperties = calendarProperties;
     }
 
     @GetMapping
@@ -202,8 +205,7 @@ public class CalendarSharingViewController {
         if (maybePersonCalendar.isPresent()) {
             final PersonCalendar personCalendar = maybePersonCalendar.get();
             final var path = format("web/persons/%d/calendar?secret=%s", personId, personCalendar.getSecret());
-            final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .replacePath(path).build().toString();
+            final var url = this.getCalendarUrl(path);
 
             dto.setCalendarUrl(url);
             dto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(personCalendar.getCalendarPeriod()));
@@ -240,8 +242,7 @@ public class CalendarSharingViewController {
             if (maybeDepartmentCalendar.isPresent()) {
                 final var departmentCalendar = maybeDepartmentCalendar.get();
                 final var path = format("web/departments/%s/persons/%s/calendar?secret=%s", departmentId, personId, departmentCalendar.getSecret());
-                final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                    .replacePath(path).build().toString();
+                final var url = this.getCalendarUrl(path);
 
                 departmentCalendarDto.setCalendarUrl(url);
                 departmentCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(departmentCalendar.getCalendarPeriod()));
@@ -267,8 +268,7 @@ public class CalendarSharingViewController {
 
             final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
             final var path = format("web/company/persons/%d/calendar?secret=%s", personId, companyCalendar.getSecret());
-            final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .replacePath(path).build().toString();
+            final var url = this.getCalendarUrl(path);
 
             companyCalendarDto.setCalendarUrl(url);
             companyCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(companyCalendar.getCalendarPeriod()));
@@ -285,5 +285,15 @@ public class CalendarSharingViewController {
         }
 
         return maybePerson.get();
+    }
+
+    private String getCalendarUrl(String path) {
+        var configuredUrl = this.calendarProperties.getUrl();
+        if (Objects.equals(configuredUrl, null)) {
+            return ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .replacePath(path).build().toString();
+        }
+
+        return this.calendarProperties.getUrl() + path;
     }
 }
