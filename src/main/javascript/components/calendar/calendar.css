@@ -40,6 +40,7 @@
   @apply sm:-tw-ml-2;
   @apply tw-flex;
   @apply tw-items-center;
+  @apply lg:-tw-translate-x-full;
 }
 
 .datepicker-next {
@@ -53,6 +54,7 @@
   @apply tw-flex;
   @apply tw-items-center;
   @apply tw-flex-row-reverse;
+  @apply lg:tw-translate-x-full;
 }
 
 /* MONTHS */
