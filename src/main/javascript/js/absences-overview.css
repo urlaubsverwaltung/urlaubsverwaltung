@@ -118,6 +118,11 @@ th.vacationOverview-cal-head.today::after {
   border: solid 1px var(--absence-bar-color);
 }
 
+.cal-day.absence-full--outline-solid-half::after {
+  border: solid 1px var(--absence-bar-color);
+  background: linear-gradient(135deg, var(--absence-bar-color) 50%, #FFFFFF 50%);
+}
+
 .cal-day:is(.absence-morning, .sick-note-morning)::before {
   content: "";
   position: absolute;
@@ -137,6 +142,11 @@ th.vacationOverview-cal-head.today::after {
   border: solid 1px var(--absence-bar-color-morning);
 }
 
+.cal-day.absence-morning--outline-solid-half::before {
+  border: solid 1px var(--absence-bar-color-morning);
+  background: linear-gradient(135deg, var(--absence-bar-color-morning) 50%, #FFFFFF 50%);
+}
+
 .cal-day:is(.absence-noon, .sick-note-noon)::after {
   content: "";
   position: absolute;
@@ -154,6 +164,11 @@ th.vacationOverview-cal-head.today::after {
 
 .cal-day.absence-noon--outline::after {
   border: solid 1px var(--absence-bar-color-noon);
+}
+
+.cal-day.absence-noon--outline-solid-half::after {
+  border: solid 1px var(--absence-bar-color-noon);
+  background: linear-gradient(135deg, var(--absence-bar-color-noon) 50%, #FFFFFF 50%);
 }
 
 @media print {
