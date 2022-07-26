@@ -3,7 +3,7 @@ import { findWhere } from "underscore";
 import {
   addDays,
   addMonths,
-  addWeeks,
+  // addWeeks,
   endOfYear,
   formatISO,
   getDay,
@@ -485,17 +485,14 @@ $(function () {
       button: '<button class="{{css}}">{{text}}</button>',
 
       month:
-        '<div class="datepicker-month {{css}}" data-datepicker-month="{{month}}" data-datepicker-year="{{year}}"><table class="datepicker-table"><caption>{{caption}}</caption><thead>{{weekdays}}</thead><tbody>{{weeks}}</tbody></table></div>',
+        '<div class="datepicker-month {{css}}" data-datepicker-month="{{month}}" data-datepicker-year="{{year}}"><p id="calendar-month-{{month}}" class="datepicker-month-caption">{{caption}}</p><ol class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid" style="grid-template-columns: repeat(7, 1fr);" aria-describedby="calendar calendar-month-{{month}}">{{weekdays}}{{weeks}}</ol></div>',
 
-      // <tr>{{0}}......{{6}}</tr>
-      weekdays: `<tr>{{${[0, 1, 2, 3, 4, 5, 6].join("}}{{")}}}</tr>`,
+      // {{0}}......{{6}}
+      weekdays: `{{${[0, 1, 2, 3, 4, 5, 6].join("}}{{")}}}`,
 
-      weekday: '<th scope="row" aria-label="{{ariaLabel}}"><span aria-hidden="true">{{text}}</span></th>',
+      weekday: `<li role="none" aria-hidden="true" class="datepicker-day-header print:tw-hidden">{{text}}</li>`,
 
-      // <tr><td>{{0}}</td>......<td>{{6}}</td></tr>
-      week: "<tr><td>{{" + [0, 1, 2, 3, 4, 5, 6].join("}}</td><td>{{") + "}}</td></tr>",
-
-      day: '<div class="datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span class="tw-sr-only print:tw-hidden">{{ariaDay}}</span><span aria-hidden="true">{{day}}</span>{{icon}}</div>',
+      day: '<li class="tw-border-b tw-border-r dark:tw-border-zinc-900" style="{{cellStyle}}"><span class="tw-sr-only print:tw-hidden">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
 
       iconPlaceholder: '<span class="tw-w-3 tw-h-3 tw-inline-block"></span>',
 
@@ -561,9 +558,8 @@ $(function () {
         weeks: function () {
           let html = "";
           while (getMonth(d) === m) {
-            html += renderWeek(d);
-            d = addWeeks(d, 1);
-            d = startOfWeek(d);
+            html += renderDay(d);
+            d = addDays(d, 1);
           }
           return html;
         },
@@ -589,27 +585,6 @@ $(function () {
         4: renderWeekday(addDays(startOfWeekDate, 4)),
         5: renderWeekday(addDays(startOfWeekDate, 5)),
         6: renderWeekday(addDays(startOfWeekDate, 6)),
-      });
-    }
-
-    function renderWeek(date) {
-      let d = date;
-      const m = getMonth(d);
-
-      return render(TMPL.week, function (_, dayIndex) {
-        let dayIndexToRender = Number(dayIndex) + window.uv.weekStartsOn;
-        if (dayIndexToRender === 7) {
-          dayIndexToRender = 0;
-        }
-
-        let html = "&nbsp;";
-
-        if (dayIndexToRender === getDay(d) && m === getMonth(d)) {
-          html = renderDay(d);
-          d = addDays(d, 1);
-        }
-
-        return html;
       });
     }
 
@@ -700,12 +675,25 @@ $(function () {
         return assert.isHalfDayAbsence(date) || !assert.isPublicHolidayFull(date);
       }
 
+      function cellStyle() {
+        if (date.getDate() === 1) {
+          const day = getDay(date);
+          // when first of month is sunday -> col_start == 7 otherwise the day value. monday is the first column
+          const gridColumnStart = date.getDate() === 1 ? (day === 0 ? 7 : day) : 0;
+          return `grid-column-start: ${gridColumnStart};`;
+        } else {
+          // every other day just follows the flow
+          return ``;
+        }
+      }
+
       return render(TMPL.day, {
         date: format(date, "yyyy-MM-dd"),
         day: format(date, "dd"),
         ariaDay: format(date, "dd. MMMM"),
         css: classes(),
         style: style(),
+        cellStyle: cellStyle(),
         selectable: isSelectable(),
         title: assert.title(date),
         absenceId: assert.absenceId(date),

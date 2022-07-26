@@ -36,8 +36,8 @@
   @apply tw-mb-4;
   @apply sm:tw-mb-0;
   @apply sm:tw-order-none;
-  @apply sm:tw-basis-auto;
-  @apply sm:tw-mr-5;
+  @apply sm:tw-basis-0;
+  @apply sm:-tw-ml-2;
   @apply tw-flex;
   @apply tw-items-center;
 }
@@ -48,8 +48,8 @@
   @apply tw-mb-4;
   @apply sm:tw-mb-0;
   @apply sm:tw-order-none;
-  @apply sm:tw-basis-auto;
-  @apply sm:tw-ml-5;
+  @apply sm:tw-basis-0;
+  @apply sm:-tw-mr-2;
   @apply tw-flex;
   @apply tw-items-center;
   @apply tw-flex-row-reverse;
@@ -70,45 +70,80 @@
 /* MONTH */
 
 .datepicker-month {
-  --width: 22.5rem;
+  --width: 100%;
+  --gap: 1rem;
   position: absolute;
   width: var(--width);
-  height: 100%;
   transition: left 0.4s ease-in-out;
+  /* hide every month despite current month. */
+  display: none;
 }
 
-.datepicker-month:nth-child(1) {
-  left: calc(-3 * var(--width));
-}
-.datepicker-month:nth-child(2) {
-  left: calc(-2 * var(--width));
-}
-.datepicker-month:nth-child(3) {
-  left: calc(-1 * var(--width));
-}
-.datepicker-month:nth-child(4) {
-  left: 0;
-}
 .datepicker-month:nth-child(5) {
-  left: var(--width);
-}
-.datepicker-month:nth-child(6) {
-  left: calc(2 * var(--width));
-}
-.datepicker-month:nth-child(7) {
-  left: calc(3 * var(--width));
-}
-.datepicker-month:nth-child(8) {
-  left: calc(4 * var(--width));
-}
-.datepicker-month:nth-child(9) {
-  left: calc(5 * var(--width));
-}
-.datepicker-month:nth-child(10) {
-  left: calc(6 * var(--width));
+  left: 0;
+  /* hide every month despite current month. */
+  display: block;
 }
 
-.datepicker-table caption {
+@screen sm {
+  .datepicker-month:nth-child(5) {
+    --width: 80vw;
+    left: 5vw;
+  }
+}
+
+@screen md {
+  .datepicker-month {
+    --width: 46.3% !important; /* `important` to also override :nth-child(5) from above */
+    --gap: 2.5rem;
+    display: block;
+  }
+  .datepicker-month:nth-child(4) {
+    left: var(--gap);
+  }
+  .datepicker-month:nth-child(1) {
+    left: calc(-3 * (var(--width)) - var(--gap));
+  }
+  .datepicker-month:nth-child(2) {
+    left: calc(-2 * (var(--width)) - var(--gap));
+  }
+  .datepicker-month:nth-child(3) {
+    left: calc(-1 * (var(--width)) - var(--gap));
+  }
+  .datepicker-month:nth-child(4) {
+    left: calc(var(--gap) / 2);
+  }
+  .datepicker-month:nth-child(5) {
+    left: calc(var(--width) + var(--gap));
+  }
+  .datepicker-month:nth-child(6) {
+    left: calc(2 * (var(--width) + var(--gap)));
+  }
+  .datepicker-month:nth-child(7) {
+    left: calc(3 * (var(--width) + var(--gap)));
+  }
+  .datepicker-month:nth-child(8) {
+    left: calc(4 * (var(--width) + var(--gap)));
+  }
+  .datepicker-month:nth-child(9) {
+    left: calc(5 * (var(--width) + var(--gap)));
+  }
+  .datepicker-month:nth-child(10) {
+    left: calc(6 * (var(--width) + var(--gap)));
+  }
+}
+
+@media (min-width: 992px) {
+  .datepicker-month {
+    --width: 32.3% !important; /* `important` to also override :nth-child(5) from above */
+    --gap: 1rem;
+  }
+  .datepicker-month:nth-child(4) {
+    left: 0;
+  }
+}
+
+.datepicker-month-caption {
   margin: 0;
   margin-bottom: 0.5rem;
   color: theme("textColor.calendar.DEFAULT");
@@ -125,7 +160,7 @@
   font-size: 0.75rem;
 }
 
-.datepicker-table th,
+.datepicker-table .datepicker-day-header,
 .datepicker-table td {
   padding: 0;
   margin: 0;
@@ -144,7 +179,7 @@
     url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='currentColor' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-.datepicker-table thead tr th {
+.datepicker-table .datepicker-day-header {
   padding: 0.5em;
   font-weight: normal;
   @apply dark:tw-font-semibold;
@@ -161,17 +196,32 @@
   --font-color: theme("textColor.calendar.DEFAULT");
   display: flex;
   align-items: center;
-  @apply tw-px-0;
   @apply tw-pt-2;
   @apply tw-pb-3.5;
-  @apply sm:tw-pr-1.5;
-  @apply sm:tw-pl-2;
+  @apply tw-pl-1.5;
+  @apply tw-pr-1;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
   color: var(--font-color);
   @apply dark:tw-font-semibold;
-  @apply tw-space-x-1;
+  @apply tw-space-x-0.5;
   @apply tw-tabular-nums;
+}
+
+@screen xs {
+  .datepicker-day {
+    @apply tw-pl-2;
+    @apply tw-pr-1.5;
+    @apply tw-space-x-1;
+  }
+}
+
+@media (min-width: 992px) {
+  .datepicker-day {
+    @apply tw-pl-1.5;
+    @apply tw-pr-1;
+    @apply tw-space-x-0.5;
+  }
 }
 
 .datepicker-day-past {
@@ -332,26 +382,4 @@ td.datepicker-day {
 .tw-dark .datepicker-day-public-holiday-full:not(.datepicker-day-past):hover,
 .tw-dark .datepicker-day-public-holiday-full.datepicker-day-selected {
   @apply tw-shadow-sky-400/80;
-}
-
-/**************************************************************************
-
-  RESPONSIVNESS
-
-**************************************************************************/
-
-/* Show only current month on small devices! */
-@media (max-width: 767px) {
-  .datepicker-table {
-    width: 100%;
-  }
-
-  .datepicker-month {
-    display: none;
-  }
-  .datepicker-month:nth-child(5) {
-    display: block;
-    left: 0;
-    width: 100%;
-  }
 }
