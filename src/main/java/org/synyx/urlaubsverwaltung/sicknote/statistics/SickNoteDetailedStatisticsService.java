@@ -10,9 +10,7 @@ import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,21 +29,15 @@ import static java.util.stream.Collectors.toList;
 public class SickNoteDetailedStatisticsService {
 
     private final SickNoteService sickNoteService;
-    private final WorkDaysCountService workDaysCountService;
     private final PersonBasedataService personBasedataService;
     private final DepartmentService departmentService;
 
     @Autowired
-    SickNoteDetailedStatisticsService(SickNoteService sickNoteService, WorkDaysCountService workDaysCountService,
-                                      PersonBasedataService personBasedataService, DepartmentService departmentService) {
+    SickNoteDetailedStatisticsService(SickNoteService sickNoteService, PersonBasedataService personBasedataService,
+                                      DepartmentService departmentService) {
         this.sickNoteService = sickNoteService;
-        this.workDaysCountService = workDaysCountService;
         this.personBasedataService = personBasedataService;
         this.departmentService = departmentService;
-    }
-
-    SickNoteStatistics createStatistics(Clock clock) {
-        return new SickNoteStatistics(clock, sickNoteService, workDaysCountService);
     }
 
     List<SickNoteDetailedStatistics> getAllSicknotes(FilterPeriod period) {

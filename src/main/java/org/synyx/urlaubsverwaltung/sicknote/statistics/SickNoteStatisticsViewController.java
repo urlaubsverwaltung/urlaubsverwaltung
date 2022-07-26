@@ -23,6 +23,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static liquibase.util.csv.CSVReader.DEFAULT_QUOTE_CHARACTER;
 import static liquibase.util.csv.opencsv.CSVWriter.NO_QUOTE_CHARACTER;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -37,15 +38,17 @@ class SickNoteStatisticsViewController {
 
     protected static final byte[] UTF8_BOM = new byte[]{(byte) 239, (byte) 187, (byte) 191};
     public static final char SEPARATOR = ';';
-    private final SickNoteDetailedStatisticsService statisticsService;
+    private final SickNoteStatisticsService sickNoteStatisticsService;
+    private final SickNoteDetailedStatisticsService sickNoteDetailedStatisticsService;
     private final SickNoteDetailedStatisticsCsvExportService sickNoteDetailedStatisticsCsvExportService;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
     @Autowired
-    SickNoteStatisticsViewController(SickNoteDetailedStatisticsService statisticsService,
+    SickNoteStatisticsViewController(SickNoteStatisticsService sickNoteStatisticsService, SickNoteDetailedStatisticsService sickNoteDetailedStatisticsService,
                                      SickNoteDetailedStatisticsCsvExportService sickNoteDetailedStatisticsCsvExportService, DateFormatAware dateFormatAware, Clock clock) {
-        this.statisticsService = statisticsService;
+        this.sickNoteStatisticsService = sickNoteStatisticsService;
+        this.sickNoteDetailedStatisticsService = sickNoteDetailedStatisticsService;
         this.sickNoteDetailedStatisticsCsvExportService = sickNoteDetailedStatisticsCsvExportService;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
@@ -56,7 +59,7 @@ class SickNoteStatisticsViewController {
     public String sickNotesStatistics(@RequestParam(value = "year", required = false) Integer requestedYear, Model model) {
 
         final Clock clockOfRequestedYear = getClockOfRequestedYear(requestedYear);
-        final SickNoteStatistics statistics = statisticsService.createStatistics(clockOfRequestedYear);
+        final SickNoteStatistics statistics = sickNoteStatisticsService.createStatistics(clockOfRequestedYear);
 
         model.addAttribute("statistics", statistics);
 
@@ -71,12 +74,18 @@ class SickNoteStatisticsViewController {
 
         final FilterPeriod period = toFilterPeriod(from, to);
 
+        // NOTE: Not supported at the moment
+        if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
+            response.sendError(SC_BAD_REQUEST);
+            return;
+        }
+
         final String fileName = sickNoteDetailedStatisticsCsvExportService.getFileName(period);
         response.setContentType("text/csv");
         response.setCharacterEncoding(UTF_8.name());
         response.setHeader("Content-disposition", "attachment;filename=" + fileName);
 
-        List<SickNoteDetailedStatistics> allDetailedSicknotes = statisticsService.getAllSicknotes(period);
+        List<SickNoteDetailedStatistics> allDetailedSicknotes = sickNoteDetailedStatisticsService.getAllSicknotes(period);
 
         try (final OutputStream os = response.getOutputStream()) {
             os.write(UTF8_BOM);

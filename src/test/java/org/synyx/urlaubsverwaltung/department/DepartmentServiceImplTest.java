@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.time.Month.DECEMBER;
@@ -953,6 +954,29 @@ class DepartmentServiceImplTest {
 
         final long numberOfDepartments = sut.getNumberOfDepartments();
         assertThat(numberOfDepartments).isEqualTo(10);
+    }
+
+    @Test
+    void getDepartmentsByMembers() {
+
+        final Person person = new Person();
+        person.setId(42);
+        List<Person> persons = List.of(person);
+
+        final DepartmentMemberEmbeddable existingPersonMember = new DepartmentMemberEmbeddable();
+        existingPersonMember.setPerson(person);
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setName("Department A");
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(existingPersonMember));
+
+        when(departmentRepository.findDistinctByMembersPersonIn(persons)).thenReturn(List.of(departmentEntity));
+
+        final Map<Integer, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(persons);
+        assertThat(departmentsByMembers)
+            .containsKey(person.getId())
+            .containsValue(List.of("Department A"));
     }
 
     private DepartmentMemberEmbeddable departmentMemberEmbeddable(String username, String firstname, String lastname, String email) {
