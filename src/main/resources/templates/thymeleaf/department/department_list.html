@@ -86,9 +86,9 @@
                 <tr th:each="department : ${departments}">
                   <td>
                     <details th:if="${department.description != null}" is="uv-popover">
-                      <summary class="overflow">
+                      <summary class="overflow tw-flex tw-items-center">
                         <th:block th:text="${department.name}"></th:block>
-                        <span data-uv-popover-placement>
+                        <span data-uv-popover-placement class="tw-flex tw-items-center tw-ml-1">
                           <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
                         </span>
                       </summary>
