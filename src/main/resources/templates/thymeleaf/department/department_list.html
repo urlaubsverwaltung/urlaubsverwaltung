@@ -86,8 +86,16 @@
                       th:title="#{department.data.info}"
                       th:data-content="${department.description}"
                     >
-                      <th:block th:text="${department.name}" />
-                      <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                      <details tabindex="-1">
+                        <summary>
+                          <th:block th:text="${department.name}"></th:block>
+                          <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                        </summary>
+                        <p class="tw-sr-only">
+                          <span th:text="#{department.data.info}"></span>:
+                          <span th:text="${department.description}"></span>
+                        </p>
+                      </details>
                     </div>
                     <div th:if="${department.description == null}" th:text="${department.name}"></div>
                   </td>
