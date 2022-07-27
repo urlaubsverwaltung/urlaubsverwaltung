@@ -130,7 +130,7 @@
                         class="modal fade"
                         tabindex="-1"
                         role="dialog"
-                        aria-labelledby="myModalLabel"
+                        th:aria-labelledby="${'modal-label-' + department.id}"
                         aria-hidden="true"
                       >
                         <div class="modal-dialog">
@@ -139,7 +139,7 @@
                               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                 <svg th:replace="icon/x-circle::svg(className='tw-w-8 tw-h-8')"></svg>
                               </button>
-                              <h4 th:text="|#{action.department.delete} ?|" id="myModalLabel" class="modal-title"></h4>
+                              <h4 th:text="|#{action.department.delete} ?|" th:id="${'modal-label-' + department.id}" class="modal-title"></h4>
                             </div>
                             <div
                               th:text="#{action.department.delete.confirm(${department.name})}"
