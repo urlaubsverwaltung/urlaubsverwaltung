@@ -58,6 +58,7 @@ function paramize(p) {
 
 $(function () {
   const $datepicker = $("#datepicker");
+  const datepickerElement = document.querySelector("#datepicker");
 
   const numberOfMonths = 10;
 
@@ -923,6 +924,19 @@ $(function () {
 
         $(document.body).on("mouseup", function () {
           $(document.body).removeClass(CSS.mousedown);
+        });
+
+        const smScreenQuery = window.matchMedia("(max-width: 640px)");
+        if (smScreenQuery.matches) {
+          for (const button of datepickerElement.querySelectorAll("button")) {
+            button.classList.add("button");
+          }
+        }
+
+        smScreenQuery.addEventListener("change", function () {
+          for (const button of datepickerElement.querySelectorAll("button")) {
+            button.classList.toggle("button");
+          }
         });
       },
     };

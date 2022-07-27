@@ -23,8 +23,6 @@
 
 .datepicker-prev,
 .datepicker-next {
-  border: none;
-  padding: 0;
   cursor: pointer;
   background-color: transparent;
   color: theme("textColor.calendar.DEFAULT");
@@ -32,7 +30,7 @@
 
 .datepicker-prev {
   order: 1;
-  flex-basis: 50%;
+  flex-basis: 40%;
   @apply tw-mb-4;
   @apply sm:tw-mb-0;
   @apply sm:tw-order-none;
@@ -45,7 +43,8 @@
 
 .datepicker-next {
   order: 2;
-  flex-basis: 50%;
+  flex-basis: 40%;
+  @apply tw-ml-auto;
   @apply tw-mb-4;
   @apply sm:tw-mb-0;
   @apply sm:tw-order-none;
