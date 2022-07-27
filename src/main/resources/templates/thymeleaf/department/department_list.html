@@ -1,157 +1,180 @@
 <!DOCTYPE html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
-  <title th:text="#{departments.header.title}"></title>
-  <th:block th:fragment="scripts">
-    <script defer asset:src="npm.tablesorter.js"></script>
-    <script defer asset:src="department_list.js"></script>
-  </th:block>
-</head>
-<body th:replace="_layout::body(~{::main}, ~{})">
-<main th:fragment="main">
-  <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
-
-    <div
-      th:replace="fragments/section-heading::section-heading(~{::department-list-heading-body}, ~{::department-list-heading-actions})"
-    >
-      <th:block th:ref="department-list-heading-body">
-        <h1 th:text="#{departments.title}">Abwesenheitsstatistik</h1>
-      </th:block>
-      <th:block th:ref="department-list-heading-actions">
-        <a
-          th:if="${canCreateAndModifyDepartment}"
-          th:href="@{/web/department/new}"
-          class="icon-link tw-px-1"
-          th:data-title="#{action.department.create}"
+  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+    <title th:text="#{departments.header.title}"></title>
+    <th:block th:fragment="scripts">
+      <script defer asset:src="npm.tablesorter.js"></script>
+      <script defer asset:src="department_list.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main th:fragment="main">
+      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
+        <div
+          th:replace="fragments/section-heading::section-heading(~{::department-list-heading-body}, ~{::department-list-heading-actions})"
         >
-          <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
-          <span class="tw-sr-only" th:text="#{action.department.create}"></span>
-        </a>
+          <th:block th:ref="department-list-heading-body">
+            <h1 th:text="#{departments.title}">Abwesenheitsstatistik</h1>
+          </th:block>
+          <th:block th:ref="department-list-heading-actions">
+            <a
+              th:if="${canCreateAndModifyDepartment}"
+              th:href="@{/web/department/new}"
+              class="icon-link tw-px-1"
+              th:data-title="#{action.department.create}"
+            >
+              <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
+              <span class="tw-sr-only" th:text="#{action.department.create}"></span>
+            </a>
 
-        <a
-          th:href="@{/web/absences}"
-          class="icon-link tw-px-1"
-          th:data-title="#{action.applications.absences_overview}"
-        >
-          <svg th:replace="icon/calendar::svg(className='tw-w-5 tw-h-5')"></svg>
-          <span class="tw-sr-only" th:text="#{action.applications.absences_overview}"></span>
-        </a>
+            <a
+              th:href="@{/web/absences}"
+              class="icon-link tw-px-1"
+              th:data-title="#{action.applications.absences_overview}"
+            >
+              <svg th:replace="icon/calendar::svg(className='tw-w-5 tw-h-5')"></svg>
+              <span class="tw-sr-only" th:text="#{action.applications.absences_overview}"></span>
+            </a>
 
-        <button th:replace="fragments/print::button"></button>
-      </th:block>
-    </div>
-
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="feedback">
-          <div th:if="${createdDepartmentName != null}"
-               th:text="#{department.action.create.success(${createdDepartmentName})}" class="alert alert-success">
-          </div>
-          <div th:if="${updatedDepartmentName != null}"
-               th:text="#{department.action.edit.success(${updatedDepartmentName})}" class="alert alert-success">
-          </div>
-          <div th:if="${deletedDepartmentName != null}"
-               th:text="#{department.action.delete.success(${deletedDepartmentName})}" class="alert alert-success">
-          </div>
+            <button th:replace="fragments/print::button"></button>
+          </th:block>
         </div>
 
-        <th:block th:if="${#lists.isEmpty(departments)}" th:text="#{departments.none}"></th:block>
-        <table th:if="${not #lists.isEmpty(departments)}" id="department-table" class="list-table tw-text-sm">
-          <thead class="hidden-xs hidden-sm">
-          <tr>
-            <th th:text="#{department.data.name}" scope="col" class="sortable-field">
-            </th>
-            <th th:text="#{department.members}" scope="col" class="sortable-field">
-            </th>
-            <th th:text="#{department.data.twoStageApproval}" scope="col" class="sortable-field">
-            </th>
-            <th th:text="#{department.data.lastModification}" scope="col" class="sortable-field">
-            </th>
-            <th th:if="${canCreateAndModifyDepartment}" scope="col">
-              <!--placeholder to ensure correct number of th-->
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr th:each="department : ${departments}">
-            <td>
-              <div th:if="${department.description != null}"
-                   class="overflow"
-                   data-toggle="popover"
-                   data-trigger="hover"
-                   data-placement="right"
-                   th:title="#{department.data.info}"
-                   th:data-content="${department.description}">
-                <th:block th:text="${department.name}"/>
-                <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
-              </div>
-              <div th:if="${department.description == null}" th:text="${department.name}"></div>
-            </td>
-            <td class="hidden-xs">
-              <a th:if="${department.activeMembersCount > 0}"
-                 th:href="@{/web/person?active=true&department=__${department.id}__}"
-                 th:text="|${department.activeMembersCount} #{department.members.active}|">
-              </a>
-              <th:block th:if="${department.activeMembersCount > 0 && department.inactiveMembersCount > 0}">
-                /
-              </th:block>
-              <a th:if="${department.inactiveMembersCount > 0}"
-                 th:href="@{/web/person?active=false&department=__${department.id}__}">
-                <th:block th:text="${department.inactiveMembersCount}"/>
-                <th:block th:text="#{department.members.inactive}"/>
-              </a>
-            </td>
-            <td class="is-centered hidden-xs">
-              <th:block th:if="${department.twoStageApproval == true}">
-                <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
-              </th:block>
-            </td>
-            <td th:text="${{department.lastModification}}" class="hidden-xs">
-            </td>
-            <td th:if="${canCreateAndModifyDepartment}">
-              <form method="post" th:action="@{/web/department/__${department.id}__/delete}">
-                <div th:id="|modal-cancel-${department.id}|" class="modal fade" tabindex="-1" role="dialog"
-                     aria-labelledby="myModalLabel" aria-hidden="true">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                          <svg th:replace="icon/x-circle::svg(className='tw-w-8 tw-h-8')"></svg>
-                        </button>
-                        <h4 th:text="|#{action.department.delete} ?|" id="myModalLabel" class="modal-title"></h4>
-                      </div>
-                      <div th:text="#{action.department.delete.confirm(${department.name})}" class="modal-body">
-                      </div>
-                      <div class="modal-footer tw-flex tw-justify-end tw-space-x-2">
-                        <button th:text="#{action.department.delete}" class="button-danger" type="submit">
-                        </button>
-                        <button th:text="#{action.cancel}" class="button" data-dismiss="modal" aria-hidden="true">
-                        </button>
-                      </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="feedback">
+              <div
+                th:if="${createdDepartmentName != null}"
+                th:text="#{department.action.create.success(${createdDepartmentName})}"
+                class="alert alert-success"
+              ></div>
+              <div
+                th:if="${updatedDepartmentName != null}"
+                th:text="#{department.action.edit.success(${updatedDepartmentName})}"
+                class="alert alert-success"
+              ></div>
+              <div
+                th:if="${deletedDepartmentName != null}"
+                th:text="#{department.action.delete.success(${deletedDepartmentName})}"
+                class="alert alert-success"
+              ></div>
+            </div>
+
+            <th:block th:if="${#lists.isEmpty(departments)}" th:text="#{departments.none}"></th:block>
+            <table th:if="${not #lists.isEmpty(departments)}" id="department-table" class="list-table tw-text-sm">
+              <thead class="hidden-xs hidden-sm">
+                <tr>
+                  <th th:text="#{department.data.name}" scope="col" class="sortable-field"></th>
+                  <th th:text="#{department.members}" scope="col" class="sortable-field"></th>
+                  <th th:text="#{department.data.twoStageApproval}" scope="col" class="sortable-field"></th>
+                  <th th:text="#{department.data.lastModification}" scope="col" class="sortable-field"></th>
+                  <th th:if="${canCreateAndModifyDepartment}" scope="col">
+                    <!--placeholder to ensure correct number of th-->
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="department : ${departments}">
+                  <td>
+                    <div
+                      th:if="${department.description != null}"
+                      class="overflow"
+                      data-toggle="popover"
+                      data-trigger="hover"
+                      data-placement="right"
+                      th:title="#{department.data.info}"
+                      th:data-content="${department.description}"
+                    >
+                      <th:block th:text="${department.name}" />
+                      <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
                     </div>
-                  </div>
-                </div>
-              </form>
+                    <div th:if="${department.description == null}" th:text="${department.name}"></div>
+                  </td>
+                  <td class="hidden-xs">
+                    <a
+                      th:if="${department.activeMembersCount > 0}"
+                      th:href="@{/web/person?active=true&department=__${department.id}__}"
+                      th:text="|${department.activeMembersCount} #{department.members.active}|"
+                    >
+                    </a>
+                    <th:block th:if="${department.activeMembersCount > 0 && department.inactiveMembersCount > 0}">
+                      /
+                    </th:block>
+                    <a
+                      th:if="${department.inactiveMembersCount > 0}"
+                      th:href="@{/web/person?active=false&department=__${department.id}__}"
+                    >
+                      <th:block th:text="${department.inactiveMembersCount}" />
+                      <th:block th:text="#{department.members.inactive}" />
+                    </a>
+                  </td>
+                  <td class="is-centered hidden-xs">
+                    <th:block th:if="${department.twoStageApproval == true}">
+                      <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+                    </th:block>
+                  </td>
+                  <td th:text="${{department.lastModification}}" class="hidden-xs"></td>
+                  <td th:if="${canCreateAndModifyDepartment}">
+                    <form method="post" th:action="@{/web/department/__${department.id}__/delete}">
+                      <div
+                        th:id="|modal-cancel-${department.id}|"
+                        class="modal fade"
+                        tabindex="-1"
+                        role="dialog"
+                        aria-labelledby="myModalLabel"
+                        aria-hidden="true"
+                      >
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                <svg th:replace="icon/x-circle::svg(className='tw-w-8 tw-h-8')"></svg>
+                              </button>
+                              <h4 th:text="|#{action.department.delete} ?|" id="myModalLabel" class="modal-title"></h4>
+                            </div>
+                            <div
+                              th:text="#{action.department.delete.confirm(${department.name})}"
+                              class="modal-body"
+                            ></div>
+                            <div class="modal-footer tw-flex tw-justify-end tw-space-x-2">
+                              <button
+                                th:text="#{action.department.delete}"
+                                class="button-danger"
+                                type="submit"
+                              ></button>
+                              <button
+                                th:text="#{action.cancel}"
+                                class="button"
+                                data-dismiss="modal"
+                                aria-hidden="true"
+                              ></button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
 
-              <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
-                <a class="action-link" th:href="@{/web/department/__${department.id}__/edit}">
-                  <svg th:replace="icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
-                  <th:block th:text="#{action.edit}"/>
-                </a>
-                <a class="action-link" data-toggle="modal"
-                   th:href="@{/web/department#modal-cancel-__${department.id}__}">
-                  <svg th:replace="icon/trash::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
-                  <th:block th:text="#{action.department.delete}"/>
-                </a>
-              </div>
-
-            </td>
-          </tr>
-          </tbody>
-        </table>
+                    <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
+                      <a class="action-link" th:href="@{/web/department/__${department.id}__/edit}">
+                        <svg th:replace="icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                        <th:block th:text="#{action.edit}" />
+                      </a>
+                      <a
+                        class="action-link"
+                        data-toggle="modal"
+                        th:href="@{/web/department#modal-cancel-__${department.id}__}"
+                      >
+                        <svg th:replace="icon/trash::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                        <th:block th:text="#{action.department.delete}" />
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</main>
-</body>
+    </main>
+  </body>
 </html>
