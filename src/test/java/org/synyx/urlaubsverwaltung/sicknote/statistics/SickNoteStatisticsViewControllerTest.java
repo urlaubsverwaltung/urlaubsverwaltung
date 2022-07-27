@@ -22,6 +22,7 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.refEq;
@@ -69,7 +70,8 @@ class SickNoteStatisticsViewControllerTest {
             .param("year", String.valueOf(Year.now(clock).getValue())));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(model().attribute("statistics", sickNoteStatistics));
-        resultActions.andExpect(view().name("sicknote/sick_notes_statistics"));
+        resultActions.andExpect(model().attribute("selectedYear", LocalDate.now(clock).getYear()));
+        resultActions.andExpect(view().name("thymeleaf/sicknote/sick_notes_statistics"));
     }
 
     @Test
@@ -81,7 +83,8 @@ class SickNoteStatisticsViewControllerTest {
         final ResultActions resultActions = perform(get("/web/sicknote/statistics"));
         resultActions.andExpect(status().isOk());
         resultActions.andExpect(model().attribute("statistics", sickNoteStatistics));
-        resultActions.andExpect(view().name("sicknote/sick_notes_statistics"));
+        resultActions.andExpect(model().attribute("selectedYear", nullValue()));
+        resultActions.andExpect(view().name("thymeleaf/sicknote/sick_notes_statistics"));
     }
 
     @Test

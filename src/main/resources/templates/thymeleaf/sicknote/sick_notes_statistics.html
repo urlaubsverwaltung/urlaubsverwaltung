@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_layout::head(~{::title}, ~{}, ~{})">
+  <title th:text="#{sicknotes.statistics.header.title(${statistics.year})}"></title>
+</head>
+<body th:replace="_layout::body(~{::main}, ~{})">
+<main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
+
+  <div
+    th:replace="fragments/section-heading::section-heading(~{::sick-notes-statistics-heading-body}, ~{::sick-notes-statistics-heading-actions})"
+  >
+    <th:block th:ref="sick-notes-statistics-heading-body">
+      <h1 th:text="#{sicknotes.statistics.title}">Statistik für das Jahr</h1>
+      <div
+        th:replace="fragments/year-selector::year-selector(id='year-selection', year=${statistics.year}, hrefPrefix=|/sicknote/statistics?year=|, selectedYear=${selectedYear})"></div>
+    </th:block>
+    <th:block th:ref="sick-notes-statistics-heading-actions">
+      <button th:replace="fragments/print::button"></button>
+    </th:block>
+  </div>
+
+  <table class="list-table tw-text-sm">
+    <thead>
+    <tr>
+      <th scope="col" colspan="2" class="text-right">
+        <th:block th:text="#{filter.validity}"></th:block>
+        <th:block th:replace="fragments/date::date(${statistics.created})"></th:block>
+      </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr>
+      <td th:text="#{sicknotes.statistics.totalNumber}"></td>
+      <td th:text="${statistics.totalNumberOfSickNotes}"></td>
+    </tr>
+    <tr>
+      <td th:text="#{sicknotes.statistics.totalNumberOfDays}"></td>
+      <td>
+        <th:block th:replace="fragments/number::number(${statistics.totalNumberOfSickDays})"></th:block>
+      </td>
+    </tr>
+    <tr>
+      <td th:text="#{sicknotes.statistics.personWithSickNotes}"></td>
+      <td th:text="${statistics.numberOfPersonsWithMinimumOneSickNote}"></td>
+    </tr>
+    <tr>
+      <td th:text="#{sicknotes.statistics.averageSickTime}"></td>
+      <td>
+        <th:block th:replace="fragments/number::number(${statistics.averageDurationOfDiseasePerPerson})"></th:block>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

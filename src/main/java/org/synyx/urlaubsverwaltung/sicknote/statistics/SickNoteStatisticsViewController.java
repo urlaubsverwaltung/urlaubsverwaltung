@@ -62,8 +62,9 @@ class SickNoteStatisticsViewController {
         final SickNoteStatistics statistics = sickNoteStatisticsService.createStatistics(clockOfRequestedYear);
 
         model.addAttribute("statistics", statistics);
+        model.addAttribute("selectedYear", requestedYear);
 
-        return "sicknote/sick_notes_statistics";
+        return "thymeleaf/sicknote/sick_notes_statistics";
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
