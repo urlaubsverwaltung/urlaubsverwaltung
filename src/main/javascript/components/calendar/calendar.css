@@ -144,7 +144,7 @@
   }
 }
 
-.datepicker-month-caption {
+.calendar-month-caption {
   margin: 0;
   margin-bottom: 0.5rem;
   color: theme("textColor.calendar.DEFAULT");
