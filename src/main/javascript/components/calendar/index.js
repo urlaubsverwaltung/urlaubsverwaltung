@@ -56,14 +56,9 @@ function paramize(p) {
 }
 
 $(function () {
-  const $datepicker = $("#datepicker");
   const datepickerElement = document.querySelector("#datepicker");
 
   const numberOfMonths = 10;
-
-  const keyCodes = {
-    escape: 27,
-  };
 
   const mouseButtons = {
     left: 0,
@@ -704,39 +699,42 @@ $(function () {
 
     const View = {
       display: function (date) {
-        $datepicker.html(renderCalendar(date)).addClass("unselectable");
+        datepickerElement.innerHTML = renderCalendar(date);
+        datepickerElement.classList.add("unselectable");
         tooltip();
       },
 
       displayNext: function () {
-        const elements = $datepicker.find("." + CSS.month).get();
-        const length_ = elements.length;
+        const elements = [...datepickerElement.querySelectorAll("." + CSS.month)];
 
-        $(elements[0]).remove();
+        elements[0]?.remove();
 
-        const $lastMonth = $(elements[length_ - 1]);
-        const month = Number($lastMonth.data(DATA.month));
-        const year = Number($lastMonth.data(DATA.year));
+        const lastMonthElement = elements[elements.length - 1];
+        const month = Number(lastMonthElement.dataset[DATA.month]);
+        const year = Number(lastMonthElement.dataset[DATA.year]);
 
-        const $nextMonth = $(renderMonth(addMonths(new Date(year, month), 1)));
+        const nextMonthHtml = renderMonth(addMonths(new Date(year, month), 1));
+        const nextMonthParentElement = document.createElement("div");
+        nextMonthParentElement.innerHTML = nextMonthHtml;
 
-        $lastMonth.after($nextMonth);
+        lastMonthElement.insertAdjacentElement("afterend", nextMonthParentElement.firstElementChild);
         tooltip();
       },
 
       displayPrevious: function () {
-        const elements = $datepicker.find("." + CSS.month).get();
-        const length_ = elements.length;
+        const elements = [...datepickerElement.querySelectorAll("." + CSS.month)];
 
-        $(elements[length_ - 1]).remove();
+        elements[elements.length - 1]?.remove();
 
-        const $firstMonth = $(elements[0]);
-        const month = Number($firstMonth.data(DATA.month));
-        const year = Number($firstMonth.data(DATA.year));
+        const firstMonthElement = elements[0];
+        const month = Number(firstMonthElement.dataset[DATA.month]);
+        const year = Number(firstMonthElement.dataset[DATA.year]);
 
-        const previousMonth = $(renderMonth(subMonths(new Date(year, month), 1)));
+        let previousMonthHtml = renderMonth(subMonths(new Date(year, month), 1));
+        const previousMonthParentElement = document.createElement("div");
+        previousMonthParentElement.innerHTML = previousMonthHtml;
 
-        $firstMonth.before(previousMonth);
+        firstMonthElement.insertAdjacentElement("beforebegin", previousMonthParentElement.firstElementChild);
         tooltip();
       },
     };
@@ -756,11 +754,11 @@ $(function () {
 
     const datepickerHandlers = {
       mousedown: function (event) {
-        if (event.button != mouseButtons.left) {
+        if (event.button !== mouseButtons.left) {
           return;
         }
 
-        $(document.body).addClass(CSS.mousedown);
+        document.body.classList.add(CSS.mousedown);
 
         const dateThis = getDateFromElement(this);
 
@@ -769,7 +767,7 @@ $(function () {
         if (!isValidDate(start) || !isValidDate(end) || !isWithinInterval(dateThis, { start, end })) {
           clearSelection();
 
-          $datepicker.data(DATA.selected, dateThis);
+          datepickerElement.dataset[DATA.selected] = dateThis;
 
           selectionFrom(dateThis);
           selectionTo(dateThis);
@@ -777,13 +775,13 @@ $(function () {
       },
 
       mouseup: function () {
-        $(document.body).removeClass(CSS.mousedown);
+        document.body.classList.remove(CSS.mousedown);
       },
 
       mouseover: function () {
-        if ($(document.body).hasClass(CSS.mousedown)) {
+        if (document.body.classList.contains(CSS.mousedown)) {
           const dateThis = getDateFromElement(this);
-          const dateSelected = $datepicker.data(DATA.selected);
+          const dateSelected = new Date(datepickerElement.dataset[DATA.selected]);
 
           const isThisBefore = isBefore(dateThis, dateSelected);
 
@@ -798,9 +796,9 @@ $(function () {
 
         const dateThis = getDateFromElement(this);
 
-        const isSelectable = $(this).attr("data-datepicker-selectable");
-        const absenceId = $(this).attr("data-datepicker-absence-id");
-        const absenceType = $(this).attr("data-datepicker-absence-type");
+        const isSelectable = this.dataset.datepickerSelectable;
+        const absenceId = this.dataset.datepickerAbsenceId;
+        const absenceType = this.dataset.datepickerAbsenceType;
 
         if (isSelectable === "true" && absenceType === "VACATION" && absenceId !== "-1") {
           holidayService.navigateToApplicationForLeave(absenceId);
@@ -821,10 +819,10 @@ $(function () {
 
       clickNext: function () {
         // last month of calendar
-        const $month = $($datepicker.find("." + CSS.month)[numberOfMonths - 1]);
+        const monthElement = [...datepickerElement.querySelectorAll("." + CSS.month)][numberOfMonths - 1];
 
-        const y = $month.data(DATA.year);
-        const m = $month.data(DATA.month);
+        const y = monthElement.dataset[DATA.year];
+        const m = monthElement.dataset[DATA.month];
 
         // to load data for the new (invisible) prev month
         const date = addMonths(new Date(y, m, 1), 1);
@@ -836,10 +834,10 @@ $(function () {
 
       clickPrevious: function () {
         // first month of calendar
-        const $month = $($datepicker.find("." + CSS.month)[0]);
+        const monthElement = [...datepickerElement.querySelectorAll("." + CSS.month)][0];
 
-        const y = $month.data(DATA.year);
-        const m = $month.data(DATA.month);
+        const y = monthElement.dataset[DATA.year];
+        const m = monthElement.dataset[DATA.month];
 
         // to load data for the new (invisible) prev month
         const date = subMonths(new Date(y, m, 1), 1);
@@ -851,27 +849,27 @@ $(function () {
     };
 
     function selectionFrom(date) {
-      if (!date) {
-        const d = $datepicker.data(DATA.selectFrom);
+      if (date) {
+        datepickerElement.dataset[DATA.selectFrom] = format(date, "yyyy-MM-dd");
+        refreshDatepicker();
+      } else {
+        const d = datepickerElement.dataset[DATA.selectFrom];
         return parseISO(d);
       }
-
-      $datepicker.data(DATA.selectFrom, format(date, "yyyy-MM-dd"));
-      refreshDatepicker();
     }
 
     function selectionTo(date) {
-      if (!date) {
-        return parseISO($datepicker.data(DATA.selectTo));
+      if (date) {
+        datepickerElement.dataset[DATA.selectTo] = format(date, "yyyy-MM-dd");
+        refreshDatepicker();
+      } else {
+        return parseISO(datepickerElement.dataset[DATA.selectTo]);
       }
-
-      $datepicker.data(DATA.selectTo, format(date, "yyyy-MM-dd"));
-      refreshDatepicker();
     }
 
     function clearSelection() {
-      $datepicker.removeData(DATA.selectFrom);
-      $datepicker.removeData(DATA.selectTo);
+      delete datepickerElement.dataset[DATA.selectFrom];
+      delete datepickerElement.dataset[DATA.selectTo];
       refreshDatepicker();
     }
 
@@ -881,48 +879,74 @@ $(function () {
       const startIsValid = isValidDate(start);
       const endIsValid = isValidDate(end);
 
-      $("." + CSS.day).each(function () {
+      for (let dayElement of document.querySelectorAll(`.${CSS.day}`)) {
         if (!startIsValid || !endIsValid) {
-          select(this, false);
+          select(dayElement, false);
         } else {
-          const date = parseISO($(this).data(DATA.date));
-          select(this, isWithinInterval(date, { start, end }));
+          const date = parseISO(dayElement.dataset[DATA.date]);
+          select(dayElement, isWithinInterval(date, { start, end }));
         }
-      });
+      }
     }
 
     // eslint-disable-next-line unicorn/consistent-function-scoping
     function select(element, select) {
-      const element_ = $(element);
-
-      if (!element_.data(DATA.selectable)) {
+      if (!element.dataset[DATA.selectable]) {
         return;
       }
 
       if (select) {
-        element_.addClass(CSS.daySelected);
+        element.classList.add(CSS.daySelected);
       } else {
-        element_.removeClass(CSS.daySelected);
+        element.classList.remove(CSS.daySelected);
       }
     }
 
+    const matches = (element, query) => {
+      if (!element) {
+        return;
+      }
+      if (element.matches(query)) {
+        return element;
+      }
+      return matches(element.parentElement, query);
+    };
+
     const Controller = {
       bind: function () {
-        $datepicker.on("mousedown", "." + CSS.day, datepickerHandlers.mousedown);
-        $datepicker.on("mouseover", "." + CSS.day, datepickerHandlers.mouseover);
-        $datepicker.on("click", "." + CSS.day, datepickerHandlers.click);
+        datepickerElement.addEventListener("mousedown", function (event) {
+          const element = matches(event.target, `.${CSS.day}`);
+          if (element) {
+            datepickerHandlers.mousedown.call(element, event);
+          }
+        });
 
-        $datepicker.on("click", "." + CSS.previous, datepickerHandlers.clickPrevious);
-        $datepicker.on("click", "." + CSS.next, datepickerHandlers.clickNext);
+        datepickerElement.addEventListener("mouseover", function (event) {
+          const element = matches(event.target, `.${CSS.day}`);
+          if (element) {
+            datepickerHandlers.mouseover.call(element, event);
+          }
+        });
 
-        $(document.body).on("keyup", function (event) {
-          if (event.keyCode === keyCodes.escape) {
+        datepickerElement.addEventListener("click", function (event) {
+          let element = matches(event.target, `.${CSS.day}`);
+          if (element) {
+            datepickerHandlers.click.call(element, event);
+          } else if ((element = matches(event.target, `.${CSS.previous}`))) {
+            datepickerHandlers.clickPrevious.call(element, event);
+          } else if ((element = matches(event.target, `.${CSS.next}`))) {
+            datepickerHandlers.clickNext.call(element, event);
+          }
+        });
+
+        document.body.addEventListener("keyup", function (event) {
+          if (event.key === "Escape") {
             clearSelection();
           }
         });
 
-        $(document.body).on("mouseup", function () {
-          $(document.body).removeClass(CSS.mousedown);
+        document.body.addEventListener("mouseup", function () {
+          document.body.classList.remove(CSS.mousedown);
         });
 
         const smScreenQuery = window.matchMedia("(max-width: 640px)");
