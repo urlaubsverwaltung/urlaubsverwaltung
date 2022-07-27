@@ -60,7 +60,7 @@
               ></div>
             </div>
 
-            <th:block th:if="${#lists.isEmpty(departments)}" th:text="#{departments.none}"></th:block>
+            <p th:if="${#lists.isEmpty(departments)}" th:text="#{departments.none}"></p>
             <table th:if="${not #lists.isEmpty(departments)}" id="department-table" class="list-table tw-text-sm">
               <thead class="hidden-xs hidden-sm">
                 <tr>
