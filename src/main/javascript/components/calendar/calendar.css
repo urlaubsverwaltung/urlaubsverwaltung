@@ -154,21 +154,21 @@
   text-align: center;
 }
 
-.datepicker-table {
+.calendar-month-grid {
   border: none;
   border-spacing: 0;
   border-collapse: collapse;
   font-size: 0.75rem;
 }
 
-.datepicker-table .datepicker-day-header {
+.calendar-month-grid .datepicker-day-header {
   padding: 0;
   margin: 0;
   color: theme("textColor.calendar.DEFAULT");
   @apply dark:tw-text-center;
 }
 
-.datepicker-table .datepicker-day-header {
+.calendar-month-grid .datepicker-day-header {
   padding: 0.5em;
   font-weight: normal;
   @apply dark:tw-font-semibold;

@@ -44,7 +44,7 @@ exports[`calendar renders 1`] = `
         </p>
         <ol
           aria-describedby="calendar calendar-month-7"
-          class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid"
+          class="calendar-month-grid tw-m-0 tw-p-0 tw-list-none tw-grid"
           style="grid-template-columns: repeat(7, 1fr);"
         >
           <li
@@ -1072,7 +1072,7 @@ exports[`calendar renders 1`] = `
         </p>
         <ol
           aria-describedby="calendar calendar-month-8"
-          class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid"
+          class="calendar-month-grid tw-m-0 tw-p-0 tw-list-none tw-grid"
           style="grid-template-columns: repeat(7, 1fr);"
         >
           <li
@@ -2069,7 +2069,7 @@ exports[`calendar renders 1`] = `
         </p>
         <ol
           aria-describedby="calendar calendar-month-9"
-          class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid"
+          class="calendar-month-grid tw-m-0 tw-p-0 tw-list-none tw-grid"
           style="grid-template-columns: repeat(7, 1fr);"
         >
           <li
@@ -3097,7 +3097,7 @@ exports[`calendar renders 1`] = `
         </p>
         <ol
           aria-describedby="calendar calendar-month-10"
-          class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid"
+          class="calendar-month-grid tw-m-0 tw-p-0 tw-list-none tw-grid"
           style="grid-template-columns: repeat(7, 1fr);"
         >
           <li
@@ -4094,7 +4094,7 @@ exports[`calendar renders 1`] = `
         </p>
         <ol
           aria-describedby="calendar calendar-month-11"
-          class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid"
+          class="calendar-month-grid tw-m-0 tw-p-0 tw-list-none tw-grid"
           style="grid-template-columns: repeat(7, 1fr);"
         >
           <li
@@ -5122,7 +5122,7 @@ exports[`calendar renders 1`] = `
         </p>
         <ol
           aria-describedby="calendar calendar-month-0"
-          class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid"
+          class="calendar-month-grid tw-m-0 tw-p-0 tw-list-none tw-grid"
           style="grid-template-columns: repeat(7, 1fr);"
         >
           <li
@@ -6150,7 +6150,7 @@ exports[`calendar renders 1`] = `
         </p>
         <ol
           aria-describedby="calendar calendar-month-1"
-          class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid"
+          class="calendar-month-grid tw-m-0 tw-p-0 tw-list-none tw-grid"
           style="grid-template-columns: repeat(7, 1fr);"
         >
           <li
@@ -7085,7 +7085,7 @@ exports[`calendar renders 1`] = `
         </p>
         <ol
           aria-describedby="calendar calendar-month-2"
-          class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid"
+          class="calendar-month-grid tw-m-0 tw-p-0 tw-list-none tw-grid"
           style="grid-template-columns: repeat(7, 1fr);"
         >
           <li
@@ -8113,7 +8113,7 @@ exports[`calendar renders 1`] = `
         </p>
         <ol
           aria-describedby="calendar calendar-month-3"
-          class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid"
+          class="calendar-month-grid tw-m-0 tw-p-0 tw-list-none tw-grid"
           style="grid-template-columns: repeat(7, 1fr);"
         >
           <li
@@ -9110,7 +9110,7 @@ exports[`calendar renders 1`] = `
         </p>
         <ol
           aria-describedby="calendar calendar-month-4"
-          class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid"
+          class="calendar-month-grid tw-m-0 tw-p-0 tw-list-none tw-grid"
           style="grid-template-columns: repeat(7, 1fr);"
         >
           <li
