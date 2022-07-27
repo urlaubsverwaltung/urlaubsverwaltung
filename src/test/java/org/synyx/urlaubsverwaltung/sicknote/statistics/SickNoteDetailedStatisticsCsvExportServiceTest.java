@@ -110,7 +110,7 @@ class SickNoteDetailedStatisticsCsvExportServiceTest {
         sut.writeStatistics(period, statistics, csvWriter);
 
         verify(csvWriter).writeNext(new String[]{"{absence.period}: 01.01.2022 - 31.12.2022"});
-        verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{sicknote.statistics.departments}", "{sicknote.statistics.from}", "{sicknote.statistics.to}", "{sicknote.statistics.type}", "{sicknote.statistics.certificate}"});
+        verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{sicknotes.statistics.departments}", "{sicknotes.statistics.from}", "{sicknotes.statistics.to}", "{sicknotes.statistics.type}", "{sicknotes.statistics.certificate}"});
         verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", null, null, null, null});
         verify(csvWriter).writeNext(new String[]{null, null, null, null, "01.01.2022", "02.01.2022", null, ""});
         verify(csvWriter).writeNext(new String[]{null, null, null, null, "04.01.2022", "05.01.2022", null, "04.01.2022-05.01.2022"});
