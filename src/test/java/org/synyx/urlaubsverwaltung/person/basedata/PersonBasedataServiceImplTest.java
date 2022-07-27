@@ -8,6 +8,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,5 +59,23 @@ class PersonBasedataServiceImplTest {
         assertThat(personBasedataEntity.getPersonId()).isEqualTo(1);
         assertThat(personBasedataEntity.getPersonnelNumber()).isEqualTo("1337");
         assertThat(personBasedataEntity.getAdditionalInformation()).isEqualTo("Some additional Information");
+    }
+
+    @Test
+    void getBasedataByPersonIds() {
+        final PersonBasedataEntity personBasedataEntity = new PersonBasedataEntity();
+        personBasedataEntity.setPersonId(1);
+        personBasedataEntity.setPersonnelNumber("1337");
+
+        final PersonBasedataEntity personBasedataEntity2 = new PersonBasedataEntity();
+        personBasedataEntity2.setPersonId(2);
+        personBasedataEntity2.setPersonnelNumber("1887");
+
+        when(personBasedataRepository.findAllByPersonIdIn(List.of(1,2))).thenReturn(List.of(personBasedataEntity, personBasedataEntity2));
+
+        final Map<Integer, PersonBasedata> basedataByPersonIds = sut.getBasedataByPersonIds(List.of(1,2));
+        assertThat(basedataByPersonIds).containsKeys(1,2);
+        assertThat(basedataByPersonIds.get(1).getPersonnelNumber()).isEqualTo("1337");
+        assertThat(basedataByPersonIds.get(2).getPersonnelNumber()).isEqualTo("1887");
     }
 }

@@ -966,17 +966,23 @@ class DepartmentServiceImplTest {
         final DepartmentMemberEmbeddable existingPersonMember = new DepartmentMemberEmbeddable();
         existingPersonMember.setPerson(person);
 
-        final DepartmentEntity departmentEntity = new DepartmentEntity();
-        departmentEntity.setName("Department A");
-        departmentEntity.setId(1);
-        departmentEntity.setMembers(List.of(existingPersonMember));
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setName("Department A");
+        departmentEntityA.setId(1);
+        departmentEntityA.setMembers(List.of(existingPersonMember));
 
-        when(departmentRepository.findDistinctByMembersPersonIn(persons)).thenReturn(List.of(departmentEntity));
+        final DepartmentEntity departmentEntityB = new DepartmentEntity();
+        departmentEntityB.setName("Department B");
+        departmentEntityB.setId(2);
+        departmentEntityB.setMembers(List.of(existingPersonMember));
+
+
+        when(departmentRepository.findDistinctByMembersPersonIn(persons)).thenReturn(List.of(departmentEntityA, departmentEntityB));
 
         final Map<Integer, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(persons);
         assertThat(departmentsByMembers)
             .containsKey(person.getId())
-            .containsValue(List.of("Department A"));
+            .containsValue(List.of("Department A", "Department B"));
     }
 
     private DepartmentMemberEmbeddable departmentMemberEmbeddable(String username, String firstname, String lastname, String email) {

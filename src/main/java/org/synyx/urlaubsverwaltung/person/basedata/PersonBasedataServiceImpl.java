@@ -2,15 +2,12 @@ package org.synyx.urlaubsverwaltung.person.basedata;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataMapper.mapToEntity;
 
 @Service
