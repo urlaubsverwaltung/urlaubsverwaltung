@@ -62,6 +62,7 @@
 
             <p th:if="${#lists.isEmpty(departments)}" th:text="#{departments.none}"></p>
             <table th:if="${not #lists.isEmpty(departments)}" id="department-table" class="list-table tw-text-sm">
+              <caption class="tw-sr-only" th:text="#{departments.title}">Departments</caption>
               <thead class="hidden-xs hidden-sm">
                 <tr>
                   <th th:text="#{department.data.name}" scope="col" class="sortable-field"></th>
