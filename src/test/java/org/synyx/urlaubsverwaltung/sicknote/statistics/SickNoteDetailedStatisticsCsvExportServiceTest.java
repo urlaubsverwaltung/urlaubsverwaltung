@@ -101,11 +101,11 @@ class SickNoteDetailedStatisticsCsvExportServiceTest {
         addMessageSource("person.account.basedata.personnelNumber");
         addMessageSource("person.data.firstName");
         addMessageSource("person.data.lastName");
-        addMessageSource("sicknote.statistics.departments");
-        addMessageSource("sicknote.statistics.from");
-        addMessageSource("sicknote.statistics.to");
-        addMessageSource("sicknote.statistics.type");
-        addMessageSource("sicknote.statistics.certificate");
+        addMessageSource("sicknotes.statistics.departments");
+        addMessageSource("sicknotes.statistics.from");
+        addMessageSource("sicknotes.statistics.to");
+        addMessageSource("sicknotes.statistics.type");
+        addMessageSource("sicknotes.statistics.certificate");
 
         sut.writeStatistics(period, statistics, csvWriter);
 

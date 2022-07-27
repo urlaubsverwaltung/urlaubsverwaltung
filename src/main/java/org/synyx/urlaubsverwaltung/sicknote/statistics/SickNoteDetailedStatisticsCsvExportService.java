@@ -41,11 +41,11 @@ public class SickNoteDetailedStatisticsCsvExportService {
             getTranslation("person.account.basedata.personnelNumber"),
             getTranslation("person.data.firstName"),
             getTranslation("person.data.lastName"),
-            getTranslation("sicknote.statistics.departments"),
-            getTranslation("sicknote.statistics.from"),
-            getTranslation("sicknote.statistics.to"),
-            getTranslation("sicknote.statistics.type"),
-            getTranslation("sicknote.statistics.certificate")
+            getTranslation("sicknotes.statistics.departments"),
+            getTranslation("sicknotes.statistics.from"),
+            getTranslation("sicknotes.statistics.to"),
+            getTranslation("sicknotes.statistics.type"),
+            getTranslation("sicknotes.statistics.certificate")
         };
 
         final String startDateString = dateFormatAware.format(period.getStartDate());
