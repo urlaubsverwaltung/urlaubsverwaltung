@@ -481,7 +481,7 @@ $(function () {
     let i18n = () => "";
 
     const TMPL = {
-      container: '{{previousButton}}<div class="datepicker-months-container">{{months}}</div>{{nextButton}}',
+      container: '{{previousButton}}<div class="calendar-container">{{months}}</div>{{nextButton}}',
 
       button: '<button class="{{css}}">{{text}}</button>',
 

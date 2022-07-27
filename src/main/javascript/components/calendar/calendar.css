@@ -58,7 +58,7 @@
 
 /* MONTHS */
 
-.datepicker-months-container {
+.calendar-container {
   order: 0;
   @apply sm:tw-order-none;
   position: relative;

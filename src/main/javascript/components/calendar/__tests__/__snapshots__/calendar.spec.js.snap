@@ -29,7 +29,7 @@ exports[`calendar renders 1`] = `
       </span>
     </button>
     <div
-      class="datepicker-months-container"
+      class="calendar-container"
     >
       <div
         class="datepicker-month "
