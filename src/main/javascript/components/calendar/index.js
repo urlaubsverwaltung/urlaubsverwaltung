@@ -491,7 +491,7 @@ $(function () {
       // {{0}}......{{6}}
       weekdays: `{{${[0, 1, 2, 3, 4, 5, 6].join("}}{{")}}}`,
 
-      weekday: `<li role="none" aria-hidden="true" class="datepicker-day-header print:tw-hidden">{{text}}</li>`,
+      weekday: `<li role="none" aria-hidden="true" class="calendar-month-day-header print:tw-hidden">{{text}}</li>`,
 
       day: '<li class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900" style="{{cellStyle}}"><span class="tw-sr-only print:tw-hidden">{{ariaDay}}</span><div class="datepicker-day {{css}}" style="{{style}}" data-title="{{title}}" data-datepicker-absence-id={{absenceId}} data-datepicker-absence-type="{{absenceType}}" data-datepicker-date="{{date}}" data-datepicker-selectable="{{selectable}}"><span aria-hidden="true">{{day}}</span>{{icon}}</div></li>',
 

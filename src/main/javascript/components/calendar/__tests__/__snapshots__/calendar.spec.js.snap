@@ -49,49 +49,49 @@ exports[`calendar renders 1`] = `
         >
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Mo
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Tu
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             We
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Th
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Fr
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Sa
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Su
@@ -1077,49 +1077,49 @@ exports[`calendar renders 1`] = `
         >
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Mo
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Tu
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             We
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Th
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Fr
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Sa
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Su
@@ -2074,49 +2074,49 @@ exports[`calendar renders 1`] = `
         >
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Mo
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Tu
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             We
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Th
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Fr
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Sa
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Su
@@ -3102,49 +3102,49 @@ exports[`calendar renders 1`] = `
         >
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Mo
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Tu
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             We
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Th
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Fr
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Sa
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Su
@@ -4099,49 +4099,49 @@ exports[`calendar renders 1`] = `
         >
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Mo
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Tu
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             We
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Th
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Fr
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Sa
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Su
@@ -5127,49 +5127,49 @@ exports[`calendar renders 1`] = `
         >
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Mo
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Tu
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             We
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Th
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Fr
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Sa
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Su
@@ -6155,49 +6155,49 @@ exports[`calendar renders 1`] = `
         >
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Mo
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Tu
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             We
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Th
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Fr
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Sa
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Su
@@ -7090,49 +7090,49 @@ exports[`calendar renders 1`] = `
         >
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Mo
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Tu
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             We
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Th
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Fr
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Sa
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Su
@@ -8118,49 +8118,49 @@ exports[`calendar renders 1`] = `
         >
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Mo
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Tu
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             We
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Th
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Fr
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Sa
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Su
@@ -9115,49 +9115,49 @@ exports[`calendar renders 1`] = `
         >
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Mo
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Tu
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             We
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Th
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Fr
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Sa
           </li>
           <li
             aria-hidden="true"
-            class="datepicker-day-header print:tw-hidden"
+            class="calendar-month-day-header print:tw-hidden"
             role="none"
           >
             Su

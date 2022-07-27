@@ -161,14 +161,14 @@
   font-size: 0.75rem;
 }
 
-.calendar-month-grid .datepicker-day-header {
+.calendar-month-grid .calendar-month-day-header {
   padding: 0;
   margin: 0;
   color: theme("textColor.calendar.DEFAULT");
   @apply dark:tw-text-center;
 }
 
-.calendar-month-grid .datepicker-day-header {
+.calendar-month-grid .calendar-month-day-header {
   padding: 0.5em;
   font-weight: normal;
   @apply dark:tw-font-semibold;
