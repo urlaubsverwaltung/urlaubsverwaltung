@@ -92,7 +92,7 @@ $(function () {
     daySickDayNoon: "datepicker-day-sick-note-noon",
     next: "datepicker-next",
     previous: "datepicker-prev",
-    month: "datepicker-month",
+    month: "calendar-month-container",
     mousedown: "mousedown",
   };
 
@@ -486,7 +486,7 @@ $(function () {
       button: '<button class="{{css}}">{{text}}</button>',
 
       month:
-        '<div class="datepicker-month {{css}}" data-datepicker-month="{{month}}" data-datepicker-year="{{year}}"><p id="calendar-month-{{month}}" class="datepicker-month-caption">{{caption}}</p><ol class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid" style="grid-template-columns: repeat(7, 1fr);" aria-describedby="calendar calendar-month-{{month}}">{{weekdays}}{{weeks}}</ol></div>',
+        '<div class="calendar-month-container {{css}}" data-datepicker-month="{{month}}" data-datepicker-year="{{year}}"><p id="calendar-month-{{month}}" class="datepicker-month-caption">{{caption}}</p><ol class="datepicker-table tw-m-0 tw-p-0 tw-list-none tw-grid" style="grid-template-columns: repeat(7, 1fr);" aria-describedby="calendar calendar-month-{{month}}">{{weekdays}}{{weeks}}</ol></div>',
 
       // {{0}}......{{6}}
       weekdays: `{{${[0, 1, 2, 3, 4, 5, 6].join("}}{{")}}}`,

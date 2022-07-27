@@ -32,7 +32,7 @@ exports[`calendar renders 1`] = `
       class="calendar-container"
     >
       <div
-        class="datepicker-month "
+        class="calendar-month-container "
         data-datepicker-month="7"
         data-datepicker-year="2017"
       >
@@ -1060,7 +1060,7 @@ exports[`calendar renders 1`] = `
         </ol>
       </div>
       <div
-        class="datepicker-month "
+        class="calendar-month-container "
         data-datepicker-month="8"
         data-datepicker-year="2017"
       >
@@ -2057,7 +2057,7 @@ exports[`calendar renders 1`] = `
         </ol>
       </div>
       <div
-        class="datepicker-month "
+        class="calendar-month-container "
         data-datepicker-month="9"
         data-datepicker-year="2017"
       >
@@ -3085,7 +3085,7 @@ exports[`calendar renders 1`] = `
         </ol>
       </div>
       <div
-        class="datepicker-month "
+        class="calendar-month-container "
         data-datepicker-month="10"
         data-datepicker-year="2017"
       >
@@ -4082,7 +4082,7 @@ exports[`calendar renders 1`] = `
         </ol>
       </div>
       <div
-        class="datepicker-month "
+        class="calendar-month-container "
         data-datepicker-month="11"
         data-datepicker-year="2017"
       >
@@ -5110,7 +5110,7 @@ exports[`calendar renders 1`] = `
         </ol>
       </div>
       <div
-        class="datepicker-month "
+        class="calendar-month-container "
         data-datepicker-month="0"
         data-datepicker-year="2018"
       >
@@ -6138,7 +6138,7 @@ exports[`calendar renders 1`] = `
         </ol>
       </div>
       <div
-        class="datepicker-month "
+        class="calendar-month-container "
         data-datepicker-month="1"
         data-datepicker-year="2018"
       >
@@ -7073,7 +7073,7 @@ exports[`calendar renders 1`] = `
         </ol>
       </div>
       <div
-        class="datepicker-month "
+        class="calendar-month-container "
         data-datepicker-month="2"
         data-datepicker-year="2018"
       >
@@ -8101,7 +8101,7 @@ exports[`calendar renders 1`] = `
         </ol>
       </div>
       <div
-        class="datepicker-month "
+        class="calendar-month-container "
         data-datepicker-month="3"
         data-datepicker-year="2018"
       >
@@ -9098,7 +9098,7 @@ exports[`calendar renders 1`] = `
         </ol>
       </div>
       <div
-        class="datepicker-month "
+        class="calendar-month-container "
         data-datepicker-month="4"
         data-datepicker-year="2018"
       >

@@ -70,7 +70,7 @@
 
 /* MONTH */
 
-.datepicker-month {
+.calendar-month-container {
   --width: 100%;
   --gap: 1rem;
   position: absolute;
@@ -80,66 +80,66 @@
   display: none;
 }
 
-.datepicker-month:nth-child(5) {
+.calendar-month-container:nth-child(5) {
   left: 0;
   /* hide every month despite current month. */
   display: block;
 }
 
 @screen sm {
-  .datepicker-month:nth-child(5) {
+  .calendar-month-container:nth-child(5) {
     --width: 80vw;
     left: 5vw;
   }
 }
 
 @screen md {
-  .datepicker-month {
+  .calendar-month-container {
     --width: 43% !important; /* `important` to also override :nth-child(5) from above */
     --gap: 5rem;
     display: block;
   }
-  .datepicker-month:nth-child(4) {
+  .calendar-month-container:nth-child(4) {
     left: var(--gap);
   }
-  .datepicker-month:nth-child(1) {
+  .calendar-month-container:nth-child(1) {
     left: calc(-3 * (var(--width)) - var(--gap));
   }
-  .datepicker-month:nth-child(2) {
+  .calendar-month-container:nth-child(2) {
     left: calc(-2 * (var(--width)) - var(--gap));
   }
-  .datepicker-month:nth-child(3) {
+  .calendar-month-container:nth-child(3) {
     left: calc(-1 * (var(--width)) - var(--gap));
   }
-  .datepicker-month:nth-child(4) {
+  .calendar-month-container:nth-child(4) {
     left: calc(var(--gap) / 2);
   }
-  .datepicker-month:nth-child(5) {
+  .calendar-month-container:nth-child(5) {
     left: calc(var(--width) + var(--gap));
   }
-  .datepicker-month:nth-child(6) {
+  .calendar-month-container:nth-child(6) {
     left: calc(2 * (var(--width) + var(--gap)));
   }
-  .datepicker-month:nth-child(7) {
+  .calendar-month-container:nth-child(7) {
     left: calc(3 * (var(--width) + var(--gap)));
   }
-  .datepicker-month:nth-child(8) {
+  .calendar-month-container:nth-child(8) {
     left: calc(4 * (var(--width) + var(--gap)));
   }
-  .datepicker-month:nth-child(9) {
+  .calendar-month-container:nth-child(9) {
     left: calc(5 * (var(--width) + var(--gap)));
   }
-  .datepicker-month:nth-child(10) {
+  .calendar-month-container:nth-child(10) {
     left: calc(6 * (var(--width) + var(--gap)));
   }
 }
 
 @media (min-width: 992px) {
-  .datepicker-month {
+  .calendar-month-container {
     --width: 30% !important; /* `important` to also override :nth-child(5) from above */
     --gap: 3rem;
   }
-  .datepicker-month:nth-child(4) {
+  .calendar-month-container:nth-child(4) {
     left: 0;
   }
 }
