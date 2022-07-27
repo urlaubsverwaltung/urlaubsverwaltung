@@ -90,7 +90,7 @@ public class SickDaysOverviewViewController {
         final List<SickNote> sickNoteList = sickNoteService.getByPeriod(period.getStartDate(), period.getEndDate());
         fillModel(model, sickNoteList, period);
 
-        return "sicknote/sick_notes";
+        return "thymeleaf/sicknote/sick_notes";
     }
 
     private void fillModel(Model model, List<SickNote> sickNotes, FilterPeriod period) {
