@@ -97,7 +97,7 @@ exports[`calendar renders 1`] = `
             Su
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style="grid-column-start: 2;"
           >
             <span
@@ -128,7 +128,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -159,7 +159,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -190,7 +190,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -221,7 +221,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -252,7 +252,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -283,7 +283,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -314,7 +314,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -345,7 +345,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -376,7 +376,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -407,7 +407,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -438,7 +438,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -469,7 +469,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -500,7 +500,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -531,7 +531,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -562,7 +562,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -593,7 +593,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -624,7 +624,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -655,7 +655,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -686,7 +686,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -717,7 +717,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -748,7 +748,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -779,7 +779,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -810,7 +810,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -841,7 +841,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -872,7 +872,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -903,7 +903,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -934,7 +934,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -965,7 +965,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -996,7 +996,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1027,7 +1027,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1125,7 +1125,7 @@ exports[`calendar renders 1`] = `
             Su
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style="grid-column-start: 5;"
           >
             <span
@@ -1156,7 +1156,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1187,7 +1187,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1218,7 +1218,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1249,7 +1249,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1280,7 +1280,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1311,7 +1311,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1342,7 +1342,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1373,7 +1373,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1404,7 +1404,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1435,7 +1435,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1466,7 +1466,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1497,7 +1497,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1528,7 +1528,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1559,7 +1559,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1590,7 +1590,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1621,7 +1621,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1652,7 +1652,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1683,7 +1683,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1714,7 +1714,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1745,7 +1745,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1776,7 +1776,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1807,7 +1807,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1838,7 +1838,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1869,7 +1869,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1900,7 +1900,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1931,7 +1931,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1962,7 +1962,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -1993,7 +1993,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2024,7 +2024,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2122,7 +2122,7 @@ exports[`calendar renders 1`] = `
             Su
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style="grid-column-start: 7;"
           >
             <span
@@ -2153,7 +2153,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2184,7 +2184,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2215,7 +2215,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2246,7 +2246,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2277,7 +2277,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2308,7 +2308,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2339,7 +2339,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2370,7 +2370,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2401,7 +2401,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2432,7 +2432,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2463,7 +2463,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2494,7 +2494,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2525,7 +2525,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2556,7 +2556,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2587,7 +2587,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2618,7 +2618,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2649,7 +2649,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2680,7 +2680,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2711,7 +2711,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2742,7 +2742,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2773,7 +2773,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2804,7 +2804,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2835,7 +2835,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2866,7 +2866,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2897,7 +2897,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2928,7 +2928,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2959,7 +2959,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -2990,7 +2990,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3021,7 +3021,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3052,7 +3052,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3150,7 +3150,7 @@ exports[`calendar renders 1`] = `
             Su
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style="grid-column-start: 3;"
           >
             <span
@@ -3181,7 +3181,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3212,7 +3212,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3243,7 +3243,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3274,7 +3274,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3305,7 +3305,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3336,7 +3336,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3367,7 +3367,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3398,7 +3398,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3429,7 +3429,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3460,7 +3460,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3491,7 +3491,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3522,7 +3522,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3553,7 +3553,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3584,7 +3584,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3615,7 +3615,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3646,7 +3646,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3677,7 +3677,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3708,7 +3708,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3739,7 +3739,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3770,7 +3770,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3801,7 +3801,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3832,7 +3832,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3863,7 +3863,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3894,7 +3894,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3925,7 +3925,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3956,7 +3956,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -3987,7 +3987,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4018,7 +4018,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4049,7 +4049,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4147,7 +4147,7 @@ exports[`calendar renders 1`] = `
             Su
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style="grid-column-start: 5;"
           >
             <span
@@ -4178,7 +4178,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4209,7 +4209,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4240,7 +4240,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4271,7 +4271,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4302,7 +4302,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4333,7 +4333,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4364,7 +4364,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4395,7 +4395,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4426,7 +4426,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4457,7 +4457,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4488,7 +4488,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4519,7 +4519,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4550,7 +4550,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4581,7 +4581,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4612,7 +4612,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4643,7 +4643,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4674,7 +4674,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4705,7 +4705,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4736,7 +4736,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4767,7 +4767,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4798,7 +4798,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4829,7 +4829,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4860,7 +4860,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4891,7 +4891,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4922,7 +4922,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4953,7 +4953,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -4984,7 +4984,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5015,7 +5015,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5046,7 +5046,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5077,7 +5077,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5175,7 +5175,7 @@ exports[`calendar renders 1`] = `
             Su
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style="grid-column-start: 1;"
           >
             <span
@@ -5206,7 +5206,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5237,7 +5237,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5268,7 +5268,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5299,7 +5299,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5330,7 +5330,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5361,7 +5361,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5392,7 +5392,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5423,7 +5423,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5454,7 +5454,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5485,7 +5485,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5516,7 +5516,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5547,7 +5547,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5578,7 +5578,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5609,7 +5609,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5640,7 +5640,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5671,7 +5671,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5702,7 +5702,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5733,7 +5733,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5764,7 +5764,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5795,7 +5795,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5826,7 +5826,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5857,7 +5857,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5888,7 +5888,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5919,7 +5919,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5950,7 +5950,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -5981,7 +5981,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6012,7 +6012,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6043,7 +6043,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6074,7 +6074,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6105,7 +6105,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6203,7 +6203,7 @@ exports[`calendar renders 1`] = `
             Su
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style="grid-column-start: 4;"
           >
             <span
@@ -6234,7 +6234,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6265,7 +6265,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6296,7 +6296,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6327,7 +6327,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6358,7 +6358,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6389,7 +6389,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6420,7 +6420,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6451,7 +6451,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6482,7 +6482,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6513,7 +6513,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6544,7 +6544,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6575,7 +6575,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6606,7 +6606,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6637,7 +6637,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6668,7 +6668,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6699,7 +6699,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6730,7 +6730,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6761,7 +6761,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6792,7 +6792,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6823,7 +6823,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6854,7 +6854,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6885,7 +6885,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6916,7 +6916,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6947,7 +6947,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -6978,7 +6978,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7009,7 +7009,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7040,7 +7040,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7138,7 +7138,7 @@ exports[`calendar renders 1`] = `
             Su
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style="grid-column-start: 4;"
           >
             <span
@@ -7169,7 +7169,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7200,7 +7200,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7231,7 +7231,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7262,7 +7262,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7293,7 +7293,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7324,7 +7324,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7355,7 +7355,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7386,7 +7386,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7417,7 +7417,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7448,7 +7448,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7479,7 +7479,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7510,7 +7510,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7541,7 +7541,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7572,7 +7572,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7603,7 +7603,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7634,7 +7634,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7665,7 +7665,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7696,7 +7696,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7727,7 +7727,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7758,7 +7758,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7789,7 +7789,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7820,7 +7820,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7851,7 +7851,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7882,7 +7882,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7913,7 +7913,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7944,7 +7944,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -7975,7 +7975,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8006,7 +8006,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8037,7 +8037,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8068,7 +8068,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8166,7 +8166,7 @@ exports[`calendar renders 1`] = `
             Su
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style="grid-column-start: 7;"
           >
             <span
@@ -8197,7 +8197,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8228,7 +8228,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8259,7 +8259,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8290,7 +8290,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8321,7 +8321,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8352,7 +8352,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8383,7 +8383,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8414,7 +8414,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8445,7 +8445,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8476,7 +8476,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8507,7 +8507,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8538,7 +8538,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8569,7 +8569,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8600,7 +8600,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8631,7 +8631,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8662,7 +8662,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8693,7 +8693,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8724,7 +8724,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8755,7 +8755,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8786,7 +8786,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8817,7 +8817,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8848,7 +8848,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8879,7 +8879,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8910,7 +8910,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8941,7 +8941,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -8972,7 +8972,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9003,7 +9003,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9034,7 +9034,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9065,7 +9065,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9163,7 +9163,7 @@ exports[`calendar renders 1`] = `
             Su
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style="grid-column-start: 2;"
           >
             <span
@@ -9194,7 +9194,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9225,7 +9225,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9256,7 +9256,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9287,7 +9287,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9318,7 +9318,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9349,7 +9349,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9380,7 +9380,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9411,7 +9411,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9442,7 +9442,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9473,7 +9473,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9504,7 +9504,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9535,7 +9535,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9566,7 +9566,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9597,7 +9597,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9628,7 +9628,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9659,7 +9659,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9690,7 +9690,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9721,7 +9721,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9752,7 +9752,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9783,7 +9783,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9814,7 +9814,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9845,7 +9845,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9876,7 +9876,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9907,7 +9907,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9938,7 +9938,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -9969,7 +9969,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -10000,7 +10000,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -10031,7 +10031,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -10062,7 +10062,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
@@ -10093,7 +10093,7 @@ exports[`calendar renders 1`] = `
             </div>
           </li>
           <li
-            class="tw-border-b tw-border-r dark:tw-border-zinc-900"
+            class="tw-border-b tw-border-r tw-border-white dark:tw-border-zinc-900"
             style=""
           >
             <span
