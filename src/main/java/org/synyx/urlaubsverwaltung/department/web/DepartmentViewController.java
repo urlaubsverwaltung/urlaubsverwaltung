@@ -38,7 +38,7 @@ public class DepartmentViewController {
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String REDIRECT_WEB_DEPARTMENT = "redirect:/web/department/";
     private static final String DEPARTMENT = "department";
-    private static final String DEPARTMENT_DEPARTMENT_FORM = "department/department_form";
+    private static final String DEPARTMENT_DEPARTMENT_FORM = "thymeleaf/department/department_form";
 
     private final DepartmentService departmentService;
     private final PersonService personService;
@@ -66,7 +66,7 @@ public class DepartmentViewController {
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("canCreateAndModifyDepartment", signedInUser.hasRole(OFFICE));
 
-        return "department/department_list";
+        return "thymeleaf/department/department_list";
     }
 
     @PreAuthorize(IS_OFFICE)
