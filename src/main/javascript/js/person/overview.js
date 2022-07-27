@@ -43,17 +43,4 @@ $(document).ready(function () {
   }
 
   initCalendar();
-
-  let resizeTimer;
-
-  $(window).on("resize", function () {
-    if (resizeTimer) {
-      clearTimeout(resizeTimer);
-    }
-
-    resizeTimer = setTimeout(function () {
-      Urlaubsverwaltung.Calendar.reRender();
-      resizeTimer = false;
-    }, 30);
-  });
 });

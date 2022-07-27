@@ -951,10 +951,6 @@ $(function () {
         view.display(date);
         c.bind();
       },
-
-      reRender: function () {
-        view.display(date);
-      },
     };
   })();
 
