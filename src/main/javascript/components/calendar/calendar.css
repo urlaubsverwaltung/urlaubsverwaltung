@@ -68,6 +68,14 @@
   height: 19.688rem;
 }
 
+/* 1024px */
+@screen lg {
+  .calendar-container {
+    /* prev & next buttons are moved ti the side. use "full" width for the calendar  */
+    @apply -tw-mx-6;
+  }
+}
+
 /* MONTH */
 
 .calendar-month-container {
@@ -137,10 +145,27 @@
 @media (min-width: 992px) {
   .calendar-month-container {
     --width: 30% !important; /* `important` to also override :nth-child(5) from above */
-    --gap: 3rem;
+    --gap: 2.3rem;
   }
   .calendar-month-container:nth-child(4) {
     left: 0;
+  }
+}
+
+/* 1024px */
+@screen lg {
+  .calendar-container {
+    /* prev & next buttons are moved ti the side. use "full" width for the calendar  */
+    @apply -tw-mx-6;
+  }
+  .calendar-month-container {
+    --gap: 2.6rem;
+  }
+}
+
+@media (min-width: 1120px) {
+  .calendar-month-container {
+    --gap: 3rem;
   }
 }
 
