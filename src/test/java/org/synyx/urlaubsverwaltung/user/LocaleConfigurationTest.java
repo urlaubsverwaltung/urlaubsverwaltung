@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.user;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,15 +16,8 @@ class LocaleConfigurationTest {
                 assertThat(context).hasBean("localeResolver");
                 assertThat(context.getBean(LocaleInterceptorConfigurer.class).getHandlerInterceptors())
                     .hasSize(2)
-                    .hasOnlyElementsOfTypes(LocaleChangeInterceptor.class, LocaleModelInterceptor.class);
+                    .hasOnlyElementsOfTypes(LocaleModelInterceptor.class);
             });
-    }
-
-    @Test
-    void localeChangeInterceptorConfiguredWithLanguage() {
-        final LocaleConfiguration localeConfiguration = new LocaleConfiguration();
-        final LocaleChangeInterceptor localeChangeInterceptor = localeConfiguration.localeChangeInterceptor();
-        assertThat(localeChangeInterceptor.getParamName()).isEqualTo("language");
     }
 
     @Test

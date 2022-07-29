@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.user;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.util.List;
@@ -18,13 +17,7 @@ class LocaleConfiguration {
 
     @Bean
     LocaleInterceptorConfigurer localeInterceptorConfigurer() {
-        return new LocaleInterceptorConfigurer(List.of(localeChangeInterceptor(), localeModelInterceptor()));
-    }
-
-    LocaleChangeInterceptor localeChangeInterceptor() {
-        final LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-        localeChangeInterceptor.setParamName("language");
-        return localeChangeInterceptor;
+        return new LocaleInterceptorConfigurer(List.of(localeModelInterceptor()));
     }
 
     LocaleModelInterceptor localeModelInterceptor() {
