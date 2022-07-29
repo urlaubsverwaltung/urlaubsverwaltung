@@ -5,7 +5,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
-import org.synyx.urlaubsverwaltung.user.LocaleModelInterceptor;
 
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,25 +12,60 @@ import static org.assertj.core.api.Assertions.assertThat;
 class LocaleModelInterceptorTest {
 
     @Test
-    void modelAndView() {
+    void ensureLanguageModelAttribute() throws Exception {
         LocaleContextHolder.setLocale(GERMAN);
 
-        final LocaleModelInterceptor localeModelInterceptor = new LocaleModelInterceptor();
-        final ModelAndView modelAndView = new ModelAndView();
+        final LocaleModelInterceptor interceptor = new LocaleModelInterceptor();
 
-        localeModelInterceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), modelAndView);
-        assertThat(modelAndView.getModelMap().getAttribute("locale")).isEqualTo("de");
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("view-name");
+        interceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), modelAndView);
+
+        assertThat(modelAndView.getModelMap().getAttribute("language")).isEqualTo("de");
     }
 
     @Test
-    void modelAndViewWithParameterSet() {
+    void ensureNoExceptionThrownWhenModelAndViewIsNull() throws Exception {
+        final LocaleModelInterceptor interceptor = new LocaleModelInterceptor();
+        interceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), null);
+    }
+
+    @Test
+    void ensureLanguageModelAttributeIsNotSetWhenThereIsNoViewName() throws Exception {
         LocaleContextHolder.setLocale(GERMAN);
 
-        final LocaleModelInterceptor localeModelInterceptor = new LocaleModelInterceptor();
-        localeModelInterceptor.setParamName("language");
-        final ModelAndView modelAndView = new ModelAndView();
+        final LocaleModelInterceptor interceptor = new LocaleModelInterceptor();
 
-        localeModelInterceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), modelAndView);
-        assertThat(modelAndView.getModelMap().getAttribute("language")).isEqualTo("de");
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName(null);
+        interceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), modelAndView);
+
+        assertThat(modelAndView.getModelMap()).isEmpty();
+    }
+
+    @Test
+    void ensureLanguageModelAttributeIsNotSetForForward() throws Exception {
+        LocaleContextHolder.setLocale(GERMAN);
+
+        final LocaleModelInterceptor interceptor = new LocaleModelInterceptor();
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("forward::view-name");
+        interceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), modelAndView);
+
+        assertThat(modelAndView.getModelMap()).isEmpty();
+    }
+
+    @Test
+    void ensureLanguageModelAttributeIsNotSetForRedirect() throws Exception {
+        LocaleContextHolder.setLocale(GERMAN);
+
+        final LocaleModelInterceptor interceptor = new LocaleModelInterceptor();
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("redirect::view-name");
+        interceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), modelAndView);
+
+        assertThat(modelAndView.getModelMap()).isEmpty();
     }
 }
