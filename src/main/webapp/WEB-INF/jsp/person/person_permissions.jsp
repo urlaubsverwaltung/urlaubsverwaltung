@@ -114,7 +114,7 @@
                                 <h2 class="tw-mb-2 tw-block">
                                     <spring:message code="person.form.permissions.roles.basic_roles.description"/>
                                 </h2>
-                                <div class="checkbox tw-pb-2 tw-pl-4 tw-mb-2">
+                                <div class="checkbox tw-pb-2 tw-mb-2">
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.DEPARTMENT_HEAD"/>
                                     </strong>
@@ -144,7 +144,7 @@
                                     </label>
                                 </div>
 
-                                <div class="checkbox tw-pb-2 tw-pl-4 tw-mb-2">
+                                <div class="checkbox tw-pb-2 tw-mb-2">
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.SECOND_STAGE_AUTHORITY"/>
                                     </strong>
@@ -177,7 +177,7 @@
                                     </label>
                                 </div>
 
-                                <div class="checkbox tw-pb-2 tw-pl-4 tw-mb-2">
+                                <div class="checkbox tw-pb-2 tw-mb-2">
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.BOSS"/>
                                     </strong>
@@ -199,7 +199,7 @@
                                     </label>
                                 </div>
 
-                                <div class="checkbox tw-pb-4 tw-pl-4 tw-mb-4">
+                                <div class="checkbox tw-pb-4 tw-mb-4">
                                     <strong class="tw-mb-2 tw-block">
                                         <spring:message code="person.form.permissions.roles.OFFICE"/>
                                     </strong>
