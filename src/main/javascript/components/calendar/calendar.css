@@ -23,8 +23,6 @@
 
 .datepicker-prev,
 .datepicker-next {
-  border: none;
-  padding: 0;
   cursor: pointer;
   background-color: transparent;
   color: theme("textColor.calendar.DEFAULT");
@@ -32,32 +30,35 @@
 
 .datepicker-prev {
   order: 1;
-  flex-basis: 50%;
+  flex-basis: 40%;
   @apply tw-mb-4;
   @apply sm:tw-mb-0;
   @apply sm:tw-order-none;
-  @apply sm:tw-basis-auto;
-  @apply sm:tw-mr-5;
+  @apply sm:tw-basis-0;
+  @apply sm:-tw-ml-2;
   @apply tw-flex;
   @apply tw-items-center;
+  @apply lg:-tw-translate-x-full;
 }
 
 .datepicker-next {
   order: 2;
-  flex-basis: 50%;
+  flex-basis: 40%;
+  @apply tw-ml-auto;
   @apply tw-mb-4;
   @apply sm:tw-mb-0;
   @apply sm:tw-order-none;
-  @apply sm:tw-basis-auto;
-  @apply sm:tw-ml-5;
+  @apply sm:tw-basis-0;
+  @apply sm:-tw-mr-2;
   @apply tw-flex;
   @apply tw-items-center;
   @apply tw-flex-row-reverse;
+  @apply lg:tw-translate-x-full;
 }
 
 /* MONTHS */
 
-.datepicker-months-container {
+.calendar-container {
   order: 0;
   @apply sm:tw-order-none;
   position: relative;
@@ -67,48 +68,108 @@
   height: 19.688rem;
 }
 
+/* 1024px */
+@screen lg {
+  .calendar-container {
+    /* prev & next buttons are moved ti the side. use "full" width for the calendar  */
+    @apply -tw-mx-6;
+  }
+}
+
 /* MONTH */
 
-.datepicker-month {
-  --width: 22.5rem;
+.calendar-month-container {
+  --width: 100%;
+  --gap: 1rem;
   position: absolute;
   width: var(--width);
-  height: 100%;
   transition: left 0.4s ease-in-out;
+  /* hide every month despite current month. */
+  display: none;
 }
 
-.datepicker-month:nth-child(1) {
-  left: calc(-3 * var(--width));
-}
-.datepicker-month:nth-child(2) {
-  left: calc(-2 * var(--width));
-}
-.datepicker-month:nth-child(3) {
-  left: calc(-1 * var(--width));
-}
-.datepicker-month:nth-child(4) {
+.calendar-month-container:nth-child(5) {
   left: 0;
-}
-.datepicker-month:nth-child(5) {
-  left: var(--width);
-}
-.datepicker-month:nth-child(6) {
-  left: calc(2 * var(--width));
-}
-.datepicker-month:nth-child(7) {
-  left: calc(3 * var(--width));
-}
-.datepicker-month:nth-child(8) {
-  left: calc(4 * var(--width));
-}
-.datepicker-month:nth-child(9) {
-  left: calc(5 * var(--width));
-}
-.datepicker-month:nth-child(10) {
-  left: calc(6 * var(--width));
+  /* hide every month despite current month. */
+  display: block;
 }
 
-.datepicker-table caption {
+@screen sm {
+  .calendar-month-container:nth-child(5) {
+    --width: 80vw;
+    left: 5vw;
+  }
+}
+
+@screen md {
+  .calendar-month-container {
+    --width: 43% !important; /* `important` to also override :nth-child(5) from above */
+    --gap: 5rem;
+    display: block;
+  }
+  .calendar-month-container:nth-child(4) {
+    left: var(--gap);
+  }
+  .calendar-month-container:nth-child(1) {
+    left: calc(-3 * (var(--width)) - var(--gap));
+  }
+  .calendar-month-container:nth-child(2) {
+    left: calc(-2 * (var(--width)) - var(--gap));
+  }
+  .calendar-month-container:nth-child(3) {
+    left: calc(-1 * (var(--width)) - var(--gap));
+  }
+  .calendar-month-container:nth-child(4) {
+    left: calc(var(--gap) / 2);
+  }
+  .calendar-month-container:nth-child(5) {
+    left: calc(var(--width) + var(--gap));
+  }
+  .calendar-month-container:nth-child(6) {
+    left: calc(2 * (var(--width) + var(--gap)));
+  }
+  .calendar-month-container:nth-child(7) {
+    left: calc(3 * (var(--width) + var(--gap)));
+  }
+  .calendar-month-container:nth-child(8) {
+    left: calc(4 * (var(--width) + var(--gap)));
+  }
+  .calendar-month-container:nth-child(9) {
+    left: calc(5 * (var(--width) + var(--gap)));
+  }
+  .calendar-month-container:nth-child(10) {
+    left: calc(6 * (var(--width) + var(--gap)));
+  }
+}
+
+@media (min-width: 992px) {
+  .calendar-month-container {
+    --width: 30% !important; /* `important` to also override :nth-child(5) from above */
+    --gap: 2.3rem;
+  }
+  .calendar-month-container:nth-child(4) {
+    left: 0;
+  }
+}
+
+/* 1024px */
+@screen lg {
+  .calendar-container {
+    /* prev & next buttons are moved ti the side. use "full" width for the calendar  */
+    @apply -tw-mx-6;
+  }
+  .calendar-month-container {
+    --gap: 2.6rem;
+  }
+}
+
+@media (min-width: 1120px) {
+  .calendar-month-container {
+    --gap: 3rem;
+  }
+}
+
+.calendar-month-caption {
   margin: 0;
   margin-bottom: 0.5rem;
   color: theme("textColor.calendar.DEFAULT");
@@ -118,35 +179,18 @@
   text-align: center;
 }
 
-.datepicker-table {
+.calendar-month-grid {
   border: none;
   border-spacing: 0;
   border-collapse: collapse;
   font-size: 0.75rem;
 }
 
-.datepicker-table th,
-.datepicker-table td {
-  padding: 0;
+.calendar-month-grid .calendar-month-day-header {
   margin: 0;
+  padding: 0.5em;
   color: theme("textColor.calendar.DEFAULT");
   @apply dark:tw-text-center;
-}
-
-.datepicker-table td {
-  border: 1px solid theme("borderColor.calendar.DEFAULT");
-  background: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)),
-    url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAMAAAC6sdbXAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF7u7u////KNOqmgAAABlJREFUeNpiYGRkZABCCGIA8UAEI4QACDAAAUoAFV5+ydgAAAAASUVORK5CYII=");
-}
-
-.tw-dark .datepicker-table td {
-  background: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)),
-    url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='currentColor' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
-}
-
-.datepicker-table thead tr th {
-  padding: 0.5em;
-  font-weight: normal;
   @apply dark:tw-font-semibold;
 }
 
@@ -161,17 +205,32 @@
   --font-color: theme("textColor.calendar.DEFAULT");
   display: flex;
   align-items: center;
-  @apply tw-px-0;
   @apply tw-pt-2;
   @apply tw-pb-3.5;
-  @apply sm:tw-pr-1.5;
-  @apply sm:tw-pl-2;
+  @apply tw-pl-1.5;
+  @apply tw-pr-1;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
   color: var(--font-color);
   @apply dark:tw-font-semibold;
-  @apply tw-space-x-1;
+  @apply tw-space-x-0.5;
   @apply tw-tabular-nums;
+}
+
+@screen xs {
+  .datepicker-day {
+    @apply tw-pl-2;
+    @apply tw-pr-1.5;
+    @apply tw-space-x-1;
+  }
+}
+
+@media (min-width: 992px) {
+  .datepicker-day {
+    @apply tw-pl-1.5;
+    @apply tw-pr-1;
+    @apply tw-space-x-0.5;
+  }
 }
 
 .datepicker-day-past {
@@ -332,26 +391,4 @@ td.datepicker-day {
 .tw-dark .datepicker-day-public-holiday-full:not(.datepicker-day-past):hover,
 .tw-dark .datepicker-day-public-holiday-full.datepicker-day-selected {
   @apply tw-shadow-sky-400/80;
-}
-
-/**************************************************************************
-
-  RESPONSIVNESS
-
-**************************************************************************/
-
-/* Show only current month on small devices! */
-@media (max-width: 767px) {
-  .datepicker-table {
-    width: 100%;
-  }
-
-  .datepicker-month {
-    display: none;
-  }
-  .datepicker-month:nth-child(5) {
-    display: block;
-    left: 0;
-    width: 100%;
-  }
 }

@@ -32,6 +32,10 @@ describe("calendar", () => {
   beforeEach(setup);
   afterEach(cleanup);
 
+  beforeEach(() => {
+    window.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
+  });
+
   afterEach(() => {
     fetchMock.restore();
     window.Date = RealDate;
