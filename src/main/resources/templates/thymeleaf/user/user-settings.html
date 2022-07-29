@@ -34,7 +34,39 @@
           method="post"
           th:object="${userSettings}"
         >
-          <fieldset>
+          <fieldset id="fieldset-language">
+            <legend
+              id="language-description"
+              class="dark:tw-text-zinc-100 tw-border-none"
+              th:text="#{user-settings.language.title}"
+            >
+              Sprache
+            </legend>
+            <ul
+              aria-describedby="language-description"
+              class="tw-list-none tw-m-0 tw-p-0"
+            >
+              <li th:each="supportedLocale : ${supportedLocales}" class="tw-flex tw-items-center tw-gap-2">
+                <input
+                  required
+                  type="radio"
+                  id="user-locale"
+                  th:id="${'user-locale-' + supportedLocale.locale}"
+                  name="locale"
+                  th:value="${supportedLocale.locale}"
+                  th:checked="${supportedLocale.locale eq userSettings.locale}"
+                  class="tw-m-0"
+                >
+                <label for="user-locale" th:for="${'user-locale-' + supportedLocale.locale}" class="tw-flex tw-items-center tw-m-0 tw-cursor-pointer">
+                  <img th:src="@{/images/flags/{locale}.svg (locale=${supportedLocale.locale})}" alt="" width="25" height="15" class="tw-mr-2">
+                  <th:block th:text="${supportedLocale.displayName}">
+                    Sprache
+                  </th:block>
+                </label>
+              </li>
+            </ul>
+          </fieldset>
+          <fieldset class="tw-mt-8">
             <legend
               id="theme-description"
               th:text="#{user-settings.theme.title}"

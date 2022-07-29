@@ -10,6 +10,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.Locale;
 import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
@@ -30,6 +31,8 @@ class UserSettingsEntity {
     @NotNull
     @Enumerated(STRING)
     private Theme theme;
+
+    private Locale locale;
 
     public Integer getPersonId() {
         return personId;
@@ -55,11 +58,20 @@ class UserSettingsEntity {
         this.theme = theme;
     }
 
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
     @Override
     public String toString() {
         return "UserSettingsEntity{" +
             "personId=" + personId +
             ", theme=" + theme +
+            ", locale=" + locale +
             '}';
     }
 

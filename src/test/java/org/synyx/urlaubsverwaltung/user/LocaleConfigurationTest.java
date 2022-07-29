@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 class LocaleConfigurationTest {
 
@@ -11,11 +12,14 @@ class LocaleConfigurationTest {
 
     @Test
     void beansHaveBeenCreated() {
-        this.contextRunner.withUserConfiguration(LocaleConfiguration.class)
+        this.contextRunner
+            .withBean(UserSettingsRepository.class, () -> mock(UserSettingsRepository.class))
+            .withBean(UserSettingsService.class)
+            .withUserConfiguration(LocaleConfiguration.class)
             .run(context -> {
                 assertThat(context).hasBean("localeResolver");
                 assertThat(context.getBean(LocaleInterceptorConfigurer.class).getHandlerInterceptors())
-                    .hasSize(2)
+                    .hasSize(1)
                     .hasOnlyElementsOfTypes(LocaleModelInterceptor.class);
             });
     }

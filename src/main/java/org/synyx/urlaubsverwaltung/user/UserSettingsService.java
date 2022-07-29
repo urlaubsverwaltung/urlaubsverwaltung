@@ -1,10 +1,16 @@
 package org.synyx.urlaubsverwaltung.user;
 
 import org.slf4j.Logger;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.util.Locale;
+import java.util.Optional;
+
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
@@ -18,18 +24,30 @@ class UserSettingsService {
         this.userSettingsRepository = userSettingsRepository;
     }
 
-    UserSettings getUserSettingsForPerson(Person person) {
+    UserSettings getUserSettingsForPerson(Person person, Locale defaultLocale) {
         final UserSettingsEntity entity = findForPersonOrGetDefault(person);
-        return toUserSettings(entity);
+        return toUserSettings(entity, defaultLocale);
     }
 
-    UserSettings updateUserThemePreference(Person person, Theme theme) {
+    Optional<Theme> findThemeForUsername(String username) {
+        return userSettingsRepository.findByPersonUsername(username).map(UserSettingsEntity::getTheme);
+    }
+
+    Optional<Locale> findLocaleForUsername(String username) {
+        return userSettingsRepository.findByPersonUsername(username).map(UserSettingsEntity::getLocale);
+    }
+
+    UserSettings updateUserThemePreference(Person person, Theme theme, Locale locale) {
         final UserSettingsEntity entity = findForPersonOrGetDefault(person);
         entity.setPersonId(person.getId());
         entity.setPerson(null);
         entity.setTheme(theme);
+        entity.setLocale(locale);
 
         final UserSettingsEntity persistedEntity = userSettingsRepository.save(entity);
+
+        // TODO where should we set the locale?
+        LocaleContextHolder.setLocale(locale);
 
         return toUserSettings(persistedEntity);
     }
@@ -49,6 +67,10 @@ class UserSettingsService {
     }
 
     private static UserSettings toUserSettings(UserSettingsEntity userSettingsEntity) {
-        return new UserSettings(userSettingsEntity.getTheme());
+        return new UserSettings(userSettingsEntity.getTheme(), requireNonNull(userSettingsEntity.getLocale()));
+    }
+
+    private static UserSettings toUserSettings(UserSettingsEntity userSettingsEntity, Locale defaultLocale) {
+        return new UserSettings(userSettingsEntity.getTheme(), requireNonNullElse(userSettingsEntity.getLocale(), defaultLocale));
     }
 }

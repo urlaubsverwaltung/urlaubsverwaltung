@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.user;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.util.List;
 
@@ -11,8 +10,8 @@ import java.util.List;
 class LocaleConfiguration {
 
     @Bean
-    LocaleResolver localeResolver() {
-        return new SessionLocaleResolver();
+    LocaleResolver localeResolver(UserSettingsService userSettingsService) {
+        return new UserSettingsAwareSessionLocaleResolver(userSettingsService);
     }
 
     @Bean

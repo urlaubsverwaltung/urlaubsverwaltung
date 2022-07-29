@@ -14,9 +14,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.Locale;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
@@ -39,11 +41,14 @@ class UserSettingsViewControllerTest {
     private UserSettingsService userSettingsService;
 
     @Mock
+    private SupportedLocaleService supportedLocaleService;
+
+    @Mock
     private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
-        sut = new UserSettingsViewController(personService, userSettingsService, messageSource);
+        sut = new UserSettingsViewController(personService, userSettingsService, supportedLocaleService, messageSource);
     }
 
     @Test
@@ -54,15 +59,31 @@ class UserSettingsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        final UserSettings userSettings = new UserSettings(Theme.DARK);
-        when(userSettingsService.getUserSettingsForPerson(signedInPerson)).thenReturn(userSettings);
+        final UserSettings userSettings = new UserSettings(Theme.DARK, Locale.GERMAN);
+        when(userSettingsService.getUserSettingsForPerson(signedInPerson, Locale.GERMAN)).thenReturn(userSettings);
 
-        when(messageSource.getMessage("user-settings.theme.DARK", new Object[]{}, Locale.GERMANY)).thenReturn("dark-label");
-        when(messageSource.getMessage("user-settings.theme.LIGHT", new Object[]{}, Locale.GERMANY)).thenReturn("light-label");
-        when(messageSource.getMessage("user-settings.theme.SYSTEM", new Object[]{}, Locale.GERMANY)).thenReturn("system-label");
+        when(supportedLocaleService.getSupportedLocales()).thenReturn(Set.of(Locale.GERMAN, Locale.ENGLISH));
 
-        perform(get("/web/person/42/settings").locale(Locale.GERMANY))
+        when(messageSource.getMessage("user-settings.theme.DARK", new Object[]{}, Locale.GERMAN)).thenReturn("dark-label");
+        when(messageSource.getMessage("user-settings.theme.LIGHT", new Object[]{}, Locale.GERMAN)).thenReturn("light-label");
+        when(messageSource.getMessage("user-settings.theme.SYSTEM", new Object[]{}, Locale.GERMAN)).thenReturn("system-label");
+        when(messageSource.getMessage("locale", new Object[]{}, Locale.GERMAN)).thenReturn("Deutsch");
+        when(messageSource.getMessage("locale", new Object[]{}, Locale.ENGLISH)).thenReturn("English");
+
+        perform(get("/web/person/42/settings").locale(Locale.GERMAN))
             .andExpect(status().isOk())
+            .andExpect(model().attribute("supportedLocales",
+                hasItems(
+                    allOf(
+                        hasProperty("locale", is(Locale.GERMAN)),
+                        hasProperty("displayName", is("Deutsch"))
+                    ),
+                    allOf(
+                        hasProperty("locale", is(Locale.ENGLISH)),
+                        hasProperty("displayName", is("English"))
+                    )
+                )
+            ))
             .andExpect(model().attribute("userSettings",
                 allOf(
                     hasProperty("selectedTheme", is("DARK")),
