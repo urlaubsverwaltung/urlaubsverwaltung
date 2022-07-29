@@ -17,3 +17,7 @@
   @apply dark:tw-bg-neutral-900 !important;
   @apply dark:tw-text-neutral-200 !important;
 }
+
+[is="uv-popover"] summary {
+  @apply tw-cursor-pointer;
+}

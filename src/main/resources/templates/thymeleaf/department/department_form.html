@@ -144,11 +144,10 @@
 
               <div class="col-md-8 col-md-pull-4">
                 <div class="form-group">
-                  <label th:text="|#{department.members.person}:|" class="control-label col-md-3" for="members"></label>
+                  <p th:text="|#{department.members.person}:|" class="control-label col-md-3 tw-m-0 tw-text-sm tw-font-semibold tw-leading-6"></p>
                   <div class="col-md-9">
                     <div class="department--members">
                       <div
-                        id="members"
                         th:each="person : ${persons}"
                         class="department--member"
                         th:with="isInactive=${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).INACTIVE)}, isMember=${#lists.contains(department.members, person)}"

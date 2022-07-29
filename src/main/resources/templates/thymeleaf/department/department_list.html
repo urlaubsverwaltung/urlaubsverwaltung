@@ -3,6 +3,14 @@
   <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
     <title th:text="#{departments.header.title}"></title>
     <th:block th:fragment="scripts">
+      <script>
+        (function() {
+          // hide uv-popover arrow on safari.
+          const style = document.createElement("style");
+          style.innerHTML = `[is="uv-popover"] summary::-webkit-details-marker { display: none; }`;
+          document.head.append(style);
+        })();
+      </script>
       <script defer asset:src="npm.tablesorter.js"></script>
       <script defer asset:src="department_list.js"></script>
     </th:block>
@@ -62,6 +70,7 @@
 
             <p th:if="${#lists.isEmpty(departments)}" th:text="#{departments.none}"></p>
             <table th:if="${not #lists.isEmpty(departments)}" id="department-table" class="list-table tw-text-sm">
+              <caption class="tw-sr-only" th:text="#{departments.title}">Departments</caption>
               <thead class="hidden-xs hidden-sm">
                 <tr>
                   <th th:text="#{department.data.name}" scope="col" class="sortable-field"></th>
@@ -76,18 +85,18 @@
               <tbody>
                 <tr th:each="department : ${departments}">
                   <td>
-                    <div
-                      th:if="${department.description != null}"
-                      class="overflow"
-                      data-toggle="popover"
-                      data-trigger="hover"
-                      data-placement="right"
-                      th:title="#{department.data.info}"
-                      th:data-content="${department.description}"
-                    >
-                      <th:block th:text="${department.name}" />
-                      <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
-                    </div>
+                    <details th:if="${department.description != null}" is="uv-popover">
+                      <summary class="overflow tw-flex tw-items-center">
+                        <th:block th:text="${department.name}"></th:block>
+                        <span data-uv-popover-placement class="tw-flex tw-items-center tw-ml-1">
+                          <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                        </span>
+                      </summary>
+                      <p>
+                        <span data-uv-popover-title th:text="#{department.data.info}"></span>:
+                        <span data-uv-popover-content th:text="${department.description}"></span>
+                      </p>
+                    </details>
                     <div th:if="${department.description == null}" th:text="${department.name}"></div>
                   </td>
                   <td class="hidden-xs">
@@ -121,7 +130,7 @@
                         class="modal fade"
                         tabindex="-1"
                         role="dialog"
-                        aria-labelledby="myModalLabel"
+                        th:aria-labelledby="${'modal-label-' + department.id}"
                         aria-hidden="true"
                       >
                         <div class="modal-dialog">
@@ -130,7 +139,7 @@
                               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                 <svg th:replace="icon/x-circle::svg(className='tw-w-8 tw-h-8')"></svg>
                               </button>
-                              <h4 th:text="|#{action.department.delete} ?|" id="myModalLabel" class="modal-title"></h4>
+                              <h4 th:text="|#{action.department.delete} ?|" th:id="${'modal-label-' + department.id}" class="modal-title"></h4>
                             </div>
                             <div
                               th:text="#{action.department.delete.confirm(${department.name})}"
@@ -146,7 +155,6 @@
                                 th:text="#{action.cancel}"
                                 class="button"
                                 data-dismiss="modal"
-                                aria-hidden="true"
                               ></button>
                             </div>
                           </div>

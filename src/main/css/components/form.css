@@ -185,6 +185,7 @@ textarea.error {
 
 .department--member.is-inactive {
   background-color: #fff4ea;
+  @apply dark:tw-bg-transparent;
 }
 
 .department--member:last-child {
