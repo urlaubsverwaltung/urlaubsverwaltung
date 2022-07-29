@@ -69,15 +69,17 @@ public class AccountViewController {
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
 
-        final int yearOfHolidaysAccount = year != null ? year : Year.now(clock).getValue();
+        final int currentYear = Year.now(clock).getValue();
+        final int selectedYear = year != null ? year : currentYear;
 
-        final Optional<Account> maybeHolidaysAccount = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
+        final Optional<Account> maybeHolidaysAccount = accountService.getHolidaysAccount(selectedYear, person);
         final AccountForm accountForm = maybeHolidaysAccount.map(AccountForm::new)
-            .orElseGet(() -> new AccountForm(yearOfHolidaysAccount));
+            .orElseGet(() -> new AccountForm(selectedYear));
 
         model.addAttribute("account", accountForm);
         model.addAttribute("person", person);
-        model.addAttribute("year", yearOfHolidaysAccount);
+        model.addAttribute("selectedYear", selectedYear);
+        model.addAttribute("currentYear", currentYear);
 
         addVacationTypeColorsToModel(model);
 
@@ -97,7 +99,8 @@ public class AccountViewController {
 
         if (errors.hasErrors()) {
             model.addAttribute("person", person);
-            model.addAttribute("year", accountForm.getHolidaysAccountYear());
+            model.addAttribute("selectedYear", accountForm.getHolidaysAccountYear());
+            model.addAttribute("currentYear", Year.now(clock).getValue());
 
             addVacationTypeColorsToModel(model);
 

@@ -52,11 +52,14 @@ class SickNoteStatisticsViewControllerTest {
         final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(clock, List.of(), workDaysCountService);
         when(statisticsService.createStatisticsForPerson(eq(person), any(Clock.class))).thenReturn(sickNoteStatistics);
 
+        final int currentYear = Year.now(clock).getValue();
         final ResultActions resultActions = perform(get("/web/sicknote/statistics")
-            .param("year", String.valueOf(Year.now(clock).getValue())));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(model().attribute("statistics", sickNoteStatistics));
-        resultActions.andExpect(view().name("thymeleaf/sicknote/sick_notes_statistics"));
+            .param("year", String.valueOf(currentYear)));
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("statistics", sickNoteStatistics))
+            .andExpect(model().attribute("currentYear", currentYear))
+            .andExpect(view().name("thymeleaf/sicknote/sick_notes_statistics"));
     }
 
     @Test
@@ -68,10 +71,14 @@ class SickNoteStatisticsViewControllerTest {
         final SickNoteStatistics sickNoteStatistics = new SickNoteStatistics(clock, List.of(), workDaysCountService);
         when(statisticsService.createStatisticsForPerson(eq(person), any(Clock.class))).thenReturn(sickNoteStatistics);
 
+        final int currentYear = Year.now(clock).getValue();
+
         final ResultActions resultActions = perform(get("/web/sicknote/statistics"));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(model().attribute("statistics", sickNoteStatistics));
-        resultActions.andExpect(view().name("thymeleaf/sicknote/sick_notes_statistics"));
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("statistics", sickNoteStatistics))
+            .andExpect(model().attribute("currentYear", currentYear))
+            .andExpect(view().name("thymeleaf/sicknote/sick_notes_statistics"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
