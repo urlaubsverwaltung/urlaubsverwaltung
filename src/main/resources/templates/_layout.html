@@ -92,6 +92,10 @@
     <script defer asset:src="npm.ungap.js"></script>
     <script defer asset:src="custom-elements-polyfill.js"></script>
 
+    <script th:inline="javascript">
+      window.uv = window.uv || {};
+      window.uv.language = /*[[${language}]]*/"de";
+    </script>
     <th:block th:replace="${scripts}"></th:block>
   </head>
   <body th:fragment="body(content, scripts)">

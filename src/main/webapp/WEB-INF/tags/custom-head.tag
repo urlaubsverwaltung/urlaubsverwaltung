@@ -42,6 +42,11 @@
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
 <uv:script-theme-toggler />
 
+<script>
+    window.uv = window.uv || {};
+    window.uv.language = '<c:out value="${language}" />';
+</script>
+
 <script defer src="<asset:url value='runtime.js' />"></script>
 <script defer src="<asset:url value='polyfill.js' />"></script>
 <script defer src="<asset:url value='npm.core-js.js' />"></script>
