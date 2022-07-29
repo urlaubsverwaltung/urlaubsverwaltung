@@ -15,7 +15,7 @@
       <th:block th:ref="absences-statistics-heading-body">
         <h1 th:text="#{sicknotes.statistics.title}">Statistik für das Jahr</h1>
         <div
-          th:replace="fragments/year-selector::year-selector(id='year-selection', year=${statistics.year}, hrefPrefix=|/sicknote/statistics?year=|)"></div>
+          th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/sicknote/statistics?year=|, selectedYear=${statistics.year})"></div>
       </th:block>
       <th:block th:ref="absences-statistics-heading-actions">
         <a href="#" th:replace="fragments/print::button"></a>

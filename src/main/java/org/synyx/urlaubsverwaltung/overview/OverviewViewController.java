@@ -127,7 +127,6 @@ public class OverviewViewController {
         prepareSickNoteList(person, yearToShow, model);
         prepareSettings(model);
 
-        model.addAttribute("year", now.getYear());
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("selectedYear", yearToShow);
         model.addAttribute("currentMonth", now.getMonthValue());

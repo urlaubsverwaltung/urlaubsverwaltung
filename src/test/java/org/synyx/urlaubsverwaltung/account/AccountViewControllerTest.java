@@ -90,7 +90,8 @@ class AccountViewControllerTest {
         perform(get("/web/person/" + SOME_PERSON_ID + "/account"))
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("account", instanceOf(AccountForm.class)))
-            .andExpect(model().attribute("year", notNullValue()))
+            .andExpect(model().attribute("currentYear", notNullValue()))
+            .andExpect(model().attribute("selectedYear", notNullValue()))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("thymeleaf/account/account_form"));
     }
@@ -101,10 +102,12 @@ class AccountViewControllerTest {
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
 
         final int providedYear = 1987;
+        final int currentYear = Year.now(clock).getValue();
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/account")
             .param("year", Integer.toString(providedYear)))
-            .andExpect(model().attribute("year", providedYear));
+            .andExpect(model().attribute("currentYear", currentYear))
+            .andExpect(model().attribute("selectedYear", providedYear));
     }
 
     @Test
@@ -115,7 +118,8 @@ class AccountViewControllerTest {
         final int currentYear = Year.now(clock).getValue();
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/account"))
-            .andExpect(model().attribute("year", currentYear));
+            .andExpect(model().attribute("currentYear", currentYear))
+            .andExpect(model().attribute("selectedYear", currentYear));
     }
 
     @Test

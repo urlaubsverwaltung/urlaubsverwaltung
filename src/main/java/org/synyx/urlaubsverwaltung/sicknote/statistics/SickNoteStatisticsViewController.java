@@ -41,6 +41,7 @@ class SickNoteStatisticsViewController {
         final SickNoteStatistics statistics = statisticsService.createStatisticsForPerson(signedInUser, clockOfRequestedYear);
 
         model.addAttribute("statistics", statistics);
+        model.addAttribute("currentYear", Year.now(clock).getValue());
 
         return "thymeleaf/sicknote/sick_notes_statistics";
     }
