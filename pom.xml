@@ -23,7 +23,7 @@
     <testcontainers.version>1.17.3</testcontainers.version>
     <opentelemetry-agent.version>1.14.0</opentelemetry-agent.version>
     <docker.name>synyx/urlaubsverwaltung</docker.name>
-    <shedlock.version>4.38.0</shedlock.version>
+    <shedlock.version>4.39.0</shedlock.version>
   </properties>
 
   <scm>
