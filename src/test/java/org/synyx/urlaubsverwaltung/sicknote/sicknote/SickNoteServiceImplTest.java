@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
@@ -21,6 +22,7 @@ import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,16 +63,17 @@ class SickNoteServiceImplTest {
         final LocalDate from = LocalDate.of(2015, 1, 1);
         final LocalDate to = LocalDate.of(2016, 1, 1);
         final SickNote sickNote = new SickNote();
-        when(sickNoteRepository.findByPeriod(from, to)).thenReturn(List.of(sickNote));
+        final List<Role> roles = List.of(USER);
+        when(sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(roles, List.of(ACTIVE), from, to)).thenReturn(List.of(sickNote));
 
-        final List<SickNote> sickNotes = sut.getByPeriod(from, to);
+        final List<SickNote> sickNotes = sut.getActiveByPeriodAndPersonHasRole(from, to, roles);
         assertThat(sickNotes).contains(sickNote);
     }
 
     @Test
     void getAllActiveByYear() {
         final SickNote sickNote = new SickNote();
-        when(sickNoteRepository.findAllActiveByYear(2017)).thenReturn(List.of(sickNote));
+        when(sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(USER), List.of(ACTIVE), LocalDate.of(2017, 1, 1), LocalDate.of(2017, 12, 31))).thenReturn(List.of(sickNote));
 
         final List<SickNote> sickNotes = sut.getAllActiveByYear(2017);
         assertThat(sickNotes).contains(sickNote);

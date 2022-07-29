@@ -41,6 +41,7 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
@@ -126,7 +127,6 @@ public class OverviewViewController {
         prepareSickNoteList(person, yearToShow, model);
         prepareSettings(model);
 
-        model.addAttribute("year", now.getYear());
         model.addAttribute("currentYear", now.getYear());
         model.addAttribute("selectedYear", yearToShow);
         model.addAttribute("currentMonth", now.getMonthValue());
@@ -137,7 +137,7 @@ public class OverviewViewController {
         model.addAttribute("canAccessAbsenceOverview", person.equals(signedInUser));
         model.addAttribute("canAccessCalendarShare", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS));
         model.addAttribute("canAddApplicationForLeaveForAnotherUser", signedInUser.hasRole(OFFICE));
-        model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE));
+        model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(SICK_NOTE_ADD) && (signedInUser.hasRole(BOSS) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)));
 
         return "thymeleaf/person/person-overview";
     }

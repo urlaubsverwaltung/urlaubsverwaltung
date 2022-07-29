@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
@@ -19,6 +21,10 @@ import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
  * Class for validating {@link SickNote} object.
@@ -32,6 +38,7 @@ public class SickNoteValidator implements Validator {
     private static final String ERROR_HALF_DAY_PERIOD_SICK_NOTE = "sicknote.error.halfDayPeriod";
     private static final String ERROR_OVERLAP = "application.error.overlap";
     private static final String ERROR_WORKING_TIME = "sicknote.error.noValidWorkingTime";
+    private static final String ERROR_ROLES = "sicknote.error.noValidPermissionToApplySickNote";
 
     private static final String ATTRIBUTE_DAY_LENGTH = "dayLength";
     private static final String ATTRIBUTE_START_DATE = "startDate";
@@ -41,12 +48,14 @@ public class SickNoteValidator implements Validator {
 
     private final OverlapService overlapService;
     private final WorkingTimeService workingTimeService;
+    private final DepartmentService departmentService;
     private final Clock clock;
 
     @Autowired
-    public SickNoteValidator(OverlapService overlapService, WorkingTimeService workingTimeService, Clock clock) {
+    public SickNoteValidator(OverlapService overlapService, WorkingTimeService workingTimeService, DepartmentService departmentService, Clock clock) {
         this.overlapService = overlapService;
         this.workingTimeService = workingTimeService;
+        this.departmentService = departmentService;
         this.clock = clock;
     }
 
@@ -59,10 +68,31 @@ public class SickNoteValidator implements Validator {
     public void validate(Object target, Errors errors) {
 
         final SickNote sickNote = (SickNote) target;
+        validateApplier(sickNote, errors);
         validateSickNotePeriod(sickNote, errors);
 
         if (!errors.hasErrors() && sickNote.isAubPresent()) {
             validateAUPeriod(sickNote, errors);
+        }
+    }
+
+    private void validateApplier(SickNote sickNote, Errors errors) {
+        final Person applier = sickNote.getApplier();
+        if (applier == null) {
+            return;
+        }
+
+        if (!applier.hasRole(OFFICE) && !applier.hasRole(BOSS) && !applier.hasRole(DEPARTMENT_HEAD) && !applier.hasRole(SECOND_STAGE_AUTHORITY)) {
+            errors.reject(ERROR_ROLES);
+        }
+
+        final Person person = sickNote.getPerson();
+        if (applier.hasRole(DEPARTMENT_HEAD) && !departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)) {
+            errors.reject(ERROR_ROLES);
+        }
+
+        if (applier.hasRole(SECOND_STAGE_AUTHORITY) && !departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person)) {
+            errors.reject(ERROR_ROLES);
         }
     }
 

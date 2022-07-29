@@ -97,10 +97,10 @@ public class PersonDetailsViewController {
 
         model.addAttribute("year", year);
         model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute("permissions", PersonPermissionsMapper.mapRoleToPermissionsDto(List.copyOf(person.getPermissions())));
 
         final Optional<PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(person.getId());
         if (basedataByPersonId.isPresent()) {
-
             final PersonDetailsBasedataDto personDetailsBasedataDto = mapToPersonDetailsBasedataDto(basedataByPersonId.get());
             model.addAttribute("personBasedata", personDetailsBasedataDto);
         }
@@ -248,8 +248,6 @@ public class PersonDetailsViewController {
                 final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(holidaysAccount, accountNextYear);
 
                 final boolean beforeExpiryDate = now.isBefore(holidaysAccount.getExpiryDate());
-                model.addAttribute("isBeforeExpiryDate", beforeExpiryDate);
-
                 final double remainingVacationDays = beforeExpiryDate
                     ? vacationDaysLeft.getRemainingVacationDays().doubleValue()
                     : vacationDaysLeft.getRemainingVacationDaysNotExpiring().doubleValue();

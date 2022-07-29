@@ -27,6 +27,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,7 +74,7 @@ class MenuDataProviderTest {
 
         final Person person = new Person();
         person.setId(10);
-        person.setPermissions(List.of(USER, BOSS));
+        person.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");
         person.setEmail("person@example.org");
@@ -82,7 +84,31 @@ class MenuDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", true);
+    }
+
+    @Test
+    void postHandleNavigationAccessForBossAndSickNoteAdd() {
+        mockOvertime(true, false);
+
+        final Person person = new Person();
+        person.setId(10);
+        person.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW, SICK_NOTE_ADD));
+        person.setFirstName("Marie");
+        person.setLastName("Reichenbach");
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(null, null, null, modelAndView);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", true);
@@ -104,7 +130,8 @@ class MenuDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", true);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", true);
@@ -116,7 +143,7 @@ class MenuDataProviderTest {
 
         final Person person = new Person();
         person.setId(10);
-        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");
         person.setEmail("person@example.org");
@@ -126,7 +153,31 @@ class MenuDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", false);
+    }
+
+    @Test
+    void postHandleNavigationAccessForDepartmentHeadAndSickNoteAdd() {
+        mockOvertime(true, false);
+
+        final Person person = new Person();
+        person.setId(10);
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW, SICK_NOTE_ADD));
+        person.setFirstName("Marie");
+        person.setLastName("Reichenbach");
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(null, null, null, modelAndView);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", false);
@@ -138,7 +189,7 @@ class MenuDataProviderTest {
 
         final Person person = new Person();
         person.setId(10);
-        person.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        person.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW));
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");
         person.setEmail("person@example.org");
@@ -148,7 +199,31 @@ class MenuDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", false);
+    }
+
+    @Test
+    void postHandleNavigationAccessForSecondStageAuthorityAndSickNoteAdd() {
+        mockOvertime(true, false);
+
+        final Person person = new Person();
+        person.setId(10);
+        person.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW, SICK_NOTE_ADD));
+        person.setFirstName("Marie");
+        person.setLastName("Reichenbach");
+        person.setEmail("person@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(null, null, null, modelAndView);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
         assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", false);

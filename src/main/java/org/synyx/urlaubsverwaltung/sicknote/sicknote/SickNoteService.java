@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,8 +16,9 @@ public interface SickNoteService {
      * Persists the given sick note.
      *
      * @param sickNote to be persisted
+     * @return saved sick note
      */
-    void save(SickNote sickNote);
+    SickNote save(SickNote sickNote);
 
     /**
      * Gets the sick note with the given id.
@@ -43,7 +45,7 @@ public interface SickNoteService {
      * @param to   defines the end of the period
      * @return all the sick notes matching the given parameters
      */
-    List<SickNote> getByPeriod(LocalDate from, LocalDate to);
+    List<SickNote> getActiveByPeriodAndPersonHasRole(LocalDate from, LocalDate to, List<Role> roles);
 
     /**
      * Get all the sick notes that are reaching the end of sick pay.
@@ -80,6 +82,8 @@ public interface SickNoteService {
      * @return list of all matching {@link SickNote}s
      */
     List<SickNote> getForStatesAndPerson(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate start, LocalDate end);
+
+    List<SickNote> getForStatesAndPersonAndPersonHasRoles(List<SickNoteStatus> sickNoteStatus, List<Person> persons, List<Role> roles, LocalDate start, LocalDate end);
 
     /**
      * Set end of sick pay notification send for given sicknote.

@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
@@ -81,7 +82,7 @@ public class PublicHolidayApiController {
         + "Information only reachable for users with role office and for own public holidays."
     )
     @GetMapping("/persons/{personId}/public-holidays")
-    @PreAuthorize(IS_OFFICE +
+    @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
         " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")

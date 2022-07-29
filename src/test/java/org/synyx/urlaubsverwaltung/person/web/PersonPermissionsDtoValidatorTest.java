@@ -20,12 +20,12 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_D
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.BOSS;
+import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.USER;
 
 
 @ExtendWith(MockitoExtension.class)

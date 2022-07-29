@@ -220,6 +220,14 @@ class DepartmentServiceImpl implements DepartmentService {
         return false;
     }
 
+    public List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
+        return getManagedDepartmentsOfDepartmentHead(departmentHead)
+            .stream()
+            .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
+            .distinct()
+            .collect(toList());
+    }
+
     @Override
     public boolean isSecondStageAuthorityAllowedToManagePerson(Person secondStageAuthority, Person person) {
         if (secondStageAuthority.hasRole(SECOND_STAGE_AUTHORITY)) {
@@ -227,6 +235,14 @@ class DepartmentServiceImpl implements DepartmentService {
         }
 
         return false;
+    }
+
+    public List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
+        return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)
+            .stream()
+            .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
+            .distinct()
+            .collect(toList());
     }
 
     @Override
@@ -319,22 +335,6 @@ class DepartmentServiceImpl implements DepartmentService {
         return getAssignedDepartmentsOfMember(member).stream()
             .map(Department::getMembers)
             .flatMap(List::stream)
-            .distinct()
-            .collect(toList());
-    }
-
-    private List<Person> getManagedMembersOfDepartmentHead(Person departmentHead) {
-        return getManagedDepartmentsOfDepartmentHead(departmentHead)
-            .stream()
-            .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
-            .distinct()
-            .collect(toList());
-    }
-
-    private List<Person> getManagedMembersForSecondStageAuthority(Person secondStageAuthority) {
-        return getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)
-            .stream()
-            .flatMap(department -> department.getMembers().stream().filter(isNotSecondStageIn(department)))
             .distinct()
             .collect(toList());
     }

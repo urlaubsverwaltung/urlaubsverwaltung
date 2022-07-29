@@ -33,6 +33,12 @@ public class SickNote {
     private Person person;
 
     /**
+     * Person that created the sick-note.
+     */
+    @ManyToOne
+    private Person applier;
+
+    /**
      * Type of sick note.
      *
      * @since 2.15.0
@@ -85,6 +91,14 @@ public class SickNote {
 
     public void setPerson(Person person) {
         this.person = person;
+    }
+
+    public Person getApplier() {
+        return applier;
+    }
+
+    public void setApplier(Person applier) {
+        this.applier = applier;
     }
 
     public SickNoteType getSickNoteType() {
@@ -176,6 +190,7 @@ public class SickNote {
         return "SickNote{" +
             "id=" + getId() +
             ", person=" + person +
+            ", applier=" + applier +
             ", sickNoteType=" + sickNoteType +
             ", startDate=" + startDate +
             ", endDate=" + endDate +

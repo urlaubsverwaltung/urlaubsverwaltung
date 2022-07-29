@@ -18,6 +18,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 
 /**
  * Interceptor to add menu specific information to all requests
@@ -53,7 +55,8 @@ public class MenuDataProvider implements HandlerInterceptor {
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user));
             modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled(user));
 
-            modelAndView.addObject("navigationSickNoteAccess", user.hasRole(OFFICE));
+            modelAndView.addObject("navigationSickNoteAddAccess", user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_ADD));
+            modelAndView.addObject("navigationSickNoteStatisticsAccess", user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW));
             modelAndView.addObject("navigationSettingsAccess", user.hasRole(OFFICE));
             modelAndView.addObject("navigationPersonListAccess", user.hasRole(OFFICE) || user.hasRole(BOSS) || user.hasRole(DEPARTMENT_HEAD) || user.hasRole(SECOND_STAGE_AUTHORITY));
             modelAndView.addObject("navigationDepartmentAccess", user.hasRole(OFFICE) || user.hasRole(BOSS));

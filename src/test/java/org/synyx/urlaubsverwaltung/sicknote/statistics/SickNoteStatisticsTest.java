@@ -1,31 +1,30 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Year;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import java.time.ZoneId;
 import java.util.List;
 
+import static java.math.BigDecimal.ZERO;
+import static java.time.LocalDate.of;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.OCTOBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 /**
  * Unit test for {@link SickNoteStatistics}.
@@ -33,89 +32,89 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SickNoteStatisticsTest {
 
-    private SickNoteStatistics sut;
-
     @Mock
     private WorkDaysCountService workDaysCountService;
-    @Mock
-    private SickNoteService sickNoteDAO;
-
-    private List<SickNote> sickNotes;
-
-    private final Clock clock = Clock.systemUTC();
-
-    @BeforeEach
-    void setUp() {
-
-        sickNotes = new ArrayList<>();
-
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        SickNote sickNote1 = TestDataCreator.createSickNote(person,
-            LocalDate.of(Year.now(clock).getValue(), OCTOBER, 7),
-            LocalDate.of(Year.now(clock).getValue(), OCTOBER, 11), DayLength.FULL);
-
-        SickNote sickNote2 = TestDataCreator.createSickNote(person,
-            LocalDate.of(Year.now(clock).getValue(), DECEMBER, 18),
-            LocalDate.of(Year.now(clock).getValue() + 1, JANUARY, 3), DayLength.FULL);
-
-        sickNotes.add(sickNote1);
-        sickNotes.add(sickNote2);
-
-        when(sickNoteDAO.getNumberOfPersonsWithMinimumOneSickNote(Year.now(clock).getValue())).thenReturn(7L);
-        when(sickNoteDAO.getAllActiveByYear(Year.now(clock).getValue())).thenReturn(sickNotes);
-
-        when(workDaysCountService.getWorkDaysCount(DayLength.FULL, LocalDate.of(Year.now(clock).getValue(), OCTOBER, 7),
-            LocalDate.of(Year.now(clock).getValue(), OCTOBER, 11), person))
-            .thenReturn(new BigDecimal("5"));
-
-        when(workDaysCountService.getWorkDaysCount(DayLength.FULL, LocalDate.of(Year.now(clock).getValue(), DECEMBER, 18),
-            LocalDate.of(Year.now(clock).getValue(), DECEMBER, 31), person))
-            .thenReturn(new BigDecimal("9"));
-
-
-        sut = new SickNoteStatistics(clock, sickNoteDAO, workDaysCountService);
-    }
 
     @Test
     void testGetTotalNumberOfSickNotes() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate sickNote1from = of(2022, OCTOBER, 7);
+        final LocalDate sickNote1To = of(2022, OCTOBER, 11);
+        final SickNote sickNote1 = createSickNote(person, sickNote1from, sickNote1To, FULL);
+        when(workDaysCountService.getWorkDaysCount(FULL, sickNote1from, sickNote1To, person)).thenReturn(new BigDecimal("5"));
+
+        final LocalDate sickNote2From = of(2022, DECEMBER, 18);
+        final SickNote sickNote2 = createSickNote(person, sickNote2From, of(2023, JANUARY, 3), FULL);
+        when(workDaysCountService.getWorkDaysCount(FULL, sickNote2From, of(2022, DECEMBER, 31), person)).thenReturn(new BigDecimal("9"));
+
+        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote1, sickNote2), workDaysCountService);
+
         assertThat(sut.getTotalNumberOfSickNotes()).isEqualTo(2);
     }
 
     @Test
     void testGetTotalNumberOfSickDays() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate sickNote1from = of(2022, OCTOBER, 7);
+        final LocalDate sickNote1To = of(2022, OCTOBER, 11);
+        final SickNote sickNote1 = createSickNote(person, sickNote1from, sickNote1To, FULL);
+        when(workDaysCountService.getWorkDaysCount(FULL, sickNote1from, sickNote1To, person)).thenReturn(new BigDecimal("5"));
+
+        final LocalDate sickNote2From = of(2022, DECEMBER, 18);
+        final SickNote sickNote2 = createSickNote(person, sickNote2From, of(2023, JANUARY, 3), FULL);
+        when(workDaysCountService.getWorkDaysCount(FULL, sickNote2From, of(2022, DECEMBER, 31), person)).thenReturn(new BigDecimal("9"));
+
+        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote1, sickNote2), workDaysCountService);
+
         assertThat(sut.getTotalNumberOfSickDays()).isEqualTo(new BigDecimal("14"));
     }
 
     @Test
     void testGetAverageDurationOfDiseasePerPerson() {
 
-        // 2 sick notes: 1st with 5 workdays and 2nd with 9 workdays --> sum = 14 workdays
-        // 14 workdays / 7 persons = 2 workdays per person
-        sut = new SickNoteStatistics(clock, sickNoteDAO, workDaysCountService);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate sickNote1from = of(2022, OCTOBER, 7);
+        final LocalDate sickNote1To = of(2022, OCTOBER, 11);
+        final SickNote sickNote1 = createSickNote(person, sickNote1from, sickNote1To, FULL);
+        when(workDaysCountService.getWorkDaysCount(FULL, sickNote1from, sickNote1To, person)).thenReturn(new BigDecimal("5"));
 
+        final Person person2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate sickNote2From = of(2022, DECEMBER, 18);
+        final SickNote sickNote2 = createSickNote(person2, sickNote2From, of(2023, JANUARY, 3), FULL);
+        when(workDaysCountService.getWorkDaysCount(FULL, sickNote2From, of(2022, DECEMBER, 31), person2)).thenReturn(new BigDecimal("9"));
+
+        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
+        final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote1, sickNote2), workDaysCountService);
+
+        // 2 sick notes: 1st with 5 workdays and 2nd with 9 workdays --> sum = 14 workdays
+        // 14 workdays / 2 persons = 7 workdays per person
         final BigDecimal averageDurationOfDiseasePerPerson = sut.getAverageDurationOfDiseasePerPerson();
-        assertThat(averageDurationOfDiseasePerPerson).isEqualByComparingTo(BigDecimal.valueOf(2));
+        assertThat(averageDurationOfDiseasePerPerson).isEqualByComparingTo(BigDecimal.valueOf(7));
     }
 
     @Test
     void testGetAverageDurationOfDiseasePerPersonDivisionByZero() {
+        final Clock fixedClock = Clock.fixed(Instant.parse("2022-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
-        when(sickNoteDAO.getNumberOfPersonsWithMinimumOneSickNote(Year.now(clock).getValue())).thenReturn(0L);
-
-        sut = new SickNoteStatistics(clock, sickNoteDAO, workDaysCountService);
-
+        final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(), workDaysCountService);
         final BigDecimal averageDurationOfDiseasePerPerson = sut.getAverageDurationOfDiseasePerPerson();
-        assertThat(averageDurationOfDiseasePerPerson).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(averageDurationOfDiseasePerPerson).isEqualByComparingTo(ZERO);
     }
 
     @Test
     void testGetTotalNumberOfSickDaysInvalidDateRange() {
+        final Clock fixedClock = Clock.fixed(Instant.parse("2015-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
-        when(sickNoteDAO.getAllActiveByYear(2015)).thenReturn(sickNotes);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final LocalDate from = of(2022, OCTOBER, 7);
+        final LocalDate sickNote1To = of(2022, OCTOBER, 11);
+        final SickNote sickNote = createSickNote(person, from, sickNote1To, FULL);
 
-        final Clock fixedClock = Clock.fixed(ZonedDateTime.now(this.clock).withYear(2015).toInstant(), this.clock.getZone());
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> new SickNoteStatistics(fixedClock, sickNoteDAO, workDaysCountService));
+            .isThrownBy(() -> new SickNoteStatistics(fixedClock, List.of(sickNote), workDaysCountService));
     }
 }

@@ -4,6 +4,8 @@ package org.synyx.urlaubsverwaltung.overview;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
@@ -22,13 +24,13 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
@@ -65,6 +67,8 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeC
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -262,15 +266,48 @@ class OverviewViewControllerTest {
             .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
     }
 
-    @Test
-    void showOverviewCanAddSickNoteForAnotherUser() throws Exception {
-        final Person person = new Person();
-        person.setId(1);
-        person.setPermissions(List.of(USER, OFFICE));
-        when(personService.getSignedInUser()).thenReturn(person);
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+    void ensureOverviewCanAddSickNoteForAnotherUserIfRole(Role role) throws Exception {
+        final Person personWithRole = new Person();
+        personWithRole.setId(1);
+        personWithRole.setPermissions(List.of(USER, role, SICK_NOTE_ADD));
+        when(personService.getSignedInUser()).thenReturn(personWithRole);
 
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canAddSickNoteAnotherUser", true));
+    }
+
+    @Test
+    void ensureOverviewCanAddSickNoteForAnotherUserIfDepartmentRoleAndDepartmentMember() throws Exception {
+        final Person departmentHead = new Person();
+        departmentHead.setId(1);
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_ADD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person person = new Person();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canAddSickNoteAnotherUser", true));
+    }
+
+    @Test
+    void ensureOverviewCanAddSickNoteForAnotherUserIfSAARoleAndDepartmentMember() throws Exception {
+        final Person ssa = new Person();
+        ssa.setId(1);
+        ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD));
+        when(personService.getSignedInUser()).thenReturn(ssa);
+
+        final Person person = new Person();
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
             .andExpect(model().attribute("canAddSickNoteAnotherUser", true));
