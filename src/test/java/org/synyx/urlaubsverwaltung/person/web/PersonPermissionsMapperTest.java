@@ -7,7 +7,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,10 +46,10 @@ class PersonPermissionsMapperTest {
     }
 
     @Test
-    void ensurePermissionsMappingToRolesContainsAllRoles() {
+    void ensurePermissionsMappingToRolesContainsAllRolesInSortedOrder() {
         final List<PersonPermissionsRoleDto> permissions = Arrays.asList(PersonPermissionsRoleDto.values());
         final List<Role> roles = mapPermissionsDtoToRole(permissions);
-        assertThat(roles).containsAll(Arrays.asList(Role.values()));
+        assertThat(roles).containsExactlyElementsOf(Arrays.asList(Role.values()));
     }
 
     static Stream<Arguments> roleMapping() {

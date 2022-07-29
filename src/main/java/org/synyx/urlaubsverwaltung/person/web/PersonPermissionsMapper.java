@@ -109,6 +109,6 @@ final class PersonPermissionsMapper {
             }
         });
 
-        return new ArrayList<>(mappedToRolesDto);
+        return new ArrayList<>(mappedToRolesDto).stream().sorted().collect(toList());
     }
 }
