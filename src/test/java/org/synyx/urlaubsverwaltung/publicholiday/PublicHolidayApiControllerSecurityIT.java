@@ -27,6 +27,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN;
@@ -202,6 +203,19 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
         when(departmentService.getManagedDepartmentsOfSecondStageAuthority(ssa)).thenReturn(departments);
 
         when(workingTimeService.getFederalStateForPerson(eq(person), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
+
+        final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
+            .param("from", "2016-01-01")
+            .param("to", "2016-01-31"));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    void personsPublicHolidaysWithBossRoleIsOk() throws Exception {
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 
         final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")
