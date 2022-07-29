@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.config;
+package org.synyx.urlaubsverwaltung.user;
 
 
 import org.junit.jupiter.api.Test;
@@ -7,6 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.synyx.urlaubsverwaltung.user.LocaleInterceptorConfigurer;
+import org.synyx.urlaubsverwaltung.user.LocaleModelInterceptor;
 
 import java.util.List;
 

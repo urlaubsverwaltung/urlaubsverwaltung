@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.config;
+package org.synyx.urlaubsverwaltung.user;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.lang.NonNull;

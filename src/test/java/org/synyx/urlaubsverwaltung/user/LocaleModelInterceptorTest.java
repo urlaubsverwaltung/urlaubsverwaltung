@@ -1,10 +1,11 @@
-package org.synyx.urlaubsverwaltung.config;
+package org.synyx.urlaubsverwaltung.user;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
+import org.synyx.urlaubsverwaltung.user.LocaleModelInterceptor;
 
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
