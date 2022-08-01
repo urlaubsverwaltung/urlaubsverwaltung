@@ -253,7 +253,7 @@
 
 .datepicker-day.absence-full--outline-solid-half::after {
   border: solid 1px var(--absence-bar-color);
-  background: linear-gradient(135deg, var(--absence-bar-color) 50%,  transparent 50%);
+  background: linear-gradient(135deg, var(--absence-bar-color) 50%, transparent 50%);
 }
 
 .datepicker-day.datepicker-day-sick-note-full::after,
@@ -344,7 +344,8 @@ td.datepicker-day {
   @apply tw-shadow-cyan-600;
 }
 
-.tw-dark .datepicker-day:not(.datepicker-day-today):not(.datepicker-day-past):not(.datepicker-day-weekend):not(.datepicker-day-public-holiday-full):hover,
+.tw-dark
+  .datepicker-day:not(.datepicker-day-today):not(.datepicker-day-past):not(.datepicker-day-weekend):not(.datepicker-day-public-holiday-full):hover,
 .tw-dark .datepicker-day-today.datepicker-day-selected,
 .tw-dark .datepicker-day-selected,
 .tw-dark .datepicker-day-selected[class*="-morning"],

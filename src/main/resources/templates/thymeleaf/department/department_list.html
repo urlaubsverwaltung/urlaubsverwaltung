@@ -4,7 +4,7 @@
     <title th:text="#{departments.header.title}"></title>
     <th:block th:fragment="scripts">
       <script>
-        (function() {
+        (function () {
           // hide uv-popover arrow on safari.
           const style = document.createElement("style");
           style.innerHTML = `[is="uv-popover"] summary::-webkit-details-marker { display: none; }`;
@@ -70,7 +70,9 @@
 
             <p th:if="${#lists.isEmpty(departments)}" th:text="#{departments.none}"></p>
             <table th:if="${not #lists.isEmpty(departments)}" id="department-table" class="list-table tw-text-sm">
-              <caption class="tw-sr-only" th:text="#{departments.title}">Departments</caption>
+              <caption class="tw-sr-only" th:text="#{departments.title}">
+                Departments
+              </caption>
               <thead class="hidden-xs hidden-sm">
                 <tr>
                   <th th:text="#{department.data.name}" scope="col" class="sortable-field"></th>
@@ -139,7 +141,11 @@
                               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                 <svg th:replace="icon/x-circle::svg(className='tw-w-8 tw-h-8')"></svg>
                               </button>
-                              <h4 th:text="|#{action.department.delete} ?|" th:id="${'modal-label-' + department.id}" class="modal-title"></h4>
+                              <h4
+                                th:text="|#{action.department.delete} ?|"
+                                th:id="${'modal-label-' + department.id}"
+                                class="modal-title"
+                              ></h4>
                             </div>
                             <div
                               th:text="#{action.department.delete.confirm(${department.name})}"
@@ -151,11 +157,7 @@
                                 class="button-danger"
                                 type="submit"
                               ></button>
-                              <button
-                                th:text="#{action.cancel}"
-                                class="button"
-                                data-dismiss="modal"
-                              ></button>
+                              <button th:text="#{action.cancel}" class="button" data-dismiss="modal"></button>
                             </div>
                           </div>
                         </div>
