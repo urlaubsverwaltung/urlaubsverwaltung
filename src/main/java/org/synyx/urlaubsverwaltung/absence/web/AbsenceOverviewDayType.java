@@ -20,6 +20,10 @@ public class AbsenceOverviewDayType {
     private final boolean temporaryAllowedAbsenceNoon;
     private final boolean temporaryAllowedAbsenceFull;
 
+    private final boolean allowedCancellationRequestedAbsenceMorning;
+    private final boolean allowedCancellationRequestedAbsenceNoon;
+    private final boolean allowedCancellationRequestedAbsenceFull;
+
     private final boolean publicHolidayMorning;
     private final boolean publicHolidayNoon;
     private final boolean publicHolidayFull;
@@ -30,7 +34,9 @@ public class AbsenceOverviewDayType {
     private AbsenceOverviewDayType(boolean sickNoteMorning, boolean sickNoteNoon, boolean sickNoteFull, boolean absenceMorning,
                                    boolean absenceNoon, boolean absenceFull, boolean waitingAbsenceMorning, boolean waitingAbsenceNoon,
                                    boolean waitingAbsenceFull, boolean temporaryAllowedAbsenceMorning, boolean temporaryAllowedAbsenceNoon,
-                                   boolean temporaryAllowedAbsenceFull, boolean publicHolidayMorning, boolean publicHolidayNoon,
+                                   boolean temporaryAllowedAbsenceFull, boolean allowedCancellationRequestedAbsenceMorning,
+                                   boolean allowedCancellationRequestedAbsenceNoon, boolean allowedCancellationRequestedAbsenceFull,
+                                   boolean publicHolidayMorning, boolean publicHolidayNoon,
                                    boolean publicHolidayFull, AbsenceOverviewDayTypeColor color) {
         this.sickNoteMorning = sickNoteMorning;
         this.sickNoteNoon = sickNoteNoon;
@@ -44,6 +50,9 @@ public class AbsenceOverviewDayType {
         this.temporaryAllowedAbsenceMorning = temporaryAllowedAbsenceMorning;
         this.temporaryAllowedAbsenceNoon = temporaryAllowedAbsenceNoon;
         this.temporaryAllowedAbsenceFull = temporaryAllowedAbsenceFull;
+        this.allowedCancellationRequestedAbsenceMorning = allowedCancellationRequestedAbsenceMorning;
+        this.allowedCancellationRequestedAbsenceNoon = allowedCancellationRequestedAbsenceNoon;
+        this.allowedCancellationRequestedAbsenceFull = allowedCancellationRequestedAbsenceFull;
         this.publicHolidayMorning = publicHolidayMorning;
         this.publicHolidayNoon = publicHolidayNoon;
         this.publicHolidayFull = publicHolidayFull;
@@ -102,6 +111,18 @@ public class AbsenceOverviewDayType {
         return temporaryAllowedAbsenceFull;
     }
 
+    public boolean isAllowedCancellationRequestedAbsenceMorning() {
+        return allowedCancellationRequestedAbsenceMorning;
+    }
+
+    public boolean isAllowedCancellationRequestedAbsenceNoon() {
+        return allowedCancellationRequestedAbsenceNoon;
+    }
+
+    public boolean isAllowedCancellationRequestedAbsenceFull() {
+        return allowedCancellationRequestedAbsenceFull;
+    }
+
     public boolean isPublicHolidayMorning() {
         return publicHolidayMorning;
     }
@@ -135,6 +156,10 @@ public class AbsenceOverviewDayType {
         private boolean temporaryAllowedAbsenceMorning = false;
         private boolean temporaryAllowedAbsenceNoon = false;
         private boolean temporaryAllowedAbsenceFull = false;
+
+        private boolean allowedCancellationRequestedAbsenceMorning = false;
+        private boolean allowedCancellationRequestedAbsenceNoon = false;
+        private boolean allowedCancellationRequestedAbsenceFull = false;
 
         private boolean publicHolidayMorning = false;
         private boolean publicHolidayNoon = false;
@@ -204,6 +229,21 @@ public class AbsenceOverviewDayType {
             return this;
         }
 
+        public Builder allowedCancellationRequestedAbsenceMorning() {
+            this.allowedCancellationRequestedAbsenceMorning = true;
+            return this;
+        }
+
+        public Builder allowedCancellationRequestedAbsenceNoon() {
+            this.allowedCancellationRequestedAbsenceNoon = true;
+            return this;
+        }
+
+        public Builder allowedCancellationRequestedAbsenceFull() {
+            this.allowedCancellationRequestedAbsenceFull = true;
+            return this;
+        }
+
         public Builder publicHolidayMorning() {
             this.publicHolidayMorning = true;
             return this;
@@ -248,6 +288,9 @@ public class AbsenceOverviewDayType {
                 temporaryAllowedAbsenceMorning,
                 temporaryAllowedAbsenceNoon,
                 temporaryAllowedAbsenceFull,
+                allowedCancellationRequestedAbsenceMorning,
+                allowedCancellationRequestedAbsenceNoon,
+                allowedCancellationRequestedAbsenceFull,
                 publicHolidayMorning,
                 publicHolidayNoon,
                 publicHolidayFull,
