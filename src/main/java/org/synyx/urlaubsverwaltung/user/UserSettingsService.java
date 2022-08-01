@@ -45,8 +45,6 @@ class UserSettingsService {
         entity.setLocale(locale);
 
         final UserSettingsEntity persistedEntity = userSettingsRepository.save(entity);
-
-        // TODO where should we set the locale?
         LocaleContextHolder.setLocale(locale);
 
         return toUserSettings(persistedEntity);
