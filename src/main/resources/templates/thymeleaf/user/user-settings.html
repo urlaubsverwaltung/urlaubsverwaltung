@@ -44,9 +44,12 @@
             </legend>
             <ul
               aria-describedby="language-description"
-              class="tw-list-none tw-m-0 tw-p-0"
+              class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-col md:tw-grid md:tw-auto-cols-fr md:tw-grid-flow-col tw-gap-2 md:tw-gap-8"
             >
-              <li th:each="supportedLocale : ${supportedLocales}" class="tw-flex tw-items-center tw-gap-2">
+              <li
+                th:each="supportedLocale : ${supportedLocales}"
+                class="tw-relative tw-flex md:tw-block tw-items-center tw-gap-4 md:tw-flex-row md:tw-justify-center"
+              >
                 <input
                   required
                   type="radio"
@@ -55,18 +58,36 @@
                   name="locale"
                   th:value="${supportedLocale.locale}"
                   th:checked="${supportedLocale.locale eq userSettings.locale}"
-                  class="tw-m-0"
+                  class="tw-peer md:tw-absolute tw-bottom-5 tw-left-4"
                 >
-                <label for="user-locale" th:for="${'user-locale-' + supportedLocale.locale}" class="tw-flex tw-items-center tw-m-0 tw-cursor-pointer">
-                  <img th:src="@{/images/flags/{locale}.svg (locale=${supportedLocale.locale})}" alt="" width="25" height="15" class="tw-mr-2">
-                  <th:block th:text="${supportedLocale.displayName}">
-                    Sprache
-                  </th:block>
-                </label>
+                <span class="tw-block tw-w-full tw-h-full tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800 peer-checked:tw-border-blue-400">
+                  <label
+                    for="user-locale"
+                    th:for="${'user-locale-' + supportedLocale.locale}"
+                    class="tw-flex md:tw-flex-col tw-items-center tw-gap-4 tw-m-0 tw-cursor-pointer md:tw-text-center"
+                  >
+                    <span class="tw-h-8 tw-w-8 md:tw-h-16 md:tw-w-16 tw-inline-block tw-overflow-hidden tw-rounded-full">
+                      <img
+                        th:src="@{/images/flags/{locale}.svg (locale=${supportedLocale.locale})}"
+                        alt=""
+                        width="25"
+                        height="15"
+                        class="tw-scale-[1.75] tw-w-full tw-h-full"
+                      >
+                    </span>
+                    <span
+                      th:text="${supportedLocale.displayName}"
+                      class="tw-min-w-0 md:tw-w-4/5 tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden"
+                      th:classappend="${supportedLocale.displayNameOverflow ? 'md:tw-ml-5' : ''}"
+                    >
+                      Sprache
+                    </span>
+                  </label>
+                </span>
               </li>
             </ul>
           </fieldset>
-          <fieldset class="tw-mt-8">
+          <fieldset class="tw-mt-16">
             <legend
               id="theme-description"
               th:text="#{user-settings.theme.title}"

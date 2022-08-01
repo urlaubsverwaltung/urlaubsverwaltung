@@ -53,7 +53,7 @@ class UserSettingsViewController {
         final UserSettingsDto userSettingsDto = userSettingsToDto(userSettings);
 
         final List<LocaleDto> supportedLocales = supportedLocaleService.getSupportedLocales().stream()
-            .map(supportedLocale -> new LocaleDto(supportedLocale, messageSource.getMessage("locale", new Object[]{}, supportedLocale)))
+            .map(this::toLocaleDto)
             .sorted(comparing(LocaleDto::getDisplayName))
             .collect(toList());
 
@@ -77,6 +77,12 @@ class UserSettingsViewController {
         userSettingsService.updateUserThemePreference(signedInUser, theme, userLocale);
 
         return String.format("redirect:/web/person/%s/settings", personId);
+    }
+
+    private LocaleDto toLocaleDto(Locale locale) {
+        boolean displayNameOverflow = SupportedLocale.GERMAN_AUSTRIA.getLocale().equals(locale);
+        String displayName = messageSource.getMessage("locale", new Object[]{}, locale);
+        return new LocaleDto(locale, displayName, displayNameOverflow);
     }
 
     private UserSettingsDto userSettingsToDto(UserSettings userSettings) {
