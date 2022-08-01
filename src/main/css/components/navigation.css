@@ -177,6 +177,17 @@
   @apply dark:tw-border-b-neutral-600;
 }
 
+.nav-popup-menu {
+  @apply tw-transition-transform;
+  @apply tw-origin-top-right;
+  @apply tw-scale-0;
+}
+
+.nav-popup-menu.visible,
+.nav-popup-menu:focus-within {
+  @apply tw-scale-100;
+}
+
 .nav-popup-menu-inner {
   @apply tw-backdrop-blur;
   @apply tw-bg-gray-800;
@@ -204,6 +215,7 @@
 
 .nav-popup-menu-button:is(:hover, :focus) .nav-popup-menu-button_icon {
   @apply tw-text-opacity-100;
+  @apply tw-text-zinc-800;
   @apply dark:tw-text-zinc-100;
 }
 
