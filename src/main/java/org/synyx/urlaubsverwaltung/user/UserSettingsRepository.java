@@ -7,6 +7,5 @@ import java.util.Optional;
 
 @Repository
 interface UserSettingsRepository extends CrudRepository<UserSettingsEntity, Integer> {
-
     Optional<UserSettingsEntity> findByPersonUsername(String username);
 }
