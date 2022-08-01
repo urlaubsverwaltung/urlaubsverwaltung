@@ -79,6 +79,8 @@
                       th:text="${supportedLocale.displayName}"
                       class="tw-min-w-0 md:tw-w-4/5 tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden"
                       th:classappend="${supportedLocale.displayNameOverflow ? 'md:tw-ml-5' : ''}"
+                      th:data-title="${supportedLocale.displayName}"
+                      data-title-delay
                     >
                       Sprache
                     </span>
