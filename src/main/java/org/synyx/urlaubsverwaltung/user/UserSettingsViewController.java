@@ -80,8 +80,8 @@ class UserSettingsViewController {
     }
 
     private LocaleDto toLocaleDto(Locale locale) {
-        boolean displayNameOverflow = SupportedLocale.GERMAN_AUSTRIA.getLocale().equals(locale);
-        String displayName = messageSource.getMessage("locale", new Object[]{}, locale);
+        final boolean displayNameOverflow = SupportedLocale.GERMAN_AUSTRIA.getLocale().equals(locale);
+        final String displayName = messageSource.getMessage("locale", new Object[]{}, locale);
         return new LocaleDto(locale, displayName, displayNameOverflow);
     }
 

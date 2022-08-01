@@ -1,6 +1,9 @@
 package org.synyx.urlaubsverwaltung.user;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -8,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class LocaleModelInterceptorTest {
 
@@ -25,45 +29,23 @@ class LocaleModelInterceptorTest {
     }
 
     @Test
-    void ensureNoExceptionThrownWhenModelAndViewIsNull() throws Exception {
+    void ensureNoExceptionThrownWhenModelAndViewIsNull() {
         final LocaleModelInterceptor interceptor = new LocaleModelInterceptor();
-        interceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), null);
+        assertDoesNotThrow(() ->
+            interceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), null)
+        );
     }
 
-    @Test
-    void ensureLanguageModelAttributeIsNotSetWhenThereIsNoViewName() throws Exception {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"forward::view-name", "redirect::view-name"})
+    void ensureLanguageModelAttributeIsNotSet(String viewName) throws Exception {
         LocaleContextHolder.setLocale(GERMAN);
 
         final LocaleModelInterceptor interceptor = new LocaleModelInterceptor();
 
         final ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName(null);
-        interceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), modelAndView);
-
-        assertThat(modelAndView.getModelMap()).isEmpty();
-    }
-
-    @Test
-    void ensureLanguageModelAttributeIsNotSetForForward() throws Exception {
-        LocaleContextHolder.setLocale(GERMAN);
-
-        final LocaleModelInterceptor interceptor = new LocaleModelInterceptor();
-
-        final ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("forward::view-name");
-        interceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), modelAndView);
-
-        assertThat(modelAndView.getModelMap()).isEmpty();
-    }
-
-    @Test
-    void ensureLanguageModelAttributeIsNotSetForRedirect() throws Exception {
-        LocaleContextHolder.setLocale(GERMAN);
-
-        final LocaleModelInterceptor interceptor = new LocaleModelInterceptor();
-
-        final ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect::view-name");
+        modelAndView.setViewName(viewName);
         interceptor.postHandle(new MockHttpServletRequest(), new MockHttpServletResponse(), new Object(), modelAndView);
 
         assertThat(modelAndView.getModelMap()).isEmpty();
