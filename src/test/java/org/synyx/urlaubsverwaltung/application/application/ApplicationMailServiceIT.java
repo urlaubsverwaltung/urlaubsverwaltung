@@ -465,7 +465,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Zeitraum:            20.05.2022 bis 29.05.2022, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    19.05.2022" + EMAIL_LINE_BREAK +
-            "    Weitergeleitet von:  Rick Grimes" + EMAIL_LINE_BREAK);
+            "    Weitergeleitet von:  Rick Grimes");
     }
 
     @Test
@@ -665,7 +665,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Kommentar:           OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021");
     }
 
     @Test
@@ -709,7 +709,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Kommentar:           OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021");
     }
 
     @Test
@@ -750,7 +750,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Zeitraum:                  16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit:       Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Kommentar:                 OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:          12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:          12.04.2021");
     }
 
     @Test
@@ -1026,7 +1026,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
             "    Kommentar:           Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021");
     }
 
     @Test
@@ -1073,7 +1073,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
             "    Kommentar:           Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021");
     }
 
     @Test
@@ -1154,7 +1154,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
             "    Kommentar:           Habe das mal für dich beantragt" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021");
     }
 
     @Test
@@ -1205,7 +1205,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
             "    Kommentar:           Habe das mal für dich beantragt" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021");
     }
 
     @Test
@@ -1345,7 +1345,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    16.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    16.04.2021");
     }
 
     @Test
@@ -1428,7 +1428,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    16.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    16.04.2021");
     }
 
     @Test
@@ -1651,7 +1651,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Lieschen M¨¨üller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK);
+            "    Lieschen M¨¨üller: 16.04.2021 bis 16.04.2021");
     }
 
     @Test
@@ -1704,7 +1704,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Lieschen M¨¨üller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK);
+            "    Lieschen M¨¨üller: 16.04.2021 bis 16.04.2021");
     }
 
     @Test
@@ -1776,7 +1776,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK);
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
     }
 
     @Test
@@ -1848,7 +1848,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK);
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
     }
 
     @Test
@@ -1924,7 +1924,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK);
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
     }
 
     @Test
@@ -2257,7 +2257,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
                 "" + EMAIL_LINE_BREAK +
-                "Link zur Abwesenheit: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK
+                "Link zur Abwesenheit: https://localhost:8080/web/application/1234"
         );
     }
 
@@ -2298,7 +2298,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "Link zur Abwesenheit: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK
+                "Link zur Abwesenheit: https://localhost:8080/web/application/1234"
         );
     }
 
@@ -2347,7 +2347,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "Link zur Abwesenheit: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK
+                "Link zur Abwesenheit: https://localhost:8080/web/application/1234"
         );
     }
 
@@ -2392,7 +2392,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "Link zur Abwesenheit: https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK
+                "Link zur Abwesenheit: https://localhost:8080/web/application/1234"
         );
     }
 

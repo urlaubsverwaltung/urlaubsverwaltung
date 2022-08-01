@@ -80,6 +80,6 @@ class OvertimeMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +
             "    Zeitraum:    16.04.2020 - 23.04.2020" + EMAIL_LINE_BREAK +
-            "    Dauer:       55 Std. 12 Min." + EMAIL_LINE_BREAK);
+            "    Dauer:       55 Std. 12 Min.");
     }
 }
