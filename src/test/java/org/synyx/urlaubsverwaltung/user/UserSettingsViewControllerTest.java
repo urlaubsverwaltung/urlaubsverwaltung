@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.user;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,20 +14,15 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import static java.math.BigDecimal.ONE;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.hasValue;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
@@ -96,15 +90,13 @@ class UserSettingsViewControllerTest {
                 )
             ))
             .andExpect(model().attribute("userSettings",
-                allOf(
-                    hasProperty("selectedTheme", is("DARK")),
-                    hasProperty("themes", contains(
-                        allOf(hasProperty("value", is("SYSTEM")), hasProperty("label", is("system-label"))),
-                        allOf(hasProperty("value", is("LIGHT")), hasProperty("label", is("light-label"))),
-                        allOf(hasProperty("value", is("DARK")), hasProperty("label", is("dark-label")))
-                    ))
-                ))
-            );
+                hasProperty("selectedTheme", is("DARK"))
+            ))
+            .andExpect(model().attribute("supportedThemes", contains(
+                allOf(hasProperty("value", is("SYSTEM")), hasProperty("label", is("system-label"))),
+                allOf(hasProperty("value", is("LIGHT")), hasProperty("label", is("light-label"))),
+                allOf(hasProperty("value", is("DARK")), hasProperty("label", is("dark-label")))
+            )));
     }
 
     @Test
@@ -186,7 +178,11 @@ class UserSettingsViewControllerTest {
             .locale(Locale.ITALIAN)
         )
             .andExpect(status().isOk())
-            .andExpect(model().attribute("userSettings", hasProperty("themes", is(notNullValue()))))
+            .andExpect(model().attribute("supportedThemes", contains(
+                hasProperty("value", is("SYSTEM")),
+                hasProperty("value", is("LIGHT")),
+                hasProperty("value", is("DARK"))
+            )))
             .andExpect(model().attribute("supportedLocales", hasItem(hasProperty("locale", is(Locale.GERMAN)))));
 
         verify(userSettingsService, never()).updateUserThemePreference(any(), any(), any());

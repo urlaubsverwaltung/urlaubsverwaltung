@@ -1,24 +1,12 @@
 package org.synyx.urlaubsverwaltung.user;
 
-import java.util.List;
 import java.util.Locale;
 
 public class UserSettingsDto {
 
-    private List<ThemeDto> themes;
-
     private String selectedTheme;
 
     private Locale locale;
-
-    public List<ThemeDto> getThemes() {
-        return themes;
-    }
-
-    public UserSettingsDto setThemes(List<ThemeDto> themes) {
-        this.themes = themes;
-        return this;
-    }
 
     public String getSelectedTheme() {
         return selectedTheme;

@@ -55,12 +55,13 @@ class UserSettingsViewController {
         final UserSettings userSettings = userSettingsService.getUserSettingsForPerson(signedInUser, locale);
         model.addAttribute("userSettings", userSettingsToDto(userSettings));
         model.addAttribute("supportedLocales", getSupportedLocales());
+        model.addAttribute("supportedThemes", getAvailableThemeDtos(locale));
 
         return "thymeleaf/user/user-settings";
     }
 
     @PostMapping("/person/{personId}/settings")
-    String updateUserSettings(@PathVariable("personId") Integer personId, Model model, @ModelAttribute UserSettingsDto userSettingsDto, Errors errors) {
+    String updateUserSettings(@PathVariable("personId") Integer personId, Model model, @ModelAttribute UserSettingsDto userSettingsDto, Errors errors, Locale locale) {
 
         final Person signedInUser = personService.getSignedInUser();
         if (!signedInUser.getId().equals(personId)) {
@@ -69,8 +70,8 @@ class UserSettingsViewController {
 
         userSettingsDtoValidator.validate(userSettingsDto, errors);
         if (errors.hasErrors()) {
-            userSettingsDto.setThemes(getAvailableThemeDtos(userSettingsDto.getLocale()));
             model.addAttribute("userSettings", userSettingsDto);
+            model.addAttribute("supportedThemes", getAvailableThemeDtos(locale));
             model.addAttribute("supportedLocales", getSupportedLocales());
             return "thymeleaf/user/user-settings";
         }
@@ -90,10 +91,8 @@ class UserSettingsViewController {
 
     private UserSettingsDto userSettingsToDto(UserSettings userSettings) {
         final Locale locale = userSettings.locale();
-        final UserSettingsDto userSettingsDto = new UserSettingsDto();
 
-        final List<ThemeDto> availableThemeDtos = getAvailableThemeDtos(locale);
-        userSettingsDto.setThemes(availableThemeDtos);
+        final UserSettingsDto userSettingsDto = new UserSettingsDto();
         userSettingsDto.setSelectedTheme(userSettings.theme().name());
         userSettingsDto.setLocale(locale);
 
