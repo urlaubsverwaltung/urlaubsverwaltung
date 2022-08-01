@@ -80,7 +80,7 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Du hast noch 10 Tag(e) Urlaub für dieses Jahr offen, bitte denke daran deinen Urlaub zu planen." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview" + EMAIL_LINE_BREAK);
+            "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview");
     }
 
     @Test
@@ -128,7 +128,7 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "Du hast noch 10 Tag(e) Resturlaub aus dem Vorjahr, bitte denke daran den Urlaub bis zum 31.03.2022 zu nehmen." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview" + EMAIL_LINE_BREAK);
+            "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview");
     }
 
     @Test
@@ -177,6 +177,6 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
             "Dein aktueller Urlaubsanspruch:" + EMAIL_LINE_BREAK +
             "    10 Tag(e)" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/1/overview" + EMAIL_LINE_BREAK);
+            "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/1/overview");
     }
 }
