@@ -10,7 +10,6 @@ import static java.util.stream.Collectors.toUnmodifiableSet;
 
 @Service
 class SupportedLocaleService {
-
     Set<Locale> getSupportedLocales() {
         return Arrays.stream(SupportedLocale.values()).map(SupportedLocale::getLocale).collect(toUnmodifiableSet());
     }
