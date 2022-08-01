@@ -5,6 +5,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,12 +34,14 @@ class UserSettingsViewController {
     private final UserSettingsService userSettingsService;
     private final SupportedLocaleService supportedLocaleService;
     private final MessageSource messageSource;
+    private final UserSettingsDtoValidator userSettingsDtoValidator;
 
-    UserSettingsViewController(PersonService personService, UserSettingsService userSettingsService, SupportedLocaleService supportedLocaleService, MessageSource messageSource) {
+    UserSettingsViewController(PersonService personService, UserSettingsService userSettingsService, SupportedLocaleService supportedLocaleService, MessageSource messageSource, UserSettingsDtoValidator userSettingsDtoValidator) {
         this.personService = personService;
         this.userSettingsService = userSettingsService;
         this.supportedLocaleService = supportedLocaleService;
         this.messageSource = messageSource;
+        this.userSettingsDtoValidator = userSettingsDtoValidator;
     }
 
     @GetMapping("/person/{personId}/settings")
@@ -50,30 +53,30 @@ class UserSettingsViewController {
         }
 
         final UserSettings userSettings = userSettingsService.getUserSettingsForPerson(signedInUser, locale);
-        final UserSettingsDto userSettingsDto = userSettingsToDto(userSettings);
-
-        final List<LocaleDto> supportedLocales = supportedLocaleService.getSupportedLocales().stream()
-            .map(this::toLocaleDto)
-            .sorted(comparing(LocaleDto::getDisplayName))
-            .collect(toList());
-
-        model.addAttribute("userSettings", userSettingsDto);
-        model.addAttribute("supportedLocales", supportedLocales);
+        model.addAttribute("userSettings", userSettingsToDto(userSettings));
+        model.addAttribute("supportedLocales", getSupportedLocales());
 
         return "thymeleaf/user/user-settings";
     }
 
     @PostMapping("/person/{personId}/settings")
-    String updateUserSettings(@PathVariable("personId") Integer personId, @ModelAttribute UserSettingsDto userSettingsDto) {
+    String updateUserSettings(@PathVariable("personId") Integer personId, Model model, @ModelAttribute UserSettingsDto userSettingsDto, Errors errors) {
 
         final Person signedInUser = personService.getSignedInUser();
         if (!signedInUser.getId().equals(personId)) {
             throw new ResponseStatusException(NOT_FOUND);
         }
 
+        userSettingsDtoValidator.validate(userSettingsDto, errors);
+        if (errors.hasErrors()) {
+            userSettingsDto.setThemes(getAvailableThemeDtos(userSettingsDto.getLocale()));
+            model.addAttribute("userSettings", userSettingsDto);
+            model.addAttribute("supportedLocales", getSupportedLocales());
+            return "thymeleaf/user/user-settings";
+        }
+
         final Theme theme = themeNameToTheme(userSettingsDto.getSelectedTheme());
         final Locale userLocale = userSettingsDto.getLocale();
-
         userSettingsService.updateUserThemePreference(signedInUser, theme, userLocale);
 
         return String.format("redirect:/web/person/%s/settings", personId);
@@ -89,17 +92,20 @@ class UserSettingsViewController {
         final Locale locale = userSettings.locale();
         final UserSettingsDto userSettingsDto = new UserSettingsDto();
 
-        final List<ThemeDto> availableThemeDtos = List.of(
-            themeToThemeDto(Theme.SYSTEM, locale),
-            themeToThemeDto(Theme.LIGHT, locale),
-            themeToThemeDto(Theme.DARK, locale)
-        );
-
+        final List<ThemeDto> availableThemeDtos = getAvailableThemeDtos(locale);
         userSettingsDto.setThemes(availableThemeDtos);
         userSettingsDto.setSelectedTheme(userSettings.theme().name());
         userSettingsDto.setLocale(locale);
 
         return userSettingsDto;
+    }
+
+    private List<ThemeDto> getAvailableThemeDtos(Locale locale) {
+        return List.of(
+            themeToThemeDto(Theme.SYSTEM, locale),
+            themeToThemeDto(Theme.LIGHT, locale),
+            themeToThemeDto(Theme.DARK, locale)
+        );
     }
 
     private Theme themeNameToTheme(String themeName) {
@@ -119,5 +125,12 @@ class UserSettingsViewController {
         themeDto.setLabel(label);
 
         return themeDto;
+    }
+
+    private List<LocaleDto> getSupportedLocales() {
+        return supportedLocaleService.getSupportedLocales().stream()
+            .map(this::toLocaleDto)
+            .sorted(comparing(LocaleDto::getDisplayName))
+            .collect(toList());
     }
 }

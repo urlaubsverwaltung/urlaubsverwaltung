@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.user;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,17 +11,28 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import static java.math.BigDecimal.ONE;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.hasValue;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -36,19 +48,18 @@ class UserSettingsViewControllerTest {
 
     @Mock
     private PersonService personService;
-
     @Mock
     private UserSettingsService userSettingsService;
-
     @Mock
     private SupportedLocaleService supportedLocaleService;
-
     @Mock
     private MessageSource messageSource;
+    @Mock
+    private UserSettingsDtoValidator userSettingsDtoValidator;
 
     @BeforeEach
     void setUp() {
-        sut = new UserSettingsViewController(personService, userSettingsService, supportedLocaleService, messageSource);
+        sut = new UserSettingsViewController(personService, userSettingsService, supportedLocaleService, messageSource, userSettingsDtoValidator);
     }
 
     @Test
@@ -117,11 +128,10 @@ class UserSettingsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        final ResultActions perform = perform(post("/web/person/42/settings")
+        perform(post("/web/person/42/settings")
             .param("selectedTheme", givenTheme.name())
-            .locale(Locale.GERMANY));
-
-        perform
+            .locale(Locale.GERMANY)
+        )
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/person/42/settings"));
     }
@@ -134,11 +144,10 @@ class UserSettingsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        final ResultActions perform = perform(post("/web/person/42/settings")
+        perform(post("/web/person/42/settings")
             .param("selectedTheme", "UNKNOWN_THEME")
-            .locale(Locale.GERMANY));
-
-        perform
+            .locale(Locale.GERMANY)
+        )
             .andExpect(status().isBadRequest());
     }
 
@@ -150,12 +159,37 @@ class UserSettingsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        final ResultActions perform = perform(post("/web/person/42/settings")
+        perform(post("/web/person/42/settings")
             .param("selectedTheme", "DARK")
-            .locale(Locale.GERMANY));
-
-        perform
+            .locale(Locale.GERMANY)
+        )
             .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void ensureUpdateUserSettingsWithErrorOpensThePageAgainAndDoesNotSave() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(42);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        doAnswer(invocation -> {
+            final Errors errors = invocation.getArgument(1);
+            errors.reject("errors");
+            return null;
+        }).when(userSettingsDtoValidator).validate(any(), any());
+
+        when(supportedLocaleService.getSupportedLocales()).thenReturn(Set.of(Locale.GERMAN));
+
+        perform(post("/web/person/42/settings")
+            .param("selectedTheme", "someTheme")
+            .locale(Locale.ITALIAN)
+        )
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("userSettings", hasProperty("themes", is(notNullValue()))))
+            .andExpect(model().attribute("supportedLocales", hasItem(hasProperty("locale", is(Locale.GERMAN)))));
+
+        verify(userSettingsService, never()).updateUserThemePreference(any(), any(), any());
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

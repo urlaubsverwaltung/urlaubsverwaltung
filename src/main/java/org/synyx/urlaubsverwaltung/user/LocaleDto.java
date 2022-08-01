@@ -30,4 +30,13 @@ public class LocaleDto {
     public boolean isDisplayNameOverflow() {
         return displayNameOverflow;
     }
+
+    @Override
+    public String toString() {
+        return "LocaleDto{" +
+            "locale=" + locale +
+            ", displayName='" + displayName + '\'' +
+            ", displayNameOverflow=" + displayNameOverflow +
+            '}';
+    }
 }
