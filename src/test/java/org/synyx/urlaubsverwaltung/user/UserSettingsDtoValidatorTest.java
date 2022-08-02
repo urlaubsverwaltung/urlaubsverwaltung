@@ -28,7 +28,7 @@ class UserSettingsDtoValidatorTest {
     @Test
     void ensureValidIfLocaleIsNotProvided() {
         final UserSettingsDto userSettingsDto = new UserSettingsDto();
-        userSettingsDto.setSelectedTheme(Theme.SYSTEM.name());
+        userSettingsDto.setTheme(Theme.SYSTEM.name());
         sut.validate(userSettingsDto, errors);
         verifyNoInteractions(errors);
     }
@@ -36,7 +36,7 @@ class UserSettingsDtoValidatorTest {
     @Test
     void ensureThrowsErrorIfLocaleIsNotSupported() {
         final UserSettingsDto userSettingsDto = new UserSettingsDto();
-        userSettingsDto.setSelectedTheme(Theme.SYSTEM.name());
+        userSettingsDto.setTheme(Theme.SYSTEM.name());
         userSettingsDto.setLocale(Locale.ITALIAN);
         sut.validate(userSettingsDto, errors);
         verify(errors).reject("Locale is not available");
@@ -54,7 +54,7 @@ class UserSettingsDtoValidatorTest {
     void ensureThrowsErrorIfThemeIsNotSupported() {
         final UserSettingsDto userSettingsDto = new UserSettingsDto();
         userSettingsDto.setLocale(Locale.GERMAN);
-        userSettingsDto.setSelectedTheme("someTheme");
+        userSettingsDto.setTheme("someTheme");
         sut.validate(userSettingsDto, errors);
         verify(errors).reject("Theme is not available");
     }

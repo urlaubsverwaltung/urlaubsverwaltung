@@ -90,7 +90,7 @@ class UserSettingsViewControllerTest {
                 )
             ))
             .andExpect(model().attribute("userSettings",
-                hasProperty("selectedTheme", is("DARK"))
+                hasProperty("theme", is("DARK"))
             ))
             .andExpect(model().attribute("supportedThemes", contains(
                 allOf(hasProperty("value", is("SYSTEM")), hasProperty("label", is("system-label"))),
@@ -121,7 +121,7 @@ class UserSettingsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         perform(post("/web/person/42/settings")
-            .param("selectedTheme", givenTheme.name())
+            .param("theme", givenTheme.name())
             .locale(Locale.GERMANY)
         )
             .andExpect(status().is3xxRedirection())
@@ -137,7 +137,7 @@ class UserSettingsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         perform(post("/web/person/42/settings")
-            .param("selectedTheme", "UNKNOWN_THEME")
+            .param("theme", "UNKNOWN_THEME")
             .locale(Locale.GERMANY)
         )
             .andExpect(status().isBadRequest());
@@ -152,7 +152,7 @@ class UserSettingsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         perform(post("/web/person/42/settings")
-            .param("selectedTheme", "DARK")
+            .param("theme", "DARK")
             .locale(Locale.GERMANY)
         )
             .andExpect(status().isNotFound());
@@ -174,7 +174,7 @@ class UserSettingsViewControllerTest {
         when(supportedLocaleService.getSupportedLocales()).thenReturn(Set.of(Locale.GERMAN));
 
         perform(post("/web/person/42/settings")
-            .param("selectedTheme", "someTheme")
+            .param("theme", "someTheme")
             .locale(Locale.ITALIAN)
         )
             .andExpect(status().isOk())

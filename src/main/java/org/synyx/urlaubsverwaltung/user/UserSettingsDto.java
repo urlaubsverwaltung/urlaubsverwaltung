@@ -4,17 +4,16 @@ import java.util.Locale;
 
 public class UserSettingsDto {
 
-    private String selectedTheme;
+    private String theme;
 
     private Locale locale;
 
-    public String getSelectedTheme() {
-        return selectedTheme;
+    public String getTheme() {
+        return theme;
     }
 
-    public UserSettingsDto setSelectedTheme(String selectedTheme) {
-        this.selectedTheme = selectedTheme;
-        return this;
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
     public Locale getLocale() {

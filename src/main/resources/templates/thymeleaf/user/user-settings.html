@@ -133,10 +133,10 @@
                 <input
                   type="radio"
                   id="theme"
-                  name="selectedTheme"
+                  name="theme"
                   th:value="${selectableTheme.value}"
                   th:id="|theme-${selectableTheme.value}|"
-                  th:checked="${userSettings.selectedTheme eq selectableTheme.value}"
+                  th:checked="${userSettings.theme eq selectableTheme.value}"
                   class="tw-peer tw-absolute tw-bottom-7 tw-left-4"
                 />
                 <label

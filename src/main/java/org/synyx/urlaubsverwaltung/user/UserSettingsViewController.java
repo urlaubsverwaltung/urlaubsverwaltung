@@ -76,7 +76,7 @@ class UserSettingsViewController {
             return "thymeleaf/user/user-settings";
         }
 
-        final Theme theme = themeNameToTheme(userSettingsDto.getSelectedTheme());
+        final Theme theme = themeNameToTheme(userSettingsDto.getTheme());
         final Locale userLocale = userSettingsDto.getLocale();
         userSettingsService.updateUserThemePreference(signedInUser, theme, userLocale);
 
@@ -91,7 +91,7 @@ class UserSettingsViewController {
 
     private UserSettingsDto userSettingsToDto(UserSettings userSettings) {
         final UserSettingsDto userSettingsDto = new UserSettingsDto();
-        userSettingsDto.setSelectedTheme(userSettings.theme().name());
+        userSettingsDto.setTheme(userSettings.theme().name());
         userSettings.locale().ifPresent(userSettingsDto::setLocale);
 
         return userSettingsDto;

@@ -21,8 +21,8 @@ class UserSettingsDtoValidator implements Validator {
     public void validate(@NonNull Object target, @NonNull Errors errors) {
         final UserSettingsDto userSettingsDto = (UserSettingsDto) target;
 
-        final String selectedTheme = userSettingsDto.getSelectedTheme();
-        if (availableThemesDoesNotContain(selectedTheme)) {
+        final String theme = userSettingsDto.getTheme();
+        if (availableThemesDoesNotContain(theme)) {
             errors.reject("Theme is not available");
         }
 
