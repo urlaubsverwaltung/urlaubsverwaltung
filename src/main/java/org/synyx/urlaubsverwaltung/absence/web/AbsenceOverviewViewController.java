@@ -374,6 +374,12 @@ public class AbsenceOverviewViewController {
         if (morningWaiting) {
             return anonymizeMorning ? builder.absenceMorning() : builder.waitingAbsenceMorning();
         }
+
+        final boolean morningTemporaryAllowed = morning.map(AbsencePeriod.RecordInfo::hasStatusTemporaryAllowed).orElse(false);
+        if (morningTemporaryAllowed) {
+            return anonymizeMorning ? builder.absenceMorning() : builder.temporaryAllowedAbsenceMorning();
+        }
+
         final boolean morningAllowed = morning.map(AbsencePeriod.RecordInfo::hasStatusAllowed).orElse(false);
         if (morningAllowed) {
             return builder.absenceMorning();
@@ -382,6 +388,11 @@ public class AbsenceOverviewViewController {
         final boolean noonWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (noonWaiting) {
             return anonymizeNoon ? builder.absenceNoon() : builder.waitingAbsenceNoon();
+        }
+
+        final boolean noonTemporaryAllowed = noon.map(AbsencePeriod.RecordInfo::hasStatusTemporaryAllowed).orElse(false);
+        if (noonTemporaryAllowed) {
+            return anonymizeMorning ? builder.absenceNoon() : builder.temporaryAllowedAbsenceNoon();
         }
 
         return builder.absenceNoon();
@@ -412,6 +423,9 @@ public class AbsenceOverviewViewController {
         final boolean morningWaiting = morning.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         final boolean noonWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
 
+        final boolean morningTemporaryAllowed = morning.map(AbsencePeriod.RecordInfo::hasStatusTemporaryAllowed).orElse(false);
+        final boolean noonTemporaryAllowed = noon.map(AbsencePeriod.RecordInfo::hasStatusTemporaryAllowed).orElse(false);
+
         if (anonymizeAbsenceType) {
             builder = builder.colorFull(ANONYMIZED_ABSENCE_COLOR);
         } else {
@@ -423,6 +437,8 @@ public class AbsenceOverviewViewController {
 
         if (morningWaiting && noonWaiting) {
             return anonymizeAbsenceType ? builder.absenceFull() : builder.waitingAbsenceFull();
+        } else if (morningTemporaryAllowed && noonTemporaryAllowed) {
+            return anonymizeAbsenceType ? builder.absenceFull() : builder.temporaryAllowedAbsenceFull();
         } else if (!morningWaiting && !noonWaiting) {
             return builder.absenceFull();
         }

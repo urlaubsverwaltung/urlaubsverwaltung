@@ -183,7 +183,7 @@
   border: none;
   border-spacing: 0;
   border-collapse: collapse;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
 }
 
 .calendar-month-grid .calendar-month-day-header {
@@ -207,8 +207,8 @@
   align-items: center;
   @apply tw-pt-2;
   @apply tw-pb-3.5;
-  @apply tw-pl-1.5;
-  @apply tw-pr-1;
+  @apply tw-pl-2;
+  @apply tw-pr-0.5;
   background: linear-gradient(90deg, var(--background-color-left) 50%, var(--background-color-right) 50%);
   cursor: default;
   color: var(--font-color);
@@ -227,8 +227,6 @@
 
 @media (min-width: 992px) {
   .datepicker-day {
-    @apply tw-pl-1.5;
-    @apply tw-pr-1;
     @apply tw-space-x-0.5;
   }
 }
@@ -240,15 +238,20 @@
 .datepicker-day:is(.datepicker-day-absence-full, .datepicker-day-sick-note-full)::after {
   content: "";
   position: absolute;
-  bottom: 0.375rem;
+  bottom: 0.4rem;
   left: 0.375rem;
   right: 0.375rem;
-  height: 0.25rem;
+  height: 0.375rem;
   border-radius: 99999px;
 }
 
 .datepicker-day.absence-full--outline::after {
   border: solid 1px var(--absence-bar-color);
+}
+
+.datepicker-day.absence-full--outline-solid-half::after {
+  border: solid 1px var(--absence-bar-color);
+  background: linear-gradient(135deg, var(--absence-bar-color) 50%, transparent 50%);
 }
 
 .datepicker-day.datepicker-day-sick-note-full::after,
@@ -259,16 +262,21 @@
 .datepicker-day:is(.datepicker-day-absence-morning, .datepicker-day-sick-note-morning)::before {
   content: "";
   position: absolute;
-  bottom: 0.375rem;
+  bottom: 0.4rem;
   left: 0.375rem;
-  right: 50%;
-  height: 0.25rem;
+  right: 52%;
+  height: 0.375rem;
   border-radius: 99999px;
 }
 
 .datepicker-day.absence-morning--outline::before {
   background: none !important; /* override @duetds hover background color */
   border: solid 1px var(--absence-bar-color-morning);
+}
+
+.datepicker-day.absence-morning--outline-solid-half::before {
+  border: solid 1px var(--absence-bar-color-morning);
+  background: linear-gradient(135deg, var(--absence-bar-color-morning) 50%, transparent 50%);
 }
 
 .datepicker-day.datepicker-day-sick-note-morning::before,
@@ -279,15 +287,20 @@
 .datepicker-day:is(.datepicker-day-absence-noon, .datepicker-day-sick-note-noon)::after {
   content: "";
   position: absolute;
-  bottom: 0.375rem;
-  left: 50%;
+  bottom: 0.4rem;
+  left: 52%;
   right: 0.375rem;
-  height: 0.25rem;
+  height: 0.375rem;
   border-radius: 99999px;
 }
 
 .datepicker-day.absence-noon--outline::after {
   border: solid 1px var(--absence-bar-color-noon);
+}
+
+.datepicker-day.absence-noon--outline-solid-half::after {
+  border: solid 1px var(--absence-bar-color-noon);
+  background: linear-gradient(135deg, var(--absence-bar-color-noon) 50%, transparent 50%);
 }
 
 .datepicker-day.datepicker-day-sick-note-noon::after,
@@ -329,7 +342,8 @@ td.datepicker-day {
   @apply tw-shadow-cyan-600;
 }
 
-.tw-dark .datepicker-day:not(.datepicker-day-today):not(.datepicker-day-past):not(.datepicker-day-weekend):not(.datepicker-day-public-holiday-full):hover,
+.tw-dark
+  .datepicker-day:not(.datepicker-day-today):not(.datepicker-day-past):not(.datepicker-day-weekend):not(.datepicker-day-public-holiday-full):hover,
 .tw-dark .datepicker-day-today.datepicker-day-selected,
 .tw-dark .datepicker-day-selected,
 .tw-dark .datepicker-day-selected[class*="-morning"],

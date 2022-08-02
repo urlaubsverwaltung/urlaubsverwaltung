@@ -16,6 +16,10 @@ public class AbsenceOverviewDayType {
     private final boolean waitingAbsenceNoon;
     private final boolean waitingAbsenceFull;
 
+    private final boolean temporaryAllowedAbsenceMorning;
+    private final boolean temporaryAllowedAbsenceNoon;
+    private final boolean temporaryAllowedAbsenceFull;
+
     private final boolean publicHolidayMorning;
     private final boolean publicHolidayNoon;
     private final boolean publicHolidayFull;
@@ -25,7 +29,8 @@ public class AbsenceOverviewDayType {
     @SuppressWarnings("java:S107") // Methods should not have too many parameters -> builder below must be used for construction
     private AbsenceOverviewDayType(boolean sickNoteMorning, boolean sickNoteNoon, boolean sickNoteFull, boolean absenceMorning,
                                    boolean absenceNoon, boolean absenceFull, boolean waitingAbsenceMorning, boolean waitingAbsenceNoon,
-                                   boolean waitingAbsenceFull, boolean publicHolidayMorning, boolean publicHolidayNoon,
+                                   boolean waitingAbsenceFull, boolean temporaryAllowedAbsenceMorning, boolean temporaryAllowedAbsenceNoon,
+                                   boolean temporaryAllowedAbsenceFull, boolean publicHolidayMorning, boolean publicHolidayNoon,
                                    boolean publicHolidayFull, AbsenceOverviewDayTypeColor color) {
         this.sickNoteMorning = sickNoteMorning;
         this.sickNoteNoon = sickNoteNoon;
@@ -36,6 +41,9 @@ public class AbsenceOverviewDayType {
         this.waitingAbsenceMorning = waitingAbsenceMorning;
         this.waitingAbsenceNoon = waitingAbsenceNoon;
         this.waitingAbsenceFull = waitingAbsenceFull;
+        this.temporaryAllowedAbsenceMorning = temporaryAllowedAbsenceMorning;
+        this.temporaryAllowedAbsenceNoon = temporaryAllowedAbsenceNoon;
+        this.temporaryAllowedAbsenceFull = temporaryAllowedAbsenceFull;
         this.publicHolidayMorning = publicHolidayMorning;
         this.publicHolidayNoon = publicHolidayNoon;
         this.publicHolidayFull = publicHolidayFull;
@@ -82,6 +90,18 @@ public class AbsenceOverviewDayType {
         return waitingAbsenceFull;
     }
 
+    public boolean isTemporaryAllowedAbsenceMorning() {
+        return temporaryAllowedAbsenceMorning;
+    }
+
+    public boolean isTemporaryAllowedAbsenceNoon() {
+        return temporaryAllowedAbsenceNoon;
+    }
+
+    public boolean isTemporaryAllowedAbsenceFull() {
+        return temporaryAllowedAbsenceFull;
+    }
+
     public boolean isPublicHolidayMorning() {
         return publicHolidayMorning;
     }
@@ -111,6 +131,10 @@ public class AbsenceOverviewDayType {
         private boolean waitingAbsenceMorning = false;
         private boolean waitingAbsenceNoon = false;
         private boolean waitingAbsenceFull = false;
+
+        private boolean temporaryAllowedAbsenceMorning = false;
+        private boolean temporaryAllowedAbsenceNoon = false;
+        private boolean temporaryAllowedAbsenceFull = false;
 
         private boolean publicHolidayMorning = false;
         private boolean publicHolidayNoon = false;
@@ -165,6 +189,21 @@ public class AbsenceOverviewDayType {
             return this;
         }
 
+        public Builder temporaryAllowedAbsenceMorning() {
+            this.temporaryAllowedAbsenceMorning = true;
+            return this;
+        }
+
+        public Builder temporaryAllowedAbsenceNoon() {
+            this.temporaryAllowedAbsenceNoon = true;
+            return this;
+        }
+
+        public Builder temporaryAllowedAbsenceFull() {
+            this.temporaryAllowedAbsenceFull = true;
+            return this;
+        }
+
         public Builder publicHolidayMorning() {
             this.publicHolidayMorning = true;
             return this;
@@ -206,6 +245,9 @@ public class AbsenceOverviewDayType {
                 waitingAbsenceMorning,
                 waitingAbsenceNoon,
                 waitingAbsenceFull,
+                temporaryAllowedAbsenceMorning,
+                temporaryAllowedAbsenceNoon,
+                temporaryAllowedAbsenceFull,
                 publicHolidayMorning,
                 publicHolidayNoon,
                 publicHolidayFull,

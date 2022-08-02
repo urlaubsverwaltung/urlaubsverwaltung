@@ -21,10 +21,7 @@
         <span class="tw-ml-0.5 dropdown-caret tw-opacity-70"></span>
       </button>
       <ul class="dropdown-menu">
-        <li
-          th:each="i, status: ${#numbers.sequence(0, 10)}"
-          th:with="selectableYear=${currentYear + 2 - status.count}"
-        >
+        <li th:each="i, status: ${#numbers.sequence(0, 10)}" th:with="selectableYear=${currentYear + 2 - status.count}">
           <a
             th:href="|${hrefPrefix}${selectableYear}|"
             th:attr="aria-current=${selectableYear == currentYear ? 'page' : ''}"

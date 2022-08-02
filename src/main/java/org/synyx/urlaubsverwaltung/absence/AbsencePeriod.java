@@ -155,6 +155,7 @@ public class AbsencePeriod {
         AbsenceType getType();
         AbsenceStatus getStatus();
         Integer getId();
+        boolean hasStatusTemporaryAllowed();
         boolean hasStatusWaiting();
         boolean hasStatusAllowed();
         Optional<Integer> getVacationTypeId();
@@ -221,12 +222,16 @@ public class AbsencePeriod {
             return List.of(status).contains(this.status);
         }
 
+        public boolean hasStatusTemporaryAllowed() {
+            return hasStatusOneOf(AbsenceStatus.TEMPORARY_ALLOWED);
+        }
+
         public boolean hasStatusWaiting() {
-            return hasStatusOneOf(AbsenceStatus.WAITING, AbsenceStatus.TEMPORARY_ALLOWED);
+            return hasStatusOneOf(AbsenceStatus.WAITING);
         }
 
         public boolean hasStatusAllowed() {
-            return !hasStatusWaiting();
+            return hasStatusOneOf(AbsenceStatus.ALLOWED, AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED);
         }
 
         public Optional<Integer> getVacationTypeId() {
