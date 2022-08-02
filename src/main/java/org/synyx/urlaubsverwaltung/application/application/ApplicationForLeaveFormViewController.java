@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -72,9 +71,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 class ApplicationForLeaveFormViewController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
-    private static final String PERSONS_ATTRIBUTE = "persons";
-    private static final String PERSON_ATTRIBUTE = "person";
-    private static final String SHOW_HALF_DAY_OPTION_ATTRIBUTE = "showHalfDayOption";
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
     private static final String APP_FORM = "application/app_form";
     private static final String NO_HOLIDAYS_ACCOUNT = "noHolidaysAccount";
@@ -121,15 +117,13 @@ class ApplicationForLeaveFormViewController {
     }
 
     @GetMapping("/application/new")
-    public String newApplicationForm(@RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId,
+    public String newApplicationForm(@RequestParam(value = "personId", required = false) Integer personId,
                                      @RequestParam(value = "from", required = false) String startDateString,
                                      @RequestParam(value = "to", required = false) String endDateString,
-                                     ApplicationForLeaveForm appForLeaveForm, Model model) {
+                                     Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
-        final Person person = ofNullable(appForLeaveForm.getPerson())
-            .or(getPersonByRequestParam(personId))
-            .orElse(signedInUser);
+        final Person person = getPersonByRequestParam(personId).orElse(signedInUser);
 
         final boolean isApplyingForOneSelf = person.equals(signedInUser);
         if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
@@ -139,11 +133,12 @@ class ApplicationForLeaveFormViewController {
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
 
-            final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(appForLeaveForm.getStartDate());
-            final Supplier<Optional<LocalDate>> endDateSupplier = () -> Optional.ofNullable(appForLeaveForm.getEndDate());
+            final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
+            final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(startDate);
 
+            final ApplicationForLeaveForm appForLeaveForm = new ApplicationForLeaveForm();
             appForLeaveForm.setStartDate(startDate);
-            appForLeaveForm.setEndDate(dateFormatAware.parse(endDateString).or(endDateSupplier).orElse(startDate));
+            appForLeaveForm.setEndDate(endDate);
 
             prepareApplicationForLeaveForm(person, appForLeaveForm, model);
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements(not(isEqual(person))));
@@ -391,18 +386,18 @@ class ApplicationForLeaveFormViewController {
         return REDIRECT_WEB_APPLICATION + savedApplicationForLeave.getId();
     }
 
-    private Supplier<Optional<? extends Person>> getPersonByRequestParam(Integer personId) {
+    private Optional<Person> getPersonByRequestParam(Integer personId) {
         if (personId == null) {
-            return Optional::empty;
+            return Optional.empty();
         }
-        return () -> personService.getPersonByID(personId);
+        return personService.getPersonByID(personId);
     }
 
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
 
         final List<Person> persons = personService.getActivePersons();
-        model.addAttribute(PERSON_ATTRIBUTE, person);
-        model.addAttribute(PERSONS_ATTRIBUTE, persons);
+        model.addAttribute("person", person);
+        model.addAttribute("persons", persons);
         model.addAttribute("canAddApplicationForLeaveForAnotherUser", personService.getSignedInUser().hasRole(OFFICE));
 
         final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
@@ -424,7 +419,7 @@ class ApplicationForLeaveFormViewController {
 
         final boolean isHalfDayApplication = ofNullable(appForm.getDayLength()).filter(DayLength::isHalfDay).isPresent();
         final boolean isHalfDaysActivated = settingsService.getSettings().getApplicationSettings().isAllowHalfDays();
-        model.addAttribute(SHOW_HALF_DAY_OPTION_ATTRIBUTE, isHalfDayApplication || isHalfDaysActivated);
+        model.addAttribute("showHalfDayOption", isHalfDayApplication || isHalfDaysActivated);
 
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
         model.addAttribute("vacationTypeColors", vacationTypeColors);

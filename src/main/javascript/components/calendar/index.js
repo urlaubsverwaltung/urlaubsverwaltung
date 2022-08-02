@@ -44,14 +44,8 @@ import {
 import { isPublicHoliday, isPublicHolidayMorning, isPublicHolidayNoon } from "../../js/public-holiday";
 import "./calendar.css";
 
-function paramize(p) {
-  let result = "?";
-  for (let v in p) {
-    if (p[v]) {
-      result += v + "=" + p[v] + "&";
-    }
-  }
-  return result.replace(/[&?]$/, "");
+function paramize(parameters) {
+  return "?" + new URLSearchParams(parameters).toString();
 }
 
 const datepickerElement = document.querySelector("#datepicker");

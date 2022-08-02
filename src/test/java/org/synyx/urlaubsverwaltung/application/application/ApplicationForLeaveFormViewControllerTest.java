@@ -109,7 +109,6 @@ class ApplicationForLeaveFormViewControllerTest {
 
     private final DateFormatAware dateFormatAware = new DateFormatAware();
 
-    private static final int PERSON_ID = 1;
     private final Clock clock = Clock.systemUTC();
 
     @BeforeEach
@@ -308,7 +307,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get("/web/application/new")
-            .param("person", "1"))
+            .param("personId", "1"))
             .andExpect(model().attribute("person", person));
     }
 
@@ -329,7 +328,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get("/web/application/new")
-            .param("person", "1"))
+            .param("personId", "1"))
             .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
     }
 
@@ -347,7 +346,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(now.getYear(), signedInUser)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        perform(get("/web/application/new").param("person", "1"))
+        perform(get("/web/application/new").param("personId", "1"))
             .andExpect(model().attribute("person", hasProperty("id", is(1337))));
     }
 
@@ -357,12 +356,12 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        final Person person = personWithId(PERSON_ID);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        final Person person = personWithId(1);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         assertThatThrownBy(() ->
             perform(get("/web/application/new")
-                .param("person", Integer.toString(PERSON_ID)))
+                .param("personId", "1"))
         ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
@@ -371,10 +370,10 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(signedInPerson));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(signedInPerson));
 
         perform(get("/web/application/new")
-            .param("person", Integer.toString(PERSON_ID)))
+            .param("personId", "1"))
             .andExpect(status().isOk());
     }
 
@@ -382,10 +381,10 @@ class ApplicationForLeaveFormViewControllerTest {
     void getNewApplicationFormAccessibleForOfficeIfGivenPersonNotSignedInPerson() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithId(PERSON_ID)));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(personWithId(1)));
 
         perform(get("/web/application/new")
-            .param("person", Integer.toString(PERSON_ID)))
+            .param("personId", "1"))
             .andExpect(status().isOk());
     }
 
@@ -410,7 +409,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
 
         final ResultActions resultActions = perform(get("/web/application/new")
-            .param("person", "1")
+            .param("personId", "1")
             .param("from", givenDateFrom.format(formatter)));
 
         resultActions
@@ -439,7 +438,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         final Person person = new Person();
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
@@ -449,7 +448,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final ResultActions resultActions = perform(get("/web/application/new")
-            .param("person", Integer.toString(PERSON_ID))
+            .param("personId", "1")
             .param("from", givenFromString)
             .param("to", givenToString));
 

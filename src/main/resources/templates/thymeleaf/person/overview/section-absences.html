@@ -26,7 +26,7 @@
             th:if="${person.id != signedInUser.id && canAddApplicationForLeaveForAnotherUser}"
             class="icon-link tw-px-1"
             href="#"
-            th:href="@{/web/application/new (person=${person.id})}"
+            th:href="@{/web/application/new (personId=${person.id})}"
             th:data-title="#{action.apply.vacation}"
           >
             <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
