@@ -71,8 +71,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 class ApplicationForLeaveFormViewController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
-    private static final String PERSONS_ATTRIBUTE = "persons";
-    private static final String SHOW_HALF_DAY_OPTION_ATTRIBUTE = "showHalfDayOption";
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
     private static final String APP_FORM = "application/app_form";
     private static final String NO_HOLIDAYS_ACCOUNT = "noHolidaysAccount";
@@ -398,7 +396,7 @@ class ApplicationForLeaveFormViewController {
 
         final List<Person> persons = personService.getActivePersons();
         model.addAttribute("person", person);
-        model.addAttribute(PERSONS_ATTRIBUTE, persons);
+        model.addAttribute("persons", persons);
         model.addAttribute("canAddApplicationForLeaveForAnotherUser", personService.getSignedInUser().hasRole(OFFICE));
 
         final boolean overtimeActive = settingsService.getSettings().getOvertimeSettings().isOvertimeActive();
@@ -420,7 +418,7 @@ class ApplicationForLeaveFormViewController {
 
         final boolean isHalfDayApplication = ofNullable(appForm.getDayLength()).filter(DayLength::isHalfDay).isPresent();
         final boolean isHalfDaysActivated = settingsService.getSettings().getApplicationSettings().isAllowHalfDays();
-        model.addAttribute(SHOW_HALF_DAY_OPTION_ATTRIBUTE, isHalfDayApplication || isHalfDaysActivated);
+        model.addAttribute("showHalfDayOption", isHalfDayApplication || isHalfDaysActivated);
 
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
         model.addAttribute("vacationTypeColors", vacationTypeColors);
