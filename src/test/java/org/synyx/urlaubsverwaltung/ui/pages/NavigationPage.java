@@ -1,10 +1,14 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.synyx.urlaubsverwaltung.ui.Page;
+
+import java.util.Map;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 
@@ -108,8 +112,52 @@ public class NavigationPage implements Page {
 
         void logout() {
             driver.findElement(AVATAR_SELECTOR).click();
-            wait.until(elementToBeClickable(LOGOUT_SELECTOR));
+            wait.until(waitForElementAnimationToFinish(LOGOUT_SELECTOR));
             driver.findElement(LOGOUT_SELECTOR).click();
         }
+    }
+
+    private static ExpectedCondition<Boolean> waitForElementAnimationToFinish(final By locator) {
+        return new ExpectedCondition<>() {
+            private double x = 0;
+            private double y = 0;
+            private double width = 0;
+            private double height = 0;
+
+            private double convertToDouble(Object longValue) {
+                if (longValue instanceof Long) {
+                    return ((Long) longValue).doubleValue();
+                }
+
+                return (double) longValue;
+            }
+
+            @Override
+            public Boolean apply(WebDriver driver) {
+                final WebElement elem = driver.findElement(locator);
+                final JavascriptExecutor js = (JavascriptExecutor) driver;
+                final Map<String, Object> rect = (Map<String, Object>) js.executeScript("var rect = arguments[0].getBoundingClientRect(); return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };", elem);
+
+                double newX = convertToDouble(rect.get("x"));
+                double newY = convertToDouble(rect.get("y"));
+                double newWidth = convertToDouble(rect.get("width"));
+                double newHeight = convertToDouble(rect.get("height"));
+
+                if (newX != x || newY != y || newWidth != width || newHeight != height) {
+                    x = newX;
+                    y = newY;
+                    width = newWidth;
+                    height = newHeight;
+                    return false;
+                }
+
+                return true;
+            }
+
+            @Override
+            public String toString() {
+                return String.format("CSS Selector: \"%s\"", locator.toString());
+            }
+        };
     }
 }
