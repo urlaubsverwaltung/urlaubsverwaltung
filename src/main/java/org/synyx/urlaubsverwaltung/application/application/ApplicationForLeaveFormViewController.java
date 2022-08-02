@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
@@ -123,12 +122,10 @@ class ApplicationForLeaveFormViewController {
     public String newApplicationForm(@RequestParam(value = "personId", required = false) Integer personId,
                                      @RequestParam(value = "from", required = false) String startDateString,
                                      @RequestParam(value = "to", required = false) String endDateString,
-                                     ApplicationForLeaveForm appForLeaveForm, Model model) {
+                                     Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
-        final Person person = ofNullable(appForLeaveForm.getPerson())
-            .or(getPersonByRequestParam(personId))
-            .orElse(signedInUser);
+        final Person person = getPersonByRequestParam(personId).orElse(signedInUser);
 
         final boolean isApplyingForOneSelf = person.equals(signedInUser);
         if (!isApplyingForOneSelf && !signedInUser.hasRole(OFFICE)) {
@@ -138,11 +135,11 @@ class ApplicationForLeaveFormViewController {
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
 
-            final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(appForLeaveForm.getStartDate());
-            final Supplier<Optional<LocalDate>> endDateSupplier = () -> Optional.ofNullable(appForLeaveForm.getEndDate());
+            final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
 
+            final ApplicationForLeaveForm appForLeaveForm = new ApplicationForLeaveForm();
             appForLeaveForm.setStartDate(startDate);
-            appForLeaveForm.setEndDate(dateFormatAware.parse(endDateString).or(endDateSupplier).orElse(startDate));
+            appForLeaveForm.setEndDate(dateFormatAware.parse(endDateString).orElse(startDate));
 
             prepareApplicationForLeaveForm(person, appForLeaveForm, model);
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements(not(isEqual(person))));
@@ -390,11 +387,11 @@ class ApplicationForLeaveFormViewController {
         return REDIRECT_WEB_APPLICATION + savedApplicationForLeave.getId();
     }
 
-    private Supplier<Optional<? extends Person>> getPersonByRequestParam(Integer personId) {
+    private Optional<Person> getPersonByRequestParam(Integer personId) {
         if (personId == null) {
-            return Optional::empty;
+            return Optional.empty();
         }
-        return () -> personService.getPersonByID(personId);
+        return personService.getPersonByID(personId);
     }
 
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
