@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.user;
 
 import org.slf4j.Logger;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -9,8 +10,6 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.Objects.requireNonNull;
-import static java.util.Objects.requireNonNullElse;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
@@ -24,9 +23,9 @@ class UserSettingsService {
         this.userSettingsRepository = userSettingsRepository;
     }
 
-    UserSettings getUserSettingsForPerson(Person person, Locale defaultLocale) {
+    UserSettings getUserSettingsForPerson(Person person) {
         final UserSettingsEntity entity = findForPersonOrGetDefault(person);
-        return toUserSettings(entity, defaultLocale);
+        return toUserSettings(entity);
     }
 
     Optional<Theme> findThemeForUsername(String username) {
@@ -37,7 +36,14 @@ class UserSettingsService {
         return userSettingsRepository.findByPersonUsername(username).map(UserSettingsEntity::getLocale);
     }
 
-    UserSettings updateUserThemePreference(Person person, Theme theme, Locale locale) {
+    /**
+     *
+     * @param person the person to update the {@link UserSettings} for.
+     * @param theme the {@link Theme} for the person.
+     * @param locale the locale to set for the person. must be a {@link SupportedLocale} or {@code null} to use the user-agent as fallback.
+     * @return the updated {@link UserSettings}
+     */
+    UserSettings updateUserThemePreference(Person person, Theme theme, @Nullable Locale locale) {
         final UserSettingsEntity entity = findForPersonOrGetDefault(person);
         entity.setPersonId(person.getId());
         entity.setPerson(null);
@@ -65,10 +71,6 @@ class UserSettingsService {
     }
 
     private static UserSettings toUserSettings(UserSettingsEntity userSettingsEntity) {
-        return new UserSettings(userSettingsEntity.getTheme(), requireNonNull(userSettingsEntity.getLocale()));
-    }
-
-    private static UserSettings toUserSettings(UserSettingsEntity userSettingsEntity, Locale defaultLocale) {
-        return new UserSettings(userSettingsEntity.getTheme(), requireNonNullElse(userSettingsEntity.getLocale(), defaultLocale));
+        return new UserSettings(userSettingsEntity.getTheme(), userSettingsEntity.getLocale());
     }
 }

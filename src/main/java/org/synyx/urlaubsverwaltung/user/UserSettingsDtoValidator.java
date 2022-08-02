@@ -27,7 +27,7 @@ class UserSettingsDtoValidator implements Validator {
         }
 
         final Locale locale = userSettingsDto.getLocale();
-        if (supportedLocaleDoesNotContain(locale)) {
+        if (locale != null && supportedLocaleDoesNotContain(locale)) {
             errors.reject("Locale is not available");
         }
     }

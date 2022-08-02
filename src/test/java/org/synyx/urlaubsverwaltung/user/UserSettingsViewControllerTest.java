@@ -65,7 +65,7 @@ class UserSettingsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final UserSettings userSettings = new UserSettings(Theme.DARK, Locale.GERMAN);
-        when(userSettingsService.getUserSettingsForPerson(signedInPerson, Locale.GERMAN)).thenReturn(userSettings);
+        when(userSettingsService.getUserSettingsForPerson(signedInPerson)).thenReturn(userSettings);
 
         when(supportedLocaleService.getSupportedLocales()).thenReturn(Set.of(Locale.GERMAN, Locale.ENGLISH));
 

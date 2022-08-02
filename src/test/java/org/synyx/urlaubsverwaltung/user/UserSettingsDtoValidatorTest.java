@@ -10,6 +10,7 @@ import org.springframework.validation.Errors;
 import java.util.Locale;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class UserSettingsDtoValidatorTest {
@@ -25,11 +26,11 @@ class UserSettingsDtoValidatorTest {
     }
 
     @Test
-    void ensureThrowsErrorIfLocaleIsNotProvided() {
+    void ensureValidIfLocaleIsNotProvided() {
         final UserSettingsDto userSettingsDto = new UserSettingsDto();
         userSettingsDto.setSelectedTheme(Theme.SYSTEM.name());
         sut.validate(userSettingsDto, errors);
-        verify(errors).reject("Locale is not available");
+        verifyNoInteractions(errors);
     }
 
     @Test

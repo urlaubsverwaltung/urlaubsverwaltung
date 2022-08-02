@@ -52,7 +52,7 @@ class UserSettingsViewController {
             throw new ResponseStatusException(NOT_FOUND);
         }
 
-        final UserSettings userSettings = userSettingsService.getUserSettingsForPerson(signedInUser, locale);
+        final UserSettings userSettings = userSettingsService.getUserSettingsForPerson(signedInUser);
         model.addAttribute("userSettings", userSettingsToDto(userSettings));
         model.addAttribute("supportedLocales", getSupportedLocales());
         model.addAttribute("supportedThemes", getAvailableThemeDtos(locale));
@@ -85,16 +85,14 @@ class UserSettingsViewController {
 
     private LocaleDto toLocaleDto(Locale locale) {
         final boolean displayNameOverflow = SupportedLocale.GERMAN_AUSTRIA.getLocale().equals(locale);
-        final String displayName = messageSource.getMessage("locale", new Object[]{}, locale);
+        final String displayName = i18n(locale, "locale");
         return new LocaleDto(locale, displayName, displayNameOverflow);
     }
 
     private UserSettingsDto userSettingsToDto(UserSettings userSettings) {
-        final Locale locale = userSettings.locale();
-
         final UserSettingsDto userSettingsDto = new UserSettingsDto();
         userSettingsDto.setSelectedTheme(userSettings.theme().name());
-        userSettingsDto.setLocale(locale);
+        userSettings.locale().ifPresent(userSettingsDto::setLocale);
 
         return userSettingsDto;
     }
@@ -117,7 +115,7 @@ class UserSettingsViewController {
     }
 
     private ThemeDto themeToThemeDto(Theme theme, Locale locale) {
-        final String label = messageSource.getMessage("user-settings.theme." + theme.name(), new Object[]{}, locale);
+        final String label = i18n(locale, "user-settings.theme." + theme.name());
 
         final ThemeDto themeDto = new ThemeDto();
         themeDto.setValue(theme.name());
@@ -131,5 +129,9 @@ class UserSettingsViewController {
             .map(this::toLocaleDto)
             .sorted(comparing(LocaleDto::getDisplayName))
             .collect(toList());
+    }
+
+    private String i18n(Locale locale, String messageKey) {
+        return messageSource.getMessage(messageKey, new Object[]{}, locale);
     }
 }

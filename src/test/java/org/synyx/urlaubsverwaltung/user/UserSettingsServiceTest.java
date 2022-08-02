@@ -35,12 +35,14 @@ class UserSettingsServiceTest {
         final UserSettingsEntity entity = new UserSettingsEntity();
         entity.setPersonId(42);
         entity.setTheme(Theme.DARK);
+        entity.setLocale(Locale.GERMAN);
 
         when(userSettingsRepository.findById(42)).thenReturn(Optional.of(entity));
 
-        final UserSettings actual = sut.getUserSettingsForPerson(person, Locale.GERMAN);
+        final UserSettings actual = sut.getUserSettingsForPerson(person);
 
         assertThat(actual.theme()).isEqualTo(Theme.DARK);
+        assertThat(actual.locale()).hasValue(Locale.GERMAN);
     }
 
     @Test
@@ -50,9 +52,10 @@ class UserSettingsServiceTest {
 
         when(userSettingsRepository.findById(42)).thenReturn(Optional.empty());
 
-        final UserSettings actual = sut.getUserSettingsForPerson(person, Locale.GERMAN);
+        final UserSettings actual = sut.getUserSettingsForPerson(person);
 
         assertThat(actual.theme()).isEqualTo(Theme.SYSTEM);
+        assertThat(actual.locale()).isEmpty();
     }
 
     @Test

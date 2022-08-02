@@ -1,11 +1,16 @@
 package org.synyx.urlaubsverwaltung.user;
 
 import java.util.Locale;
+import java.util.Optional;
 
 class UserSettings {
 
     private final Theme theme;
     private final Locale locale;
+
+    UserSettings(Theme theme) {
+        this(theme, null);
+    }
 
     UserSettings(Theme theme, Locale locale) {
         this.theme = theme;
@@ -16,7 +21,7 @@ class UserSettings {
         return theme;
     }
 
-    Locale locale() {
-        return locale;
+    Optional<Locale> locale() {
+        return Optional.ofNullable(locale);
     }
 }

@@ -46,6 +46,34 @@
               aria-describedby="language-description"
               class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-col md:tw-grid md:tw-auto-cols-fr md:tw-grid-flow-col tw-gap-2 md:tw-gap-8"
             >
+              <li class="tw-relative tw-flex md:tw-block tw-items-center tw-gap-4 md:tw-flex-row md:tw-justify-center">
+                <input
+                  required
+                  type="radio"
+                  id="user-locale-system"
+                  th:id="${'user-locale-system'}"
+                  name="locale"
+                  value=""
+                  th:checked="${null eq userSettings.locale}"
+                  class="tw-peer md:tw-absolute tw-bottom-5 tw-left-4"
+                >
+                <span class="tw-block tw-w-full tw-h-full tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800 peer-checked:tw-border-blue-400">
+                  <label
+                    for="user-locale-system"
+                    class="tw-flex md:tw-flex-col tw-items-center tw-gap-4 tw-m-0 tw-cursor-pointer md:tw-text-center"
+                  >
+                    <svg th:replace="icon/globe::svg(className='tw-w-9 tw-h-9 md:tw-w-16 md:tw-h-16 tw-stroke-1')"></svg>
+                    <span
+                      th:text="#{user-settings.language.locale.system}"
+                      class="tw-min-w-0 md:tw-w-4/5 tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden md:tw-ml-5"
+                      th:data-title="#{user-settings.language.locale.system}"
+                      data-title-delay
+                    >
+                      Browsersprache
+                    </span>
+                  </label>
+                </span>
+              </li>
               <li
                 th:each="supportedLocale : ${supportedLocales}"
                 class="tw-relative tw-flex md:tw-block tw-items-center tw-gap-4 md:tw-flex-row md:tw-justify-center"
