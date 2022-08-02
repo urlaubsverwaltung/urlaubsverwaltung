@@ -25,34 +25,29 @@
                         <c:choose>
                             <c:when test="${navigationRequestPopupEnabled}">
                                 <div class="tw-relative">
-                                    <button
+                                    <a
+                                        href="#add-something-new-menu"
                                         id="add-something-new"
-                                        class="nav-popup-menu-button tw-border-none tw-text-base tw-bg-transparent tw-flex tw-items-center"
-                                        aria-expanded="false"
-                                        aria-haspopup="true"
+                                        class="nav-popup-menu-button tw-flex tw-items-center tw-no-underline tw-px-1.5 tw-py-px tw-outline-none"
                                         data-test-id="add-something-new"
+                                        tabindex="-1"
                                     >
                                         <icon:plus className="nav-popup-menu-button_icon tw-w-7 tw-h-7" />
                                         <span class="tw-sr-only">
                                             <spring:message code="nav.add.button.text" />
                                         </span>
                                         <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
-                                    </button>
+                                    </a>
                                     <div
                                         id="add-something-new-menu"
-                                        class="nav-popup-menu tw-w-screen tw-absolute tw-right-2 tw-top-full tw-mt-1 tw-flex tw-justify-end tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
-                                        aria-hidden="true"
+                                        class="nav-popup-menu tw-w-screen tw-absolute tw-right-2 tw-top-full tw-mt-1 tw-flex tw-justify-end"
                                         data-test-id="add-something-new-popupmenu"
                                     >
                                         <div class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner tw-backdrop-blur tw-bg-zinc-900 supports-backdrop-blur:tw-bg-zinc-900/[0.85] dark:tw-border dark:tw-border-zinc-700">
-                                            <ul
-                                                class="tw-list-none tw-m-0 tw-p-0"
-                                                role="menu"
-                                            >
-                                                <li role="none">
+                                            <ul class="tw-list-none tw-m-0 tw-p-0">
+                                                <li>
                                                     <a
                                                         href="${URL_PREFIX}/application/new"
-                                                        role="menuitem"
                                                         class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
                                                         data-test-id="quick-add-new-application"
                                                     >
@@ -65,10 +60,9 @@
                                                     </a>
                                                 </li>
                                                 <c:if test="${navigationSickNoteAddAccess}">
-                                                    <li role="none">
+                                                    <li>
                                                         <a
                                                             href="${URL_PREFIX}/sicknote/new"
-                                                            role="menuitem"
                                                             class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
                                                             data-test-id="quick-add-new-sicknote"
                                                         >
@@ -82,10 +76,9 @@
                                                     </li>
                                                 </c:if>
                                                 <c:if test="${navigationOvertimeItemEnabled}">
-                                                    <li role="none">
+                                                    <li>
                                                         <a
                                                             href="${URL_PREFIX}/overtime/new"
-                                                            role="menuitem"
                                                             class="nav-popup-menu_link tw-block tw-py-2 tw-px-3 tw-no-underline tw-flex tw-items-center"
                                                             data-test-id="quick-add-new-overtime"
                                                         >
@@ -119,11 +112,10 @@
                         <div class="tw-relative">
                             <a
                                 href="#avatar-menu"
-                                class="nav-popup-menu-button tw-no-underline"
+                                class="nav-popup-menu-button tw-flex tw-items-center tw-gap-1 tw-no-underline tw-outline-none"
                                 id="avatar-link"
-                                aria-expanded="false"
-                                aria-haspopup="true"
                                 data-test-id="avatar"
+                                tabindex="-1"
                             >
                                 <img
                                     src="<c:out value='${menuGravatarUrl}?d=mm'/>"
@@ -133,21 +125,20 @@
                                     height="24px"
                                     onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                 />
-                                <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
+                                <span class="dropdown-caret tw-translate-x-px tw-ml-0.5 tw-mt-0.5"></span>
                             </a>
                             <div
                                 id="avatar-menu"
-                                class="nav-popup-menu tw-w-screen tw-absolute tw-right-1 tw-top-full tw-mt-2 tw-flex tw-justify-end tw-origin-top-right tw-transition-transform tw-scale-x-0 tw-scale-y-0 tw-scale-x-1 tw-scale-y-1"
-                                aria-hidden="true"
+                                class="nav-popup-menu tw-w-screen tw-absolute tw-right-1 tw-top-full tw-mt-2 tw-flex tw-justify-end"
                                 data-test-id="avatar-popupmenu"
                             >
                                 <div
                                     class="tw-inline-block tw-py-1 tw-rounded nav-popup-menu-inner"
                                     style="max-width: 78%"
                                 >
-                                    <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs" role="menu">
-                                        <li role="none" class="tw-mb-4">
-                                            <a href="${URL_PREFIX}/person/${userId}/overview" role="menuitem" class="nav-popup-menu_link--no-hover tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-px-2">
+                                    <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs">
+                                        <li class="tw-mb-4">
+                                            <a href="${URL_PREFIX}/person/${userId}/overview" class="nav-popup-menu_link--no-hover tw-block tw-py-2 tw-pl-5 tw-pr-5 tw-no-underline tw-px-2">
                                                 <span class="tw-flex tw-items-center">
                                                     <img
                                                         src="<c:out value='${menuGravatarUrl}?d=mm&s=128'/>"
@@ -165,10 +156,9 @@
                                                 </span>
                                             </a>
                                         </li>
-                                        <li role="none" class="tw-mb-1">
+                                        <li class="tw-mb-1">
                                             <a
                                                 href="${menuHelpUrl}"
-                                                role="menuitem"
                                                 class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center"
                                                 target="_blank"
                                                 rel="noopener"
@@ -182,10 +172,11 @@
                                                 <icon:external-link className="tw-ml-1.5 tw-h-4 tw-w-4" />
                                             </a>
                                         </li>
-                                        <li role="none" class="tw-mb-1">
-                                            <a href="${URL_PREFIX}/person/${userId}"
-                                               role="menuitem"
-                                               class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center">
+                                        <li class="tw-mb-1">
+                                            <a
+                                                href="${URL_PREFIX}/person/${userId}"
+                                                class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center"
+                                            >
                                                 <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                                                     <icon:user-circle className="tw-h-6 tw-w-6" />
                                                 </span>
@@ -194,10 +185,11 @@
                                                 </span>
                                             </a>
                                         </li>
-                                        <li role="none" class="tw-mb-1">
-                                            <a href="${URL_PREFIX}/person/${userId}/settings"
-                                               role="menuitem"
-                                               class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center">
+                                        <li class="tw-mb-1">
+                                            <a
+                                                href="${URL_PREFIX}/person/${userId}/settings"
+                                                class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center"
+                                            >
                                                 <span class="nav-popup-menu_link-icon tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
                                                     <icon:adjustments className="tw-h-6 tw-w-6" />
                                                 </span>
@@ -206,10 +198,9 @@
                                                 </span>
                                             </a>
                                         </li>
-                                        <li role="none" class="tw-mb-1">
+                                        <li class="tw-mb-1">
                                             <form:form action="/logout" method="POST" cssClass="tw-ml-auto tw-w-full">
                                                 <button
-                                                    role="menuitem"
                                                     type="submit"
                                                     class="nav-popup-menu_link tw-w-full tw-block tw-py-2 tw-pl-5 tw-pr-16 tw-text-sm tw-no-underline tw-flex tw-items-center"
                                                     data-test-id="logout"

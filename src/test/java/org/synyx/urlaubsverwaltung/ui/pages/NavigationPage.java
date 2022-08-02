@@ -7,7 +7,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.synyx.urlaubsverwaltung.ui.Page;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
-import static org.synyx.urlaubsverwaltung.ui.PageConditions.elementHasAttributeWithValue;
 
 public class NavigationPage implements Page {
 
@@ -91,16 +90,6 @@ public class NavigationPage implements Page {
             wait.until(elementToBeClickable(SICKNOTE_SELECTOR));
             driver.findElement(SICKNOTE_SELECTOR).click();
         }
-
-        private void openPopupMenu() {
-            wait.until(elementHasAttributeWithValue(BUTTON_SELECTOR, "aria-expanded", "false"));
-            wait.until(elementHasAttributeWithValue(POPUPMENU_SELECTOR, "aria-hidden", "true"));
-
-            driver.findElement(BUTTON_SELECTOR).click();
-
-            wait.until(elementHasAttributeWithValue(BUTTON_SELECTOR, "aria-expanded", "true"));
-            wait.until(elementHasAttributeWithValue(POPUPMENU_SELECTOR, "aria-hidden", "false"));
-        }
     }
 
     private static class AvatarMenu {
@@ -118,16 +107,8 @@ public class NavigationPage implements Page {
         }
 
         void logout() {
-
-            wait.until(elementHasAttributeWithValue(AVATAR_SELECTOR, "aria-expanded", "false"));
-            wait.until(elementHasAttributeWithValue(AVATAR_POPUPMENU_SELECTOR, "aria-hidden", "true"));
-
             driver.findElement(AVATAR_SELECTOR).click();
-
-            wait.until(elementHasAttributeWithValue(AVATAR_SELECTOR, "aria-expanded", "true"));
-            wait.until(elementHasAttributeWithValue(AVATAR_POPUPMENU_SELECTOR, "aria-hidden", "false"));
             wait.until(elementToBeClickable(LOGOUT_SELECTOR));
-
             driver.findElement(LOGOUT_SELECTOR).click();
         }
     }
