@@ -8,17 +8,17 @@ import localeEL from "date-fns/locale/el";
 jest.mock("../../lib/date-fns/locale-resolver");
 
 describe("date-fns-localized", () => {
-  let navigatorLanguage = "";
-  const originalNavigatorLanguage = window.navigator.language;
+  let uvLanguage = "";
+  window.uv = {};
 
-  Object.defineProperty(window.navigator, "language", {
+  Object.defineProperty(window.uv, "language", {
     get() {
-      return navigatorLanguage || originalNavigatorLanguage;
+      return uvLanguage;
     },
   });
 
   afterEach(() => {
-    navigatorLanguage = "";
+    uvLanguage = "";
     jest.resetModules();
   });
 
@@ -27,8 +27,8 @@ describe("date-fns-localized", () => {
     ["de-DE", localeDE],
     ["de-AT", localeDEAT],
     ["el", localeEL],
-  ])("loads date-fn locale for window.navigator.language=%s", async (givenLanguage, expectedLocaleStuff) => {
-    navigatorLanguage = givenLanguage;
+  ])("loads date-fn locale for window.uv.language=%s", async (givenLanguage, expectedLocaleStuff) => {
+    uvLanguage = givenLanguage;
 
     const { setLocale } = await import("../../lib/date-fns/locale-resolver");
 
@@ -46,22 +46,19 @@ describe("date-fns-localized", () => {
     expect(setLocale).toHaveBeenCalledWith(expect.objectContaining({ code: expectedLocaleStuff.code }));
   });
 
-  test.each([["en"], ["en-US"]])(
-    "loads date-fn english locale for window.navigator.language=%s",
-    async (givenLanguage) => {
-      navigatorLanguage = givenLanguage;
+  test.each([["en"], ["en-US"]])("loads date-fn english locale for window.uv.language=%s", async (givenLanguage) => {
+    uvLanguage = givenLanguage;
 
-      const { setLocale } = await import("../../lib/date-fns/locale-resolver");
+    const { setLocale } = await import("../../lib/date-fns/locale-resolver");
 
-      await import("../date-fns-localized");
+    await import("../date-fns-localized");
 
-      // wait for resolved promise in implementation
-      // which then calls `setLocale`
-      await wait();
+    // wait for resolved promise in implementation
+    // which then calls `setLocale`
+    await wait();
 
-      expect(setLocale).not.toHaveBeenCalled();
-    },
-  );
+    expect(setLocale).not.toHaveBeenCalled();
+  });
 
   function wait(delay = 0) {
     return new Promise((resolve) => {

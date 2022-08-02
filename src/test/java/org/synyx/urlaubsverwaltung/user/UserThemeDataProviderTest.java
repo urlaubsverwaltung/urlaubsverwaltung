@@ -8,9 +8,16 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.servlet.ModelAndView;
-import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonService;
+
+import java.security.Principal;
+import java.util.Locale;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -22,49 +29,50 @@ class UserThemeDataProviderTest {
     private UserThemeDataProvider sut;
 
     @Mock
-    private PersonService personService;
-    @Mock
     private UserSettingsService userSettingsService;
 
     @BeforeEach
     void setUp() {
-        sut = new UserThemeDataProvider(personService, userSettingsService);
+        sut = new UserThemeDataProvider(userSettingsService);
     }
 
     @Test
     void addTheme() {
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getSignedInUser()).thenReturn(person);
-
-        final UserSettings userSettings = new UserSettings(Theme.LIGHT);
-        when(userSettingsService.getUserSettingsForPerson(person)).thenReturn(userSettings);
+        when(userSettingsService.findThemeForUsername("batman")).thenReturn(Optional.of(Theme.LIGHT));
 
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("viewName");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setLocalName(Locale.GERMAN.getLanguage());
+        request.setUserPrincipal(anyPrincipal("batman"));
+
+        sut.postHandle(request, null, null, modelAndView);
+
         assertThat(modelAndView.getModelMap().get("theme")).isEqualTo("light");
     }
 
     @Test
     void addSystemDefaultTheme() {
-        when(personService.getSignedInUser()).thenThrow(new IllegalStateException());
-
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("viewName");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setLocalName(Locale.GERMAN.getLanguage());
+
+        sut.postHandle(request, null, null, modelAndView);
         assertThat(modelAndView.getModelMap().get("theme")).isEqualTo("system");
     }
 
     @Test
     void addSystemDefaultThemeForLogin() {
-        when(personService.getSignedInUser()).thenThrow(new IllegalStateException());
-
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("login");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setLocalName(Locale.GERMAN.getLanguage());
+
+        sut.postHandle(request, null, null, modelAndView);
         assertThat(modelAndView.getModelMap().get("theme")).isEqualTo("system");
     }
 
@@ -83,6 +91,11 @@ class UserThemeDataProviderTest {
     @Test
     void doNotAddThemeIfModelAndViewIsNull() {
         sut.postHandle(null, null, null, null);
-        verifyNoInteractions(personService, userSettingsService);
+        verifyNoInteractions(userSettingsService);
+    }
+
+    private static Principal anyPrincipal(String username) {
+        final UserDetails user = User.withUsername(username).password("secret").authorities(new SimpleGrantedAuthority("ROLE_USER")).build();
+        return new UsernamePasswordAuthenticationToken(user, null);
     }
 }

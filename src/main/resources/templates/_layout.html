@@ -88,10 +88,15 @@
     <script defer asset:src="npm.underscore.js"></script>
     <script defer asset:src="npm.datalist-polyfill.js"></script>
     <script defer asset:src="common.js"></script>
+    <script defer asset:src="common~copy_to_clipboard_input~person_overview~user_settings.js"></script>
     <script defer asset:src="date-fns-localized.js"></script>
     <script defer asset:src="npm.ungap.js"></script>
     <script defer asset:src="custom-elements-polyfill.js"></script>
 
+    <script th:inline="javascript">
+      window.uv = window.uv || {};
+      window.uv.language = /*[[${language}]]*/"de";
+    </script>
     <th:block th:replace="${scripts}"></th:block>
   </head>
   <body th:fragment="body(content, scripts)">

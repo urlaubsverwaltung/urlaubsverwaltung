@@ -8,7 +8,7 @@ const userSettingsForm = document.querySelector("#user-settings-form");
 let darkTheme = html.classList.contains("tw-dark") || (html.classList.contains("tw-system") && mediaQueryDark.matches);
 
 userSettingsForm.addEventListener("change", function (event) {
-  if (event.target.name === "selectedTheme") {
+  if (event.target.name === "theme") {
     const value = event.target.value;
 
     if (/system/i.test(value)) {

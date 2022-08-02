@@ -1,30 +1,21 @@
 package org.synyx.urlaubsverwaltung.user;
 
-import org.slf4j.Logger;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 import java.util.Optional;
-
-import static java.lang.invoke.MethodHandles.lookup;
-import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
 public class UserThemeDataProvider implements HandlerInterceptor {
 
-    private static final Logger LOG = getLogger(lookup().lookupClass());
-
-    private final PersonService personService;
     private final UserSettingsService userSettingsService;
 
-    UserThemeDataProvider(PersonService personService, UserSettingsService userSettingsService) {
-        this.personService = personService;
+    UserThemeDataProvider(UserSettingsService userSettingsService) {
         this.userSettingsService = userSettingsService;
     }
 
@@ -32,7 +23,9 @@ public class UserThemeDataProvider implements HandlerInterceptor {
     public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, ModelAndView modelAndView) {
         if (themeIsNeeded(modelAndView)) {
 
-            final Theme theme = getTheme().orElse(Theme.SYSTEM);
+            final Principal userPrincipal = request.getUserPrincipal();
+
+            final Theme theme = userPrincipal == null ? Theme.SYSTEM : getTheme(userPrincipal).orElse(Theme.SYSTEM);
             final String themeValueLowerCase = theme.name().toLowerCase();
 
             modelAndView.addObject("theme", themeValueLowerCase);
@@ -54,13 +47,8 @@ public class UserThemeDataProvider implements HandlerInterceptor {
             !viewName.startsWith("redirect:");
     }
 
-    private Optional<Theme> getTheme() {
-        try {
-            final Person signedInUser = personService.getSignedInUser();
-            return Optional.of(userSettingsService.getUserSettingsForPerson(signedInUser).theme());
-        } catch (IllegalStateException e) {
-            LOG.debug("could not get theme for unknown user (login page called for instance).", e);
-            return Optional.empty();
-        }
+    private Optional<Theme> getTheme(Principal principal) {
+        final String username = principal.getName();
+        return userSettingsService.findThemeForUsername(username);
     }
 }

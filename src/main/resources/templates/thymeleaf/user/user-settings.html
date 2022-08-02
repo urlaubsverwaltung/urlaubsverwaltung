@@ -34,7 +34,90 @@
           method="post"
           th:object="${userSettings}"
         >
-          <fieldset>
+          <fieldset id="fieldset-language">
+            <legend
+              id="language-description"
+              class="dark:tw-text-zinc-100 tw-border-none"
+              th:text="#{user-settings.language.title}"
+            >
+              Sprache
+            </legend>
+            <ul
+              aria-describedby="language-description"
+              class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-col md:tw-grid md:tw-auto-cols-fr md:tw-grid-flow-col tw-gap-2 md:tw-gap-8"
+            >
+              <li class="tw-relative tw-flex md:tw-block tw-items-center tw-gap-4 md:tw-flex-row md:tw-justify-center">
+                <input
+                  required
+                  type="radio"
+                  id="user-locale-system"
+                  th:id="${'user-locale-system'}"
+                  name="locale"
+                  value=""
+                  th:checked="${null eq userSettings.locale}"
+                  class="tw-peer md:tw-absolute tw-bottom-5 tw-left-4"
+                >
+                <span class="tw-block tw-w-full tw-h-full tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800 peer-checked:tw-border-blue-400">
+                  <label
+                    for="user-locale-system"
+                    class="tw-flex md:tw-flex-col tw-items-center tw-gap-4 tw-m-0 tw-cursor-pointer md:tw-text-center"
+                  >
+                    <svg th:replace="icon/globe::svg(className='tw-w-9 tw-h-9 md:tw-w-16 md:tw-h-16 tw-stroke-1')"></svg>
+                    <span
+                      th:text="#{user-settings.language.locale.system}"
+                      class="tw-min-w-0 md:tw-w-4/5 tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden md:tw-ml-5"
+                      th:data-title="#{user-settings.language.locale.system}"
+                      data-title-delay
+                    >
+                      Browsersprache
+                    </span>
+                  </label>
+                </span>
+              </li>
+              <li
+                th:each="supportedLocale : ${supportedLocales}"
+                class="tw-relative tw-flex md:tw-block tw-items-center tw-gap-4 md:tw-flex-row md:tw-justify-center"
+              >
+                <input
+                  required
+                  type="radio"
+                  id="user-locale"
+                  th:id="${'user-locale-' + supportedLocale.locale}"
+                  name="locale"
+                  th:value="${supportedLocale.locale}"
+                  th:checked="${supportedLocale.locale eq userSettings.locale}"
+                  class="tw-peer md:tw-absolute tw-bottom-5 tw-left-4"
+                >
+                <span class="tw-block tw-w-full tw-h-full tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800 peer-checked:tw-border-blue-400">
+                  <label
+                    for="user-locale"
+                    th:for="${'user-locale-' + supportedLocale.locale}"
+                    class="tw-flex md:tw-flex-col tw-items-center tw-gap-4 tw-m-0 tw-cursor-pointer md:tw-text-center"
+                  >
+                    <span class="tw-h-8 tw-w-8 md:tw-h-16 md:tw-w-16 tw-inline-block tw-overflow-hidden tw-rounded-full">
+                      <img
+                        th:src="@{/images/flags/{locale}.svg (locale=${supportedLocale.locale})}"
+                        alt=""
+                        width="25"
+                        height="15"
+                        class="tw-scale-[1.75] tw-w-full tw-h-full"
+                      >
+                    </span>
+                    <span
+                      th:text="${supportedLocale.displayName}"
+                      class="tw-min-w-0 md:tw-w-4/5 tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden"
+                      th:classappend="${supportedLocale.displayNameOverflow ? 'md:tw-ml-5' : ''}"
+                      th:data-title="${supportedLocale.displayName}"
+                      data-title-delay
+                    >
+                      Sprache
+                    </span>
+                  </label>
+                </span>
+              </li>
+            </ul>
+          </fieldset>
+          <fieldset class="tw-mt-16">
             <legend
               id="theme-description"
               th:text="#{user-settings.theme.title}"
@@ -46,30 +129,30 @@
               aria-describedby="theme-description"
               class="tw-list-none tw-m-0 tw-p-0 tw-grid tw-grid-cols-2 xs:tw-grid-cols-3 tw-gap-4"
             >
-              <li th:each="theme : ${userSettings.themes}" class="tw-relative">
+              <li th:each="selectableTheme : ${supportedThemes}" class="tw-relative">
                 <input
                   type="radio"
                   id="theme"
-                  name="selectedTheme"
-                  th:value="${theme.value}"
-                  th:id="|theme-${theme.value}|"
-                  th:checked="${userSettings.selectedTheme eq theme.value}"
+                  name="theme"
+                  th:value="${selectableTheme.value}"
+                  th:id="|theme-${selectableTheme.value}|"
+                  th:checked="${userSettings.theme eq selectableTheme.value}"
                   class="tw-peer tw-absolute tw-bottom-7 tw-left-4"
                 />
                 <label
                   for="theme"
-                  th:for="|theme-${theme.value}|"
+                  th:for="|theme-${selectableTheme.value}|"
                   class="tw-overflow-hidden tw-flex tw-flex-col tw-cursor-pointer tw-rounded-lg md:tw-rounded-xl tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800 peer-checked:tw-border-blue-400"
                 >
                   <img
                     src="#"
-                    th:src="|/images/user-settings-theme-${#strings.toLowerCase(theme.value)}.png|"
+                    th:src="|/images/user-settings-theme-${#strings.toLowerCase(selectableTheme.value)}.png|"
                     width="753"
                     height="466"
                     class="tw-max-w-full tw-h-auto tw-block"
                     alt=""
                   />
-                  <span th:text="${theme.label}" class="tw-py-4 tw-pl-10"> Theme Name </span>
+                  <span th:text="${selectableTheme.label}" class="tw-py-4 tw-pl-10"> Theme Name </span>
                 </label>
               </li>
             </ul>

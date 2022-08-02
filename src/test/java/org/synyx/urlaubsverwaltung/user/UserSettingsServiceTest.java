@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,12 +35,14 @@ class UserSettingsServiceTest {
         final UserSettingsEntity entity = new UserSettingsEntity();
         entity.setPersonId(42);
         entity.setTheme(Theme.DARK);
+        entity.setLocale(Locale.GERMAN);
 
         when(userSettingsRepository.findById(42)).thenReturn(Optional.of(entity));
 
         final UserSettings actual = sut.getUserSettingsForPerson(person);
 
         assertThat(actual.theme()).isEqualTo(Theme.DARK);
+        assertThat(actual.locale()).hasValue(Locale.GERMAN);
     }
 
     @Test
@@ -52,6 +55,7 @@ class UserSettingsServiceTest {
         final UserSettings actual = sut.getUserSettingsForPerson(person);
 
         assertThat(actual.theme()).isEqualTo(Theme.SYSTEM);
+        assertThat(actual.locale()).isEmpty();
     }
 
     @Test
@@ -70,10 +74,11 @@ class UserSettingsServiceTest {
         entityToSave.setPersonId(42);
         entityToSave.setPerson(null);
         entityToSave.setTheme(Theme.LIGHT);
+        entityToSave.setLocale(Locale.GERMAN);
 
         when(userSettingsRepository.save(entityToSave)).thenReturn(entityToSave);
 
-        final UserSettings updatedUserSettings = sut.updateUserThemePreference(person, Theme.LIGHT);
+        final UserSettings updatedUserSettings = sut.updateUserThemePreference(person, Theme.LIGHT, Locale.GERMAN);
 
         assertThat(updatedUserSettings.theme()).isEqualTo(Theme.LIGHT);
     }
@@ -89,11 +94,78 @@ class UserSettingsServiceTest {
         entityToSave.setPersonId(42);
         entityToSave.setPerson(null);
         entityToSave.setTheme(Theme.LIGHT);
+        entityToSave.setLocale(Locale.GERMAN);
 
         when(userSettingsRepository.save(entityToSave)).thenReturn(entityToSave);
 
-        final UserSettings updatedUserSettings = sut.updateUserThemePreference(person, Theme.LIGHT);
+        final UserSettings updatedUserSettings = sut.updateUserThemePreference(person, Theme.LIGHT, Locale.GERMAN);
 
         assertThat(updatedUserSettings.theme()).isEqualTo(Theme.LIGHT);
+    }
+
+    @Test
+    void ensureFindLocaleForUsernameReturnsEmptyOptionalWhenUsernameIsUnknown() {
+
+        when(userSettingsRepository.findByPersonUsername("batman")).thenReturn(Optional.empty());
+
+        final Optional<Locale> actual = sut.findLocaleForUsername("batman");
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    void ensureFindLocaleForUsernameReturnsEmptyOptionalWhenThereIsNoLocale() {
+
+        final UserSettingsEntity entity = new UserSettingsEntity();
+        entity.setLocale(null);
+
+        when(userSettingsRepository.findByPersonUsername("batman")).thenReturn(Optional.of(entity));
+
+        final Optional<Locale> actual = sut.findLocaleForUsername("batman");
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    void ensureFindLocaleForUsernameReturnsLocale() {
+
+        final UserSettingsEntity entity = new UserSettingsEntity();
+        entity.setLocale(Locale.GERMAN);
+
+        when(userSettingsRepository.findByPersonUsername("batman")).thenReturn(Optional.of(entity));
+
+        final Optional<Locale> actual = sut.findLocaleForUsername("batman");
+        assertThat(actual).hasValue(Locale.GERMAN);
+    }
+
+    @Test
+    void ensureFindThemeForUsernameReturnsEmptyOptionalWhenUsernameIsUnknown() {
+
+        when(userSettingsRepository.findByPersonUsername("batman")).thenReturn(Optional.empty());
+
+        final Optional<Theme> actual = sut.findThemeForUsername("batman");
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    void ensureFindThemeForUsernameReturnsEmptyOptionalWhenThereIsNoLocale() {
+
+        final UserSettingsEntity entity = new UserSettingsEntity();
+        entity.setTheme(null);
+
+        when(userSettingsRepository.findByPersonUsername("batman")).thenReturn(Optional.of(entity));
+
+        final Optional<Theme> actual = sut.findThemeForUsername("batman");
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    void ensureFindThemeForUsernameReturnsLocale() {
+
+        final UserSettingsEntity entity = new UserSettingsEntity();
+        entity.setTheme(Theme.DARK);
+
+        when(userSettingsRepository.findByPersonUsername("batman")).thenReturn(Optional.of(entity));
+
+        final Optional<Theme> actual = sut.findThemeForUsername("batman");
+        assertThat(actual).hasValue(Theme.DARK);
     }
 }

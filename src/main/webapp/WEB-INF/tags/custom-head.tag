@@ -42,6 +42,11 @@
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
 <uv:script-theme-toggler />
 
+<script>
+    window.uv = window.uv || {};
+    window.uv.language = '<c:out value="${language}" />';
+</script>
+
 <script defer src="<asset:url value='runtime.js' />"></script>
 <script defer src="<asset:url value='polyfill.js' />"></script>
 <script defer src="<asset:url value='npm.core-js.js' />"></script>
@@ -51,6 +56,7 @@
 <script defer src="<asset:url value='npm.underscore.js' />"></script>
 <script defer src="<asset:url value='npm.datalist-polyfill.js' />"></script>
 <script defer src="<asset:url value='common.js' />"></script>
+<script defer src="<asset:url value='common~copy_to_clipboard_input~person_overview~user_settings.js' />"></script>
 <script defer src="<asset:url value="date-fns-localized.js" />"></script>
 <script defer src="<asset:url value='npm.ungap.js' />"></script>
 <script defer src="<asset:url value='custom-elements-polyfill.js' />"></script>

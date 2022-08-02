@@ -5,6 +5,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Locale;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -29,12 +32,16 @@ class UserSettingsViewController {
 
     private final PersonService personService;
     private final UserSettingsService userSettingsService;
+    private final SupportedLocaleService supportedLocaleService;
     private final MessageSource messageSource;
+    private final UserSettingsDtoValidator userSettingsDtoValidator;
 
-    UserSettingsViewController(PersonService personService, UserSettingsService userSettingsService, MessageSource messageSource) {
+    UserSettingsViewController(PersonService personService, UserSettingsService userSettingsService, SupportedLocaleService supportedLocaleService, MessageSource messageSource, UserSettingsDtoValidator userSettingsDtoValidator) {
         this.personService = personService;
         this.userSettingsService = userSettingsService;
+        this.supportedLocaleService = supportedLocaleService;
         this.messageSource = messageSource;
+        this.userSettingsDtoValidator = userSettingsDtoValidator;
     }
 
     @GetMapping("/person/{personId}/settings")
@@ -46,41 +53,56 @@ class UserSettingsViewController {
         }
 
         final UserSettings userSettings = userSettingsService.getUserSettingsForPerson(signedInUser);
-        final UserSettingsDto userSettingsDto = userSettingsToDto(userSettings, locale);
-
-        model.addAttribute("userSettings", userSettingsDto);
+        model.addAttribute("userSettings", userSettingsToDto(userSettings));
+        model.addAttribute("supportedLocales", getSupportedLocales());
+        model.addAttribute("supportedThemes", getAvailableThemeDtos(locale));
 
         return "thymeleaf/user/user-settings";
     }
 
     @PostMapping("/person/{personId}/settings")
-    String updateUserSettings(@PathVariable("personId") Integer personId, @ModelAttribute UserSettingsDto userSettingsDto, Model model, Locale locale) {
+    String updateUserSettings(@PathVariable("personId") Integer personId, Model model, @ModelAttribute UserSettingsDto userSettingsDto, Errors errors, Locale locale) {
 
         final Person signedInUser = personService.getSignedInUser();
         if (!signedInUser.getId().equals(personId)) {
             throw new ResponseStatusException(NOT_FOUND);
         }
 
-        final Theme theme = themeNameToTheme(userSettingsDto.getSelectedTheme());
+        userSettingsDtoValidator.validate(userSettingsDto, errors);
+        if (errors.hasErrors()) {
+            model.addAttribute("userSettings", userSettingsDto);
+            model.addAttribute("supportedThemes", getAvailableThemeDtos(locale));
+            model.addAttribute("supportedLocales", getSupportedLocales());
+            return "thymeleaf/user/user-settings";
+        }
 
-        userSettingsService.updateUserThemePreference(signedInUser, theme);
+        final Theme theme = themeNameToTheme(userSettingsDto.getTheme());
+        final Locale userLocale = userSettingsDto.getLocale();
+        userSettingsService.updateUserThemePreference(signedInUser, theme, userLocale);
 
         return String.format("redirect:/web/person/%s/settings", personId);
     }
 
-    private UserSettingsDto userSettingsToDto(UserSettings userSettings, Locale locale) {
-        final UserSettingsDto userSettingsDto = new UserSettingsDto();
+    private LocaleDto toLocaleDto(Locale locale) {
+        final boolean displayNameOverflow = SupportedLocale.GERMAN_AUSTRIA.getLocale().equals(locale);
+        final String displayName = i18n(locale, "locale");
+        return new LocaleDto(locale, displayName, displayNameOverflow);
+    }
 
-        final List<ThemeDto> availableThemeDtos = List.of(
+    private UserSettingsDto userSettingsToDto(UserSettings userSettings) {
+        final UserSettingsDto userSettingsDto = new UserSettingsDto();
+        userSettingsDto.setTheme(userSettings.theme().name());
+        userSettings.locale().ifPresent(userSettingsDto::setLocale);
+
+        return userSettingsDto;
+    }
+
+    private List<ThemeDto> getAvailableThemeDtos(Locale locale) {
+        return List.of(
             themeToThemeDto(Theme.SYSTEM, locale),
             themeToThemeDto(Theme.LIGHT, locale),
             themeToThemeDto(Theme.DARK, locale)
         );
-
-        userSettingsDto.setThemes(availableThemeDtos);
-        userSettingsDto.setSelectedTheme(userSettings.theme().name());
-
-        return userSettingsDto;
     }
 
     private Theme themeNameToTheme(String themeName) {
@@ -93,12 +115,23 @@ class UserSettingsViewController {
     }
 
     private ThemeDto themeToThemeDto(Theme theme, Locale locale) {
-        final String label = messageSource.getMessage("user-settings.theme." + theme.name(), new Object[]{}, locale);
+        final String label = i18n(locale, "user-settings.theme." + theme.name());
 
         final ThemeDto themeDto = new ThemeDto();
         themeDto.setValue(theme.name());
         themeDto.setLabel(label);
 
         return themeDto;
+    }
+
+    private List<LocaleDto> getSupportedLocales() {
+        return supportedLocaleService.getSupportedLocales().stream()
+            .map(this::toLocaleDto)
+            .sorted(comparing(LocaleDto::getDisplayName))
+            .collect(toList());
+    }
+
+    private String i18n(Locale locale, String messageKey) {
+        return messageSource.getMessage(messageKey, new Object[]{}, locale);
     }
 }
