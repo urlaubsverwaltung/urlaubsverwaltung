@@ -73,7 +73,6 @@ class ApplicationForLeaveFormViewController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
     private static final String PERSONS_ATTRIBUTE = "persons";
-    private static final String PERSON_ATTRIBUTE = "person";
     private static final String SHOW_HALF_DAY_OPTION_ATTRIBUTE = "showHalfDayOption";
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
     private static final String APP_FORM = "application/app_form";
@@ -121,7 +120,7 @@ class ApplicationForLeaveFormViewController {
     }
 
     @GetMapping("/application/new")
-    public String newApplicationForm(@RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId,
+    public String newApplicationForm(@RequestParam(value = "personId", required = false) Integer personId,
                                      @RequestParam(value = "from", required = false) String startDateString,
                                      @RequestParam(value = "to", required = false) String endDateString,
                                      ApplicationForLeaveForm appForLeaveForm, Model model) {
@@ -401,7 +400,7 @@ class ApplicationForLeaveFormViewController {
     private void prepareApplicationForLeaveForm(Person person, ApplicationForLeaveForm appForm, Model model) {
 
         final List<Person> persons = personService.getActivePersons();
-        model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute("person", person);
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
         model.addAttribute("canAddApplicationForLeaveForAnotherUser", personService.getSignedInUser().hasRole(OFFICE));
 
