@@ -1,12 +1,11 @@
 const buttons = [...document.querySelectorAll(".nav-popup-menu-button")];
-// const menu = document.querySelector("#avatar-menu");
 
 document.addEventListener("click", function (event) {
-  const button = buttons.find((button) => button === event.target) || event.target.closest(".nav-popup-menu-button");
-  console.log(button);
-  if (button) {
+  const selectedButton =
+    buttons.find((button) => button === event.target) || event.target.closest(".nav-popup-menu-button");
+  if (selectedButton) {
     event.preventDefault();
-    const menu = document.querySelector(button.getAttribute("href"));
+    const menu = document.querySelector(selectedButton.getAttribute("href"));
     for (const otherMenu of document.querySelectorAll(".nav-popup-menu.visible")) {
       if (otherMenu !== menu) {
         // only one menu should be opened
