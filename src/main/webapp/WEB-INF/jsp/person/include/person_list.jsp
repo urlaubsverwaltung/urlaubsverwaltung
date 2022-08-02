@@ -137,11 +137,7 @@
                 </td>
                 <td class="hidden-xs">
                     <div class="print:tw-hidden">
-                        <a
-                            class="action-link"
-                            href="${URL_PREFIX}/person/${person.id}"
-                            data-title="<spring:message code="action.account.title" />"
-                        >
+                        <a class="action-link" href="${URL_PREFIX}/person/${person.id}">
                             <icon:user-circle className="tw-w-5 tw-h-5 tw-mr-1"/>
                             <spring:message code="action.account.title" />
                             <span class="tw-sr-only"><spring:message code="action.account.title.screen-reader-appendix" arguments="${person.niceName}" /></span>
