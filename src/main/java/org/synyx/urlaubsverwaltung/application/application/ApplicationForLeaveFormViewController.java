@@ -134,10 +134,11 @@ class ApplicationForLeaveFormViewController {
         if (holidaysAccount.isPresent()) {
 
             final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
+            final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(startDate);
 
             final ApplicationForLeaveForm appForLeaveForm = new ApplicationForLeaveForm();
             appForLeaveForm.setStartDate(startDate);
-            appForLeaveForm.setEndDate(dateFormatAware.parse(endDateString).orElse(startDate));
+            appForLeaveForm.setEndDate(endDate);
 
             prepareApplicationForLeaveForm(person, appForLeaveForm, model);
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements(not(isEqual(person))));
