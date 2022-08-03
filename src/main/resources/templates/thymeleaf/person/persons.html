@@ -18,7 +18,7 @@
       >
         <th:block
           th:fragment="persons-overview-heading-body"
-          th:with="visiblePersonsDropdownText=${param.active != null ? (department != null ? #messages.msg(department.name) : #messages.msg('persons.active')) : #messages.msg('persons.inactive')}"
+          th:with="visiblePersonsDropdownText=${param.active ? (department != null ? department.name : #messages.msg('persons.active')) : #messages.msg('persons.inactive')}"
         >
           <div class="dropdown tw-inline-block">
             <button
