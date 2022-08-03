@@ -139,7 +139,8 @@ public class PersonDetailsViewController {
                              @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                              Model model) throws UnknownDepartmentException {
 
-        final Integer year = requestedYear.orElseGet(() -> Year.now(clock).getValue());
+        final int currentYear = Year.now(clock).getValue();
+        final Integer selectedYear = requestedYear.orElse(currentYear);
 
         final Person signedInUser = personService.getSignedInUser();
         final List<Person> persons = active ? getRelevantActivePersons(signedInUser) : getRelevantInactivePersons(signedInUser);
@@ -156,9 +157,12 @@ public class PersonDetailsViewController {
             model.addAttribute("department", department);
         }
 
-        preparePersonView(signedInUser, persons, year, model);
+        preparePersonView(signedInUser, persons, selectedYear, model);
+        model.addAttribute("currentYear", currentYear);
+        model.addAttribute("selectedYear", selectedYear);
+        model.addAttribute("active", active);
 
-        return "person/person_view";
+        return "thymeleaf/person/persons";
     }
 
     private List<Person> getRelevantActivePersons(Person signedInUser) {
@@ -284,7 +288,6 @@ public class PersonDetailsViewController {
 
         model.addAttribute("persons", personDtos);
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
-        model.addAttribute("year", year);
         model.addAttribute("now", now);
         model.addAttribute("departments", getRelevantDepartmentsSortedByName(signedInUser));
     }

@@ -25,17 +25,19 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
-import static java.time.Month.APRIL;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
+import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -71,7 +73,6 @@ class PersonDetailsViewControllerTest {
     private static final int PERSON_ID = 1;
     private static final int UNKNOWN_DEPARTMENT_ID = 456;
 
-    private static final String YEAR_ATTRIBUTE = "year";
     private static final String DEPARTMENT_ATTRIBUTE = "department";
 
     private static Clock clock;
@@ -143,8 +144,8 @@ class PersonDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
-        perform(get("/web/person/" + PERSON_ID).param(YEAR_ATTRIBUTE, "1985"))
-            .andExpect(model().attribute(YEAR_ATTRIBUTE, 1985));
+        perform(get("/web/person/" + PERSON_ID).param("year", "1985"))
+            .andExpect(model().attribute("year", 1985));
     }
 
     @Test
@@ -173,7 +174,7 @@ class PersonDetailsViewControllerTest {
         final int currentYear = Year.now(clock).getValue();
 
         perform(get("/web/person/" + PERSON_ID))
-            .andExpect(model().attribute(YEAR_ATTRIBUTE, currentYear));
+            .andExpect(model().attribute("year", currentYear));
     }
 
     @Test
@@ -541,27 +542,38 @@ class PersonDetailsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(person);
         perform(get("/web/person").param("active", "true"))
-            .andExpect(view().name("person/person_view"));
+            .andExpect(view().name("thymeleaf/person/persons"));
     }
 
     @Test
     void showPersonWithActiveFlagUsesGivenYear() throws Exception {
 
+        clock = Clock.fixed(Instant.parse("2022-08-04T06:00:00Z"), ZoneId.of("UTC"));
+        sut = new PersonDetailsViewController(personService, accountService, vacationDaysService, departmentService,
+            workingTimeService, settingsService, personBasedataService, clock);
+
         when(personService.getSignedInUser()).thenReturn(person);
+
         perform(get("/web/person/")
             .param("active", "true")
-            .param(YEAR_ATTRIBUTE, "1985")
-        ).andExpect(model().attribute(YEAR_ATTRIBUTE, 1985));
+            .param("year", "1985")
+        )
+            .andExpect(model().attribute("selectedYear", 1985))
+            .andExpect(model().attribute("currentYear", 2022));
     }
 
     @Test
     void showPersonWithActiveFlagUsesCurrentYearIfNoYearGiven() throws Exception {
 
+        clock = Clock.fixed(Instant.parse("2022-08-04T06:00:00Z"), ZoneId.of("UTC"));
+        sut = new PersonDetailsViewController(personService, accountService, vacationDaysService, departmentService,
+            workingTimeService, settingsService, personBasedataService, clock);
+
         when(personService.getSignedInUser()).thenReturn(person);
-        final int currentYear = Year.now(clock).getValue();
 
         perform(get("/web/person/").param("active", "true"))
-            .andExpect(model().attribute(YEAR_ATTRIBUTE, currentYear));
+            .andExpect(model().attribute("selectedYear", 2022))
+            .andExpect(model().attribute("currentYear", 2022));
     }
 
     @Test
