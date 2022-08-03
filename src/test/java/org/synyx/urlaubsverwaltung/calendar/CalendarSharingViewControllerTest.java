@@ -87,7 +87,7 @@ class CalendarSharingViewControllerTest {
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(false);
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeDoesNotExist("companyCalendarShare"))
             .andExpect(status().isOk());
     }
@@ -110,7 +110,7 @@ class CalendarSharingViewControllerTest {
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(false);
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
     }
@@ -132,7 +132,7 @@ class CalendarSharingViewControllerTest {
         when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(anyCompanyCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(model().attribute("companyCalendarShare", hasProperty("calendarUrl", containsString("/web/company/persons/1/calendar?secret="))))
             .andExpect(status().isOk());
@@ -156,7 +156,7 @@ class CalendarSharingViewControllerTest {
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(false);
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
     }
@@ -176,7 +176,7 @@ class CalendarSharingViewControllerTest {
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(true);
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
     }
@@ -194,7 +194,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeDoesNotExist("companyCalendarAccessible"))
             .andExpect(status().isOk());
     }
@@ -212,7 +212,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarAccessible"))
             .andExpect(status().isOk());
     }
@@ -230,7 +230,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarAccessible"))
             .andExpect(status().isOk());
     }
@@ -247,7 +247,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attribute("departmentCalendars", hasSize(0)))
             .andExpect(status().isOk());
     }
@@ -270,7 +270,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attribute("departmentCalendars", hasSize(2)))
             .andExpect(status().isOk());
     }
@@ -294,7 +294,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(status().isOk());
     }
 
@@ -319,7 +319,7 @@ class CalendarSharingViewControllerTest {
         when(departmentCalendarService.getCalendarForDepartment(42, 1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attribute("departmentCalendars", hasSize(2)))
             .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl", containsString("web/departments/1337/persons/1/calendar?secret=")))))
             .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl", nullValue()))))
@@ -342,7 +342,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("privateCalendarShare"))
             .andExpect(status().isOk());
     }
@@ -363,7 +363,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeDoesNotExist("companyCalendarAccessible"))
             .andExpect(model().attributeDoesNotExist("companyCalendarShare"))
             .andExpect(status().isOk());
@@ -388,7 +388,7 @@ class CalendarSharingViewControllerTest {
         when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(anyCompanyCalendar()));
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarAccessible"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
@@ -410,7 +410,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarAccessible"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
@@ -432,7 +432,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarAccessible"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
@@ -468,7 +468,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attribute("privateCalendarShare", hasProperty("calendarUrl", nullValue())))
             .andExpect(status().isOk());
     }
@@ -486,7 +486,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attribute("privateCalendarShare", hasProperty("calendarUrl", containsString("/web/persons/1/calendar?secret="))))
             .andExpect(status().isOk());
     }
@@ -604,7 +604,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attribute("departmentCalendars", hasSize(0)))
             .andExpect(model().attribute("isSignedInUser", false))
             .andExpect(model().attribute("personName", "Marlene Muster"))
@@ -623,7 +623,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attribute("departmentCalendars", hasSize(0)))
             .andExpect(model().attribute("isSignedInUser", true))
             .andExpect(model().attributeDoesNotExist("personName"))

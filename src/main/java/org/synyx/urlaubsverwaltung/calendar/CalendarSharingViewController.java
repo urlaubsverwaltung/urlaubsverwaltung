@@ -73,7 +73,7 @@ public class CalendarSharingViewController {
         prepareModelForOtherCalendarSharePerson(personId, model, signedInUser);
         prepareModelForCompanyCalendar(model, personId, signedInUser);
 
-        return "calendarsharing/index";
+        return "thymeleaf/calendarsharing/index";
     }
 
     @GetMapping("/persons/{personId}/departments/{activeDepartmentId}")
@@ -91,7 +91,7 @@ public class CalendarSharingViewController {
         prepareModelForOtherCalendarSharePerson(personId, model, signedInUser);
         prepareModelForCompanyCalendar(model, personId, signedInUser);
 
-        return "calendarsharing/index";
+        return "thymeleaf/calendarsharing/index";
     }
 
     private void prepareModelForOtherCalendarSharePerson(int personId, Model model, Person signedInUser) {
