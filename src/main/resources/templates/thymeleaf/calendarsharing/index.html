@@ -150,7 +150,7 @@
             <h2 th:text="#{calendar.share.department.title}" id="calendar-department" class="tw-text-xl"></h2>
           </th:block>
         </div>
-        <ul th:if="${departmentCalendars.size() > 1}" class="nav nav-tabs">
+        <ul th:if="${departmentCalendars.size() > 1}" class="nav nav-tabs" role="tablist">
           <li
             th:each="departmentCal : ${departmentCalendars}"
             role="presentation"
