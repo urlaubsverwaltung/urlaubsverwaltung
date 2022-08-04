@@ -24,7 +24,7 @@
         <li th:each="i, status: ${#numbers.sequence(0, 10)}" th:with="selectableYear=${currentYear + 2 - status.count}">
           <a
             th:href="|${hrefPrefix}${selectableYear}|"
-            th:attr="aria-current=${selectableYear == currentYear ? 'page' : ''}"
+            th:attr="aria-current=${selectableYear == selectedYear ? 'page' : ''}"
           >
             <span th:text="#{overview.year.selection.item.link(${selectableYear})}" class="tw-sr-only"></span>
             <span th:text="${selectableYear}" aria-hidden="true"></span>
