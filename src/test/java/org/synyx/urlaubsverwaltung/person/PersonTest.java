@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
@@ -135,6 +136,22 @@ class PersonTest {
         person.setPermissions(List.of(BOSS));
 
         assertThat(person.isPrivileged()).isTrue();
+    }
+
+    @Test
+    void ensureIsInactiveReturnsTrueWhenPersonHasRoleInactive() {
+        final Person person = new Person();
+        person.setPermissions(List.of(INACTIVE));
+
+        assertThat(person.isInactive()).isTrue();
+    }
+
+    @Test
+    void ensureIsInactiveReturnsFalseWhenPersonDoesNotHaveRoleInactive() {
+        final Person person = new Person();
+        person.setPermissions(List.of());
+
+        assertThat(person.isInactive()).isFalse();
     }
 
     @Test

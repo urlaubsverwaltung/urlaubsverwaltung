@@ -7,6 +7,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -39,6 +41,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -60,6 +63,283 @@ class DepartmentServiceImplTest {
     @BeforeEach
     void setUp() {
         sut = new DepartmentServiceImpl(departmentRepository, applicationService, applicationEventPublisher, clock);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonReturnsDistinctActivePersonsForDepartmentHeadAndSecondStageAuthority() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember));
+
+        when(departmentRepository.findByDepartmentHeadsAndSecondStageAuthorities(person, person)).thenReturn(List.of(admins, developers));
+
+        final PageRequest pageRequest = PageRequest.of(0, 100);
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, pageRequest);
+
+        assertThat(actual.getContent()).containsExactly(jane, max);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonReturnsDistinctActivePersonsForDepartmentHead() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember));
+
+        when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(admins, developers));
+
+        final PageRequest pageRequest = PageRequest.of(0, 100);
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, pageRequest);
+
+        assertThat(actual.getContent()).containsExactly(jane, max);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonReturnsDistinctActivePersonsForSecondStageAuthority() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember));
+
+        when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(List.of(admins, developers));
+
+        final PageRequest pageRequest = PageRequest.of(0, 100);
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, pageRequest);
+
+        assertThat(actual.getContent()).containsExactly(jane, max);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonReturnsEmptyList() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of());
+
+        final PageRequest pageRequest = PageRequest.of(0, 100);
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, pageRequest);
+
+        assertThat(actual.getContent()).isEmpty();
+        verifyNoInteractions(departmentRepository);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonReturnsDistinctInactivePersonsForDepartmentHeadAndSecondStageAuthority() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        max.setPermissions(List.of(INACTIVE));
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final Person john = new Person();
+        john.setId(4);
+        john.setFirstName("John");
+        john.setLastName("Doe");
+        john.setPermissions(List.of(INACTIVE));
+        final DepartmentMemberEmbeddable johnMember = new DepartmentMemberEmbeddable();
+        johnMember.setPerson(john);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember, johnMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember, johnMember));
+
+        when(departmentRepository.findByDepartmentHeadsAndSecondStageAuthorities(person, person)).thenReturn(List.of(admins, developers));
+
+        final PageRequest pageRequest = PageRequest.of(0, 100);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, pageRequest);
+
+        assertThat(actual.getContent()).containsExactly(john, max);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonReturnsDistinctInactivePersonsForDepartmentHead() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        max.setPermissions(List.of(INACTIVE));
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final Person john = new Person();
+        john.setId(4);
+        john.setFirstName("John");
+        john.setLastName("Doe");
+        john.setPermissions(List.of(INACTIVE));
+        final DepartmentMemberEmbeddable johnMember = new DepartmentMemberEmbeddable();
+        johnMember.setPerson(john);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember, johnMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember, johnMember));
+
+        when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(admins, developers));
+
+        final PageRequest pageRequest = PageRequest.of(0, 100);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, pageRequest);
+
+        assertThat(actual.getContent()).containsExactly(john, max);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonReturnsDistinctInactivePersonsForSecondStageAuthority() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        max.setPermissions(List.of(INACTIVE));
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final Person john = new Person();
+        john.setId(4);
+        john.setFirstName("John");
+        john.setLastName("Doe");
+        john.setPermissions(List.of(INACTIVE));
+        final DepartmentMemberEmbeddable johnMember = new DepartmentMemberEmbeddable();
+        johnMember.setPerson(john);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember, johnMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember, johnMember));
+
+        when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(List.of(admins, developers));
+
+        final PageRequest pageRequest = PageRequest.of(0, 100);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, pageRequest);
+
+        assertThat(actual.getContent()).containsExactly(john, max);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonReturnsEmptyList() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of());
+
+        final PageRequest pageRequest = PageRequest.of(0, 100);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, pageRequest);
+
+        assertThat(actual.getContent()).isEmpty();
+        verifyNoInteractions(departmentRepository);
     }
 
     @Test

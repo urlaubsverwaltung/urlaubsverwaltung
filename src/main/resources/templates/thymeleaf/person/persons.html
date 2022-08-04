@@ -72,26 +72,15 @@
         </th:block>
       </div>
 
-      <p th:if="${#lists.isEmpty(persons)}" th:text="#{persons.none}"></p>
+      <p th:if="${#lists.isEmpty(personPage.content)}" th:text="#{persons.none}"></p>
 
-      <th:block th:if="${not #lists.isEmpty(persons)}">
+      <th:block th:if="${not #lists.isEmpty(personPage.content)}">
         <p class="text-right visible-print">
           <th:block th:text="#{filter.validity}"></th:block>&nbsp;<span
             th:replace="fragments/date::date(${now})"
           ></span>
         </p>
         <div id="users">
-          <form class="form-inline" id="search">
-            <div class="form-group">
-              <div class="input-group search-field">
-                <!-- NOTE: class 'search' is needed for list.js -->
-                <input type="text" class="search form-control" th:placeholder="#{action.search}" />
-                <span class="input-group-addon">
-                  <svg th:replace="icon/search::svg(className='tw-w-4 tw-h-4')"></svg>
-                </span>
-              </div>
-            </div>
-          </form>
           <table id="person-table" class="list-table selectable-table tw-text-sm">
             <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
             <thead class="hidden-xs hidden-sm print:tw-table-header-group">
@@ -136,7 +125,7 @@
             <!-- NOTE: class 'list' is needed for list.js -->
             <tbody class="list">
               <tr
-                th:each="person,loopStatus : ${persons}"
+                th:each="person,loopStatus : ${personPage.content}"
                 th:onclick="|navigate('/web/person/${person.id}/overview');|"
               >
                 <td class="is-centered">
@@ -228,6 +217,20 @@
               </tr>
             </tbody>
           </table>
+          <div class="tw-flex tw-flex-row tw-gap-2">
+            <a
+              th:each="pageNumber : ${personPageNumbers}"
+              th:with="isSelected=${pageNumber == personPage.number + 1}"
+              href="#"
+              th:href="@{/web/person (active=${active},page=${pageNumber})}"
+              class="tw-px-4 tw-py-1 tw-no-underline dark:tw-text-zinc-50 tw-rounded-md tw-border-2 dark:tw-border-zinc-700 hover:dark:tw-border-zinc-300 tw-transition-colors"
+              th:classappend="${isSelected ? 'dark:tw-border-zinc-300' : ''}"
+              th:text="${pageNumber}"
+              th:attr="aria-current=${isSelected ? 'page' : ''}"
+            >
+              1
+            </a>
+          </div>
         </div>
       </th:block>
     </main>

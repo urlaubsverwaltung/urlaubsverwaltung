@@ -5,6 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -41,6 +46,7 @@ import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
@@ -48,7 +54,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -272,21 +277,27 @@ class PersonDetailsViewControllerTest {
     @Test
     void showPersonWithActiveTrueForUserWithRoleBossCallsCorrectService() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(personWithRole(USER, BOSS));
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        perform(get("/web/person").param("active", "true"));
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPageRequest())).thenReturn(page);
 
-        verify(personService).getActivePersons();
+        perform(get("/web/person").param("active", "true"))
+            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
     }
 
     @Test
     void showPersonWithActiveTrueForUserWithRoleOfficeCallsCorrectService() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(personWithRole(USER, OFFICE));
+        final Person signedInUser = personWithRole(USER, OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        perform(get("/web/person").param("active", "true"));
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPageRequest())).thenReturn(page);
 
-        verify(personService).getActivePersons();
+        perform(get("/web/person").param("active", "true"))
+            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
     }
 
     @Test
@@ -295,9 +306,11 @@ class PersonDetailsViewControllerTest {
         final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        perform(get("/web/person").param("active", "true"));
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest())).thenReturn(page);
 
-        verify(departmentService).getMembersForDepartmentHead(signedInUser);
+        perform(get("/web/person").param("active", "true"))
+            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
     }
 
     @Test
@@ -306,9 +319,11 @@ class PersonDetailsViewControllerTest {
         final Person signedInUser = personWithRole(USER, SECOND_STAGE_AUTHORITY);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        perform(get("/web/person").param("active", "true"));
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest())).thenReturn(page);
 
-        verify(departmentService).getMembersForSecondStageAuthority(signedInUser);
+        perform(get("/web/person").param("active", "true"))
+            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
     }
 
     @Test
@@ -317,10 +332,11 @@ class PersonDetailsViewControllerTest {
         final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        perform(get("/web/person").param("active", "true"));
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest())).thenReturn(page);
 
-        verify(departmentService).getMembersForDepartmentHead(signedInUser);
-        verify(departmentService).getMembersForSecondStageAuthority(signedInUser);
+        perform(get("/web/person").param("active", "true"))
+            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
     }
 
     @Test
@@ -331,81 +347,43 @@ class PersonDetailsViewControllerTest {
 
         final Person person = new Person("username", "Cloud", "Sky", "sky@exaple.org");
         person.setId(2);
-        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(person));
-        when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(person));
+
+        final PageImpl<Person> page = new PageImpl<>(List.of(person));
+        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest())).thenReturn(page);
 
         perform(get("/web/person").param("active", "true"))
-            .andExpect(model().attribute("persons", hasSize(1)));
-    }
-
-    @Test
-    void showPersonWithActiveTrueForUserWithRoleDepartmentHeadAndSecondStageAuthorityPersonsSortedByFirstname() throws Exception {
-
-        final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
-        signedInUser.setId(1);
-        when(personService.getSignedInUser()).thenReturn(signedInUser);
-
-        final Person bruce = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        bruce.setId(2);
-
-        final Person clark = new Person("superman", "Kent", "Clark", "superman@example.org");
-        clark.setId(3);
-
-        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(clark));
-        when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(clark, bruce));
-
-        perform(get("/web/person").param("active", "true"))
-            .andExpect(
-                model().attribute("persons", contains(
-                    hasProperty("firstName", is("Bruce")),
-                    hasProperty("firstName", is("Clark"))
-                ))
-            );
-    }
-
-    @Test
-    void showPersonWithActiveTrueForUserWithRoleDepartmentHeadAndSecondStageAuthorityPersonsSortedByFirstnameThenLastName() throws Exception {
-
-        final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
-        signedInUser.setId(1);
-        when(personService.getSignedInUser()).thenReturn(signedInUser);
-
-        final Person wayne = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        wayne.setId(2);
-
-        final Person wolf = new Person("red.wolf", "Xavier", "Bruce", "red.wolf@example.org");
-        wolf.setId(3);
-
-        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(wolf));
-        when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(wolf, wayne));
-
-        perform(get("/web/person").param("active", "true"))
-            .andExpect(
-                model().attribute("persons", contains(
-                    hasProperty("lastName", is("Wayne")),
-                    hasProperty("lastName", is("Xavier"))
-                ))
-            );
+            .andExpect(model().attribute("personPage", hasProperty("content", allOf(
+                hasSize(1),
+                contains(
+                    hasProperty("firstName", is("Sky"))
+                )
+            ))));
     }
 
     @Test
     void showPersonWithActiveFalseForUserWithRoleBossCallsCorrectService() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(personWithRole(USER, BOSS));
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        perform(get("/web/person").param("active", "false"));
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getInactivePersons(defaultPageRequest())).thenReturn(page);
 
-        verify(personService).getInactivePersons();
+        perform(get("/web/person").param("active", "false"))
+            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
     }
 
     @Test
     void showPersonWithActiveFalseForUserWithRoleOfficeCallsCorrectService() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(personWithRole(USER, OFFICE));
+        final Person signedInUser = personWithRole(USER, OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        perform(get("/web/person").param("active", "false"));
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getInactivePersons(defaultPageRequest())).thenReturn(page);
 
-        verify(personService).getInactivePersons();
+        perform(get("/web/person").param("active", "false"))
+            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
     }
 
     @Test
@@ -414,9 +392,11 @@ class PersonDetailsViewControllerTest {
         final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        perform(get("/web/person").param("active", "false"));
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPageRequest())).thenReturn(page);
 
-        verify(departmentService).getMembersForDepartmentHead(signedInUser);
+        perform(get("/web/person").param("active", "false"))
+            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
     }
 
     @Test
@@ -425,9 +405,11 @@ class PersonDetailsViewControllerTest {
         final Person signedInUser = personWithRole(USER, SECOND_STAGE_AUTHORITY);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        perform(get("/web/person").param("active", "false"));
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPageRequest())).thenReturn(page);
 
-        verify(departmentService).getMembersForSecondStageAuthority(signedInUser);
+        perform(get("/web/person").param("active", "false"))
+            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
     }
 
     @Test
@@ -436,10 +418,11 @@ class PersonDetailsViewControllerTest {
         final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        perform(get("/web/person").param("active", "false"));
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPageRequest())).thenReturn(page);
 
-        verify(departmentService).getMembersForDepartmentHead(signedInUser);
-        verify(departmentService).getMembersForSecondStageAuthority(signedInUser);
+        perform(get("/web/person").param("active", "false"))
+            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
     }
 
     @Test
@@ -451,11 +434,17 @@ class PersonDetailsViewControllerTest {
         final Person person = new Person("username", "Cloud", "Sky", "sky@exaple.org");
         person.setId(2);
         person.setPermissions(List.of(INACTIVE));
-        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(person));
-        when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(person));
+
+        final PageImpl<Person> page = new PageImpl<>(List.of(person));
+        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPageRequest())).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
-            .andExpect(model().attribute("persons", hasSize(1)));
+            .andExpect(model().attribute("personPage", hasProperty("content", allOf(
+                hasSize(1),
+                contains(
+                    hasProperty("firstName", is("Sky"))
+                )
+            ))));
     }
 
     @Test
@@ -473,42 +462,15 @@ class PersonDetailsViewControllerTest {
         clark.setId(3);
         clark.setPermissions(List.of(INACTIVE));
 
-        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(clark));
-        when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(clark, bruce));
+        final PageImpl<Person> page = new PageImpl<>(List.of(bruce, clark));
+        when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPageRequest())).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
             .andExpect(
-                model().attribute("persons", contains(
+                model().attribute("personPage", hasProperty("content", contains(
                     hasProperty("firstName", is("Bruce")),
                     hasProperty("firstName", is("Clark"))
-                ))
-            );
-    }
-
-    @Test
-    void showPersonWithActiveFalseForUserWithRoleDepartmentHeadAndSecondStageAuthorityPersonsSortedByFirstnameThenLastName() throws Exception {
-
-        final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
-        signedInUser.setId(1);
-        when(personService.getSignedInUser()).thenReturn(signedInUser);
-
-        final Person wayne = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        wayne.setId(2);
-        wayne.setPermissions(List.of(INACTIVE));
-
-        final Person wolf = new Person("red.wolf", "Xavier", "Bruce", "red.wolf@example.org");
-        wolf.setId(3);
-        wolf.setPermissions(List.of(INACTIVE));
-
-        when(departmentService.getMembersForDepartmentHead(signedInUser)).thenReturn(List.of(wolf));
-        when(departmentService.getMembersForSecondStageAuthority(signedInUser)).thenReturn(List.of(wolf, wayne));
-
-        perform(get("/web/person").param("active", "false"))
-            .andExpect(
-                model().attribute("persons", contains(
-                    hasProperty("lastName", is("Wayne")),
-                    hasProperty("lastName", is("Xavier"))
-                ))
+                )))
             );
     }
 
@@ -528,21 +490,40 @@ class PersonDetailsViewControllerTest {
     @Test
     void showPersonUsesDepartmentWithGivenId() throws Exception {
 
+        final Person signedInUser = personWithRole(BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
         final Department department = new Department();
+        department.setName("awesome-department");
+        department.setMembers(List.of());
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
 
-        when(personService.getSignedInUser()).thenReturn(person);
-        when(departmentService.getDepartmentById(PERSON_ID)).thenReturn(Optional.of(department));
+        final Person john = new Person();
+        john.setId(2);
+        john.setFirstName("John");
 
-        perform(get("/web/person")
-            .param("active", "true")
-            .param(DEPARTMENT_ATTRIBUTE, "1")
-        ).andExpect(model().attribute(DEPARTMENT_ATTRIBUTE, department));
+        final PageImpl<Person> page = new PageImpl<>(List.of(john));
+        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1, defaultPageRequest())).thenReturn(page);
+
+        perform(get("/web/person").param("active", "true")
+            .param("department", "1")
+        )
+            .andExpect(model().attribute("department", hasProperty("name", is("awesome-department"))))
+            .andExpect(model().attribute("personPage", hasProperty("content", allOf(
+                hasSize(1),
+                contains(
+                    hasProperty("firstName", is("John"))
+                )
+            ))));
     }
 
     @Test
     void showPersonUsesDepartmentUsesCorrectView() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(person);
+
+        mockDefaultPageRequest(person);
+
         perform(get("/web/person").param("active", "true"))
             .andExpect(view().name("thymeleaf/person/persons"));
     }
@@ -555,6 +536,8 @@ class PersonDetailsViewControllerTest {
             workingTimeService, settingsService, personBasedataService, clock);
 
         when(personService.getSignedInUser()).thenReturn(person);
+
+        mockDefaultPageRequest(person);
 
         perform(get("/web/person/")
             .param("active", "true")
@@ -573,6 +556,8 @@ class PersonDetailsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(person);
 
+        mockDefaultPageRequest(person);
+
         perform(get("/web/person/").param("active", "true"))
             .andExpect(model().attribute("selectedYear", 2022))
             .andExpect(model().attribute("currentYear", 2022));
@@ -586,6 +571,9 @@ class PersonDetailsViewControllerTest {
 
         final Department department = new Department();
         when(departmentService.getAllDepartments()).thenReturn(List.of(department));
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPageRequest())).thenReturn(page);
 
         perform(get("/web/person/").param("active", "true"))
             .andExpect(model().attribute("departments", hasSize(1)));
@@ -602,6 +590,9 @@ class PersonDetailsViewControllerTest {
         final Department department = new Department();
         when(departmentService.getAllDepartments()).thenReturn(List.of(department));
 
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPageRequest())).thenReturn(page);
+
         perform(get("/web/person/").param("active", "true"))
             .andExpect(model().attribute("departments", hasSize(1)));
 
@@ -613,6 +604,8 @@ class PersonDetailsViewControllerTest {
 
         final Person departmentHead = personWithRole(USER, DEPARTMENT_HEAD);
         when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        mockDefaultPageRequest(departmentHead);
 
         final Department department = new Department();
         when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(List.of(department));
@@ -627,11 +620,22 @@ class PersonDetailsViewControllerTest {
         final Person secondStageAuthority = personWithRole(USER, SECOND_STAGE_AUTHORITY);
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
 
+        mockDefaultPageRequest(secondStageAuthority);
+
         final Department department = new Department();
+        department.setId(1);
+        department.setName("awesome-department");
         when(departmentService.getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(department));
 
         perform(get("/web/person/").param("active", "true"))
-            .andExpect(model().attribute("departments", hasSize(1)));
+            .andExpect(
+                model().attribute("departments", allOf(
+                    hasSize(1),
+                    contains(
+                        hasProperty("name", is("awesome-department"))
+                    )
+                ))
+            );
     }
 
     @Test
@@ -639,6 +643,8 @@ class PersonDetailsViewControllerTest {
 
         final Person departmentHeadAndSecondStageAuthority = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSecondStageAuthority);
+
+        mockDefaultPageRequest(departmentHeadAndSecondStageAuthority);
 
         final Department department = new Department();
         department.setId(1);
@@ -663,6 +669,8 @@ class PersonDetailsViewControllerTest {
         final Person user = personWithRole(USER);
         when(personService.getSignedInUser()).thenReturn(user);
 
+        mockDefaultPageRequest(user);
+
         final Department department = new Department();
         when(departmentService.getAssignedDepartmentsOfMember(user)).thenReturn(List.of(department));
 
@@ -685,17 +693,21 @@ class PersonDetailsViewControllerTest {
         wolf.setId(3);
         wolf.setPermissions(List.of(USER));
 
-        when(personService.getActivePersons()).thenReturn(List.of(wayne, wolf));
+        final PageImpl<Person> page = new PageImpl<>(List.of(wayne, wolf));
+        when(personService.getActivePersons(defaultPageRequest())).thenReturn(page);
+
         when(personBasedataService.getBasedataByPersonId(2)).thenReturn(Optional.of(new PersonBasedata(2, "42", null)));
 
         perform(get("/web/person").param("active", "true"))
-            .andExpect(model().attribute("persons", hasSize(2)))
             .andExpect(
                 model()
-                    .attribute("persons", contains(
-                        hasProperty("personnelNumber", is("42")),
-                        hasProperty("lastName", is("Xavier"))
-                    ))
+                    .attribute("personPage", hasProperty("content", allOf(
+                        hasSize(2),
+                        contains(
+                            hasProperty("personnelNumber", is("42")),
+                            hasProperty("lastName", is("Xavier"))
+                        )
+                    )))
             ).andExpect(model().attribute("showPersonnelNumberColumn", true));
     }
 
@@ -715,14 +727,32 @@ class PersonDetailsViewControllerTest {
         wolf.setId(3);
         wolf.setPermissions(List.of(USER));
 
-        when(personService.getActivePersons()).thenReturn(List.of(wayne, wolf));
+        final PageImpl<Person> page = new PageImpl<>(List.of(wayne, wolf));
+        when(personService.getActivePersons(defaultPageRequest())).thenReturn(page);
 
         perform(get("/web/person").param("active", "true"))
             .andExpect(model().attribute("showPersonnelNumberColumn", false));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut).build().perform(builder);
+        return standaloneSetup(sut)
+            .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+            .build()
+            .perform(builder);
+    }
+
+    private static PageRequest defaultPageRequest() {
+        return PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "firstName", "lastName"));
+    }
+
+    private Page<Person> mockDefaultPageRequest(Person signedInUser) {
+
+        final PageRequest defaultPageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "firstName", "lastName"));
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest)).thenReturn(page);
+
+        return page;
     }
 
     private static Settings settingsWithFederalState(FederalState federalState) {

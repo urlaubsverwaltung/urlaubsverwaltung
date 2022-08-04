@@ -1,6 +1,11 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -33,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -42,7 +48,6 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.web.PersonDetailsBasedataDtoMapper.mapToPersonDetailsBasedataDto;
@@ -138,27 +143,38 @@ public class PersonDetailsViewController {
     public String showPerson(@RequestParam(value = "active") boolean active,
                              @RequestParam(value = "department", required = false) Optional<Integer> requestedDepartmentId,
                              @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
+                             @SortDefault.SortDefaults({
+                                 @SortDefault(sort = "firstName", direction = Sort.Direction.DESC),
+                                 @SortDefault(sort = "lastName", direction = Sort.Direction.DESC),
+                             })
+                             Pageable pageable,
                              Model model) throws UnknownDepartmentException {
 
         final int currentYear = Year.now(clock).getValue();
         final Integer selectedYear = requestedYear.orElse(currentYear);
 
         final Person signedInUser = personService.getSignedInUser();
-        final List<Person> persons = active ? getRelevantActivePersons(signedInUser) : getRelevantInactivePersons(signedInUser);
-
+        final Page<Person> personPage;
 
         if (requestedDepartmentId.isPresent()) {
             final Integer departmentId = requestedDepartmentId.get();
             final Department department = departmentService.getDepartmentById(departmentId)
                 .orElseThrow(() -> new UnknownDepartmentException(departmentId));
 
-            // if department filter is active, only department members are relevant
-            persons.retainAll(department.getMembers());
-
             model.addAttribute("department", department);
+
+            personPage = active
+                ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, pageable)
+                : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, pageable);
+
+
+        } else {
+            personPage = active
+                ? getRelevantActivePersons(signedInUser, pageable)
+                : getRelevantInactivePersons(signedInUser, pageable);
         }
 
-        preparePersonView(signedInUser, persons, selectedYear, model);
+        preparePersonView(signedInUser, personPage, selectedYear, model);
         model.addAttribute("currentYear", currentYear);
         model.addAttribute("selectedYear", selectedYear);
         model.addAttribute("active", active);
@@ -166,46 +182,19 @@ public class PersonDetailsViewController {
         return "thymeleaf/person/persons";
     }
 
-    private List<Person> getRelevantActivePersons(Person signedInUser) {
-
+    private Page<Person> getRelevantActivePersons(Person signedInUser, Pageable pageable) {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-            return personService.getActivePersons();
+            return personService.getActivePersons(pageable);
+        } else {
+            return departmentService.getManagedMembersOfPerson(signedInUser, pageable);
         }
-
-        final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
-            ? departmentService.getMembersForDepartmentHead(signedInUser)
-            : List.of();
-
-        final List<Person> memberForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
-            ? departmentService.getMembersForSecondStageAuthority(signedInUser)
-            : List.of();
-
-        return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
-            .filter(person -> !person.hasRole(INACTIVE))
-            .distinct()
-            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
-            .collect(toList());
     }
 
-    private List<Person> getRelevantInactivePersons(Person signedInUser) {
-
+    private Page<Person> getRelevantInactivePersons(Person signedInUser, Pageable pageable) {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-            return personService.getInactivePersons();
+            return personService.getInactivePersons(pageable);
         }
-
-        final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
-            ? departmentService.getMembersForDepartmentHead(signedInUser)
-            : List.of();
-
-        final List<Person> membersForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
-            ? departmentService.getMembersForSecondStageAuthority(signedInUser)
-            : List.of();
-
-        return Stream.concat(membersForDepartmentHead.stream(), membersForSecondStageAuthority.stream())
-            .filter(person -> person.hasRole(INACTIVE))
-            .distinct()
-            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
-            .collect(toList());
+        return departmentService.getManagedInactiveMembersOfPerson(signedInUser, pageable);
     }
 
     private List<Department> getRelevantDepartmentsSortedByName(Person signedInUser) {
@@ -238,12 +227,12 @@ public class PersonDetailsViewController {
             .collect(toList());
     }
 
-    private void preparePersonView(Person signedInUser, List<Person> persons, int year, Model model) {
+    private void preparePersonView(Person signedInUser, Page<Person> personPage, int year, Model model) {
 
         final LocalDate now = LocalDate.now(clock);
 
-        final List<PersonDto> personDtos = new ArrayList<>(persons.size());
-        for (Person person : persons) {
+        final List<PersonDto> personDtos = new ArrayList<>(personPage.getContent().size());
+        for (Person person : personPage) {
             final PersonDto.Builder personDtoBuilder = PersonDto.builder();
 
             final Optional<Account> account = accountService.getHolidaysAccount(year, person);
@@ -287,7 +276,12 @@ public class PersonDetailsViewController {
         final boolean showPersonnelNumberColumn = personDtos.stream()
             .anyMatch(personDto -> hasText(personDto.getPersonnelNumber()));
 
-        model.addAttribute("persons", personDtos);
+        final PageImpl<PersonDto> personDtoPage = new PageImpl<>(personDtos, personPage.getPageable(), personPage.getTotalElements());
+        model.addAttribute("personPage", personDtoPage);
+
+        final List<Integer> pageNumbers = IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().collect(toList());
+        model.addAttribute("personPageNumbers", pageNumbers);
+
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("now", now);
         model.addAttribute("departments", getRelevantDepartmentsSortedByName(signedInUser));

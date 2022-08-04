@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.department;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -134,6 +136,42 @@ public interface DepartmentService {
      * else {@code false}
      */
     boolean isDepartmentHeadAllowedToManagePerson(Person departmentHead, Person person);
+
+    /**
+     * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
+     * {@link Pageable} request. Managed members are all persons for which the second stage authority are responsible
+     * for and can perform actions for this person.
+     *
+     * @param person person to get managed members for
+     * @param pageable the page request
+     * @return all managed and active members for the person
+     */
+    Page<Person> getManagedMembersOfPerson(Person person, Pageable pageable);
+
+    /**
+     * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
+     * {@link Pageable} request. Managed members are all persons for which the second stage authority are responsible
+     * for and can perform actions for this person.
+     *
+     * @param person person to get managed members for
+     * @param pageable the page request
+     * @return all managed and inactive members for the person
+     */
+    Page<Person> getManagedInactiveMembersOfPerson(Person person, Pageable pageable);
+
+    /**
+     * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
+     * {@link Pageable} request. Managed members are all persons for which the second stage authority are responsible
+     * for and can perform actions for this person.
+     *
+     * @param person person to get managed members for
+     * @param departmentId departmentId to get managed members for
+     * @param pageable the page request
+     * @return all managed and active members for the person
+     */
+    Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, Pageable pageable);
+
+    Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, Pageable pageable);
 
     /**
      * Get all distinct managed members of the department head.

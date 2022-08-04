@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -92,6 +95,8 @@ public interface PersonService {
      */
     List<Person> getActivePersons();
 
+    Page<Person> getActivePersons(Pageable pageable);
+
     /**
      * finds all {@link Person}s in the database that have the given {@link Role}.
      *
@@ -114,6 +119,8 @@ public interface PersonService {
      * @return returns all inactive persons
      */
     List<Person> getInactivePersons();
+
+    Page<Person> getInactivePersons(Pageable pageable);
 
     /**
      * This method allows to get the signed in user.

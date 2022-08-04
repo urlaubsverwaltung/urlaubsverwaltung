@@ -3,6 +3,10 @@ package org.synyx.urlaubsverwaltung.person;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -131,6 +135,10 @@ class PersonServiceImpl implements PersonService {
         return personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
     }
 
+    @Override
+    public Page<Person> getActivePersons(Pageable pageable) {
+        return personRepository.findByPermissionsNotContaining(INACTIVE, pageable);
+    }
 
     @Override
     public List<Person> getActivePersonsByRole(final Role role) {
@@ -145,6 +153,13 @@ class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getInactivePersons() {
         return personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
+    }
+
+    @Override
+    public Page<Person> getInactivePersons(Pageable pageable) {
+        // TODO consider pageable sorting
+        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "firstName", "lastName");
+        return personRepository.findByPermissionsContaining(INACTIVE, pageRequest);
     }
 
     @Override

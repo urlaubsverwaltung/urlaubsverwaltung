@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -18,7 +20,11 @@ interface PersonRepository extends JpaRepository<Person, Integer> {
 
     List<Person> findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(Role permission);
 
+    Page<Person> findByPermissionsNotContaining(Role permission, Pageable pageable);
+
     List<Person> findByPermissionsContainingOrderByFirstNameAscLastNameAsc(Role permission);
+
+    Page<Person> findByPermissionsContaining(Role permission, Pageable pageable);
 
     List<Person> findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(Role permissionContaining, Role permissionNotContaining);
 

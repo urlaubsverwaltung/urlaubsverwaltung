@@ -8,6 +8,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -232,6 +235,18 @@ class PersonServiceImplTest {
     }
 
     @Test
+    void ensureGetActivePersonsPage() {
+
+        final Page<Person> expected = Page.empty();
+        final PageRequest pageRequest = PageRequest.of(1, 100);
+
+        when(personRepository.findByPermissionsNotContaining(INACTIVE, pageRequest)).thenReturn(expected);
+
+        final Page<Person> actual = sut.getActivePersons(pageRequest);
+        assertThat(actual).isSameAs(expected);
+    }
+
+    @Test
     void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveInactiveRole() {
 
         final Person inactive = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -243,6 +258,20 @@ class PersonServiceImplTest {
         assertThat(inactivePersons)
             .hasSize(1)
             .contains(inactive);
+    }
+
+    @Test
+    void ensureGetInactivePersonsPage() {
+
+        final Page<Person> expected = Page.empty();
+        final PageRequest pageRequest = PageRequest.of(1, 100);
+
+        // currently a hard coded pageRequest is used in implementation
+        final PageRequest pageRequestInternal = PageRequest.of(1, 100, Sort.Direction.DESC, "firstName", "lastName");
+        when(personRepository.findByPermissionsContaining(INACTIVE, pageRequestInternal)).thenReturn(expected);
+
+        final Page<Person> actual = sut.getInactivePersons(pageRequest);
+        assertThat(actual).isSameAs(expected);
     }
 
     @Test
