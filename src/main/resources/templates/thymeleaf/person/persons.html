@@ -140,9 +140,11 @@
                 th:onclick="|navigate('/web/person/${person.id}/overview');|"
               >
                 <td class="is-centered">
-                  <span
-                    th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=40'},username=${person.niceName},width='40px',height='40px')"
-                  ></span>
+                  <div class="print:tw-hidden">
+                    <img
+                      th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=40'},username=${person.niceName},width='40px',height='40px')"
+                    />
+                  </div>
                 </td>
                 <td
                   th:if="${showPersonnelNumberColumn}"
