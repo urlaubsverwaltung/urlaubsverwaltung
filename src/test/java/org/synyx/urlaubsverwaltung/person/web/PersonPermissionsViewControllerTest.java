@@ -95,7 +95,7 @@ class PersonPermissionsViewControllerTest {
 
         when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(personWithId(PERSON_ID)));
         perform(get("/web/person/" + PERSON_ID + "/permissions"))
-            .andExpect(view().name("person/person_permissions"));
+            .andExpect(view().name("thymeleaf/person/person_permissions"));
     }
 
     @Test
@@ -145,7 +145,7 @@ class PersonPermissionsViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/person/" + PERSON_ID + "/permissions"))
-            .andExpect(view().name("person/person_permissions"));
+            .andExpect(view().name("thymeleaf/person/person_permissions"));
     }
 
     @Test
