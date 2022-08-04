@@ -137,7 +137,9 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public Page<Person> getActivePersons(Pageable pageable) {
-        return personRepository.findByPermissionsNotContaining(INACTIVE, pageable);
+        final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
+        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
+        return personRepository.findByPermissionsNotContaining(INACTIVE, pageRequest);
     }
 
     @Override
@@ -157,8 +159,8 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public Page<Person> getInactivePersons(Pageable pageable) {
-        // TODO consider pageable sorting
-        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.Direction.DESC, "firstName", "lastName");
+        final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
+        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
         return personRepository.findByPermissionsContaining(INACTIVE, pageRequest);
     }
 
@@ -209,5 +211,23 @@ class PersonServiceImpl implements PersonService {
     @Override
     public int numberOfActivePersons() {
         return personRepository.countByPermissionsNotContaining(INACTIVE);
+    }
+
+    private static Sort mapToImplicitPersonSort(Sort requestedSort) {
+        final Sort.Order firstNameOrder = requestedSort.getOrderFor("firstName");
+        final Sort.Order lastNameOrder = requestedSort.getOrderFor("lastName");
+
+        // e.g. if content should be sorted by firstName, use lastName as second sort criteria
+        final Sort implicitSort;
+
+        if (firstNameOrder != null) {
+            implicitSort = requestedSort.and(Sort.by(firstNameOrder.getDirection(), "lastName"));
+        } else if (lastNameOrder != null) {
+            implicitSort = requestedSort.and(Sort.by(lastNameOrder.getDirection(), "firstName"));
+        } else {
+            implicitSort = requestedSort;
+        }
+
+        return implicitSort;
     }
 }

@@ -742,12 +742,12 @@ class PersonDetailsViewControllerTest {
     }
 
     private static PageRequest defaultPageRequest() {
-        return PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "firstName", "lastName"));
+        return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "firstName"));
     }
 
     private Page<Person> mockDefaultPageRequest(Person signedInUser) {
 
-        final PageRequest defaultPageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "firstName", "lastName"));
+        final PageRequest defaultPageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "firstName"));
 
         final PageImpl<Person> page = new PageImpl<>(List.of());
         when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPageRequest)).thenReturn(page);

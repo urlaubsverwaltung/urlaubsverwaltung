@@ -81,155 +81,182 @@
           ></span>
         </p>
         <div id="users">
-          <table id="person-table" class="list-table selectable-table tw-text-sm">
-            <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
-            <thead class="hidden-xs hidden-sm print:tw-table-header-group">
-              <tr>
-                <th scope="col"><!-- placeholder to ensure correct number of th --></th>
-                <th
-                  th:if="${showPersonnelNumberColumn}"
-                  scope="col"
-                  class="sortable-field"
-                  th:text="#{person.account.basedata.personnelNumber.abbreviation}"
-                ></th>
-                <th scope="col" class="sortable-field" th:text="#{person.data.firstName}"></th>
-                <th scope="col" class="sortable-field" th:text="#{person.data.lastName}"></th>
-                <th
-                  scope="col"
-                  class="sortable-field is-centered"
-                  th:text="#{persons.account.vacation.entitlement.year}"
-                ></th>
-                <th
-                  scope="col"
-                  class="sortable-field is-centered"
-                  th:text="#{persons.account.vacation.entitlement.actual}"
-                ></th>
-                <th
-                  scope="col"
-                  class="sortable-field is-centered"
-                  th:text="#{persons.account.vacation.entitlement.remaining}"
-                ></th>
-                <th
-                  scope="col"
-                  class="sortable-field is-centered"
-                  th:text="#{persons.account.vacation.vacationDaysLeft}"
-                ></th>
-                <th
-                  scope="col"
-                  class="sortable-field is-centered"
-                  th:text="#{persons.account.vacation.vacationDaysLeft.remaining}"
-                ></th>
-                <th scope="col"><!-- placeholder to ensure correct number of th --></th>
-              </tr>
-            </thead>
-            <!-- NOTE: class 'list' is needed for list.js -->
-            <tbody class="list">
-              <tr
-                th:each="person,loopStatus : ${personPage.content}"
-                th:onclick="|navigate('/web/person/${person.id}/overview');|"
+          <div class="tw-flex">
+            <div class="tw-ml-auto">
+              <form action="#" th:action="@{/web/person}" method="get">
+                <input type="hidden" name="active" th:value="${active}" />
+                <div class="tw-flex tw-items-center">
+                  <label for="sort-select" class="tw-m-0 tw-mr-2">Sortieren:</label>
+                  <select id="sort-select" name="sort" class="tw-py-2 tw-px-3">
+                    <option value="firstName,asc" th:selected="${personPageSort.firstNameAscending}">
+                      Vorname (aufsteigend A bis Z)
+                    </option>
+                    <option value="firstName,desc" th:selected="${personPageSort.firstNameDescending}">
+                      Vorname (absteigend Z bis A)
+                    </option>
+                    <option value="lastName,asc" th:selected="${personPageSort.lastNameAscending}">
+                      Nachname (aufsteigend A bis Z)
+                    </option>
+                    <option value="lastName,desc" th:selected="${personPageSort.lastNameDescending}">
+                      Nachname (absteigend Z bis A)
+                    </option>
+                  </select>
+                  <button type="submit" class="tw-ml-2 button-main">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="tw-mt-16">
+            <table id="person-table" class="list-table selectable-table tw-text-sm">
+              <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
+              <thead class="hidden-xs hidden-sm print:tw-table-header-group">
+                <tr>
+                  <th scope="col"><!-- placeholder to ensure correct number of th --></th>
+                  <th
+                    th:if="${showPersonnelNumberColumn}"
+                    scope="col"
+                    class="sortable-field"
+                    th:text="#{person.account.basedata.personnelNumber.abbreviation}"
+                  ></th>
+                  <th scope="col" class="sortable-field" th:text="#{person.data.firstName}"></th>
+                  <th scope="col" class="sortable-field" th:text="#{person.data.lastName}"></th>
+                  <th
+                    scope="col"
+                    class="sortable-field is-centered"
+                    th:text="#{persons.account.vacation.entitlement.year}"
+                  ></th>
+                  <th
+                    scope="col"
+                    class="sortable-field is-centered"
+                    th:text="#{persons.account.vacation.entitlement.actual}"
+                  ></th>
+                  <th
+                    scope="col"
+                    class="sortable-field is-centered"
+                    th:text="#{persons.account.vacation.entitlement.remaining}"
+                  ></th>
+                  <th
+                    scope="col"
+                    class="sortable-field is-centered"
+                    th:text="#{persons.account.vacation.vacationDaysLeft}"
+                  ></th>
+                  <th
+                    scope="col"
+                    class="sortable-field is-centered"
+                    th:text="#{persons.account.vacation.vacationDaysLeft.remaining}"
+                  ></th>
+                  <th scope="col"><!-- placeholder to ensure correct number of th --></th>
+                </tr>
+              </thead>
+              <!-- NOTE: class 'list' is needed for list.js -->
+              <tbody class="list">
+                <tr
+                  th:each="person,loopStatus : ${personPage.content}"
+                  th:onclick="|navigate('/web/person/${person.id}/overview');|"
+                >
+                  <td class="is-centered">
+                    <div class="print:tw-hidden">
+                      <img
+                        th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=40'},username=${person.niceName},width='40px',height='40px')"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    th:if="${showPersonnelNumberColumn}"
+                    class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center"
+                    th:text="${person.personnelNumber}"
+                  ></td>
+                  <td class="firstname" th:text="${person.firstName}"></td>
+                  <td class="lastname" th:text="${person.lastName}"></td>
+                  <td
+                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    th:data-sortable-value="${person.entitlementYear}"
+                  >
+                    <th:block th:if="${person.entitlementYear != null}">
+                      <span th:replace="fragments/number::number(${person.entitlementYear})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.entitlementYear == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td
+                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    th:data-sortable-value="${person.entitlementActual}"
+                  >
+                    <th:block th:if="${person.entitlementActual != null}">
+                      <span th:replace="fragments/number::number(${person.entitlementActual})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.entitlementActual == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td
+                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    th:data-sortable-value="${person.entitlementRemaining}"
+                  >
+                    <th:block th:if="${person.entitlementRemaining != null}">
+                      <span th:replace="fragments/number::number(${person.entitlementRemaining})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.entitlementRemaining == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td
+                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    th:data-sortable-value="${person.vacationDaysLeft}"
+                  >
+                    <th:block th:if="${person.vacationDaysLeft != null}">
+                      <span th:replace="fragments/number::number(${person.vacationDaysLeft})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.vacationDaysLeft == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td
+                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    th:data-sortable-value="${person.vacationDaysLeftRemaining}"
+                  >
+                    <th:block th:if="${person.vacationDaysLeftRemaining != null}">
+                      <span th:replace="fragments/number::number(${person.vacationDaysLeftRemaining})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.vacationDaysLeftRemaining == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td class="hidden-xs">
+                    <div class="print:tw-hidden">
+                      <a class="action-link" th:href="@{/web/person/{personId} (personId=${person.id})}">
+                        <svg th:replace="icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')"></svg>
+                        <th:block th:text="#{action.account.title}"></th:block>
+                        <span
+                          class="tw-sr-only"
+                          th:text="#{action.account.title.screen-reader-appendix(${person.niceName})}"
+                        ></span>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="tw-mt-16 tw-flex tw-flex-row tw-gap-2">
+              <a
+                th:each="pageNumber : ${personPageNumbers}"
+                th:with="isSelected=${pageNumber == personPage.number + 1}"
+                href="#"
+                th:href="@{/web/person (active=${active},page=${pageNumber})}"
+                class="tw-px-4 tw-py-1 tw-no-underline dark:tw-text-zinc-50 tw-rounded-md tw-border-2 dark:tw-border-zinc-700 hover:dark:tw-border-zinc-300 tw-transition-colors"
+                th:classappend="${isSelected ? 'dark:tw-border-zinc-300' : ''}"
+                th:text="${pageNumber}"
+                th:attr="aria-current=${isSelected ? 'page' : ''}"
               >
-                <td class="is-centered">
-                  <div class="print:tw-hidden">
-                    <img
-                      th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=40'},username=${person.niceName},width='40px',height='40px')"
-                    />
-                  </div>
-                </td>
-                <td
-                  th:if="${showPersonnelNumberColumn}"
-                  class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center"
-                  th:text="${person.personnelNumber}"
-                ></td>
-                <td class="firstname" th:text="${person.firstName}"></td>
-                <td class="lastname" th:text="${person.lastName}"></td>
-                <td
-                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                  th:data-sortable-value="${person.entitlementYear}"
-                >
-                  <th:block th:if="${person.entitlementYear != null}">
-                    <span th:replace="fragments/number::number(${person.entitlementYear})"></span>
-                  </th:block>
-                  <th:block
-                    th:if="${person.entitlementYear == null}"
-                    th:text="#{person.account.vacation.noInformation}"
-                  ></th:block>
-                </td>
-                <td
-                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                  th:data-sortable-value="${person.entitlementActual}"
-                >
-                  <th:block th:if="${person.entitlementActual != null}">
-                    <span th:replace="fragments/number::number(${person.entitlementActual})"></span>
-                  </th:block>
-                  <th:block
-                    th:if="${person.entitlementActual == null}"
-                    th:text="#{person.account.vacation.noInformation}"
-                  ></th:block>
-                </td>
-                <td
-                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                  th:data-sortable-value="${person.entitlementRemaining}"
-                >
-                  <th:block th:if="${person.entitlementRemaining != null}">
-                    <span th:replace="fragments/number::number(${person.entitlementRemaining})"></span>
-                  </th:block>
-                  <th:block
-                    th:if="${person.entitlementRemaining == null}"
-                    th:text="#{person.account.vacation.noInformation}"
-                  ></th:block>
-                </td>
-                <td
-                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                  th:data-sortable-value="${person.vacationDaysLeft}"
-                >
-                  <th:block th:if="${person.vacationDaysLeft != null}">
-                    <span th:replace="fragments/number::number(${person.vacationDaysLeft})"></span>
-                  </th:block>
-                  <th:block
-                    th:if="${person.vacationDaysLeft == null}"
-                    th:text="#{person.account.vacation.noInformation}"
-                  ></th:block>
-                </td>
-                <td
-                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                  th:data-sortable-value="${person.vacationDaysLeftRemaining}"
-                >
-                  <th:block th:if="${person.vacationDaysLeftRemaining != null}">
-                    <span th:replace="fragments/number::number(${person.vacationDaysLeftRemaining})"></span>
-                  </th:block>
-                  <th:block
-                    th:if="${person.vacationDaysLeftRemaining == null}"
-                    th:text="#{person.account.vacation.noInformation}"
-                  ></th:block>
-                </td>
-                <td class="hidden-xs">
-                  <div class="print:tw-hidden">
-                    <a class="action-link" th:href="@{/web/person/{personId} (personId=${person.id})}">
-                      <svg th:replace="icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')"></svg>
-                      <th:block th:text="#{action.account.title}"></th:block>
-                      <span
-                        class="tw-sr-only"
-                        th:text="#{action.account.title.screen-reader-appendix(${person.niceName})}"
-                      ></span>
-                    </a>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="tw-flex tw-flex-row tw-gap-2">
-            <a
-              th:each="pageNumber : ${personPageNumbers}"
-              th:with="isSelected=${pageNumber == personPage.number + 1}"
-              href="#"
-              th:href="@{/web/person (active=${active},page=${pageNumber})}"
-              class="tw-px-4 tw-py-1 tw-no-underline dark:tw-text-zinc-50 tw-rounded-md tw-border-2 dark:tw-border-zinc-700 hover:dark:tw-border-zinc-300 tw-transition-colors"
-              th:classappend="${isSelected ? 'dark:tw-border-zinc-300' : ''}"
-              th:text="${pageNumber}"
-              th:attr="aria-current=${isSelected ? 'page' : ''}"
-            >
-              1
-            </a>
+                1
+              </a>
+            </div>
           </div>
         </div>
       </th:block>

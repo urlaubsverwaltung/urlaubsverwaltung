@@ -144,8 +144,7 @@ public class PersonDetailsViewController {
                              @RequestParam(value = "department", required = false) Optional<Integer> requestedDepartmentId,
                              @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                              @SortDefault.SortDefaults({
-                                 @SortDefault(sort = "firstName", direction = Sort.Direction.DESC),
-                                 @SortDefault(sort = "lastName", direction = Sort.Direction.DESC),
+                                 @SortDefault(sort = "firstName", direction = Sort.Direction.ASC)
                              })
                              Pageable pageable,
                              Model model) throws UnknownDepartmentException {
@@ -174,7 +173,7 @@ public class PersonDetailsViewController {
                 : getRelevantInactivePersons(signedInUser, pageable);
         }
 
-        preparePersonView(signedInUser, personPage, selectedYear, model);
+        preparePersonView(signedInUser, personPage, pageable.getSort(), selectedYear, model);
         model.addAttribute("currentYear", currentYear);
         model.addAttribute("selectedYear", selectedYear);
         model.addAttribute("active", active);
@@ -227,7 +226,7 @@ public class PersonDetailsViewController {
             .collect(toList());
     }
 
-    private void preparePersonView(Person signedInUser, Page<Person> personPage, int year, Model model) {
+    private void preparePersonView(Person signedInUser, Page<Person> personPage, Sort originalPageRequestSort, int year, Model model) {
 
         final LocalDate now = LocalDate.now(clock);
 
@@ -278,6 +277,18 @@ public class PersonDetailsViewController {
 
         final PageImpl<PersonDto> personDtoPage = new PageImpl<>(personDtos, personPage.getPageable(), personPage.getTotalElements());
         model.addAttribute("personPage", personDtoPage);
+
+        final Sort.Order orderFirstName = originalPageRequestSort.getOrderFor("firstName");
+        final Sort.Order orderLastName = originalPageRequestSort.getOrderFor("lastName");
+        final PersonPageSortDto personPageSortDto;
+        if (orderFirstName != null) {
+            personPageSortDto = PersonPageSortDto.firstName(orderFirstName.isAscending());
+        } else if (orderLastName != null) {
+            personPageSortDto = PersonPageSortDto.lastName(orderLastName.isAscending());
+        } else {
+            personPageSortDto = PersonPageSortDto.firstName(false);
+        }
+        model.addAttribute("personPageSort", personPageSortDto);
 
         final List<Integer> pageNumbers = IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().collect(toList());
         model.addAttribute("personPageNumbers", pageNumbers);
