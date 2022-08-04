@@ -70,11 +70,11 @@
                     th:id="${'personal-calendar-period-' + loop.index}"
                     type="radio"
                     name="calendarPeriod"
-                    th:value="${loop.current}"
-                    th:selected="${privateCalendarShare.calendarPeriod == loop.current}"
+                    th:value="${calendarPeriod}"
+                    th:checked="${privateCalendarShare.calendarPeriod == calendarPeriod}"
                     class="tw-m-0"
                   />
-                  <span th:text="${#messages.msg('calendar.share.me.range.' + loop.current)}"></span>
+                  <span th:text="${#messages.msg('calendar.share.me.range.' + calendarPeriod)}"></span>
                 </label>
               </div>
             </div>
@@ -200,11 +200,11 @@
                         th:id="|department-${departmentCal.departmentId}-calendar-period-${periodLoop.index}|"
                         type="radio"
                         name="calendarPeriod"
-                        th:value="${periodLoop.current}"
-                        th:selected="${departmentCal.calendarPeriod == periodLoop.current}"
+                        th:value="${calendarPeriod}"
+                        th:checked="${departmentCal.calendarPeriod == calendarPeriod}"
                         class="tw-m-0"
                       />
-                      <span th:text="#{|calendar.share.department.range.${periodLoop.current}|}"></span>
+                      <span th:text="#{|calendar.share.department.range.${calendarPeriod}|}"></span>
                     </label>
                   </div>
                 </div>
@@ -338,8 +338,8 @@
                     th:id="${'company-calendar-period-' + loop.index}"
                     type="radio"
                     name="calendarPeriod"
-                    th:value="${loop.current}"
-                    th:selected="${companyCalendarShare.calendarPeriod == loop.current}"
+                    th:value="${calendarPeriod}"
+                    th:checked="${companyCalendarShare.calendarPeriod == calendarPeriod}"
                     class="tw-m-0"
                   />
                   <span th:text="${#messages.msg('calendar.share.company.range.' + calendarPeriod)}"></span>
