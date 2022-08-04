@@ -42,6 +42,7 @@
     "jquery": "3.6.0",
     "jquery-ui": "1.13.1",
     "jquery-ui-themes": "1.12.0",
+    "lint-staged": "13.0.3",
     "list.js": "2.3.1",
     "postcss-loader": "4.3.0",
     "tablesorter": "2.31.3",
@@ -90,5 +91,10 @@
     "webpack": "4.46.0",
     "webpack-assets-manifest": "3.1.1",
     "webpack-cli": "4.10.0"
+  },
+  "lint-staged": {
+    "*.{js,html,svg}": [
+      "prettier --write"
+    ]
   }
 }

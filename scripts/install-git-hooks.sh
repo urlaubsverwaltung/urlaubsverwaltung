@@ -10,5 +10,6 @@ function copy() {
 }
 
 copy "post-merge"
+copy "pre-commit"
 
 echo "successfully installed git hooks for you 😽"

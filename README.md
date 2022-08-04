@@ -376,6 +376,8 @@ Folgende git hooks werden installiert:
 
 * **post-merge**
   * schaut nach einen `pull` ob sich die `package.lock` geändert hat und installiert ggfs. npm dependencies
+* **pre-commit**
+  * formatiert geänderte Dateien mit [prettier](https://prettier.io/) 
 
 ### Anwendung starten
 
