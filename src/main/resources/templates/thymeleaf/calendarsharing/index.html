@@ -51,7 +51,7 @@
             </th:block>
           </div>
 
-          <div th:if="${#lists.isEmpty(privateCalendarShare.calendarUrl)}" class="tw-max-w-3xl">
+          <div th:if="${#strings.isEmpty(privateCalendarShare.calendarUrl)}" class="tw-max-w-3xl">
             <p class="tw-mb-8 tw-text-base">
               <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.me.paragraph.status}"></th:block>
               <th:block
@@ -87,7 +87,7 @@
             </button>
           </div>
 
-          <div th:unless="${#lists.isEmpty(privateCalendarShare.calendarUrl)}" class="tw-max-w-4xl">
+          <div th:if="${not #strings.isEmpty(privateCalendarShare.calendarUrl)}" class="tw-max-w-4xl">
             <p th:if="${privateCalendarShare.calendarPeriod == 'ALL'}" class="tw-mb-8 tw-text-base">
               <th:block
                 th:if="${isSignedInUser}"
@@ -99,9 +99,9 @@
               ></th:block>
             </p>
             <p
-              th:if="${privateCalendarShare.calendarPeriod == 'ALL'}"
+              th:unless="${privateCalendarShare.calendarPeriod == 'ALL'}"
               class="tw-mb-8 tw-text-base"
-              th:with="privateCalendarPeriodText=${#messages.msg('calendar.share.me.range.' + ${privateCalendarShare.calendarPeriod})}"
+              th:with="privateCalendarPeriodText=${#messages.msg('calendar.share.me.range.' + privateCalendarShare.calendarPeriod)}"
             >
               <th:block
                 th:if="${isSignedInUser}"
@@ -178,7 +178,7 @@
               th:action="@{/web/calendars/share/persons/{personId}/departments/{departmentId}#calendar-department (personId=${privateCalendarShare.personId}, departmentId=${departmentCal.departmentId})}"
               th:id="${'department-calendar-form-' + loop.index}"
             >
-              <div th:if="${#lists.isEmpty(departmentCal.calendarUrl)}" class="tw-max-w-3xl">
+              <div th:if="${#strings.isEmpty(departmentCal.calendarUrl)}" class="tw-max-w-3xl">
                 <p class="tw-mb-8 tw-text-base">
                   <th:block
                     th:if="${isSignedInUser}"
@@ -219,7 +219,7 @@
                   ></th:block>
                 </button>
               </div>
-              <div th:if="${not #lists.isEmpty(departmentCal.calendarUrl)}" class="tw-max-w-4xl">
+              <div th:if="${not #strings.isEmpty(departmentCal.calendarUrl)}" class="tw-max-w-4xl">
                 <p th:if="${departmentCal.calendarPeriod == 'ALL'}" class="tw-mb-8 tw-text-base">
                   <th:block
                     th:if="${isSignedInUser}"
@@ -322,7 +322,7 @@
           th:action="@{/web/calendars/share/persons/{personId}/company#calendar-company (personId=${companyCalendarShare.personId})}"
           th:object="${companyCalendarShare}"
         >
-          <div th:if="${#lists.isEmpty(companyCalendarShare.calendarUrl)}" class="tw-max-w-3xl">
+          <div th:if="${#strings.isEmpty(companyCalendarShare.calendarUrl)}" class="tw-max-w-3xl">
             <p class="tw-mb-8 tw-text-base">
               <th:block th:if="${isSignedInUser}" th:text="#{calendar.share.company.paragraph.status}"></th:block>
               <th:block
@@ -354,8 +354,7 @@
               ></th:block>
             </button>
           </div>
-
-          <div th:unless="${#lists.isEmpty(companyCalendarShare.calendarUrl)}" class="tw-max-w-4xl">
+          <div th:if="${not #strings.isEmpty(companyCalendarShare.calendarUrl)}" class="tw-max-w-4xl">
             <p th:if="${companyCalendarShare.calendarPeriod == 'ALL'}" class="tw-mb-8 tw-text-base">
               <th:block
                 th:if="${isSignedInUser}"
