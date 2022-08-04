@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import javax.validation.Valid;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +107,7 @@ public class CalendarSharingViewController {
 
     @PostMapping(value = "/persons/{personId}/me")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String linkPrivateCalendar(@PathVariable int personId, @ModelAttribute PersonCalendarDto personCalendarDto) {
+    public String linkPrivateCalendar(@PathVariable int personId, @Valid @ModelAttribute PersonCalendarDto personCalendarDto) {
 
         final Period calendarPeriod = personCalendarDto.getCalendarPeriod().getPeriod();
         personCalendarService.createCalendarForPerson(personId, calendarPeriod);
@@ -126,7 +127,7 @@ public class CalendarSharingViewController {
     @PostMapping(value = "/persons/{personId}/departments/{departmentId}")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String linkDepartmentCalendar(@PathVariable int personId, @PathVariable int departmentId,
-                                         @ModelAttribute DepartmentCalendarDto departmentCalendarDto) {
+                                         @Valid @ModelAttribute DepartmentCalendarDto departmentCalendarDto) {
 
         final Period calendarPeriod = departmentCalendarDto.getCalendarPeriod().getPeriod();
         departmentCalendarService.createCalendarForDepartmentAndPerson(departmentId, personId, calendarPeriod);
@@ -145,7 +146,7 @@ public class CalendarSharingViewController {
 
     @PostMapping(value = "/persons/{personId}/company")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String linkCompanyCalendar(@PathVariable int personId, @ModelAttribute CompanyCalendarDto companyCalendarDto) {
+    public String linkCompanyCalendar(@PathVariable int personId, @Valid @ModelAttribute CompanyCalendarDto companyCalendarDto) {
 
         final Period calendarPeriod = companyCalendarDto.getCalendarPeriod().getPeriod();
         companyCalendarService.createCalendarForPerson(personId, calendarPeriod);
