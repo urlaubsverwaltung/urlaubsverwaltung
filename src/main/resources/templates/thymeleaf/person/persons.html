@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+    <title th:text="#{person.overview.header.title}"></title>
+    <th:block th:ref="scripts">
+      <th:block th:if="${not #lists.isEmpty(persons)}">
+        <script defer asset:src="npm.tablesorter.js"></script>
+        <script defer asset:src="npm.string-natural-compare.js"></script>
+        <script defer asset:src="npm.list.js.js"></script>
+        <script defer asset:src="person_view.js"></script>
+      </th:block>
+    </th:block>
+  </head>
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::persons-overview-heading-body}, ~{::persons-overview-heading-actions})"
+      >
+        <th:block
+          th:fragment="persons-overview-heading-body"
+          th:with="visiblePersonsDropdownText=${param.active ? (department != null ? department.name : #messages.msg('persons.active')) : #messages.msg('persons.inactive')}"
+        >
+          <div class="dropdown tw-inline-block">
+            <button
+              id="active-state"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              class="tw-bg-transparent tw-text-current tw-m-0 tw-p-0"
+            >
+              <th:block th:text="${visiblePersonsDropdownText}"></th:block
+              ><span class="tw-ml-0.5 dropdown-caret tw-opacity-70"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
+              <li>
+                <a th:href="@{/web/person (active=true, year=${selectedYear})}" class="tw-flex tw-items-center">
+                  <span class="tw-w-5 tw-flex tw-items-center">
+                    <svg th:replace="icon/eye::svg(className='tw-w-4 tw-h-4')"></svg>
+                  </span>
+                  <th:block th:text="#{persons.active}"></th:block>
+                </a>
+              </li>
+              <th:block th:if="${not #lists.isEmpty(departments)}">
+                <li th:each="department : ${departments}">
+                  <a th:href="@{/web/person (active=true, year=${selectedYear}, department=${department.id})}">
+                    <span class="tw-w-5 tw-inline-block"></span>
+                    <th:block th:text="${department.name}"></th:block>
+                  </a>
+                </li>
+                <li role="separator" class="divider"></li>
+              </th:block>
+              <li>
+                <a th:href="@{/web/person (active=false, year=${selectedYear})}" class="tw-flex tw-items-center">
+                  <span class="tw-w-5 tw-flex tw-items-center">
+                    <svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')"></svg>
+                  </span>
+                  <th:block th:text="#{persons.inactive}"></th:block>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <th:block
+            th:with="hrefPrefix=${department == null ? '/web/person?active=' + active + '&year=' : '/web/person?active=' + active + '&department='+department.id + '&year='}"
+          >
+            <div
+              th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=${hrefPrefix}, selectedYear=${selectedYear})"
+            ></div>
+          </th:block>
+        </th:block>
+        <th:block th:fragment="persons-overview-heading-actions">
+          <button th:replace="fragments/print::button"></button>
+        </th:block>
+      </div>
+
+      <p th:if="${#lists.isEmpty(persons)}" th:text="#{persons.none}"></p>
+
+      <th:block th:if="${not #lists.isEmpty(persons)}">
+        <p class="text-right visible-print">
+          <th:block th:text="#{filter.validity}"></th:block>&nbsp;<span
+            th:replace="/fragments/date::date(${now})"
+          ></span>
+        </p>
+        <div id="users">
+          <form class="form-inline" id="search">
+            <div class="form-group">
+              <div class="input-group search-field">
+                <!-- NOTE: class 'search' is needed for list.js -->
+                <input type="text" class="search form-control" th:placeholder="#{action.search}" />
+                <span class="input-group-addon">
+                  <svg th:replace="icon/search::svg(className='tw-w-4 tw-h-4')"></svg>
+                </span>
+              </div>
+            </div>
+          </form>
+          <table id="person-table" class="list-table selectable-table tw-text-sm">
+            <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
+            <thead class="hidden-xs hidden-sm print:tw-table-header-group">
+              <tr>
+                <th scope="col"><!-- placeholder to ensure correct number of th --></th>
+                <th
+                  th:if="${showPersonnelNumberColumn}"
+                  scope="col"
+                  class="sortable-field"
+                  th:text="#{person.account.basedata.personnelNumber.abbreviation}"
+                ></th>
+                <th scope="col" class="sortable-field" th:text="#{person.data.firstName}"></th>
+                <th scope="col" class="sortable-field" th:text="#{person.data.lastName}"></th>
+                <th
+                  scope="col"
+                  class="sortable-field is-centered"
+                  th:text="#{persons.account.vacation.entitlement.year}"
+                ></th>
+                <th
+                  scope="col"
+                  class="sortable-field is-centered"
+                  th:text="#{persons.account.vacation.entitlement.actual}"
+                ></th>
+                <th
+                  scope="col"
+                  class="sortable-field is-centered"
+                  th:text="#{persons.account.vacation.entitlement.remaining}"
+                ></th>
+                <th
+                  scope="col"
+                  class="sortable-field is-centered"
+                  th:text="#{persons.account.vacation.vacationDaysLeft}"
+                ></th>
+                <th
+                  scope="col"
+                  class="sortable-field is-centered"
+                  th:text="#{persons.account.vacation.vacationDaysLeft.remaining}"
+                ></th>
+                <th scope="col"><!-- placeholder to ensure correct number of th --></th>
+              </tr>
+            </thead>
+            <!-- NOTE: class 'list' is needed for list.js -->
+            <tbody class="list">
+              <tr
+                th:each="person,loopStatus : ${persons}"
+                th:onclick="|navigate('/web/person/${person.id}/overview');|"
+              >
+                <td class="is-centered">
+                  <div class="print:tw-hidden">
+                    <img
+                      th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=40'},username=${person.niceName},width='40px',height='40px')"
+                    />
+                  </div>
+                </td>
+                <td
+                  th:if="${showPersonnelNumberColumn}"
+                  class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center"
+                  th:text="${person.personnelNumber}"
+                ></td>
+                <td class="firstname" th:text="${person.firstName}"></td>
+                <td class="lastname" th:text="${person.lastName}"></td>
+                <td
+                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                  th:data-sortable-value="${person.entitlementYear}"
+                >
+                  <th:block th:if="${person.entitlementYear != null}">
+                    <span th:replace="fragments/number::number(${person.entitlementYear})"></span>
+                  </th:block>
+                  <th:block
+                    th:if="${person.entitlementYear == null}"
+                    th:text="#{person.account.vacation.noInformation}"
+                  ></th:block>
+                </td>
+                <td
+                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                  th:data-sortable-value="${person.entitlementActual}"
+                >
+                  <th:block th:if="${person.entitlementActual != null}">
+                    <span th:replace="fragments/number::number(${person.entitlementActual})"></span>
+                  </th:block>
+                  <th:block
+                    th:if="${person.entitlementActual == null}"
+                    th:text="#{person.account.vacation.noInformation}"
+                  ></th:block>
+                </td>
+                <td
+                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                  th:data-sortable-value="${person.entitlementRemaining}"
+                >
+                  <th:block th:if="${person.entitlementRemaining != null}">
+                    <span th:replace="fragments/number::number(${person.entitlementRemaining})"></span>
+                  </th:block>
+                  <th:block
+                    th:if="${person.entitlementRemaining == null}"
+                    th:text="#{person.account.vacation.noInformation}"
+                  ></th:block>
+                </td>
+                <td
+                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                  th:data-sortable-value="${person.vacationDaysLeft}"
+                >
+                  <th:block th:if="${person.vacationDaysLeft != null}">
+                    <span th:replace="fragments/number::number(${person.vacationDaysLeft})"></span>
+                  </th:block>
+                  <th:block
+                    th:if="${person.vacationDaysLeft == null}"
+                    th:text="#{person.account.vacation.noInformation}"
+                  ></th:block>
+                </td>
+                <td
+                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                  th:data-sortable-value="${person.vacationDaysLeftRemaining}"
+                >
+                  <th:block th:if="${person.vacationDaysLeftRemaining != null}">
+                    <span th:replace="fragments/number::number(${person.vacationDaysLeftRemaining})"></span>
+                  </th:block>
+                  <th:block
+                    th:if="${person.vacationDaysLeftRemaining == null}"
+                    th:text="#{person.account.vacation.noInformation}"
+                  ></th:block>
+                </td>
+                <td class="hidden-xs">
+                  <div class="print:tw-hidden">
+                    <a class="action-link" th:href="@{/web/person/{personId} (personId=${person.id})}">
+                      <svg th:replace="icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')"></svg>
+                      <th:block th:text="#{action.account.title}"></th:block>
+                      <span
+                        class="tw-sr-only"
+                        th:text="#{action.account.title.screen-reader-appendix(${person.niceName})}"
+                      ></span>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </th:block>
+    </main>
+  </body>
+</html>
