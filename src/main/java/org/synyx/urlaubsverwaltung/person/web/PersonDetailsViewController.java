@@ -46,6 +46,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.web.PersonDetailsBasedataDtoMapper.mapToPersonDetailsBasedataDto;
+import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapRoleToPermissionsDto;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
 /**
@@ -54,8 +55,6 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
 @Controller
 @RequestMapping("/web")
 public class PersonDetailsViewController {
-
-    private static final String PERSON_ATTRIBUTE = "person";
 
     private final PersonService personService;
     private final AccountService accountService;
@@ -93,11 +92,13 @@ public class PersonDetailsViewController {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to access data of user '%s'", signedInUser.getId(), person.getId()));
         }
 
-        final Integer year = requestedYear.orElseGet(() -> Year.now(clock).getValue());
+        final int currentYear = Year.now(clock).getValue();
+        final int selectedYear = requestedYear.orElse(currentYear);
+        model.addAttribute("currentYear", Year.now(clock).getValue());
+        model.addAttribute("selectedYear", selectedYear);
 
-        model.addAttribute("year", year);
-        model.addAttribute(PERSON_ATTRIBUTE, person);
-        model.addAttribute("permissions", PersonPermissionsMapper.mapRoleToPermissionsDto(List.copyOf(person.getPermissions())));
+        model.addAttribute("person", person);
+        model.addAttribute("permissions", mapRoleToPermissionsDto(List.copyOf(person.getPermissions())));
 
         final Optional<PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(person.getId());
         if (basedataByPersonId.isPresent()) {
@@ -120,10 +121,10 @@ public class PersonDetailsViewController {
         model.addAttribute("canEditAccounts", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditWorkingtime", signedInUser.hasRole(OFFICE));
 
-        final Optional<Account> maybeAccount = accountService.getHolidaysAccount(year, person);
+        final Optional<Account> maybeAccount = accountService.getHolidaysAccount(selectedYear, person);
         maybeAccount.ifPresent(account -> model.addAttribute("account", account));
 
-        return "person/person_detail";
+        return "thymeleaf/person/person_detail";
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
