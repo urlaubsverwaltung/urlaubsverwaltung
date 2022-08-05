@@ -33,7 +33,7 @@
             </button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
               <li>
-                <a th:href="@{/web/person (active=true, year=${selectedYear})}" class="tw-flex tw-items-center">
+                <a th:href="@{/web/person (active=true, year=${selectedYear}, sort=${sortQuery})}" class="tw-flex tw-items-center">
                   <span class="tw-w-5 tw-flex tw-items-center">
                     <svg th:replace="icon/eye::svg(className='tw-w-4 tw-h-4')"></svg>
                   </span>
@@ -50,7 +50,7 @@
                 <li role="separator" class="divider"></li>
               </th:block>
               <li>
-                <a th:href="@{/web/person (active=false, year=${selectedYear})}" class="tw-flex tw-items-center">
+                <a th:href="@{/web/person (active=false, year=${selectedYear}, sort=${sortQuery})}" class="tw-flex tw-items-center">
                   <span class="tw-w-5 tw-flex tw-items-center">
                     <svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')"></svg>
                   </span>
