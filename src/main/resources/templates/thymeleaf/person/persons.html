@@ -80,7 +80,54 @@
         </th:block>
       </div>
 
-      <p th:if="${#lists.isEmpty(personPage.content)}" th:text="#{persons.none}"></p>
+      <div class="tw-flex">
+        <form action="#" th:action="@{/web/person}" method="get">
+          <input type="hidden" name="active" th:value="${active}" />
+          <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
+          <div class="tw-flex tw-items-center">
+            <label for="search" th:text="#{action.search}" class=""></label>
+            <input
+              type="text"
+              id="search"
+              name="query"
+              th:value="${query}"
+              class=""
+              th:placeholder="#{action.search}"
+            />
+            <span>
+              <svg th:replace="icon/search::svg(className='tw-w-4 tw-h-4')"></svg>
+            </span>
+            <button type="submit" class="tw-ml-2 button-main">Submit</button>
+          </div>
+        </form>
+        <div class="tw-ml-auto">
+          <form action="#" th:action="@{/web/person}" method="get">
+            <input type="hidden" name="active" th:value="${active}" />
+            <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
+            <input type="hidden" name="query" th:value="${query}" />
+            <div class="tw-flex tw-items-center">
+              <label for="sort-select" class="tw-m-0 tw-mr-2">Sortieren:</label>
+              <select id="sort-select" name="sort" class="tw-py-2 tw-px-3">
+                <option value="firstName,asc" th:selected="${personPageSort.firstNameAscending}">
+                  Vorname (aufsteigend A bis Z)
+                </option>
+                <option value="firstName,desc" th:selected="${personPageSort.firstNameDescending}">
+                  Vorname (absteigend Z bis A)
+                </option>
+                <option value="lastName,asc" th:selected="${personPageSort.lastNameAscending}">
+                  Nachname (aufsteigend A bis Z)
+                </option>
+                <option value="lastName,desc" th:selected="${personPageSort.lastNameDescending}">
+                  Nachname (absteigend Z bis A)
+                </option>
+              </select>
+              <button type="submit" class="tw-ml-2 button-main">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <p th:if="${#lists.isEmpty(personPage.content)}" class="tw-mt-16" th:text="#{persons.none}"></p>
 
       <th:block th:if="${not #lists.isEmpty(personPage.content)}">
         <p class="text-right visible-print">
@@ -89,52 +136,6 @@
           ></span>
         </p>
         <div id="users">
-          <div class="tw-flex">
-            <form action="#" th:action="@{/web/person}" method="get">
-              <input type="hidden" name="active" th:value="${active}" />
-              <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
-              <div class="tw-flex tw-items-center">
-                <label for="search" th:text="#{action.search}" class=""></label>
-                <input
-                  type="text"
-                  id="search"
-                  name="query"
-                  th:value="${query}"
-                  class=""
-                  th:placeholder="#{action.search}"
-                />
-                <span>
-                  <svg th:replace="icon/search::svg(className='tw-w-4 tw-h-4')"></svg>
-                </span>
-                <button type="submit" class="tw-ml-2 button-main">Submit</button>
-              </div>
-            </form>
-            <div class="tw-ml-auto">
-              <form action="#" th:action="@{/web/person}" method="get">
-                <input type="hidden" name="active" th:value="${active}" />
-                <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
-                <input type="hidden" name="query" th:value="${query}" />
-                <div class="tw-flex tw-items-center">
-                  <label for="sort-select" class="tw-m-0 tw-mr-2">Sortieren:</label>
-                  <select id="sort-select" name="sort" class="tw-py-2 tw-px-3">
-                    <option value="firstName,asc" th:selected="${personPageSort.firstNameAscending}">
-                      Vorname (aufsteigend A bis Z)
-                    </option>
-                    <option value="firstName,desc" th:selected="${personPageSort.firstNameDescending}">
-                      Vorname (absteigend Z bis A)
-                    </option>
-                    <option value="lastName,asc" th:selected="${personPageSort.lastNameAscending}">
-                      Nachname (aufsteigend A bis Z)
-                    </option>
-                    <option value="lastName,desc" th:selected="${personPageSort.lastNameDescending}">
-                      Nachname (absteigend Z bis A)
-                    </option>
-                  </select>
-                  <button type="submit" class="tw-ml-2 button-main">Submit</button>
-                </div>
-              </form>
-            </div>
-          </div>
           <div class="tw-mt-16">
             <table id="person-table" class="list-table selectable-table tw-text-sm">
               <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
