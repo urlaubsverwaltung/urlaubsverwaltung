@@ -144,10 +144,10 @@ public interface DepartmentService {
      * for and can perform actions for this person.
      *
      * @param person person to get managed members for
-     * @param pageable the page request
+     * @param personSearchQuery search query containing pageable and an optional query for firstname/lastname
      * @return all managed and active members for the person
      */
-    Page<Person> getManagedMembersOfPerson(Person person, Pageable pageable);
+    Page<Person> getManagedMembersOfPerson(Person person, SearchQuery<Person> personSearchQuery);
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
@@ -155,10 +155,10 @@ public interface DepartmentService {
      * for and can perform actions for this person.
      *
      * @param person person to get managed members for
-     * @param pageable the page request
+     * @param personSearchQuery search query containing pageable and an optional query for firstname/lastname
      * @return all managed and inactive members for the person
      */
-    Page<Person> getManagedInactiveMembersOfPerson(Person person, Pageable pageable);
+    Page<Person> getManagedInactiveMembersOfPerson(Person person, SearchQuery<Person> personSearchQuery);
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the

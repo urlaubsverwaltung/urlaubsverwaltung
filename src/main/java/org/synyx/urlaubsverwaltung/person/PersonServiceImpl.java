@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.SearchQuery;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
@@ -136,10 +137,12 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Page<Person> getActivePersons(Pageable pageable) {
+    public Page<Person> getActivePersons(SearchQuery<Person> personSearchQuery) {
+        final Pageable pageable = personSearchQuery.getPageable();
         final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
+        final String query = personSearchQuery.getQuery();
         final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
-        return personRepository.findByPermissionsNotContaining(INACTIVE, pageRequest);
+        return personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, pageRequest);
     }
 
     @Override
@@ -158,10 +161,11 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Page<Person> getInactivePersons(Pageable pageable) {
+    public Page<Person> getInactivePersons(SearchQuery<Person> personSearchQuery) {
+        final Pageable pageable = personSearchQuery.getPageable();
         final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
         final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
-        return personRepository.findByPermissionsContaining(INACTIVE, pageRequest);
+        return personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, personSearchQuery.getQuery(), pageRequest);
     }
 
     @Override

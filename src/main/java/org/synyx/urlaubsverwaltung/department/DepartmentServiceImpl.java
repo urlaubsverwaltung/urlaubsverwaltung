@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.SearchQuery;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -57,13 +56,13 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPerson(Person person, Pageable pageable) {
-        return getManagedMembersOfPerson(person, pageable, not(Person::isInactive));
+    public Page<Person> getManagedMembersOfPerson(Person person, SearchQuery<Person> personSearchQuery) {
+        return getManagedMembersOfPerson(person, personSearchQuery, not(Person::isInactive));
     }
 
     @Override
-    public Page<Person> getManagedInactiveMembersOfPerson(Person person, Pageable pageable) {
-        return getManagedMembersOfPerson(person, pageable, Person::isInactive);
+    public Page<Person> getManagedInactiveMembersOfPerson(Person person, SearchQuery<Person> personSearchQuery) {
+        return getManagedMembersOfPerson(person, personSearchQuery, Person::isInactive);
     }
 
     @Override
@@ -72,7 +71,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(DepartmentEntity::getMembers)
             .map(departmentMembers -> departmentMembers.stream()
                 .map(DepartmentMemberEmbeddable::getPerson)
-                .filter(not(Person::isInactive))
+                .filter(nameContains(searchQuery.getQuery()).and(not(Person::isInactive)))
                 .sorted(searchQuery.getComparator())
                 .collect(toList())
             )
@@ -87,7 +86,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(DepartmentEntity::getMembers)
             .map(departmentMembers -> departmentMembers.stream()
                 .map(DepartmentMemberEmbeddable::getPerson)
-                .filter(Person::isInactive)
+                .filter(nameContains(searchQuery.getQuery()).and(Person::isInactive))
                 .sorted(searchQuery.getComparator())
                 .collect(toList())
             )
@@ -96,7 +95,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return new PageImpl<>(members, searchQuery.getPageable(), members.size());
     }
 
-    private Page<Person> getManagedMembersOfPerson(Person person, Pageable pageable, Predicate<Person> predicate) {
+    private Page<Person> getManagedMembersOfPerson(Person person, SearchQuery<Person> personSearchQuery, Predicate<Person> predicate) {
         final List<DepartmentEntity> departments;
 
         if (person.hasRole(DEPARTMENT_HEAD) && person.hasRole(SECOND_STAGE_AUTHORITY)) {
@@ -114,12 +113,11 @@ class DepartmentServiceImpl implements DepartmentService {
             .flatMap(List::stream)
             .map(DepartmentMemberEmbeddable::getPerson)
             .distinct()
-            .filter(predicate)
-            // TODO consider pageable sorting
-            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+            .filter(nameContains(personSearchQuery.getQuery()).and(predicate))
+            .sorted(personSearchQuery.getComparator())
             .collect(toList());
 
-        return new PageImpl<>(content, pageable, content.size());
+        return new PageImpl<>(content, personSearchQuery.getPageable(), content.size());
     }
 
     @Override
@@ -425,6 +423,10 @@ class DepartmentServiceImpl implements DepartmentService {
         }
 
         return false;
+    }
+
+    private static Predicate<Person> nameContains(String query) {
+        return person -> person.getNiceName().toLowerCase().contains(query.toLowerCase());
     }
 
     private Comparator<Department> departmentComparator() {

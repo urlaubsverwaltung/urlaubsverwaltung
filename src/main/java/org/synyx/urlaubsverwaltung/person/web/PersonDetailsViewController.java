@@ -144,6 +144,7 @@ public class PersonDetailsViewController {
     public String showPerson(@RequestParam(value = "active") boolean active,
                              @RequestParam(value = "department", required = false) Optional<Integer> requestedDepartmentId,
                              @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
+                             @RequestParam(value = "query", required = false, defaultValue = "") String query,
                              @SortDefault.SortDefaults({
                                  @SortDefault(sort = "firstName", direction = Sort.Direction.ASC)
                              })
@@ -154,7 +155,7 @@ public class PersonDetailsViewController {
         final Integer selectedYear = requestedYear.orElse(currentYear);
 
         final Person signedInUser = personService.getSignedInUser();
-        final SearchQuery<Person> personSearchQuery = new SearchQuery<>(Person.class, pageable);
+        final SearchQuery<Person> personSearchQuery = new SearchQuery<>(Person.class, pageable, query);
         final Page<Person> personPage;
 
         if (requestedDepartmentId.isPresent()) {
@@ -171,31 +172,32 @@ public class PersonDetailsViewController {
 
         } else {
             personPage = active
-                ? getRelevantActivePersons(signedInUser, pageable)
-                : getRelevantInactivePersons(signedInUser, pageable);
+                ? getRelevantActivePersons(signedInUser, personSearchQuery)
+                : getRelevantInactivePersons(signedInUser, personSearchQuery);
         }
 
         preparePersonView(signedInUser, personPage, pageable.getSort(), selectedYear, model);
         model.addAttribute("currentYear", currentYear);
         model.addAttribute("selectedYear", selectedYear);
         model.addAttribute("active", active);
+        model.addAttribute("query", query);
 
         return "thymeleaf/person/persons";
     }
 
-    private Page<Person> getRelevantActivePersons(Person signedInUser, Pageable pageable) {
+    private Page<Person> getRelevantActivePersons(Person signedInUser, SearchQuery<Person> personSearchQuery) {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-            return personService.getActivePersons(pageable);
+            return personService.getActivePersons(personSearchQuery);
         } else {
-            return departmentService.getManagedMembersOfPerson(signedInUser, pageable);
+            return departmentService.getManagedMembersOfPerson(signedInUser, personSearchQuery);
         }
     }
 
-    private Page<Person> getRelevantInactivePersons(Person signedInUser, Pageable pageable) {
+    private Page<Person> getRelevantInactivePersons(Person signedInUser, SearchQuery<Person> personSearchQuery) {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-            return personService.getInactivePersons(pageable);
+            return personService.getInactivePersons(personSearchQuery);
         }
-        return departmentService.getManagedInactiveMembersOfPerson(signedInUser, pageable);
+        return departmentService.getManagedInactiveMembersOfPerson(signedInUser, personSearchQuery);
     }
 
     private List<Department> getRelevantDepartmentsSortedByName(Person signedInUser) {

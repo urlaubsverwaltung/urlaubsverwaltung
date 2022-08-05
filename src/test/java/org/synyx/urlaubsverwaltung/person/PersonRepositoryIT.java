@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.person;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 
@@ -200,6 +202,56 @@ class PersonRepositoryIT extends TestContainersBase {
 
         final List<Person> personsWithUserRole = sut.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_OFFICE);
         assertThat(personsWithUserRole).containsExactly(bettina, peter, xenia);
+    }
+
+    @Test
+    void ensureFindByPermissionsNotContainingAndByNiceNameContainingIgnoreCase() {
+
+        final Person xenia = new Person("username_1", "Basta", "xenia", "xenia@example.org");
+        xenia.setPermissions(List.of(USER));
+        personService.save(xenia);
+
+        final Person peter = new Person("username_2", "Muster", "Peter", "peter@example.org");
+        peter.setPermissions(List.of(USER));
+        personService.save(peter);
+
+        final Person mustafa = new Person("username_3", "Tunichtgut", "Mustafa", "mustafa@example.org");
+        mustafa.setPermissions(List.of(INACTIVE));
+        personService.save(mustafa);
+
+        final Person rosamund = new Person("username_4", "Hatgoldimmund", "Rosamund", "rosamund@example.org");
+        rosamund.setPermissions(List.of(USER));
+        personService.save(rosamund);
+
+        final PageRequest pageRequest = PageRequest.of(0, 10);
+        final Page<Person> actual = sut.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "mu", pageRequest);
+
+        assertThat(actual.getContent()).containsExactly(peter, rosamund);
+    }
+
+    @Test
+    void ensureFindByPermissionsContainingAndNiceNameContainingIgnoreCase() {
+
+        final Person xenia = new Person("username_1", "Basta", "xenia", "xenia@example.org");
+        xenia.setPermissions(List.of(USER));
+        personService.save(xenia);
+
+        final Person peter = new Person("username_2", "Muster", "Peter", "peter@example.org");
+        peter.setPermissions(List.of(USER));
+        personService.save(peter);
+
+        final Person mustafa = new Person("username_3", "Tunichtgut", "Mustafa", "mustafa@example.org");
+        mustafa.setPermissions(List.of(INACTIVE));
+        personService.save(mustafa);
+
+        final Person rosamund = new Person("username_4", "Hatgoldimmund", "Rosamund", "rosamund@example.org");
+        rosamund.setPermissions(List.of(USER));
+        personService.save(rosamund);
+
+        final PageRequest pageRequest = PageRequest.of(0, 10);
+        final Page<Person> actual = sut.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, "mu", pageRequest);
+
+        assertThat(actual.getContent()).containsExactly(mustafa);
     }
 }
 

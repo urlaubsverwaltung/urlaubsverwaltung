@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.synyx.urlaubsverwaltung.SearchQuery;
 
 import java.util.List;
 import java.util.Optional;
@@ -95,7 +95,13 @@ public interface PersonService {
      */
     List<Person> getActivePersons();
 
-    Page<Person> getActivePersons(Pageable pageable);
+    /**
+     * Find all active persons matching the given query.
+     *
+     * @param personSearchQuery search query containing pageable and an optional query for firstname/lastname
+     * @return paginated active persons matching the search query
+     */
+    Page<Person> getActivePersons(SearchQuery<Person> personSearchQuery);
 
     /**
      * finds all {@link Person}s in the database that have the given {@link Role}.
@@ -120,7 +126,13 @@ public interface PersonService {
      */
     List<Person> getInactivePersons();
 
-    Page<Person> getInactivePersons(Pageable pageable);
+    /**
+     * Find all inactive persons matching the given query.
+     *
+     * @param personSearchQuery search query containing pageable and an optional query for firstname/lastname
+     * @return paginated inactive persons matching the search query
+     */
+    Page<Person> getInactivePersons(SearchQuery<Person> personSearchQuery);
 
     /**
      * This method allows to get the signed in user.

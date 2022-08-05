@@ -9,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.synyx.urlaubsverwaltung.SearchQuery;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -96,8 +98,7 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findByDepartmentHeadsAndSecondStageAuthorities(person, person)).thenReturn(List.of(admins, developers));
 
-        final PageRequest pageRequest = PageRequest.of(0, 100);
-        final Page<Person> actual = sut.getManagedMembersOfPerson(person, pageRequest);
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
 
         assertThat(actual.getContent()).containsExactly(jane, max);
     }
@@ -133,8 +134,7 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(admins, developers));
 
-        final PageRequest pageRequest = PageRequest.of(0, 100);
-        final Page<Person> actual = sut.getManagedMembersOfPerson(person, pageRequest);
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
 
         assertThat(actual.getContent()).containsExactly(jane, max);
     }
@@ -170,8 +170,7 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(List.of(admins, developers));
 
-        final PageRequest pageRequest = PageRequest.of(0, 100);
-        final Page<Person> actual = sut.getManagedMembersOfPerson(person, pageRequest);
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
 
         assertThat(actual.getContent()).containsExactly(jane, max);
     }
@@ -183,8 +182,7 @@ class DepartmentServiceImplTest {
         person.setId(1);
         person.setPermissions(List.of());
 
-        final PageRequest pageRequest = PageRequest.of(0, 100);
-        final Page<Person> actual = sut.getManagedMembersOfPerson(person, pageRequest);
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
 
         assertThat(actual.getContent()).isEmpty();
         verifyNoInteractions(departmentRepository);
@@ -230,8 +228,7 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findByDepartmentHeadsAndSecondStageAuthorities(person, person)).thenReturn(List.of(admins, developers));
 
-        final PageRequest pageRequest = PageRequest.of(0, 100);
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, pageRequest);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
 
         assertThat(actual.getContent()).containsExactly(john, max);
     }
@@ -276,8 +273,7 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(admins, developers));
 
-        final PageRequest pageRequest = PageRequest.of(0, 100);
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, pageRequest);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
 
         assertThat(actual.getContent()).containsExactly(john, max);
     }
@@ -322,8 +318,7 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(List.of(admins, developers));
 
-        final PageRequest pageRequest = PageRequest.of(0, 100);
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, pageRequest);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
 
         assertThat(actual.getContent()).containsExactly(john, max);
     }
@@ -335,8 +330,7 @@ class DepartmentServiceImplTest {
         person.setId(1);
         person.setPermissions(List.of());
 
-        final PageRequest pageRequest = PageRequest.of(0, 100);
-        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, pageRequest);
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
 
         assertThat(actual.getContent()).isEmpty();
         verifyNoInteractions(departmentRepository);
@@ -1233,6 +1227,14 @@ class DepartmentServiceImplTest {
 
         final long numberOfDepartments = sut.getNumberOfDepartments();
         assertThat(numberOfDepartments).isEqualTo(10);
+    }
+
+    private static SearchQuery<Person> defaultPersonSearchQuery() {
+        return new SearchQuery<>(Person.class, defaultPageRequest(), "");
+    }
+
+    private static PageRequest defaultPageRequest() {
+        return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "firstName"));
     }
 
     private DepartmentMemberEmbeddable departmentMemberEmbeddable(String username, String firstname, String lastname, String email) {
