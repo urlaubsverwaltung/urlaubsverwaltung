@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.SearchQuery;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -66,27 +67,33 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, Pageable pageable) {
-        // TODO consider pageRequest Sort
-
+    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, SearchQuery<Person> searchQuery) {
         final List<Person> members = departmentRepository.findById(departmentId)
             .map(DepartmentEntity::getMembers)
-            .map(departmentMembers -> departmentMembers.stream().map(DepartmentMemberEmbeddable::getPerson).filter(not(Person::isInactive)).collect(toList()))
+            .map(departmentMembers -> departmentMembers.stream()
+                .map(DepartmentMemberEmbeddable::getPerson)
+                .filter(not(Person::isInactive))
+                .sorted(searchQuery.getComparator())
+                .collect(toList())
+            )
             .orElseThrow(() -> new IllegalArgumentException("could not find department with id=" + departmentId));
 
-        return new PageImpl<>(members, pageable, members.size());
+        return new PageImpl<>(members, searchQuery.getPageable(), members.size());
     }
 
     @Override
-    public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, Pageable pageable) {
-        // TODO consider pageRequest Sort
-
+    public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, SearchQuery<Person> searchQuery) {
         final List<Person> members = departmentRepository.findById(departmentId)
             .map(DepartmentEntity::getMembers)
-            .map(departmentMembers -> departmentMembers.stream().map(DepartmentMemberEmbeddable::getPerson).filter(Person::isInactive).collect(toList()))
+            .map(departmentMembers -> departmentMembers.stream()
+                .map(DepartmentMemberEmbeddable::getPerson)
+                .filter(Person::isInactive)
+                .sorted(searchQuery.getComparator())
+                .collect(toList())
+            )
             .orElseThrow(() -> new IllegalArgumentException("could not find department with id=" + departmentId));
 
-        return new PageImpl<>(members, pageable, members.size());
+        return new PageImpl<>(members, searchQuery.getPageable(), members.size());
     }
 
     private Page<Person> getManagedMembersOfPerson(Person person, Pageable pageable, Predicate<Person> predicate) {

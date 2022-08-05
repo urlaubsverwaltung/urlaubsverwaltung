@@ -13,6 +13,7 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.SearchQuery;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
@@ -503,7 +504,7 @@ class PersonDetailsViewControllerTest {
         john.setFirstName("John");
 
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
-        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1, defaultPageRequest())).thenReturn(page);
+        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1, defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person").param("active", "true")
             .param("department", "1")
@@ -739,6 +740,10 @@ class PersonDetailsViewControllerTest {
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
             .build()
             .perform(builder);
+    }
+
+    private static SearchQuery<Person> defaultPersonSearchQuery() {
+        return new SearchQuery<>(Person.class, defaultPageRequest());
     }
 
     private static PageRequest defaultPageRequest() {

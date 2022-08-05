@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.synyx.urlaubsverwaltung.SearchQuery;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
@@ -153,6 +154,7 @@ public class PersonDetailsViewController {
         final Integer selectedYear = requestedYear.orElse(currentYear);
 
         final Person signedInUser = personService.getSignedInUser();
+        final SearchQuery<Person> personSearchQuery = new SearchQuery<>(Person.class, pageable);
         final Page<Person> personPage;
 
         if (requestedDepartmentId.isPresent()) {
@@ -163,8 +165,8 @@ public class PersonDetailsViewController {
             model.addAttribute("department", department);
 
             personPage = active
-                ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, pageable)
-                : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, pageable);
+                ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personSearchQuery)
+                : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personSearchQuery);
 
 
         } else {

@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.department;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.synyx.urlaubsverwaltung.SearchQuery;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -166,12 +167,12 @@ public interface DepartmentService {
      *
      * @param person person to get managed members for
      * @param departmentId departmentId to get managed members for
-     * @param pageable the page request
+     * @param searchQuery searchQuery to restrict the result set
      * @return all managed and active members for the person
      */
-    Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, Pageable pageable);
+    Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, SearchQuery<Person> searchQuery);
 
-    Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, Pageable pageable);
+    Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, SearchQuery<Person> searchQuery);
 
     /**
      * Get all distinct managed members of the department head.

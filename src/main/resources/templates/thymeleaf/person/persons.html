@@ -85,6 +85,7 @@
             <div class="tw-ml-auto">
               <form action="#" th:action="@{/web/person}" method="get">
                 <input type="hidden" name="active" th:value="${active}" />
+                <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
                 <div class="tw-flex tw-items-center">
                   <label for="sort-select" class="tw-m-0 tw-mr-2">Sortieren:</label>
                   <select id="sort-select" name="sort" class="tw-py-2 tw-px-3">
