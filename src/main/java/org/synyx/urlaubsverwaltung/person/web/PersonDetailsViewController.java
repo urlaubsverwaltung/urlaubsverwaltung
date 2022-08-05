@@ -298,5 +298,6 @@ public class PersonDetailsViewController {
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("now", now);
         model.addAttribute("departments", getRelevantDepartmentsSortedByName(signedInUser));
+        model.addAttribute("sortQuery", originalPageRequestSort.stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(toList()).stream().reduce((s, s2) -> s + "&" + s2).orElse(""));
     }
 }

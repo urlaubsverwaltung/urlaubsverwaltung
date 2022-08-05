@@ -42,7 +42,7 @@
               </li>
               <th:block th:if="${not #lists.isEmpty(departments)}">
                 <li th:each="department : ${departments}">
-                  <a th:href="@{/web/person (active=true, year=${selectedYear}, department=${department.id})}">
+                  <a th:href="@{/web/person (active=true, year=${selectedYear}, department=${department.id}, sort=${sortQuery})}">
                     <span class="tw-w-5 tw-inline-block"></span>
                     <th:block th:text="${department.name}"></th:block>
                   </a>
