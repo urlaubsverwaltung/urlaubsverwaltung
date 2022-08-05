@@ -60,7 +60,7 @@
             </ul>
           </div>
           <th:block
-            th:with="hrefPrefix=${department == null ? '/web/person?active=' + active + '&year=' : '/web/person?active=' + active + '&department='+department.id + '&year='}"
+            th:with="hrefPrefix=${department == null ? '/web/person?active=' + active + '&sort=' + sortQuery + '&year=' : '/web/person?active=' + active + '&department='+department.id + '&sort=' + sortQuery + '&year='}"
           >
             <div
               th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=${hrefPrefix}, selectedYear=${selectedYear})"
