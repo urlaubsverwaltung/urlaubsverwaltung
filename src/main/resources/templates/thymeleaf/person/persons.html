@@ -120,16 +120,32 @@
                 th:replace="fragments/select::one(id='sort-select', name='sort', options=~{::sort-select-options})"
               >
                 <th:block th:ref="sort-select-options">
-                  <option value="firstName,asc" th:selected="${personPageSort.firstNameAscending}">
+                  <option
+                    value="firstName,asc"
+                    th:selected="${personPageSort.firstNameAscending}"
+                    th:text="#{persons.sort.first-name.asc}"
+                  >
                     Vorname (aufsteigend A bis Z)
                   </option>
-                  <option value="firstName,desc" th:selected="${personPageSort.firstNameDescending}">
+                  <option
+                    value="firstName,desc"
+                    th:selected="${personPageSort.firstNameDescending}"
+                    th:text="#{persons.sort.first-name.desc}"
+                  >
                     Vorname (absteigend Z bis A)
                   </option>
-                  <option value="lastName,asc" th:selected="${personPageSort.lastNameAscending}">
+                  <option
+                    value="lastName,asc"
+                    th:selected="${personPageSort.lastNameAscending}"
+                    th:text="#{persons.sort.last-name.asc}"
+                  >
                     Nachname (aufsteigend A bis Z)
                   </option>
-                  <option value="lastName,desc" th:selected="${personPageSort.lastNameDescending}">
+                  <option
+                    value="lastName,desc"
+                    th:selected="${personPageSort.lastNameDescending}"
+                    th:text="#{persons.sort.last-name.desc}"
+                  >
                     Nachname (absteigend Z bis A)
                   </option>
                 </th:block>
