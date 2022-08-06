@@ -84,20 +84,25 @@
         <form action="#" th:action="@{/web/person}" method="get">
           <input type="hidden" name="active" th:value="${active}" />
           <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
-          <div class="tw-flex tw-items-center">
-            <label for="search" th:text="#{action.search}" class=""></label>
-            <input
-              type="text"
-              id="search"
-              name="query"
-              th:value="${query}"
-              class=""
-              th:placeholder="#{action.search}"
-            />
-            <span>
-              <svg th:replace="icon/search::svg(className='tw-w-4 tw-h-4')"></svg>
+          <div class="tw-flex">
+            <label for="search" th:text="#{action.search}" class="tw-sr-only"></label>
+            <span class="tw-relative tw-border dark:tw-border-neutral-600 tw-rounded-md">
+              <input
+                type="text"
+                id="search"
+                name="query"
+                th:value="${query}"
+                class="form-control tw-pr-8 tw-border-none"
+                th:placeholder="#{action.search}"
+              />
+              <button
+                type="submit"
+                class="tw-absolute tw-bottom-0 tw-right-0 dark:tw-bg-zinc-800 tw-py-3 tw-px-2 tw-rounded-r-md tw-h-full tw-flex tw-items-center"
+              >
+                <svg th:replace="icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')"></svg>
+                <span class="tw-sr-only" th:text="#{action.search}">Suche</span>
+              </button>
             </span>
-            <button type="submit" class="tw-ml-2 button-main">Submit</button>
           </div>
         </form>
         <div class="tw-ml-auto">
