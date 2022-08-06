@@ -111,22 +111,30 @@
             <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
             <input type="hidden" name="query" th:value="${query}" />
             <div class="tw-flex tw-items-center">
-              <label for="sort-select" class="tw-m-0 tw-mr-2">Sortieren:</label>
-              <select id="sort-select" name="sort" class="tw-py-2 tw-px-3">
-                <option value="firstName,asc" th:selected="${personPageSort.firstNameAscending}">
-                  Vorname (aufsteigend A bis Z)
-                </option>
-                <option value="firstName,desc" th:selected="${personPageSort.firstNameDescending}">
-                  Vorname (absteigend Z bis A)
-                </option>
-                <option value="lastName,asc" th:selected="${personPageSort.lastNameAscending}">
-                  Nachname (aufsteigend A bis Z)
-                </option>
-                <option value="lastName,desc" th:selected="${personPageSort.lastNameDescending}">
-                  Nachname (absteigend Z bis A)
-                </option>
+              <label for="sort-select" class="tw-m-0 tw-mr-2">
+                <th:block th:text="#{action.sort}">Sortieren</th:block>:
+              </label>
+              <select
+                id="sort-select"
+                name="sort"
+                th:replace="fragments/select::one(id='sort-select', name='sort', options=~{::sort-select-options})"
+              >
+                <th:block th:ref="sort-select-options">
+                  <option value="firstName,asc" th:selected="${personPageSort.firstNameAscending}">
+                    Vorname (aufsteigend A bis Z)
+                  </option>
+                  <option value="firstName,desc" th:selected="${personPageSort.firstNameDescending}">
+                    Vorname (absteigend Z bis A)
+                  </option>
+                  <option value="lastName,asc" th:selected="${personPageSort.lastNameAscending}">
+                    Nachname (aufsteigend A bis Z)
+                  </option>
+                  <option value="lastName,desc" th:selected="${personPageSort.lastNameDescending}">
+                    Nachname (absteigend Z bis A)
+                  </option>
+                </th:block>
               </select>
-              <button type="submit" class="tw-ml-2 button-main">Submit</button>
+              <button type="submit" class="tw-ml-2 button-main" th:text="#{action.sort}">Sortieren</button>
             </div>
           </form>
         </div>
