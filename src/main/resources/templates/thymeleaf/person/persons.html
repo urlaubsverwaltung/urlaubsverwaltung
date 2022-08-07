@@ -138,34 +138,110 @@
                 th:replace="fragments/select::one(id='sort-select', name='sort', options=~{::sort-select-options}, autosubmit='sort-submit')"
               >
                 <th:block th:ref="sort-select-options">
-                  <option
-                    value="firstName,asc"
-                    th:selected="${personPageSort.firstNameAscending}"
-                    th:text="#{persons.sort.first-name.asc}"
-                  >
-                    Vorname (aufsteigend A bis Z)
-                  </option>
-                  <option
-                    value="firstName,desc"
-                    th:selected="${personPageSort.firstNameDescending}"
-                    th:text="#{persons.sort.first-name.desc}"
-                  >
-                    Vorname (absteigend Z bis A)
-                  </option>
-                  <option
-                    value="lastName,asc"
-                    th:selected="${personPageSort.lastNameAscending}"
-                    th:text="#{persons.sort.last-name.asc}"
-                  >
-                    Nachname (aufsteigend A bis Z)
-                  </option>
-                  <option
-                    value="lastName,desc"
-                    th:selected="${personPageSort.lastNameDescending}"
-                    th:text="#{persons.sort.last-name.desc}"
-                  >
-                    Nachname (absteigend Z bis A)
-                  </option>
+                  <optgroup label="Person">
+                    <option
+                      value="person.firstName,asc"
+                      th:selected="${personPageSort.firstNameAsc}"
+                      th:text="#{persons.sort.first-name.asc}"
+                    >
+                      Vorname aufsteigend
+                    </option>
+                    <option
+                      value="person.firstName,desc"
+                      th:selected="${personPageSort.firstNameDesc}"
+                      th:text="#{persons.sort.first-name.desc}"
+                    >
+                      Vorname absteigend
+                    </option>
+                    <option
+                      value="person.lastName,asc"
+                      th:selected="${personPageSort.lastNameAsc}"
+                      th:text="#{persons.sort.last-name.asc}"
+                    >
+                      Nachname aufsteigend
+                    </option>
+                    <option
+                      value="person.lastName,desc"
+                      th:selected="${personPageSort.lastNameDesc}"
+                      th:text="#{persons.sort.last-name.desc}"
+                    >
+                      Nachname absteigend
+                    </option>
+                  </optgroup>
+                  <optgroup label="Urlaubsanspruch" th:with="sort=${param.sort != null ? param.sort[0] : ''}">
+                    <option
+                      value="account.entitlementYear,asc"
+                      th:text="#{persons.sort.entitlement-year.asc}"
+                      th:selected="${personPageSort.entitlementYearAsc}"
+                    >
+                      Jährlich aufsteigend
+                    </option>
+                    <option
+                      value="account.entitlementYear,desc"
+                      th:text="#{persons.sort.entitlement-year.desc}"
+                      th:selected="${personPageSort.entitlementYearDesc}"
+                    >
+                      Jährlich absteigend
+                    </option>
+                    <option
+                      value="account.entitlementActual,asc"
+                      th:text="#{persons.sort.entitlement-actual.asc}"
+                      th:selected="${personPageSort.entitlementActualAsc}"
+                    >
+                      Anteilig aufsteigend
+                    </option>
+                    <option
+                      value="account.entitlementActual,desc"
+                      th:text="#{persons.sort.entitlement-actual.desc}"
+                      th:selected="${personPageSort.entitlementActualDesc}"
+                    >
+                      Anteilig absteigend
+                    </option>
+                    <option
+                      value="account.vacationDaysLeft,asc"
+                      th:text="#{persons.sort.vacation-days-left.asc}"
+                      th:selected="${personPageSort.vacationDaysLeftAsc}"
+                    >
+                      Resturlaub aufsteigend
+                    </option>
+                    <option
+                      value="account.vacationDaysLeft,desc"
+                      th:text="#{persons.sort.vacation-days-left.desc}"
+                      th:selected="${personPageSort.vacationDaysLeftDesc}"
+                    >
+                      Resturlaub absteigend
+                    </option>
+                  </optgroup>
+                  <optgroup label="Resturlaub">
+                    <option
+                      value="account.entitlementRemaining,asc"
+                      th:text="#{persons.sort.entitlement-remaining.asc}"
+                      th:selected="${personPageSort.entitlementRemainingAsc}"
+                    >
+                      Verbleibend aufsteigend
+                    </option>
+                    <option
+                      value="account.entitlementRemaining,desc"
+                      th:text="#{persons.sort.entitlement-remaining.desc}"
+                      th:selected="${personPageSort.entitlementRemainingDesc}"
+                    >
+                      Verbleibend absteigend
+                    </option>
+                    <option
+                      value="account.vacationDaysLeftRemaining,asc"
+                      th:text="#{persons.sort.vacation-days-left-remaining.asc}"
+                      th:selected="${personPageSort.vacationDaysLeftRemainingAsc}"
+                    >
+                      Verbleibend aufsteigend
+                    </option>
+                    <option
+                      value="account.vacationDaysLeftRemaining,desc"
+                      th:text="#{persons.sort.vacation-days-left-remaining.desc}"
+                      th:selected="${personPageSort.vacationDaysLeftRemainingDesc}"
+                    >
+                      Verbleibend absteigend
+                    </option>
+                  </optgroup>
                 </th:block>
               </select>
               <button

@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.person.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.SearchQuery;
+import org.synyx.urlaubsverwaltung.SortComparator;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
@@ -37,6 +39,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -142,7 +145,7 @@ public class PersonDetailsViewController {
                              @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                              @RequestParam(value = "query", required = false, defaultValue = "") String query,
                              @SortDefault.SortDefaults({
-                                 @SortDefault(sort = "firstName", direction = Sort.Direction.ASC)
+                                 @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)
                              })
                              Pageable pageable,
                              @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
@@ -152,7 +155,22 @@ public class PersonDetailsViewController {
         final Integer selectedYear = requestedYear.orElse(currentYear);
 
         final Person signedInUser = personService.getSignedInUser();
-        final SearchQuery<Person> personSearchQuery = new SearchQuery<>(Person.class, pageable, query);
+
+        Sort personSort = Sort.unsorted();
+        Sort accountSort = Sort.unsorted();
+        for (Sort.Order order : pageable.getSort()) {
+            final String propertyWithPrefix = order.getProperty();
+            if (propertyWithPrefix.startsWith("person.")) {
+                final String property = propertyWithPrefix.replace("person.", "");
+                personSort = personSort.and(Sort.by(order.getDirection(), property));
+            } else if (propertyWithPrefix.startsWith("account.")) {
+                final String property = propertyWithPrefix.replace("account.", "");
+                accountSort = accountSort.and(Sort.by(order.getDirection(), property));
+            }
+        }
+        final Pageable personPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), personSort);
+
+        final SearchQuery<Person> personSearchQuery = new SearchQuery<>(Person.class, personPageable, query);
         final Page<Person> personPage;
 
         if (requestedDepartmentId.isPresent()) {
@@ -173,7 +191,7 @@ public class PersonDetailsViewController {
                 : getRelevantInactivePersons(signedInUser, personSearchQuery);
         }
 
-        preparePersonView(signedInUser, personPage, pageable.getSort(), selectedYear, model);
+        preparePersonView(signedInUser, personPage, personSort, accountSort, selectedYear, model);
         model.addAttribute("currentYear", currentYear);
         model.addAttribute("selectedYear", selectedYear);
         model.addAttribute("active", active);
@@ -232,7 +250,7 @@ public class PersonDetailsViewController {
             .collect(toList());
     }
 
-    private void preparePersonView(Person signedInUser, Page<Person> personPage, Sort originalPageRequestSort, int year, Model model) {
+    private void preparePersonView(Person signedInUser, Page<Person> personPage, Sort originalPersonSort, Sort originalAccountSort, int year, Model model) {
 
         final LocalDate now = LocalDate.now(clock);
 
@@ -278,22 +296,16 @@ public class PersonDetailsViewController {
             personDtos.add(personDto);
         }
 
+        final Comparator<PersonDto> accountComparator = new SortComparator<>(PersonDto.class, originalAccountSort);
+        personDtos.sort(accountComparator.thenComparing(PersonDto::getNiceName));
+
         final boolean showPersonnelNumberColumn = personDtos.stream()
             .anyMatch(personDto -> hasText(personDto.getPersonnelNumber()));
 
         final PageImpl<PersonDto> personDtoPage = new PageImpl<>(personDtos, personPage.getPageable(), personPage.getTotalElements());
         model.addAttribute("personPage", personDtoPage);
 
-        final Sort.Order orderFirstName = originalPageRequestSort.getOrderFor("firstName");
-        final Sort.Order orderLastName = originalPageRequestSort.getOrderFor("lastName");
-        final PersonPageSortDto personPageSortDto;
-        if (orderFirstName != null) {
-            personPageSortDto = PersonPageSortDto.firstName(orderFirstName.isAscending());
-        } else if (orderLastName != null) {
-            personPageSortDto = PersonPageSortDto.lastName(orderLastName.isAscending());
-        } else {
-            personPageSortDto = PersonPageSortDto.firstName(false);
-        }
+        final PersonPageSortDto personPageSortDto = personPageSortDto(originalPersonSort, originalAccountSort);
         model.addAttribute("personPageSort", personPageSortDto);
 
         final List<Integer> pageNumbers = IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().collect(toList());
@@ -302,6 +314,34 @@ public class PersonDetailsViewController {
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("now", now);
         model.addAttribute("departments", getRelevantDepartmentsSortedByName(signedInUser));
-        model.addAttribute("sortQuery", originalPageRequestSort.stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(toList()).stream().reduce((s, s2) -> s + "&" + s2).orElse(""));
+        model.addAttribute("sortQuery", originalPersonSort.stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(toList()).stream().reduce((s, s2) -> s + "&" + s2).orElse(""));
+    }
+
+    private static PersonPageSortDto personPageSortDto(Sort originalPersonSort, Sort originalAccountSort) {
+        final Sort.Order orderFirstName = originalPersonSort.getOrderFor("firstName");
+        final Sort.Order orderLastName = originalPersonSort.getOrderFor("lastName");
+        final Sort.Order orderEntitlementYear = originalAccountSort.getOrderFor("entitlementYear");
+        final Sort.Order orderEntitlementActual = originalAccountSort.getOrderFor("entitlementActual");
+        final Sort.Order orderVacationDaysLeft = originalAccountSort.getOrderFor("vacationDaysLeft");
+        final Sort.Order orderEntitlementRemaining = originalAccountSort.getOrderFor("entitlementRemaining");
+        final Sort.Order orderVacationDaysLeftRemaining = originalAccountSort.getOrderFor("vacationDaysLeftRemaining");
+
+        if (orderFirstName != null) {
+            return PersonPageSortDto.firstName(orderFirstName.isAscending());
+        } else if (orderLastName != null) {
+            return PersonPageSortDto.lastName(orderLastName.isAscending());
+        } else if (orderEntitlementYear != null) {
+            return PersonPageSortDto.entitlementYear(orderEntitlementYear.isAscending());
+        } else if (orderEntitlementActual != null) {
+            return PersonPageSortDto.entitlementActual(orderEntitlementActual.isAscending());
+        } else if (orderVacationDaysLeft != null) {
+            return PersonPageSortDto.vacationDaysLeft(orderVacationDaysLeft.isAscending());
+        } else if (orderEntitlementRemaining != null) {
+            return PersonPageSortDto.entitlementRemaining(orderEntitlementRemaining.isAscending());
+        } else if (orderVacationDaysLeftRemaining != null) {
+            return PersonPageSortDto.vacationDaysLeftRemaining(orderVacationDaysLeftRemaining.isAscending());
+        } else {
+            return PersonPageSortDto.firstName(true);
+        }
     }
 }

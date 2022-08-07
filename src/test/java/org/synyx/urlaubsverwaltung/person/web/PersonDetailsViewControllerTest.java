@@ -747,6 +747,12 @@ class PersonDetailsViewControllerTest {
         return new SearchQuery<>(Person.class, defaultPageRequest(), "");
     }
 
+    /**
+     * create a default PageRequest used to invoke services.
+     * Note the difference to the pageable consumed by the view controller which has keys like `person.firstName` or `account.someAttribute`.
+     *
+     * @return {@link PageRequest} passed to the services
+     */
     private static PageRequest defaultPageRequest() {
         return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "firstName"));
     }

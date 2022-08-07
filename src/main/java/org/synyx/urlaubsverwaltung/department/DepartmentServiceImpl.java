@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.SearchQuery;
+import org.synyx.urlaubsverwaltung.SortComparator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -72,7 +73,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(departmentMembers -> departmentMembers.stream()
                 .map(DepartmentMemberEmbeddable::getPerson)
                 .filter(nameContains(searchQuery.getQuery()).and(not(Person::isInactive)))
-                .sorted(searchQuery.getComparator())
+                .sorted(new SortComparator<>(Person.class, searchQuery.getPageable().getSort()))
                 .collect(toList())
             )
             .orElseThrow(() -> new IllegalArgumentException("could not find department with id=" + departmentId));
@@ -87,7 +88,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(departmentMembers -> departmentMembers.stream()
                 .map(DepartmentMemberEmbeddable::getPerson)
                 .filter(nameContains(searchQuery.getQuery()).and(Person::isInactive))
-                .sorted(searchQuery.getComparator())
+                .sorted(new SortComparator<>(Person.class, searchQuery.getPageable().getSort()))
                 .collect(toList())
             )
             .orElseThrow(() -> new IllegalArgumentException("could not find department with id=" + departmentId));
@@ -114,7 +115,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .map(DepartmentMemberEmbeddable::getPerson)
             .distinct()
             .filter(nameContains(personSearchQuery.getQuery()).and(predicate))
-            .sorted(personSearchQuery.getComparator())
+            .sorted(new SortComparator<>(Person.class, personSearchQuery.getPageable().getSort()))
             .collect(toList());
 
         return new PageImpl<>(content, personSearchQuery.getPageable(), content.size());
