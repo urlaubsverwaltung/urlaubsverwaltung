@@ -305,20 +305,71 @@
             <div class="tw-mt-16">
               <nav th:aria-label="#{persons.pagination.navigation.aria-label}">
                 <ul class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-row tw-gap-2">
-                  <li
+                  <li th:if="${not personPage.first}">
+                    <a
+                      href="#"
+                      th:href="@{/web/person (active=${active},page=${personPage.number})}"
+                      class="tw-text-current tw-no-underline tw-flex tw-items-center"
+                    >
+                      <svg th:replace="icon/chevron-left::svg(className='tw-w-6 tw-h-6')"></svg>
+                      <span class="tw-sr-only" th:text="#{pagination.page.previous}"></span>
+                    </a>
+                  </li>
+                  <li th:with="isSelected=${personPage.first}">
+                    <a
+                      href="#"
+                      th:href="@{/web/person (active=${active},page=1)}"
+                      class="tw-px-4 tw-py-1 tw-no-underline dark:tw-text-zinc-50 tw-rounded-md tw-border-2 dark:tw-border-zinc-700 hover:dark:tw-border-zinc-300 tw-transition-colors"
+                      th:classappend="${isSelected ? 'dark:tw-border-zinc-300' : ''}"
+                      th:attr="aria-current=${isSelected ? 'page' : ''}"
+                      th:aria-label="#{pagination.page('1')}"
+                    >
+                      1
+                    </a>
+                  </li>
+                  <li th:if="${personPage.number > 2}" role="presentation">…</li>
+                  <th:block
                     th:each="pageNumber : ${personPageNumbers}"
                     th:with="isSelected=${pageNumber == personPage.number + 1}"
                   >
+                    <li
+                      th:if="${not pageNumberStat.first && not pageNumberStat.last && (pageNumber == personPage.number || pageNumber == personPage.number + 1 || pageNumber == personPage.number + 2)}"
+                    >
+                      <a
+                        href="#"
+                        th:href="@{/web/person (active=${active},page=${pageNumber})}"
+                        class="tw-px-4 tw-py-1 tw-no-underline dark:tw-text-zinc-50 tw-rounded-md tw-border-2 dark:tw-border-zinc-700 hover:dark:tw-border-zinc-300 tw-transition-colors"
+                        th:classappend="${isSelected ? 'dark:tw-border-zinc-300' : ''}"
+                        th:text="${pageNumber}"
+                        th:attr="aria-current=${isSelected ? 'page' : ''}"
+                        th:aria-label="${pageNumberStat.last ? #messages.msg('pagination.page.last', pageNumber) : #messages.msg('pagination.page', pageNumber)}"
+                      >
+                        2
+                      </a>
+                    </li>
+                  </th:block>
+                  <li th:if="${personPage.number < personPage.totalPages - 3}" role="presentation">…</li>
+                  <li th:if="${personPage.totalPages > 1}" th:with="isSelected=${personPage.last}">
                     <a
                       href="#"
-                      th:href="@{/web/person (active=${active},page=${pageNumber})}"
+                      th:href="@{/web/person (active=${active},page=${personPage.totalPages})}"
                       class="tw-px-4 tw-py-1 tw-no-underline dark:tw-text-zinc-50 tw-rounded-md tw-border-2 dark:tw-border-zinc-700 hover:dark:tw-border-zinc-300 tw-transition-colors"
                       th:classappend="${isSelected ? 'dark:tw-border-zinc-300' : ''}"
-                      th:text="${pageNumber}"
+                      th:text="${personPage.totalPages}"
                       th:attr="aria-current=${isSelected ? 'page' : ''}"
-                      th:aria-label="${pageNumberStat.last ? #messages.msg('pagination.page.last', pageNumber) : #messages.msg('pagination.page', pageNumber)}"
+                      th:aria-label="#{pagination.page.last(${personPage.totalPages})}"
                     >
-                      1
+                      3
+                    </a>
+                  </li>
+                  <li th:if="${not personPage.last}">
+                    <a
+                      href="#"
+                      th:href="@{/web/person (active=${active},page=${personPage.number + 2})}"
+                      class="tw-text-current tw-no-underline tw-flex tw-items-center"
+                    >
+                      <span class="tw-sr-only" th:text="#{pagination.page.next}"></span>
+                      <svg th:replace="icon/chevron-right::svg(className='tw-w-6 tw-h-6')"></svg>
                     </a>
                   </li>
                 </ul>
