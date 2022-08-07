@@ -5,8 +5,18 @@
     <title>select</title>
   </head>
   <body>
-    <span th:fragment="one(id, name, options)" class="tw-inline-block tw-relative tw-w-full" th:classappend="${class}">
-      <select th:id="${id}" th:name="${name}" class="form-control tw-appearance-none tw-pr-8">
+    <span
+      th:fragment="one(id, name, options)"
+      class="tw-inline-block tw-relative tw-w-full"
+      th:classappend="${class}"
+      th:with="autosubmit=${autosubmit ?: ''}"
+    >
+      <select
+        th:id="${id}"
+        th:name="${name}"
+        class="form-control tw-appearance-none tw-pr-8"
+        th:attrappend="data-auto-submit=${#strings.isEmpty(autosubmit) ? '' : autosubmit}"
+      >
         <option th:replace="${options}"></option>
       </select>
       <span
