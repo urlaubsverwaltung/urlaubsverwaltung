@@ -277,6 +277,19 @@ class PersonDetailsViewControllerTest {
     }
 
     @Test
+    void ensurePersonsPageTurboFrameRenderedWhenHeaderIsSet() throws Exception {
+
+        final Person signedInUser = personWithRole(USER, BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final PageImpl<Person> page = new PageImpl<>(List.of());
+        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
+
+        perform(get("/web/person").header("Turbo-Frame", "persons-frame"))
+            .andExpect(view().name("thymeleaf/person/persons::#persons-frame"));
+    }
+
+    @Test
     void showPersonWithActiveTrueForUserWithRoleOfficeCallsCorrectService() throws Exception {
 
         final Person signedInUser = personWithRole(USER, OFFICE);

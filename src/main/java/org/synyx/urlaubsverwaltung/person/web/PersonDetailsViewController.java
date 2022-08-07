@@ -10,8 +10,10 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.SearchQuery;
@@ -143,6 +145,7 @@ public class PersonDetailsViewController {
                                  @SortDefault(sort = "firstName", direction = Sort.Direction.ASC)
                              })
                              Pageable pageable,
+                             @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
                              Model model) throws UnknownDepartmentException {
 
         final int currentYear = Year.now(clock).getValue();
@@ -175,8 +178,13 @@ public class PersonDetailsViewController {
         model.addAttribute("selectedYear", selectedYear);
         model.addAttribute("active", active);
         model.addAttribute("query", query);
+        model.addAttribute("turboFrameRequested", StringUtils.hasText(turboFrame));
 
-        return "thymeleaf/person/persons";
+        if (turboFrame == null || turboFrame.isBlank()) {
+            return "thymeleaf/person/persons";
+        } else {
+            return "thymeleaf/person/persons::#" + turboFrame;
+        }
     }
 
     private Page<Person> getRelevantActivePersons(Person signedInUser, SearchQuery<Person> personSearchQuery) {

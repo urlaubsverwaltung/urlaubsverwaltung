@@ -183,24 +183,26 @@
       </div>
 
       <turbo-frame id="frame-persons">
-        <turbo-stream target="persons-filter" action="replace">
-          <template th:insert="::#persons-filter"></template>
-        </turbo-stream>
-        <turbo-stream target="persons-form-query-inputs" action="replace">
-          <template th:insert="::#persons-form-query-inputs"></template>
-        </turbo-stream>
-        <turbo-stream target="persons-form-sort-inputs" action="replace">
-          <template th:insert="::#persons-form-sort-inputs"></template>
-        </turbo-stream>
-        <turbo-stream target="persons-pagination" action="replace">
-          <template th:insert="::#persons-pagination"></template>
-        </turbo-stream>
-        <turbo-stream target="persons-form-size-inputs" action="replace">
-          <template th:insert="::#persons-form-size-inputs"></template>
-        </turbo-stream>
-        <turbo-stream target="pagination-size-hint" action="replace">
-          <template th:insert="::#pagination-size-hint"></template>
-        </turbo-stream>
+        <th:block th:if="${turboFrameRequested}">
+          <turbo-stream target="persons-filter" action="replace">
+            <template th:insert="::#persons-filter"></template>
+          </turbo-stream>
+          <turbo-stream target="persons-form-query-inputs" action="replace">
+            <template th:insert="::#persons-form-query-inputs"></template>
+          </turbo-stream>
+          <turbo-stream target="persons-form-sort-inputs" action="replace">
+            <template th:insert="::#persons-form-sort-inputs"></template>
+          </turbo-stream>
+          <turbo-stream target="persons-pagination" action="replace">
+            <template th:insert="::#persons-pagination"></template>
+          </turbo-stream>
+          <turbo-stream target="persons-form-size-inputs" action="replace">
+            <template th:insert="::#persons-form-size-inputs"></template>
+          </turbo-stream>
+          <turbo-stream target="pagination-size-hint" action="replace">
+            <template th:insert="::#pagination-size-hint"></template>
+          </turbo-stream>
+        </th:block>
         <p th:if="${#lists.isEmpty(personPage.content)}" class="tw-mt-16" th:text="#{persons.none}"></p>
         <th:block th:if="${not #lists.isEmpty(personPage.content)}">
           <p class="text-right visible-print">
