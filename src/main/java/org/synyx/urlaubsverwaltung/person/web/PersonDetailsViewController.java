@@ -134,14 +134,8 @@ public class PersonDetailsViewController {
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
-    @GetMapping("/person")
-    public String showPerson() {
-        return "redirect:/web/person?active=true";
-    }
-
-    @PreAuthorize(IS_PRIVILEGED_USER)
-    @GetMapping(value = "/person", params = "active")
-    public String showPerson(@RequestParam(value = "active") boolean active,
+    @GetMapping(value = "/person")
+    public String showPerson(@RequestParam(value = "active", required = false, defaultValue = "true") boolean active,
                              @RequestParam(value = "department", required = false) Optional<Integer> requestedDepartmentId,
                              @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                              @RequestParam(value = "query", required = false, defaultValue = "") String query,
