@@ -182,7 +182,25 @@
         </div>
       </div>
 
-      <div id="users">
+      <turbo-frame id="frame-persons">
+        <turbo-stream target="persons-filter" action="replace">
+          <template th:insert="::#persons-filter"></template>
+        </turbo-stream>
+        <turbo-stream target="persons-form-query-inputs" action="replace">
+          <template th:insert="::#persons-form-query-inputs"></template>
+        </turbo-stream>
+        <turbo-stream target="persons-form-sort-inputs" action="replace">
+          <template th:insert="::#persons-form-sort-inputs"></template>
+        </turbo-stream>
+        <turbo-stream target="persons-pagination" action="replace">
+          <template th:insert="::#persons-pagination"></template>
+        </turbo-stream>
+        <turbo-stream target="persons-form-size-inputs" action="replace">
+          <template th:insert="::#persons-form-size-inputs"></template>
+        </turbo-stream>
+        <turbo-stream target="pagination-size-hint" action="replace">
+          <template th:insert="::#pagination-size-hint"></template>
+        </turbo-stream>
         <p th:if="${#lists.isEmpty(personPage.content)}" class="tw-mt-16" th:text="#{persons.none}"></p>
         <th:block th:if="${not #lists.isEmpty(personPage.content)}">
           <p class="text-right visible-print">
@@ -191,162 +209,142 @@
             ></span>
           </p>
           <div class="tw-mt-16">
-            <turbo-frame id="frame-persons">
-              <turbo-stream target="persons-filter" action="replace">
-                <template th:insert="::#persons-filter"></template>
-              </turbo-stream>
-              <turbo-stream target="persons-form-query-inputs" action="replace">
-                <template th:insert="::#persons-form-query-inputs"></template>
-              </turbo-stream>
-              <turbo-stream target="persons-form-sort-inputs" action="replace">
-                <template th:insert="::#persons-form-sort-inputs"></template>
-              </turbo-stream>
-              <turbo-stream target="persons-pagination" action="replace">
-                <template th:insert="::#persons-pagination"></template>
-              </turbo-stream>
-              <turbo-stream target="persons-form-size-inputs" action="replace">
-                <template th:insert="::#persons-form-size-inputs"></template>
-              </turbo-stream>
-              <turbo-stream target="pagination-size-hint" action="replace">
-                <template th:insert="::#pagination-size-hint"></template>
-              </turbo-stream>
-              <table id="person-table" class="list-table selectable-table tw-text-sm">
-                <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
-                <thead class="hidden-xs hidden-sm print:tw-table-header-group">
-                  <tr>
-                    <th scope="col"><!-- placeholder to ensure correct number of th --></th>
-                    <th
-                      th:if="${showPersonnelNumberColumn}"
-                      scope="col"
-                      class="sortable-field"
-                      th:text="#{person.account.basedata.personnelNumber.abbreviation}"
-                    ></th>
-                    <th scope="col" class="sortable-field" th:text="#{person.data.firstName}"></th>
-                    <th scope="col" class="sortable-field" th:text="#{person.data.lastName}"></th>
-                    <th
-                      scope="col"
-                      class="sortable-field is-centered"
-                      th:text="#{persons.account.vacation.entitlement.year}"
-                    ></th>
-                    <th
-                      scope="col"
-                      class="sortable-field is-centered"
-                      th:text="#{persons.account.vacation.entitlement.actual}"
-                    ></th>
-                    <th
-                      scope="col"
-                      class="sortable-field is-centered"
-                      th:text="#{persons.account.vacation.entitlement.remaining}"
-                    ></th>
-                    <th
-                      scope="col"
-                      class="sortable-field is-centered"
-                      th:text="#{persons.account.vacation.vacationDaysLeft}"
-                    ></th>
-                    <th
-                      scope="col"
-                      class="sortable-field is-centered"
-                      th:text="#{persons.account.vacation.vacationDaysLeft.remaining}"
-                    ></th>
-                    <th scope="col"><!-- placeholder to ensure correct number of th --></th>
-                  </tr>
-                </thead>
-                <!-- NOTE: class 'list' is needed for list.js -->
-                <tbody class="list">
-                  <tr
-                    th:each="person,loopStatus : ${personPage.content}"
-                    th:onclick="|navigate('/web/person/${person.id}/overview');|"
+            <table id="person-table" class="list-table selectable-table tw-text-sm">
+              <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
+              <thead class="hidden-xs hidden-sm print:tw-table-header-group">
+                <tr>
+                  <th scope="col"><!-- placeholder to ensure correct number of th --></th>
+                  <th
+                    th:if="${showPersonnelNumberColumn}"
+                    scope="col"
+                    class="sortable-field"
+                    th:text="#{person.account.basedata.personnelNumber.abbreviation}"
+                  ></th>
+                  <th scope="col" class="sortable-field" th:text="#{person.data.firstName}"></th>
+                  <th scope="col" class="sortable-field" th:text="#{person.data.lastName}"></th>
+                  <th
+                    scope="col"
+                    class="sortable-field is-centered"
+                    th:text="#{persons.account.vacation.entitlement.year}"
+                  ></th>
+                  <th
+                    scope="col"
+                    class="sortable-field is-centered"
+                    th:text="#{persons.account.vacation.entitlement.actual}"
+                  ></th>
+                  <th
+                    scope="col"
+                    class="sortable-field is-centered"
+                    th:text="#{persons.account.vacation.entitlement.remaining}"
+                  ></th>
+                  <th
+                    scope="col"
+                    class="sortable-field is-centered"
+                    th:text="#{persons.account.vacation.vacationDaysLeft}"
+                  ></th>
+                  <th
+                    scope="col"
+                    class="sortable-field is-centered"
+                    th:text="#{persons.account.vacation.vacationDaysLeft.remaining}"
+                  ></th>
+                  <th scope="col"><!-- placeholder to ensure correct number of th --></th>
+                </tr>
+              </thead>
+              <!-- NOTE: class 'list' is needed for list.js -->
+              <tbody class="list">
+                <tr
+                  th:each="person,loopStatus : ${personPage.content}"
+                  th:onclick="|navigate('/web/person/${person.id}/overview');|"
+                >
+                  <td class="is-centered">
+                    <div class="print:tw-hidden">
+                      <img
+                        th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=40'},username=${person.niceName},width='40px',height='40px')"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    th:if="${showPersonnelNumberColumn}"
+                    class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center"
+                    th:text="${person.personnelNumber}"
+                  ></td>
+                  <td class="firstname" th:text="${person.firstName}"></td>
+                  <td class="lastname" th:text="${person.lastName}"></td>
+                  <td
+                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    th:data-sortable-value="${person.entitlementYear}"
                   >
-                    <td class="is-centered">
-                      <div class="print:tw-hidden">
-                        <img
-                          th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=40'},username=${person.niceName},width='40px',height='40px')"
-                        />
-                      </div>
-                    </td>
-                    <td
-                      th:if="${showPersonnelNumberColumn}"
-                      class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center"
-                      th:text="${person.personnelNumber}"
-                    ></td>
-                    <td class="firstname" th:text="${person.firstName}"></td>
-                    <td class="lastname" th:text="${person.lastName}"></td>
-                    <td
-                      class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                      th:data-sortable-value="${person.entitlementYear}"
-                    >
-                      <th:block th:if="${person.entitlementYear != null}">
-                        <span th:replace="fragments/number::number(${person.entitlementYear})"></span>
-                      </th:block>
-                      <th:block
-                        th:if="${person.entitlementYear == null}"
-                        th:text="#{person.account.vacation.noInformation}"
-                      ></th:block>
-                    </td>
-                    <td
-                      class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                      th:data-sortable-value="${person.entitlementActual}"
-                    >
-                      <th:block th:if="${person.entitlementActual != null}">
-                        <span th:replace="fragments/number::number(${person.entitlementActual})"></span>
-                      </th:block>
-                      <th:block
-                        th:if="${person.entitlementActual == null}"
-                        th:text="#{person.account.vacation.noInformation}"
-                      ></th:block>
-                    </td>
-                    <td
-                      class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                      th:data-sortable-value="${person.entitlementRemaining}"
-                    >
-                      <th:block th:if="${person.entitlementRemaining != null}">
-                        <span th:replace="fragments/number::number(${person.entitlementRemaining})"></span>
-                      </th:block>
-                      <th:block
-                        th:if="${person.entitlementRemaining == null}"
-                        th:text="#{person.account.vacation.noInformation}"
-                      ></th:block>
-                    </td>
-                    <td
-                      class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                      th:data-sortable-value="${person.vacationDaysLeft}"
-                    >
-                      <th:block th:if="${person.vacationDaysLeft != null}">
-                        <span th:replace="fragments/number::number(${person.vacationDaysLeft})"></span>
-                      </th:block>
-                      <th:block
-                        th:if="${person.vacationDaysLeft == null}"
-                        th:text="#{person.account.vacation.noInformation}"
-                      ></th:block>
-                    </td>
-                    <td
-                      class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                      th:data-sortable-value="${person.vacationDaysLeftRemaining}"
-                    >
-                      <th:block th:if="${person.vacationDaysLeftRemaining != null}">
-                        <span th:replace="fragments/number::number(${person.vacationDaysLeftRemaining})"></span>
-                      </th:block>
-                      <th:block
-                        th:if="${person.vacationDaysLeftRemaining == null}"
-                        th:text="#{person.account.vacation.noInformation}"
-                      ></th:block>
-                    </td>
-                    <td class="hidden-xs">
-                      <div class="print:tw-hidden">
-                        <a class="action-link" th:href="@{/web/person/{personId} (personId=${person.id})}">
-                          <svg th:replace="icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')"></svg>
-                          <th:block th:text="#{action.account.title}"></th:block>
-                          <span
-                            class="tw-sr-only"
-                            th:text="#{action.account.title.screen-reader-appendix(${person.niceName})}"
-                          ></span>
-                        </a>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </turbo-frame>
+                    <th:block th:if="${person.entitlementYear != null}">
+                      <span th:replace="fragments/number::number(${person.entitlementYear})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.entitlementYear == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td
+                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    th:data-sortable-value="${person.entitlementActual}"
+                  >
+                    <th:block th:if="${person.entitlementActual != null}">
+                      <span th:replace="fragments/number::number(${person.entitlementActual})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.entitlementActual == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td
+                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    th:data-sortable-value="${person.entitlementRemaining}"
+                  >
+                    <th:block th:if="${person.entitlementRemaining != null}">
+                      <span th:replace="fragments/number::number(${person.entitlementRemaining})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.entitlementRemaining == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td
+                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    th:data-sortable-value="${person.vacationDaysLeft}"
+                  >
+                    <th:block th:if="${person.vacationDaysLeft != null}">
+                      <span th:replace="fragments/number::number(${person.vacationDaysLeft})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.vacationDaysLeft == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td
+                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
+                    th:data-sortable-value="${person.vacationDaysLeftRemaining}"
+                  >
+                    <th:block th:if="${person.vacationDaysLeftRemaining != null}">
+                      <span th:replace="fragments/number::number(${person.vacationDaysLeftRemaining})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.vacationDaysLeftRemaining == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td class="hidden-xs">
+                    <div class="print:tw-hidden">
+                      <a class="action-link" th:href="@{/web/person/{personId} (personId=${person.id})}">
+                        <svg th:replace="icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')"></svg>
+                        <th:block th:text="#{action.account.title}"></th:block>
+                        <span
+                          class="tw-sr-only"
+                          th:text="#{action.account.title.screen-reader-appendix(${person.niceName})}"
+                        ></span>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
             <div class="tw-mt-16 tw-flex tw-items-center">
               <div id="persons-pagination">
                 <nav th:aria-label="#{persons.pagination.navigation.aria-label}">
@@ -478,7 +476,7 @@
             </div>
           </div>
         </th:block>
-      </div>
+      </turbo-frame>
     </main>
   </body>
 </html>
