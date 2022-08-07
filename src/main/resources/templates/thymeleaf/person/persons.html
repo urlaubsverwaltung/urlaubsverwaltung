@@ -305,7 +305,7 @@
             <div class="tw-mt-16">
               <nav th:aria-label="#{persons.pagination.navigation.aria-label}">
                 <ul class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-row tw-gap-2">
-                  <li th:if="${not personPage.first}">
+                  <li th:if="${not personPage.first && personPage.totalPages > 7}">
                     <a
                       href="#"
                       th:href="@{/web/person (active=${active},page=${personPage.number})}"
@@ -327,13 +327,13 @@
                       1
                     </a>
                   </li>
-                  <li th:if="${personPage.number > 2}" role="presentation">…</li>
+                  <li th:if="${personPage.totalPages > 7 && personPage.number > 2}" role="presentation">…</li>
                   <th:block
                     th:each="pageNumber : ${personPageNumbers}"
                     th:with="isSelected=${pageNumber == personPage.number + 1}"
                   >
                     <li
-                      th:if="${not pageNumberStat.first && not pageNumberStat.last && (pageNumber == personPage.number || pageNumber == personPage.number + 1 || pageNumber == personPage.number + 2)}"
+                      th:if="${not pageNumberStat.first && not pageNumberStat.last && (personPage.totalPages <= 7 || pageNumber == personPage.number || pageNumber == personPage.number + 1 || pageNumber == personPage.number + 2)}"
                     >
                       <a
                         href="#"
@@ -348,7 +348,12 @@
                       </a>
                     </li>
                   </th:block>
-                  <li th:if="${personPage.number < personPage.totalPages - 3}" role="presentation">…</li>
+                  <li
+                    th:if="${personPage.totalPages > 7 && personPage.number < personPage.totalPages - 3}"
+                    role="presentation"
+                  >
+                    …
+                  </li>
                   <li th:if="${personPage.totalPages > 1}" th:with="isSelected=${personPage.last}">
                     <a
                       href="#"
@@ -362,7 +367,7 @@
                       3
                     </a>
                   </li>
-                  <li th:if="${not personPage.last}">
+                  <li th:if="${personPage.totalPages > 7 && not personPage.last}">
                     <a
                       href="#"
                       th:href="@{/web/person (active=${active},page=${personPage.number + 2})}"
