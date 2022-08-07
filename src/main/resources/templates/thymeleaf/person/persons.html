@@ -302,19 +302,27 @@
                 </tr>
               </tbody>
             </table>
-            <div class="tw-mt-16 tw-flex tw-flex-row tw-gap-2">
-              <a
-                th:each="pageNumber : ${personPageNumbers}"
-                th:with="isSelected=${pageNumber == personPage.number + 1}"
-                href="#"
-                th:href="@{/web/person (active=${active},page=${pageNumber})}"
-                class="tw-px-4 tw-py-1 tw-no-underline dark:tw-text-zinc-50 tw-rounded-md tw-border-2 dark:tw-border-zinc-700 hover:dark:tw-border-zinc-300 tw-transition-colors"
-                th:classappend="${isSelected ? 'dark:tw-border-zinc-300' : ''}"
-                th:text="${pageNumber}"
-                th:attr="aria-current=${isSelected ? 'page' : ''}"
-              >
-                1
-              </a>
+            <div class="tw-mt-16">
+              <nav th:aria-label="#{persons.pagination.navigation.aria-label}">
+                <ul class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-row tw-gap-2">
+                  <li
+                    th:each="pageNumber : ${personPageNumbers}"
+                    th:with="isSelected=${pageNumber == personPage.number + 1}"
+                  >
+                    <a
+                      href="#"
+                      th:href="@{/web/person (active=${active},page=${pageNumber})}"
+                      class="tw-px-4 tw-py-1 tw-no-underline dark:tw-text-zinc-50 tw-rounded-md tw-border-2 dark:tw-border-zinc-700 hover:dark:tw-border-zinc-300 tw-transition-colors"
+                      th:classappend="${isSelected ? 'dark:tw-border-zinc-300' : ''}"
+                      th:text="${pageNumber}"
+                      th:attr="aria-current=${isSelected ? 'page' : ''}"
+                      th:aria-label="${pageNumberStat.last ? #messages.msg('pagination.page.last', pageNumber) : #messages.msg('pagination.page', pageNumber)}"
+                    >
+                      1
+                    </a>
+                  </li>
+                </ul>
+              </nav>
             </div>
           </div>
         </div>
