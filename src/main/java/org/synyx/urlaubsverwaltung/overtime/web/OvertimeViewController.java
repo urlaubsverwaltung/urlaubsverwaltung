@@ -105,7 +105,6 @@ public class OvertimeViewController {
         @RequestParam(value = "year", required = false) Integer requestedYear, Model model)
         throws UnknownPersonException {
 
-        final int year = requestedYear == null ? Year.now(clock).getValue() : requestedYear;
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Person signedInUser = personService.getSignedInUser();
 
@@ -115,17 +114,21 @@ public class OvertimeViewController {
                 signedInUser.getId(), person.getId()));
         }
 
-        model.addAttribute("year", year);
+        final int currentYear = Year.now(clock).getValue();
+        final int selectedYear = requestedYear != null ? requestedYear : currentYear;
+        model.addAttribute("currentYear", Year.now(clock).getValue());
+        model.addAttribute("selectedYear", selectedYear);
+
         model.addAttribute(PERSON_ATTRIBUTE, person);
         model.addAttribute(SIGNED_IN_USER, signedInUser);
 
         final boolean userIsAllowedToWriteOvertime = overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person);
 
         final OvertimeListDto overtimeListDto = mapToDto(
-            getOvertimeAbsences(year, person),
-            overtimeService.getOvertimeRecordsForPersonAndYear(person, year),
-            overtimeService.getTotalOvertimeForPersonAndYear(person, year),
-            overtimeService.getTotalOvertimeForPersonBeforeYear(person, year),
+            getOvertimeAbsences(selectedYear, person),
+            overtimeService.getOvertimeRecordsForPersonAndYear(person, selectedYear),
+            overtimeService.getTotalOvertimeForPersonAndYear(person, selectedYear),
+            overtimeService.getTotalOvertimeForPersonBeforeYear(person, selectedYear),
             overtimeService.getLeftOvertimeForPerson(person),
             signedInUser,
             userIsAllowedToWriteOvertime);
@@ -136,7 +139,7 @@ public class OvertimeViewController {
         model.addAttribute("overtimeLeft", overtimeListDto.getOvertimeLeft());
         model.addAttribute("userIsAllowedToWriteOvertime", userIsAllowedToWriteOvertime);
 
-        return "overtime/overtime_list";
+        return "thymeleaf/overtime/overtime_list";
     }
 
     @GetMapping("/overtime/{id}")
