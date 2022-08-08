@@ -69,17 +69,10 @@ class PersonsViewControllerTest {
     @Mock
     private PersonBasedataService personBasedataService;
 
-    private Person person;
-
     @BeforeEach
     void setUp() {
-
         clock = Clock.systemUTC();
         sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
-
-        person = new Person();
-        person.setId(1);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
     }
 
     @Test
@@ -297,14 +290,16 @@ class PersonsViewControllerTest {
 
     @Test
     void showPersonForUnknownDepartmentIdThrowsUnknownDepartmentException() {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
-        assertThatThrownBy(() ->
 
+        assertThatThrownBy(() ->
             perform(get("/web/person")
                 .param("active", "false")
                 .param("department", "456"))
-
         ).hasCauseInstanceOf(UnknownDepartmentException.class);
     }
 
@@ -340,6 +335,9 @@ class PersonsViewControllerTest {
 
     @Test
     void showPersonUsesDepartmentUsesCorrectView() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -354,6 +352,10 @@ class PersonsViewControllerTest {
 
         clock = Clock.fixed(Instant.parse("2022-08-04T06:00:00Z"), ZoneId.of("UTC"));
         sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -372,6 +374,10 @@ class PersonsViewControllerTest {
 
         clock = Clock.fixed(Instant.parse("2022-08-04T06:00:00Z"), ZoneId.of("UTC"));
         sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
 

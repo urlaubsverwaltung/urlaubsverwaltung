@@ -71,17 +71,10 @@ class PersonDetailsViewControllerTest {
     @Mock
     private PersonBasedataService personBasedataService;
 
-    private Person person;
-
     @BeforeEach
     void setUp() {
-
         clock = Clock.systemUTC();
         sut = new PersonDetailsViewController(personService, accountService, departmentService, workingTimeService, settingsService, personBasedataService, clock);
-
-        person = new Person();
-        person.setId(1);
-        person.setPermissions(singletonList(DEPARTMENT_HEAD));
     }
 
     @Test
@@ -94,6 +87,10 @@ class PersonDetailsViewControllerTest {
 
     @Test
     void showPersonInformationIfSignedInUserIsNotAllowedToAccessPersonDataThrowsAccessDeniedException() {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
+
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(false);
@@ -105,6 +102,9 @@ class PersonDetailsViewControllerTest {
 
     @Test
     void showPersonInformationUsesGivenYear() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
@@ -118,6 +118,9 @@ class PersonDetailsViewControllerTest {
 
     @Test
     void showPersonInformationShowsBasedata() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
@@ -133,6 +136,9 @@ class PersonDetailsViewControllerTest {
 
     @Test
     void showPersonInformationUsesCurrentYearIfNoYearGiven() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
@@ -148,6 +154,9 @@ class PersonDetailsViewControllerTest {
 
     @Test
     void showPersonInformationUsesAccountIfPresent() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
@@ -166,6 +175,9 @@ class PersonDetailsViewControllerTest {
 
     @Test
     void showPersonInformationUsesCorrectView() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
@@ -178,6 +190,9 @@ class PersonDetailsViewControllerTest {
 
     @Test
     void showPersonInformationOfficeCanEditPermissions() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
@@ -193,6 +208,9 @@ class PersonDetailsViewControllerTest {
 
     @Test
     void showPersonInformationOfficeCanEditDepartments() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
@@ -208,6 +226,9 @@ class PersonDetailsViewControllerTest {
 
     @Test
     void showPersonInformationOfficeCanEditAccounts() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
@@ -223,6 +244,9 @@ class PersonDetailsViewControllerTest {
 
     @Test
     void showPersonInformationOfficeCanEditWorkingtimes() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
