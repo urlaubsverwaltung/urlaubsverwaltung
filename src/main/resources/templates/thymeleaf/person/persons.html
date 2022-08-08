@@ -428,7 +428,7 @@
               <form
                 action="#"
                 th:action="@{/web/person}"
-                class="md:tw-ml-auto"
+                class="md:tw-ml-auto tw-flex tw-items-center"
                 data-turbo-frame="frame-persons"
                 data-turbo-action="advance"
               >
@@ -470,7 +470,12 @@
                     von 42 Personen
                   </span>
                 </div>
-                <button data-js-hidden id="size-submit" th:text="#{pagination.page.size.button.text}">
+                <button
+                  id="size-submit"
+                  th:text="#{pagination.page.size.button.text}"
+                  class="tw-ml-2 button-main"
+                  data-js-hidden
+                >
                   Aktualisieren
                 </button>
               </form>
