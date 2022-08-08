@@ -77,7 +77,7 @@
       <th:block th:if="${not #lists.isEmpty(persons)}">
         <p class="text-right visible-print">
           <th:block th:text="#{filter.validity}"></th:block>&nbsp;<span
-            th:replace="/fragments/date::date(${now})"
+            th:replace="fragments/date::date(${now})"
           ></span>
         </p>
         <div id="users">

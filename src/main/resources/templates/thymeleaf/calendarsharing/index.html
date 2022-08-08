@@ -22,7 +22,7 @@
       </p>
 
       <div class="tw-mb-8">
-        <aside th:replace="/fragments/privacy-box::privacy-box(~{::privacy-box-body})">
+        <aside th:replace="fragments/privacy-box::privacy-box(~{::privacy-box-body})">
           <th:block th:fragment="privacy-box-body">
             <p th:text="#{calendar.share.privacy-info.paragraph}" class="tw-space-y-4"></p>
             <p th:text="#{calendar.share.privacy-info.reset}"></p>
