@@ -25,6 +25,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 
 /**
  * Class for validating {@link SickNote} object.
@@ -82,17 +84,24 @@ public class SickNoteValidator implements Validator {
             return;
         }
 
-        if (!applier.hasRole(OFFICE) && !applier.hasRole(BOSS) && !applier.hasRole(DEPARTMENT_HEAD) && !applier.hasRole(SECOND_STAGE_AUTHORITY)) {
+        if (!applier.isPrivileged()) {
             errors.reject(ERROR_ROLES);
         }
 
-        final Person person = sickNote.getPerson();
-        if (applier.hasRole(DEPARTMENT_HEAD) && !departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)) {
-            errors.reject(ERROR_ROLES);
-        }
+        if (!applier.hasRole(OFFICE)) {
+            final boolean cannotEditOrAddSickNotes = !applier.hasRole(SICK_NOTE_ADD) && !applier.hasRole(SICK_NOTE_EDIT);
+            if (applier.hasRole(BOSS) && cannotEditOrAddSickNotes) {
+                errors.reject(ERROR_ROLES);
+            }
 
-        if (applier.hasRole(SECOND_STAGE_AUTHORITY) && !departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person)) {
-            errors.reject(ERROR_ROLES);
+            final Person person = sickNote.getPerson();
+            if (applier.hasRole(DEPARTMENT_HEAD) && (cannotEditOrAddSickNotes || !departmentService.isDepartmentHeadAllowedToManagePerson(applier, person))) {
+                errors.reject(ERROR_ROLES);
+            }
+
+            if (applier.hasRole(SECOND_STAGE_AUTHORITY) && (cannotEditOrAddSickNotes || !departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person))) {
+                errors.reject(ERROR_ROLES);
+            }
         }
     }
 
