@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -10,6 +12,7 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
@@ -46,7 +49,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 class SickNoteValidatorTest {
 
     private SickNoteValidator sut;
-    private final Clock clock = Clock.systemUTC();
 
     @Mock
     private OverlapService overlapService;
@@ -61,7 +63,7 @@ class SickNoteValidatorTest {
     }
 
     @Test
-    void ensureNoApplierReturnsNoErrorOnEdit() {
+    void ensureNoApplierReturnsErrorOnEdit() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final SickNote sickNote = createSickNote(person,
@@ -93,44 +95,6 @@ class SickNoteValidatorTest {
     }
 
     @Test
-    void ensureDepartmentHeadApplierForWrongDepartmentReturnsError() {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final SickNote sickNote = createSickNote(person,
-            LocalDate.of(2013, NOVEMBER, 19),
-            LocalDate.of(2013, NOVEMBER, 20),
-            FULL);
-
-        final Person applier = new Person("dh", "department", "head", "department@example.org");
-        applier.setPermissions(List.of(USER, DEPARTMENT_HEAD));
-        sickNote.setApplier(applier);
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)).thenReturn(false);
-
-        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
-        sut.validate(sickNote, errors);
-        assertThat(errors.getErrorCount()).isOne();
-    }
-
-    @Test
-    void ensureSecondStageAuthorityApplierForWrongDepartmentReturnsError() {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final SickNote sickNote = createSickNote(person,
-            LocalDate.of(2013, NOVEMBER, 19),
-            LocalDate.of(2013, NOVEMBER, 20),
-            FULL);
-
-        final Person applier = new Person("ssa", "ssa", "ssa", "ssa@example.org");
-        applier.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
-        sickNote.setApplier(applier);
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person)).thenReturn(false);
-
-        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
-        sut.validate(sickNote, errors);
-        assertThat(errors.getErrorCount()).isOne();
-    }
-
-    @Test
     void ensureValidOfficeApplierHasNoErrors() {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
@@ -152,12 +116,31 @@ class SickNoteValidatorTest {
         assertThat(errors.getErrorCount()).isZero();
     }
 
-    @Test
-    void ensureValidBossApplierHasNoErrors() {
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"SICK_NOTE_ADD", "SICK_NOTE_EDIT"})
+    void ensureBossApplierWithValidPermissionsHasNoErrors(final Role role) {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
             any(LocalDate.class))).thenReturn(Optional.of(createWorkingTime()));
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Person applier = new Person("boss", "boss", "boss", "boss@example.org");
+        applier.setPermissions(List.of(USER, BOSS, role));
+        sickNote.setApplier(applier);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isZero();
+    }
+
+    @Test
+    void ensureBossApplierWithInvalidPermissionsHasErrors() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final SickNote sickNote = createSickNote(person,
@@ -171,11 +154,12 @@ class SickNoteValidatorTest {
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
-        assertThat(errors.getErrorCount()).isZero();
+        assertThat(errors.getErrorCount()).isOne();
     }
 
-    @Test
-    void ensureValidDepartmentHeadApplierHasNoErrors() {
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"SICK_NOTE_ADD", "SICK_NOTE_EDIT"})
+    void ensureDepartmentHeadWithValidPermissionsHasNoErrors(final Role role) {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
@@ -188,7 +172,7 @@ class SickNoteValidatorTest {
             FULL);
 
         final Person applier = new Person("dh", "department", "head", "department@example.org");
-        applier.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        applier.setPermissions(List.of(USER, DEPARTMENT_HEAD, role));
         sickNote.setApplier(applier);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)).thenReturn(true);
 
@@ -197,8 +181,47 @@ class SickNoteValidatorTest {
         assertThat(errors.getErrorCount()).isZero();
     }
 
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"SICK_NOTE_ADD", "SICK_NOTE_EDIT"})
+    void ensureDepartmentHeadWithValidPermissionsButForWrongMemberHasError(final Role role) {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Person applier = new Person("dh", "department", "head", "department@example.org");
+        applier.setPermissions(List.of(USER, DEPARTMENT_HEAD, role));
+        sickNote.setApplier(applier);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)).thenReturn(false);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isOne();
+    }
+
     @Test
-    void ensureValidSecondStageAuthorityApplierHasNoErrors() {
+    void ensureDepartmentHeadWithInvalidPermissionsHasError() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Person applier = new Person("dh", "department", "head", "department@example.org");
+        applier.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        sickNote.setApplier(applier);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isOne();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"SICK_NOTE_ADD", "SICK_NOTE_EDIT"})
+    void ensureSecondStageAuthorityWithValidPermissionsHasNoErrors(final Role role) {
 
         when(overlapService.checkOverlap(any(SickNote.class))).thenReturn(NO_OVERLAPPING);
         when(workingTimeService.getWorkingTime(any(Person.class),
@@ -211,13 +234,51 @@ class SickNoteValidatorTest {
             FULL);
 
         final Person applier = new Person("ssa", "second stage authority", "second stage authority", "ssa@example.org");
-        applier.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        applier.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, role));
         sickNote.setApplier(applier);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person)).thenReturn(true);
 
         final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
         sut.validate(sickNote, errors);
         assertThat(errors.getErrorCount()).isZero();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"SICK_NOTE_ADD", "SICK_NOTE_EDIT"})
+    void ensureSecondStageAuthorityWithValidPermissionsButForWrongMemberHasError(final Role role) {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Person applier = new Person("ssa", "ssa", "ssa", "ssa@example.org");
+        applier.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, role));
+        sickNote.setApplier(applier);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person)).thenReturn(false);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isOne();
+    }
+
+    @Test
+    void ensureSecondStageAuthorityWithInvalidPermissionsHasError() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final SickNote sickNote = createSickNote(person,
+            LocalDate.of(2013, NOVEMBER, 19),
+            LocalDate.of(2013, NOVEMBER, 20),
+            FULL);
+
+        final Person applier = new Person("ssa", "ssa", "ssa", "ssa@example.org");
+        applier.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        sickNote.setApplier(applier);
+
+        final Errors errors = new BeanPropertyBindingResult(sickNote, "sickNote");
+        sut.validate(sickNote, errors);
+        assertThat(errors.getErrorCount()).isOne();
     }
 
     @Test
