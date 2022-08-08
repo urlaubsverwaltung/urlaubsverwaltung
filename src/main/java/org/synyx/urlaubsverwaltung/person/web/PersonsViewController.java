@@ -108,7 +108,7 @@ public class PersonsViewController {
         }
         final Pageable personPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), personSort);
 
-        final PageableSearchQuery<Person> personPageableSearchQuery = new PageableSearchQuery<>(Person.class, personPageable, query);
+        final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(personPageable, query);
         final Page<Person> personPage;
 
         if (requestedDepartmentId.isPresent()) {
@@ -143,7 +143,7 @@ public class PersonsViewController {
         }
     }
 
-    private Page<Person> getRelevantActivePersons(Person signedInUser, PageableSearchQuery<Person> personPageableSearchQuery) {
+    private Page<Person> getRelevantActivePersons(Person signedInUser, PageableSearchQuery personPageableSearchQuery) {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             return personService.getActivePersons(personPageableSearchQuery);
         } else {
@@ -151,7 +151,7 @@ public class PersonsViewController {
         }
     }
 
-    private Page<Person> getRelevantInactivePersons(Person signedInUser, PageableSearchQuery<Person> personPageableSearchQuery) {
+    private Page<Person> getRelevantInactivePersons(Person signedInUser, PageableSearchQuery personPageableSearchQuery) {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             return personService.getInactivePersons(personPageableSearchQuery);
         }

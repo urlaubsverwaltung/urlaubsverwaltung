@@ -240,7 +240,7 @@ class PersonServiceImplTest {
 
         final Page<Person> expected = Page.empty();
         final PageRequest pageRequest = PageRequest.of(1, 100);
-        final PageableSearchQuery<Person> personPageableSearchQuery = new PageableSearchQuery<>(Person.class, pageRequest, "name-query");
+        final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(pageRequest, "name-query");
 
         when(personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "name-query", pageRequest)).thenReturn(expected);
 
@@ -267,7 +267,7 @@ class PersonServiceImplTest {
 
         final Page<Person> expected = Page.empty();
         final PageRequest pageRequest = PageRequest.of(1, 100, Sort.by(Sort.Direction.ASC, "firstName"));
-        final PageableSearchQuery<Person> personPageableSearchQuery = new PageableSearchQuery<>(Person.class, pageRequest, "name-query");
+        final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(pageRequest, "name-query");
 
         // currently a hard coded pageRequest is used in implementation
         final PageRequest pageRequestInternal = PageRequest.of(1, 100, Sort.Direction.ASC, "firstName", "lastName");

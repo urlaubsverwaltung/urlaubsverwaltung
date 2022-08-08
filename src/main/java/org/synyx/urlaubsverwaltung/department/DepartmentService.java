@@ -147,7 +147,7 @@ public interface DepartmentService {
      * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
      * @return all managed and active members for the person
      */
-    Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery<Person> personPageableSearchQuery);
+    Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery);
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
@@ -158,7 +158,7 @@ public interface DepartmentService {
      * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
      * @return all managed and inactive members for the person
      */
-    Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery<Person> personPageableSearchQuery);
+    Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery);
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
@@ -170,9 +170,9 @@ public interface DepartmentService {
      * @param pageableSearchQuery searchQuery to restrict the result set
      * @return all managed and active members for the person
      */
-    Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery<Person> pageableSearchQuery);
+    Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery);
 
-    Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery<Person> pageableSearchQuery);
+    Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery);
 
     /**
      * Get all distinct managed members of the department head.

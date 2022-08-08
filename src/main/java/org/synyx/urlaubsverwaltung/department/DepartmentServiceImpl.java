@@ -57,17 +57,17 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery<Person> personPageableSearchQuery) {
+    public Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery) {
         return getManagedMembersOfPerson(person, personPageableSearchQuery, not(Person::isInactive));
     }
 
     @Override
-    public Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery<Person> personPageableSearchQuery) {
+    public Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery) {
         return getManagedMembersOfPerson(person, personPageableSearchQuery, Person::isInactive);
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery<Person> pageableSearchQuery) {
+    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery) {
         final List<Person> members = departmentRepository.findById(departmentId)
             .map(DepartmentEntity::getMembers)
             .map(departmentMembers -> departmentMembers.stream()
@@ -82,7 +82,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery<Person> pageableSearchQuery) {
+    public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery) {
         final List<Person> members = departmentRepository.findById(departmentId)
             .map(DepartmentEntity::getMembers)
             .map(departmentMembers -> departmentMembers.stream()
@@ -96,7 +96,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return new PageImpl<>(members, pageableSearchQuery.getPageable(), members.size());
     }
 
-    private Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery<Person> personPageableSearchQuery, Predicate<Person> predicate) {
+    private Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery, Predicate<Person> predicate) {
         final List<DepartmentEntity> departments;
 
         if (person.hasRole(DEPARTMENT_HEAD) && person.hasRole(SECOND_STAGE_AUTHORITY)) {

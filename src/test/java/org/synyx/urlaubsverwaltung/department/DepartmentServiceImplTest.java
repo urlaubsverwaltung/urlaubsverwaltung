@@ -1229,8 +1229,8 @@ class DepartmentServiceImplTest {
         assertThat(numberOfDepartments).isEqualTo(10);
     }
 
-    private static PageableSearchQuery<Person> defaultPersonSearchQuery() {
-        return new PageableSearchQuery<>(Person.class, defaultPageRequest(), "");
+    private static PageableSearchQuery defaultPersonSearchQuery() {
+        return new PageableSearchQuery(defaultPageRequest(), "");
     }
 
     private static PageRequest defaultPageRequest() {

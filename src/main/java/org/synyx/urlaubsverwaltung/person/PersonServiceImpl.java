@@ -137,7 +137,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Page<Person> getActivePersons(PageableSearchQuery<Person> personPageableSearchQuery) {
+    public Page<Person> getActivePersons(PageableSearchQuery personPageableSearchQuery) {
         final Pageable pageable = personPageableSearchQuery.getPageable();
         final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
         final String query = personPageableSearchQuery.getQuery();
@@ -161,7 +161,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Page<Person> getInactivePersons(PageableSearchQuery<Person> personPageableSearchQuery) {
+    public Page<Person> getInactivePersons(PageableSearchQuery personPageableSearchQuery) {
         final Pageable pageable = personPageableSearchQuery.getPageable();
         final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
         final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);

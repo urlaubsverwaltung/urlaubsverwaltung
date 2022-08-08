@@ -101,7 +101,7 @@ public interface PersonService {
      * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
      * @return paginated active persons matching the search query
      */
-    Page<Person> getActivePersons(PageableSearchQuery<Person> personPageableSearchQuery);
+    Page<Person> getActivePersons(PageableSearchQuery personPageableSearchQuery);
 
     /**
      * finds all {@link Person}s in the database that have the given {@link Role}.
@@ -132,7 +132,7 @@ public interface PersonService {
      * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
      * @return paginated inactive persons matching the search query
      */
-    Page<Person> getInactivePersons(PageableSearchQuery<Person> personPageableSearchQuery);
+    Page<Person> getInactivePersons(PageableSearchQuery personPageableSearchQuery);
 
     /**
      * This method allows to get the signed in user.

@@ -566,8 +566,8 @@ class PersonsViewControllerTest {
             .perform(builder);
     }
 
-    private static PageableSearchQuery<Person> defaultPersonSearchQuery() {
-        return new PageableSearchQuery<>(Person.class, defaultPageRequest(), "");
+    private static PageableSearchQuery defaultPersonSearchQuery() {
+        return new PageableSearchQuery(defaultPageRequest(), "");
     }
 
     /**
