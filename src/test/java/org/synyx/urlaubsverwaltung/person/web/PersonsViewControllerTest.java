@@ -22,8 +22,6 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -55,9 +53,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class PersonsViewControllerTest {
-    private static final int UNKNOWN_DEPARTMENT_ID = 456;
-
-    private static final String DEPARTMENT_ATTRIBUTE = "department";
 
     private static Clock clock;
 
@@ -71,10 +66,6 @@ class PersonsViewControllerTest {
     private VacationDaysService vacationDaysService;
     @Mock
     private DepartmentService departmentService;
-    @Mock
-    private WorkingTimeService workingTimeService;
-    @Mock
-    private SettingsService settingsService;
     @Mock
     private PersonBasedataService personBasedataService;
 
@@ -312,7 +303,7 @@ class PersonsViewControllerTest {
 
             perform(get("/web/person")
                 .param("active", "false")
-                .param(DEPARTMENT_ATTRIBUTE, Integer.toString(UNKNOWN_DEPARTMENT_ID)))
+                .param("department", "456"))
 
         ).hasCauseInstanceOf(UnknownDepartmentException.class);
     }

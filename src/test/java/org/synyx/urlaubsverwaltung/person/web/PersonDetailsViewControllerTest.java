@@ -54,9 +54,6 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN
 @ExtendWith(MockitoExtension.class)
 class PersonDetailsViewControllerTest {
 
-    private static final int UNKNOWN_PERSON_ID = 365;
-    private static final int PERSON_ID = 1;
-
     private static Clock clock;
 
     private PersonDetailsViewController sut;
@@ -91,18 +88,18 @@ class PersonDetailsViewControllerTest {
     void showPersonInformationForUnknownIdThrowsUnknownPersonException() {
 
         assertThatThrownBy(() ->
-            perform(get("/web/person/" + UNKNOWN_PERSON_ID))
+            perform(get("/web/person/1"))
         ).hasCauseInstanceOf(UnknownPersonException.class);
     }
 
     @Test
     void showPersonInformationIfSignedInUserIsNotAllowedToAccessPersonDataThrowsAccessDeniedException() {
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(false);
 
         assertThatThrownBy(() ->
-            perform(get("/web/person/" + PERSON_ID))
+            perform(get("/web/person/1"))
         ).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
@@ -110,11 +107,11 @@ class PersonDetailsViewControllerTest {
     void showPersonInformationUsesGivenYear() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
-        perform(get("/web/person/" + PERSON_ID).param("year", "1985"))
+        perform(get("/web/person/1").param("year", "1985"))
             .andExpect(model().attribute("currentYear", Year.now().getValue()))
             .andExpect(model().attribute("selectedYear", 1985));
     }
@@ -123,13 +120,13 @@ class PersonDetailsViewControllerTest {
     void showPersonInformationShowsBasedata() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
-        final PersonBasedata personBasedata = new PersonBasedata(PERSON_ID, "42", "additional information");
-        when(personBasedataService.getBasedataByPersonId(PERSON_ID)).thenReturn(Optional.of(personBasedata));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        final PersonBasedata personBasedata = new PersonBasedata(1, "42", "additional information");
+        when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(personBasedata));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
-        perform(get("/web/person/" + PERSON_ID))
+        perform(get("/web/person/1"))
             .andExpect(model().attribute("personBasedata", hasProperty("personnelNumber", is("42"))))
             .andExpect(model().attribute("personBasedata", hasProperty("additionalInformation", is("additional information"))));
     }
@@ -138,13 +135,13 @@ class PersonDetailsViewControllerTest {
     void showPersonInformationUsesCurrentYearIfNoYearGiven() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
         final int currentYear = Year.now(clock).getValue();
 
-        perform(get("/web/person/" + PERSON_ID))
+        perform(get("/web/person/1"))
             .andExpect(model().attribute("currentYear", currentYear))
             .andExpect(model().attribute("selectedYear", currentYear));
     }
@@ -153,17 +150,17 @@ class PersonDetailsViewControllerTest {
     void showPersonInformationUsesAccountIfPresent() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
-        perform(get("/web/person/" + PERSON_ID))
+        perform(get("/web/person/1"))
             .andExpect(model().attribute("account", nullValue()));
 
         final Account account = accountForPerson(person);
         when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(account));
 
-        perform(get("/web/person/" + PERSON_ID))
+        perform(get("/web/person/1"))
             .andExpect(model().attribute("account", account));
     }
 
@@ -171,11 +168,11 @@ class PersonDetailsViewControllerTest {
     void showPersonInformationUsesCorrectView() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
-        perform(get("/web/person/" + PERSON_ID))
+        perform(get("/web/person/1"))
             .andExpect(view().name("thymeleaf/person/person_detail"));
     }
 
@@ -185,11 +182,11 @@ class PersonDetailsViewControllerTest {
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(office);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
-        perform(get("/web/person/" + PERSON_ID))
+        perform(get("/web/person/1"))
             .andExpect(view().name("thymeleaf/person/person_detail"))
             .andExpect(model().attribute("canEditPermissions", true));
     }
@@ -200,11 +197,11 @@ class PersonDetailsViewControllerTest {
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(office);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
-        perform(get("/web/person/" + PERSON_ID))
+        perform(get("/web/person/1"))
             .andExpect(view().name("thymeleaf/person/person_detail"))
             .andExpect(model().attribute("canEditDepartments", true));
     }
@@ -215,11 +212,11 @@ class PersonDetailsViewControllerTest {
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(office);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
-        perform(get("/web/person/" + PERSON_ID))
+        perform(get("/web/person/1"))
             .andExpect(view().name("thymeleaf/person/person_detail"))
             .andExpect(model().attribute("canEditAccounts", true));
     }
@@ -230,11 +227,11 @@ class PersonDetailsViewControllerTest {
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(office);
-        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
-        perform(get("/web/person/" + PERSON_ID))
+        perform(get("/web/person/1"))
             .andExpect(view().name("thymeleaf/person/person_detail"))
             .andExpect(model().attribute("canEditWorkingtime", true));
     }
