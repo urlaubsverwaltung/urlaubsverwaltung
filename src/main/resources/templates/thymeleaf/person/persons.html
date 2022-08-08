@@ -328,8 +328,7 @@
                   <th scope="col"><!-- placeholder to ensure correct number of th --></th>
                 </tr>
               </thead>
-              <!-- NOTE: class 'list' is needed for list.js -->
-              <tbody class="list">
+              <tbody>
                 <tr
                   th:each="person,loopStatus : ${personPage.content}"
                   th:onclick="|navigate('/web/person/${person.id}/overview');|"
@@ -532,7 +531,9 @@
                   <input th:if="${not #strings.isEmpty(query)}" type="hidden" name="query" th:value="${query}" />
                 </div>
                 <div class="tw-flex tw-items-center tw-gap-2">
-                  <label for="pagination-size-select" class="tw-m-0">Zeige</label>
+                  <label for="pagination-size-select" class="tw-m-0" th:text="#{pagination.page.size.label.text}">
+                    Zeige
+                  </label>
                   <span>
                     <select
                       name="size"
@@ -554,11 +555,17 @@
                       </th:block>
                     </select>
                   </span>
-                  <span class="tw-whitespace-nowrap" id="pagination-size-hint">
-                    von <th:block th:text="${personPage.totalElements}"></th:block> Personen
+                  <span
+                    class="tw-whitespace-nowrap"
+                    id="pagination-size-hint"
+                    th:text="#{pagination.page.size.total.text(${personPage.totalElements}, ${#messages.msg('persons.pagination.total.text')})}"
+                  >
+                    von 42 Personen
                   </span>
                 </div>
-                <button data-js-hidden id="size-submit">TODO</button>
+                <button data-js-hidden id="size-submit" th:text="#{pagination.page.size.button.text}">
+                  Aktualisieren
+                </button>
               </form>
             </div>
           </div>
