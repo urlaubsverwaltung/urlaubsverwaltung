@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import org.springframework.data.domain.Page;
-import org.synyx.urlaubsverwaltung.SearchQuery;
+import org.synyx.urlaubsverwaltung.search.SearchQuery;
 
 import java.util.List;
 import java.util.Optional;

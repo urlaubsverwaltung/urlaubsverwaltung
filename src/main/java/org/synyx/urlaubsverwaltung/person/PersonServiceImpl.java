@@ -10,7 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.SearchQuery;
+import org.synyx.urlaubsverwaltung.search.SearchQuery;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 

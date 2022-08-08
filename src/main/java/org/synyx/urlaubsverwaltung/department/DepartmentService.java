@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.department;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.synyx.urlaubsverwaltung.SearchQuery;
+import org.synyx.urlaubsverwaltung.search.SearchQuery;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 

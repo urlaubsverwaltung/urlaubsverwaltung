@@ -12,7 +12,7 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.synyx.urlaubsverwaltung.SearchQuery;
+import org.synyx.urlaubsverwaltung.search.SearchQuery;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;

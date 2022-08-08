@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung;
+package org.synyx.urlaubsverwaltung.search;
 
 import org.springframework.data.domain.Pageable;
 
