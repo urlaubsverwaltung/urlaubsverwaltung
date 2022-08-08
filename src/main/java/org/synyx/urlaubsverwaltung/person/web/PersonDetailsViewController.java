@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
-import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
@@ -31,6 +29,11 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
+import org.synyx.urlaubsverwaltung.search.SortComparator;
+import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
+import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
+import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
@@ -305,8 +308,8 @@ public class PersonDetailsViewController {
         final PageImpl<PersonDto> personDtoPage = new PageImpl<>(personDtos, personPage.getPageable(), personPage.getTotalElements());
         model.addAttribute("personPage", personDtoPage);
 
-        final PersonPageSortDto personPageSortDto = personPageSortDto(originalPersonSort, originalAccountSort);
-        model.addAttribute("personPageSort", personPageSortDto);
+        final HtmlSelectDto htmlSelectDto = htmlSelectDto(originalPersonSort, originalAccountSort);
+        model.addAttribute("sortSelect", htmlSelectDto);
 
         final List<Integer> pageNumbers = IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().collect(toList());
         model.addAttribute("personPageNumbers", pageNumbers);
@@ -317,31 +320,35 @@ public class PersonDetailsViewController {
         model.addAttribute("sortQuery", originalPersonSort.stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(toList()).stream().reduce((s, s2) -> s + "&" + s2).orElse(""));
     }
 
-    private static PersonPageSortDto personPageSortDto(Sort originalPersonSort, Sort originalAccountSort) {
-        final Sort.Order orderFirstName = originalPersonSort.getOrderFor("firstName");
-        final Sort.Order orderLastName = originalPersonSort.getOrderFor("lastName");
-        final Sort.Order orderEntitlementYear = originalAccountSort.getOrderFor("entitlementYear");
-        final Sort.Order orderEntitlementActual = originalAccountSort.getOrderFor("entitlementActual");
-        final Sort.Order orderVacationDaysLeft = originalAccountSort.getOrderFor("vacationDaysLeft");
-        final Sort.Order orderEntitlementRemaining = originalAccountSort.getOrderFor("entitlementRemaining");
-        final Sort.Order orderVacationDaysLeftRemaining = originalAccountSort.getOrderFor("vacationDaysLeftRemaining");
+    private static HtmlSelectDto htmlSelectDto(Sort originalPersonSort, Sort originalAccountSort) {
 
-        if (orderFirstName != null) {
-            return PersonPageSortDto.firstName(orderFirstName.isAscending());
-        } else if (orderLastName != null) {
-            return PersonPageSortDto.lastName(orderLastName.isAscending());
-        } else if (orderEntitlementYear != null) {
-            return PersonPageSortDto.entitlementYear(orderEntitlementYear.isAscending());
-        } else if (orderEntitlementActual != null) {
-            return PersonPageSortDto.entitlementActual(orderEntitlementActual.isAscending());
-        } else if (orderVacationDaysLeft != null) {
-            return PersonPageSortDto.vacationDaysLeft(orderVacationDaysLeft.isAscending());
-        } else if (orderEntitlementRemaining != null) {
-            return PersonPageSortDto.entitlementRemaining(orderEntitlementRemaining.isAscending());
-        } else if (orderVacationDaysLeftRemaining != null) {
-            return PersonPageSortDto.vacationDaysLeftRemaining(orderVacationDaysLeftRemaining.isAscending());
-        } else {
-            return PersonPageSortDto.firstName(true);
+        final List<HtmlOptionDto> personOptions = htmlOptionDtos("persons", List.of("firstName", "lastName"), originalPersonSort);
+        final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("persons.sort.optgroup.person.label", personOptions);
+
+        final List<HtmlOptionDto> urlaubOptions = htmlOptionDtos("account", List.of("entitlementYear", "entitlementActual", "vacationDaysLeft"), originalAccountSort);
+        final HtmlOptgroupDto urlaubOptgroup = new HtmlOptgroupDto("persons.sort.optgroup.urlaub.label", urlaubOptions);
+
+        final List<HtmlOptionDto> resturlaubOptions = htmlOptionDtos("account", List.of("entitlementRemaining", "vacationDaysLeftRemaining"), originalAccountSort);
+        final HtmlOptgroupDto resturlaubOptgroup = new HtmlOptgroupDto("persons.sort.optgroup.resturlaub.label", resturlaubOptions);
+
+        return new HtmlSelectDto(List.of(personOptgroup, urlaubOptgroup, resturlaubOptgroup));
+    }
+
+    private static List<HtmlOptionDto> htmlOptionDtos(String propertyPrefix, List<String> properties, Sort sort) {
+        final List<HtmlOptionDto> options = new ArrayList<>();
+
+        for (String property : properties) {
+            final Sort.Order order = sort.getOrderFor(property);
+            options.addAll(htmlOptionDto(propertyPrefix, property, order));
         }
+
+        return options;
+    }
+
+    private static List<HtmlOptionDto> htmlOptionDto(String propertyPrefix, String property, Sort.Order order) {
+        return List.of(
+            new HtmlOptionDto(String.format("persons.sort.%s.asc", property), propertyPrefix + "." + property + ",asc", order != null && order.isAscending()),
+            new HtmlOptionDto(String.format("persons.sort.%s.desc", property), propertyPrefix + "." + property + ",desc", order != null && order.isDescending())
+        );
     }
 }
