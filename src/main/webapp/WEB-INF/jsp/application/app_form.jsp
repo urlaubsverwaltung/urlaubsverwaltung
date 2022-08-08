@@ -143,7 +143,7 @@
                                                                onchange="window.location.href=this.options[this.selectedIndex].value">
                                                         <c:forEach items="${persons}" var="p">
                                                             <option
-                                                                value="${URL_PREFIX}/application/new?person=${p.id}" ${person.id == p.id ? 'selected="selected"' : ''}>
+                                                                value="${URL_PREFIX}/application/new?personId=${p.id}" ${person.id == p.id ? 'selected="selected"' : ''}>
                                                                 <c:out value="${p.niceName}"/>
                                                             </option>
                                                         </c:forEach>
