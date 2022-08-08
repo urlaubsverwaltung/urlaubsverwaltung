@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title></title>
+</head>
+<body>
+<th:block th:fragment="section">
+
+  <div th:replace="fragments/section-heading::section-heading(~{::reminder-holiday-replacement-heading-body}, ~{})">
+    <th:block th:fragment="reminder-holiday-replacement-heading-body">
+      <h2 th:text="#{settings.vacation.remindForUpcomingHolidayReplacement.title}"></h2>
+    </th:block>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 col-md-push-8">
+        <span class="help-block tw-text-sm">
+          <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+          <th:block th:text="#{settings.vacation.remindForUpcomingHolidayReplacement.description}"/>
+        </span>
+    </div>
+    <div class="col-md-8 col-md-pull-4">
+      <div class="form-group is-required">
+        <label class="control-label col-md-4"
+               for="applicationSettings.remindForUpcomingHolidayReplacement.activation.true">
+          <th:block th:text="|#{settings.vacation.remindForUpcomingHolidayReplacement.activation}:|"/>
+        </label>
+        <div class="col-md-8 radio">
+          <label class="halves">
+            <input type="radio"
+                   id="applicationSettings.remindForUpcomingHolidayReplacement.activation.true"
+                   th:field="*{applicationSettings.remindForUpcomingHolidayReplacement}"
+                   value="true"/>
+            <th:block th:text="#{settings.vacation.remindForUpcomingHolidayReplacement.activation.true}"/>
+          </label>
+          <label class="halves">
+            <input type="radio"
+                   id="applicationSettings.remindForUpcomingHolidayReplacement.activation.false"
+                   th:field="*{applicationSettings.remindForUpcomingHolidayReplacement}"
+                   value="false"/>
+            <th:block th:text="#{settings.vacation.remindForUpcomingHolidayReplacement.activation.false}"/>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group is-required">
+        <label class="control-label col-md-4" for="applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement">
+          <th:block th:text="|#{settings.vacation.daysBeforeRemindForUpcomingHolidayReplacement}:|"/>
+        </label>
+        <div class="col-md-8">
+          <input id="applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement"
+                 th:field="*{applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement}"
+                 class="form-control" th:errorclass="error"
+                 type="number" step="1"/>
+          <div class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+               th:if="${#fields.hasErrors('applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement')}">
+            <th:block th:errors="*{applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement}">
+              applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement Error
+            </th:block>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</th:block>
+</body>
+</html>

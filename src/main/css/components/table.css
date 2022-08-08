@@ -258,7 +258,7 @@ table.absence-type-settings-table thead {
       Label the data
       */
       td::before {
-        content: attr(data-th-text);
+        content: attr(data-table-head-text);
       }
     }
   }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title></title>
+</head>
+<body>
+<th:block th:fragment="section">
+
+  <div th:replace="fragments/section-heading::section-heading(~{::reminder-waiting-application-heading-body}, ~{})">
+    <th:block th:fragment="reminder-waiting-application-heading-body">
+      <h2 th:text="#{settings.vacation.remindForWaitingApplications.title}"></h2>
+    </th:block>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4 col-md-push-8">
+        <span class="help-block tw-text-sm">
+          <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+          <th:block th:text="#{settings.vacation.daysBeforeRemindForWaitingApplications.description}"/>
+        </span>
+    </div>
+    <div class="col-md-8 col-md-pull-4">
+
+      <div class="form-group is-required">
+        <label th:text="|#{settings.vacation.remindForWaitingApplications}:|" class="control-label col-md-4"
+               for="applicationSettings.remindForWaitingApplications.true">
+        </label>
+        <div class="col-md-8 radio">
+          <label class="halves">
+            <input type="radio" id="applicationSettings.remindForWaitingApplications.true"
+                   th:field="*{applicationSettings.remindForWaitingApplications}"
+                   value="true"/>
+            <th:block th:text="#{settings.vacation.remindForWaitingApplications.true}"/>
+          </label>
+          <label class="halves">
+            <input type="radio" id="applicationSettings.remindForWaitingApplications.false"
+                   th:field="*{applicationSettings.remindForWaitingApplications}"
+                   value="false"/>
+            <th:block th:text="#{settings.vacation.remindForWaitingApplications.false}"/>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group is-required">
+        <label th:text="|#{settings.vacation.daysBeforeRemindForWaitingApplications}:|" class="control-label col-md-4"
+               for="applicationSettings.daysBeforeRemindForWaitingApplications">
+        </label>
+        <div class="col-md-8">
+          <input id="applicationSettings.daysBeforeRemindForWaitingApplications"
+                 th:field="*{applicationSettings.daysBeforeRemindForWaitingApplications}"
+                 class="form-control" th:errorclass="error"
+                 type="number" step="1"/>
+          <div class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+               th:if="${#fields.hasErrors('applicationSettings.daysBeforeRemindForWaitingApplications')}">
+            <th:block th:errors="*{applicationSettings.daysBeforeRemindForWaitingApplications}">
+              applicationSettings.daysBeforeRemindForWaitingApplications Error
+            </th:block>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</th:block>
+</body>
+</html>

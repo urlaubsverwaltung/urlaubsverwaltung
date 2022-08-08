@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="section">
+      <div th:replace="fragments/section-heading::section-heading(~{::integrations-heading-body}, ~{})">
+        <th:block th:fragment="integrations-heading-body">
+          <h2 th:text="#{settings.calendar.title}"></h2>
+        </th:block>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 col-md-push-8">
+          <span class="help-block tw-text-sm">
+            <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+            <th:block th:text="#{settings.calendar.description}" />
+          </span>
+        </div>
+        <div class="col-md-8 col-md-pull-4">
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.calendar.provider}:|"
+              class="control-label col-md-4"
+              for="calendarSettingsProvider"
+            >
+            </label>
+            <div class="col-md-8">
+              <select
+                th:replace="fragments/select::one(id='calendarSettingsProvider', name='calendarSettings.provider', options=~{::settings-calendar-providers})"
+              >
+                <th:block th:fragment="settings-calendar-providers">
+                  <option
+                    th:each="provider : ${providers}"
+                    th:text="|#{settings.calendar.provider.__${provider}__}|"
+                    th:value="${provider}"
+                    th:selected="${settings.calendarSettings.provider == provider}"
+                  ></option>
+                </th:block>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </th:block>
+  </body>
+</html>

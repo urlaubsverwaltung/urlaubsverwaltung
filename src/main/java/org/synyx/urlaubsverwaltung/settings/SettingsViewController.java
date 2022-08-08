@@ -85,7 +85,7 @@ public class SettingsViewController {
             model.addAttribute("oautherrors", googleOAuthError);
         }
 
-        return "settings/settings_form";
+        return "thymeleaf/settings/settings_form";
     }
 
     @PostMapping
@@ -106,7 +106,7 @@ public class SettingsViewController {
 
             model.addAttribute("errors", errors);
 
-            return "settings/settings_form";
+            return "thymeleaf/settings/settings_form";
         }
 
         settingsService.save(processGoogleRefreshToken(settings));

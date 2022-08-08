@@ -194,7 +194,7 @@ class SettingsViewControllerTest {
     void ensureSettingsDetailsUsesCorrectView() throws Exception {
         when(settingsService.getSettings()).thenReturn(someSettings());
         perform(get("/web/settings"))
-            .andExpect(view().name("settings/settings_form"));
+            .andExpect(view().name("thymeleaf/settings/settings_form"));
     }
 
     @Test
@@ -219,7 +219,7 @@ class SettingsViewControllerTest {
                 .param("calendarSettings.googleCalendarSettings.calendarId", "")
                 .param("calendarSettings.googleCalendarSettings.authorizedRedirectUrl", "http://localhost:8080/web/google-api-handshake")
         )
-            .andExpect(view().name("settings/settings_form"));
+            .andExpect(view().name("thymeleaf/settings/settings_form"));
     }
 
     @Test
