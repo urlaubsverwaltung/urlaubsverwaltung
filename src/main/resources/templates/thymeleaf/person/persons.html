@@ -443,8 +443,8 @@
                       <a
                         href="#"
                         th:href="@{/web/person (active=${active},size=${personPage.size},page=1)}"
-                        class="tw-block tw-px-4 tw-py-1 tw-no-underline dark:tw-text-zinc-50 tw-rounded-md tw-border-2 dark:tw-border-zinc-700 hover:dark:tw-border-zinc-300 tw-transition-colors"
-                        th:classappend="${isSelected ? 'dark:tw-border-zinc-300' : ''}"
+                        class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+                        th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
                         th:attr="aria-current=${isSelected ? 'page' : ''}"
                         th:aria-label="#{pagination.page('1')}"
                         data-turbo-frame="frame-persons"
@@ -470,8 +470,8 @@
                         <a
                           href="#"
                           th:href="@{/web/person (active=${active},size=${personPage.size},page=${pageNumber})}"
-                          class="tw-block tw-px-4 tw-py-1 tw-no-underline dark:tw-text-zinc-50 tw-rounded-md tw-border-2 dark:tw-border-zinc-700 hover:dark:tw-border-zinc-300 tw-transition-colors"
-                          th:classappend="${isSelected ? 'dark:tw-border-zinc-300' : ''}"
+                          class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+                          th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
                           th:text="${pageNumber}"
                           th:attr="aria-current=${isSelected ? 'page' : ''}"
                           th:aria-label="${pageNumberStat.last ? #messages.msg('pagination.page.last', pageNumber) : #messages.msg('pagination.page', pageNumber)}"
@@ -493,8 +493,8 @@
                       <a
                         href="#"
                         th:href="@{/web/person (active=${active},size=${personPage.size},page=${personPage.totalPages})}"
-                        class="tw-block tw-px-4 tw-py-1 tw-no-underline dark:tw-text-zinc-50 tw-rounded-md tw-border-2 dark:tw-border-zinc-700 hover:dark:tw-border-zinc-300 tw-transition-colors"
-                        th:classappend="${isSelected ? 'dark:tw-border-zinc-300' : ''}"
+                        class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+                        th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
                         th:text="${personPage.totalPages}"
                         th:attr="aria-current=${isSelected ? 'page' : ''}"
                         th:aria-label="#{pagination.page.last(${personPage.totalPages})}"
