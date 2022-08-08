@@ -5,25 +5,27 @@
     <title>section heading</title>
   </head>
   <body>
-  <div
-    th:fragment="privacy-box(body)"
-    class="tw-w-full tw-bg-amber-50 dark:tw-bg-amber-100 tw-border tw-border-amber-200 dark:tw-border-0 tw-p-4 tw-flex tw-flex-col sm:tw-flex-row dark:tw-rounded"
-  >
-    <div class="tw-mb-4 sm:tw-mb-0 sm:tw-mr-4 lg:tw-mr-14 tw-flex tw-items-center sm:tw-items-start">
-      <svg th:replace="/icon/information-circle::svg(className='tw-text-amber-300 dark:tw-text-yellow-500 tw-w-6 tw-h-6 tw-mr-2')"></svg>
-      <span
-        class="tw-text-black tw-text-opacity-75 dark:tw-text-opacity-100 tw-font-bold tw-text-sm sm:tw-mt-px"
-        th:text="#{privacy-box.title}"
-      >
-        Privacy Box Title
-      </span>
-    </div>
     <div
-      class="tw-max-w-xl tw-flex-1 tw-text-sm lg:tw-text-base tw-text-black tw-text-opacity-80 dark:tw-text-opacity-100 dark:tw-font-medium"
-      th:insert="${body}"
+      th:fragment="privacy-box(body)"
+      class="tw-w-full tw-bg-amber-50 dark:tw-bg-amber-100 tw-border tw-border-amber-200 dark:tw-border-0 tw-p-4 tw-flex tw-flex-col sm:tw-flex-row dark:tw-rounded"
     >
-      Content Body
+      <div class="tw-mb-4 sm:tw-mb-0 sm:tw-mr-4 lg:tw-mr-14 tw-flex tw-items-center sm:tw-items-start">
+        <svg
+          th:replace="icon/information-circle::svg(className='tw-text-amber-300 dark:tw-text-yellow-500 tw-w-6 tw-h-6 tw-mr-2')"
+        ></svg>
+        <span
+          class="tw-text-black tw-text-opacity-75 dark:tw-text-opacity-100 tw-font-bold tw-text-sm sm:tw-mt-px"
+          th:text="#{privacy-box.title}"
+        >
+          Privacy Box Title
+        </span>
+      </div>
+      <div
+        class="tw-max-w-xl tw-flex-1 tw-text-sm lg:tw-text-base tw-text-black tw-text-opacity-80 dark:tw-text-opacity-100 dark:tw-font-medium"
+        th:insert="${body}"
+      >
+        Content Body
+      </div>
     </div>
-  </div>
   </body>
 </html>
