@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.synyx.urlaubsverwaltung.search.SearchQuery;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -1229,8 +1229,8 @@ class DepartmentServiceImplTest {
         assertThat(numberOfDepartments).isEqualTo(10);
     }
 
-    private static SearchQuery<Person> defaultPersonSearchQuery() {
-        return new SearchQuery<>(Person.class, defaultPageRequest(), "");
+    private static PageableSearchQuery<Person> defaultPersonSearchQuery() {
+        return new PageableSearchQuery<>(Person.class, defaultPageRequest(), "");
     }
 
     private static PageRequest defaultPageRequest() {

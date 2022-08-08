@@ -4,13 +4,13 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Objects;
 
-public class SearchQuery<T> {
+public class PageableSearchQuery<T> {
 
     private final Class<T> type;
     private final Pageable pageable;
     private final String query;
 
-    public SearchQuery(Class<T> type, Pageable pageable, String query) {
+    public PageableSearchQuery(Class<T> type, Pageable pageable, String query) {
         this.type = type;
         this.pageable = pageable;
         this.query = query;
@@ -28,7 +28,7 @@ public class SearchQuery<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SearchQuery<?> that = (SearchQuery<?>) o;
+        PageableSearchQuery<?> that = (PageableSearchQuery<?>) o;
         return Objects.equals(type, that.type) && Objects.equals(pageable, that.pageable) && Objects.equals(query, that.query);
     }
 

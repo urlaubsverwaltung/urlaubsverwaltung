@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.department;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.synyx.urlaubsverwaltung.search.SearchQuery;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -144,10 +144,10 @@ public interface DepartmentService {
      * for and can perform actions for this person.
      *
      * @param person person to get managed members for
-     * @param personSearchQuery search query containing pageable and an optional query for firstname/lastname
+     * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
      * @return all managed and active members for the person
      */
-    Page<Person> getManagedMembersOfPerson(Person person, SearchQuery<Person> personSearchQuery);
+    Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery<Person> personPageableSearchQuery);
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
@@ -155,10 +155,10 @@ public interface DepartmentService {
      * for and can perform actions for this person.
      *
      * @param person person to get managed members for
-     * @param personSearchQuery search query containing pageable and an optional query for firstname/lastname
+     * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
      * @return all managed and inactive members for the person
      */
-    Page<Person> getManagedInactiveMembersOfPerson(Person person, SearchQuery<Person> personSearchQuery);
+    Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery<Person> personPageableSearchQuery);
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
@@ -167,12 +167,12 @@ public interface DepartmentService {
      *
      * @param person person to get managed members for
      * @param departmentId departmentId to get managed members for
-     * @param searchQuery searchQuery to restrict the result set
+     * @param pageableSearchQuery searchQuery to restrict the result set
      * @return all managed and active members for the person
      */
-    Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, SearchQuery<Person> searchQuery);
+    Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery<Person> pageableSearchQuery);
 
-    Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, SearchQuery<Person> searchQuery);
+    Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery<Person> pageableSearchQuery);
 
     /**
      * Get all distinct managed members of the department head.

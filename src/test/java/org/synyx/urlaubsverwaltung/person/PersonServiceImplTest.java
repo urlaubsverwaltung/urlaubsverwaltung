@@ -14,7 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.synyx.urlaubsverwaltung.search.SearchQuery;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
@@ -240,11 +240,11 @@ class PersonServiceImplTest {
 
         final Page<Person> expected = Page.empty();
         final PageRequest pageRequest = PageRequest.of(1, 100);
-        final SearchQuery<Person> personSearchQuery = new SearchQuery<>(Person.class, pageRequest, "name-query");
+        final PageableSearchQuery<Person> personPageableSearchQuery = new PageableSearchQuery<>(Person.class, pageRequest, "name-query");
 
         when(personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "name-query", pageRequest)).thenReturn(expected);
 
-        final Page<Person> actual = sut.getActivePersons(personSearchQuery);
+        final Page<Person> actual = sut.getActivePersons(personPageableSearchQuery);
         assertThat(actual).isSameAs(expected);
     }
 
@@ -267,13 +267,13 @@ class PersonServiceImplTest {
 
         final Page<Person> expected = Page.empty();
         final PageRequest pageRequest = PageRequest.of(1, 100, Sort.by(Sort.Direction.ASC, "firstName"));
-        final SearchQuery<Person> personSearchQuery = new SearchQuery<>(Person.class, pageRequest, "name-query");
+        final PageableSearchQuery<Person> personPageableSearchQuery = new PageableSearchQuery<>(Person.class, pageRequest, "name-query");
 
         // currently a hard coded pageRequest is used in implementation
         final PageRequest pageRequestInternal = PageRequest.of(1, 100, Sort.Direction.ASC, "firstName", "lastName");
         when(personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, "name-query", pageRequestInternal)).thenReturn(expected);
 
-        final Page<Person> actual = sut.getInactivePersons(personSearchQuery);
+        final Page<Person> actual = sut.getInactivePersons(personPageableSearchQuery);
         assertThat(actual).isSameAs(expected);
     }
 

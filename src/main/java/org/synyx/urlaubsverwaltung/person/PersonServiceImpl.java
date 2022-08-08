@@ -10,7 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.search.SearchQuery;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
@@ -137,10 +137,10 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Page<Person> getActivePersons(SearchQuery<Person> personSearchQuery) {
-        final Pageable pageable = personSearchQuery.getPageable();
+    public Page<Person> getActivePersons(PageableSearchQuery<Person> personPageableSearchQuery) {
+        final Pageable pageable = personPageableSearchQuery.getPageable();
         final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
-        final String query = personSearchQuery.getQuery();
+        final String query = personPageableSearchQuery.getQuery();
         final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
         return personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, pageRequest);
     }
@@ -161,11 +161,11 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Page<Person> getInactivePersons(SearchQuery<Person> personSearchQuery) {
-        final Pageable pageable = personSearchQuery.getPageable();
+    public Page<Person> getInactivePersons(PageableSearchQuery<Person> personPageableSearchQuery) {
+        final Pageable pageable = personPageableSearchQuery.getPageable();
         final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
         final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
-        return personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, personSearchQuery.getQuery(), pageRequest);
+        return personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, personPageableSearchQuery.getQuery(), pageRequest);
     }
 
     @Override

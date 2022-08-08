@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.synyx.urlaubsverwaltung.search.SearchQuery;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
@@ -170,7 +170,7 @@ public class PersonDetailsViewController {
         }
         final Pageable personPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), personSort);
 
-        final SearchQuery<Person> personSearchQuery = new SearchQuery<>(Person.class, personPageable, query);
+        final PageableSearchQuery<Person> personPageableSearchQuery = new PageableSearchQuery<>(Person.class, personPageable, query);
         final Page<Person> personPage;
 
         if (requestedDepartmentId.isPresent()) {
@@ -181,14 +181,14 @@ public class PersonDetailsViewController {
             model.addAttribute("department", department);
 
             personPage = active
-                ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personSearchQuery)
-                : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personSearchQuery);
+                ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery)
+                : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery);
 
 
         } else {
             personPage = active
-                ? getRelevantActivePersons(signedInUser, personSearchQuery)
-                : getRelevantInactivePersons(signedInUser, personSearchQuery);
+                ? getRelevantActivePersons(signedInUser, personPageableSearchQuery)
+                : getRelevantInactivePersons(signedInUser, personPageableSearchQuery);
         }
 
         preparePersonView(signedInUser, personPage, personSort, accountSort, selectedYear, model);
@@ -205,19 +205,19 @@ public class PersonDetailsViewController {
         }
     }
 
-    private Page<Person> getRelevantActivePersons(Person signedInUser, SearchQuery<Person> personSearchQuery) {
+    private Page<Person> getRelevantActivePersons(Person signedInUser, PageableSearchQuery<Person> personPageableSearchQuery) {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-            return personService.getActivePersons(personSearchQuery);
+            return personService.getActivePersons(personPageableSearchQuery);
         } else {
-            return departmentService.getManagedMembersOfPerson(signedInUser, personSearchQuery);
+            return departmentService.getManagedMembersOfPerson(signedInUser, personPageableSearchQuery);
         }
     }
 
-    private Page<Person> getRelevantInactivePersons(Person signedInUser, SearchQuery<Person> personSearchQuery) {
+    private Page<Person> getRelevantInactivePersons(Person signedInUser, PageableSearchQuery<Person> personPageableSearchQuery) {
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-            return personService.getInactivePersons(personSearchQuery);
+            return personService.getInactivePersons(personPageableSearchQuery);
         }
-        return departmentService.getManagedInactiveMembersOfPerson(signedInUser, personSearchQuery);
+        return departmentService.getManagedInactiveMembersOfPerson(signedInUser, personPageableSearchQuery);
     }
 
     private List<Department> getRelevantDepartmentsSortedByName(Person signedInUser) {

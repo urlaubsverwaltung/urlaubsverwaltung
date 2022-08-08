@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.search.SearchQuery;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
@@ -57,46 +57,46 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPerson(Person person, SearchQuery<Person> personSearchQuery) {
-        return getManagedMembersOfPerson(person, personSearchQuery, not(Person::isInactive));
+    public Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery<Person> personPageableSearchQuery) {
+        return getManagedMembersOfPerson(person, personPageableSearchQuery, not(Person::isInactive));
     }
 
     @Override
-    public Page<Person> getManagedInactiveMembersOfPerson(Person person, SearchQuery<Person> personSearchQuery) {
-        return getManagedMembersOfPerson(person, personSearchQuery, Person::isInactive);
+    public Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery<Person> personPageableSearchQuery) {
+        return getManagedMembersOfPerson(person, personPageableSearchQuery, Person::isInactive);
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, SearchQuery<Person> searchQuery) {
+    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery<Person> pageableSearchQuery) {
         final List<Person> members = departmentRepository.findById(departmentId)
             .map(DepartmentEntity::getMembers)
             .map(departmentMembers -> departmentMembers.stream()
                 .map(DepartmentMemberEmbeddable::getPerson)
-                .filter(nameContains(searchQuery.getQuery()).and(not(Person::isInactive)))
-                .sorted(new SortComparator<>(Person.class, searchQuery.getPageable().getSort()))
+                .filter(nameContains(pageableSearchQuery.getQuery()).and(not(Person::isInactive)))
+                .sorted(new SortComparator<>(Person.class, pageableSearchQuery.getPageable().getSort()))
                 .collect(toList())
             )
             .orElseThrow(() -> new IllegalArgumentException("could not find department with id=" + departmentId));
 
-        return new PageImpl<>(members, searchQuery.getPageable(), members.size());
+        return new PageImpl<>(members, pageableSearchQuery.getPageable(), members.size());
     }
 
     @Override
-    public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, SearchQuery<Person> searchQuery) {
+    public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery<Person> pageableSearchQuery) {
         final List<Person> members = departmentRepository.findById(departmentId)
             .map(DepartmentEntity::getMembers)
             .map(departmentMembers -> departmentMembers.stream()
                 .map(DepartmentMemberEmbeddable::getPerson)
-                .filter(nameContains(searchQuery.getQuery()).and(Person::isInactive))
-                .sorted(new SortComparator<>(Person.class, searchQuery.getPageable().getSort()))
+                .filter(nameContains(pageableSearchQuery.getQuery()).and(Person::isInactive))
+                .sorted(new SortComparator<>(Person.class, pageableSearchQuery.getPageable().getSort()))
                 .collect(toList())
             )
             .orElseThrow(() -> new IllegalArgumentException("could not find department with id=" + departmentId));
 
-        return new PageImpl<>(members, searchQuery.getPageable(), members.size());
+        return new PageImpl<>(members, pageableSearchQuery.getPageable(), members.size());
     }
 
-    private Page<Person> getManagedMembersOfPerson(Person person, SearchQuery<Person> personSearchQuery, Predicate<Person> predicate) {
+    private Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery<Person> personPageableSearchQuery, Predicate<Person> predicate) {
         final List<DepartmentEntity> departments;
 
         if (person.hasRole(DEPARTMENT_HEAD) && person.hasRole(SECOND_STAGE_AUTHORITY)) {
@@ -114,11 +114,11 @@ class DepartmentServiceImpl implements DepartmentService {
             .flatMap(List::stream)
             .map(DepartmentMemberEmbeddable::getPerson)
             .distinct()
-            .filter(nameContains(personSearchQuery.getQuery()).and(predicate))
-            .sorted(new SortComparator<>(Person.class, personSearchQuery.getPageable().getSort()))
+            .filter(nameContains(personPageableSearchQuery.getQuery()).and(predicate))
+            .sorted(new SortComparator<>(Person.class, personPageableSearchQuery.getPageable().getSort()))
             .collect(toList());
 
-        return new PageImpl<>(content, personSearchQuery.getPageable(), content.size());
+        return new PageImpl<>(content, personPageableSearchQuery.getPageable(), content.size());
     }
 
     @Override
