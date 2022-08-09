@@ -13,7 +13,7 @@ import java.util.function.Function;
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
-import static java.util.Comparator.nullsFirst;
+import static java.util.Comparator.nullsLast;
 import static java.util.Comparator.reverseOrder;
 
 public class SortComparator<T> implements Comparator<T> {
@@ -60,7 +60,7 @@ public class SortComparator<T> implements Comparator<T> {
         };
 
         return order.isDescending()
-            ? comparing(valueExtractor, nullsFirst(reverseOrder()))
-            : comparing(valueExtractor, nullsFirst(naturalOrder()));
+            ? comparing(valueExtractor, nullsLast(reverseOrder()))
+            : comparing(valueExtractor, nullsLast(naturalOrder()));
     }
 }
