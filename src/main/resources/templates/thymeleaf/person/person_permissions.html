@@ -59,12 +59,12 @@
               <th:block th:errors="*{notifications}"> notifications Error</th:block>
             </p>
 
-            <div class="col-md-4 col-md-push-8">
-              <span class="help-block tw-text-sm">
+            <aside class="col-md-4 col-md-push-8">
+              <p class="help-block tw-text-sm">
                 <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
                 <th:block th:text="#{person.form.permissions.description}" />
-              </span>
-            </div>
+              </p>
+            </aside>
 
             <div class="col-md-8 col-md-pull-4">
               <div class="form-group is-required">
