@@ -25,7 +25,7 @@
                 href="mailto:info@urlaubsverwaltung.cloud?subject=Missing%20special%20leaves"
               >
                 <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
-                <th:block th:if="#{settings.specialleave.description.2}" />
+                <th:block th:text="#{settings.specialleave.description.2}" />
               </a>
             </p>
           </div>

@@ -96,14 +96,14 @@
               <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
                 <label
                   th:text="#{settings.absenceTypes.action.approve.label}"
-                  for="absenceType-approval-${loop.index}"
+                  th:for="${'absenceType-approval-' + loop.index}"
                   class="absence-type-cell-title tw-m-0"
                 >
                 </label>
                 <input
                   type="checkbox"
                   th:field="*{absenceTypeSettings.items[__${loop.index}__].requiresApproval}"
-                  id="absenceType-approval-${loop.index}"
+                  th:id="${'absenceType-approval-' + loop.index}"
                   class="absence-type-option-checkbox"
                 />
               </div>
