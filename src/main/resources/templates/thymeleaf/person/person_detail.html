@@ -339,10 +339,9 @@
                             ></span>
                           </td>
                           <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
-                            <th:block th:if="${workingTime.saturday.duration > 0}">
+                            <th:block th:if="${workingTime.thursday.duration > 0}">
                               <svg th:replace="icon/check-circle::svg"></svg>
                             </th:block>
-                            <svg th:if="${workingTime.thursday.duration > 0}" th:replace="icon/check-circle::svg"></svg>
                             <span
                               th:text="#{${workingTime.thursday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
                               class="tw-sr-only"
