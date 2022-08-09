@@ -1,164 +1,166 @@
 <!DOCTYPE html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
-  <title th:text="#{settings.header.title}"></title>
-  <th:block th:ref="scripts">
-    <script defer asset:src="settings_form.js"></script>
-  </th:block>
-</head>
-<body th:replace="_layout::body(~{::main}, ~{})">
-<main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
+  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+    <title th:text="#{settings.header.title}"></title>
+    <th:block th:ref="scripts">
+      <script defer asset:src="settings_form.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
+      <h1 th:text="#{settings.header.title}" class="tw-sr-only"></h1>
 
-  <h1 th:text="#{settings.header.title}" class="tw-sr-only"></h1>
+      <form method="post" th:action="@{/web/settings}" th:object="${settings}" class="form-horizontal" role="form">
+        <input type="hidden" th:field="*{id}" />
+        <button type="submit" hidden></button>
 
-  <form method="post" th:action="@{/web/settings}" th:object="${settings}" class="form-horizontal" role="form">
-    <input type="hidden" th:field="*{id}"/>
-    <button type="submit" hidden></button>
-
-    <div class="tw-mb-4">
-      <div class="feedback">
-        <div th:if="${not #strings.isEmpty(errors)}" th:text="#{settings.action.update.error}"
-             class="alert alert-danger">
+        <div class="tw-mb-4">
+          <div class="feedback">
+            <div
+              th:if="${not #strings.isEmpty(errors)}"
+              th:text="#{settings.action.update.error}"
+              class="alert alert-danger"
+            ></div>
+            <div th:if="${success}" th:text="#{settings.action.update.success}" class="alert alert-success"></div>
+          </div>
         </div>
-        <div th:if="${success}" th:text="#{settings.action.update.success}" class="alert alert-success">
-        </div>
-      </div>
-    </div>
 
-    <ul class="nav nav-tabs" role="tablist">
-      <li
-        th:with="hasErrors=${#fields.hasErrors('applicationSettings.*') || #fields.hasErrors('sickNoteSettings.*') || #fields.hasErrors('accountSettings.*')}"
-        role="presentation" class="active">
-        <a
-          href="#absence"
-          aria-controls="absence"
-          role="tab"
-          data-toggle="tab"
-          th:class="${hasErrors ? 'tw-text-red-800' : ''}"
-        >
-          <th:block th:text="#{settings.tabs.absence}"/>
-          <th:block th:if="${hasErrors}">*</th:block>
-        </a>
-      </li>
-      <li role="presentation">
-        <a
-          href="#absenceTypes"
-          aria-controls="absenceTypes"
-          role="tab"
-          data-toggle="tab"
-          th:text="#{settings.tabs.absenceTypes}"
-        >
-        </a>
-      </li>
-      <li
-        th:with="hasErrors=${#fields.hasErrors('workingTimeSettings.*') || #fields.hasErrors('timeSettings.*') || #fields.hasErrors('overtimeSettings.*')}"
-        role="presentation">
+        <ul class="nav nav-tabs" role="tablist">
+          <li
+            th:with="hasErrors=${#fields.hasErrors('applicationSettings.*') || #fields.hasErrors('sickNoteSettings.*') || #fields.hasErrors('accountSettings.*')}"
+            role="presentation"
+            class="active"
+          >
+            <a
+              href="#absence"
+              aria-controls="absence"
+              role="tab"
+              data-toggle="tab"
+              th:class="${hasErrors ? 'tw-text-red-800' : ''}"
+            >
+              <th:block th:text="#{settings.tabs.absence}" />
+              <th:block th:if="${hasErrors}">*</th:block>
+            </a>
+          </li>
+          <li role="presentation">
+            <a
+              href="#absenceTypes"
+              aria-controls="absenceTypes"
+              role="tab"
+              data-toggle="tab"
+              th:text="#{settings.tabs.absenceTypes}"
+            >
+            </a>
+          </li>
+          <li
+            th:with="hasErrors=${#fields.hasErrors('workingTimeSettings.*') || #fields.hasErrors('timeSettings.*') || #fields.hasErrors('overtimeSettings.*')}"
+            role="presentation"
+          >
+            <a
+              href="#publicHolidays"
+              aria-controls="publicHolidays"
+              role="tab"
+              data-toggle="tab"
+              th:class="${hasErrors ? 'tw-text-red-800' : ''}"
+              data-test-id="settings-tab-working-time"
+            >
+              <th:block th:text="#{settings.tabs.workingTime}" />
+              <th:block th:if="${hasErrors}">*</th:block>
+            </a>
+          </li>
+          <li th:with="hasErrors=${#fields.hasErrors('calendarSettings.*')}" role="presentation">
+            <a
+              href="#calendar"
+              aria-controls="calendar"
+              role="tab"
+              data-toggle="tab"
+              th:class="${hasErrors ? 'tw-text-red-800' : ''}"
+            >
+              <th:block th:text="#{settings.tabs.calendar}" />
+              <th:block th:if="${hasErrors}">*</th:block>
+            </a>
+          </li>
+        </ul>
 
-        <a
-          href="#publicHolidays"
-          aria-controls="publicHolidays"
-          role="tab"
-          data-toggle="tab"
-          th:class="${hasErrors ? 'tw-text-red-800' : ''}"
-          data-test-id="settings-tab-working-time"
-        >
-          <th:block th:text="#{settings.tabs.workingTime}"/>
-          <th:block th:if="${hasErrors}">*</th:block>
-        </a>
-      </li>
-      <li th:with="hasErrors=${#fields.hasErrors('calendarSettings.*')}" role="presentation">
-        <a
-          href="#calendar"
-          aria-controls="calendar"
-          role="tab"
-          data-toggle="tab"
-          th:class="${hasErrors ? 'tw-text-red-800' : ''}"
-        >
-          <th:block th:text="#{settings.tabs.calendar}"/>
-          <th:block th:if="${hasErrors}">*</th:block>
-        </a>
-      </li>
-    </ul>
+        <div class="tab-content tw-mb-16">
+          <div class="tab-pane active" id="absence">
+            <div class="form-section tw-mb-8">
+              <div th:replace="thymeleaf/settings/absence/vacation::section"></div>
+            </div>
+            <div class="form-section tw-mb-8">
+              <div th:replace="thymeleaf/settings/absence/reminder-waiting-application::section"></div>
+            </div>
+            <div class="form-section tw-mb-8">
+              <div th:replace="thymeleaf/settings/absence/reminder-holiday-replacement::section"></div>
+            </div>
+            <div class="form-section tw-mb-8">
+              <div th:replace="thymeleaf/settings/absence/reminder-upcoming-application::section"></div>
+            </div>
+            <div class="form-section">
+              <div th:replace="thymeleaf/settings/absence/sick-days::section"></div>
+            </div>
+          </div>
 
-    <div class="tab-content tw-mb-16">
+          <div class="tab-pane" id="absenceTypes">
+            <div class="form-section tw-mb-12 tw-relative tw-z-10">
+              <div th:replace="thymeleaf/settings/absence-types/absence-types::section"></div>
+            </div>
+            <div class="form-section">
+              <div th:replace="thymeleaf/settings/absence-types/special-leave::section"></div>
+            </div>
+          </div>
 
-      <div class="tab-pane active" id="absence">
-        <div class="form-section tw-mb-8">
-          <div th:replace="thymeleaf/settings/absence/vacation::section"></div>
+          <div class="tab-pane" id="publicHolidays">
+            <div th:if="${defaultWorkingTimeFromSettings}" class="form-section tw-mb-8">
+              <div th:replace="thymeleaf/settings/public-holidays/default-workingtime::section"></div>
+            </div>
+            <div class="form-section tw-mb-8">
+              <div th:replace="thymeleaf/settings/public-holidays/time::section"></div>
+            </div>
+            <div class="form-section tw-mb-8">
+              <div th:replace="thymeleaf/settings/public-holidays/public-holidays::section"></div>
+            </div>
+            <div class="form-section tw-mb-8">
+              <div th:replace="thymeleaf/settings/public-holidays/overtime::section"></div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="calendar">
+            <div class="alert alert-danger tw-flex tw-items-center" role="alert">
+              <svg th:replace="icon/speakerphone::svg(className='tw-w-4 tw-h-4')"></svg>
+              &nbsp;<th:block th:text="#{settings.calendar.deprecated}" />
+            </div>
+            <div class="form-section">
+              <div th:replace="thymeleaf/settings/calendar/integration::section"></div>
+            </div>
+            <div class="form-section" id="exchange-calendar">
+              <div th:replace="thymeleaf/settings/calendar/exchange::section"></div>
+            </div>
+            <div class="form-section" id="google-calendar">
+              <div th:replace="thymeleaf/settings/calendar/google::section"></div>
+            </div>
+          </div>
         </div>
-        <div class="form-section tw-mb-8">
-          <div th:replace="thymeleaf/settings/absence/reminder-waiting-application::section"></div>
-        </div>
-        <div class="form-section tw-mb-8">
-          <div th:replace="thymeleaf/settings/absence/reminder-holiday-replacement::section"></div>
-        </div>
-        <div class="form-section tw-mb-8">
-          <div th:replace="thymeleaf/settings/absence/reminder-upcoming-application::section"></div>
-        </div>
+
         <div class="form-section">
-          <div th:replace="thymeleaf/settings/absence/sick-days::section"></div>
+          <div class="tw-mb-16">
+            <p th:text="#{settings.action.update.description}" class="help-block tw-text-sm"></p>
+            <button
+              th:text="#{action.save}"
+              type="submit"
+              class="button-main-green pull-left col-xs-12 col-sm-5 col-md-2"
+              data-test-id="settings-save-button"
+            ></button>
+          </div>
         </div>
-      </div>
+      </form>
 
-      <div class="tab-pane" id="absenceTypes">
-        <div class="form-section tw-mb-12 tw-relative tw-z-10">
-          <div th:replace="thymeleaf/settings/absence-types/absence-types::section"></div>
+      <footer>
+        <div class="tw-mb-4">
+          <span class="tw-text-sm"> <a href="https://urlaubsverwaltung.cloud/">urlaubsverwaltung.cloud</a> | </span>
+          <span th:text="|v${version}|" class="tw-text-xs"></span>
         </div>
-        <div class="form-section">
-          <div th:replace="thymeleaf/settings/absence-types/special-leave::section"></div>
-        </div>
-      </div>
-
-      <div class="tab-pane" id="publicHolidays">
-        <div th:if="${defaultWorkingTimeFromSettings}" class="form-section tw-mb-8">
-          <div th:replace="thymeleaf/settings/public-holidays/default-workingtime::section"></div>
-        </div>
-        <div class="form-section tw-mb-8">
-          <div th:replace="thymeleaf/settings/public-holidays/time::section"></div>
-        </div>
-        <div class="form-section tw-mb-8">
-          <div th:replace="thymeleaf/settings/public-holidays/public-holidays::section"></div>
-        </div>
-        <div class="form-section tw-mb-8">
-          <div th:replace="thymeleaf/settings/public-holidays/overtime::section"></div>
-        </div>
-      </div>
-
-      <div class="tab-pane" id="calendar">
-        <div class="alert alert-danger tw-flex tw-items-center" role="alert">
-          <svg th:replace="icon/speakerphone::svg(className='tw-w-4 tw-h-4')"></svg>
-          &nbsp;<th:block th:text="#{settings.calendar.deprecated}"/>
-        </div>
-        <div class="form-section">
-          <div th:replace="thymeleaf/settings/calendar/integration::section"></div>
-        </div>
-        <div class="form-section" id="exchange-calendar">
-          <div th:replace="thymeleaf/settings/calendar/exchange::section"></div>
-        </div>
-        <div class="form-section" id="google-calendar">
-          <div th:replace="thymeleaf/settings/calendar/google::section"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-section">
-      <div class="tw-mb-16">
-        <p th:text="#{settings.action.update.description}" class="help-block tw-text-sm"></p>
-        <button th:text="#{action.save}" type="submit" class="button-main-green pull-left col-xs-12 col-sm-5 col-md-2"
-                data-test-id="settings-save-button">
-        </button>
-      </div>
-    </div>
-  </form>
-
-  <footer>
-    <div class="tw-mb-4">
-      <span class="tw-text-sm">
-          <a href="https://urlaubsverwaltung.cloud/">urlaubsverwaltung.cloud</a> |
-      </span>
-      <span th:text="|v${version}|" class="tw-text-xs"></span>
-    </div>
-  </footer>
-</main>
-</body>
+      </footer>
+    </main>
+  </body>
 </html>

@@ -56,13 +56,17 @@
                   value=""
                   th:checked="${null eq userSettings.locale}"
                   class="tw-peer md:tw-absolute tw-bottom-5 tw-left-4"
+                />
+                <span
+                  class="tw-block tw-w-full tw-h-full tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800 peer-checked:tw-border-blue-400"
                 >
-                <span class="tw-block tw-w-full tw-h-full tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800 peer-checked:tw-border-blue-400">
                   <label
                     for="user-locale-system"
                     class="tw-flex md:tw-flex-col tw-items-center tw-gap-4 tw-m-0 tw-cursor-pointer md:tw-text-center"
                   >
-                    <svg th:replace="icon/globe::svg(className='tw-w-9 tw-h-9 md:tw-w-16 md:tw-h-16 tw-stroke-1')"></svg>
+                    <svg
+                      th:replace="icon/globe::svg(className='tw-w-9 tw-h-9 md:tw-w-16 md:tw-h-16 tw-stroke-1')"
+                    ></svg>
                     <span
                       th:text="#{user-settings.language.locale.system}"
                       class="tw-min-w-0 md:tw-w-4/5 tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden md:tw-ml-5"
@@ -87,21 +91,25 @@
                   th:value="${supportedLocale.locale}"
                   th:checked="${supportedLocale.locale eq userSettings.locale}"
                   class="tw-peer md:tw-absolute tw-bottom-5 tw-left-4"
+                />
+                <span
+                  class="tw-block tw-w-full tw-h-full tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800 peer-checked:tw-border-blue-400"
                 >
-                <span class="tw-block tw-w-full tw-h-full tw-px-4 tw-py-3 tw-rounded-lg tw-border-2 tw-border-zinc-200 dark:tw-border-zinc-800 peer-checked:tw-border-blue-400">
                   <label
                     for="user-locale"
                     th:for="${'user-locale-' + supportedLocale.locale}"
                     class="tw-flex md:tw-flex-col tw-items-center tw-gap-4 tw-m-0 tw-cursor-pointer md:tw-text-center"
                   >
-                    <span class="tw-h-8 tw-w-8 md:tw-h-16 md:tw-w-16 tw-inline-block tw-overflow-hidden tw-rounded-full">
+                    <span
+                      class="tw-h-8 tw-w-8 md:tw-h-16 md:tw-w-16 tw-inline-block tw-overflow-hidden tw-rounded-full"
+                    >
                       <img
                         th:src="@{/images/flags/{locale}.svg (locale=${supportedLocale.locale})}"
                         alt=""
                         width="25"
                         height="15"
                         class="tw-scale-[1.75] tw-w-full tw-h-full"
-                      >
+                      />
                     </span>
                     <span
                       th:text="${supportedLocale.displayName}"

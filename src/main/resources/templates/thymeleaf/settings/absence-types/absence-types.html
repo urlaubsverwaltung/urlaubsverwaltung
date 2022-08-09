@@ -1,135 +1,169 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <title></title>
-</head>
-<body>
-<th:block th:fragment="section">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="section">
+      <div th:replace="fragments/section-heading::section-heading(~{::absence-types-heading-body}, ~{})">
+        <th:block th:fragment="absence-types-heading-body">
+          <h2 th:text="#{settings.absenceTypes.title}"></h2>
+        </th:block>
+      </div>
 
-
-  <div th:replace="fragments/section-heading::section-heading(~{::absence-types-heading-body}, ~{})">
-    <th:block th:fragment="absence-types-heading-body">
-      <h2 th:text="#{settings.absenceTypes.title}"></h2>
-    </th:block>
-  </div>
-
-  <div>
-    <div
-      class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none tw-pt-2 md:tw-pt-0 tw-text-sm">
       <div>
-        <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
-      </div>
-      <div class="tw-flex tw-flex-col">
-        <p>
-          <th:block th:text="#{settings.absenceTypes.help.1}"/>
-          <a class="tw-inline-flex tw-items-center" target="_blank" rel="noopener"
-             href="https://urlaubsverwaltung.cloud/hilfe/abwesenheiten/#welche-abwesenheitsarten-gibt-es">
-            <th:block th:text="#{settings.absenceTypes.help.2}"/>
-            <svg th:replace="icon/external-link::svg(className='tw-w-4 tw-h-4 tw-ml-1')"></svg>
-          </a>
-        </p>
-        <p>
-          <th:block th:text="#{settings.absenceTypes.description.1}"/>
-          <a class="tw-flex tw-items-center"
-             href="mailto:info@urlaubsverwaltung.cloud?subject=Weitere%20Abwesenheitsart">
-            <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
-            <th:block th:text="#{settings.absenceTypes.description.2}"/>
-          </a>
-        </p>
-      </div>
-    </div>
-    <div class="tw-w-full tw-sticky tw-top-0">
-      <div class="absence-type-list-head">
-        <span th:text="#{settings.absenceTypes.table.head.state}"></span>
-        <span th:text="#{settings.absenceTypes.table.head.type}"></span>
-        <span th:text="#{settings.absenceTypes.table.head.category}"></span>
-        <span th:text="#{settings.absenceTypes.table.head.approval}" class="tw-break-all tw-text-right"></span>
-        <span th:text="#{settings.absenceTypes.table.head.visibleToEveryone}"
-              class="tw-break-words tw-text-right"></span>
-        <span th:text="#{settings.absenceTypes.table.head.color}" class="tw-pr-5"></span>
-      </div>
-      <ul id="absence-type-list" class="absence-type-list tw-list-none tw-m-0 tw-mt-2 tw-p-0 tw-w-full">
-        <li th:each="absenceType, loop : ${settings.absenceTypeSettings.items}" class="absence-type-list-item"
-            data-enabled="${absenceType.active}">
-          <div data-col-status class="tw-flex sm:tw-items-center">
-                    <span th:text="#{settings.absenceTypes.table.head.state}" class="absence-type-cell-title">
-                    </span>
-            <span class="absence-type-cell-text tw-flex-1 checkbox-switch">
-                      <input type="hidden" th:name="|absenceTypeSettings.items[${loop.index}].id|"
-                             th:value="${absenceType.id}"/>
-                        <input type="checkbox" th:field="*{absenceTypeSettings.items[__${loop.index}__].active}"
-                               th:id="|absenceType-active-${loop.index}|"/>
-                        <label th:text="#{settings.absenceTypes.action.state.label}"
-                               th:for="|absenceType-active-${loop.index}|" class="tw-sr-only">
-                        </label>
-                    </span>
+        <div
+          class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none tw-pt-2 md:tw-pt-0 tw-text-sm"
+        >
+          <div>
+            <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
           </div>
-          <div class="tw-flex sm:tw-items-center sm:tw-overflow-hidden">
-            <span th:text="#{settings.absenceTypes.table.head.type}" class="absence-type-cell-title"></span>
-            <span th:text="#{__${absenceType.messageKey}__}"
-                  class="absence-type-cell-text tw-flex-1 sm:tw-truncate"></span>
-          </div>
-          <div class="tw-flex sm:tw-items-center sm:tw-overflow-hidden">
-            <span th:text="#{settings.absenceTypes.table.head.category}" class="absence-type-cell-title"></span>
-            <span th:text="#{__${absenceType.category}__}" class="absence-type-cell-text sm:tw-truncate"></span>
-          </div>
-          <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
-            <label th:text="#{settings.absenceTypes.action.approve.label}" for="absenceType-approval-${loop.index}"
-                   class="absence-type-cell-title tw-m-0">
-            </label>
-            <input type="checkbox"
-                   th:field="*{absenceTypeSettings.items[__${loop.index}__].requiresApproval}"
-                   id="absenceType-approval-${loop.index}"
-                   class="absence-type-option-checkbox"
-            />
-          </div>
-          <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
-            <label th:text="#{settings.absenceTypes.action.visibleToEveryone.label}"
-                   th:for="|absenceType-visible-to-everyone-${loop.index}|"
-                   class="absence-type-cell-title tw-m-0">
-            </label>
-            <input type="checkbox"
-                   th:field="*{absenceTypeSettings.items[__${loop.index}__].visibleToEveryone}"
-                   th:id="|absenceType-visible-to-everyone-${loop.index}|"
-                   class="absence-type-option-checkbox"
-            />
-          </div>
-          <div class="tw-flex sm:tw-items-center">
-            <label th:text="#{settings.absenceTypes.action.color.label}" th:for="|color-${loop.index}|"
-                   class="absence-type-cell-title tw-pr-4 tw-m-0">
-            </label>
-            <div is="uv-color-picker">
-              <label
-                th:id="|color-picker-label-${loop.index}|"
-                th:for="|color-picker-${loop.index}|"
-                class="color-picker-button"
+          <div class="tw-flex tw-flex-col">
+            <p>
+              <th:block th:text="#{settings.absenceTypes.help.1}" />
+              <a
+                class="tw-inline-flex tw-items-center"
+                target="_blank"
+                rel="noopener"
+                href="https://urlaubsverwaltung.cloud/hilfe/abwesenheiten/#welche-abwesenheitsarten-gibt-es"
               >
-                <span class="color-picker-button-color"
-                      th:style="|background-color:var(--absence-color-${absenceType.color})|"></span>
-                <span th:text="#{settings.absenceTypes.action.color.label}" class="tw-sr-only"></span>
-              </label>
-              <input type="checkbox" th:id="|color-picker-${loop.index}|" />
-              <ul th:id="|color-popup-${loop.index}|" class="color-picker-dialog tw-list-none">
-                <li th:each="selectableColor, selectableColorLoop: ${settings.absenceTypeSettings.colors}"
-                    class="color-picker-option"
-                    th:style="|background-color:var(--absence-color-__${selectableColor}__)|">
-                  <label th:for="|color-${loop.index}-radio-${selectableColorLoop.index}|">
-                    <input
-                      th:checked="${absenceType.color == selectableColor}"
-                      th:value="${selectableColor}"
-                      th:id="|color-${loop.index}-radio-${selectableColorLoop.index}|"
-                      th:name="|absenceTypeSettings.items[__${loop.index}__].color|"
-                      type="radio"
-                    />
-                  </label>
-                </li>
-              </ul>
-            </div>
+                <th:block th:text="#{settings.absenceTypes.help.2}" />
+                <svg th:replace="icon/external-link::svg(className='tw-w-4 tw-h-4 tw-ml-1')"></svg>
+              </a>
+            </p>
+            <p>
+              <th:block th:text="#{settings.absenceTypes.description.1}" />
+              <a
+                class="tw-flex tw-items-center"
+                href="mailto:info@urlaubsverwaltung.cloud?subject=Weitere%20Abwesenheitsart"
+              >
+                <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                <th:block th:text="#{settings.absenceTypes.description.2}" />
+              </a>
+            </p>
           </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-</th:block>
-</body>
+        </div>
+        <div class="tw-w-full tw-sticky tw-top-0">
+          <div class="absence-type-list-head">
+            <span th:text="#{settings.absenceTypes.table.head.state}"></span>
+            <span th:text="#{settings.absenceTypes.table.head.type}"></span>
+            <span th:text="#{settings.absenceTypes.table.head.category}"></span>
+            <span th:text="#{settings.absenceTypes.table.head.approval}" class="tw-break-all tw-text-right"></span>
+            <span
+              th:text="#{settings.absenceTypes.table.head.visibleToEveryone}"
+              class="tw-break-words tw-text-right"
+            ></span>
+            <span th:text="#{settings.absenceTypes.table.head.color}" class="tw-pr-5"></span>
+          </div>
+          <ul id="absence-type-list" class="absence-type-list tw-list-none tw-m-0 tw-mt-2 tw-p-0 tw-w-full">
+            <li
+              th:each="absenceType, loop : ${settings.absenceTypeSettings.items}"
+              class="absence-type-list-item"
+              data-enabled="${absenceType.active}"
+            >
+              <div data-col-status class="tw-flex sm:tw-items-center">
+                <span th:text="#{settings.absenceTypes.table.head.state}" class="absence-type-cell-title"> </span>
+                <span class="absence-type-cell-text tw-flex-1 checkbox-switch">
+                  <input
+                    type="hidden"
+                    th:name="|absenceTypeSettings.items[${loop.index}].id|"
+                    th:value="${absenceType.id}"
+                  />
+                  <input
+                    type="checkbox"
+                    th:field="*{absenceTypeSettings.items[__${loop.index}__].active}"
+                    th:id="|absenceType-active-${loop.index}|"
+                  />
+                  <label
+                    th:text="#{settings.absenceTypes.action.state.label}"
+                    th:for="|absenceType-active-${loop.index}|"
+                    class="tw-sr-only"
+                  >
+                  </label>
+                </span>
+              </div>
+              <div class="tw-flex sm:tw-items-center sm:tw-overflow-hidden">
+                <span th:text="#{settings.absenceTypes.table.head.type}" class="absence-type-cell-title"></span>
+                <span
+                  th:text="#{__${absenceType.messageKey}__}"
+                  class="absence-type-cell-text tw-flex-1 sm:tw-truncate"
+                ></span>
+              </div>
+              <div class="tw-flex sm:tw-items-center sm:tw-overflow-hidden">
+                <span th:text="#{settings.absenceTypes.table.head.category}" class="absence-type-cell-title"></span>
+                <span th:text="#{__${absenceType.category}__}" class="absence-type-cell-text sm:tw-truncate"></span>
+              </div>
+              <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
+                <label
+                  th:text="#{settings.absenceTypes.action.approve.label}"
+                  for="absenceType-approval-${loop.index}"
+                  class="absence-type-cell-title tw-m-0"
+                >
+                </label>
+                <input
+                  type="checkbox"
+                  th:field="*{absenceTypeSettings.items[__${loop.index}__].requiresApproval}"
+                  id="absenceType-approval-${loop.index}"
+                  class="absence-type-option-checkbox"
+                />
+              </div>
+              <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
+                <label
+                  th:text="#{settings.absenceTypes.action.visibleToEveryone.label}"
+                  th:for="|absenceType-visible-to-everyone-${loop.index}|"
+                  class="absence-type-cell-title tw-m-0"
+                >
+                </label>
+                <input
+                  type="checkbox"
+                  th:field="*{absenceTypeSettings.items[__${loop.index}__].visibleToEveryone}"
+                  th:id="|absenceType-visible-to-everyone-${loop.index}|"
+                  class="absence-type-option-checkbox"
+                />
+              </div>
+              <div class="tw-flex sm:tw-items-center">
+                <label
+                  th:text="#{settings.absenceTypes.action.color.label}"
+                  th:for="|color-${loop.index}|"
+                  class="absence-type-cell-title tw-pr-4 tw-m-0"
+                >
+                </label>
+                <div is="uv-color-picker">
+                  <label
+                    th:id="|color-picker-label-${loop.index}|"
+                    th:for="|color-picker-${loop.index}|"
+                    class="color-picker-button"
+                  >
+                    <span
+                      class="color-picker-button-color"
+                      th:style="|background-color:var(--absence-color-${absenceType.color})|"
+                    ></span>
+                    <span th:text="#{settings.absenceTypes.action.color.label}" class="tw-sr-only"></span>
+                  </label>
+                  <input type="checkbox" th:id="|color-picker-${loop.index}|" />
+                  <ul th:id="|color-popup-${loop.index}|" class="color-picker-dialog tw-list-none">
+                    <li
+                      th:each="selectableColor, selectableColorLoop: ${settings.absenceTypeSettings.colors}"
+                      class="color-picker-option"
+                      th:style="|background-color:var(--absence-color-__${selectableColor}__)|"
+                    >
+                      <label th:for="|color-${loop.index}-radio-${selectableColorLoop.index}|">
+                        <input
+                          th:checked="${absenceType.color == selectableColor}"
+                          th:value="${selectableColor}"
+                          th:id="|color-${loop.index}-radio-${selectableColorLoop.index}|"
+                          th:name="|absenceTypeSettings.items[__${loop.index}__].color|"
+                          type="radio"
+                        />
+                      </label>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </th:block>
+  </body>
 </html>
