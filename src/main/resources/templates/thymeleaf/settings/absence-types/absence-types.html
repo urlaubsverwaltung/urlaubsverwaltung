@@ -59,7 +59,7 @@
             <li
               th:each="absenceType, loop : ${settings.absenceTypeSettings.items}"
               class="absence-type-list-item"
-              data-enabled="${absenceType.active}"
+              th:data-enabled="${absenceType.active}"
             >
               <div data-col-status class="tw-flex sm:tw-items-center">
                 <span th:text="#{settings.absenceTypes.table.head.state}" class="absence-type-cell-title"> </span>
