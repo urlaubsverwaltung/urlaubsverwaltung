@@ -62,7 +62,10 @@ public interface PersonService {
      *
      * @param person {@link Person}
      * @return saved {@link Person}
+     *
+     * @deprecated in favor of create() or update()
      */
+    @Deprecated(since = "4.47.0", forRemoval = true)
     Person save(Person person);
 
     /**
