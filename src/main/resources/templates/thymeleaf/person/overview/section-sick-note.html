@@ -28,15 +28,17 @@
       <div class="tw-mb-4 lg:tw-mb-6">
         <div class="tw-flex tw-flex-wrap tw-space-y-8 sm:tw-space-y-0">
           <div class="tw-w-full sm:tw-w-1/2">
-            <div class="box tw-flex tw-items-start tw-p-0 tw-border-none">
-              <div class="tw-mr-6 tw-p-1">
+            <div th:replace="fragments/box::box-with-icon(~{::sick-days-box-icon}, ~{::sick-days-box-body})">
+              <th:block th:ref="sick-days-box-icon">
                 <div
-                  class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16 tw-bg-red-500 tw-text-white dark:tw-bg-red-600 dark:tw-text-zinc-900"
+                  th:replace="fragments/rounded::block(content=~{::sick-days-box-icon-rounded}, className='tw-bg-red-500 tw-text-white dark:tw-bg-red-600 dark:tw-text-zinc-900')"
                 >
-                  <svg th:replace="icon/medkit::svg(className='tw-w-8 tw-h-8')"></svg>
+                  <th:block th:ref="sick-days-box-icon-rounded">
+                    <svg th:replace="icon/medkit::svg(className='tw-w-8 tw-h-8')" />
+                  </th:block>
                 </div>
-              </div>
-              <div class="box-text tw-flex-1 tw-flex tw-flex-col">
+              </th:block>
+              <th:block th:ref="sick-days-box-body">
                 <span
                   class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
                   th:text="#{overview.sicknotes.sickdays.1}"
@@ -61,19 +63,23 @@
                     ></span>
                   </span>
                 </span>
-              </div>
+              </th:block>
             </div>
           </div>
           <div class="tw-w-full sm:tw-w-1/2">
-            <div class="box tw-flex tw-items-start tw-p-0 tw-border-none">
-              <div class="tw-mr-6 tw-p-1">
+            <div
+              th:replace="fragments/box::box-with-icon(~{::child-sick-days-box-icon}, ~{::child-sick-days-box-body})"
+            >
+              <th:block th:ref="child-sick-days-box-icon">
                 <div
-                  class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16 tw-bg-red-500 tw-text-white dark:tw-bg-red-600 dark:tw-text-zinc-900"
+                  th:replace="fragments/rounded::block(content=~{::child-sick-days-box-icon-rounded}, className='tw-text-white dark:tw-bg-red-600 dark:tw-text-zinc-900')"
                 >
-                  <svg th:replace="icon/child::svg(className='tw-w-8 tw-h-8')"></svg>
+                  <th:block th:ref="child-sick-days-box-icon-rounded">
+                    <svg th:replace="icon/child::svg(className='tw-w-8 tw-h-8')"></svg>
+                  </th:block>
                 </div>
-              </div>
-              <div class="box-text tw-flex-1 tw-flex tw-flex-col">
+              </th:block>
+              <th:block th:ref="child-sick-days-box-body">
                 <span
                   class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
                   th:text="#{overview.sicknotes.sickdays.child.1}"
@@ -98,7 +104,7 @@
                     ></span>
                   </span>
                 </span>
-              </div>
+              </th:block>
             </div>
           </div>
         </div>
