@@ -140,7 +140,7 @@ public interface DepartmentService {
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
-     * {@link Pageable} request. Managed members are all persons for which the second stage authority are responsible
+     * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
      *
      * @param person person to get managed members for
@@ -151,7 +151,7 @@ public interface DepartmentService {
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
-     * {@link Pageable} request. Managed members are all persons for which the second stage authority are responsible
+     * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
      *
      * @param person person to get managed members for
@@ -162,7 +162,7 @@ public interface DepartmentService {
 
     /**
      * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
-     * {@link Pageable} request. Managed members are all persons for which the second stage authority are responsible
+     * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
      *
      * @param person person to get managed members for
@@ -172,6 +172,16 @@ public interface DepartmentService {
      */
     Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery);
 
+    /**
+     * Check the role of the given person and return a {@link Page} of all managed and inactive {@link Person}s for the
+     * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
+     * for and can perform actions for this person.
+     *
+     * @param person person to get managed members for
+     * @param departmentId departmentId to get managed members for
+     * @param pageableSearchQuery search query containing pageable and an optional query for firstname/lastname
+     * @return all managed and inactive members for the person
+     */
     Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery);
 
     /**
