@@ -55,7 +55,7 @@ public class PersonPermissionsViewController {
         model.addAttribute("departments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageDepartments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
 
-        return "person/person_permissions";
+        return "thymeleaf/person/person_permissions";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -67,7 +67,7 @@ public class PersonPermissionsViewController {
         validator.validate(personPermissionsDto, errors);
 
         if (errors.hasErrors()) {
-            return "person/person_permissions";
+            return "thymeleaf/person/person_permissions";
         }
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
