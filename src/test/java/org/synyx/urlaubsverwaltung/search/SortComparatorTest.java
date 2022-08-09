@@ -5,11 +5,9 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SortComparatorTest {
 
@@ -84,6 +82,19 @@ class SortComparatorTest {
         assertThat(sorted).containsExactly(
             new SomeClassToSort(2, "aaa"),
             new SomeClassToSort(1, "bbb")
+        );
+    }
+
+    @Test
+    void ensureNullValuesAreBasedAtTheEnd() {
+        final Sort sort = Sort.by(Sort.Direction.DESC, "string");
+        final SortComparator<SomeClassToSort> sut = new SortComparator<>(SomeClassToSort.class, sort);
+        final List<SomeClassToSort> list = List.of(new SomeClassToSort(2, null), new SomeClassToSort(1, "bbb"));
+
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
+        assertThat(sorted).containsExactly(
+            new SomeClassToSort(1, "bbb"),
+            new SomeClassToSort(2, null)
         );
     }
 
