@@ -9,6 +9,7 @@
         <th:block th:ref="person-box-icon">
           <img
             th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL},username=${person.niceName},width='60px',height='60px')"
+            alt=""
           />
         </th:block>
         <th:block th:ref="person-box-body">
