@@ -145,7 +145,8 @@ class PersonDetailsViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
         perform(get("/web/person/" + PERSON_ID).param("year", "1985"))
-            .andExpect(model().attribute("year", 1985));
+            .andExpect(model().attribute("currentYear", Year.now().getValue()))
+            .andExpect(model().attribute("selectedYear", 1985));
     }
 
     @Test
@@ -174,7 +175,8 @@ class PersonDetailsViewControllerTest {
         final int currentYear = Year.now(clock).getValue();
 
         perform(get("/web/person/" + PERSON_ID))
-            .andExpect(model().attribute("year", currentYear));
+            .andExpect(model().attribute("currentYear", currentYear))
+            .andExpect(model().attribute("selectedYear", currentYear));
     }
 
     @Test
@@ -204,7 +206,7 @@ class PersonDetailsViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
         perform(get("/web/person/" + PERSON_ID))
-            .andExpect(view().name("person/person_detail"));
+            .andExpect(view().name("thymeleaf/person/person_detail"));
     }
 
     @Test
@@ -218,7 +220,7 @@ class PersonDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
         perform(get("/web/person/" + PERSON_ID))
-            .andExpect(view().name("person/person_detail"))
+            .andExpect(view().name("thymeleaf/person/person_detail"))
             .andExpect(model().attribute("canEditPermissions", true));
     }
 
@@ -233,7 +235,7 @@ class PersonDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
         perform(get("/web/person/" + PERSON_ID))
-            .andExpect(view().name("person/person_detail"))
+            .andExpect(view().name("thymeleaf/person/person_detail"))
             .andExpect(model().attribute("canEditDepartments", true));
     }
 
@@ -248,7 +250,7 @@ class PersonDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
         perform(get("/web/person/" + PERSON_ID))
-            .andExpect(view().name("person/person_detail"))
+            .andExpect(view().name("thymeleaf/person/person_detail"))
             .andExpect(model().attribute("canEditAccounts", true));
     }
 
@@ -263,7 +265,7 @@ class PersonDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
         perform(get("/web/person/" + PERSON_ID))
-            .andExpect(view().name("person/person_detail"))
+            .andExpect(view().name("thymeleaf/person/person_detail"))
             .andExpect(model().attribute("canEditWorkingtime", true));
     }
 
