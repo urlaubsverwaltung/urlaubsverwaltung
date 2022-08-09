@@ -7,16 +7,8 @@
     <main th:fragment="main">
       <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5 tw-pb-32">
         <div class="feedback">
-          <div
-            th:if="${createSuccess}"
-            th:text="#{person.account.action.create.success}"
-            class="alert alert-success"
-          ></div>
-          <div
-            th:if="${updateSuccess}"
-            th:text="#{person.account.action.update.success}"
-            class="alert alert-success"
-          ></div>
+          <p th:if="${createSuccess}" th:text="#{person.account.action.create.success}" class="alert alert-success"></p>
+          <p th:if="${updateSuccess}" th:text="#{person.account.action.update.success}" class="alert alert-success"></p>
         </div>
 
         <div class="tw-space-y-12 md:tw-space-y-0 md:tw-grid tw-gap-12 tw-grid-cols-1 md:tw-grid-cols-2">
