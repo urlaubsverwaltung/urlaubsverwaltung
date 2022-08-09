@@ -258,7 +258,7 @@ class SickNoteIT {
         final Person savedPerson = personService.create(person);
 
         final int currentYear = LocalDate.now().getYear();
-        final LocalDate validFrom = LocalDate.of(currentYear - 1, 1, 1);
+        final LocalDate validFrom = LocalDate.of(currentYear, 1, 1);
         final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).stream().map(DayOfWeek::getValue).collect(toList());
         workingTimeWriteService.touch(workingDays, validFrom, savedPerson);
 
