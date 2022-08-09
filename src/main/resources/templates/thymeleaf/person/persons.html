@@ -65,7 +65,7 @@
             </ul>
           </div>
           <th:block
-            th:with="hrefPrefix=${department == null ? '/web/person?active=' + active + '&sort=' + sortQuery + '&query=' + query + '&year=' : '/web/person?active=' + active + '&department='+department.id + '&sort=' + sortQuery + '&year='}"
+            th:with="hrefPrefix=${department == null ? '/web/person?active=' + active + '&size=' + personPage.size + '&sort=' + sortQuery + '&query=' + query + '&year=' : '/web/person?active=' + active + '&department=' + department.id + '&sort=' + sortQuery + '&query=' + query + '&year='}"
           >
             <div
               th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=${hrefPrefix}, selectedYear=${selectedYear})"
@@ -87,8 +87,10 @@
         >
           <div id="persons-form-query-inputs">
             <input type="hidden" name="active" th:value="${active}" />
+            <input th:if="${selectedYear != null}" type="hidden" name="year" th:value="${selectedYear}" />
             <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
             <input type="hidden" name="size" th:value="${personPage.size}" />
+            <input th:if="${not #strings.isEmpty(sortQuery)}" type="hidden" name="sort" th:value="${sortQuery}" />
           </div>
           <div class="tw-flex tw-flex-col md:tw-flex-row">
             <label for="search" th:text="#{action.search}" class="tw-sr-only"></label>
@@ -124,9 +126,10 @@
           >
             <div id="persons-form-sort-inputs">
               <input type="hidden" name="active" th:value="${active}" />
+              <input th:if="${selectedYear != null}" type="hidden" name="year" th:value="${selectedYear}" />
               <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
-              <input type="hidden" name="query" th:value="${query}" />
               <input type="hidden" name="size" th:value="${personPage.size}" />
+              <input th:if="${not #strings.isEmpty(query)}" type="hidden" name="query" th:value="${query}" />
             </div>
             <div class="tw-flex tw-flex-col md:tw-flex-row md:tw-items-center">
               <label for="sort-select" class="tw-m-0 tw-mr-2">
@@ -336,7 +339,7 @@
                     <li th:if="${not personPage.first && personPage.totalPages > 7}">
                       <a
                         href="#"
-                        th:href="@{/web/person (active=${active},size=${personPage.size},page=${personPage.number})}"
+                        th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=${personPage.number}, sort=${sortQuery}, query=${query})}"
                         class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
                         data-turbo-frame="frame-persons"
                         data-turbo-action="advance"
@@ -348,7 +351,7 @@
                     <li th:with="isSelected=${personPage.first}">
                       <a
                         href="#"
-                        th:href="@{/web/person (active=${active},size=${personPage.size},page=1)}"
+                        th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=1, sort=${sortQuery}, query=${query})}"
                         class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
                         th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
                         th:attr="aria-current=${isSelected ? 'page' : ''}"
@@ -375,7 +378,7 @@
                       >
                         <a
                           href="#"
-                          th:href="@{/web/person (active=${active},size=${personPage.size},page=${pageNumber})}"
+                          th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=${pageNumber}, sort=${sortQuery}, query=${query})}"
                           class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
                           th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
                           th:text="${pageNumber}"
@@ -398,7 +401,7 @@
                     <li th:if="${personPage.totalPages > 1}" th:with="isSelected=${personPage.last}">
                       <a
                         href="#"
-                        th:href="@{/web/person (active=${active},size=${personPage.size},page=${personPage.totalPages})}"
+                        th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=${personPage.totalPages}, sort=${sortQuery}, query=${query})}"
                         class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
                         th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
                         th:text="${personPage.totalPages}"
@@ -413,7 +416,7 @@
                     <li th:if="${personPage.totalPages > 7 && not personPage.last}">
                       <a
                         href="#"
-                        th:href="@{/web/person (active=${active},size=${personPage.size},page=${personPage.number + 2})}"
+                        th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=${personPage.number + 2}, sort=${sortQuery}, query=${query})}"
                         class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
                         data-turbo-frame="frame-persons"
                         data-turbo-action="advance"
@@ -434,7 +437,9 @@
               >
                 <div id="persons-form-size-inputs">
                   <input type="hidden" name="active" th:value="${active}" />
+                  <input th:if="${selectedYear != null}" type="hidden" name="year" th:value="${selectedYear}" />
                   <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
+                  <input th:if="${not #strings.isEmpty(sortQuery)}" type="hidden" name="sort" th:value="${sortQuery}" />
                   <input th:if="${not #strings.isEmpty(query)}" type="hidden" name="query" th:value="${query}" />
                 </div>
                 <div class="tw-flex tw-items-center tw-gap-2">

@@ -129,7 +129,7 @@ public class PersonsViewController {
                 : getRelevantInactivePersons(signedInUser, personPageableSearchQuery);
         }
 
-        preparePersonView(signedInUser, personPage, personSort, accountSort, selectedYear, model);
+        preparePersonView(signedInUser, personPage, personSort, accountSort, pageable.getSort(), selectedYear, model);
         model.addAttribute("currentYear", currentYear);
         model.addAttribute("selectedYear", selectedYear);
         model.addAttribute("active", active);
@@ -188,7 +188,7 @@ public class PersonsViewController {
             .collect(toList());
     }
 
-    private void preparePersonView(Person signedInUser, Page<Person> personPage, Sort originalPersonSort, Sort originalAccountSort, int year, Model model) {
+    private void preparePersonView(Person signedInUser, Page<Person> personPage, Sort originalPersonSort, Sort originalAccountSort, Sort originalSort, int year, Model model) {
 
         final LocalDate now = LocalDate.now(clock);
 
@@ -234,8 +234,10 @@ public class PersonsViewController {
             personDtos.add(personDto);
         }
 
-        final Comparator<PersonDto> accountComparator = new SortComparator<>(PersonDto.class, originalAccountSort);
-        personDtos.sort(accountComparator.thenComparing(PersonDto::getNiceName));
+        if (!originalAccountSort.equals(Sort.unsorted())) {
+            final Comparator<PersonDto> accountComparator = new SortComparator<>(PersonDto.class, originalAccountSort);
+            personDtos.sort(accountComparator.thenComparing(PersonDto::getNiceName));
+        }
 
         final boolean showPersonnelNumberColumn = personDtos.stream()
             .anyMatch(personDto -> hasText(personDto.getPersonnelNumber()));
@@ -252,12 +254,12 @@ public class PersonsViewController {
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("now", now);
         model.addAttribute("departments", getRelevantDepartmentsSortedByName(signedInUser));
-        model.addAttribute("sortQuery", originalPersonSort.stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(toList()).stream().reduce((s, s2) -> s + "&" + s2).orElse(""));
+        model.addAttribute("sortQuery", originalSort.stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(toList()).stream().reduce((s, s2) -> s + "&" + s2).orElse(""));
     }
 
     private static HtmlSelectDto htmlSelectDto(Sort originalPersonSort, Sort originalAccountSort) {
 
-        final List<HtmlOptionDto> personOptions = htmlOptionDtos("persons", List.of("firstName", "lastName"), originalPersonSort);
+        final List<HtmlOptionDto> personOptions = htmlOptionDtos("person", List.of("firstName", "lastName"), originalPersonSort);
         final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("persons.sort.optgroup.person.label", personOptions);
 
         final List<HtmlOptionDto> urlaubOptions = htmlOptionDtos("account", List.of("entitlementYear", "entitlementActual", "vacationDaysLeft"), originalAccountSort);

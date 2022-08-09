@@ -15,6 +15,11 @@ public class SortComparator<T> implements Comparator<T> {
         this.comparator = getComparator(type, sort);
     }
 
+    @Override
+    public int compare(T o1, T o2) {
+        return comparator.compare(o1, o2);
+    }
+
     private static <T> Comparator<T> getComparator(Class<T> type, Sort sort) {
         final Iterator<Sort.Order> orderIterator = sort.iterator();
         if (!orderIterator.hasNext()) {
@@ -41,10 +46,5 @@ public class SortComparator<T> implements Comparator<T> {
         });
 
         return order.isDescending() ? comparator.reversed() : comparator;
-    }
-
-    @Override
-    public int compare(T o1, T o2) {
-        return comparator.compare(o1, o2);
     }
 }
