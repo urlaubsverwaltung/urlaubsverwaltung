@@ -11,11 +11,30 @@
         </div>
       </div>
       <div class="row">
-        <aside class="col-md-4 col-md-push-8">
-          <p class="help-block tw-text-sm">
-            <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
-            <th:block th:text="#{settings.calendar.google.description}" />
-          </p>
+        <aside class="col-md-4 col-md-push-8 help-block tw-text-sm tw-break-words">
+          <p th:text="#{settings.calendar.google.description}"></p>
+          <dl class="tw-mt-4">
+            <dt class="tw-mb-0.5 tw-flex tw-items-center tw-gap-2">
+              <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+              <th:block th:text="#{settings.calendar.google.oauth-client-id.title}"></th:block>
+            </dt>
+            <dd th:utext="#{settings.calendar.google.oauth-client-id.description}"></dd>
+            <dt class="tw-mb-0.5 tw-mt-4 tw-flex tw-items-center tw-gap-2">
+              <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+              <th:block th:text="#{settings.calendar.google.oauth-client-secret.title}"></th:block>
+            </dt>
+            <dd th:text="#{settings.calendar.google.oauth-client-secret.description}"></dd>
+            <dt class="tw-mb-0.5 tw-mt-4 tw-flex tw-items-center tw-gap-2">
+              <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+              <th:block th:text="#{settings.calendar.google.calendar-id.title}"></th:block>
+            </dt>
+            <dd th:text="#{settings.calendar.google.calendar-id.description}"></dd>
+            <dt class="tw-mb-0.5 tw-mt-4 tw-flex tw-items-center tw-gap-2">
+              <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+              <th:block th:text="#{settings.calendar.google.redirect-url.title}"></th:block>
+            </dt>
+            <dd th:text="#{settings.calendar.google.redirect-url.description}"></dd>
+          </dl>
         </aside>
         <div class="col-md-8 col-md-pull-4">
           <div class="form-group">
