@@ -108,7 +108,7 @@
                       th:style="|background-color:var(--absence-color-${absenceType.color})|"></span>
                 <span th:text="#{settings.absenceTypes.action.color.label}" class="tw-sr-only"></span>
               </label>
-              <input type="checkbox" th:id="|color-picker-${loop.index}|">
+              <input type="checkbox" th:id="|color-picker-${loop.index}|" />
               <ul th:id="|color-popup-${loop.index}|" class="color-picker-dialog tw-list-none">
                 <li th:each="selectableColor, selectableColorLoop: ${settings.absenceTypeSettings.colors}"
                     class="color-picker-option"
@@ -120,7 +120,7 @@
                       th:id="|color-${loop.index}-radio-${selectableColorLoop.index}|"
                       th:name="|absenceTypeSettings.items[__${loop.index}__].color|"
                       type="radio"
-                    >
+                    />
                   </label>
                 </li>
               </ul>
