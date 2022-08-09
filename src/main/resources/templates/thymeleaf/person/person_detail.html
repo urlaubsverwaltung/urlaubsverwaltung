@@ -98,7 +98,7 @@
               <th:block th:ref="person-details-permissions-actions">
                 <a
                   th:if="${canEditPermissions}"
-                  th:href="@{web/person/__${person.id}__/permissions}"
+                  th:href="@{/web/person/__${person.id}__/permissions}"
                   class="icon-link tw-px-1"
                   aria-hidden="true"
                   th:data-title="#{action.edit}"
