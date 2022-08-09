@@ -260,7 +260,6 @@ class PersonDetailsViewControllerTest {
             .andExpect(model().attribute("canEditWorkingtime", true));
     }
 
-    @Test
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut)
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
