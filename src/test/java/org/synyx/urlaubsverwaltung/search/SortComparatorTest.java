@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -24,7 +25,7 @@ class SortComparatorTest {
             new SomeClassToSort(3, "aaa")
         );
 
-        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(Collectors.toList());
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
 
         assertThat(sorted).containsExactly(
             new SomeClassToSort(1, "aaa"),
@@ -46,7 +47,7 @@ class SortComparatorTest {
             new SomeClassToSort(3, "aaa")
         );
 
-        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(Collectors.toList());
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
 
         assertThat(sorted).containsExactly(
             new SomeClassToSort(1, "aaa"),
@@ -65,7 +66,7 @@ class SortComparatorTest {
             new SomeClassToSort(1, "bbb")
         );
 
-        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(Collectors.toList());
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
 
         assertThat(sorted).containsExactly(
             new SomeClassToSort(2, "aaa"),
@@ -74,13 +75,15 @@ class SortComparatorTest {
     }
 
     @Test
-    void ensureThrowsForUnknownSortProperty() {
-        final Sort sortAscByInteger = Sort.by( "unknownAttribute");
+    void ensureRobustHandlingForUnknownSortProperty() {
+        final Sort sortAscByInteger = Sort.by("unknownAttribute");
         final SortComparator<SomeClassToSort> sut = new SortComparator<>(SomeClassToSort.class, sortAscByInteger);
         final List<SomeClassToSort> list = List.of(new SomeClassToSort(2, "aaa"), new SomeClassToSort(1, "bbb"));
 
-        assertThrows(RuntimeException.class,
-            () -> list.stream().sorted(sut).collect(Collectors.toList())
+        final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
+        assertThat(sorted).containsExactly(
+            new SomeClassToSort(2, "aaa"),
+            new SomeClassToSort(1, "bbb")
         );
     }
 
