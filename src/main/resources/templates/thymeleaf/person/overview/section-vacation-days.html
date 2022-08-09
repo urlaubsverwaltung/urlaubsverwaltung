@@ -33,33 +33,9 @@
 
       <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
         <div class="tw-w-full lg:tw-w-1/3">
-          <div class="box tw-flex tw-items-start tw-items-center tw-p-0 tw-border-none">
-            <div class="tw-mr-6 tw-p-1">
-              <img
-                th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL},username=${person.niceName},width='60px',height='60px')"
-              />
-            </div>
-            <div class="box-text tw-flex-1 tw-flex tw-flex-col">
-              <div class="tw-text-lg tw-mb-1" th:text="${person.niceName}">Marlene Muster</div>
-              <a href="#" th:href="|mailto:${person.email}|" class="icon-link tw-inline-block tw-text-sm print:no-link">
-                <span class="tw-flex tw-items-center">
-                  <svg th:replace="icon/mail::svg" />&nbsp;<span th:text="${person.email}"></span>
-                </span>
-              </a>
-              <ul
-                class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
-                th:aria-label="#{overview.person.departments.list.label(${person.niceName})}"
-              >
-                <li
-                  class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent"
-                  th:each="department : ${departmentsOfPerson}"
-                  th:text="${department.name}"
-                >
-                  Geschäftsführung
-                </li>
-              </ul>
-            </div>
-          </div>
+          <div
+            th:replace="thymeleaf/person/box::person-box-with-departments(person=${person}, departments=${departmentsOfPerson})"
+          ></div>
         </div>
         <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
           <div class="box tw-flex tw-items-start tw-p-0 tw-border-none">
