@@ -33,7 +33,7 @@
               </th:block>
             </div>
             <div
-              th:replace="fragments/box::box-with-icon(~{::person-details-basedata-box-icon}, ~{::person-details-basedata-box-body}, '')"
+              th:replace="fragments/box::box-with-icon(~{::person-details-basedata-box-icon}, ~{::person-details-basedata-box-body})"
             >
               <th:block th:ref="person-details-basedata-box-icon">
                 <img
@@ -101,10 +101,16 @@
               </th:block>
             </div>
             <div
-              th:replace="fragments/box::box-with-icon(~{::person-details-permissions-box-icon}, ~{::person-details-permissions-box-body}, 'tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-zinc-900')"
+              th:replace="fragments/box::box-with-icon(~{::person-details-permissions-box-icon}, ~{::person-details-permissions-box-body})"
             >
               <th:block th:ref="person-details-permissions-box-icon">
-                <svg th:replace="icon/key::svg(className='tw-w-8 tw-h-8')"></svg>
+                <div
+                  th:replace="fragments/rounded::block(content=~{::person-details-permissions-box-icon-rounded}, className='tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-zinc-900')"
+                >
+                  <th:block th:ref="person-details-permissions-box-icon-rounded">
+                    <svg th:replace="icon/key::svg(className='tw-w-8 tw-h-8')" />
+                  </th:block>
+                </div>
               </th:block>
               <th:block th:ref="person-details-permissions-box-body">
                 <dl th:each="role, loop : ${permissions}" class="tw-m-0">
@@ -131,10 +137,16 @@
               </th:block>
             </div>
             <div
-              th:replace="fragments/box::box-with-icon(~{::person-details-departments-box-icon}, ~{::person-details-departments-box-body}, 'tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-zinc-900')"
+              th:replace="fragments/box::box-with-icon(~{::person-details-departments-box-icon}, ~{::person-details-departments-box-body})"
             >
               <th:block th:ref="person-details-departments-box-icon">
-                <svg th:replace="icon/user-group::svg(className='tw-w-8 tw-h-8')"></svg>
+                <div
+                  th:replace="fragments/rounded::block(content=~{::person-details-departments-box-icon-rounded}, className='tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-zinc-900')"
+                >
+                  <th:block th:ref="person-details-departments-box-icon-rounded">
+                    <svg th:replace="icon/user-group::svg(className='tw-w-8 tw-h-8')" />
+                  </th:block>
+                </div>
               </th:block>
               <th:block th:ref="person-details-departments-box-body">
                 <th:block
@@ -214,10 +226,16 @@
               </th:block>
             </div>
             <div
-              th:replace="fragments/box::box-with-icon(~{::person-details-account-box-icon}, ~{::person-details-account-box-body}, 'tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')"
+              th:replace="fragments/box::box-with-icon(~{::person-details-account-box-icon}, ~{::person-details-account-box-body})"
             >
               <th:block th:ref="person-details-account-box-icon">
-                <svg th:replace="icon/calendar::svg(className='tw-w-8 tw-h-8')"></svg>
+                <div
+                  th:replace="fragments/rounded::block(content=~{::person-details-account-box-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')"
+                >
+                  <th:block th:ref="person-details-account-box-icon-rounded">
+                    <svg th:replace="icon/calendar::svg(className='tw-w-8 tw-h-8')" />
+                  </th:block>
+                </div>
               </th:block>
               <th:block th:ref="person-details-account-box-body">
                 <th:block th:if="${account != null}">
@@ -274,10 +292,16 @@
               </th:block>
             </div>
             <div
-              th:replace="fragments/box::box-with-icon(~{::person-details-workingtime-box-icon}, ~{::person-details-workingtime-box-body}, 'tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')"
+              th:replace="fragments/box::box-with-icon(~{::person-details-workingtime-box-icon}, ~{::person-details-workingtime-box-body})"
             >
               <th:block th:ref="person-details-workingtime-box-icon">
-                <svg th:replace="icon/clock::svg(className='tw-w-8 tw-h-8')"></svg>
+                <div
+                  th:replace="fragments/rounded::block(content=~{::person-details-workingtime-box-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')"
+                >
+                  <th:block th:ref="person-details-workingtime-box-icon-rounded">
+                    <svg th:replace="icon/clock::svg(className='tw-w-8 tw-h-8')" />
+                  </th:block>
+                </div>
               </th:block>
               <th:block th:ref="person-details-workingtime-box-body">
                 <span class="tw-text-sm">
@@ -400,10 +424,16 @@
             </div>
 
             <div
-              th:replace="fragments/box::box-with-icon(~{::person-details-federalstate-box-icon}, ~{::person-details-federalstate-box-body}, 'tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')"
+              th:replace="fragments/box::box-with-icon(~{::person-details-federalstate-box-icon}, ~{::person-details-federalstate-box-body})"
             >
               <th:block th:ref="person-details-federalstate-box-icon">
-                <svg th:replace="icon/map::svg(className='tw-w-8 tw-h-8')"></svg>
+                <div
+                  th:replace="fragments/rounded::block(content=~{::person-details-federalstate-box-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')"
+                >
+                  <th:block th:ref="person-details-federalstate-box-icon-rounded">
+                    <svg th:replace="icon/map::svg(className='tw-w-8 tw-h-8')" />
+                  </th:block>
+                </div>
               </th:block>
               <th:block th:ref="person-details-federalstate-box-body">
                 <span
