@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Function;
 
+import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 
 public class SortComparator<T> implements Comparator<T> {
@@ -51,7 +52,7 @@ public class SortComparator<T> implements Comparator<T> {
                 }
                 return null;
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException(e);
+                throw new SortComparatorException(format("Cannot extract the value of the type %s", type), e);
             }
         };
 
