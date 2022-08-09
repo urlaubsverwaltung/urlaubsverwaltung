@@ -135,7 +135,7 @@
                 list="exchange-timezones"
               />
               <datalist id="exchange-timezones">
-                <option th:each="timeZoneId : ${availableTimezones}" value="${timeZoneId}">${timeZoneId}</option>
+                <option th:each="timeZoneId : ${availableTimezones}" th:value="${timeZoneId}" th:text="${timeZoneId}" />
               </datalist>
 
               <div
