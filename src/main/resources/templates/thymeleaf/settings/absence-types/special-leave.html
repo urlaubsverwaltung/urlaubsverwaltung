@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="section">
+      <div th:replace="fragments/section-heading::section-heading(~{::special-leave-heading-body}, ~{})">
+        <th:block th:fragment="special-leave-heading-body">
+          <h2 th:text="#{settings.specialleave.title}"></h2>
+        </th:block>
+      </div>
+
+      <div>
+        <aside class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start tw-pt-2 tw-text-sm">
+          <div>
+            <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+          </div>
+          <div class="tw-flex tw-flex-col">
+            <p th:text="#{settings.specialleave.help}"></p>
+            <p>
+              <th:block th:text="#{settings.specialleave.description.1}" />
+              <a
+                class="tw-flex tw-items-center"
+                href="mailto:info@urlaubsverwaltung.cloud?subject=Missing%20special%20leaves"
+              >
+                <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                <th:block th:text="#{settings.specialleave.description.2}" />
+              </a>
+            </p>
+          </div>
+        </aside>
+        <table id="special-leave-table" class="tw-w-full absence-type-settings-table">
+          <caption th:text="#{settings.specialleave.title}" class="tw-sr-only"></caption>
+          <thead>
+            <tr>
+              <th th:text="#{settings.specialleave.table.head.state}" scope="col"></th>
+              <th th:text="#{settings.specialleave.table.head.type}" scope="col"></th>
+              <th th:text="#{settings.specialleave.table.head.days}" scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              th:each="specialLeaveSettingsItem, loop : ${settings.specialLeaveSettings.specialLeaveSettingsItems}"
+              th:data-enabled="${specialLeaveSettingsItem.active}"
+            >
+              <td data-col-status th:data-table-head-text="#{settings.specialleave.table.head.state}">
+                <span class="checkbox-switch">
+                  <input
+                    type="hidden"
+                    th:name="|specialLeaveSettings.specialLeaveSettingsItems[${loop.index}].id|"
+                    th:value="${specialLeaveSettingsItem.id}"
+                  />
+                  <input
+                    type="checkbox"
+                    th:field="*{specialLeaveSettings.specialLeaveSettingsItems[__${loop.index}__].active}"
+                    th:id="|specialLeave-active-${loop.index}|"
+                  />
+                  <label
+                    th:text="#{settings.specialleave.action.state.label}"
+                    th:for="|specialLeave-active-${loop.index}|"
+                    class="tw-sr-only"
+                  >
+                  </label>
+                </span>
+              </td>
+
+              <td th:data-table-head-text="#{settings.specialleave.table.head.type}">
+                <span th:text="#{__${specialLeaveSettingsItem.messageKey}__}" class="tw-w-1/2 md:tw-w-full"> </span>
+              </td>
+
+              <td th:data-table-head-text="#{settings.specialleave.table.head.days}">
+                <input
+                  th:id="|specialLeave-days-${loop.index}|"
+                  class="form-control tw-w-1/2 sm:tw-w-full"
+                  th:field="*{specialLeaveSettings.specialLeaveSettingsItems[__${loop.index}__].days}"
+                  th:errorclass="error"
+                  type="number"
+                  step="1"
+                  min="0"
+                />
+
+                <div
+                  class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                  th:if="${#fields.hasErrors('specialLeaveSettings.specialLeaveSettingsItems[__${loop.index}__].days')}"
+                >
+                  <th:block th:errors="*{specialLeaveSettings.specialLeaveSettingsItems[__${loop.index}__].days}">
+                    specialLeaveSettings.specialLeaveSettingsItems Error
+                  </th:block>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </th:block>
+  </body>
+</html>

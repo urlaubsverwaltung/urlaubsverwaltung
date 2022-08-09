@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="section">
+      <div th:replace="fragments/section-heading::section-heading(~{::sick-days-heading-body}, ~{})">
+        <th:block th:fragment="sick-days-heading-body">
+          <h2 th:text="#{settings.sickDays.title}"></h2>
+        </th:block>
+      </div>
+
+      <div class="row">
+        <aside class="col-md-4 col-md-push-8">
+          <p class="help-block tw-text-sm">
+            <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+            <th:block th:text="#{settings.sickDays.description}" />
+          </p>
+        </aside>
+        <div class="col-md-8 col-md-pull-4">
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.sickDays.maximumSickPayDays}:|"
+              class="control-label col-md-4"
+              for="sickNoteSettings.maximumSickPayDays"
+            >
+            </label>
+            <div class="col-md-8">
+              <input
+                id="sickNoteSettings.maximumSickPayDays"
+                th:field="*{sickNoteSettings.maximumSickPayDays}"
+                class="form-control"
+                th:errorclass="error"
+                type="number"
+                step="1"
+              />
+
+              <div
+                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('sickNoteSettings.maximumSickPayDays')}"
+              >
+                <th:block th:errors="*{sickNoteSettings.maximumSickPayDays}">
+                  sickNoteSettings.maximumSickPayDays Error
+                </th:block>
+              </div>
+            </div>
+          </div>
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.sickDays.daysBeforeEndOfSickPayNotification}:|"
+              class="control-label col-md-4"
+              for="sickNoteSettings.daysBeforeEndOfSickPayNotification"
+            >
+            </label>
+            <div class="col-md-8">
+              <input
+                id="sickNoteSettings.daysBeforeEndOfSickPayNotification"
+                th:field="*{sickNoteSettings.daysBeforeEndOfSickPayNotification}"
+                class="form-control"
+                th:errorclass="error"
+                type="number"
+                step="1"
+              />
+
+              <div
+                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('sickNoteSettings.daysBeforeEndOfSickPayNotification')}"
+              >
+                <th:block th:errors="*{sickNoteSettings.daysBeforeEndOfSickPayNotification}">
+                  sickNoteSettings.daysBeforeEndOfSickPayNotification Error
+                </th:block>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </th:block>
+  </body>
+</html>

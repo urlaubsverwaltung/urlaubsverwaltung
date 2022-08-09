@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="section">
+      <div th:replace="fragments/section-heading::section-heading(~{::time-heading-body}, ~{})">
+        <th:block th:fragment="time-heading-body">
+          <h2 th:text="#{settings.time.title}"></h2>
+        </th:block>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 col-md-push-8">
+          <span class="help-block tw-text-sm"> </span>
+        </div>
+        <div class="col-md-8 col-md-pull-4">
+          <div class="form-group">
+            <label th:text="|#{settings.time.timezone}:|" class="control-label col-md-4" for="timeSettings.timeZoneId">
+            </label>
+            <div class="col-md-8">
+              <select
+                th:replace="fragments/select::one(id='timeSettings.timeZoneId', name='timeSettings.timeZoneId', options=~{::settings-time-timezoneid})"
+                id="yearSelect"
+              >
+                <th:block th:fragment="settings-time-timezoneid">
+                  <option
+                    th:each="timeZoneId : ${availableTimezones}"
+                    th:text="${timeZoneId}"
+                    th:value="${timeZoneId}"
+                    th:selected="${settings.timeSettings.timeZoneId == timeZoneId}"
+                  ></option>
+                </th:block>
+              </select>
+            </div>
+          </div>
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.time.workDay.begin}:|"
+              class="control-label col-md-4"
+              for="timeSettings.workDayBeginHour"
+            >
+            </label>
+            <div class="col-md-8">
+              <input
+                id="timeSettings.workDayBeginHour"
+                th:field="*{timeSettings.workDayBeginHour}"
+                class="form-control"
+                th:errorclass="error"
+                type="number"
+                step="1"
+              />
+
+              <div
+                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('timeSettings.workDayBeginHour')}"
+              >
+                <th:block th:errors="*{timeSettings.workDayBeginHour}"> timeSettings.workDayBeginHour Error </th:block>
+              </div>
+            </div>
+          </div>
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.time.workDay.end}:|"
+              class="control-label col-md-4"
+              for="timeSettings.workDayEndHour"
+            >
+            </label>
+            <div class="col-md-8">
+              <input
+                id="timeSettings.workDayEndHour"
+                th:field="*{timeSettings.workDayEndHour}"
+                class="form-control"
+                th:errorclass="error"
+                type="number"
+                step="1"
+              />
+
+              <div
+                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('timeSettings.workDayEndHour')}"
+              >
+                <th:block th:errors="*{timeSettings.workDayEndHour}"> timeSettings.workDayEndHour Error </th:block>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </th:block>
+  </body>
+</html>

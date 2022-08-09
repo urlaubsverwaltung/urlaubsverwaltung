@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="section">
+      <div th:replace="fragments/section-heading::section-heading(~{::reminder-holiday-replacement-heading-body}, ~{})">
+        <th:block th:fragment="reminder-holiday-replacement-heading-body">
+          <h2 th:text="#{settings.overtime.title}"></h2>
+        </th:block>
+      </div>
+
+      <div class="row">
+        <aside class="col-md-4 col-md-push-8">
+          <p class="help-block tw-text-sm">
+            <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+            <th:block th:text="#{settings.overtime.description}" />
+          </p>
+        </aside>
+        <div class="col-md-8 col-md-pull-4">
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.overtime.overtimeActive}:|"
+              class="control-label col-md-4"
+              for="overtimeSettings.overtimeActive.true"
+            >
+            </label>
+            <div class="col-md-8 radio">
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="overtimeSettings.overtimeActive.true"
+                  th:field="*{overtimeSettings.overtimeActive}"
+                  value="true"
+                  data-test-id="setting-overtime-enabled"
+                />
+                <th:block th:text="#{settings.overtime.overtimeActive.true}" />
+              </label>
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="overtimeSettings.overtimeActive.false"
+                  th:field="*{overtimeSettings.overtimeActive}"
+                  value="false"
+                  data-test-id="setting-overtime-disabled"
+                />
+                <th:block th:text="#{settings.overtime.overtimeActive.false}" />
+              </label>
+            </div>
+          </div>
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.overtime.overtimeWritePrivilegedOnly}:|"
+              class="control-label col-md-4"
+              for="overtimeSettings.overtimeActive.true"
+            >
+            </label>
+            <div class="col-md-8 radio">
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="overtimeSettings.overtimeWritePrivilegedOnly.true"
+                  th:field="*{overtimeSettings.overtimeWritePrivilegedOnly}"
+                  value="true"
+                  data-test-id="setting-overtime-write-privileged-only-enabled"
+                />
+                <th:block th:text="#{settings.overtime.overtimeWritePrivilegedOnly.true}" />
+              </label>
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="overtimeSettings.overtimeWritePrivilegedOnly.false"
+                  th:field="*{overtimeSettings.overtimeWritePrivilegedOnly}"
+                  value="false"
+                  data-test-id="setting-overtime-write-privileged-only-disabled"
+                />
+                <th:block th:text="#{settings.overtime.overtimeWritePrivilegedOnly.false}" />
+              </label>
+            </div>
+          </div>
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.overtime.overtimeReductionWithoutApplicationActive}:|"
+              class="control-label col-md-4"
+              for="overtimeSettings.overtimeActive.true"
+            >
+            </label>
+            <div class="col-md-8 radio">
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="overtimeSettings.overtimeReductionWithoutApplicationActive.true"
+                  th:field="*{overtimeSettings.overtimeReductionWithoutApplicationActive}"
+                  value="true"
+                  data-test-id="setting-overtime-reduction-enabled"
+                />
+                <th:block th:text="#{settings.overtime.overtimeReductionWithoutApplicationActive.true}" />
+              </label>
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="overtimeSettings.overtimeReductionWithoutApplicationActive.false"
+                  th:field="*{overtimeSettings.overtimeReductionWithoutApplicationActive}"
+                  value="false"
+                  data-test-id="setting-overtime-reduction-disabled"
+                />
+                <th:block th:text="#{settings.overtime.overtimeReductionWithoutApplicationActive.false}" />
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.overtime.maximum}:|"
+              class="control-label col-md-4"
+              for="overtimeSettings.maximumOvertime"
+            >
+            </label>
+            <div class="col-md-8">
+              <input
+                id="overtimeSettings.maximumOvertime"
+                th:field="*{overtimeSettings.maximumOvertime}"
+                class="form-control"
+                th:errorclass="error"
+                type="number"
+                step="1"
+              />
+
+              <div
+                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('overtimeSettings.maximumOvertime')}"
+              >
+                <th:block th:errors="*{overtimeSettings.maximumOvertime}">
+                  overtimeSettings.maximumOvertime Error
+                </th:block>
+              </div>
+            </div>
+          </div>
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.overtime.minimum}:|"
+              class="control-label col-md-4"
+              for="overtimeSettings.minimumOvertime"
+            >
+            </label>
+            <div class="col-md-8">
+              <input
+                id="overtimeSettings.minimumOvertime"
+                th:field="*{overtimeSettings.minimumOvertime}"
+                class="form-control"
+                th:errorclass="error"
+                type="number"
+                step="1"
+              />
+
+              <div
+                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('overtimeSettings.minimumOvertime')}"
+              >
+                <th:block th:errors="*{overtimeSettings.minimumOvertime}">
+                  overtimeSettings.minimumOvertime Error
+                </th:block>
+              </div>
+            </div>
+          </div>
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.overtime.minimumOvertimeReduction}:|"
+              class="control-label col-md-4"
+              for="overtimeSettings.minimumOvertimeReduction"
+            >
+            </label>
+            <div class="col-md-8">
+              <input
+                id="overtimeSettings.minimumOvertimeReduction"
+                th:field="*{overtimeSettings.minimumOvertimeReduction}"
+                class="form-control"
+                th:errorclass="error"
+                type="number"
+                step="1"
+              />
+
+              <div
+                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('overtimeSettings.minimumOvertimeReduction')}"
+              >
+                <th:block th:errors="*{overtimeSettings.minimumOvertimeReduction}">
+                  overtimeSettings.minimumOvertimeReduction Error
+                </th:block>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </th:block>
+  </body>
+</html>

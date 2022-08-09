@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="section">
+      <div th:replace="fragments/section-heading::section-heading(~{::vacation-heading-body}, ~{})">
+        <th:block th:fragment="vacation-heading-body">
+          <h2 th:text="#{settings.vacation.title}"></h2>
+        </th:block>
+      </div>
+
+      <div class="row">
+        <aside class="col-md-4 col-md-push-8">
+          <p class="help-block tw-text-sm">
+            <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+            <th:block th:text="#{settings.vacation.description}" />
+          </p>
+        </aside>
+        <div class="col-md-8 col-md-pull-4">
+          <div th:if="${defaultVacationDaysFromSettings}" class="form-group is-required">
+            <label
+              th:text="|#{settings.vacation.defaultVacationDays}:|"
+              class="control-label col-md-4"
+              for="accountSettings.defaultVacationDays"
+            >
+            </label>
+            <div class="col-md-8">
+              <input
+                id="accountSettings.defaultVacationDays"
+                th:field="*{accountSettings.defaultVacationDays}"
+                class="form-control"
+                th:errorclass="error"
+                type="number"
+                step="1"
+              />
+
+              <div
+                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('accountSettings.defaultVacationDays')}"
+              >
+                <th:block th:errors="*{accountSettings.defaultVacationDays}">
+                  accountSettings.defaultVacationDays Error
+                </th:block>
+              </div>
+            </div>
+          </div>
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.vacation.maximumAnnualVacationDays}:|"
+              class="control-label col-md-4"
+              for="accountSettings.maximumAnnualVacationDays"
+            >
+            </label>
+            <div class="col-md-8">
+              <input
+                id="accountSettings.maximumAnnualVacationDays"
+                th:field="*{accountSettings.maximumAnnualVacationDays}"
+                class="form-control"
+                th:errorclass="error"
+                type="number"
+                step="1"
+              />
+
+              <div
+                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('accountSettings.maximumAnnualVacationDays')}"
+              >
+                <th:block th:errors="*{accountSettings.maximumAnnualVacationDays}">
+                  accountSettings.maximumAnnualVacationDays Error
+                </th:block>
+              </div>
+            </div>
+          </div>
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.vacation.maximumMonthsToApplyForLeaveInAdvance}:|"
+              class="control-label col-md-4"
+              for="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
+            >
+            </label>
+            <div class="col-md-8">
+              <input
+                id="applicationSettings.maximumMonthsToApplyForLeaveInAdvance"
+                th:field="*{applicationSettings.maximumMonthsToApplyForLeaveInAdvance}"
+                class="form-control"
+                th:errorclass="error"
+                type="number"
+                step="1"
+              />
+
+              <div
+                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('applicationSettings.maximumMonthsToApplyForLeaveInAdvance')}"
+              >
+                <th:block th:errors="*{applicationSettings.maximumMonthsToApplyForLeaveInAdvance}">
+                  applicationSettings.maximumMonthsToApplyForLeaveInAdvance Error
+                </th:block>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.vacation.allowHalfDays}:|"
+              class="control-label col-md-4"
+              for="applicationSettings.allowHalfDays.true"
+            >
+            </label>
+            <div class="col-md-8 radio">
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="applicationSettings.allowHalfDays.true"
+                  th:field="*{applicationSettings.allowHalfDays}"
+                  value="true"
+                />
+                <th:block th:text="#{settings.vacation.allowHalfDays.true}" />
+              </label>
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="applicationSettings.allowHalfDays.false"
+                  th:field="*{applicationSettings.allowHalfDays}"
+                  value="false"
+                />
+                <th:block th:text="#{settings.vacation.allowHalfDays.false}" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </th:block>
+  </body>
+</html>
