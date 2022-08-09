@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 
 import static java.util.Collections.singletonList;
@@ -40,15 +41,17 @@ class PersonMailServiceIT extends TestContainersBase {
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
-        personService.save(office);
+        personService.create(office);
 
         sut.sendPersonCreationNotification(new PersonCreatedEvent(personService, createdPerson.getId(), createdPerson.getNiceName()));
 
         // was email sent to office?
-        assertThat(greenMail.getReceivedMessagesForDomain(office.getEmail()).length).isOne();
+        MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        assertThat(inboxOffice.length).isEqualTo(2);
+        assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
         // check attributes
-        final Message msg = greenMail.getReceivedMessagesForDomain(office.getEmail())[0];
+        final Message msg = inboxOffice[1];
         assertThat(msg.getSubject()).contains("Ein neuer Benutzer wurde erstellt");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 

@@ -110,7 +110,7 @@ class LdapPersonContextMapperTest {
 
         when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("murygina", "Aljona", "Murygina", "murygina@synyx.de", List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
-        when(personService.save(any(Person.class))).thenReturn(person);
+        when(personService.update(any(Person.class))).thenReturn(person);
 
         sut.mapUserFromContext(context, "murygina", null);
 
@@ -118,7 +118,7 @@ class LdapPersonContextMapperTest {
         assertThat(person.getEmail()).isEqualTo("murygina@synyx.de");
         assertThat(person.getFirstName()).isEqualTo("Aljona");
         assertThat(person.getLastName()).isEqualTo("Murygina");
-        verify(personService).save(person);
+        verify(personService).update(person);
     }
 
     @Test
@@ -185,7 +185,7 @@ class LdapPersonContextMapperTest {
 
         when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("username", null, null, null, List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
-        when(personService.save(any(Person.class))).thenReturn(person);
+        when(personService.update(any(Person.class))).thenReturn(person);
 
         final UserDetails userDetails = sut.mapUserFromContext(context, "username", null);
         assertThat(userDetails.getAuthorities()).hasSize(2);
