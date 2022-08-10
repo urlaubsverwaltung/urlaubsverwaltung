@@ -15,14 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -71,20 +67,6 @@ class ApplicationForLeaveStatisticsViewController {
         this.vacationTypeService = vacationTypeService;
         this.dateFormatAware = dateFormatAware;
         this.messageSource = messageSource;
-    }
-
-    @PreAuthorize(IS_PRIVILEGED_USER)
-    @PostMapping
-    public String applicationForLeaveStatistics(@ModelAttribute("period") FilterPeriod period, Errors errors, RedirectAttributes redirectAttributes) {
-
-        if (errors.hasErrors()) {
-            redirectAttributes.addFlashAttribute("filterPeriodIncorrect", true);
-        }
-
-        final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
-        final String endDateIsoString = dateFormatAware.formatISO(period.getEndDate());
-
-        return "redirect:/web/application/statistics?from=" + startDateIsoString + "&to=" + endDateIsoString;
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)

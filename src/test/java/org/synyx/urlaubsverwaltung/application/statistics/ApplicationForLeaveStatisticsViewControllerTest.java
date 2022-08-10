@@ -4,9 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,12 +28,9 @@ import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.math.BigDecimal;
-import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.Year;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static java.util.Locale.ENGLISH;
 import static org.hamcrest.Matchers.aMapWithSize;
@@ -49,11 +44,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -81,62 +74,6 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     void setUp() {
         sut = new ApplicationForLeaveStatisticsViewController(personService, applicationForLeaveStatisticsService,
             applicationForLeaveStatisticsCsvExportService, vacationTypeService, new DateFormatAware(), messageSource);
-    }
-
-    @Test
-    void applicationForLeaveStatisticsRedirectsToStatistics() throws Exception {
-
-        final LocalDate startDate = LocalDate.parse("2019-01-01");
-        final LocalDate endDate = LocalDate.parse("2019-08-01");
-        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
-
-        perform(post("/web/application/statistics")
-            .flashAttr("period", filterPeriod))
-            .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/statistics?from=2019-01-01&to=2019-08-01"));
-    }
-
-    private static Stream<Arguments> dateInputAndIsoDateTuple() {
-        return Stream.of(
-            Arguments.of("25.03.2022", "2022-03-25"),
-            Arguments.of("25.03.22", "2022-03-25"),
-            Arguments.of("25.3.2022", "2022-03-25"),
-            Arguments.of("25.3.22", "2022-03-25"),
-            Arguments.of("1.4.22", "2022-04-01")
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("dateInputAndIsoDateTuple")
-    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDate, String givenIsoDate) throws Exception {
-
-        perform(post("/web/application/statistics")
-            .param("startDate", givenDate))
-            .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/statistics?from=" + givenIsoDate + "&to=2022-12-31"));
-    }
-
-    @ParameterizedTest
-    @MethodSource("dateInputAndIsoDateTuple")
-    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForEndDate(String givenDate, String givenIsoDate) throws Exception {
-
-        perform(post("/web/application/statistics")
-            .param("endDate", givenDate))
-            .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/statistics?from=2022-01-01&to=" + givenIsoDate));
-    }
-
-    @Test
-    void applicationForLeaveStatisticsRedirectsToStatisticsWithNullDates() throws Exception {
-
-        final int year = Year.now(Clock.systemUTC()).getValue();
-
-        final FilterPeriod filterPeriod = new FilterPeriod(null, null);
-
-        perform(post("/web/application/statistics")
-            .flashAttr("period", filterPeriod))
-            .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/statistics?from=" + year + "-01-01&to=" + year + "-12-31"));
     }
 
     @Test
