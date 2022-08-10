@@ -22,7 +22,7 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -131,7 +131,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         final PersonBasedata personBasedata = new PersonBasedata(new PersonId(2), "42", "additional information");
-        when(personBasedataService.getBasedataByPersonId(2)).thenReturn(Optional.of(personBasedata));
+        when(personBasedataService.getBasedataByPersonId(List.of(2))).thenReturn(Map.of(new PersonId(2), personBasedata));
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
         final List<VacationType> vacationTypes = List.of(vacationType);

@@ -74,7 +74,7 @@ class PersonBasedataServiceImplTest {
         personBasedataEntity2.setPersonId(2);
         personBasedataEntity2.setPersonnelNumber("1887");
 
-        when(personBasedataRepository.findAllByPersonIdIn(List.of(1,2))).thenReturn(List.of(personBasedataEntity, personBasedataEntity2));
+        when(personBasedataRepository.findAllByPersonIdIsIn(List.of(1,2))).thenReturn(List.of(personBasedataEntity, personBasedataEntity2));
 
         final Map<PersonId, PersonBasedata> basedataByPersonIds = sut.getBasedataByPersonId(List.of(1,2));
         assertThat(basedataByPersonIds).containsKeys(new PersonId(1), new PersonId(2));
@@ -88,5 +88,14 @@ class PersonBasedataServiceImplTest {
         sut.delete(new PersonDeletedEvent(person));
 
         verify(personBasedataRepository).deleteByPerson(person);
+    }
+
+    @Test
+    void ensureGetBasedataForPersonIdsDoesNotIncludeEntriesWhenThereIsNoBasedata() {
+
+        when(personBasedataRepository.findAllByPersonIdIsIn(List.of(1, 2))).thenReturn(List.of());
+
+        final Map<PersonId, PersonBasedata> actual = sut.getBasedataByPersonId(List.of(1, 2));
+        assertThat(actual).isEmpty();
     }
 }
