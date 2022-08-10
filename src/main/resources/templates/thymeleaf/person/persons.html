@@ -205,34 +205,17 @@
                   <th
                     th:if="${showPersonnelNumberColumn}"
                     scope="col"
-                    class="sortable-field"
                     th:text="#{person.account.basedata.personnelNumber.abbreviation}"
                   ></th>
-                  <th scope="col" class="sortable-field" th:text="#{person.data.firstName}"></th>
-                  <th scope="col" class="sortable-field" th:text="#{person.data.lastName}"></th>
+                  <th scope="col" th:text="#{person.data.firstName}"></th>
+                  <th scope="col" th:text="#{person.data.lastName}"></th>
+                  <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.year}"></th>
+                  <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.actual}"></th>
+                  <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.remaining}"></th>
+                  <th scope="col" class="is-centered" th:text="#{persons.account.vacation.vacationDaysLeft}"></th>
                   <th
                     scope="col"
-                    class="sortable-field is-centered"
-                    th:text="#{persons.account.vacation.entitlement.year}"
-                  ></th>
-                  <th
-                    scope="col"
-                    class="sortable-field is-centered"
-                    th:text="#{persons.account.vacation.entitlement.actual}"
-                  ></th>
-                  <th
-                    scope="col"
-                    class="sortable-field is-centered"
-                    th:text="#{persons.account.vacation.entitlement.remaining}"
-                  ></th>
-                  <th
-                    scope="col"
-                    class="sortable-field is-centered"
-                    th:text="#{persons.account.vacation.vacationDaysLeft}"
-                  ></th>
-                  <th
-                    scope="col"
-                    class="sortable-field is-centered"
+                    class="is-centered"
                     th:text="#{persons.account.vacation.vacationDaysLeft.remaining}"
                   ></th>
                   <th scope="col"><!-- placeholder to ensure correct number of th --></th>
@@ -257,10 +240,7 @@
                   ></td>
                   <td class="firstname" th:text="${person.firstName}"></td>
                   <td class="lastname" th:text="${person.lastName}"></td>
-                  <td
-                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                    th:data-sortable-value="${person.entitlementYear}"
-                  >
+                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <th:block th:if="${person.entitlementYear != null}">
                       <span th:replace="fragments/number::number(${person.entitlementYear})"></span>
                     </th:block>
@@ -269,10 +249,7 @@
                       th:text="#{person.account.vacation.noInformation}"
                     ></th:block>
                   </td>
-                  <td
-                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                    th:data-sortable-value="${person.entitlementActual}"
-                  >
+                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <th:block th:if="${person.entitlementActual != null}">
                       <span th:replace="fragments/number::number(${person.entitlementActual})"></span>
                     </th:block>
@@ -281,10 +258,7 @@
                       th:text="#{person.account.vacation.noInformation}"
                     ></th:block>
                   </td>
-                  <td
-                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                    th:data-sortable-value="${person.entitlementRemaining}"
-                  >
+                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <th:block th:if="${person.entitlementRemaining != null}">
                       <span th:replace="fragments/number::number(${person.entitlementRemaining})"></span>
                     </th:block>
@@ -293,10 +267,7 @@
                       th:text="#{person.account.vacation.noInformation}"
                     ></th:block>
                   </td>
-                  <td
-                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                    th:data-sortable-value="${person.vacationDaysLeft}"
-                  >
+                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <th:block th:if="${person.vacationDaysLeft != null}">
                       <span th:replace="fragments/number::number(${person.vacationDaysLeft})"></span>
                     </th:block>
@@ -305,10 +276,7 @@
                       th:text="#{person.account.vacation.noInformation}"
                     ></th:block>
                   </td>
-                  <td
-                    class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                    th:data-sortable-value="${person.vacationDaysLeftRemaining}"
-                  >
+                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <th:block th:if="${person.vacationDaysLeftRemaining != null}">
                       <span th:replace="fragments/number::number(${person.vacationDaysLeftRemaining})"></span>
                     </th:block>
