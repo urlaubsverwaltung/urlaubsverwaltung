@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="overtime-box-left(overtimeLeft)">
+      <div th:replace="fragments/box::box-with-icon(~{::overtime-box-left-icon}, ~{::overtime-box-left-body})">
+        <th:block th:ref="overtime-box-left-icon">
+          <div
+            th:replace="fragments/rounded::block(content=~{::overtime-box-left-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')"
+          >
+            <th:block th:ref="overtime-box-left-icon-rounded">
+              <svg th:replace="icon/sort-descending::svg(className='tw-w-8 tw-h-8')"></svg>
+            </th:block>
+          </div>
+        </th:block>
+        <th:block th:ref="overtime-box-left-body">
+          <span
+            class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+            th:text="#{overtime.person.left.1}"
+          >
+            Es können
+          </span>
+          <span class="tw-my-1 tw-text-lg tw-font-medium" th:text="${{overtimeLeft}}"> 12 </span>
+          <span
+            class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+            th:text="#{overtime.person.left.2}"
+          >
+            Überstunden abgebaut werden.
+          </span>
+        </th:block>
+      </div>
+    </th:block>
+
+    <th:block th:fragment="overtime-box-total(overtimeTotal)">
+      <div th:replace="fragments/box::box-with-icon(~{::overtime-box-total-icon}, ~{::overtime-box-total-body})">
+        <th:block th:ref="overtime-box-total-icon">
+          <div
+            th:replace="fragments/rounded::block(content=~{::overtime-box-total-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')"
+          >
+            <th:block th:ref="overtime-box-total-icon-rounded">
+              <svg th:replace="icon/briefcase::svg(className='tw-w-8 tw-h-8')" />
+            </th:block>
+          </div>
+        </th:block>
+        <th:block th:ref="overtime-box-total-body">
+          <span
+            class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+            th:text="#{overtime.person.total.1}"
+          >
+            In diesem Jahr
+          </span>
+          <span class="tw-my-1 tw-text-lg tw-font-medium" th:text="${{overtimeTotal}}"> 42 </span>
+          <span
+            class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+            th:text="#{overtime.person.total.2}"
+          >
+            Überstunden eingetragen.
+          </span>
+        </th:block>
+      </div>
+    </th:block>
+  </body>
+</html>

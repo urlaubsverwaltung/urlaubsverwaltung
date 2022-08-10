@@ -38,15 +38,17 @@
       <div class="tw-mb-4 lg:tw-mb-6">
         <div class="tw-flex tw-flex-wrap tw-space-y-8 sm:tw-space-y-0">
           <div class="tw-w-full sm:tw-w-1/2">
-            <div class="box tw-flex tw-items-start tw-p-0 tw-border-none">
-              <div class="tw-mr-6 tw-p-1">
+            <div th:replace="fragments/box::box-with-icon(~{::holidays-sum-box-icon}, ~{::holidays-sum-box-body})">
+              <th:block th:ref="holidays-sum-box-icon">
                 <div
-                  class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16 tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900"
+                  th:replace="fragments/rounded::block(content=~{::holidays-sum-box-icon-rounded}, className='tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900')"
                 >
-                  <svg th:replace="icon/sun::svg(className='tw-w-8 tw-h-8')"></svg>
+                  <th:block th:ref="holidays-sum-box-icon-rounded">
+                    <svg th:replace="icon/sun::svg(className='tw-w-8 tw-h-8')" />
+                  </th:block>
                 </div>
-              </div>
-              <div class="box-text tw-flex-1 tw-flex tw-flex-col">
+              </th:block>
+              <th:block th:ref="holidays-sum-box-body">
                 <span
                   class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
                   th:text="#{overview.vacations.holidayLeave.1}"
@@ -71,19 +73,21 @@
                     ></span>
                   </span>
                 </span>
-              </div>
+              </th:block>
             </div>
           </div>
           <div class="tw-w-full sm:tw-w-1/2">
-            <div class="box tw-flex tw-items-start tw-p-0 tw-border-none">
-              <div class="tw-mr-6 tw-p-1">
+            <div th:replace="fragments/box::box-with-icon(~{::other-days-sum-box-icon}, ~{::other-days-sum-box-body})">
+              <th:block th:ref="other-days-sum-box-icon">
                 <div
-                  class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16 tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900"
+                  th:replace="fragments/rounded::block(content=~{::other-days-sum-box-icon-rounded}, className='tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900')"
                 >
-                  <svg th:replace="icon/flag::svg(className='tw-w-8 tw-h-8')"></svg>
+                  <th:block th:ref="other-days-sum-box-icon-rounded">
+                    <svg th:replace="icon/flag::svg(className='tw-w-8 tw-h-8')" />
+                  </th:block>
                 </div>
-              </div>
-              <div class="box-text tw-flex-1 tw-flex tw-flex-col">
+              </th:block>
+              <th:block th:ref="other-days-sum-box-body">
                 <span
                   class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
                   th:text="#{overview.vacations.otherLeave.1}"
@@ -108,7 +112,7 @@
                     ></span>
                   </span>
                 </span>
-              </div>
+              </th:block>
             </div>
           </div>
         </div>

@@ -5,14 +5,9 @@
     <title>box</title>
   </head>
   <body>
-    <div th:fragment="box-with-icon(icon, body, iconClassName)" class="tw-flex tw-items-start">
+    <div th:fragment="box-with-icon(icon, body)" class="tw-flex tw-items-start">
       <div class="tw-mr-6 tw-p-1">
-        <div
-          class="tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-16 tw-h-16"
-          th:classappend="${iconClassName}"
-        >
-          <th:block th:replace="${icon}"></th:block>
-        </div>
+        <th:block th:replace="${icon}"></th:block>
       </div>
       <div class="box-text tw-flex-1 tw-flex tw-flex-col">
         <th:block th:replace="${body}"></th:block>
