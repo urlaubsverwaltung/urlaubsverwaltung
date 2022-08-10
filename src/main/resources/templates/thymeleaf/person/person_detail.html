@@ -55,22 +55,22 @@
                 </a>
                 <dl class="tw-m-0 tw-mt-4 tw-list-none">
                   <dt
-                    th:if="${not #strings.isEmpty(personBasedata.personnelNumber)}"
+                    th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.personnelNumber)}"
                     th:text="#{person.account.basedata.personnelNumber}"
                     class="tw-mb-2 tw-font-medium dark:tw-text-zinc-400"
                   ></dt>
                   <dd
-                    th:if="${not #strings.isEmpty(personBasedata.personnelNumber)}"
+                    th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.personnelNumber)}"
                     th:text="${personBasedata.personnelNumber}"
                     class="tw-text-sm tw-mb-8 tw-text-ellipsis tw-overflow-hidden"
                   ></dd>
                   <dt
-                    th:if="${not #strings.isEmpty(personBasedata.additionalInformation)}"
+                    th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.additionalInformation)}"
                     th:text="#{person.account.basedata.additionalInformation}"
                     class="tw-mb-2 tw-font-medium dark:tw-text-zinc-400"
                   ></dt>
                   <dd
-                    th:if="${not #strings.isEmpty(personBasedata.additionalInformation)}"
+                    th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.additionalInformation)}"
                     class="tw-text-sm tw-text-ellipsis tw-overflow-hidden"
                   >
                     <span th:text="${personBasedata.additionalInformation}" class="tw-whitespace-pre-line"></span>
