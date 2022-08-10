@@ -20,6 +20,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -95,6 +96,7 @@ class ApplicationForLeaveStatisticsViewController {
                                                 Pageable pageable,
                                                 @RequestParam(value = "from", defaultValue = "") String from,
                                                 @RequestParam(value = "to", defaultValue = "") String to,
+                                                @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
                                                 Model model, Locale locale) {
 
         final FilterPeriod period = toFilterPeriod(from, to);
@@ -138,7 +140,14 @@ class ApplicationForLeaveStatisticsViewController {
         final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
         model.addAttribute("sortSelect", sortSelectDto);
 
-        return "thymeleaf/application/application-statistics";
+        final boolean turboFrameRequested = hasText(turboFrame);
+        model.addAttribute("turboFrameRequested", turboFrameRequested);
+
+        if (turboFrameRequested) {
+            return "thymeleaf/application/application-statistics::#" + turboFrame;
+        } else {
+            return "thymeleaf/application/application-statistics";
+        }
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
