@@ -261,7 +261,9 @@
                       th:text="#{person.account.vacation.entitlement.remaining.notExpiring.one(${account.remainingVacationDaysNotExpiring})}"
                     ></th:block>
                     <th:block th:replace="fragments/date::date(${account.expiryDate})"></th:block>
-                    <th:block th:text="#{person.account.vacation.entitlement.remaining.notExpiring.two}"></th:block>
+                    <th:block
+                      th:text="#{person.account.vacation.entitlement.remaining.notExpiring.two(${account.remainingVacationDaysNotExpiring})}"
+                    ></th:block>
                   </span>
                 </th:block>
                 <th:block th:if="${account == null}">
