@@ -1,6 +1,7 @@
 import $ from "jquery";
 import "tablesorter";
 import { dataValueNumberParser } from "../../components/table-sortable/parser-data-value-number";
+import { createDatepicker } from "../../components/datepicker";
 
 $(document).ready(function () {
   $.tablesorter.addParser(dataValueNumberParser);
@@ -34,3 +35,9 @@ $(document).ready(function () {
     });
   }
 });
+
+const getPersonId = () => {};
+const urlPrefix = ""; // not required, no absences are fetched since we have no single person (personId)
+
+createDatepicker("#from-date-input", { urlPrefix, getPersonId });
+createDatepicker("#to-date-input", { urlPrefix, getPersonId });

@@ -56,33 +56,48 @@
           </th:block>
         </div>
 
-        <p class="tw-text-sm -tw-translate-y-4">
-          <a
-            th:if="${errors}"
-            th:text="#{applications.statistics.error.period}"
-            href="#filterModal"
-            data-toggle="modal"
-          ></a>
-          <a th:unless="${errors}" href="#filterModal" data-toggle="modal">
-            <span th:text="|#{filter.period}:|"></span>
-            <span th:replace="fragments/date-range::date-range(${from}, ${to})"></span>
-          </a>
-        </p>
+        <div>
+          <form method="get" action="#" th:action="@{/web/application/statistics}">
+            <div class="tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center tw-gap-4">
+              <div class="tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center tw-gap-y-1 tw-gap-x-2">
+                <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="tw-m-0" />
+                <input
+                  id="from-date-input"
+                  name="from"
+                  th:value="${{period.startDate}}"
+                  th:data-iso-value="${period.startDateIsoValue}"
+                  th:placeholder="#{pattern.date}"
+                  class="form-control"
+                />
+              </div>
+              <div class="tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center tw-gap-y-1 tw-gap-x-2">
+                <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0" />
+                <input
+                  id="to-date-input"
+                  name="to"
+                  th:value="${{period.endDate}}"
+                  th:data-iso-value="${period.endDateIsoValue}"
+                  th:placeholder="#{pattern.date}"
+                  class="form-control"
+                />
+              </div>
+              <div>
+                <button th:text="#{action.confirm}" class="button-main tw-py-1.5 tw-px-3" type="submit" />
+              </div>
+            </div>
+          </form>
+        </div>
 
-        <div
-          th:replace="fragments/filter-modal::filter-modal('filterModal', @{'/web/application/statistics'}, ${#temporals.formatISO(from)}, ${#temporals.formatISO(to)}, ${period})"
-        ></div>
-
-        <div class="feedback" th:if="${filterPeriodIncorrect}">
+        <div class="tw-mt-8 feedback" th:if="${filterPeriodIncorrect}">
           <div th:text="#{filter.period.incorrect.warning}" class="alert alert-warning"></div>
         </div>
 
-        <div th:if="${errors}" th:text="#{applications.statistics.error}" class="alert alert-danger"></div>
+        <div th:if="${errors}" th:text="#{applications.statistics.error}" class="tw-mt-8 alert alert-danger"></div>
 
         <table
           th:unless="${errors}"
           id="application-statistic-table"
-          class="list-table sortable tablesorter tw-text-sm"
+          class="tw-mt-8 md:tw-mt-16 list-table sortable tablesorter tw-text-sm"
         >
           <thead class="tw-hidden lg:tw-table-header-group">
             <tr>
