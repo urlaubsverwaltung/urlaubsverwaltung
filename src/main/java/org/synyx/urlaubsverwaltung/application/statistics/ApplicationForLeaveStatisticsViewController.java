@@ -3,6 +3,11 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,12 +24,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.OK;
@@ -39,6 +47,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
 @RequestMapping("/web/application/statistics")
 class ApplicationForLeaveStatisticsViewController {
 
+    private final PersonService personService;
     private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
     private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
     private final VacationTypeService vacationTypeService;
@@ -47,10 +56,11 @@ class ApplicationForLeaveStatisticsViewController {
 
     @Autowired
     ApplicationForLeaveStatisticsViewController(
-        ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService,
+        PersonService personService, ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService,
         ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService,
         VacationTypeService vacationTypeService, DateFormatAware dateFormatAware, MessageSource messageSource) {
 
+        this.personService = personService;
         this.applicationForLeaveStatisticsService = applicationForLeaveStatisticsService;
         this.applicationForLeaveStatisticsCsvExportService = applicationForLeaveStatisticsCsvExportService;
         this.vacationTypeService = vacationTypeService;
@@ -74,9 +84,13 @@ class ApplicationForLeaveStatisticsViewController {
 
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping
-    public String applicationForLeaveStatistics(Locale locale,
+    public String applicationForLeaveStatistics(@SortDefault.SortDefaults({
+                                                    @SortDefault(sort = "firstName", direction = Sort.Direction.ASC)
+                                                })
+                                                Pageable pageable,
                                                 @RequestParam(value = "from", defaultValue = "") String from,
-                                                @RequestParam(value = "to", defaultValue = "") String to, Model model) {
+                                                @RequestParam(value = "to", defaultValue = "") String to,
+                                                Model model, Locale locale) {
 
         final FilterPeriod period = toFilterPeriod(from, to);
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
@@ -85,11 +99,18 @@ class ApplicationForLeaveStatisticsViewController {
             return "thymeleaf/application/application-statistics";
         }
 
-        final List<ApplicationForLeaveStatisticsDto> statisticsDtos = applicationForLeaveStatisticsService.getStatistics(period).stream()
+        final Person signedInUser = personService.getSignedInUser();
+
+        final Page<ApplicationForLeaveStatistics> personsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageable);
+
+        final List<ApplicationForLeaveStatisticsDto> statisticsDtos = personsPage.stream()
             .map(applicationForLeaveStatistics -> mapToApplicationForLeaveStatisticsDto(applicationForLeaveStatistics, locale, messageSource)).collect(toList());
 
         final boolean showPersonnelNumberColumn = statisticsDtos.stream()
             .anyMatch(statisticsDto -> hasText(statisticsDto.getPersonnelNumber()));
+
+        model.addAttribute("statisticsPage", new PageImpl<>(statisticsDtos, pageable, personsPage.getTotalElements()));
+        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personsPage.getTotalPages()).boxed().collect(toList()));
 
         model.addAttribute("period", period);
         model.addAttribute("from", period.getStartDate());
@@ -103,7 +124,11 @@ class ApplicationForLeaveStatisticsViewController {
 
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping(value = "/download")
-    public ResponseEntity<ByteArrayResource> downloadCSV(@RequestParam(value = "from", defaultValue = "") String from,
+    public ResponseEntity<ByteArrayResource> downloadCSV(@SortDefault.SortDefaults({
+                                @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)
+                            })
+                            Pageable pageable,
+                            @RequestParam(value = "from", defaultValue = "") String from,
                                                          @RequestParam(value = "to", defaultValue = "") String to) {
 
         final FilterPeriod period = toFilterPeriod(from, to);
@@ -113,7 +138,10 @@ class ApplicationForLeaveStatisticsViewController {
             return ResponseEntity.badRequest().build();
         }
 
-        final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
+        final Person signedInUser = personService.getSignedInUser();
+
+        final Page<ApplicationForLeaveStatistics> statisticsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageable);
+        final List<ApplicationForLeaveStatistics> statistics = statisticsPage.getContent();
         final CSVFile csvFile = applicationForLeaveStatisticsCsvExportService.generateCSV(period, statistics);
 
         final HttpHeaders headers = new HttpHeaders();

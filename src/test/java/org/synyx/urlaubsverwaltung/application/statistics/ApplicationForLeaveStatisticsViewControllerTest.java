@@ -11,6 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
@@ -18,6 +21,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -30,20 +34,20 @@ import java.time.Year;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
 import static java.util.Locale.ENGLISH;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -60,6 +64,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     private ApplicationForLeaveStatisticsViewController sut;
 
     @Mock
+    private PersonService personService;
+    @Mock
     private ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
     @Mock
     private ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
@@ -70,7 +76,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveStatisticsViewController(applicationForLeaveStatisticsService,
+        sut = new ApplicationForLeaveStatisticsViewController(personService, applicationForLeaveStatisticsService,
             applicationForLeaveStatisticsCsvExportService, vacationTypeService, new DateFormatAware(), messageSource);
     }
 
@@ -143,11 +149,16 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void applicationForLeaveStatisticsSetsModelAndViewWithoutStatistics() throws Exception {
 
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(List.of());
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), eq(filterPeriod), any(Pageable.class)))
+            .thenReturn(new PageImpl<>(List.of()));
 
         final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
@@ -159,7 +170,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         resultActions
             .andExpect(model().attribute("from", startDate))
             .andExpect(model().attribute("to", endDate))
-            .andExpect(model().attribute("statistics", is(empty())))
+            .andExpect(model().attribute("statisticsPage", hasProperty("content", is(List.of()))))
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
             .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", vacationType))
@@ -169,6 +180,10 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void applicationForLeaveStatisticsSetsModelAndViewWithStatistics() throws Exception {
 
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
         when(messageSource.getMessage("hours.abbr", new Object[]{}, ENGLISH)).thenReturn("Std.");
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
@@ -176,10 +191,10 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final Person person = new Person();
+        person.setId(2);
         person.setFirstName("Firstname");
         person.setLastName("Lastname");
         person.setEmail("firstname.lastname@example.org");
-        person.setId(1);
 
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person);
         statistic.setPersonBasedata(new PersonBasedata(new PersonId(1), "42", "some additional information"));
@@ -188,8 +203,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         statistic.addWaitingVacationDays(new VacationType(1, true, HOLIDAY, "message_key_holiday", false, YELLOW, false), BigDecimal.valueOf(3));
         statistic.addAllowedVacationDays(new VacationType(1, true, OVERTIME, "message_key_overtime", false, YELLOW, false), BigDecimal.valueOf(4));
 
-        final List<ApplicationForLeaveStatistics> statistics = List.of(statistic);
-        when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(statistics);
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), eq(filterPeriod), any(Pageable.class)))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
@@ -237,6 +252,13 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     void downloadCSVSetsDownloadHeaders(String givenDate) throws Exception {
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(any(FilterPeriod.class), any())).thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), any(Pageable.class)))
+            .thenReturn(new PageImpl<>(List.of()));
+
         perform(get("/web/application/statistics/download")
             .param("from", givenDate)
             .param("to", givenDate))
@@ -247,21 +269,32 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void downloadCSVWritesCSV() throws Exception {
 
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final List<ApplicationForLeaveStatistics> statistics = emptyList();
-        when(applicationForLeaveStatisticsService.getStatistics(any(FilterPeriod.class))).thenReturn(statistics);
-        when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, statistics)).thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser);
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), any(Pageable.class)))
+            .thenReturn(new PageImpl<>(List.of(statistics)));
+
+        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
+        when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, List.of(statistics))).thenReturn(csvFile);
 
         perform(get("/web/application/statistics/download")
             .param("from", "01.01.2019")
             .param("to", "01.08.2019"))
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(content().string("csv-resource"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut).build().perform(builder);
+        return standaloneSetup(sut)
+            .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+            .build()
+            .perform(builder);
     }
 }

@@ -144,7 +144,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr th:each="statistic : ${statistics}">
+            <tr th:each="statistic : ${statisticsPage.content}">
               <td class="tw-text-center">
                 <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                   <img
@@ -291,6 +291,126 @@
             </tr>
           </tbody>
         </table>
+
+        <div class="tw-mt-8 md:tw-mt-16 tw-flex tw-flex-col md:tw-flex-row md:tw-items-center tw-gap-8">
+          <div id="statistics-pagination">
+            <nav th:aria-label="#{applications.statistics.pagination.navigation.aria-label}">
+              <ul class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-row tw-gap-x-2 tw-gap-y-4 tw-flex-wrap">
+                <li th:if="${not statisticsPage.first && statisticsPage.totalPages > 7}">
+                  <a
+                    href="#"
+                    th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=${statisticsPage.number})}"
+                    class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
+                  >
+                    <svg th:replace="icon/chevron-left::svg(className='tw-w-6 tw-h-6')"></svg>
+                    <span class="tw-sr-only" th:text="#{pagination.page.previous}"></span>
+                  </a>
+                </li>
+                <li th:with="isSelected=${statisticsPage.first}">
+                  <a
+                    href="#"
+                    th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=1)}"
+                    class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+                    th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
+                    th:attr="aria-current=${isSelected ? 'page' : ''}"
+                    th:aria-label="#{pagination.page('1')}"
+                  >
+                    1
+                  </a>
+                </li>
+                <li
+                  th:if="${statisticsPage.totalPages > 7 && statisticsPage.number > 2}"
+                  role="presentation"
+                  class="tw-px-4 tw-py-1"
+                >
+                  …
+                </li>
+                <th:block
+                  th:each="pageNumber : ${paginationPageNumbers}"
+                  th:with="isSelected=${pageNumber == statisticsPage.number + 1}"
+                >
+                  <li
+                    th:if="${not pageNumberStat.first && not pageNumberStat.last && (statisticsPage.totalPages <= 7 || pageNumber == statisticsPage.number || pageNumber == statisticsPage.number + 1 || pageNumber == statisticsPage.number + 2)}"
+                  >
+                    <a
+                      href="#"
+                      th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=${pageNumber})}"
+                      class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+                      th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
+                      th:text="${pageNumber}"
+                      th:attr="aria-current=${isSelected ? 'page' : ''}"
+                      th:aria-label="${pageNumberStat.last ? #messages.msg('pagination.page.last', pageNumber) : #messages.msg('pagination.page', pageNumber)}"
+                    >
+                      2
+                    </a>
+                  </li>
+                </th:block>
+                <li
+                  th:if="${statisticsPage.totalPages > 7 && statisticsPage.number < statisticsPage.totalPages - 3}"
+                  role="presentation"
+                  class="tw-px-4 tw-py-1"
+                >
+                  …
+                </li>
+                <li th:if="${statisticsPage.totalPages > 1}" th:with="isSelected=${statisticsPage.last}">
+                  <a
+                    href="#"
+                    th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=${statisticsPage.totalPages})}"
+                    class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+                    th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
+                    th:text="${statisticsPage.totalPages}"
+                    th:attr="aria-current=${isSelected ? 'page' : ''}"
+                    th:aria-label="#{pagination.page.last(${statisticsPage.totalPages})}"
+                  >
+                    3
+                  </a>
+                </li>
+                <li th:if="${statisticsPage.totalPages > 7 && not statisticsPage.last}">
+                  <a
+                    href="#"
+                    th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=${statisticsPage.number + 2})}"
+                    class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
+                  >
+                    <span class="tw-sr-only" th:text="#{pagination.page.next}"></span>
+                    <svg th:replace="icon/chevron-right::svg(className='tw-w-6 tw-h-6')"></svg>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <form action="#" class="md:tw-ml-auto tw-flex tw-items-center">
+            <input type="hidden" name="page" th:value="${statisticsPage.number + 1}" />
+            <div class="tw-flex tw-items-center tw-gap-2">
+              <label for="pagination-size-select" class="tw-m-0" th:text="#{pagination.page.size.label.text}">
+                Zeige
+              </label>
+              <span>
+                <select
+                  name="size"
+                  id="pagination-size-select"
+                  th:replace="fragments/select::one(id='pagination-size-select', name='size', options=~{::pagination-size-options})"
+                >
+                  <th:block th:ref="pagination-size-options" th:with="size=${statisticsPage.size}">
+                    <option th:if="${size < 10}" th:value="${size}" selected th:text="${size}">4</option>
+                    <option value="10" th:selected="${size == 10}">10</option>
+                    <option th:if="${size > 10 && size < 20}" th:value="${size}" selected th:text="${size}">14</option>
+                    <option value="20" th:selected="${size == 20}">20</option>
+                    <option th:if="${size > 20 && size < 40}" th:value="${size}" selected th:text="${size}">24</option>
+                    <option value="40" th:selected="${size == 40}">40</option>
+                    <option th:if="${size > 40}" th:value="${size}" selected th:text="${size}">44</option>
+                  </th:block>
+                </select>
+              </span>
+              <span
+                class="tw-whitespace-nowrap"
+                th:text="#{pagination.page.size.total.text(${statisticsPage.totalElements}, ${#messages.msg('applications.statistics.pagination.total.text')})}"
+              >
+                von 42 Personen
+              </span>
+            </div>
+            <button th:text="#{pagination.page.size.button.text}" class="tw-ml-2 button-main">Aktualisieren</button>
+          </form>
+        </div>
       </div>
     </main>
   </body>
