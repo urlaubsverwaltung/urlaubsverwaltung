@@ -62,32 +62,51 @@
             <div id="statistics-filter-inputs">
               <input type="hidden" name="sort" th:value="${sortQuery}" />
             </div>
-            <div class="tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center tw-gap-4">
-              <div class="tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center tw-gap-y-1 tw-gap-x-2">
-                <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="tw-m-0" />
-                <input
-                  id="from-date-input"
-                  name="from"
-                  th:value="${{period.startDate}}"
-                  th:data-iso-value="${period.startDateIsoValue}"
-                  th:placeholder="#{pattern.date}"
-                  class="form-control"
-                />
-              </div>
-              <div class="tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center tw-gap-y-1 tw-gap-x-2">
-                <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0" />
-                <input
-                  id="to-date-input"
-                  name="to"
-                  th:value="${{period.endDate}}"
-                  th:data-iso-value="${period.endDateIsoValue}"
-                  th:placeholder="#{pattern.date}"
-                  class="form-control"
-                />
-              </div>
-              <div>
-                <button th:text="#{action.confirm}" class="button-main tw-py-1.5 tw-px-3" type="submit" />
-              </div>
+            <div class="tw-flex tw-flex-col tw-gap-1">
+              <fieldset>
+                <legend class="tw-sr-only" th:text="#{applications.statistics.period.legend.text}">Zeitraum</legend>
+                <div
+                  th:replace="fragments/details-dropdown::details-dropdown(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)"
+                >
+                  <th:block th:ref="period-dropdown-summary">
+                    <th:block th:text="#{applications.statistics.period.legend.text}"></th:block>
+                    <span
+                      id="period-text"
+                      th:with="start=${{period.startDate}}, end=${{period.endDate}}"
+                      th:text="#{applications.statistics.period.selected(${start}, ${end})}"
+                    ></span>
+                  </th:block>
+                  <th:block th:ref="period-dropdown-content">
+                    <div class="tw-flex tw-flex-col">
+                      <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="tw-m-0" />
+                      <input
+                        id="from-date-input"
+                        name="from"
+                        th:value="${{period.startDate}}"
+                        th:data-iso-value="${period.startDateIsoValue}"
+                        th:placeholder="#{pattern.date}"
+                        class="form-control tw-mt-0.5"
+                      />
+                      <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0 tw-mt-4" />
+                      <input
+                        id="to-date-input"
+                        name="to"
+                        th:value="${{period.endDate}}"
+                        th:data-iso-value="${period.endDateIsoValue}"
+                        th:placeholder="#{pattern.date}"
+                        class="form-control tw-mt-0.5"
+                      />
+                    </div>
+                    <div class="tw-mt-6">
+                      <button
+                        th:text="#{action.confirm}"
+                        class="button-main tw-py-1.5 tw-px-3 tw-w-full"
+                        type="submit"
+                      />
+                    </div>
+                  </th:block>
+                </div>
+              </fieldset>
             </div>
           </form>
           <div class="md:tw-ml-auto">
@@ -150,6 +169,9 @@
           <th:block th:if="${turboFrameRequested}">
             <turbo-stream target="statistics-filter-inputs" action="replace">
               <template th:insert="::#statistics-filter-inputs"></template>
+            </turbo-stream>
+            <turbo-stream target="period-text" action="replace">
+              <template th:insert="::#period-text"></template>
             </turbo-stream>
             <turbo-stream target="statistics-form-sort-inputs" action="replace">
               <template th:insert="::#statistics-form-sort-inputs"></template>
