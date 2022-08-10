@@ -5,7 +5,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
@@ -109,17 +108,7 @@ class ApplicationForLeaveStatisticsViewController {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        Sort personSort = Sort.unsorted();
-        for (Sort.Order order : pageable.getSort()) {
-            final String propertyWithPrefix = order.getProperty();
-            if (propertyWithPrefix.startsWith("person.")) {
-                final String property = propertyWithPrefix.replace("person.", "");
-                personSort = personSort.and(Sort.by(order.getDirection(), property));
-            }
-        }
-        final Pageable personPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), personSort);
-
-        final Page<ApplicationForLeaveStatistics> personsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, personPageable);
+        final Page<ApplicationForLeaveStatistics> personsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageable);
 
         final List<ApplicationForLeaveStatisticsDto> statisticsDtos = personsPage.stream()
             .map(applicationForLeaveStatistics -> mapToApplicationForLeaveStatisticsDto(applicationForLeaveStatistics, locale, messageSource)).collect(toList());
@@ -190,14 +179,21 @@ class ApplicationForLeaveStatisticsViewController {
         final List<HtmlOptionDto> personOptions = sortOptionGroupDto("person", List.of("firstName", "lastName"), originalPersonSort);
         final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("applications.sort.optgroup.person.label", personOptions);
 
-        return new HtmlSelectDto(List.of(personOptgroup));
+        final List<HtmlOptionDto> statisticsOptions = sortOptionGroupDto(List.of("totalAllowedVacationDays", "totalWaitingVacationDays", "leftVacationDaysForPeriod", "leftVacationDaysForYear"), originalPersonSort);
+        final HtmlOptgroupDto statisticsOptgroup = new HtmlOptgroupDto("applications.sort.optgroup.statistics.label", statisticsOptions);
+
+        return new HtmlSelectDto(List.of(personOptgroup, statisticsOptgroup));
+    }
+
+    private static List<HtmlOptionDto> sortOptionGroupDto(List<String> properties, Sort sort) {
+        return sortOptionGroupDto("", properties, sort);
     }
 
     private static List<HtmlOptionDto> sortOptionGroupDto(String propertyPrefix, List<String> properties, Sort sort) {
         final List<HtmlOptionDto> options = new ArrayList<>();
 
         for (String property : properties) {
-            final Sort.Order order = sort.getOrderFor(propertyPrefix + "." + property);
+            final Sort.Order order = sort.getOrderFor(hasText(propertyPrefix) ? propertyPrefix + "." + property : property);
             options.addAll(sortOptionDto(propertyPrefix, property, order));
         }
 
@@ -205,9 +201,10 @@ class ApplicationForLeaveStatisticsViewController {
     }
 
     private static List<HtmlOptionDto> sortOptionDto(String propertyPrefix, String property, Sort.Order order) {
+        final String prefix = hasText(propertyPrefix) ? propertyPrefix + "." : "";
         return List.of(
-            new HtmlOptionDto(String.format("persons.sort.%s.asc", property), propertyPrefix + "." + property + ",asc", order != null && order.isAscending()),
-            new HtmlOptionDto(String.format("persons.sort.%s.desc", property), propertyPrefix + "." + property + ",desc", order != null && order.isDescending())
+            new HtmlOptionDto(String.format("applications.statistics.sort.%s.asc", property), prefix + property + ",asc", order != null && order.isAscending()),
+            new HtmlOptionDto(String.format("applications.statistics.sort.%s.desc", property), prefix + property + ",desc", order != null && order.isDescending())
         );
     }
 }

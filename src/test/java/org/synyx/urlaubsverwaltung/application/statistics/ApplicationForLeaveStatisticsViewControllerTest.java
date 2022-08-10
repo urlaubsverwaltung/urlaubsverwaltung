@@ -243,7 +243,14 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"person.firstName,ASC:firstName", "person.lastName,ASC:lastName"}, delimiter = ':')
+    @CsvSource(value = {
+        "person.firstName,ASC:person.firstName",
+        "person.lastName,ASC:person.lastName",
+        "totalAllowedVacationDays,ASC:totalAllowedVacationDays",
+        "totalWaitingVacationDays,ASC:totalWaitingVacationDays",
+        "leftVacationDaysForPeriod,ASC:leftVacationDaysForPeriod",
+        "leftVacationDaysForYear,ASC:leftVacationDaysForYear"
+    }, delimiter = ':')
     void applicationForLeaveStatisticsSetsModelAndViewWithStatisticsSortedAscendingBy(String sortQuery, String expectedSortProperty) throws Exception {
 
         final Person signedInUser = new Person();
@@ -272,7 +279,14 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     }
 
     @ParameterizedTest
-    @CsvSource(value = {"person.firstName,DESC:firstName", "person.lastName,DESC:lastName"}, delimiter = ':')
+    @CsvSource(value = {
+        "person.firstName,DESC:person.firstName",
+        "person.lastName,DESC:person.lastName",
+        "totalAllowedVacationDays,DESC:totalAllowedVacationDays",
+        "totalWaitingVacationDays,DESC:totalWaitingVacationDays",
+        "leftVacationDaysForPeriod,DESC:leftVacationDaysForPeriod",
+        "leftVacationDaysForYear,DESC:leftVacationDaysForYear"
+    }, delimiter = ':')
     void applicationForLeaveStatisticsSetsModelAndViewWithStatisticsSortedDescendingBy(String sortQuery, String expectedSortProperty) throws Exception {
 
         final Person signedInUser = new Person();
@@ -312,7 +326,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         person.setFirstName("John");
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person);
 
-        final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "lastName"));
+        final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "person.lastName"));
         when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest)))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
@@ -376,7 +390,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     }
 
     private static Pageable defaultPageRequest() {
-        return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "firstName"));
+        return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "person.firstName"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
