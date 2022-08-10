@@ -195,7 +195,7 @@
                       <th:block th:replace="fragments/date::date(${app.startDate})"></th:block>,
                       <th:block
                         th:if="${app.startTime != null && app.endTime != null}"
-                        th:with="APPLICATION_START_TIME=${#dates.format(app.startDateWithTime, #messages.msg('pattern.time'))}, APPLICATION_END_TIME=${#dates.format(app.endDateWithTime, #messages.msg('pattern.time'))}"
+                        th:with="APPLICATION_START_TIME=${#temporals.format(app.startDateWithTime, #messages.msg('pattern.time'))}, APPLICATION_END_TIME=${#temporals.format(app.endDateWithTime, #messages.msg('pattern.time'))}"
                         th:text="#{absence.period.time(${APPLICATION_START_TIME},${APPLICATION_END_TIME})}"
                       ></th:block>
                       <th:block
