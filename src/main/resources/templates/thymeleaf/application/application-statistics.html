@@ -17,7 +17,6 @@
     <th:block th:fragment="scripts">
       <script defer asset:src="npm.duetds.js"></script>
       <script defer asset:src="npm.date-fns.js"></script>
-      <script defer asset:src="npm.tablesorter.js"></script>
       <script
         defer
         asset:src="account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.js"
@@ -94,28 +93,24 @@
 
         <div th:if="${errors}" th:text="#{applications.statistics.error}" class="tw-mt-8 alert alert-danger"></div>
 
-        <table
-          th:unless="${errors}"
-          id="application-statistic-table"
-          class="tw-mt-8 md:tw-mt-16 list-table sortable tablesorter tw-text-sm"
-        >
+        <table th:unless="${errors}" id="application-statistic-table" class="tw-mt-8 md:tw-mt-16 list-table tw-text-sm">
           <thead class="tw-hidden lg:tw-table-header-group">
             <tr>
               <th scope="col"></th>
               <th
                 th:if="${showPersonnelNumberColumn}"
                 scope="col"
-                class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
+                class="tw-hidden lg:tw-table-cell print:tw-table-cell"
                 th:text="#{person.account.basedata.personnelNumber.abbreviation}"
               ></th>
               <th
                 scope="col"
-                class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
+                class="tw-hidden lg:tw-table-cell print:tw-table-cell"
                 th:text="#{person.data.firstName}"
               ></th>
               <th
                 scope="col"
-                class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
+                class="tw-hidden lg:tw-table-cell print:tw-table-cell"
                 th:text="#{person.data.lastName}"
               ></th>
               <th scope="col" class="lg:tw-hidden print:tw-hidden"></th>
@@ -123,22 +118,22 @@
               <th scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell"></th>
               <th
                 scope="col"
-                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
+                class="tw-hidden md:tw-table-cell print:tw-table-cell"
                 th:text="#{applications.statistics.allowed}"
               ></th>
               <th
                 scope="col"
-                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
+                class="tw-hidden md:tw-table-cell print:tw-table-cell"
                 th:text="#{applications.statistics.waiting}"
               ></th>
               <th
                 scope="col"
-                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
+                class="tw-hidden md:tw-table-cell print:tw-table-cell"
                 th:text="#{applications.statistics.left}"
               ></th>
               <th
                 scope="col"
-                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
+                class="tw-hidden md:tw-table-cell print:tw-table-cell"
                 th:text="|#{applications.statistics.left} (${from.year})|"
               ></th>
             </tr>
@@ -193,10 +188,7 @@
                 </div>
               </td>
 
-              <td
-                class="tw-hidden md:tw-table-cell print:tw-table-cell"
-                th:data-sortable-value="${statistic.totalAllowedVacationDays}"
-              >
+              <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
                 <div class="tw-whitespace-nowrap">
                   <span
                     class="tw-font-bold"
@@ -216,10 +208,7 @@
                 </div>
               </td>
 
-              <td
-                class="tw-hidden md:tw-table-cell print:tw-table-cell"
-                th:data-sortable-value="${statistic.totalWaitingVacationDays}"
-              >
+              <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
                 <div class="tw-whitespace-nowrap">
                   <span
                     class="tw-font-bold"
@@ -239,10 +228,7 @@
                 </div>
               </td>
 
-              <td
-                class="tw-hidden md:tw-table-cell print:tw-table-cell"
-                th:data-sortable-value="${statistic.leftVacationDaysForPeriod}"
-              >
+              <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
                 <div>
                   <span
                     class="tw-font-bold"
@@ -264,10 +250,7 @@
                 </div>
               </td>
 
-              <td
-                class="tw-hidden md:tw-table-cell print:tw-table-cell"
-                th:data-sortable-value="${statistic.leftVacationDays}"
-              >
+              <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
                 <div>
                   <span
                     class="tw-font-bold"
