@@ -36,7 +36,7 @@
     </th:block>
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
-    <main th:fragment="main" data-turbo="true">
+    <main th:fragment="main" class="tw-pb-32" data-turbo="true">
       <div class="tw-max-w-[93.75rem] tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-8">
         <div
           th:replace="fragments/section-heading::section-heading(~{::absences-statistics-heading-body}, ~{::absences-statistics-heading-actions})"
@@ -167,25 +167,25 @@
           <table
             th:unless="${errors}"
             id="application-statistic-table"
-            class="tw-mt-8 md:tw-mt-16 list-table tw-text-sm">
-
+            class="tw-mt-8 md:tw-mt-16 list-table tw-text-sm"
+          >
             <thead class="tw-hidden lg:tw-table-header-group">
               <tr>
                 <th scope="col"></th>
                 <th
                   th:if="${showPersonnelNumberColumn}"
                   scope="col"
-                  class="tw-hidden lg:tw-table-cell print:tw-table-cell "
+                  class="tw-hidden lg:tw-table-cell print:tw-table-cell"
                   th:text="#{person.account.basedata.personnelNumber.abbreviation}"
                 ></th>
                 <th
                   scope="col"
-                  class="tw-hidden lg:tw-table-cell print:tw-table-cell "
+                  class="tw-hidden lg:tw-table-cell print:tw-table-cell"
                   th:text="#{person.data.firstName}"
                 ></th>
                 <th
                   scope="col"
-                  class="tw-hidden lg:tw-table-cell print:tw-table-cell "
+                  class="tw-hidden lg:tw-table-cell print:tw-table-cell"
                   th:text="#{person.data.lastName}"
                 ></th>
                 <th scope="col" class="lg:tw-hidden print:tw-hidden"></th>
@@ -193,22 +193,22 @@
                 <th scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell"></th>
                 <th
                   scope="col"
-                  class="tw-hidden md:tw-table-cell print:tw-table-cell "
+                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
                   th:text="#{applications.statistics.allowed}"
                 ></th>
                 <th
                   scope="col"
-                  class="tw-hidden md:tw-table-cell print:tw-table-cell "
+                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
                   th:text="#{applications.statistics.waiting}"
                 ></th>
                 <th
                   scope="col"
-                  class="tw-hidden md:tw-table-cell print:tw-table-cell "
+                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
                   th:text="#{applications.statistics.left}"
                 ></th>
                 <th
                   scope="col"
-                  class="tw-hidden md:tw-table-cell print:tw-table-cell "
+                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
                   th:text="|#{applications.statistics.left} (${from.year})|"
                 ></th>
               </tr>
@@ -263,10 +263,7 @@
                   </div>
                 </td>
 
-                <td
-                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
-
-                >
+                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
                   <div class="tw-whitespace-nowrap">
                     <span
                       class="tw-font-bold"
@@ -286,10 +283,7 @@
                   </div>
                 </td>
 
-                <td
-                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
-
-                >
+                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
                   <div class="tw-whitespace-nowrap">
                     <span
                       class="tw-font-bold"
@@ -309,10 +303,7 @@
                   </div>
                 </td>
 
-                <td
-                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
-
-                >
+                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
                   <div>
                     <span
                       class="tw-font-bold"
@@ -334,10 +325,7 @@
                   </div>
                 </td>
 
-                <td
-                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
-
-                >
+                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
                   <div>
                     <span
                       class="tw-font-bold"
