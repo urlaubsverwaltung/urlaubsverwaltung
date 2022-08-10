@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
@@ -12,7 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -203,7 +206,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         statistic.addWaitingVacationDays(new VacationType(1, true, HOLIDAY, "message_key_holiday", false, YELLOW, false), BigDecimal.valueOf(3));
         statistic.addAllowedVacationDays(new VacationType(1, true, OVERTIME, "message_key_overtime", false, YELLOW, false), BigDecimal.valueOf(4));
 
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), eq(filterPeriod), any(Pageable.class)))
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), eq(filterPeriod), eq(defaultPageRequest())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
@@ -237,6 +240,87 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", vacationType))
             .andExpect(view().name("thymeleaf/application/application-statistics"));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"person.firstName,ASC:firstName", "person.lastName,ASC:lastName"}, delimiter = ':')
+    void applicationForLeaveStatisticsSetsModelAndViewWithStatisticsSortedAscendingBy(String sortQuery, String expectedSortProperty) throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2);
+        person.setFirstName("John");
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person);
+
+        final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, expectedSortProperty));
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest)))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics")
+            .param("sort", sortQuery));
+
+        resultActions
+            .andExpect(model().attribute("statistics", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveStatisticsDto.class),
+                    hasProperty("firstName", is("John"))
+                )
+            )));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"person.firstName,DESC:firstName", "person.lastName,DESC:lastName"}, delimiter = ':')
+    void applicationForLeaveStatisticsSetsModelAndViewWithStatisticsSortedDescendingBy(String sortQuery, String expectedSortProperty) throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2);
+        person.setFirstName("John");
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person);
+
+        final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, expectedSortProperty));
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest)))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics")
+            .param("sort", sortQuery));
+
+        resultActions
+            .andExpect(model().attribute("statistics", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveStatisticsDto.class),
+                    hasProperty("firstName", is("John"))
+                )
+            )));
+    }
+
+    @Test
+    void applicationForLeaveStatisticsSetsModelAndViewSortQuery() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2);
+        person.setFirstName("John");
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person);
+
+        final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "lastName"));
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest)))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics")
+            .param("sort", "person.lastName,DESC"));
+
+        resultActions
+            .andExpect(model().attribute("sortQuery", is("person.lastName,DESC")));
     }
 
     @Test
@@ -289,6 +373,10 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .param("to", "01.08.2019"))
             .andExpect(status().isOk())
             .andExpect(content().string("csv-resource"));
+    }
+
+    private static Pageable defaultPageRequest() {
+        return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "firstName"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

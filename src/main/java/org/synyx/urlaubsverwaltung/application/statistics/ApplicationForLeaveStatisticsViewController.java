@@ -5,6 +5,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
@@ -28,8 +29,12 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
+import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
+import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
+import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.IntStream;
@@ -85,7 +90,7 @@ class ApplicationForLeaveStatisticsViewController {
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping
     public String applicationForLeaveStatistics(@SortDefault.SortDefaults({
-                                                    @SortDefault(sort = "firstName", direction = Sort.Direction.ASC)
+                                                    @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)
                                                 })
                                                 Pageable pageable,
                                                 @RequestParam(value = "from", defaultValue = "") String from,
@@ -94,6 +99,7 @@ class ApplicationForLeaveStatisticsViewController {
 
         final FilterPeriod period = toFilterPeriod(from, to);
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
+            // TODO model attributes for validation error case
             model.addAttribute("period", period);
             model.addAttribute("errors", "INVALID_PERIOD");
             return "thymeleaf/application/application-statistics";
@@ -101,7 +107,17 @@ class ApplicationForLeaveStatisticsViewController {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        final Page<ApplicationForLeaveStatistics> personsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageable);
+        Sort personSort = Sort.unsorted();
+        for (Sort.Order order : pageable.getSort()) {
+            final String propertyWithPrefix = order.getProperty();
+            if (propertyWithPrefix.startsWith("person.")) {
+                final String property = propertyWithPrefix.replace("person.", "");
+                personSort = personSort.and(Sort.by(order.getDirection(), property));
+            }
+        }
+        final Pageable personPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), personSort);
+
+        final Page<ApplicationForLeaveStatistics> personsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, personPageable);
 
         final List<ApplicationForLeaveStatisticsDto> statisticsDtos = personsPage.stream()
             .map(applicationForLeaveStatistics -> mapToApplicationForLeaveStatisticsDto(applicationForLeaveStatistics, locale, messageSource)).collect(toList());
@@ -111,13 +127,16 @@ class ApplicationForLeaveStatisticsViewController {
 
         model.addAttribute("statisticsPage", new PageImpl<>(statisticsDtos, pageable, personsPage.getTotalElements()));
         model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personsPage.getTotalPages()).boxed().collect(toList()));
-
+        model.addAttribute("sortQuery", pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(toList()).stream().reduce((s, s2) -> s + "&" + s2).orElse(""));
         model.addAttribute("period", period);
         model.addAttribute("from", period.getStartDate());
         model.addAttribute("to", period.getEndDate());
         model.addAttribute("statistics", statisticsDtos);
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("vacationTypes", vacationTypeService.getAllVacationTypes());
+
+        final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
+        model.addAttribute("sortSelect", sortSelectDto);
 
         return "thymeleaf/application/application-statistics";
     }
@@ -155,5 +174,31 @@ class ApplicationForLeaveStatisticsViewController {
         final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
         final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(null);
         return new FilterPeriod(startDate, endDate);
+    }
+
+    private static HtmlSelectDto sortSelectDto(Sort originalPersonSort) {
+
+        final List<HtmlOptionDto> personOptions = sortOptionGroupDto("person", List.of("firstName", "lastName"), originalPersonSort);
+        final HtmlOptgroupDto personOptgroup = new HtmlOptgroupDto("applications.sort.optgroup.person.label", personOptions);
+
+        return new HtmlSelectDto(List.of(personOptgroup));
+    }
+
+    private static List<HtmlOptionDto> sortOptionGroupDto(String propertyPrefix, List<String> properties, Sort sort) {
+        final List<HtmlOptionDto> options = new ArrayList<>();
+
+        for (String property : properties) {
+            final Sort.Order order = sort.getOrderFor(propertyPrefix + "." + property);
+            options.addAll(sortOptionDto(propertyPrefix, property, order));
+        }
+
+        return options;
+    }
+
+    private static List<HtmlOptionDto> sortOptionDto(String propertyPrefix, String property, Sort.Order order) {
+        return List.of(
+            new HtmlOptionDto(String.format("persons.sort.%s.asc", property), propertyPrefix + "." + property + ",asc", order != null && order.isAscending()),
+            new HtmlOptionDto(String.format("persons.sort.%s.desc", property), propertyPrefix + "." + property + ",desc", order != null && order.isDescending())
+        );
     }
 }

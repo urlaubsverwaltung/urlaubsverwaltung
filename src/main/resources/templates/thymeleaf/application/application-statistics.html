@@ -57,6 +57,7 @@
 
         <div>
           <form method="get" action="#" th:action="@{/web/application/statistics}">
+            <input type="hidden" name="sort" th:value="${sortQuery}" />
             <div class="tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center tw-gap-4">
               <div class="tw-flex tw-flex-col sm:tw-flex-row sm:tw-items-center tw-gap-y-1 tw-gap-x-2">
                 <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="tw-m-0" />
@@ -85,6 +86,40 @@
               </div>
             </div>
           </form>
+          <div class="md:tw-ml-auto">
+            <form action="#" th:action="@{/web/application/statistics}" method="get">
+              <input type="hidden" name="from" th:value="${period.startDateIsoValue}" />
+              <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
+              <input type="hidden" name="size" th:value="${statisticsPage.size}" />
+              <div class="tw-flex tw-flex-col md:tw-flex-row md:tw-items-center">
+                <label for="sort-select" class="tw-m-0 tw-mr-2">
+                  <th:block th:text="#{action.sort}">Sortieren</th:block>:
+                </label>
+                <select
+                  id="sort-select"
+                  name="sort"
+                  th:replace="fragments/select::one(id='sort-select', name='sort', options=~{::sort-select-options}, autosubmit='sort-submit')"
+                >
+                  <th:block th:ref="sort-select-options">
+                    <optgroup
+                      th:each="optgroup : ${sortSelect.optgroups}"
+                      th:label="${#messages.msg(optgroup.labelMessageKey)}"
+                    >
+                      <option
+                        th:each="option : ${optgroup.options}"
+                        th:value="${option.value}"
+                        th:text="${#messages.msg(option.textMessageKey)}"
+                        th:selected="${option.selected}"
+                      ></option>
+                    </optgroup>
+                  </th:block>
+                </select>
+                <button type="submit" id="sort-submit" class="tw-ml-2 button-main" th:text="#{action.sort}">
+                  Sortieren
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
 
         <div class="tw-mt-8 feedback" th:if="${filterPeriodIncorrect}">
@@ -282,7 +317,7 @@
                 <li th:if="${not statisticsPage.first && statisticsPage.totalPages > 7}">
                   <a
                     href="#"
-                    th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=${statisticsPage.number})}"
+                    th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=${statisticsPage.number}, sort=${sortQuery})}"
                     class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
                   >
                     <svg th:replace="icon/chevron-left::svg(className='tw-w-6 tw-h-6')"></svg>
@@ -292,7 +327,7 @@
                 <li th:with="isSelected=${statisticsPage.first}">
                   <a
                     href="#"
-                    th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=1)}"
+                    th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=1, sort=${sortQuery})}"
                     class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
                     th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
                     th:attr="aria-current=${isSelected ? 'page' : ''}"
@@ -317,7 +352,7 @@
                   >
                     <a
                       href="#"
-                      th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=${pageNumber})}"
+                      th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=${pageNumber}, sort=${sortQuery})}"
                       class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
                       th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
                       th:text="${pageNumber}"
@@ -338,7 +373,7 @@
                 <li th:if="${statisticsPage.totalPages > 1}" th:with="isSelected=${statisticsPage.last}">
                   <a
                     href="#"
-                    th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=${statisticsPage.totalPages})}"
+                    th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=${statisticsPage.totalPages}, sort=${sortQuery})}"
                     class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
                     th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
                     th:text="${statisticsPage.totalPages}"
@@ -351,7 +386,7 @@
                 <li th:if="${statisticsPage.totalPages > 7 && not statisticsPage.last}">
                   <a
                     href="#"
-                    th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=${statisticsPage.number + 2})}"
+                    th:href="@{/web/application/statistics (from=${period.startDateIsoValue}, to=${period.endDateIsoValue}, size=${statisticsPage.size}, page=${statisticsPage.number + 2}, sort=${sortQuery})}"
                     class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
                   >
                     <span class="tw-sr-only" th:text="#{pagination.page.next}"></span>
@@ -363,6 +398,7 @@
           </div>
           <form action="#" class="md:tw-ml-auto tw-flex tw-items-center">
             <input type="hidden" name="page" th:value="${statisticsPage.number + 1}" />
+            <input type="hidden" name="sort" th:value="${sortQuery}" />
             <div class="tw-flex tw-items-center tw-gap-2">
               <label for="pagination-size-select" class="tw-m-0" th:text="#{pagination.page.size.label.text}">
                 Zeige
