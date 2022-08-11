@@ -69,16 +69,14 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery) {
-        // FIXME check if person is priviliged
         final Predicate<Person> filter = nameContains(pageableSearchQuery.getQuery()).and(not(Person::isInactive));
-        return departmentMemberPage(departmentId, pageableSearchQuery, filter);
+        return managedMembersOfPersonAndDepartment(person, departmentId, pageableSearchQuery, filter);
     }
 
     @Override
     public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery) {
-        // FIXME check if person is priviliged
         final Predicate<Person> filter = nameContains(pageableSearchQuery.getQuery()).and(Person::isInactive);
-        return departmentMemberPage(departmentId, pageableSearchQuery, filter);
+        return managedMembersOfPersonAndDepartment(person, departmentId, pageableSearchQuery, filter);
     }
 
     private Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery, Predicate<Person> predicate) {
@@ -387,12 +385,17 @@ class DepartmentServiceImpl implements DepartmentService {
         return list;
     }
 
-    private Page<Person> departmentMemberPage(Integer departmentId, PageableSearchQuery pageableSearchQuery, Predicate<Person> filter) {
+    private Page<Person> managedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery, Predicate<Person> filter) {
         final Pageable pageable = pageableSearchQuery.getPageable();
 
-        final List<DepartmentMemberEmbeddable> departmentMembers = departmentRepository.findById(departmentId)
-            .map(DepartmentEntity::getMembers)
+        final DepartmentEntity departmentEntity = departmentRepository.findById(departmentId)
             .orElseThrow(() -> new IllegalArgumentException("could not find department with id=" + departmentId));
+
+        if (!doesPersonManageDepartment(person, departmentEntity)) {
+            return Page.empty();
+        }
+
+        final List<DepartmentMemberEmbeddable> departmentMembers = departmentEntity.getMembers();
 
         final List<Person> content = departmentMembers.stream()
             .map(DepartmentMemberEmbeddable::getPerson)
@@ -403,6 +406,22 @@ class DepartmentServiceImpl implements DepartmentService {
             .collect(toList());
 
         return new PageImpl<>(content, pageable, departmentMembers.size());
+    }
+
+    private static boolean doesPersonManageDepartment(Person person, DepartmentEntity departmentEntity) {
+        if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
+            return true;
+        }
+
+        if (person.hasRole(DEPARTMENT_HEAD)) {
+            return departmentEntity.getDepartmentHeads().stream().anyMatch(person::equals);
+        }
+
+        if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            return departmentEntity.getSecondStageAuthorities().stream().anyMatch(person::equals);
+        }
+
+        return false;
     }
 
     private void sendMemberLeftDepartmentEvent(Department department, DepartmentEntity currentDepartmentEntity) {
