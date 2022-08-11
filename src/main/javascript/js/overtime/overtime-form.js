@@ -2,6 +2,11 @@ import $ from "jquery";
 import { createDatepicker } from "../../components/datepicker";
 
 $(document).ready(async function () {
+  const form = document.querySelector("#person-select");
+  form.addEventListener("change", (event) => {
+    window.location.href = event.target.value;
+  });
+
   const urlPrefix = window.uv.apiPrefix;
   const personId = window.uv.personId;
 

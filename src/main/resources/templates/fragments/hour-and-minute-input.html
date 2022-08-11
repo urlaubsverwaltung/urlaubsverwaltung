@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>hour-and-minute-input</title>
+  </head>
+  <body>
+    <div th:fragment="hour-and-minute-input" class="tw-flex tw-items-start">
+      <span class="tw-flex-1">
+        <th:block
+          th:replace="fragments/input-group :: input-group(~{::body-hours}, ~{::addon-hours}, ${#fields.hasErrors('hours')})"
+        >
+          <th:block th:ref="addon-hours">
+            <th:block th:text="#{hours.abbr}"></th:block>
+          </th:block>
+          <th:block th:ref="body-hours">
+            <input
+              th:field="*{hours}"
+              class="form-control"
+              th:placeholder="#{input.hours.input.placeholder}"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              data-test-id="overtime-hours"
+            />
+          </th:block>
+        </th:block>
+        <span th:if="${#fields.hasErrors('hours')}" class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400">
+          <th:block th:errors="*{hours}">hours Error</th:block>
+        </span> </span
+      >&nbsp;
+      <span class="tw-flex-1">
+        <th:block
+          th:replace="fragments/input-group :: input-group(~{::body-minutes}, ~{::addon-minutes}, ${#fields.hasErrors('minutes')})"
+        >
+          <th:block th:ref="addon-minutes">
+            <th:block th:text="#{minutes.abbr}"></th:block>
+          </th:block>
+          <th:block th:ref="body-minutes">
+            <input
+              th:field="*{minutes}"
+              class="form-control"
+              th:placeholder="#{input.minutes.input.placeholder}"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              data-test-id="overtime-minutes"
+            />
+          </th:block>
+        </th:block>
+        <span th:if="${#fields.hasErrors('minutes')}" class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400">
+          <th:block th:errors="*{minutes}">minutes Error</th:block>
+        </span>
+      </span>
+    </div>
+  </body>
+</html>
