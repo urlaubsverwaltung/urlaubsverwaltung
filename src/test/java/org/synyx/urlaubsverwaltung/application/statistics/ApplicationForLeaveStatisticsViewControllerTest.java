@@ -110,7 +110,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         resultActions
             .andExpect(model().attribute("from", startDate))
             .andExpect(model().attribute("to", endDate))
-            .andExpect(model().attribute("statisticsPage", hasProperty("content", is(List.of()))))
+            .andExpect(model().attribute("statisticsPagination", hasProperty("page", hasProperty("content", is(List.of())))))
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
             .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", vacationType))

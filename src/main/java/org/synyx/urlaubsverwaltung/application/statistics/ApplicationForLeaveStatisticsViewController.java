@@ -28,18 +28,22 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
+import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.IntStream;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatisticsMapper.mapToApplicationForLeaveStatisticsDto;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
+import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.buildPageLinkPrefix;
 
 /**
  * Controller to generate applications for leave statistics.
@@ -98,9 +102,13 @@ class ApplicationForLeaveStatisticsViewController {
         final boolean showPersonnelNumberColumn = statisticsDtos.stream()
             .anyMatch(statisticsDto -> hasText(statisticsDto.getPersonnelNumber()));
 
-        model.addAttribute("statisticsPage", new PageImpl<>(statisticsDtos, pageable, personsPage.getTotalElements()));
+        final PageImpl<ApplicationForLeaveStatisticsDto> statisticsPage = new PageImpl<>(statisticsDtos, pageable, personsPage.getTotalElements());
+        final String pageLinkPrefix = buildPageLinkPrefix(pageable, Map.of("from", period.getStartDateIsoValue(), "to", period.getEndDateIsoValue()));
+        final PaginationDto<ApplicationForLeaveStatisticsDto> statisticsPagination = new PaginationDto<>(statisticsPage, pageLinkPrefix);
+
+        model.addAttribute("statisticsPagination", statisticsPagination);
         model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personsPage.getTotalPages()).boxed().collect(toList()));
-        model.addAttribute("sortQuery", pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(toList()).stream().reduce((s, s2) -> s + "&" + s2).orElse(""));
+        model.addAttribute("sortQuery", pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(joining("&")));
         model.addAttribute("period", period);
         model.addAttribute("from", period.getStartDate());
         model.addAttribute("to", period.getEndDate());
@@ -113,6 +121,7 @@ class ApplicationForLeaveStatisticsViewController {
 
         final boolean turboFrameRequested = hasText(turboFrame);
         model.addAttribute("turboFrameRequested", turboFrameRequested);
+
 
         if (turboFrameRequested) {
             return "thymeleaf/application/application-statistics::#" + turboFrame;

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>pagination</title>
+  </head>
+  <body>
+    <nav
+      th:fragment="pagination(pagination, label, turboFrame)"
+      th:with="page=${pagination.page}"
+      th:aria-label="${label}"
+    >
+      <ul class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-row tw-gap-x-2 tw-gap-y-4 tw-flex-wrap">
+        <li th:if="${not page.first && page.totalPages > 7}">
+          <a
+            href="#"
+            th:href="${pagination.hrefForPage(page.number)}"
+            class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
+            th:data-turbo-frame="${turboFrame}"
+            data-turbo-action="advance"
+          >
+            <svg th:replace="icon/chevron-left::svg(className='tw-w-6 tw-h-6')"></svg>
+            <span class="tw-sr-only" th:text="#{pagination.page.previous}"></span>
+          </a>
+        </li>
+        <li th:with="isSelected=${page.first}">
+          <a
+            href="#"
+            th:href="${pagination.hrefForPage(1)}"
+            class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+            th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
+            th:attr="aria-current=${isSelected ? 'page' : ''}"
+            th:aria-label="#{pagination.page('1')}"
+            th:data-turbo-frame="${turboFrame}"
+            data-turbo-action="advance"
+          >
+            1
+          </a>
+        </li>
+        <li th:if="${page.totalPages > 7 && page.number > 2}" role="presentation" class="tw-px-4 tw-py-1">…</li>
+        <th:block th:each="pageNumber : ${paginationPageNumbers}" th:with="isSelected=${pageNumber == page.number + 1}">
+          <li
+            th:if="${not pageNumberStat.first && not pageNumberStat.last && (page.totalPages <= 7 || pageNumber == page.number || pageNumber == page.number + 1 || pageNumber == page.number + 2)}"
+          >
+            <a
+              href="#"
+              th:href="${pagination.hrefForPage(pageNumber)}"
+              class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+              th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
+              th:text="${pageNumber}"
+              th:attr="aria-current=${isSelected ? 'page' : ''}"
+              th:aria-label="${pageNumberStat.last ? #messages.msg('pagination.page.last', pageNumber) : #messages.msg('pagination.page', pageNumber)}"
+              th:data-turbo-frame="${turboFrame}"
+              data-turbo-action="advance"
+            >
+              2
+            </a>
+          </li>
+        </th:block>
+        <li
+          th:if="${page.totalPages > 7 && page.number < page.totalPages - 3}"
+          role="presentation"
+          class="tw-px-4 tw-py-1"
+        >
+          …
+        </li>
+        <li th:if="${page.totalPages > 1}" th:with="isSelected=${page.last}">
+          <a
+            href="#"
+            th:href="${pagination.hrefForPage(page.totalPages)}"
+            class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+            th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
+            th:text="${page.totalPages}"
+            th:attr="aria-current=${isSelected ? 'page' : ''}"
+            th:aria-label="#{pagination.page.last(${page.totalPages})}"
+            th:data-turbo-frame="${turboFrame}"
+            data-turbo-action="advance"
+          >
+            3
+          </a>
+        </li>
+        <li th:if="${page.totalPages > 7 && not page.last}">
+          <a
+            href="#"
+            th:href="${pagination.hrefForPage(page.number + 2)}"
+            class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
+            th:data-turbo-frame="${turboFrame}"
+            data-turbo-action="advance"
+          >
+            <span class="tw-sr-only" th:text="#{pagination.page.next}"></span>
+            <svg th:replace="icon/chevron-right::svg(className='tw-w-6 tw-h-6')"></svg>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </body>
+</html>
