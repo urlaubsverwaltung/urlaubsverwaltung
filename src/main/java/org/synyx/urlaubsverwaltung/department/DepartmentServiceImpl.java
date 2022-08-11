@@ -5,12 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
-import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
+import org.synyx.urlaubsverwaltung.search.SortComparator;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -68,32 +69,16 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery) {
-        final List<Person> members = departmentRepository.findById(departmentId)
-            .map(DepartmentEntity::getMembers)
-            .map(departmentMembers -> departmentMembers.stream()
-                .map(DepartmentMemberEmbeddable::getPerson)
-                .filter(nameContains(pageableSearchQuery.getQuery()).and(not(Person::isInactive)))
-                .sorted(new SortComparator<>(Person.class, pageableSearchQuery.getPageable().getSort()))
-                .collect(toList())
-            )
-            .orElseThrow(() -> new IllegalArgumentException("could not find department with id=" + departmentId));
-
-        return new PageImpl<>(members, pageableSearchQuery.getPageable(), members.size());
+        // FIXME check if person is priviliged
+        final Predicate<Person> filter = nameContains(pageableSearchQuery.getQuery()).and(not(Person::isInactive));
+        return departmentMemberPage(departmentId, pageableSearchQuery, filter);
     }
 
     @Override
     public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery) {
-        final List<Person> members = departmentRepository.findById(departmentId)
-            .map(DepartmentEntity::getMembers)
-            .map(departmentMembers -> departmentMembers.stream()
-                .map(DepartmentMemberEmbeddable::getPerson)
-                .filter(nameContains(pageableSearchQuery.getQuery()).and(Person::isInactive))
-                .sorted(new SortComparator<>(Person.class, pageableSearchQuery.getPageable().getSort()))
-                .collect(toList())
-            )
-            .orElseThrow(() -> new IllegalArgumentException("could not find department with id=" + departmentId));
-
-        return new PageImpl<>(members, pageableSearchQuery.getPageable(), members.size());
+        // FIXME check if person is priviliged
+        final Predicate<Person> filter = nameContains(pageableSearchQuery.getQuery()).and(Person::isInactive);
+        return departmentMemberPage(departmentId, pageableSearchQuery, filter);
     }
 
     private Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery, Predicate<Person> predicate) {
@@ -109,16 +94,23 @@ class DepartmentServiceImpl implements DepartmentService {
             departments = List.of();
         }
 
-        final List<Person> content = departments.stream()
+        final Pageable pageable = personPageableSearchQuery.getPageable();
+
+        final List<Person> managedMembers = departments.stream()
             .map(DepartmentEntity::getMembers)
             .flatMap(List::stream)
             .map(DepartmentMemberEmbeddable::getPerson)
             .distinct()
             .filter(nameContains(personPageableSearchQuery.getQuery()).and(predicate))
-            .sorted(new SortComparator<>(Person.class, personPageableSearchQuery.getPageable().getSort()))
+            .sorted(new SortComparator<>(Person.class, pageable.getSort()))
             .collect(toList());
 
-        return new PageImpl<>(content, personPageableSearchQuery.getPageable(), content.size());
+        final List<Person> content = managedMembers.stream()
+            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+            .limit(pageable.getPageSize())
+            .collect(toList());
+
+        return new PageImpl<>(content, pageable, managedMembers.size());
     }
 
     @Override
@@ -393,6 +385,24 @@ class DepartmentServiceImpl implements DepartmentService {
         }
 
         return list;
+    }
+
+    private Page<Person> departmentMemberPage(Integer departmentId, PageableSearchQuery pageableSearchQuery, Predicate<Person> filter) {
+        final Pageable pageable = pageableSearchQuery.getPageable();
+
+        final List<DepartmentMemberEmbeddable> departmentMembers = departmentRepository.findById(departmentId)
+            .map(DepartmentEntity::getMembers)
+            .orElseThrow(() -> new IllegalArgumentException("could not find department with id=" + departmentId));
+
+        final List<Person> content = departmentMembers.stream()
+            .map(DepartmentMemberEmbeddable::getPerson)
+            .filter(filter)
+            .sorted(new SortComparator<>(Person.class, pageable.getSort()))
+            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+            .limit(pageable.getPageSize())
+            .collect(toList());
+
+        return new PageImpl<>(content, pageable, departmentMembers.size());
     }
 
     private void sendMemberLeftDepartmentEvent(Department department, DepartmentEntity currentDepartmentEntity) {

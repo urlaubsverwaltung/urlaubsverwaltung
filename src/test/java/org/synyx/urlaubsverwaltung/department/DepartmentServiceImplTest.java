@@ -10,10 +10,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -21,11 +21,14 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 import static java.time.Month.DECEMBER;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -334,6 +337,110 @@ class DepartmentServiceImplTest {
 
         assertThat(actual.getContent()).isEmpty();
         verifyNoInteractions(departmentRepository);
+    }
+
+    @Test
+    void ensureGetManagedActiveMembersOfPersonReturnsPageSecond() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final List<DepartmentMemberEmbeddable> activeMembers =
+            anyDepartmentMembers(14, 1, p -> p.setPermissions(List.of(USER)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(activeMembers);
+
+        when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(2);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
+        assertThat(actual.getContent()).hasSize(4);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonReturnsPageSecond() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final List<DepartmentMemberEmbeddable> inactiveMembers =
+            anyDepartmentMembers(14, 1, p -> p.setPermissions(List.of(INACTIVE)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(inactiveMembers);
+
+        when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(2);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
+        assertThat(actual.getContent()).hasSize(4);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonAndDepartmentReturnsPageSecond() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final List<DepartmentMemberEmbeddable> activeMembers =
+            anyDepartmentMembers(14, 1, p -> p.setPermissions(List.of(USER)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(activeMembers);
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(2);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
+        assertThat(actual.getContent()).hasSize(4);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonAndDepartmentReturnsPageSecond() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final List<DepartmentMemberEmbeddable> inactiveMembers =
+            anyDepartmentMembers(14, 1, p -> p.setPermissions(List.of(INACTIVE)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(inactiveMembers);
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(2);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
+        assertThat(actual.getContent()).hasSize(4);
     }
 
     @Test
@@ -1235,6 +1342,30 @@ class DepartmentServiceImplTest {
 
     private static PageRequest defaultPageRequest() {
         return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "firstName"));
+    }
+
+    private static Person anyPerson(int id) {
+        final Person person = new Person();
+        person.setId(id);
+        return person;
+    }
+
+    private static List<Person> anyPersons(int size, int firstPersonId) {
+        final List<Integer> personIds = IntStream.range(firstPersonId, firstPersonId + size).boxed().collect(toList());
+        return IntStream.range(0, size).boxed().map(index -> anyPerson(personIds.get(index))).collect(toList());
+    }
+
+    private static List<DepartmentMemberEmbeddable> anyDepartmentMembers(int size, int firstPersonId, Consumer<Person> personMutator) {
+        return anyPersons(size, firstPersonId).stream()
+            .map(DepartmentServiceImplTest::departmentMemberForPerson)
+            .peek(departmentMemberEmbeddable -> personMutator.accept(departmentMemberEmbeddable.getPerson()))
+            .collect(toList());
+    }
+
+    private static DepartmentMemberEmbeddable departmentMemberForPerson(Person person) {
+        final DepartmentMemberEmbeddable departmentMember = new DepartmentMemberEmbeddable();
+        departmentMember.setPerson(person);
+        return departmentMember;
     }
 
     private DepartmentMemberEmbeddable departmentMemberEmbeddable(String username, String firstname, String lastname, String email) {
