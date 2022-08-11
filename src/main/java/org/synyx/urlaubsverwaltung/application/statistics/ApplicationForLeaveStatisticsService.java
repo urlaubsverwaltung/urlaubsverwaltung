@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -61,12 +62,19 @@ class ApplicationForLeaveStatisticsService {
         final List<Integer> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).collect(toList());
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
 
-        final List<ApplicationForLeaveStatistics> content = relevantPersonsPage.getContent().stream()
+        Stream<ApplicationForLeaveStatistics> statisticsStream = relevantPersonsPage.getContent().stream()
             .map(relevantPerson -> statistics(period, activeVacationTypes, relevantPerson, basedataByPersonId.getOrDefault(new PersonId(relevantPerson.getId()), null)))
-            .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()))
-            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
-            .limit(pageable.getPageSize())
-            .collect(toList());
+            .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()));
+
+        if (relevantPersonsPage.getPageable().isUnpaged()) {
+            // we don't have to restrict the statistics if persons page is paged and or sorted already.
+            // otherwise we have fetched ALL persons -> therefore skip and limit statistics content.
+            statisticsStream = statisticsStream
+                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+                .limit(pageable.getPageSize());
+        }
+
+        final List<ApplicationForLeaveStatistics> content = statisticsStream.collect(toList());
 
         return new PageImpl<>(content, pageable, relevantPersonsPage.getTotalElements());
     }
