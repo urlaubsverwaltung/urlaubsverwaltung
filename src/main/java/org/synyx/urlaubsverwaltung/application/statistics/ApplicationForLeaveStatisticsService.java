@@ -3,7 +3,9 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
@@ -55,18 +57,18 @@ class ApplicationForLeaveStatisticsService {
      */
     Page<ApplicationForLeaveStatistics> getStatistics(Person person, FilterPeriod period, Pageable pageable) {
         final List<VacationType> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
-        final List<Person> relevantPersons = getAllRelevantPersons(person);
-        final List<Integer> personIdValues = relevantPersons.stream().map(Person::getId).collect(toList());
+        final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, pageable);
+        final List<Integer> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).collect(toList());
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
 
-        final List<ApplicationForLeaveStatistics> content = relevantPersons.stream()
+        final List<ApplicationForLeaveStatistics> content = relevantPersonsPage.getContent().stream()
             .map(relevantPerson -> statistics(period, activeVacationTypes, relevantPerson, basedataByPersonId.getOrDefault(new PersonId(relevantPerson.getId()), null)))
             .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()))
             .skip((long) pageable.getPageNumber() * pageable.getPageSize())
             .limit(pageable.getPageSize())
             .collect(toList());
 
-        return new PageImpl<>(content, pageable, relevantPersons.size());
+        return new PageImpl<>(content, pageable, relevantPersonsPage.getTotalElements());
     }
 
     private ApplicationForLeaveStatistics statistics(FilterPeriod period, List<VacationType> vacationTypes, Person person, PersonBasedata personBasedata) {
@@ -77,12 +79,42 @@ class ApplicationForLeaveStatisticsService {
         }
     }
 
-    private List<Person> getAllRelevantPersons(Person person) {
+    private Page<Person> getAllRelevantPersons(Person person, Pageable pageable) {
+        final boolean sortByPerson = isSortByPersonAttribute(pageable);
+
         if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
-            return personService.getActivePersons();
+            if (sortByPerson) {
+                final PageRequest pageRequest = mapToPersonPageRequest(pageable);
+                final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(pageRequest);
+                return personService.getActivePersons(personPageableSearchQuery);
+            } else {
+                final List<Person> activePersons = personService.getActivePersons();
+                return new PageImpl<>(activePersons);
+            }
         }
 
-        final PageableSearchQuery query = new PageableSearchQuery(Pageable.unpaged());
-        return departmentService.getManagedMembersOfPerson(person, query).getContent();
+        final PageableSearchQuery query = new PageableSearchQuery(sortByPerson ? mapToPersonPageRequest(pageable) : Pageable.unpaged());
+        return departmentService.getManagedMembersOfPerson(person, query);
+    }
+
+    private PageRequest mapToPersonPageRequest(Pageable statisticsPageRequest) {
+        Sort personSort = Sort.unsorted();
+
+        for (Sort.Order order : statisticsPageRequest.getSort()) {
+            if (order.getProperty().startsWith("person.")) {
+                personSort = personSort.and(Sort.by(order.getDirection(), order.getProperty().replace("person.", "")));
+            }
+        }
+
+        return PageRequest.of(statisticsPageRequest.getPageNumber(), statisticsPageRequest.getPageSize(), personSort);
+    }
+
+    private boolean isSortByPersonAttribute(Pageable pageable) {
+        for (Sort.Order order : pageable.getSort()) {
+            if (!order.getProperty().startsWith("person.")) {
+                return false;
+            }
+        }
+        return true;
     }
 }
