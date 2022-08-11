@@ -1,5 +1,8 @@
 package org.synyx.urlaubsverwaltung.department;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -134,6 +137,52 @@ public interface DepartmentService {
      * else {@code false}
      */
     boolean isDepartmentHeadAllowedToManagePerson(Person departmentHead, Person person);
+
+    /**
+     * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
+     * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
+     * for and can perform actions for this person.
+     *
+     * @param person person to get managed members for
+     * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
+     * @return all managed and active members for the person
+     */
+    Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery);
+
+    /**
+     * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
+     * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
+     * for and can perform actions for this person.
+     *
+     * @param person person to get managed members for
+     * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
+     * @return all managed and inactive members for the person
+     */
+    Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery);
+
+    /**
+     * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
+     * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
+     * for and can perform actions for this person.
+     *
+     * @param person person to get managed members for
+     * @param departmentId departmentId to get managed members for
+     * @param pageableSearchQuery searchQuery to restrict the result set
+     * @return all managed and active members for the person
+     */
+    Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery);
+
+    /**
+     * Check the role of the given person and return a {@link Page} of all managed and inactive {@link Person}s for the
+     * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
+     * for and can perform actions for this person.
+     *
+     * @param person person to get managed members for
+     * @param departmentId departmentId to get managed members for
+     * @param pageableSearchQuery search query containing pageable and an optional query for firstname/lastname
+     * @return all managed and inactive members for the person
+     */
+    Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery);
 
     /**
      * Get all distinct managed members of the department head.

@@ -40,6 +40,23 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
     <th:block th:replace="${styles}"></th:block>
 
+    <script>
+      !(function () {
+        function injectStyle(r, t) {
+          t === void 0 && (t = {});
+          var e = t.insertAt;
+          if (!(!r || typeof document == "undefined")) {
+            var d = document.head || document.getElementsByTagName("head")[0],
+              a = document.createElement("style");
+            (a.type = "text/css"),
+              e === "top" && d.firstChild ? d.insertBefore(a, d.firstChild) : d.appendChild(a),
+              a.styleSheet ? (a.styleSheet.cssText = r) : a.appendChild(document.createTextNode(r));
+          }
+        }
+        injectStyle("[data-js-hidden] { display: none; }");
+      })();
+    </script>
+
     <script th:if="${theme eq 'system'}">
       (function () {
         const htmlElement = document.querySelector("html");
@@ -95,7 +112,7 @@
 
     <script th:inline="javascript">
       window.uv = window.uv || {};
-      window.uv.language = /*[[${language}]]*/"de";
+      window.uv.language = /*[[${language}]]*/ "de";
     </script>
     <th:block th:replace="${scripts}"></th:block>
   </head>

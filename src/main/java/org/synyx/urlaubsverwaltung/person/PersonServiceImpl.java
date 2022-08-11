@@ -3,9 +3,14 @@ package org.synyx.urlaubsverwaltung.person;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
@@ -131,6 +136,14 @@ class PersonServiceImpl implements PersonService {
         return personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
     }
 
+    @Override
+    public Page<Person> getActivePersons(PageableSearchQuery personPageableSearchQuery) {
+        final Pageable pageable = personPageableSearchQuery.getPageable();
+        final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
+        final String query = personPageableSearchQuery.getQuery();
+        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
+        return personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, pageRequest);
+    }
 
     @Override
     public List<Person> getActivePersonsByRole(final Role role) {
@@ -145,6 +158,14 @@ class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getInactivePersons() {
         return personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
+    }
+
+    @Override
+    public Page<Person> getInactivePersons(PageableSearchQuery personPageableSearchQuery) {
+        final Pageable pageable = personPageableSearchQuery.getPageable();
+        final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
+        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
+        return personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, personPageableSearchQuery.getQuery(), pageRequest);
     }
 
     @Override
@@ -194,5 +215,23 @@ class PersonServiceImpl implements PersonService {
     @Override
     public int numberOfActivePersons() {
         return personRepository.countByPermissionsNotContaining(INACTIVE);
+    }
+
+    private static Sort mapToImplicitPersonSort(Sort requestedSort) {
+        final Sort.Order firstNameOrder = requestedSort.getOrderFor("firstName");
+        final Sort.Order lastNameOrder = requestedSort.getOrderFor("lastName");
+
+        // e.g. if content should be sorted by firstName, use lastName as second sort criteria
+        final Sort implicitSort;
+
+        if (firstNameOrder != null) {
+            implicitSort = requestedSort.and(Sort.by(firstNameOrder.getDirection(), "lastName"));
+        } else if (lastNameOrder != null) {
+            implicitSort = requestedSort.and(Sort.by(lastNameOrder.getDirection(), "firstName"));
+        } else {
+            implicitSort = requestedSort;
+        }
+
+        return implicitSort;
     }
 }

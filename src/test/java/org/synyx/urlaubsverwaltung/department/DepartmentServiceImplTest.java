@@ -3,13 +3,20 @@ package org.synyx.urlaubsverwaltung.department;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -17,11 +24,14 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 import static java.time.Month.DECEMBER;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -39,6 +49,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -60,6 +71,746 @@ class DepartmentServiceImplTest {
     @BeforeEach
     void setUp() {
         sut = new DepartmentServiceImpl(departmentRepository, applicationService, applicationEventPublisher, clock);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonReturnsDistinctActivePersonsForDepartmentHeadAndSecondStageAuthority() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember));
+
+        when(departmentRepository.findByDepartmentHeadsAndSecondStageAuthorities(person, person)).thenReturn(List.of(admins, developers));
+
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
+
+        assertThat(actual.getContent()).containsExactly(jane, max);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonReturnsDistinctActivePersonsForDepartmentHead() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember));
+
+        when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(admins, developers));
+
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
+
+        assertThat(actual.getContent()).containsExactly(jane, max);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonReturnsDistinctActivePersonsForSecondStageAuthority() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember));
+
+        when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(List.of(admins, developers));
+
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
+
+        assertThat(actual.getContent()).containsExactly(jane, max);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonReturnsEmptyList() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of());
+
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
+
+        assertThat(actual.getContent()).isEmpty();
+        verifyNoInteractions(departmentRepository);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonReturnsDistinctInactivePersonsForDepartmentHeadAndSecondStageAuthority() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        max.setPermissions(List.of(INACTIVE));
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final Person john = new Person();
+        john.setId(4);
+        john.setFirstName("John");
+        john.setLastName("Doe");
+        john.setPermissions(List.of(INACTIVE));
+        final DepartmentMemberEmbeddable johnMember = new DepartmentMemberEmbeddable();
+        johnMember.setPerson(john);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember, johnMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember, johnMember));
+
+        when(departmentRepository.findByDepartmentHeadsAndSecondStageAuthorities(person, person)).thenReturn(List.of(admins, developers));
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
+
+        assertThat(actual.getContent()).containsExactly(john, max);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonReturnsDistinctInactivePersonsForDepartmentHead() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        max.setPermissions(List.of(INACTIVE));
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final Person john = new Person();
+        john.setId(4);
+        john.setFirstName("John");
+        john.setLastName("Doe");
+        john.setPermissions(List.of(INACTIVE));
+        final DepartmentMemberEmbeddable johnMember = new DepartmentMemberEmbeddable();
+        johnMember.setPerson(john);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember, johnMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember, johnMember));
+
+        when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(admins, developers));
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
+
+        assertThat(actual.getContent()).containsExactly(john, max);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonReturnsDistinctInactivePersonsForSecondStageAuthority() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        max.setPermissions(List.of(INACTIVE));
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final Person john = new Person();
+        john.setId(4);
+        john.setFirstName("John");
+        john.setLastName("Doe");
+        john.setPermissions(List.of(INACTIVE));
+        final DepartmentMemberEmbeddable johnMember = new DepartmentMemberEmbeddable();
+        johnMember.setPerson(john);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember, johnMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember, johnMember));
+
+        when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(List.of(admins, developers));
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
+
+        assertThat(actual.getContent()).containsExactly(john, max);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonReturnsEmptyList() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of());
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
+
+        assertThat(actual.getContent()).isEmpty();
+        verifyNoInteractions(departmentRepository);
+    }
+
+    @Test
+    void ensureGetManagedActiveMembersOfPersonReturnsPageSecond() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final List<DepartmentMemberEmbeddable> activeMembers =
+            anyDepartmentMembers(14, 1, p -> p.setPermissions(List.of(USER)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(activeMembers);
+
+        when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedMembersOfPerson(person, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(2);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
+        assertThat(actual.getContent()).hasSize(4);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonReturnsPageSecond() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final List<DepartmentMemberEmbeddable> inactiveMembers =
+            anyDepartmentMembers(14, 1, p -> p.setPermissions(List.of(INACTIVE)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(inactiveMembers);
+
+        when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(2);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
+        assertThat(actual.getContent()).hasSize(4);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureGetManagedMembersOfPersonAndDepartmentForRole(Role role) {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(role));
+
+        final Person member = new Person();
+        member.setId(2);
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(departmentMemberEmbeddable(member)));
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(0, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(1);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(actual.getContent()).hasSize(1);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonAndDepartmentForDepartmentHead() {
+
+        final Person departmentHead = new Person();
+        departmentHead.setId(1);
+        departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final Person inactiveMember = new Person();
+        inactiveMember.setId(2);
+        inactiveMember.setPermissions(List.of(INACTIVE));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(departmentMemberEmbeddable(inactiveMember)));
+        departmentEntity.setDepartmentHeads(List.of(departmentHead));
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(0, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(departmentHead, 1, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(1);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(actual.getContent()).hasSize(1);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonAndDepartmentForSecondStageAuthority() {
+
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setId(1);
+        secondStageAuthority.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+
+        final Person inactiveMember = new Person();
+        inactiveMember.setId(2);
+        inactiveMember.setPermissions(List.of(INACTIVE));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(departmentMemberEmbeddable(inactiveMember)));
+        departmentEntity.setSecondStageAuthorities(List.of(secondStageAuthority));
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(0, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(secondStageAuthority, 1, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(1);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(actual.getContent()).hasSize(1);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonAndDepartmentForMember() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+
+        final Person inactiveMember = new Person();
+        inactiveMember.setId(2);
+        inactiveMember.setPermissions(List.of(INACTIVE));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(departmentMemberEmbeddable(person), departmentMemberEmbeddable(inactiveMember)));
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(0, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+
+        assertThat(actual).isEqualTo(Page.empty());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureGetManagedMembersOfPersonAndDepartmentReturnsPageSecond(Role role) {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(role));
+
+        final List<DepartmentMemberEmbeddable> activeMembers =
+            anyDepartmentMembers(14, 2, p -> p.setPermissions(List.of(USER)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(activeMembers);
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(2);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
+        assertThat(actual.getContent()).hasSize(4);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonAndDepartmentReturnsEmptyPageWhenDepartmentHeadIsNotResponsible() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final List<DepartmentMemberEmbeddable> activeMembers =
+            // do not start with personId=1 to exclude person from members list
+            anyDepartmentMembers(14, 2, p -> p.setPermissions(List.of(USER)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(activeMembers);
+        // person is not department head of THIS department
+        departmentEntity.setDepartmentHeads(List.of());
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+        assertThat(actual).isEqualTo(Page.empty());
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonAndDepartmentReturnsEmptyPageWhenSecondStageAuthorityIsNotResponsible() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+
+        final List<DepartmentMemberEmbeddable> activeMembers =
+            // do not start with personId=1 to exclude person from members list
+            anyDepartmentMembers(14, 2, p -> p.setPermissions(List.of(USER)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(activeMembers);
+        // person is not second stage authority of THIS department
+        departmentEntity.setSecondStageAuthorities(List.of());
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+        assertThat(actual).isEqualTo(Page.empty());
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonAndDepartmentReturnsEmptyPageWhenGivenUserIsNotAMember() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+
+        final List<DepartmentMemberEmbeddable> activeMembers =
+            // do not start with personId=1 to exclude person from members list
+            anyDepartmentMembers(14, 2, p -> p.setPermissions(List.of(USER)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(activeMembers);
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+        assertThat(actual).isEqualTo(Page.empty());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureGetManagedInactiveMembersOfPersonAndDepartmentForRole(Role role) {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(role));
+
+        final Person inactiveMember = new Person();
+        inactiveMember.setId(2);
+        inactiveMember.setPermissions(List.of(INACTIVE));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(departmentMemberEmbeddable(inactiveMember)));
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(0, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(1);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(actual.getContent()).hasSize(1);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonAndDepartmentForDepartmentHead() {
+
+        final Person departmentHead = new Person();
+        departmentHead.setId(1);
+        departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final Person member = new Person();
+        member.setId(2);
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(departmentMemberEmbeddable(member)));
+        departmentEntity.setDepartmentHeads(List.of(departmentHead));
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(0, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(departmentHead, 1, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(1);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(actual.getContent()).hasSize(1);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonAndDepartmentForSecondStageAuthority() {
+
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setId(1);
+        secondStageAuthority.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+
+        final Person member = new Person();
+        member.setId(2);
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(departmentMemberEmbeddable(member)));
+        departmentEntity.setSecondStageAuthorities(List.of(secondStageAuthority));
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(0, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(secondStageAuthority, 1, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(1);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(actual.getContent()).hasSize(1);
+    }
+
+    @Test
+    void ensureGetManagedMembersOfPersonAndDepartmentForMember() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+
+        final Person member = new Person();
+        member.setId(2);
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(departmentMemberEmbeddable(person), departmentMemberEmbeddable(member)));
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(0, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+
+        assertThat(actual).isEqualTo(Page.empty());
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonAndDepartmentReturnsPageSecond() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(BOSS));
+
+        final List<DepartmentMemberEmbeddable> inactiveMembers =
+            anyDepartmentMembers(14, 2, p -> p.setPermissions(List.of(INACTIVE)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(inactiveMembers);
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+
+        assertThat(actual.getTotalPages()).isEqualTo(2);
+        assertThat(actual.getPageable().getPageNumber()).isEqualTo(1);
+        assertThat(actual.getContent()).hasSize(4);
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonAndDepartmentReturnsEmptyPageWhenDepartmentHeadIsNotResponsible() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final List<DepartmentMemberEmbeddable> inactiveMembers =
+            // do not start with personId=1 to exclude person from members list
+            anyDepartmentMembers(14, 2, p -> p.setPermissions(List.of(INACTIVE)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(inactiveMembers);
+        // person is not department head of THIS department
+        departmentEntity.setDepartmentHeads(List.of());
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+        assertThat(actual).isEqualTo(Page.empty());
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonAndDepartmentReturnsEmptyPageWhenSecondStageAuthorityIsNotResponsible() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+
+        final List<DepartmentMemberEmbeddable> inactiveMembers =
+            // do not start with personId=1 to exclude person from members list
+            anyDepartmentMembers(14, 2, p -> p.setPermissions(List.of(INACTIVE)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(inactiveMembers);
+        // person is not second stage authority of THIS department
+        departmentEntity.setSecondStageAuthorities(List.of());
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+        assertThat(actual).isEqualTo(Page.empty());
+    }
+
+    @Test
+    void ensureGetManagedInactiveMembersOfPersonAndDepartmentReturnsEmptyPageWhenGivenUserIsNotAMember() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+
+        final List<DepartmentMemberEmbeddable> inactiveMembers =
+            // do not start with personId=1 to exclude person from members list
+            anyDepartmentMembers(14, 2, p -> p.setPermissions(List.of(INACTIVE)));
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(inactiveMembers);
+
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(departmentEntity));
+
+        final PageRequest pageRequest = PageRequest.of(1, 10);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+
+        final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
+        assertThat(actual).isEqualTo(Page.empty());
     }
 
     @Test
@@ -953,6 +1704,38 @@ class DepartmentServiceImplTest {
 
         final long numberOfDepartments = sut.getNumberOfDepartments();
         assertThat(numberOfDepartments).isEqualTo(10);
+    }
+
+    private static PageableSearchQuery defaultPersonSearchQuery() {
+        return new PageableSearchQuery(defaultPageRequest(), "");
+    }
+
+    private static PageRequest defaultPageRequest() {
+        return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "firstName"));
+    }
+
+    private static Person anyPerson(int id) {
+        final Person person = new Person();
+        person.setId(id);
+        return person;
+    }
+
+    private static List<Person> anyPersons(int size, int firstPersonId) {
+        final List<Integer> personIds = IntStream.range(firstPersonId, firstPersonId + size).boxed().collect(toList());
+        return IntStream.range(0, size).boxed().map(index -> anyPerson(personIds.get(index))).collect(toList());
+    }
+
+    private static List<DepartmentMemberEmbeddable> anyDepartmentMembers(int size, int firstPersonId, Consumer<Person> personMutator) {
+        return anyPersons(size, firstPersonId).stream()
+            .map(DepartmentServiceImplTest::departmentMemberForPerson)
+            .peek(departmentMemberEmbeddable -> personMutator.accept(departmentMemberEmbeddable.getPerson()))
+            .collect(toList());
+    }
+
+    private static DepartmentMemberEmbeddable departmentMemberForPerson(Person person) {
+        final DepartmentMemberEmbeddable departmentMember = new DepartmentMemberEmbeddable();
+        departmentMember.setPerson(person);
+        return departmentMember;
     }
 
     private DepartmentMemberEmbeddable departmentMemberEmbeddable(String username, String firstname, String lastname, String email) {

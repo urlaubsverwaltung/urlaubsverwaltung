@@ -11,6 +11,8 @@ import java.util.List;
  */
 interface DepartmentRepository extends JpaRepository<DepartmentEntity, Integer> {
 
+    List<DepartmentEntity> findByDepartmentHeadsAndSecondStageAuthorities(Person departmentHead, Person secondStageAuthority);
+
     List<DepartmentEntity> findByDepartmentHeads(Person person);
 
     List<DepartmentEntity> findBySecondStageAuthorities(Person person);

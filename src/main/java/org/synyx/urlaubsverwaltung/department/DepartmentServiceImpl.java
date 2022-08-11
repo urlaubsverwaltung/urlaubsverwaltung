@@ -3,10 +3,15 @@ package org.synyx.urlaubsverwaltung.department;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
+import org.synyx.urlaubsverwaltung.search.SortComparator;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -18,6 +23,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Comparator.comparing;
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -48,6 +55,60 @@ class DepartmentServiceImpl implements DepartmentService {
         this.applicationService = applicationService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.clock = clock;
+    }
+
+    @Override
+    public Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery) {
+        return getManagedMembersOfPerson(person, personPageableSearchQuery, not(Person::isInactive));
+    }
+
+    @Override
+    public Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery) {
+        return getManagedMembersOfPerson(person, personPageableSearchQuery, Person::isInactive);
+    }
+
+    @Override
+    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery) {
+        final Predicate<Person> filter = nameContains(pageableSearchQuery.getQuery()).and(not(Person::isInactive));
+        return managedMembersOfPersonAndDepartment(person, departmentId, pageableSearchQuery, filter);
+    }
+
+    @Override
+    public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery) {
+        final Predicate<Person> filter = nameContains(pageableSearchQuery.getQuery()).and(Person::isInactive);
+        return managedMembersOfPersonAndDepartment(person, departmentId, pageableSearchQuery, filter);
+    }
+
+    private Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery, Predicate<Person> predicate) {
+        final List<DepartmentEntity> departments;
+
+        if (person.hasRole(DEPARTMENT_HEAD) && person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            departments = departmentRepository.findByDepartmentHeadsAndSecondStageAuthorities(person, person);
+        } else if (person.hasRole(DEPARTMENT_HEAD)) {
+            departments = departmentRepository.findByDepartmentHeads(person);
+        } else if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            departments = departmentRepository.findBySecondStageAuthorities(person);
+        } else {
+            departments = List.of();
+        }
+
+        final Pageable pageable = personPageableSearchQuery.getPageable();
+
+        final List<Person> managedMembers = departments.stream()
+            .map(DepartmentEntity::getMembers)
+            .flatMap(List::stream)
+            .map(DepartmentMemberEmbeddable::getPerson)
+            .distinct()
+            .filter(nameContains(personPageableSearchQuery.getQuery()).and(predicate))
+            .sorted(new SortComparator<>(Person.class, pageable.getSort()))
+            .collect(toList());
+
+        final List<Person> content = managedMembers.stream()
+            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+            .limit(pageable.getPageSize())
+            .collect(toList());
+
+        return new PageImpl<>(content, pageable, managedMembers.size());
     }
 
     @Override
@@ -324,6 +385,45 @@ class DepartmentServiceImpl implements DepartmentService {
         return list;
     }
 
+    private Page<Person> managedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery, Predicate<Person> filter) {
+        final Pageable pageable = pageableSearchQuery.getPageable();
+
+        final DepartmentEntity departmentEntity = departmentRepository.findById(departmentId)
+            .orElseThrow(() -> new IllegalArgumentException("could not find department with id=" + departmentId));
+
+        if (!doesPersonManageDepartment(person, departmentEntity)) {
+            return Page.empty();
+        }
+
+        final List<DepartmentMemberEmbeddable> departmentMembers = departmentEntity.getMembers();
+
+        final List<Person> content = departmentMembers.stream()
+            .map(DepartmentMemberEmbeddable::getPerson)
+            .filter(filter)
+            .sorted(new SortComparator<>(Person.class, pageable.getSort()))
+            .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+            .limit(pageable.getPageSize())
+            .collect(toList());
+
+        return new PageImpl<>(content, pageable, departmentMembers.size());
+    }
+
+    private static boolean doesPersonManageDepartment(Person person, DepartmentEntity departmentEntity) {
+        if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
+            return true;
+        }
+
+        if (person.hasRole(DEPARTMENT_HEAD)) {
+            return departmentEntity.getDepartmentHeads().stream().anyMatch(person::equals);
+        }
+
+        if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            return departmentEntity.getSecondStageAuthorities().stream().anyMatch(person::equals);
+        }
+
+        return false;
+    }
+
     private void sendMemberLeftDepartmentEvent(Department department, DepartmentEntity currentDepartmentEntity) {
         currentDepartmentEntity.getMembers().stream()
             .map(DepartmentMemberEmbeddable::getPerson)
@@ -355,7 +455,11 @@ class DepartmentServiceImpl implements DepartmentService {
         return false;
     }
 
+    private static Predicate<Person> nameContains(String query) {
+        return person -> person.getNiceName().toLowerCase().contains(query.toLowerCase());
+    }
+
     private Comparator<Department> departmentComparator() {
-        return Comparator.comparing(department -> department.getName().toLowerCase());
+        return comparing(department -> department.getName().toLowerCase());
     }
 }

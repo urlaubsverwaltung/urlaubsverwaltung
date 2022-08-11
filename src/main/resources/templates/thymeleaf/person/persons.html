@@ -3,22 +3,19 @@
   <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
     <title th:text="#{person.overview.header.title}"></title>
     <th:block th:ref="scripts">
-      <th:block th:if="${not #lists.isEmpty(persons)}">
-        <script defer asset:src="npm.tablesorter.js"></script>
-        <script defer asset:src="npm.string-natural-compare.js"></script>
-        <script defer asset:src="npm.list.js.js"></script>
-        <script defer asset:src="person_view.js"></script>
-      </th:block>
+      <script defer asset:src="npm.hotwired.js"></script>
+      <script defer asset:src="person_view.js"></script>
     </th:block>
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
-    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
+    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32" data-turbo="true">
       <div
         th:replace="fragments/section-heading::section-heading(~{::persons-overview-heading-body}, ~{::persons-overview-heading-actions})"
       >
-        <th:block
+        <div
+          id="persons-filter"
           th:fragment="persons-overview-heading-body"
-          th:with="visiblePersonsDropdownText=${param.active ? (department != null ? department.name : #messages.msg('persons.active')) : #messages.msg('persons.inactive')}"
+          th:with="visiblePersonsDropdownText=${active ? (department != null ? department.name : #messages.msg('persons.active')) : #messages.msg('persons.inactive')}"
         >
           <div class="dropdown tw-inline-block">
             <button
@@ -33,7 +30,10 @@
             </button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
               <li>
-                <a th:href="@{/web/person (active=true, year=${selectedYear})}" class="tw-flex tw-items-center">
+                <a
+                  th:href="@{/web/person (active=true, year=${selectedYear}, sort=${sortQuery}, query=${query})}"
+                  class="tw-flex tw-items-center"
+                >
                   <span class="tw-w-5 tw-flex tw-items-center">
                     <svg th:replace="icon/eye::svg(className='tw-w-4 tw-h-4')"></svg>
                   </span>
@@ -42,7 +42,9 @@
               </li>
               <th:block th:if="${not #lists.isEmpty(departments)}">
                 <li th:each="department : ${departments}">
-                  <a th:href="@{/web/person (active=true, year=${selectedYear}, department=${department.id})}">
+                  <a
+                    th:href="@{/web/person (active=true, year=${selectedYear}, department=${department.id}, sort=${sortQuery}, query=${query})}"
+                  >
                     <span class="tw-w-5 tw-inline-block"></span>
                     <th:block th:text="${department.name}"></th:block>
                   </a>
@@ -50,7 +52,10 @@
                 <li role="separator" class="divider"></li>
               </th:block>
               <li>
-                <a th:href="@{/web/person (active=false, year=${selectedYear})}" class="tw-flex tw-items-center">
+                <a
+                  th:href="@{/web/person (active=false, year=${selectedYear}, sort=${sortQuery}, query=${query})}"
+                  class="tw-flex tw-items-center"
+                >
                   <span class="tw-w-5 tw-flex tw-items-center">
                     <svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')"></svg>
                   </span>
@@ -60,176 +65,397 @@
             </ul>
           </div>
           <th:block
-            th:with="hrefPrefix=${department == null ? '/web/person?active=' + active + '&year=' : '/web/person?active=' + active + '&department='+department.id + '&year='}"
+            th:with="hrefPrefix=${department == null ? '/web/person?active=' + active + '&size=' + personPage.size + '&sort=' + sortQuery + '&query=' + query + '&year=' : '/web/person?active=' + active + '&department=' + department.id + '&sort=' + sortQuery + '&query=' + query + '&year='}"
           >
             <div
               th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=${hrefPrefix}, selectedYear=${selectedYear})"
             ></div>
           </th:block>
-        </th:block>
+        </div>
         <th:block th:fragment="persons-overview-heading-actions">
           <button th:replace="fragments/print::button"></button>
         </th:block>
       </div>
 
-      <p th:if="${#lists.isEmpty(persons)}" th:text="#{persons.none}"></p>
-
-      <th:block th:if="${not #lists.isEmpty(persons)}">
-        <p class="text-right visible-print">
-          <th:block th:text="#{filter.validity}"></th:block>&nbsp;<span
-            th:replace="fragments/date::date(${now})"
-          ></span>
-        </p>
-        <div id="users">
-          <form class="form-inline" id="search">
-            <div class="form-group">
-              <div class="input-group search-field">
-                <!-- NOTE: class 'search' is needed for list.js -->
-                <input type="text" class="search form-control" th:placeholder="#{action.search}" />
-                <span class="input-group-addon">
-                  <svg th:replace="icon/search::svg(className='tw-w-4 tw-h-4')"></svg>
-                </span>
-              </div>
+      <div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4">
+        <form
+          action="#"
+          th:action="@{/web/person}"
+          method="get"
+          data-turbo-frame="frame-persons"
+          data-turbo-action="advance"
+        >
+          <div id="persons-form-query-inputs">
+            <input type="hidden" name="active" th:value="${active}" />
+            <input th:if="${selectedYear != null}" type="hidden" name="year" th:value="${selectedYear}" />
+            <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
+            <input type="hidden" name="size" th:value="${personPage.size}" />
+            <input th:if="${not #strings.isEmpty(sortQuery)}" type="hidden" name="sort" th:value="${sortQuery}" />
+          </div>
+          <div class="tw-flex tw-flex-col md:tw-flex-row">
+            <label for="search" th:text="#{action.search}" class="tw-sr-only"></label>
+            <span class="tw-flex-1 tw-relative tw-border dark:tw-border-neutral-600 tw-rounded-md">
+              <input
+                type="text"
+                id="search"
+                name="query"
+                th:value="${query}"
+                class="form-control tw-pr-8 tw-border-none tw-w-full md:tw-w-auto"
+                th:placeholder="#{action.search}"
+                data-auto-submit="search-submit"
+                data-auto-submit-delay="100"
+              />
+              <button
+                type="submit"
+                id="search-submit"
+                class="tw-absolute tw-bottom-0 tw-right-0 dark:tw-bg-zinc-800 tw-py-3 tw-px-2 tw-rounded-r-md tw-h-full tw-flex tw-items-center"
+              >
+                <svg th:replace="icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')"></svg>
+                <span class="tw-sr-only" th:text="#{action.search}">Suche</span>
+              </button>
+            </span>
+          </div>
+        </form>
+        <div class="md:tw-ml-auto">
+          <form
+            action="#"
+            th:action="@{/web/person}"
+            method="get"
+            data-turbo-frame="frame-persons"
+            data-turbo-action="advance"
+          >
+            <div id="persons-form-sort-inputs">
+              <input type="hidden" name="active" th:value="${active}" />
+              <input th:if="${selectedYear != null}" type="hidden" name="year" th:value="${selectedYear}" />
+              <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
+              <input type="hidden" name="size" th:value="${personPage.size}" />
+              <input th:if="${not #strings.isEmpty(query)}" type="hidden" name="query" th:value="${query}" />
+            </div>
+            <div class="tw-flex tw-flex-col md:tw-flex-row md:tw-items-center">
+              <label for="sort-select" class="tw-m-0 tw-mr-2">
+                <th:block th:text="#{action.sort}">Sortieren</th:block>:
+              </label>
+              <select
+                id="sort-select"
+                name="sort"
+                th:replace="fragments/select::one(id='sort-select', name='sort', options=~{::sort-select-options}, autosubmit='sort-submit')"
+              >
+                <th:block th:ref="sort-select-options">
+                  <optgroup
+                    th:each="optgroup : ${sortSelect.optgroups}"
+                    th:label="${#messages.msg(optgroup.labelMessageKey)}"
+                  >
+                    <option
+                      th:each="option : ${optgroup.options}"
+                      th:value="${option.value}"
+                      th:text="${#messages.msg(option.textMessageKey)}"
+                      th:selected="${option.selected}"
+                    ></option>
+                  </optgroup>
+                </th:block>
+              </select>
+              <button
+                type="submit"
+                id="sort-submit"
+                class="tw-ml-2 button-main"
+                data-js-hidden
+                th:text="#{action.sort}"
+              >
+                Sortieren
+              </button>
             </div>
           </form>
-          <table id="person-table" class="list-table selectable-table tw-text-sm">
-            <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
-            <thead class="hidden-xs hidden-sm print:tw-table-header-group">
-              <tr>
-                <th scope="col"><!-- placeholder to ensure correct number of th --></th>
-                <th
-                  th:if="${showPersonnelNumberColumn}"
-                  scope="col"
-                  class="sortable-field"
-                  th:text="#{person.account.basedata.personnelNumber.abbreviation}"
-                ></th>
-                <th scope="col" class="sortable-field" th:text="#{person.data.firstName}"></th>
-                <th scope="col" class="sortable-field" th:text="#{person.data.lastName}"></th>
-                <th
-                  scope="col"
-                  class="sortable-field is-centered"
-                  th:text="#{persons.account.vacation.entitlement.year}"
-                ></th>
-                <th
-                  scope="col"
-                  class="sortable-field is-centered"
-                  th:text="#{persons.account.vacation.entitlement.actual}"
-                ></th>
-                <th
-                  scope="col"
-                  class="sortable-field is-centered"
-                  th:text="#{persons.account.vacation.entitlement.remaining}"
-                ></th>
-                <th
-                  scope="col"
-                  class="sortable-field is-centered"
-                  th:text="#{persons.account.vacation.vacationDaysLeft}"
-                ></th>
-                <th
-                  scope="col"
-                  class="sortable-field is-centered"
-                  th:text="#{persons.account.vacation.vacationDaysLeft.remaining}"
-                ></th>
-                <th scope="col"><!-- placeholder to ensure correct number of th --></th>
-              </tr>
-            </thead>
-            <!-- NOTE: class 'list' is needed for list.js -->
-            <tbody class="list">
-              <tr
-                th:each="person,loopStatus : ${persons}"
-                th:onclick="|navigate('/web/person/${person.id}/overview');|"
-              >
-                <td class="is-centered">
-                  <div class="print:tw-hidden">
-                    <img
-                      th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=40'},username=${person.niceName},width='40px',height='40px')"
-                    />
-                  </div>
-                </td>
-                <td
-                  th:if="${showPersonnelNumberColumn}"
-                  class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center"
-                  th:text="${person.personnelNumber}"
-                ></td>
-                <td class="firstname" th:text="${person.firstName}"></td>
-                <td class="lastname" th:text="${person.lastName}"></td>
-                <td
-                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                  th:data-sortable-value="${person.entitlementYear}"
-                >
-                  <th:block th:if="${person.entitlementYear != null}">
-                    <span th:replace="fragments/number::number(${person.entitlementYear})"></span>
-                  </th:block>
-                  <th:block
-                    th:if="${person.entitlementYear == null}"
-                    th:text="#{person.account.vacation.noInformation}"
-                  ></th:block>
-                </td>
-                <td
-                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                  th:data-sortable-value="${person.entitlementActual}"
-                >
-                  <th:block th:if="${person.entitlementActual != null}">
-                    <span th:replace="fragments/number::number(${person.entitlementActual})"></span>
-                  </th:block>
-                  <th:block
-                    th:if="${person.entitlementActual == null}"
-                    th:text="#{person.account.vacation.noInformation}"
-                  ></th:block>
-                </td>
-                <td
-                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                  th:data-sortable-value="${person.entitlementRemaining}"
-                >
-                  <th:block th:if="${person.entitlementRemaining != null}">
-                    <span th:replace="fragments/number::number(${person.entitlementRemaining})"></span>
-                  </th:block>
-                  <th:block
-                    th:if="${person.entitlementRemaining == null}"
-                    th:text="#{person.account.vacation.noInformation}"
-                  ></th:block>
-                </td>
-                <td
-                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                  th:data-sortable-value="${person.vacationDaysLeft}"
-                >
-                  <th:block th:if="${person.vacationDaysLeft != null}">
-                    <span th:replace="fragments/number::number(${person.vacationDaysLeft})"></span>
-                  </th:block>
-                  <th:block
-                    th:if="${person.vacationDaysLeft == null}"
-                    th:text="#{person.account.vacation.noInformation}"
-                  ></th:block>
-                </td>
-                <td
-                  class="is-centered hidden-xs hidden-sm print:tw-table-cell"
-                  th:data-sortable-value="${person.vacationDaysLeftRemaining}"
-                >
-                  <th:block th:if="${person.vacationDaysLeftRemaining != null}">
-                    <span th:replace="fragments/number::number(${person.vacationDaysLeftRemaining})"></span>
-                  </th:block>
-                  <th:block
-                    th:if="${person.vacationDaysLeftRemaining == null}"
-                    th:text="#{person.account.vacation.noInformation}"
-                  ></th:block>
-                </td>
-                <td class="hidden-xs">
-                  <div class="print:tw-hidden">
-                    <a class="action-link" th:href="@{/web/person/{personId} (personId=${person.id})}">
-                      <svg th:replace="icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')"></svg>
-                      <th:block th:text="#{action.account.title}"></th:block>
-                      <span
-                        class="tw-sr-only"
-                        th:text="#{action.account.title.screen-reader-appendix(${person.niceName})}"
-                      ></span>
-                    </a>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
-      </th:block>
+      </div>
+
+      <turbo-frame id="frame-persons">
+        <th:block th:if="${turboFrameRequested}">
+          <turbo-stream target="persons-filter" action="replace">
+            <template th:insert="::#persons-filter"></template>
+          </turbo-stream>
+          <turbo-stream target="persons-form-query-inputs" action="replace">
+            <template th:insert="::#persons-form-query-inputs"></template>
+          </turbo-stream>
+          <turbo-stream target="persons-form-sort-inputs" action="replace">
+            <template th:insert="::#persons-form-sort-inputs"></template>
+          </turbo-stream>
+          <turbo-stream target="persons-pagination" action="replace">
+            <template th:insert="::#persons-pagination"></template>
+          </turbo-stream>
+          <turbo-stream target="persons-form-size-inputs" action="replace">
+            <template th:insert="::#persons-form-size-inputs"></template>
+          </turbo-stream>
+          <turbo-stream target="pagination-size-hint" action="replace">
+            <template th:insert="::#pagination-size-hint"></template>
+          </turbo-stream>
+        </th:block>
+        <p th:if="${#lists.isEmpty(personPage.content)}" class="tw-mt-16" th:text="#{persons.none}"></p>
+        <th:block th:if="${not #lists.isEmpty(personPage.content)}">
+          <p class="text-right visible-print">
+            <th:block th:text="#{filter.validity}"></th:block>&nbsp;<span
+              th:replace="fragments/date::date(${now})"
+            ></span>
+          </p>
+          <div class="tw-mt-8 md:tw-mt-16">
+            <table id="person-table" class="list-table selectable-table tw-text-sm">
+              <caption class="tw-sr-only" th:text="#{persons.list.caption}"></caption>
+              <thead class="hidden-xs hidden-sm print:tw-table-header-group">
+                <tr>
+                  <th scope="col"><!-- placeholder to ensure correct number of th --></th>
+                  <th
+                    th:if="${showPersonnelNumberColumn}"
+                    scope="col"
+                    th:text="#{person.account.basedata.personnelNumber.abbreviation}"
+                  ></th>
+                  <th scope="col" th:text="#{person.data.firstName}"></th>
+                  <th scope="col" th:text="#{person.data.lastName}"></th>
+                  <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.year}"></th>
+                  <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.actual}"></th>
+                  <th scope="col" class="is-centered" th:text="#{persons.account.vacation.entitlement.remaining}"></th>
+                  <th scope="col" class="is-centered" th:text="#{persons.account.vacation.vacationDaysLeft}"></th>
+                  <th
+                    scope="col"
+                    class="is-centered"
+                    th:text="#{persons.account.vacation.vacationDaysLeft.remaining}"
+                  ></th>
+                  <th scope="col"><!-- placeholder to ensure correct number of th --></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  th:each="person,loopStatus : ${personPage.content}"
+                  th:onclick="|navigate('/web/person/${person.id}/overview');|"
+                >
+                  <td class="is-centered">
+                    <div class="print:tw-hidden">
+                      <img
+                        th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=40'},username=${person.niceName},width='40px',height='40px')"
+                      />
+                    </div>
+                  </td>
+                  <td
+                    th:if="${showPersonnelNumberColumn}"
+                    class="personnelNumber hidden-xs hidden-sm tw-text-ellipsis tw-overflow-hidden tw-max-w-xs print:tw-table-cell tw-text-center"
+                    th:text="${person.personnelNumber}"
+                  ></td>
+                  <td class="firstname" th:text="${person.firstName}"></td>
+                  <td class="lastname" th:text="${person.lastName}"></td>
+                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                    <th:block th:if="${person.entitlementYear != null}">
+                      <span th:replace="fragments/number::number(${person.entitlementYear})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.entitlementYear == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                    <th:block th:if="${person.entitlementActual != null}">
+                      <span th:replace="fragments/number::number(${person.entitlementActual})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.entitlementActual == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                    <th:block th:if="${person.entitlementRemaining != null}">
+                      <span th:replace="fragments/number::number(${person.entitlementRemaining})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.entitlementRemaining == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                    <th:block th:if="${person.vacationDaysLeft != null}">
+                      <span th:replace="fragments/number::number(${person.vacationDaysLeft})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.vacationDaysLeft == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
+                    <th:block th:if="${person.vacationDaysLeftRemaining != null}">
+                      <span th:replace="fragments/number::number(${person.vacationDaysLeftRemaining})"></span>
+                    </th:block>
+                    <th:block
+                      th:if="${person.vacationDaysLeftRemaining == null}"
+                      th:text="#{person.account.vacation.noInformation}"
+                    ></th:block>
+                  </td>
+                  <td class="hidden-xs">
+                    <div class="print:tw-hidden">
+                      <a class="action-link" th:href="@{/web/person/{personId} (personId=${person.id})}">
+                        <svg th:replace="icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')"></svg>
+                        <th:block th:text="#{action.account.title}"></th:block>
+                        <span
+                          class="tw-sr-only"
+                          th:text="#{action.account.title.screen-reader-appendix(${person.niceName})}"
+                        ></span>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="tw-mt-8 md:tw-mt-16 tw-flex tw-flex-col md:tw-flex-row md:tw-items-center tw-gap-8">
+              <div id="persons-pagination">
+                <nav th:aria-label="#{persons.pagination.navigation.aria-label}">
+                  <ul class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-row tw-gap-x-2 tw-gap-y-4 tw-flex-wrap">
+                    <li th:if="${not personPage.first && personPage.totalPages > 7}">
+                      <a
+                        href="#"
+                        th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=${personPage.number}, sort=${sortQuery}, query=${query})}"
+                        class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
+                        data-turbo-frame="frame-persons"
+                        data-turbo-action="advance"
+                      >
+                        <svg th:replace="icon/chevron-left::svg(className='tw-w-6 tw-h-6')"></svg>
+                        <span class="tw-sr-only" th:text="#{pagination.page.previous}"></span>
+                      </a>
+                    </li>
+                    <li th:with="isSelected=${personPage.first}">
+                      <a
+                        href="#"
+                        th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=1, sort=${sortQuery}, query=${query})}"
+                        class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+                        th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
+                        th:attr="aria-current=${isSelected ? 'page' : ''}"
+                        th:aria-label="#{pagination.page('1')}"
+                        data-turbo-frame="frame-persons"
+                        data-turbo-action="advance"
+                      >
+                        1
+                      </a>
+                    </li>
+                    <li
+                      th:if="${personPage.totalPages > 7 && personPage.number > 2}"
+                      role="presentation"
+                      class="tw-px-4 tw-py-1"
+                    >
+                      …
+                    </li>
+                    <th:block
+                      th:each="pageNumber : ${personPageNumbers}"
+                      th:with="isSelected=${pageNumber == personPage.number + 1}"
+                    >
+                      <li
+                        th:if="${not pageNumberStat.first && not pageNumberStat.last && (personPage.totalPages <= 7 || pageNumber == personPage.number || pageNumber == personPage.number + 1 || pageNumber == personPage.number + 2)}"
+                      >
+                        <a
+                          href="#"
+                          th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=${pageNumber}, sort=${sortQuery}, query=${query})}"
+                          class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+                          th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
+                          th:text="${pageNumber}"
+                          th:attr="aria-current=${isSelected ? 'page' : ''}"
+                          th:aria-label="${pageNumberStat.last ? #messages.msg('pagination.page.last', pageNumber) : #messages.msg('pagination.page', pageNumber)}"
+                          data-turbo-frame="frame-persons"
+                          data-turbo-action="advance"
+                        >
+                          2
+                        </a>
+                      </li>
+                    </th:block>
+                    <li
+                      th:if="${personPage.totalPages > 7 && personPage.number < personPage.totalPages - 3}"
+                      role="presentation"
+                      class="tw-px-4 tw-py-1"
+                    >
+                      …
+                    </li>
+                    <li th:if="${personPage.totalPages > 1}" th:with="isSelected=${personPage.last}">
+                      <a
+                        href="#"
+                        th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=${personPage.totalPages}, sort=${sortQuery}, query=${query})}"
+                        class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+                        th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
+                        th:text="${personPage.totalPages}"
+                        th:attr="aria-current=${isSelected ? 'page' : ''}"
+                        th:aria-label="#{pagination.page.last(${personPage.totalPages})}"
+                        data-turbo-frame="frame-persons"
+                        data-turbo-action="advance"
+                      >
+                        3
+                      </a>
+                    </li>
+                    <li th:if="${personPage.totalPages > 7 && not personPage.last}">
+                      <a
+                        href="#"
+                        th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=${personPage.number + 2}, sort=${sortQuery}, query=${query})}"
+                        class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
+                        data-turbo-frame="frame-persons"
+                        data-turbo-action="advance"
+                      >
+                        <span class="tw-sr-only" th:text="#{pagination.page.next}"></span>
+                        <svg th:replace="icon/chevron-right::svg(className='tw-w-6 tw-h-6')"></svg>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+              <form
+                action="#"
+                th:action="@{/web/person}"
+                class="md:tw-ml-auto tw-flex tw-items-center"
+                data-turbo-frame="frame-persons"
+                data-turbo-action="advance"
+              >
+                <div id="persons-form-size-inputs">
+                  <input type="hidden" name="active" th:value="${active}" />
+                  <input th:if="${selectedYear != null}" type="hidden" name="year" th:value="${selectedYear}" />
+                  <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
+                  <input th:if="${not #strings.isEmpty(sortQuery)}" type="hidden" name="sort" th:value="${sortQuery}" />
+                  <input th:if="${not #strings.isEmpty(query)}" type="hidden" name="query" th:value="${query}" />
+                </div>
+                <div class="tw-flex tw-items-center tw-gap-2">
+                  <label for="pagination-size-select" class="tw-m-0" th:text="#{pagination.page.size.label.text}">
+                    Zeige
+                  </label>
+                  <span>
+                    <select
+                      name="size"
+                      id="pagination-size-select"
+                      th:replace="fragments/select::one(id='pagination-size-select', name='size', options=~{::pagination-size-options}, autosubmit='size-submit')"
+                    >
+                      <th:block th:ref="pagination-size-options" th:with="size=${personPage.size}">
+                        <option th:if="${size < 10}" th:value="${size}" selected th:text="${size}">4</option>
+                        <option value="10" th:selected="${size == 10}">10</option>
+                        <option th:if="${size > 10 && size < 20}" th:value="${size}" selected th:text="${size}">
+                          14
+                        </option>
+                        <option value="20" th:selected="${size == 20}">20</option>
+                        <option th:if="${size > 20 && size < 40}" th:value="${size}" selected th:text="${size}">
+                          24
+                        </option>
+                        <option value="40" th:selected="${size == 40}">40</option>
+                        <option th:if="${size > 40}" th:value="${size}" selected th:text="${size}">44</option>
+                      </th:block>
+                    </select>
+                  </span>
+                  <span
+                    class="tw-whitespace-nowrap"
+                    id="pagination-size-hint"
+                    th:text="#{pagination.page.size.total.text(${personPage.totalElements}, ${#messages.msg('persons.pagination.total.text')})}"
+                  >
+                    von 42 Personen
+                  </span>
+                </div>
+                <button
+                  id="size-submit"
+                  th:text="#{pagination.page.size.button.text}"
+                  class="tw-ml-2 button-main"
+                  data-js-hidden
+                >
+                  Aktualisieren
+                </button>
+              </form>
+            </div>
+          </div>
+        </th:block>
+      </turbo-frame>
     </main>
   </body>
 </html>

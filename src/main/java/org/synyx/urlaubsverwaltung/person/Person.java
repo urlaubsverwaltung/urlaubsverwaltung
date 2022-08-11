@@ -15,6 +15,7 @@ import static java.util.Collections.unmodifiableCollection;
 import static javax.persistence.EnumType.STRING;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
 
 /**
@@ -117,6 +118,10 @@ public class Person {
     public boolean hasRole(final Role role) {
         return getPermissions().stream()
             .anyMatch(permission -> permission.equals(role));
+    }
+
+    public boolean isInactive() {
+        return hasRole(INACTIVE);
     }
 
     public boolean isPrivileged() {
