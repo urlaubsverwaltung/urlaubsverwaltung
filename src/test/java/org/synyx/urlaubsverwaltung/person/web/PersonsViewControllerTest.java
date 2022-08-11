@@ -87,7 +87,7 @@ class PersonsViewControllerTest {
         when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person"))
-            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
+            .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
     }
 
     @Test
@@ -100,7 +100,7 @@ class PersonsViewControllerTest {
         when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person"))
-            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
+            .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
     }
 
     @Test
@@ -113,7 +113,7 @@ class PersonsViewControllerTest {
         when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person"))
-            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
+            .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
     }
 
     @Test
@@ -126,7 +126,7 @@ class PersonsViewControllerTest {
         when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person"))
-            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
+            .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
     }
 
     @Test
@@ -139,7 +139,7 @@ class PersonsViewControllerTest {
         when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person"))
-            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
+            .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
     }
 
     @Test
@@ -155,12 +155,16 @@ class PersonsViewControllerTest {
         when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person"))
-            .andExpect(model().attribute("personPage", hasProperty("content", allOf(
-                hasSize(1),
-                contains(
-                    hasProperty("firstName", is("Sky"))
+            .andExpect(model().attribute("personsPagination",
+                hasProperty("page",
+                    hasProperty("content", allOf(
+                        hasSize(1),
+                        contains(
+                            hasProperty("firstName", is("Sky"))
+                        )
+                    ))
                 )
-            ))));
+            ));
     }
 
     @Test
@@ -173,7 +177,7 @@ class PersonsViewControllerTest {
         when(personService.getInactivePersons(defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
-            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
+            .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
     }
 
     @Test
@@ -186,7 +190,7 @@ class PersonsViewControllerTest {
         when(personService.getInactivePersons(defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
-            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
+            .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
     }
 
     @Test
@@ -199,7 +203,7 @@ class PersonsViewControllerTest {
         when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
-            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
+            .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
     }
 
     @Test
@@ -212,7 +216,7 @@ class PersonsViewControllerTest {
         when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
-            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
+            .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
     }
 
     @Test
@@ -225,7 +229,7 @@ class PersonsViewControllerTest {
         when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
-            .andExpect(model().attribute("personPage", hasProperty("content", hasSize(0))));
+            .andExpect(model().attribute("personsPagination", hasProperty("page", hasProperty("content", hasSize(0)))));
     }
 
     @Test
@@ -242,12 +246,16 @@ class PersonsViewControllerTest {
         when(departmentService.getManagedInactiveMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
 
         perform(get("/web/person").param("active", "false"))
-            .andExpect(model().attribute("personPage", hasProperty("content", allOf(
-                hasSize(1),
-                contains(
-                    hasProperty("firstName", is("Sky"))
+            .andExpect(model().attribute("personsPagination",
+                hasProperty("page",
+                    hasProperty("content", allOf(
+                        hasSize(1),
+                        contains(
+                            hasProperty("firstName", is("Sky"))
+                        )
+                    ))
                 )
-            ))));
+            ));
     }
 
     @Test
@@ -270,10 +278,14 @@ class PersonsViewControllerTest {
 
         perform(get("/web/person").param("active", "false"))
             .andExpect(
-                model().attribute("personPage", hasProperty("content", contains(
-                    hasProperty("firstName", is("Bruce")),
-                    hasProperty("firstName", is("Clark"))
-                )))
+                model().attribute("personsPagination",
+                    hasProperty("page",
+                        hasProperty("content", contains(
+                            hasProperty("firstName", is("Bruce")),
+                            hasProperty("firstName", is("Clark"))
+                        ))
+                    )
+                )
             );
     }
 
@@ -316,12 +328,16 @@ class PersonsViewControllerTest {
             .param("department", "1")
         )
             .andExpect(model().attribute("department", hasProperty("name", is("awesome-department"))))
-            .andExpect(model().attribute("personPage", hasProperty("content", allOf(
-                hasSize(1),
-                contains(
-                    hasProperty("firstName", is("John"))
+            .andExpect(model().attribute("personsPagination",
+                hasProperty("page",
+                    hasProperty("content", allOf(
+                        hasSize(1),
+                        contains(
+                            hasProperty("firstName", is("John"))
+                        ))
+                    )
                 )
-            ))));
+            ));
     }
 
     @Test
@@ -579,14 +595,17 @@ class PersonsViewControllerTest {
 
         perform(get("/web/person"))
             .andExpect(
-                model()
-                    .attribute("personPage", hasProperty("content", allOf(
-                        hasSize(2),
-                        contains(
-                            hasProperty("personnelNumber", is("42")),
-                            hasProperty("lastName", is("Xavier"))
-                        )
-                    )))
+                model().attribute("personsPagination",
+                    hasProperty("page",
+                        hasProperty("content", allOf(
+                            hasSize(2),
+                            contains(
+                                hasProperty("personnelNumber", is("42")),
+                                hasProperty("lastName", is("Xavier"))
+                            )
+                        ))
+                    )
+                )
             ).andExpect(model().attribute("showPersonnelNumberColumn", true));
     }
 

@@ -28,20 +28,24 @@ import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
+import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
@@ -50,6 +54,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
+import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.buildPageLinkPrefix;
 
 @Controller
 @RequestMapping("/web")
@@ -88,6 +93,7 @@ public class PersonsViewController {
 
         final int currentYear = Year.now(clock).getValue();
         final Integer selectedYear = requestedYear.orElse(currentYear);
+        final LocalDate now = LocalDate.now(clock);
 
         final Person signedInUser = personService.getSignedInUser();
 
@@ -127,7 +133,33 @@ public class PersonsViewController {
                 : getRelevantInactivePersons(signedInUser, personPageableSearchQuery);
         }
 
-        preparePersonView(signedInUser, personPage, personSort, accountSort, pageable.getSort(), selectedYear, model);
+        final Page<PersonDto> personDtoPage = personPage(personPage, accountSort, selectedYear, now);
+        final boolean showPersonnelNumberColumn = personDtoPage.getContent().stream()
+            .anyMatch(personDto -> hasText(personDto.getPersonnelNumber()));
+
+        final String sortQuery = pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(joining("&"));
+
+        final Map<String, String> paginationLinkParameters = new HashMap<>();
+        paginationLinkParameters.put("active", String.valueOf(active));
+        paginationLinkParameters.put("query", query);
+        requestedDepartmentId.ifPresent(departmentId -> paginationLinkParameters.put("department", String.valueOf(departmentId)));
+        requestedYear.ifPresent(year -> paginationLinkParameters.put("year", String.valueOf(year)));
+
+        final String pageLinkPrefix = buildPageLinkPrefix(personPage.getPageable(), paginationLinkParameters);
+        final PaginationDto<PersonDto> personsPagination = new PaginationDto<>(personDtoPage, pageLinkPrefix);
+        model.addAttribute("personsPagination", personsPagination);
+
+        final HtmlSelectDto htmlSelectDto = htmlSelectDto(personSort, accountSort);
+        model.addAttribute("sortSelect", htmlSelectDto);
+
+        final List<Integer> pageNumbers = IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().collect(toList());
+        model.addAttribute("personPageNumbers", pageNumbers);
+
+        model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
+        model.addAttribute("now", now);
+        model.addAttribute("departments", getRelevantDepartmentsSortedByName(signedInUser));
+        model.addAttribute("sortQuery", sortQuery);
+
         model.addAttribute("currentYear", currentYear);
         model.addAttribute("selectedYear", selectedYear);
         model.addAttribute("active", active);
@@ -181,11 +213,10 @@ public class PersonsViewController {
             .collect(toList());
     }
 
-    private void preparePersonView(Person signedInUser, Page<Person> personPage, Sort originalPersonSort, Sort originalAccountSort, Sort originalSort, int year, Model model) {
-
-        final LocalDate now = LocalDate.now(clock);
+    private Page<PersonDto> personPage(Page<Person> personPage, Sort originalAccountSort, int year, LocalDate now) {
 
         final List<PersonDto> personDtos = new ArrayList<>(personPage.getContent().size());
+
         for (Person person : personPage) {
             final PersonDto.Builder personDtoBuilder = PersonDto.builder();
 
@@ -232,22 +263,7 @@ public class PersonsViewController {
             personDtos.sort(accountComparator.thenComparing(PersonDto::getNiceName));
         }
 
-        final boolean showPersonnelNumberColumn = personDtos.stream()
-            .anyMatch(personDto -> hasText(personDto.getPersonnelNumber()));
-
-        final PageImpl<PersonDto> personDtoPage = new PageImpl<>(personDtos, personPage.getPageable(), personPage.getTotalElements());
-        model.addAttribute("personPage", personDtoPage);
-
-        final HtmlSelectDto htmlSelectDto = htmlSelectDto(originalPersonSort, originalAccountSort);
-        model.addAttribute("sortSelect", htmlSelectDto);
-
-        final List<Integer> pageNumbers = IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().collect(toList());
-        model.addAttribute("personPageNumbers", pageNumbers);
-
-        model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
-        model.addAttribute("now", now);
-        model.addAttribute("departments", getRelevantDepartmentsSortedByName(signedInUser));
-        model.addAttribute("sortQuery", originalSort.stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(toList()).stream().reduce((s, s2) -> s + "&" + s2).orElse(""));
+        return new PageImpl<>(personDtos, personPage.getPageable(), personPage.getTotalElements());
     }
 
     private static HtmlSelectDto htmlSelectDto(Sort originalPersonSort, Sort originalAccountSort) {
