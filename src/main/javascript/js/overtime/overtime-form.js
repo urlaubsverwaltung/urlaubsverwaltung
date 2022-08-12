@@ -7,7 +7,7 @@ $(document).ready(async function () {
   let startDateElement;
   let endDateElement;
 
-  const personSelect = document.querySelector("select[name='person']");
+  const personSelect = document.querySelector("select[name='person.id']");
   if (personSelect) {
     personSelect.addEventListener("change", function (event) {
       updateUrl(event.target);
@@ -30,7 +30,7 @@ $(document).ready(async function () {
 });
 
 function getPersonId() {
-  return document.querySelector("[name='person']").value;
+  return document.querySelector("[name='person.id']").value;
 }
 
 function updateUrl(htmlFormInputElement) {

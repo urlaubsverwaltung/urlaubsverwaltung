@@ -55,7 +55,12 @@
             class="form-horizontal"
           >
             <input type="hidden" th:field="*{id}" />
-            <input th:if="${not canAddOvertimeForAnotherUser}" type="hidden" th:field="*{person}" />
+            <input
+              th:if="${not canAddOvertimeForAnotherUser || overtime.id != null}"
+              type="hidden"
+              name="person.id"
+              th:value="${person.id}"
+            />
             <div class="form-section">
               <div class="col-xs-12">
                 <p class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}"></p>
