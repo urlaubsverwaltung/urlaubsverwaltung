@@ -64,7 +64,7 @@
 
               <div class="col-xs-12">
                 <div
-                  th:replace="fragments/section-heading::section-heading(~{::overtime-form-body}, ~{overtime-form-actions})"
+                  th:replace="fragments/section-heading::section-heading(~{::overtime-form-body}, ~{::overtime-form-actions})"
                 >
                   <th:block th:ref="overtime-form-body">
                     <h2
@@ -72,7 +72,7 @@
                       th:text="#{__${overtimeHeadingSectionMessagekey}__}"
                     ></h2>
                   </th:block>
-                  <th:block th:ref="overtime-formactions">
+                  <th:block th:ref="overtime-form-actions">
                     <a
                       th:href="@{/web/overtime?person=__${overtime.person.id}__}"
                       class="icon-link tw-px-1"
