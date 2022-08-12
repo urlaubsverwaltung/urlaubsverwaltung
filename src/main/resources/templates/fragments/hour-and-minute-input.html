@@ -5,7 +5,7 @@
     <title>hour-and-minute-input</title>
   </head>
   <body>
-    <div th:fragment="hour-and-minute-input" class="tw-flex tw-items-start">
+    <div th:fragment="hour-and-minute-input" class="tw-flex tw-items-start tw-gap-3">
       <span class="tw-flex-1">
         <th:block
           th:replace="fragments/input-group :: input-group(~{::body-hours}, ~{::addon-hours}, ${#fields.hasErrors('hours')})"
@@ -27,8 +27,8 @@
         </th:block>
         <span th:if="${#fields.hasErrors('hours')}" class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400">
           <th:block th:errors="*{hours}">hours Error</th:block>
-        </span> </span
-      >&nbsp;
+        </span>
+      </span>
       <span class="tw-flex-1">
         <th:block
           th:replace="fragments/input-group :: input-group(~{::body-minutes}, ~{::addon-minutes}, ${#fields.hasErrors('minutes')})"
