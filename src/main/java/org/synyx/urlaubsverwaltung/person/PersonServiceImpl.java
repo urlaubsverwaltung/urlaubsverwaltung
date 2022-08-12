@@ -111,11 +111,6 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Person save(Person person) {
-        return personRepository.save(person);
-    }
-
-    @Override
     public Optional<Person> getPersonByID(Integer id) {
         return personRepository.findById(id);
     }

@@ -58,17 +58,6 @@ public interface PersonService {
     Person update(Person person);
 
     /**
-     * saves a {@link Person}.
-     *
-     * @param person {@link Person}
-     * @return saved {@link Person}
-     *
-     * @deprecated in favor of create() or update()
-     */
-    @Deprecated(since = "4.47.0", forRemoval = true)
-    Person save(Person person);
-
-    /**
      * finds a {@link Person} in the database by its primary key.
      *
      * @param id Integer the id of the person
