@@ -1,21 +1,15 @@
 import $ from "jquery";
 import { createDatepicker } from "../../components/datepicker";
 
-$(document).ready(async function () {
-  const form = document.querySelector("#person-select");
-  form.addEventListener("change", (event) => {
-    window.location.href = event.target.value;
-  });
+function getPersonId() {
+  return document.querySelector("[name='person']").value;
+}
 
+$(document).ready(async function () {
   const urlPrefix = window.uv.apiPrefix;
-  const personId = window.uv.personId;
 
   let startDateElement;
   let endDateElement;
-
-  function getPersonId() {
-    return personId;
-  }
 
   function handleStartDateSelect() {
     if (!endDateElement.value) {

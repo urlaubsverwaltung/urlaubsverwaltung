@@ -21,7 +21,6 @@
       <script th:inline="javascript">
         /*<![CDATA[*/
         window.uv = window.uv || {};
-        window.uv.personId = /*[[${person.id}]]*/ "personId";
         window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
         /*]]>*/
       </script>
@@ -56,7 +55,7 @@
             class="form-horizontal"
           >
             <input type="hidden" th:field="*{id}" />
-            <input type="hidden" th:field="*{person}" />
+            <input th:if="${not canAddOvertimeForAnotherUser}" type="hidden" th:field="*{person}" />
             <div class="form-section">
               <div class="col-xs-12">
                 <p class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}"></p>
@@ -98,14 +97,14 @@
                     </label>
                     <div class="col-md-9">
                       <select
-                        th:replace="fragments/select::one(id='person-select', name='', options=~{::person-select-options})"
+                        th:replace="fragments/select::one(id='person-select', name='person', options=~{::person-select-options})"
                         id="person-select"
                       >
                         <th:block th:fragment="person-select-options">
                           <option
                             th:each="p : ${persons}"
                             th:text="${p.niceName}"
-                            th:value="@{/web/overtime/new?person=__${p.id}__}"
+                            th:value="${p.id}"
                             th:selected="${person.id == p.id}"
                           ></option>
                         </th:block>
