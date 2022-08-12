@@ -105,6 +105,8 @@ class PersonServiceImpl implements PersonService {
             applicationEventPublisher.publishEvent(new PersonDisabledEvent(this, updatedPerson.getId()));
         }
 
+        applicationEventPublisher.publishEvent(toPersonUpdateEvent(updatedPerson));
+
         return updatedPerson;
     }
 
@@ -231,4 +233,7 @@ class PersonServiceImpl implements PersonService {
         return new PersonCreatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
     }
 
+    private PersonUpdatedEvent toPersonUpdateEvent(Person updatedPerson) {
+        return new PersonUpdatedEvent(this, updatedPerson.getId(), updatedPerson.getNiceName(), updatedPerson.getUsername(), updatedPerson.getEmail());
+    }
 }

@@ -59,6 +59,7 @@ class PersonServiceImplTest {
     private ApplicationEventPublisher applicationEventPublisher;
 
     private final ArgumentCaptor<PersonDisabledEvent> personDisabledEventArgumentCaptor = ArgumentCaptor.forClass(PersonDisabledEvent.class);
+    private final ArgumentCaptor<PersonUpdatedEvent> personUpdatedEventArgumentCaptor = ArgumentCaptor.forClass(PersonUpdatedEvent.class);
     private final ArgumentCaptor<PersonCreatedEvent> personCreatedEventArgumentCaptor = ArgumentCaptor.forClass(PersonCreatedEvent.class);
 
     @BeforeEach
@@ -389,6 +390,19 @@ class PersonServiceImplTest {
         final Person personWithOfficeRole = sut.appointAsOfficeUserIfNoOfficeUserPresent(person);
         assertThat(personWithOfficeRole.getPermissions())
             .containsOnly(USER);
+    }
+
+    @Test
+    void ensurePersonUpdatedEventIsFiredAfterUpdate() {
+
+        final Person activePerson = createPerson("active person", USER);
+        activePerson.setId(1);
+        when(personRepository.save(activePerson)).thenReturn(activePerson);
+
+        final Person updatedPerson = sut.update(activePerson);
+        verify(applicationEventPublisher).publishEvent(personUpdatedEventArgumentCaptor.capture());
+        assertThat(personUpdatedEventArgumentCaptor.getValue().getPersonId())
+            .isEqualTo(updatedPerson.getId());
     }
 
     @Test
