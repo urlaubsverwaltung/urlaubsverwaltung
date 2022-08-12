@@ -97,7 +97,7 @@
                     </label>
                     <div class="col-md-9">
                       <select
-                        th:replace="fragments/select::one(id='person-select', name='person', options=~{::person-select-options})"
+                        th:replace="fragments/select::one(id='person-select', name='person.id', options=~{::person-select-options})"
                         id="person-select"
                       >
                         <th:block th:fragment="person-select-options">
