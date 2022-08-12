@@ -3,13 +3,15 @@ import { createDatepicker } from "../../components/datepicker";
 
 $(document).ready(async function () {
   const urlPrefix = window.uv.apiPrefix;
-  const personId = window.uv.personId;
 
   let startDateElement;
   let endDateElement;
 
-  function getPersonId() {
-    return personId;
+  const personSelect = document.querySelector("select[name='person.id']");
+  if (personSelect) {
+    personSelect.addEventListener("change", function (event) {
+      updateUrl(event.target);
+    });
   }
 
   function handleStartDateSelect() {
@@ -26,3 +28,13 @@ $(document).ready(async function () {
   startDateElement = startDateResult.value;
   endDateElement = endDateResult.value;
 });
+
+function getPersonId() {
+  return document.querySelector("[name='person.id']").value;
+}
+
+function updateUrl(htmlFormInputElement) {
+  const url = new URL(window.location);
+  url.searchParams.set(htmlFormInputElement.getAttribute("name"), htmlFormInputElement.value);
+  window.history.replaceState(undefined, "", url);
+}
