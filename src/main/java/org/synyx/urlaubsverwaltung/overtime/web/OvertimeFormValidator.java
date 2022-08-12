@@ -128,13 +128,15 @@ public class OvertimeFormValidator implements Validator {
 
             // left overtime + overtime record must not be greater than maximum overtime
             if (leftOvertime.plus(numberOfHours).compareTo(maximumOvertime) > 0) {
-                errors.reject(ERROR_MAX_OVERTIME, new Object[]{maximumOvertime}, null);
+                // maxOvertime is an Integer -> save to extract hours here
+                errors.reject(ERROR_MAX_OVERTIME, new Object[]{maximumOvertime.toHours()}, null);
             }
 
             // left overtime + overtime record must be greater than minimum overtime
             // are missing hours (means negative)
             if (leftOvertime.plus(numberOfHours).compareTo(minimumOvertime.negated()) < 0) {
-                errors.reject(ERROR_MIN_OVERTIME, new Object[]{minimumOvertime}, null);
+                // minimumOvertime is an Integer -> save to extract hours here
+                errors.reject(ERROR_MIN_OVERTIME, new Object[]{minimumOvertime.toHours()}, null);
             }
         }
     }

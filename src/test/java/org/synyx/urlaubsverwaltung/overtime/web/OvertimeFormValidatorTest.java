@@ -356,7 +356,7 @@ class OvertimeFormValidatorTest {
         overtimeForm.setMinutes(30);
 
         sut.validate(overtimeForm, errors);
-        verify(errors).reject("overtime.data.numberOfHours.error.maxOvertime", new Object[]{Duration.ofHours(16)}, null);
+        verify(errors).reject("overtime.data.numberOfHours.error.maxOvertime", new Object[]{16L}, null);
         verify(settingsService).getSettings();
         verify(overtimeService).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
@@ -377,7 +377,7 @@ class OvertimeFormValidatorTest {
         overtimeForm.setMinutes(30);
 
         sut.validate(overtimeForm, errors);
-        verify(errors).reject("overtime.data.numberOfHours.error.minOvertime", new Object[]{Duration.ofHours(10)}, null);
+        verify(errors).reject("overtime.data.numberOfHours.error.minOvertime", new Object[]{10L}, null);
         verify(settingsService).getSettings();
         verify(overtimeService).getLeftOvertimeForPerson(overtimeForm.getPerson());
     }
