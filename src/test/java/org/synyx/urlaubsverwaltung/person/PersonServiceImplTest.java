@@ -138,6 +138,8 @@ class PersonServiceImplTest {
     void ensureUpdatedPersonHasCorrectAttributes() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(42);
+
         when(personRepository.findById(anyInt())).thenReturn(Optional.of(person));
         when(personRepository.save(person)).thenReturn(person);
 

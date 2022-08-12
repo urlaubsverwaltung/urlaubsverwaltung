@@ -86,9 +86,7 @@ class PersonServiceImpl implements PersonService {
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
-        LOG.info("Update person: {}", person);
-
-        return personRepository.save(person);
+        return update(person);
     }
 
     @Override
