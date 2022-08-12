@@ -81,6 +81,21 @@ class PersonServiceImplTest {
     }
 
     @Test
+    void ensurePersonCreatedEventIsFired() {
+
+        final Person activePerson = createPerson("my person", USER);
+        activePerson.setId(1);
+
+        when(personRepository.save(activePerson)).thenReturn(activePerson);
+
+        sut.create(activePerson);
+
+        verify(applicationEventPublisher).publishEvent(personCreatedEventArgumentCaptor.capture());
+        assertThat(personCreatedEventArgumentCaptor.getValue().getPersonId())
+            .isEqualTo(activePerson.getId());
+    }
+
+    @Test
     void ensureCreatedPersonHasCorrectAttributes() {
 
         final Person person = new Person("rick", "Grimes", "Rick", "rick@grimes.de");

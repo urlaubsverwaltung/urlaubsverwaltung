@@ -67,7 +67,7 @@ class PersonServiceImpl implements PersonService {
         accountInteractionService.createDefaultAccount(person);
         workingTimeWriteService.createDefaultWorkingTime(person);
 
-        applicationEventPublisher.publishEvent(new PersonCreatedEvent(this, person.getId(), person.getNiceName()));
+        applicationEventPublisher.publishEvent(toPersonCreatedEvent(createdPerson));
 
         return createdPerson;
     }
@@ -226,4 +226,9 @@ class PersonServiceImpl implements PersonService {
 
         return implicitSort;
     }
+
+    private PersonCreatedEvent toPersonCreatedEvent(Person person) {
+        return new PersonCreatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
+    }
+
 }
