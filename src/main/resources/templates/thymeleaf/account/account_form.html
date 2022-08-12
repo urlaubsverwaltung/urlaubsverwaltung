@@ -45,6 +45,15 @@
   <body th:replace="_layout::body(~{::main}, ~{})">
     <main th:fragment="main">
       <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
+        <div th:replace="fragments/section-heading::section-heading(~{::account-form-heading-body}, ~{})">
+          <th:block th:ref="account-form-heading-body">
+            <h1 th:text="#{person.form.annualVacation.title(${person.niceName})}"></h1>
+            <div
+              th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/person/${person.id}/account?year=|, selectedYear=${selectedYear})"
+            ></div>
+          </th:block>
+        </div>
+
         <form
           method="post"
           th:action="@{/web/person/__${person.id}__/account}"
@@ -54,15 +63,6 @@
           <input type="hidden" th:field="*{holidaysAccountYear}" />
 
           <div class="form-section">
-            <div th:replace="fragments/section-heading::section-heading(~{::account-form-heading-body}, ~{})">
-              <th:block th:ref="account-form-heading-body">
-                <h1 th:text="#{person.form.annualVacation.title(${person.niceName})}"></h1>
-                <div
-                  th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/person/${person.id}/account?year=|, selectedYear=${selectedYear})"
-                ></div>
-              </th:block>
-            </div>
-
             <div class="row tw-mb-8" th:if="${#fields.hasErrors('*')}">
               <div class="col-xs-12">
                 <div th:text="#{error.info.message}" class="alert alert-danger tw-text-sm"></div>
