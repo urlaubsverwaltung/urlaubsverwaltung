@@ -50,10 +50,9 @@ class ApplicationForLeaveStatisticsService {
      * Get {@link ApplicationForLeaveStatistics} the given person is allowed to see.
      * A person with {@link org.synyx.urlaubsverwaltung.person.Role} BOSS or OFFICE is allowed to see statistics of everyone for instance.
      *
-     * @param person person to restrict the returned page content
-     * @param period filter result set for a given period of time
+     * @param person   person to restrict the returned page content
+     * @param period   filter result set for a given period of time
      * @param pageable the page request
-     *
      * @return filtered page of {@link ApplicationForLeaveStatistics}
      */
     Page<ApplicationForLeaveStatistics> getStatistics(Person person, FilterPeriod period, Pageable pageable) {
@@ -62,8 +61,11 @@ class ApplicationForLeaveStatisticsService {
         final List<Integer> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).collect(toList());
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
 
-        Stream<ApplicationForLeaveStatistics> statisticsStream = relevantPersonsPage.getContent().stream()
-            .map(relevantPerson -> statistics(period, activeVacationTypes, relevantPerson, basedataByPersonId.getOrDefault(new PersonId(relevantPerson.getId()), null)))
+        Stream<ApplicationForLeaveStatistics> statisticsStream = applicationForLeaveStatisticsBuilder
+            .build(relevantPersonsPage.getContent(), period.getStartDate(), period.getEndDate(), activeVacationTypes)
+            .values()
+            .stream()
+            .peek(statistics -> statistics.setPersonBasedata(basedataByPersonId.getOrDefault(new PersonId(statistics.getPerson().getId()), null)))
             .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()));
 
         if (relevantPersonsPage.getPageable().isUnpaged()) {
@@ -77,14 +79,6 @@ class ApplicationForLeaveStatisticsService {
         final List<ApplicationForLeaveStatistics> content = statisticsStream.collect(toList());
 
         return new PageImpl<>(content, pageable, relevantPersonsPage.getTotalElements());
-    }
-
-    private ApplicationForLeaveStatistics statistics(FilterPeriod period, List<VacationType> vacationTypes, Person person, PersonBasedata personBasedata) {
-        if (personBasedata == null) {
-            return applicationForLeaveStatisticsBuilder.build(person, period.getStartDate(), period.getEndDate(), vacationTypes);
-        } else {
-            return applicationForLeaveStatisticsBuilder.build(person, personBasedata, period.getStartDate(), period.getEndDate(), vacationTypes);
-        }
     }
 
     private Page<Person> getAllRelevantPersons(Person person, Pageable pageable) {

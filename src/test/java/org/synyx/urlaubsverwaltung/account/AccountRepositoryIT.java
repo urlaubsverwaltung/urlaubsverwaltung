@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.account;
 
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,11 +10,13 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static java.math.BigDecimal.TEN;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
@@ -46,5 +47,40 @@ class AccountRepositoryIT extends TestContainersBase {
         final AccountEntity accountEntity2 = new AccountEntity(savedPerson, validFrom2, validTo2, true, expiryDate2, TEN, TEN, TEN, "comment 2");
         assertThatThrownBy(() -> sut.save(accountEntity2))
             .isInstanceOf(DataIntegrityViolationException.class);
+    }
+
+
+    @Test
+    void ensureFindAccountByYearAndPersons() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person savedPerson = personService.create(person);
+
+        final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
+        final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
+
+        final AccountEntity accountToFind = new AccountEntity(savedPerson, validFrom, validTo, null, expiryDate, TEN, TEN, TEN, "comment");
+        final AccountEntity savedAccountToFind = sut.save(accountToFind);
+
+        final Person otherPerson = new Person("otherPerson", "other", "person", "other@example.org");
+        final Person savedOtherPerson = personService.create(otherPerson);
+        final AccountEntity otherAccountToFind = new AccountEntity(savedOtherPerson, validFrom, validTo, null, expiryDate, TEN, TEN, TEN, "comment");
+        final AccountEntity savedOtherAccountToFind = sut.save(otherAccountToFind);
+
+        /* Do not find these accounts */
+        final Person personNotInSearch = new Person("personNotInSearch", "notInSearch", "person", "notInSearch@example.org");
+        final Person savedPersonNotInSearch = personService.create(personNotInSearch);
+        final AccountEntity accountWrongPerson = new AccountEntity(savedPersonNotInSearch, validFrom, validTo, null, expiryDate, TEN, TEN, TEN, "comment");
+        sut.save(accountWrongPerson);
+
+        final LocalDate validFrom2015 = LocalDate.of(2015, JANUARY, 1);
+        final LocalDate validTo2015 = LocalDate.of(2015, DECEMBER, 31);
+        final LocalDate expiryDate2015 = LocalDate.of(2015, APRIL, 1);
+        final AccountEntity accountWrongYear = new AccountEntity(savedPerson, validFrom2015, validTo2015, null, expiryDate2015, TEN, TEN, TEN, "comment");
+        sut.save(accountWrongYear);
+
+        assertThat(sut.findAccountByYearAndPersons(2014, List.of(savedPerson, savedOtherPerson)))
+            .containsExactly(savedAccountToFind, savedOtherAccountToFind);
     }
 }

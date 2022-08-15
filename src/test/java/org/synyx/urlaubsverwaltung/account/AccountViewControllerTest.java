@@ -184,7 +184,7 @@ class AccountViewControllerTest {
         account.setActualVacationDays(ZERO);
         account.setRemainingVacationDays(ZERO);
 
-        when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(anyInt(), any(Person.class))).thenReturn(Optional.of(account));
 
         final LocalDate expiryDate = validFrom.withMonth(MARCH.getValue()).withDayOfMonth(1);
 
@@ -219,7 +219,7 @@ class AccountViewControllerTest {
         account.setActualVacationDays(ZERO);
         account.setRemainingVacationDays(ZERO);
 
-        when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(anyInt(), eq(signedInPerson))).thenReturn(Optional.of(account));
 
         final LocalDate expiryDate = validFrom.withMonth(MARCH.getValue()).withDayOfMonth(1);
 
@@ -242,7 +242,7 @@ class AccountViewControllerTest {
         Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
-        when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.empty());
+        when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.empty());
 
         AccountForm mockedAccountForm = mock(AccountForm.class);
         when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));
@@ -256,8 +256,9 @@ class AccountViewControllerTest {
     @Test
     void updateAccountAddsFlashAttributeAndRedirectsToPerson() throws Exception {
 
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
-        when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(someAccount()));
+        final Person person = somePerson();
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(someAccount()));
 
         AccountForm mockedAccountForm = mock(AccountForm.class);
         when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));

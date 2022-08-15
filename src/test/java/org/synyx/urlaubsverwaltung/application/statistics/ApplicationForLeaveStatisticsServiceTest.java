@@ -79,10 +79,11 @@ class ApplicationForLeaveStatisticsServiceTest {
         when(personService.getActivePersons(personSearchQuery)).thenReturn(new PageImpl<>(List.of(anyPerson)));
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
-        final List<VacationType> vacationTypes = List.of(vacationType);
-        when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
+        final List<VacationType> activeVacationTypes = List.of(vacationType);
+        when(vacationTypeService.getActiveVacationTypes()).thenReturn(activeVacationTypes);
 
-        when(applicationForLeaveStatisticsBuilder.build(anyPerson, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(anyPerson));
+        when(applicationForLeaveStatisticsBuilder.build(List.of(anyPerson), startDate, endDate, activeVacationTypes))
+            .thenReturn(Map.of(anyPerson, new ApplicationForLeaveStatistics(anyPerson, activeVacationTypes)));
 
         final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatistics(personsWithRole, filterPeriod, pageRequest);
         assertThat(statisticsPage.getContent()).hasSize(1);
@@ -117,10 +118,10 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
-        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person);
+        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person, vacationTypes);
         applicationForLeaveStatistics.setPersonBasedata(personBasedata);
 
-        when(applicationForLeaveStatisticsBuilder.build(person, personBasedata, startDate, endDate, vacationTypes)).thenReturn(applicationForLeaveStatistics);
+        when(applicationForLeaveStatisticsBuilder.build(List.of(person), startDate, endDate, vacationTypes)).thenReturn(Map.of(person, applicationForLeaveStatistics));
 
         final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatistics(office, filterPeriod, pageRequest);
         assertThat(statisticsPage.getContent()).hasSize(1);
@@ -155,7 +156,8 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
-        when(applicationForLeaveStatisticsBuilder.build(departmentMember, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMember));
+        when(applicationForLeaveStatisticsBuilder.build(List.of(departmentMember), startDate, endDate, vacationTypes))
+            .thenReturn(Map.of(departmentMember, new ApplicationForLeaveStatistics(departmentMember, vacationTypes)));
 
         final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatistics(departmentHead, filterPeriod, pageRequest);
         assertThat(statisticsPage.getContent()).hasSize(1);
@@ -184,7 +186,8 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
-        when(applicationForLeaveStatisticsBuilder.build(anyPerson, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(anyPerson));
+        when(applicationForLeaveStatisticsBuilder.build(List.of(anyPerson), startDate, endDate, vacationTypes))
+            .thenReturn(Map.of(anyPerson, new ApplicationForLeaveStatistics(anyPerson, vacationTypes)));
 
         final PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "person.firstName", "leftVacationDaysForYear");
         final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatistics(personWithRole, filterPeriod, pageRequest);
@@ -206,10 +209,12 @@ class ApplicationForLeaveStatisticsServiceTest {
         final Person departmentMember = new Person();
         departmentMember.setId(2);
         departmentMember.setPermissions(List.of(USER));
+        departmentMember.setFirstName("Anton");
 
         final Person departmentMemberTwo = new Person();
         departmentMemberTwo.setId(3);
         departmentMemberTwo.setPermissions(List.of(USER));
+        departmentMemberTwo.setFirstName("Bernd");
 
         when(departmentService.getManagedMembersOfPerson(notBossOrOfficePerson, new PageableSearchQuery(Pageable.unpaged(), "")))
             .thenReturn(new PageImpl<>(List.of(departmentMember, departmentMemberTwo)));
@@ -218,8 +223,11 @@ class ApplicationForLeaveStatisticsServiceTest {
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
-        when(applicationForLeaveStatisticsBuilder.build(departmentMember, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMember));
-        when(applicationForLeaveStatisticsBuilder.build(departmentMemberTwo, startDate, endDate, vacationTypes)).thenReturn(new ApplicationForLeaveStatistics(departmentMemberTwo));
+        when(applicationForLeaveStatisticsBuilder.build(List.of(departmentMember, departmentMemberTwo), startDate, endDate, vacationTypes))
+            .thenReturn(Map.of(
+                departmentMember, new ApplicationForLeaveStatistics(departmentMember, vacationTypes),
+                departmentMemberTwo, new ApplicationForLeaveStatistics(departmentMemberTwo, vacationTypes)
+            ));
 
         final PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "person.firstName", "leftVacationDaysForYear");
         final Page<ApplicationForLeaveStatistics> statisticsPage = sut.getStatistics(notBossOrOfficePerson, filterPeriod, pageRequest);

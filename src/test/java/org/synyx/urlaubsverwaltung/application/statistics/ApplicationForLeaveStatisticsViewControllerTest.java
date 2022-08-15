@@ -51,7 +51,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 @ExtendWith(MockitoExtension.class)
@@ -126,6 +125,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         when(messageSource.getMessage("hours.abbr", new Object[]{}, ENGLISH)).thenReturn("Std.");
 
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
@@ -136,18 +138,15 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         person.setLastName("Lastname");
         person.setEmail("firstname.lastname@example.org");
 
-        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person);
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of(vacationType));
         statistic.setPersonBasedata(new PersonBasedata(new PersonId(1), "42", "some additional information"));
         statistic.setLeftOvertimeForYear(Duration.ofHours(10));
         statistic.setLeftVacationDaysForYear(BigDecimal.valueOf(2));
-        statistic.addWaitingVacationDays(new VacationType(1, true, HOLIDAY, "message_key_holiday", false, YELLOW, false), BigDecimal.valueOf(3));
-        statistic.addAllowedVacationDays(new VacationType(1, true, OVERTIME, "message_key_overtime", false, YELLOW, false), BigDecimal.valueOf(4));
+        statistic.addWaitingVacationDays(vacationType, BigDecimal.valueOf(3));
+        statistic.addAllowedVacationDays(vacationType, BigDecimal.valueOf(4));
 
         when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), eq(filterPeriod), eq(defaultPageRequest())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
-
-        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
             .param("from", "01.01.2019")
@@ -175,7 +174,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             )))
             .andExpect(model().attribute("showPersonnelNumberColumn", true))
             .andExpect(model().attribute("period", filterPeriod))
-            .andExpect(model().attribute("vacationTypes", vacationType))
+            .andExpect(model().attribute("vacationTypes", List.of(vacationType)))
             .andExpect(view().name("thymeleaf/application/application-statistics"));
     }
 
@@ -197,7 +196,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final Person person = new Person();
         person.setId(2);
         person.setFirstName("John");
-        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person);
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, expectedSortProperty));
         when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest)))
@@ -233,7 +232,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final Person person = new Person();
         person.setId(2);
         person.setFirstName("John");
-        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person);
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, expectedSortProperty));
         when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest)))
@@ -261,7 +260,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final Person person = new Person();
         person.setId(2);
         person.setFirstName("John");
-        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person);
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "person.lastName"));
         when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest)))
@@ -312,7 +311,9 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
+
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), any(Pageable.class)))
             .thenReturn(new PageImpl<>(List.of(statistics)));
 
