@@ -10,7 +10,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
@@ -749,6 +748,32 @@ class ApplicationRepositoryIT extends TestContainersBase {
 
         final List<Application> actualApplications = sut.findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(statuses, marlene, askedStartDate, askedEndDate, OVERTIME);
         assertThat(actualApplications).containsOnly(appStartBeforeAsked, appEndAfterAsked, appInBetween, appStartingAtPeriod, appEndingAtPeriod);
+    }
+
+    @Test
+    void ensureFindByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual() {
+
+        final Person max = personService.create(new Person("muster", "Mustermann", "Max", "mustermann@example.org"));
+        final Person marlene = personService.create(new Person("person2", "Musterfrau", "Marlene", "musterfrau@example.org"));
+
+        final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
+        final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
+
+        final Application validHolidayStartingBefore = createApplication(marlene, getVacationType(HOLIDAY), askedStartDate.minusDays(1), askedStartDate.plusDays(1), FULL);
+        sut.save(validHolidayStartingBefore);
+
+        final Application validOvertimeEndingAfter = createApplication(marlene, getVacationType(OVERTIME), askedEndDate.minusDays(1), askedEndDate.plusDays(1), FULL);
+        sut.save(validOvertimeEndingAfter);
+
+        final Application validSpecialLeaveInBetween = createApplication(marlene, getVacationType(SPECIALLEAVE), askedStartDate.plusDays(2), askedEndDate.minusDays(2), FULL);
+        sut.save(validSpecialLeaveInBetween);
+
+        final Application invalidApplication = createApplication(max, getVacationType(HOLIDAY), askedStartDate.plusDays(2), askedEndDate.minusDays(2), FULL);
+        sut.save(invalidApplication);
+
+        final List<Application> actual = sut.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(marlene), askedStartDate, askedEndDate);
+
+        assertThat(actual).containsExactlyInAnyOrder(validHolidayStartingBefore, validOvertimeEndingAfter, validSpecialLeaveInBetween);
     }
 
     @Test

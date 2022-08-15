@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
@@ -13,6 +14,9 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
+import org.synyx.urlaubsverwaltung.overtime.LeftOvertime;
+import org.synyx.urlaubsverwaltung.overtime.LeftOvertimeDateRange;
+import org.synyx.urlaubsverwaltung.overtime.LeftOvertimeOverall;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -96,7 +100,6 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2014, List.of(person))).thenReturn(List.of(account));
-        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofHours(9));
 
         final Application holidayWaiting = new Application();
         holidayWaiting.setPerson(person);
@@ -166,7 +169,10 @@ class ApplicationForLeaveStatisticsBuilderTest {
             holidayAllowedCancellationRequested, holidayRejected, specialLeaveWaiting, unpaidLeaveAllowed, overTimeWaiting);
         final LocalDate from = of(2014, 1, 1);
         final LocalDate to = of(2014, 12, 31);
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(from, to, person)).thenReturn(applications);
+        when(applicationService.getApplicationsForACertainPeriod(from, to, List.of(person))).thenReturn(applications);
+
+        when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
+            .thenReturn(Map.of(person, new LeftOvertime(new LeftOvertimeOverall(Duration.ofHours(9)), new LeftOvertimeDateRange(new DateRange(from, to), Duration.ZERO))));
 
         // just return 1 day for each application for leave
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), eq(person)))
@@ -207,8 +213,6 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, null);
         when(accountService.getHolidaysAccount(2021, List.of(person))).thenReturn(List.of(account));
 
-        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofHours(9));
-
         // application (25.04.2021-30.04.2021) with 3 work days
         final Application applicationSpanningIntoPeriod = new Application();
         applicationSpanningIntoPeriod.setPerson(person);
@@ -244,7 +248,11 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final LocalDate periodFrom = of(2021, 4, 28);
         final LocalDate periodTo = of(2021, 5, 28);
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(periodFrom, periodTo, person)).thenReturn(List.of(applicationSpanningIntoPeriod, applicationInPeriod, applicationSpanningOutOfPeriod));
+        final List<Application> applications = List.of(applicationSpanningIntoPeriod, applicationInPeriod, applicationSpanningOutOfPeriod);
+        when(applicationService.getApplicationsForACertainPeriod(periodFrom, periodTo, List.of(person))).thenReturn(applications);
+
+        when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, periodFrom, periodTo))
+            .thenReturn(Map.of(person, new LeftOvertime(new LeftOvertimeOverall(Duration.ofHours(9)), new LeftOvertimeDateRange(new DateRange(periodFrom, periodTo), Duration.ZERO))));
 
         final VacationDaysLeft vacationDaysLeftYear = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
@@ -281,7 +289,18 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2015, List.of(person))).thenReturn(List.of(account));
-        when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofMinutes(390));
+
+        final Application application = new Application();
+        application.setId(1);
+        application.setPerson(person);
+
+        final List<Person> persons = List.of(person);
+        final List<Application> applications = List.of(application);
+
+        when(applicationService.getApplicationsForACertainPeriod(periodFrom, periodTo, persons)).thenReturn(applications);
+
+        when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, periodFrom, periodTo))
+            .thenReturn(Map.of(person, new LeftOvertime(new LeftOvertimeOverall(Duration.ofMinutes(390)), new LeftOvertimeDateRange(new DateRange(periodFrom, periodTo), Duration.ZERO))));
 
         final VacationDaysLeft vacationDaysLeftYear = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)

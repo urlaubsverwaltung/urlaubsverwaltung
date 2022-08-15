@@ -302,6 +302,27 @@ class ApplicationServiceImplTest {
     }
 
     @Test
+    void ensureGetApplicationsForACertainPeriod() {
+
+        final Person person = new Person();
+        person.setId(1);
+
+        final LocalDate startDate = LocalDate.of(2022, 8, 18);
+        final LocalDate endDate = LocalDate.of(2022, 8, 18);
+        final List<Person> persons = List.of(person);
+
+        final Application application = new Application();
+        application.setId(1);
+
+        when(applicationRepository.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, startDate, endDate))
+            .thenReturn(List.of(application));
+
+        final List<Application> actual = sut.getApplicationsForACertainPeriod(startDate, endDate, persons);
+
+        assertThat(actual).containsExactly(application);
+    }
+
+    @Test
     void deleteOnPersonDeletionEventReturnsDeletedApplication() {
         final Person person = new Person();
         final Application application = new Application();

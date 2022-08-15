@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -40,6 +41,16 @@ public interface ApplicationService {
      * @return all {@link Application}s of the given person with vacation time between startDate x and endDate y
      */
     List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person);
+
+    /**
+     * Gets all {@link Application}s with vacation time between startDate x and endDate y for the given person.
+     *
+     * @param startDate
+     * @param endDate
+     * @param persons
+     * @return all {@link Application}s of the given persons with vacation time between startDate and endDate
+     */
+    List<Application> getApplicationsForACertainPeriod(LocalDate startDate, LocalDate endDate, List<Person> persons);
 
     /**
      * Returns all {@link Application}s with vacation time starting in between startDate x and endDate y for the given
@@ -149,6 +160,14 @@ public interface ApplicationService {
      * @return the total overtime reduction of a person, never {@code null}
      */
     Duration getTotalOvertimeReductionOfPerson(Person person);
+
+    /**
+     * Get the total hours of overtime reduction for the given persons.
+     *
+     * @param persons to get the total hours of overtime reduction for
+     * @return the total overtime reduction of a person
+     */
+    Map<Person, Duration> getTotalOvertimeReductionOfPersons(List<Person> persons);
 
     Duration getTotalOvertimeReductionOfPerson(Person person, LocalDate start, LocalDate end);
 
