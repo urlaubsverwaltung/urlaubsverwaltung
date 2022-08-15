@@ -14,14 +14,15 @@ import org.synyx.urlaubsverwaltung.overtime.LeftOvertime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.time.Duration.ZERO;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
@@ -47,17 +48,19 @@ class ApplicationForLeaveStatisticsBuilder {
     private final WorkDaysCountService workDaysCountService;
     private final VacationDaysService vacationDaysService;
     private final OvertimeService overtimeService;
+    private final SettingsService settingsService;
     private final Clock clock;
 
     @Autowired
     ApplicationForLeaveStatisticsBuilder(AccountService accountService, ApplicationService applicationService,
                                          WorkDaysCountService workDaysCountService, VacationDaysService vacationDaysService,
-                                         OvertimeService overtimeService, Clock clock) {
+                                         OvertimeService overtimeService, SettingsService settingsService, Clock clock) {
         this.accountService = accountService;
         this.applicationService = applicationService;
         this.workDaysCountService = workDaysCountService;
         this.vacationDaysService = vacationDaysService;
         this.overtimeService = overtimeService;
+        this.settingsService = settingsService;
         this.clock = clock;
     }
 
@@ -69,6 +72,7 @@ class ApplicationForLeaveStatisticsBuilder {
         final List<Account> holidayAccounts = accountService.getHolidaysAccount(from.getYear(), persons);
         final List<Application> applications = applicationService.getApplicationsForACertainPeriod(from, to, persons);
         final Map<Person, LeftOvertime> leftOvertimeForPersons = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
+        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
 
         final Map<Person, ApplicationForLeaveStatistics> statisticsByPerson = holidayAccounts.stream()
             .map(account -> {
@@ -77,11 +81,11 @@ class ApplicationForLeaveStatisticsBuilder {
 
                 final LocalDate firstDayOfYear = from.with(firstDayOfYear());
                 final LocalDate lastDayOfYear = to.with(lastDayOfYear());
-                final VacationDaysLeft vacationDaysLeftYear = vacationDaysService.getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, Optional.empty());
+                final VacationDaysLeft vacationDaysLeftYear = vacationDaysService.getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, workingTimeSettings);
                 statistics.setLeftVacationDaysForYear(vacationDaysLeftYear.getLeftVacationDays(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
                 statistics.setLeftRemainingVacationDaysForYear(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
 
-                final VacationDaysLeft vacationDaysLeftPeriod = vacationDaysService.getVacationDaysLeft(from, to, account, Optional.empty());
+                final VacationDaysLeft vacationDaysLeftPeriod = vacationDaysService.getVacationDaysLeft(from, to, account, workingTimeSettings);
                 statistics.setLeftVacationDaysForPeriod(vacationDaysLeftPeriod.getLeftVacationDays(to, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
                 statistics.setLeftRemainingVacationDaysForPeriod(vacationDaysLeftPeriod.getRemainingVacationDaysLeft(to, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
 
@@ -102,9 +106,9 @@ class ApplicationForLeaveStatisticsBuilder {
             for (Application application : personApplications) {
                 final ApplicationForLeaveStatistics statistics = statisticsByPerson.get(application.getPerson());
                 if (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED)) {
-                    statistics.addWaitingVacationDays(convert(application.getVacationType()), getVacationDaysFor(application, from, to));
+                    statistics.addWaitingVacationDays(convert(application.getVacationType()), getVacationDaysFor(application, from, to, workingTimeSettings));
                 } else if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
-                    statistics.addAllowedVacationDays(convert(application.getVacationType()), getVacationDaysFor(application, from, to));
+                    statistics.addAllowedVacationDays(convert(application.getVacationType()), getVacationDaysFor(application, from, to, workingTimeSettings));
                 }
             }
         }
@@ -112,7 +116,7 @@ class ApplicationForLeaveStatisticsBuilder {
         return statisticsByPerson;
     }
 
-    private BigDecimal getVacationDaysFor(Application application, LocalDate from, LocalDate to) {
+    private BigDecimal getVacationDaysFor(Application application, LocalDate from, LocalDate to, WorkingTimeSettings workingTimeSettings) {
 
         final DayLength dayLength = application.getDayLength();
         final Person person = application.getPerson();
@@ -120,6 +124,6 @@ class ApplicationForLeaveStatisticsBuilder {
         final LocalDate startDate = application.getStartDate().isBefore(from) ? from : application.getStartDate();
         final LocalDate endDate = application.getEndDate().isAfter(to) ? to : application.getEndDate();
 
-        return workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person);
+        return workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person, workingTimeSettings);
     }
 }

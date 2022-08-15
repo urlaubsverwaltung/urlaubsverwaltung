@@ -32,7 +32,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doAnswer;
@@ -184,7 +183,7 @@ class AccountViewControllerTest {
         account.setActualVacationDays(ZERO);
         account.setRemainingVacationDays(ZERO);
 
-        when(accountService.getHolidaysAccount(anyInt(), any(Person.class))).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(Year.now(clock).getValue(), signedInPerson)).thenReturn(Optional.of(account));
 
         final LocalDate expiryDate = validFrom.withMonth(MARCH.getValue()).withDayOfMonth(1);
 
@@ -219,7 +218,8 @@ class AccountViewControllerTest {
         account.setActualVacationDays(ZERO);
         account.setRemainingVacationDays(ZERO);
 
-        when(accountService.getHolidaysAccount(anyInt(), eq(signedInPerson))).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(Year.now(clock).getValue(), signedInPerson))
+            .thenReturn(Optional.of(account));
 
         final LocalDate expiryDate = validFrom.withMonth(MARCH.getValue()).withDayOfMonth(1);
 
@@ -242,7 +242,7 @@ class AccountViewControllerTest {
         Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
-        when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.empty());
+        when(accountService.getHolidaysAccount(Year.now(clock).getValue(), person)).thenReturn(Optional.empty());
 
         AccountForm mockedAccountForm = mock(AccountForm.class);
         when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));
@@ -256,18 +256,20 @@ class AccountViewControllerTest {
     @Test
     void updateAccountAddsFlashAttributeAndRedirectsToPerson() throws Exception {
 
-        final Person person = somePerson();
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
-        when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(someAccount()));
+        final Person accountPerson = new Person();
+        accountPerson.setId(2);
+
+        when(personService.getPersonByID(2)).thenReturn(Optional.of(accountPerson));
+        when(accountService.getHolidaysAccount(Year.now(clock).getValue(), accountPerson)).thenReturn(Optional.of(someAccount()));
 
         AccountForm mockedAccountForm = mock(AccountForm.class);
         when(mockedAccountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));
 
-        perform(post("/web/person/" + SOME_PERSON_ID + "/account")
+        perform(post("/web/person/2/account")
             .flashAttr("account", mockedAccountForm))
             .andExpect(flash().attribute("updateSuccess", true))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/person/" + SOME_PERSON_ID));
+            .andExpect(redirectedUrl("/web/person/2"));
     }
 
     @ParameterizedTest

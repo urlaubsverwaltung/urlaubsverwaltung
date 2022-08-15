@@ -364,10 +364,12 @@ class PersonsViewControllerTest {
             .param("department", "1")
         )
             .andExpect(model().attribute("department", hasProperty("name", is("awesome-department"))))
-            .andExpect(model().attribute("personPage", hasProperty("content", allOf(
-                hasSize(1),
-                contains(
-                    hasProperty("firstName", is("John"))
+            .andExpect(model().attribute("personsPagination", hasProperty("page",
+                hasProperty("content", allOf(
+                    hasSize(1),
+                    contains(
+                        hasProperty("firstName", is("John"))
+                    )
                 )
             ))));
     }
@@ -395,12 +397,16 @@ class PersonsViewControllerTest {
             .param("department", "1")
         )
             .andExpect(model().attribute("department", nullValue()))
-            .andExpect(model().attribute("personPage", hasProperty("content", allOf(
-                hasSize(1),
-                contains(
-                    hasProperty("firstName", is("John"))
+            .andExpect(model().attribute("personsPagination",
+                hasProperty("page",
+                    hasProperty("content", allOf(
+                        hasSize(1),
+                        contains(
+                            hasProperty("firstName", is("John"))
+                        )
+                    )
                 )
-            ))));
+            )));
     }
 
     @Test
