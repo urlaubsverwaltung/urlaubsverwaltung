@@ -22,7 +22,11 @@ class UserSettingsAwareSessionLocaleResolver extends SessionLocaleResolver {
             return request.getLocale();
         }
 
-        return userSettingsService.findLocaleForUsername(userPrincipal.getName())
+        final Locale locale = userSettingsService.findLocaleForUsername(userPrincipal.getName())
             .orElseGet(request::getLocale);
+
+        setLocaleContext(request, null, () -> locale);
+
+        return locale;
     }
 }

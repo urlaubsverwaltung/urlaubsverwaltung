@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -67,6 +68,25 @@ class UserSettingsAwareSessionLocaleResolverTest {
         final Locale actual = sut.determineDefaultLocale(request);
 
         assertThat(actual).isEqualTo(Locale.GERMAN);
+    }
+
+    @Test
+    void ensureUserLocaleIsWrittenIntoSession() {
+
+        when(userSettingsService.findLocaleForUsername("batman")).thenReturn(Optional.of(Locale.GERMAN));
+
+        final UserSettingsAwareSessionLocaleResolver sut = new UserSettingsAwareSessionLocaleResolver(userSettingsService);
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setLocalName(Locale.ENGLISH.getLanguage());
+        request.setUserPrincipal(anyPrincipal("batman"));
+
+        final MockHttpSession httpSession = new MockHttpSession();
+        request.setSession(httpSession);
+
+        sut.determineDefaultLocale(request);
+
+        assertThat(httpSession.getAttribute("org.springframework.web.servlet.i18n.SessionLocaleResolver.LOCALE")).isEqualTo(Locale.GERMAN);
     }
 
     private static Principal anyPrincipal(String username) {
