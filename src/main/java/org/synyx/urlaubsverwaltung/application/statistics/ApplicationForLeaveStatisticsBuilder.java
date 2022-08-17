@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.HolidayAccountVacationDays;
 import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -12,7 +13,6 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.overtime.LeftOvertime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -25,16 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import static java.time.Duration.ZERO;
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl.convert;
 
 /**
  * Builds a {@link ApplicationForLeaveStatistics} for the given
@@ -73,21 +65,25 @@ class ApplicationForLeaveStatisticsBuilder {
         final List<Application> applications = applicationService.getApplicationsForACertainPeriod(from, to, persons);
         final Map<Person, LeftOvertime> leftOvertimeForPersons = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
         final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
+        final Map<Account, HolidayAccountVacationDays> holidayAccountVacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, from, to, workingTimeSettings);
 
         final Map<Person, ApplicationForLeaveStatistics> statisticsByPerson = holidayAccounts.stream()
             .map(account -> {
                 final Person accountPerson = account.getPerson();
                 final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(accountPerson, vacationTypes);
 
-                final LocalDate firstDayOfYear = from.with(firstDayOfYear());
-                final LocalDate lastDayOfYear = to.with(lastDayOfYear());
-                final VacationDaysLeft vacationDaysLeftYear = vacationDaysService.getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, workingTimeSettings);
-                statistics.setLeftVacationDaysForYear(vacationDaysLeftYear.getLeftVacationDays(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
-                statistics.setLeftRemainingVacationDaysForYear(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
+                if (holidayAccountVacationDaysByAccount.containsKey(account)) {
+                    final HolidayAccountVacationDays holidayAccountVacationDays = holidayAccountVacationDaysByAccount.get(account);
 
-                final VacationDaysLeft vacationDaysLeftPeriod = vacationDaysService.getVacationDaysLeft(from, to, account, workingTimeSettings);
-                statistics.setLeftVacationDaysForPeriod(vacationDaysLeftPeriod.getLeftVacationDays(to, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
-                statistics.setLeftRemainingVacationDaysForPeriod(vacationDaysLeftPeriod.getRemainingVacationDaysLeft(to, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
+                    final VacationDaysLeft vacationDaysLeftYear = holidayAccountVacationDays.getVacationDaysYear();
+                    final BigDecimal leftVacationDays = vacationDaysLeftYear.getLeftVacationDays(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate());
+                    statistics.setLeftVacationDaysForYear(leftVacationDays);
+                    statistics.setLeftRemainingVacationDaysForYear(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
+
+                    final VacationDaysLeft vacationDaysLeftPeriod = holidayAccountVacationDays.getVacationDaysDateRange();
+                    statistics.setLeftVacationDaysForPeriod(vacationDaysLeftPeriod.getLeftVacationDays(to, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
+                    statistics.setLeftRemainingVacationDaysForPeriod(vacationDaysLeftPeriod.getRemainingVacationDaysLeft(to, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
+                }
 
                 if (leftOvertimeForPersons.containsKey(accountPerson)) {
                     final LeftOvertime leftOvertime = leftOvertimeForPersons.get(accountPerson);
@@ -101,29 +97,30 @@ class ApplicationForLeaveStatisticsBuilder {
                 return statistics;
             }).collect(toMap(ApplicationForLeaveStatistics::getPerson, identity()));
 
-        for (Person person : persons) {
-            final List<Application> personApplications = applications.stream().filter(application -> application.getPerson().equals(person)).collect(toList());
-            for (Application application : personApplications) {
-                final ApplicationForLeaveStatistics statistics = statisticsByPerson.get(application.getPerson());
-                if (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED)) {
-                    statistics.addWaitingVacationDays(convert(application.getVacationType()), getVacationDaysFor(application, from, to, workingTimeSettings));
-                } else if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
-                    statistics.addAllowedVacationDays(convert(application.getVacationType()), getVacationDaysFor(application, from, to, workingTimeSettings));
-                }
-            }
-        }
+        // TODO move into vacationDayService#getStatistics
+//        for (Person person : persons) {
+//            final List<Application> personApplications = applications.stream().filter(application -> application.getPerson().equals(person)).collect(toList());
+//            for (Application application : personApplications) {
+//                final ApplicationForLeaveStatistics statistics = statisticsByPerson.get(application.getPerson());
+//                if (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED)) {
+//                    statistics.addWaitingVacationDays(convert(application.getVacationType()), getVacationDaysFor(application, from, to, workingTimeSettings));
+//                } else if (application.hasStatus(ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)) {
+//                    statistics.addAllowedVacationDays(convert(application.getVacationType()), getVacationDaysFor(application, from, to, workingTimeSettings));
+//                }
+//            }
+//        }
 
         return statisticsByPerson;
     }
 
-    private BigDecimal getVacationDaysFor(Application application, LocalDate from, LocalDate to, WorkingTimeSettings workingTimeSettings) {
-
-        final DayLength dayLength = application.getDayLength();
-        final Person person = application.getPerson();
-
-        final LocalDate startDate = application.getStartDate().isBefore(from) ? from : application.getStartDate();
-        final LocalDate endDate = application.getEndDate().isAfter(to) ? to : application.getEndDate();
-
-        return workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person, workingTimeSettings);
-    }
+//    private BigDecimal getVacationDaysFor(Application application, LocalDate from, LocalDate to, WorkingTimeSettings workingTimeSettings) {
+//
+//        final DayLength dayLength = application.getDayLength();
+//        final Person person = application.getPerson();
+//
+//        final LocalDate startDate = application.getStartDate().isBefore(from) ? from : application.getStartDate();
+//        final LocalDate endDate = application.getEndDate().isAfter(to) ? to : application.getEndDate();
+//
+//        return workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person, workingTimeSettings);
+//    }
 }

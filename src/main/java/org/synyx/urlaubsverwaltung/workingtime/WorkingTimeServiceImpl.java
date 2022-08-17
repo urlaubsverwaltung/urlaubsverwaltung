@@ -125,6 +125,10 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         return workingTimesOfPersonByDateRange;
     }
 
+    public Map<Person, Map<DateRange, WorkingTime>> getWorkingTimesByPersonsAndDateRange(List<Person> persons, DateRange dateRange) {
+        return Map.of();
+    }
+
     @Override
     public Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange) {
         return getWorkingTimesByPersonAndDateRange(person, dateRange).entrySet().stream()
