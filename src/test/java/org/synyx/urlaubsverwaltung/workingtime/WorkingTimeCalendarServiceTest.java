@@ -40,7 +40,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 @ExtendWith(MockitoExtension.class)
-class WorkDaysCountServiceTest {
+class WorkingTimeCalendarServiceTest {
 
     private WorkDaysCountService sut;
 

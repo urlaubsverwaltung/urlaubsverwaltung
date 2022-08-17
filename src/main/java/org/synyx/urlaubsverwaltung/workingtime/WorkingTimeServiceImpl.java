@@ -7,11 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ import java.util.function.Supplier;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -34,14 +37,16 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     private final WorkingTimeProperties workingTimeProperties;
     private final WorkingTimeRepository workingTimeRepository;
+    private final PublicHolidaysService publicHolidaysService;
     private final SettingsService settingsService;
     private final Clock clock;
 
     @Autowired
     public WorkingTimeServiceImpl(WorkingTimeProperties workingTimeProperties, WorkingTimeRepository workingTimeRepository,
-                                  SettingsService settingsService, Clock clock) {
+                                  PublicHolidaysService publicHolidaysService, SettingsService settingsService, Clock clock) {
         this.workingTimeProperties = workingTimeProperties;
         this.workingTimeRepository = workingTimeRepository;
+        this.publicHolidaysService = publicHolidaysService;
         this.settingsService = settingsService;
         this.clock = clock;
     }
@@ -125,8 +130,52 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         return workingTimesOfPersonByDateRange;
     }
 
-    public Map<Person, Map<DateRange, WorkingTime>> getWorkingTimesByPersonsAndDateRange(List<Person> persons, DateRange dateRange) {
-        return Map.of();
+    @Override
+    public Map<Person, WorkingTimeCalendar> getWorkingTimesByPersonsAndDateRange(Collection<Person> persons, DateRange dateRange) {
+
+        final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)
+            .stream()
+            .map(entity -> toWorkingTime(entity, this::getSystemDefaultFederalState))
+            .collect(groupingBy(WorkingTime::getPerson));
+
+        return persons.stream().map(person -> {
+            final List<WorkingTime> workingTimesInDateRange = workingTimesByPerson.get(person).stream()
+                .filter(workingTime -> !workingTime.getValidFrom().isAfter(dateRange.getEndDate()))
+                .collect(toList());
+
+            final Map<LocalDate, DayLength> dayLengthByDate = new HashMap<>();
+
+            LocalDate nextEnd = dateRange.getEndDate();
+
+            for (WorkingTime workingTime : workingTimesInDateRange) {
+                final FederalState federalState = workingTime.getFederalState();
+
+                final DateRange workingTimeDateRange;
+                if (workingTime.getValidFrom().isBefore(dateRange.getStartDate())) {
+                    workingTimeDateRange = new DateRange(dateRange.getStartDate(), nextEnd);
+                } else {
+                    workingTimeDateRange = new DateRange(workingTime.getValidFrom(), nextEnd);
+                }
+
+                for (LocalDate date : workingTimeDateRange) {
+                    final DayLength dayLengthForWeekDay;
+                    if (publicHolidaysService.isPublicHoliday(date, federalState)) {
+                        dayLengthForWeekDay = DayLength.ZERO;
+                    } else {
+                        dayLengthForWeekDay = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
+                    }
+                    dayLengthByDate.put(date, dayLengthForWeekDay);
+                }
+
+                if (!workingTime.getValidFrom().isAfter(workingTimeDateRange.getStartDate())) {
+                    break;
+                }
+
+                nextEnd = workingTime.getValidFrom().minusDays(1);
+            }
+
+            return Map.entry(person, new WorkingTimeCalendar(dayLengthByDate));
+        }).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override

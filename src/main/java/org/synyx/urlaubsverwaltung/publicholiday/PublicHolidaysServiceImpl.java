@@ -36,6 +36,13 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
     }
 
     @Override
+    public boolean isPublicHoliday(LocalDate date, FederalState federalState) {
+        return getHolidayManager(federalState)
+            .map(holidayManager -> holidayManager.isHoliday(date, federalState.getCodes()))
+            .orElse(false);
+    }
+
+    @Override
     public Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState) {
         return getPublicHolidays(date, date, federalState).stream().findFirst();
     }
@@ -79,12 +86,6 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
         return getHolidayManager(federalState)
             .map(holidayManager -> holidayManager.getHolidays(from, to, federalState.getCodes()))
             .orElseGet(Set::of);
-    }
-
-    private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
-        return getHolidayManager(federalState)
-            .map(holidayManager -> holidayManager.isHoliday(date, federalState.getCodes()))
-            .orElse(false);
     }
 
     private Optional<HolidayManager> getHolidayManager(FederalState federalState) {

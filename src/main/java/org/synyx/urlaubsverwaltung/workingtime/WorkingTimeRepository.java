@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -15,6 +16,8 @@ import java.util.List;
 interface WorkingTimeRepository extends CrudRepository<WorkingTimeEntity, Integer> {
 
     List<WorkingTimeEntity> findByPersonOrderByValidFromDesc(Person person);
+
+    List<WorkingTimeEntity> findByPersonIsInOrderByValidFromDesc(Collection<Person> persons);
 
     @Query("SELECT x FROM working_time x WHERE x.person = ?1 AND x.validFrom = ?2")
     WorkingTimeEntity findByPersonAndValidityDate(Person person, LocalDate date);

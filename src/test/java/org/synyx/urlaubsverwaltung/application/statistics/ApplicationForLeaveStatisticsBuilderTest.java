@@ -13,7 +13,7 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.Clock;
@@ -36,18 +36,16 @@ class ApplicationForLeaveStatisticsBuilderTest {
     @Mock
     private ApplicationService applicationService;
     @Mock
-    private WorkDaysCountService workDaysCountService;
-    @Mock
     private VacationDaysService vacationDaysService;
     @Mock
     private OvertimeService overtimeService;
     @Mock
-    private SettingsService settingsService;
+    private WorkingTimeService workingTimeService;
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, workDaysCountService,
-            vacationDaysService, overtimeService, settingsService, Clock.fixed(Instant.parse("2015-06-24T16:02:42.00Z"), ZoneOffset.UTC));
+        sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
+                workingTimeService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2015-06-24T16:02:42.00Z"), ZoneOffset.UTC));
     }
 
     @Test

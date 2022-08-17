@@ -12,9 +12,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -22,13 +24,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.time.Month.AUGUST;
+import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
+import static java.time.Month.SEPTEMBER;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -48,13 +55,15 @@ class WorkingTimeServiceImplTest {
     @Mock
     private WorkingTimeRepository workingTimeRepository;
     @Mock
+    private PublicHolidaysService publicHolidaysService;
+    @Mock
     private SettingsService settingsService;
 
     private final Clock fixedClock = Clock.fixed(Instant.parse("2019-08-13T00:00:00.00Z"), UTC);
 
     @BeforeEach
     void setUp() {
-        sut = new WorkingTimeServiceImpl(workingTimeProperties, workingTimeRepository, settingsService, fixedClock);
+        sut = new WorkingTimeServiceImpl(workingTimeProperties, workingTimeRepository, publicHolidaysService, settingsService, fixedClock);
     }
 
     @Test
@@ -580,6 +589,185 @@ class WorkingTimeServiceImplTest {
             new DateRange(
                 LocalDate.of(2021, 11, 1),
                 LocalDate.of(2021, 11, 30)))).isEmpty();
+    }
+
+    @Test
+    void ensureGetWorkingTimesByPersonsAndDateRange() {
+        final Person person = new Person();
+        person.setId(1);
+
+        final Person person2 = new Person();
+        person2.setId(2);
+
+        final List<Person> persons = List.of(person, person2);
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setValidFrom(LocalDate.of(2022, JANUARY, 1));
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setMonday(DayLength.FULL);
+        workingTimeEntity.setTuesday(DayLength.FULL);
+        workingTimeEntity.setWednesday(DayLength.FULL);
+        workingTimeEntity.setThursday(DayLength.FULL);
+        workingTimeEntity.setFriday(DayLength.FULL);
+        workingTimeEntity.setSaturday(DayLength.FULL);
+        workingTimeEntity.setSunday(DayLength.FULL);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity workingTimeEntity2 = new WorkingTimeEntity();
+        workingTimeEntity2.setValidFrom(LocalDate.of(2022, JANUARY, 1));
+        workingTimeEntity2.setPerson(person2);
+        workingTimeEntity2.setMonday(DayLength.NOON);
+        workingTimeEntity2.setTuesday(DayLength.NOON);
+        workingTimeEntity2.setWednesday(DayLength.NOON);
+        workingTimeEntity2.setThursday(DayLength.NOON);
+        workingTimeEntity2.setFriday(DayLength.NOON);
+        workingTimeEntity2.setSaturday(DayLength.NOON);
+        workingTimeEntity2.setSunday(DayLength.NOON);
+        workingTimeEntity2.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons))
+            .thenReturn(List.of(workingTimeEntity, workingTimeEntity2));
+
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
+        assertThat(actual).hasSize(2);
+        assertThat(actual).containsKeys(person, person2);
+
+        final WorkingTimeCalendar personWorkingTimeCalendar = actual.get(person);
+        for (LocalDate date : dateRange) {
+            assertThat(personWorkingTimeCalendar.workingTime(date)).hasValue(BigDecimal.ONE);
+        }
+
+        final WorkingTimeCalendar person2WorkingTimeCalendar = actual.get(person2);
+        for (LocalDate date : dateRange) {
+            assertThat(person2WorkingTimeCalendar.workingTime(date)).hasValue(BigDecimal.valueOf(0.5));
+        }
+    }
+
+    @Test
+    void ensureGetWorkingTimesByPersonsAndDateRangeUsesDefaultFederalStateWhenWorkingTimeDoesNotDefineIt() {
+        final Person person = new Person();
+        person.setId(1);
+
+        final List<Person> persons = List.of(person);
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setValidFrom(LocalDate.of(2022, JANUARY, 1));
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setFederalStateOverride(null);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(workingTimeEntity));
+
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        workingTimeSettings.setFederalState(GERMANY_BERLIN);
+
+        final Settings settings = new Settings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
+
+        verify(publicHolidaysService, times(31)).isPublicHoliday(any(LocalDate.class), eq(GERMANY_BERLIN));
+    }
+
+    @Test
+    void ensureGetWorkingTimesByPersonsAndDateRangeIgnoresPublicHolidays() {
+        final Person person = new Person();
+        person.setId(1);
+
+        final Person person2 = new Person();
+        person2.setId(2);
+
+        final List<Person> persons = List.of(person, person2);
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setValidFrom(LocalDate.of(2022, JANUARY, 1));
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setMonday(DayLength.FULL);
+        workingTimeEntity.setTuesday(DayLength.FULL);
+        workingTimeEntity.setWednesday(DayLength.FULL);
+        workingTimeEntity.setThursday(DayLength.FULL);
+        workingTimeEntity.setFriday(DayLength.FULL);
+        workingTimeEntity.setSaturday(DayLength.FULL);
+        workingTimeEntity.setSunday(DayLength.FULL);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity workingTimeEntity2 = new WorkingTimeEntity();
+        workingTimeEntity2.setValidFrom(LocalDate.of(2022, JANUARY, 1));
+        workingTimeEntity2.setPerson(person2);
+        workingTimeEntity2.setMonday(DayLength.NOON);
+        workingTimeEntity2.setTuesday(DayLength.NOON);
+        workingTimeEntity2.setWednesday(DayLength.NOON);
+        workingTimeEntity2.setThursday(DayLength.NOON);
+        workingTimeEntity2.setFriday(DayLength.NOON);
+        workingTimeEntity2.setSaturday(DayLength.NOON);
+        workingTimeEntity2.setSunday(DayLength.NOON);
+        workingTimeEntity2.setFederalStateOverride(GERMANY_BERLIN);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(workingTimeEntity, workingTimeEntity2));
+
+        when(publicHolidaysService.isPublicHoliday(any(LocalDate.class), any(FederalState.class))).thenReturn(false);
+        when(publicHolidaysService.isPublicHoliday(LocalDate.of(2022, AUGUST, 5), GERMANY_BADEN_WUERTTEMBERG)).thenReturn(true);
+        when(publicHolidaysService.isPublicHoliday(LocalDate.of(2022, AUGUST, 10), GERMANY_BERLIN)).thenReturn(true);
+
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
+        assertThat(actual).hasSize(2);
+        assertThat(actual).containsKeys(person, person2);
+
+        assertThat(actual.get(person).workingTime(LocalDate.of(2022, AUGUST, 5))).hasValue(BigDecimal.ZERO);
+        assertThat(actual.get(person).workingTime(LocalDate.of(2022, AUGUST, 10))).hasValue(BigDecimal.ONE);
+        assertThat(actual.get(person2).workingTime(LocalDate.of(2022, AUGUST, 5))).hasValue(BigDecimal.valueOf(0.5));
+        assertThat(actual.get(person2).workingTime(LocalDate.of(2022, AUGUST, 10))).hasValue(BigDecimal.ZERO);
+    }
+
+    @Test
+    void ensureGetWorkingTimesByPersonsAndDateRangeIgnoresWorkingTimesNotInDateRange() {
+        final Person person = new Person();
+        person.setId(1);
+
+        final List<Person> persons = List.of(person);
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setValidFrom(LocalDate.of(2022, JANUARY, 1));
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setMonday(DayLength.FULL);
+        workingTimeEntity.setTuesday(DayLength.FULL);
+        workingTimeEntity.setWednesday(DayLength.FULL);
+        workingTimeEntity.setThursday(DayLength.FULL);
+        workingTimeEntity.setFriday(DayLength.FULL);
+        workingTimeEntity.setSaturday(DayLength.FULL);
+        workingTimeEntity.setSunday(DayLength.FULL);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity outOfDateRange = new WorkingTimeEntity();
+        outOfDateRange.setValidFrom(LocalDate.of(2022, SEPTEMBER, 1));
+        outOfDateRange.setPerson(person);
+        outOfDateRange.setMonday(DayLength.NOON);
+        outOfDateRange.setTuesday(DayLength.NOON);
+        outOfDateRange.setWednesday(DayLength.NOON);
+        outOfDateRange.setThursday(DayLength.NOON);
+        outOfDateRange.setFriday(DayLength.NOON);
+        outOfDateRange.setSaturday(DayLength.NOON);
+        outOfDateRange.setSunday(DayLength.NOON);
+        outOfDateRange.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons))
+            .thenReturn(List.of(workingTimeEntity, outOfDateRange));
+
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
+        assertThat(actual).hasSize(1);
+        assertThat(actual).containsKey(person);
+
+        final WorkingTimeCalendar workingTimeCalendar = actual.get(person);
+        for (LocalDate date : dateRange) {
+            assertThat(workingTimeCalendar.workingTime(date)).hasValue(BigDecimal.ONE);
+        }
+
+        assertThat(workingTimeCalendar.workingTime(LocalDate.of(2022, SEPTEMBER, 1))).isEmpty();
     }
 
     @Test

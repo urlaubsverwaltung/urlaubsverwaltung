@@ -10,6 +10,14 @@ import java.util.Optional;
 public interface PublicHolidaysService {
 
     /**
+     * Check if the given {@link LocalDate} is a public holiday in the given {@link FederalState} or not.
+     * @param date
+     * @param federalState
+     * @return {@code true} when the date is a public holiday, {@code false} otherwise.
+     */
+    boolean isPublicHoliday(LocalDate date, FederalState federalState);
+
+    /**
      * Returns the public holiday information for a date and the federal state.
      * If there is no public holiday at the given date the return value is an empty optional, otherwise
      * the public holiday will be returned.
