@@ -93,17 +93,24 @@ public class VacationDaysService {
     /**
      * @param holidayAccounts              {@link Account} to determine configured expiryDate of {@link Application}s
      * @param workingTimeCalendarsByPerson {@link WorkingTimeCalendar} to calculate the used vacation days for the {@link Account}s persons.
-     * @param from                         start of the calculated date range info
-     * @param to                           end of the calculated date range info
+     * @param dateRange                    date range to calculate left vacation days for. must be within a year.
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
+     *
+     * @throws IllegalArgumentException when dateRange is over one year.
      */
-    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson, LocalDate from, LocalDate to) {
-        if (from.isAfter(to) || to.getYear() != from.getYear()) {
-            throw new IllegalStateException("'from' must be before 'after' and they both must have the same year.");
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts,
+                                                                        Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson,
+                                                                        DateRange dateRange) {
+
+        final LocalDate from = dateRange.getStartDate();
+        final LocalDate to = dateRange.getEndDate();
+
+        if (to.getYear() != from.getYear()) {
+            throw new IllegalArgumentException(String.format("date range must be in the same year but was from=%s to=%s", from, to));
         }
 
         final List<Account> holidayAccountsForYear = holidayAccounts.stream().filter(account -> account.getYear() == from.getYear()).collect(toList());
-        final Map<Account, UsedVacationDaysTuple> usedVacationDaysByAccount = getUsedVacationDays(holidayAccountsForYear, from, to, workingTimeCalendarsByPerson);
+        final Map<Account, UsedVacationDaysTuple> usedVacationDaysByAccount = getUsedVacationDays(holidayAccountsForYear, dateRange, workingTimeCalendarsByPerson);
 
         return usedVacationDaysByAccount.entrySet().stream()
             .map(entry -> {
@@ -151,16 +158,14 @@ public class VacationDaysService {
             .reduce(ZERO, BigDecimal::add);
     }
 
-    private Map<Account, UsedVacationDaysTuple> getUsedVacationDays(List<Account> holidayAccounts, LocalDate from, LocalDate to, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
+    private Map<Account, UsedVacationDaysTuple> getUsedVacationDays(List<Account> holidayAccounts, DateRange dateRange, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
 
-        final LocalDate firstDayOfYear = from.with(firstDayOfYear());
-        final LocalDate lastDayOfYear = to.with(lastDayOfYear());
+        final LocalDate firstDayOfYear = dateRange.getStartDate().with(firstDayOfYear());
+        final LocalDate lastDayOfYear = dateRange.getEndDate().with(lastDayOfYear());
 
         final List<Person> persons = holidayAccounts.stream().map(Account::getPerson).distinct().collect(toList());
         final List<ApplicationStatus> status = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
         final List<Application> applicationsTouchingDateRange = applicationService.getForStatesAndPerson(status, persons, firstDayOfYear, lastDayOfYear);
-
-        final DateRange dateRange = new DateRange(from, to);
 
         return getUsedVacationDaysBetweenTwoMilestones(holidayAccounts, applicationsTouchingDateRange, dateRange, workingTimeCalendarsByPerson);
     }

@@ -126,7 +126,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final VacationDaysLeft personVacationDaysLeftPeriod = VacationDaysLeft.builder().withAnnualVacation(BigDecimal.valueOf(5)).build();
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, from , to)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, dateRange)).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
 
@@ -194,7 +194,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, from , to)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, dateRange)).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
 
@@ -260,7 +260,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, from , to)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, dateRange)).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
 
@@ -382,7 +382,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, VacationDaysLeft.builder().build());
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, from , to)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, dateRange)).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
 
@@ -436,7 +436,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final VacationDaysLeft personVacationDaysLeftPeriod = VacationDaysLeft.builder().build();
         final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
 
-        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, from , to)).thenReturn(Map.of(account, personVacationDays));
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, dateRange)).thenReturn(Map.of(account, personVacationDays));
 
         final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
 

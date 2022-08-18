@@ -64,12 +64,13 @@ class ApplicationForLeaveStatisticsBuilder {
         Assert.isTrue(from.getYear() == to.getYear(), "From and to must be in the same year");
 
         final LocalDate today = LocalDate.now(clock);
+        final DateRange dateRange = new DateRange(from, to);
 
         final List<Account> holidayAccounts = accountService.getHolidaysAccount(from.getYear(), persons);
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeService.getWorkingTimesByPersonsAndDateRange(persons, new DateRange(from, to));
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeService.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
         final List<Application> applications = applicationService.getApplicationsForACertainPeriod(from, to, persons);
         final Map<Person, LeftOvertime> leftOvertimeForPersons = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
-        final Map<Account, HolidayAccountVacationDays> holidayAccountVacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, workingTimeCalendarsByPerson, from, to);
+        final Map<Account, HolidayAccountVacationDays> holidayAccountVacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, workingTimeCalendarsByPerson, dateRange);
 
         final Map<Person, ApplicationForLeaveStatistics> statisticsByPerson = holidayAccounts.stream()
             .map(account -> {
