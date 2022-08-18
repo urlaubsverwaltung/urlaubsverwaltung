@@ -91,14 +91,13 @@ public class VacationDaysService {
     }
 
     /**
-     *
-     * @param holidayAccounts {@link Account} to determine configured expiryDate of {@link Application}s
-     * @param from start of the calculated date range info
-     * @param to end of the calculated date range info
+     * @param holidayAccounts              {@link Account} to determine configured expiryDate of {@link Application}s
      * @param workingTimeCalendarsByPerson {@link WorkingTimeCalendar} to calculate the used vacation days for the {@link Account}s persons.
+     * @param from                         start of the calculated date range info
+     * @param to                           end of the calculated date range info
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
      */
-    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, LocalDate from, LocalDate to, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
+    public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson, LocalDate from, LocalDate to) {
         if (from.isAfter(to) || to.getYear() != from.getYear()) {
             throw new IllegalStateException("'from' must be before 'after' and they both must have the same year.");
         }
