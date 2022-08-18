@@ -159,10 +159,12 @@ public class VacationDaysService {
         final List<ApplicationStatus> status = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
         final List<Application> applicationsTouchingDateRange = applicationService.getForStatesAndPerson(status, persons, firstDayOfYear, lastDayOfYear);
 
-        return getUsedVacationDaysBetweenTwoMilestones(holidayAccounts, applicationsTouchingDateRange, from, to, workingTimeCalendarsByPerson);
+        final DateRange dateRange = new DateRange(from, to);
+
+        return getUsedVacationDaysBetweenTwoMilestones(holidayAccounts, applicationsTouchingDateRange, dateRange, workingTimeCalendarsByPerson);
     }
 
-    private Map<Account, UsedVacationDaysTuple> getUsedVacationDaysBetweenTwoMilestones(List<Account> holidayAccounts, List<Application> applications, LocalDate from, LocalDate to, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
+    private Map<Account, UsedVacationDaysTuple> getUsedVacationDaysBetweenTwoMilestones(List<Account> holidayAccounts, List<Application> applications, DateRange dateRange, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
 
         final Map<Person, List<Application>> applicationsByPerson = applications.stream()
             .filter(application -> application.getVacationType().getCategory().equals(HOLIDAY))
@@ -178,7 +180,7 @@ public class VacationDaysService {
             if (applicationsByPerson.containsKey(person)) {
                 final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(person);
                 return applicationsByPerson.get(person).stream()
-                    .map(application -> usedVacationDays(holidayAccount, application, workingTimeCalendar))
+                    .map(application -> usedVacationDays(holidayAccount, application, dateRange, workingTimeCalendar))
                     .map(usedVacationDays -> Map.entry(holidayAccount, usedVacationDays));
             }
 
@@ -192,7 +194,7 @@ public class VacationDaysService {
         ));
     }
 
-    private UsedVacationDaysTuple usedVacationDays(Account holidayAccount, Application application, WorkingTimeCalendar workingTimeCalendar) {
+    private UsedVacationDaysTuple usedVacationDays(Account holidayAccount, Application application, DateRange dateRange, WorkingTimeCalendar workingTimeCalendar) {
 
         final LocalDate holidayAccountExpiryDate = holidayAccount.getExpiryDate();
         final LocalDate lastDayBeforeExpiryDate = holidayAccountExpiryDate.minusDays(1);
@@ -202,19 +204,21 @@ public class VacationDaysService {
         final LocalDate applicationStartOrFirstDayOfYear = max(application.getStartDate(), application.getEndDate().with(firstDayOfYear()));
         final LocalDate applicationEndOrLastDayOfYear = min(application.getEndDate(), application.getStartDate().with(lastDayOfYear()));
 
+        final LocalDate applicationStartOrFirstDayOfYearOrFrom = max(applicationStartOrFirstDayOfYear, dateRange.getStartDate());
+        final LocalDate applicationEndOrLastDayOfYearOrTo = min(applicationEndOrLastDayOfYear, dateRange.getEndDate());
+
         // use vacation days scoped to from/to date range
         final BigDecimal dateRangeWorkDaysCountBeforeExpiryDate;
         final BigDecimal dateRangeWorkDaysCountAfterExpiryDate;
-        if (applicationStartOrFirstDayOfYear.isBefore(holidayAccountExpiryDate)) {
-            // TODO consider from/to. currently the full year is considered here.
-            final LocalDate dateRangeStartAfterExpiryDate = max(applicationStartOrFirstDayOfYear, holidayAccountExpiryDate);
-            final LocalDate dateRangeEndBeforeExpiryDate = min(applicationEndOrLastDayOfYear, lastDayBeforeExpiryDate);
+        if (applicationStartOrFirstDayOfYearOrFrom.isBefore(holidayAccountExpiryDate)) {
+            final LocalDate dateRangeStartAfterExpiryDate = max(applicationStartOrFirstDayOfYearOrFrom, holidayAccountExpiryDate);
+            final LocalDate dateRangeEndBeforeExpiryDate = min(applicationEndOrLastDayOfYearOrTo, lastDayBeforeExpiryDate);
 
-            dateRangeWorkDaysCountBeforeExpiryDate = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, dateRangeEndBeforeExpiryDate);
-            dateRangeWorkDaysCountAfterExpiryDate = workingTimeCalendar.workingTime(dateRangeStartAfterExpiryDate, applicationEndOrLastDayOfYear);
+            dateRangeWorkDaysCountBeforeExpiryDate = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYearOrFrom, dateRangeEndBeforeExpiryDate);
+            dateRangeWorkDaysCountAfterExpiryDate = workingTimeCalendar.workingTime(dateRangeStartAfterExpiryDate, applicationEndOrLastDayOfYearOrTo);
         } else {
             dateRangeWorkDaysCountBeforeExpiryDate = ZERO;
-            dateRangeWorkDaysCountAfterExpiryDate = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, applicationEndOrLastDayOfYear);
+            dateRangeWorkDaysCountAfterExpiryDate = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYearOrFrom, applicationEndOrLastDayOfYearOrTo);
         }
 
         final UsedVacationDaysDateRange dateRangeUsedVacationDays;
