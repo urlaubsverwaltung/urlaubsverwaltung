@@ -84,8 +84,9 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     @Override
     public Optional<WorkingTime> getWorkingTime(Person person, LocalDate date) {
+        final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
         return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date))
-            .map(entity -> toWorkingTime(entity, this::getSystemDefaultFederalState));
+            .map(entity -> toWorkingTime(entity, federalStateCachedSupplier));
     }
 
     @Override
@@ -132,10 +133,11 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     @Override
     public Map<Person, WorkingTimeCalendar> getWorkingTimesByPersonsAndDateRange(Collection<Person> persons, DateRange dateRange) {
+        final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
 
         final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)
             .stream()
-            .map(entity -> toWorkingTime(entity, this::getSystemDefaultFederalState))
+            .map(entity -> toWorkingTime(entity, federalStateCachedSupplier))
             .collect(groupingBy(WorkingTime::getPerson));
 
         return persons.stream().map(person -> {
@@ -186,13 +188,15 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     @Override
     public FederalState getFederalStateForPerson(Person person, LocalDate date) {
+        final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
+
         return getWorkingTime(person, date)
             .map(WorkingTime::getFederalState)
             .orElseGet(() -> {
                 LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",
                     person.getId(), date.format(ofPattern(DD_MM_YYYY)));
 
-                return getSystemDefaultFederalState();
+                return federalStateCachedSupplier.get();
             });
     }
 
