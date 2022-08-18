@@ -160,84 +160,87 @@ public class VacationDaysService {
             .filter(application -> application.getVacationType().getCategory().equals(HOLIDAY))
             .collect(groupingBy(Application::getPerson));
 
+        // check persons actual working time for the applicationForLeave.
+        // the returned working time is the duration of usedVacationDays.
+        // e.g. working time: MONDAY=FULL TUESDAY=FULL WEDNESDAY=ZERO THURSDAY=FULL FRIDAY=FULL
+        //      application for a full week -> 4 used vacation days
         return holidayAccounts.stream().flatMap(holidayAccount -> {
             final Person person = holidayAccount.getPerson();
 
-            // check persons actual working time for the applicationForLeave.
-            // the returned working time is the duration of usedVacationDays.
-            // e.g. working time: MONDAY=FULL TUESDAY=FULL WEDNESDAY=ZERO THURSDAY=FULL FRIDAY=FULL
-            //      application for a full week -> 4 used vacation days
-
-            if (!applicationsByPerson.containsKey(person)) {
-                // person has no applied applicationForLeaves -> zero used vacation days
-                return Stream.of(Map.entry(holidayAccount, UsedVacationDaysTuple.identity()));
-            } else {
-                return applicationsByPerson.get(person).stream().map(application -> {
-                    final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(application.getPerson());
-
-                    final LocalDate holidayAccountExpiryDate = holidayAccount.getExpiryDate();
-                    final LocalDate lastDayBeforeExpiryDate = holidayAccountExpiryDate.minusDays(1);
-
-                    // assumed that applicationForLeave does not start in previous year and ends in next year :x
-                    // which would be an applicationForLeave for over a year. TODO could this be a valid case?
-                    final LocalDate applicationStartOrFirstDayOfYear = max(application.getStartDate(), application.getEndDate().with(firstDayOfYear()));
-                    final LocalDate applicationEndOrLastDayOfYear = min(application.getEndDate(), application.getStartDate().with(lastDayOfYear()));
-
-                    // use vacation days scoped to from/to date range
-                    final BigDecimal dateRangeWorkDaysCountBeforeExpiryDate;
-                    final BigDecimal dateRangeWorkDaysCountAfterExpiryDate;
-                    if (applicationStartOrFirstDayOfYear.isBefore(holidayAccountExpiryDate)) {
-                        // TODO consider from/to. currently the full year is considered here.
-                        final LocalDate dateRangeStartAfterExpiryDate = max(applicationStartOrFirstDayOfYear, holidayAccountExpiryDate);
-                        final LocalDate dateRangeEndBeforeExpiryDate = min(applicationEndOrLastDayOfYear, lastDayBeforeExpiryDate);
-
-                        dateRangeWorkDaysCountBeforeExpiryDate = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, dateRangeEndBeforeExpiryDate);
-                        dateRangeWorkDaysCountAfterExpiryDate = workingTimeCalendar.workingTime(dateRangeStartAfterExpiryDate, applicationEndOrLastDayOfYear);
-                    } else {
-                        dateRangeWorkDaysCountBeforeExpiryDate = ZERO;
-                        dateRangeWorkDaysCountAfterExpiryDate = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, applicationEndOrLastDayOfYear);
-                    }
-
-                    final UsedVacationDaysDateRange dateRangeUsedVacationDays;
-                    if (application.getDayLength().isHalfDay()) {
-                        // halfDay application is only possible for one localDate.
-                        // so we can safely divide the calculated workDays by 2.
-                        dateRangeUsedVacationDays = new UsedVacationDaysDateRange(divideBy2(dateRangeWorkDaysCountBeforeExpiryDate), divideBy2(dateRangeWorkDaysCountAfterExpiryDate));
-                    } else {
-                        dateRangeUsedVacationDays = new UsedVacationDaysDateRange(dateRangeWorkDaysCountBeforeExpiryDate, dateRangeWorkDaysCountAfterExpiryDate);
-                    }
-
-                    // use vacation days considering full year
-                    final BigDecimal yearWorkDaysCountBeforeExpiry;
-                    final BigDecimal yearWorkDaysCountAfterExpiry;
-                    if (applicationStartOrFirstDayOfYear.isBefore(lastDayBeforeExpiryDate)) {
-                        final LocalDate yearEndBeforeExpiryDate = min(applicationEndOrLastDayOfYear, lastDayBeforeExpiryDate);
-                        final LocalDate yearStartAfterExpiryDate = max(applicationStartOrFirstDayOfYear, holidayAccountExpiryDate);
-                        yearWorkDaysCountBeforeExpiry = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, yearStartAfterExpiryDate);
-                        yearWorkDaysCountAfterExpiry = workingTimeCalendar.workingTime(yearEndBeforeExpiryDate, applicationEndOrLastDayOfYear);
-                    } else {
-                        yearWorkDaysCountBeforeExpiry = ZERO;
-                        yearWorkDaysCountAfterExpiry = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, applicationEndOrLastDayOfYear);
-                    }
-
-                    final UsedVacationDaysYear yearUsedVacationDays;
-                    if (application.getDayLength().isHalfDay()) {
-                        // halfDay application is only possible for one localDate.
-                        // so we can safely divide the calculated workDays by 2.
-                        yearUsedVacationDays = new UsedVacationDaysYear(divideBy2(yearWorkDaysCountBeforeExpiry), divideBy2(yearWorkDaysCountAfterExpiry));
-                    } else {
-                        yearUsedVacationDays = new UsedVacationDaysYear(yearWorkDaysCountBeforeExpiry, yearWorkDaysCountAfterExpiry);
-                    }
-
-                    return Map.entry(holidayAccount, new UsedVacationDaysTuple(dateRangeUsedVacationDays, yearUsedVacationDays));
-                });
+            if (applicationsByPerson.containsKey(person)) {
+                final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(person);
+                return applicationsByPerson.get(person).stream()
+                    .map(application -> usedVacationDays(holidayAccount, application, workingTimeCalendar))
+                    .map(usedVacationDays -> Map.entry(holidayAccount, usedVacationDays));
             }
+
+            // person has no applied applicationForLeaves -> zero used vacation days
+            return Stream.of(Map.entry(holidayAccount, UsedVacationDaysTuple.identity()));
         }).collect(groupingBy(
-            // group by Account
+            // group by account
             Entry::getKey,
             // and summarize used vacation days of the account's applications
             reducing(UsedVacationDaysTuple.identity(), Entry::getValue, Addable::add)
         ));
+    }
+
+    private UsedVacationDaysTuple usedVacationDays(Account holidayAccount, Application application, WorkingTimeCalendar workingTimeCalendar) {
+
+        final LocalDate holidayAccountExpiryDate = holidayAccount.getExpiryDate();
+        final LocalDate lastDayBeforeExpiryDate = holidayAccountExpiryDate.minusDays(1);
+
+        // assumed that applicationForLeave does not start in previous year and ends in next year :x
+        // which would be an applicationForLeave for over a year. TODO could this be a valid case?
+        final LocalDate applicationStartOrFirstDayOfYear = max(application.getStartDate(), application.getEndDate().with(firstDayOfYear()));
+        final LocalDate applicationEndOrLastDayOfYear = min(application.getEndDate(), application.getStartDate().with(lastDayOfYear()));
+
+        // use vacation days scoped to from/to date range
+        final BigDecimal dateRangeWorkDaysCountBeforeExpiryDate;
+        final BigDecimal dateRangeWorkDaysCountAfterExpiryDate;
+        if (applicationStartOrFirstDayOfYear.isBefore(holidayAccountExpiryDate)) {
+            // TODO consider from/to. currently the full year is considered here.
+            final LocalDate dateRangeStartAfterExpiryDate = max(applicationStartOrFirstDayOfYear, holidayAccountExpiryDate);
+            final LocalDate dateRangeEndBeforeExpiryDate = min(applicationEndOrLastDayOfYear, lastDayBeforeExpiryDate);
+
+            dateRangeWorkDaysCountBeforeExpiryDate = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, dateRangeEndBeforeExpiryDate);
+            dateRangeWorkDaysCountAfterExpiryDate = workingTimeCalendar.workingTime(dateRangeStartAfterExpiryDate, applicationEndOrLastDayOfYear);
+        } else {
+            dateRangeWorkDaysCountBeforeExpiryDate = ZERO;
+            dateRangeWorkDaysCountAfterExpiryDate = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, applicationEndOrLastDayOfYear);
+        }
+
+        final UsedVacationDaysDateRange dateRangeUsedVacationDays;
+        if (application.getDayLength().isHalfDay()) {
+            // halfDay application is only possible for one localDate.
+            // so we can safely divide the calculated workDays by 2.
+            dateRangeUsedVacationDays = new UsedVacationDaysDateRange(divideBy2(dateRangeWorkDaysCountBeforeExpiryDate), divideBy2(dateRangeWorkDaysCountAfterExpiryDate));
+        } else {
+            dateRangeUsedVacationDays = new UsedVacationDaysDateRange(dateRangeWorkDaysCountBeforeExpiryDate, dateRangeWorkDaysCountAfterExpiryDate);
+        }
+
+        // use vacation days considering full year
+        final BigDecimal yearWorkDaysCountBeforeExpiry;
+        final BigDecimal yearWorkDaysCountAfterExpiry;
+        if (applicationStartOrFirstDayOfYear.isBefore(lastDayBeforeExpiryDate)) {
+            final LocalDate yearEndBeforeExpiryDate = min(applicationEndOrLastDayOfYear, lastDayBeforeExpiryDate);
+            final LocalDate yearStartAfterExpiryDate = max(applicationStartOrFirstDayOfYear, holidayAccountExpiryDate);
+            yearWorkDaysCountBeforeExpiry = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, yearStartAfterExpiryDate);
+            yearWorkDaysCountAfterExpiry = workingTimeCalendar.workingTime(yearEndBeforeExpiryDate, applicationEndOrLastDayOfYear);
+        } else {
+            yearWorkDaysCountBeforeExpiry = ZERO;
+            yearWorkDaysCountAfterExpiry = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, applicationEndOrLastDayOfYear);
+        }
+
+        final UsedVacationDaysYear yearUsedVacationDays;
+        if (application.getDayLength().isHalfDay()) {
+            // halfDay application is only possible for one localDate.
+            // so we can safely divide the calculated workDays by 2.
+            yearUsedVacationDays = new UsedVacationDaysYear(divideBy2(yearWorkDaysCountBeforeExpiry), divideBy2(yearWorkDaysCountAfterExpiry));
+        } else {
+            yearUsedVacationDays = new UsedVacationDaysYear(yearWorkDaysCountBeforeExpiry, yearWorkDaysCountAfterExpiry);
+        }
+
+        return new UsedVacationDaysTuple(dateRangeUsedVacationDays, yearUsedVacationDays);
     }
 
     private BigDecimal divideBy2(BigDecimal value) {
