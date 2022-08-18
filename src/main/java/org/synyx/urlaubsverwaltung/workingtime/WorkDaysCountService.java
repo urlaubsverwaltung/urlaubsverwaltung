@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,18 +23,11 @@ public class WorkDaysCountService {
 
     private final PublicHolidaysService publicHolidaysService;
     private final WorkingTimeService workingTimeService;
-    private final SettingsService settingsService;
 
     @Autowired
-    public WorkDaysCountService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService, SettingsService settingsService) {
+    public WorkDaysCountService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService) {
         this.publicHolidaysService = publicHolidaysService;
         this.workingTimeService = workingTimeService;
-        this.settingsService = settingsService;
-    }
-
-    public BigDecimal getWorkDaysCount(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
-        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
-        return getWorkDaysCount(dayLength, startDate, endDate, person, workingTimeSettings);
     }
 
     /**
@@ -50,7 +42,7 @@ public class WorkDaysCountService {
      * @param person    to calculate workdays in a certain time period
      * @return number of workdays in a certain time period
      */
-    public BigDecimal getWorkDaysCount(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person, WorkingTimeSettings workingTimeSettings) {
+    public BigDecimal getWorkDaysCount(DayLength dayLength, LocalDate startDate, LocalDate endDate, Person person) {
 
         final DateRange dateRange = new DateRange(startDate, endDate);
 
@@ -69,7 +61,7 @@ public class WorkDaysCountService {
             final WorkingTime workingTime = workingTimesByDate.get(day);
 
             // value may be 1 for public holiday, 0 for not public holiday or 0.5 for Christmas Eve or New Year's Eve
-            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(day, workingTime.getFederalState(), workingTimeSettings);
+            final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(day, workingTime.getFederalState());
             final BigDecimal duration = maybePublicHoliday.isPresent() ? maybePublicHoliday.get().getWorkingDuration() : BigDecimal.ONE;
 
             final BigDecimal workingDuration = workingTime.getDayLengthForWeekDay(day.getDayOfWeek()).getDuration();

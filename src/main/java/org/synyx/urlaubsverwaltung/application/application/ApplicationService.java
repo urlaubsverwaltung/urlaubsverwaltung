@@ -6,7 +6,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -160,14 +159,6 @@ public interface ApplicationService {
      * @return the total overtime reduction of a person, never {@code null}
      */
     Duration getTotalOvertimeReductionOfPerson(Person person);
-
-    /**
-     * Get the total hours of overtime reduction for the given persons.
-     *
-     * @param persons to get the total hours of overtime reduction for
-     * @return the total overtime reduction of a person
-     */
-    Map<Person, Duration> getTotalOvertimeReductionOfPersons(List<Person> persons);
 
     Duration getTotalOvertimeReductionOfPerson(Person person, LocalDate start, LocalDate end);
 

@@ -52,7 +52,7 @@ class WorkingTimeCalendarServiceTest {
     @BeforeEach
     void setUp() {
         final var publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
-        sut = new WorkDaysCountService(publicHolidaysService, workingTimeService, settingsService);
+        sut = new WorkDaysCountService(publicHolidaysService, workingTimeService);
     }
 
     @Test

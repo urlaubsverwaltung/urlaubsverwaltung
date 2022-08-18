@@ -79,7 +79,7 @@ class CalculationServiceTest {
     void setUp() {
 
         final PublicHolidaysService publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
-        final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService, settingsService);
+        final WorkDaysCountService workDaysCountService = new WorkDaysCountService(publicHolidaysService, workingTimeService);
 
         sut = new CalculationService(vacationDaysService, accountService, accountInteractionService, workDaysCountService,
             new OverlapService(null, null), applicationService);

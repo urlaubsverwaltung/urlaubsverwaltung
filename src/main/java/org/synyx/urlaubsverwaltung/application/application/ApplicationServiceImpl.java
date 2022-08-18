@@ -13,13 +13,11 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -122,17 +120,6 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Map<Person, Duration> getTotalOvertimeReductionOfPersons(List<Person> persons) {
-
-        final List<PersonOvertimeReduction> overtimeReductions = applicationRepository.calculateTotalOvertimeReductionOfPersons(persons);
-
-        // iterate over `persons` instead of `overtimeReductions` to generate Duration.ZERO entries for persons without overtime reduction entries in database.
-        return persons.stream()
-            .map(person -> Map.entry(person, overtimeReductionOfPerson(person, overtimeReductions)))
-            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    @Override
     public Duration getTotalOvertimeReductionOfPerson(Person person, LocalDate start, LocalDate end) {
 
         final DateRange dateRangeOfPeriod = new DateRange(start, end);
@@ -204,18 +191,5 @@ class ApplicationServiceImpl implements ApplicationService {
 
             return application;
         };
-    }
-
-    private static Duration overtimeReductionOfPerson(Person person, List<PersonOvertimeReduction> reductions) {
-        return reductions.stream()
-            .filter(reduction -> reduction.getPerson().equals(person))
-            .map(PersonOvertimeReduction::getOvertimeReduction)
-            .findFirst()
-            .map(ApplicationServiceImpl::toDurationOfMinutes)
-            .orElse(Duration.ZERO);
-    }
-
-    private static Duration toDurationOfMinutes(BigDecimal bigDecimal) {
-        return Duration.ofMinutes(bigDecimal.multiply(BigDecimal.valueOf(60)).longValue());
     }
 }

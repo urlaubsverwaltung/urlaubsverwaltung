@@ -2,14 +2,13 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -45,15 +44,12 @@ public class VacationDaysService {
 
     private final WorkDaysCountService workDaysCountService;
     private final ApplicationService applicationService;
-    private final SettingsService settingsService;
     private final Clock clock;
 
     @Autowired
-    public VacationDaysService(WorkDaysCountService workDaysCountService, ApplicationService applicationService,
-                               SettingsService settingsService, Clock clock) {
+    public VacationDaysService(WorkDaysCountService workDaysCountService, ApplicationService applicationService, Clock clock) {
         this.workDaysCountService = workDaysCountService;
         this.applicationService = applicationService;
-        this.settingsService = settingsService;
         this.clock = clock;
     }
 
@@ -75,8 +71,7 @@ public class VacationDaysService {
     }
 
     private BigDecimal calculateTotalLeftVacationDays(LocalDate start, LocalDate end, LocalDate today, Account account) {
-        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
-        return getVacationDaysLeft(start, end, account, workingTimeSettings)
+        return getVacationDaysLeft(start, end, account)
             .getLeftVacationDays(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate());
     }
 
@@ -92,8 +87,7 @@ public class VacationDaysService {
     public VacationDaysLeft getVacationDaysLeft(Account account, Optional<Account> nextYear) {
         final LocalDate firstDayOfYear = Year.of(account.getYear()).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
-        return getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, nextYear, workingTimeSettings);
+        return getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, nextYear);
     }
 
     /**
@@ -146,7 +140,7 @@ public class VacationDaysService {
             .collect(toMap(HolidayAccountVacationDays::getAccount, identity()));
     }
 
-    BigDecimal getUsedVacationDaysBetweenTwoMilestones(Person person, LocalDate firstMilestone, LocalDate lastMilestone, WorkingTimeSettings workingTimeSettings) {
+    BigDecimal getUsedVacationDaysBetweenTwoMilestones(Person person, LocalDate firstMilestone, LocalDate lastMilestone) {
 
         if (firstMilestone.isAfter(lastMilestone)) {
             return ZERO;
@@ -154,7 +148,7 @@ public class VacationDaysService {
 
         final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
         return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstMilestone, lastMilestone, person, statuses, HOLIDAY).stream()
-            .map(application -> getUsedVacationDays(application, person, firstMilestone, lastMilestone, workingTimeSettings))
+            .map(application -> getUsedVacationDays(application, person, firstMilestone, lastMilestone))
             .reduce(ZERO, BigDecimal::add);
     }
 
@@ -263,8 +257,8 @@ public class VacationDaysService {
         return new UsedVacationDaysTuple(dateRangeUsedVacationDays, yearUsedVacationDays);
     }
 
-    private VacationDaysLeft getVacationDaysLeft(LocalDate start, LocalDate end, Account account, WorkingTimeSettings workingTimeSettings) {
-        return getVacationDaysLeft(start, end, account, Optional.empty(), workingTimeSettings);
+    private VacationDaysLeft getVacationDaysLeft(LocalDate start, LocalDate end, Account account) {
+        return getVacationDaysLeft(start, end, account, Optional.empty());
     }
 
     private BigDecimal divideBy2(BigDecimal value) {
@@ -367,7 +361,7 @@ public class VacationDaysService {
         }
     }
 
-    private VacationDaysLeft getVacationDaysLeft(LocalDate start, LocalDate end, Account account, Optional<Account> nextYear, WorkingTimeSettings workingTimeSettings) {
+    private VacationDaysLeft getVacationDaysLeft(LocalDate start, LocalDate end, Account account, Optional<Account> nextYear) {
 
         final BigDecimal vacationDays = account.getActualVacationDays();
         final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
@@ -383,15 +377,15 @@ public class VacationDaysService {
             final LocalDate expiryDate = account.getExpiryDate();
             final LocalDate startAfterExpiryDate = start.isBefore(expiryDate) ? expiryDate : start;
 
-            usedVacationDaysBeforeExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), start, endBeforeExpiryDate, workingTimeSettings);
-            usedVacationDaysAfterExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), startAfterExpiryDate, end, workingTimeSettings);
+            usedVacationDaysBeforeExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), start, endBeforeExpiryDate);
+            usedVacationDaysAfterExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), startAfterExpiryDate, end);
         } else {
-            usedVacationDaysBeforeExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), start, end, workingTimeSettings);
+            usedVacationDaysBeforeExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), start, end);
             usedVacationDaysAfterExpiryDate = ZERO;
         }
 
         final BigDecimal usedVacationDaysNextYear = nextYear
-            .map(nextYearAccount -> getUsedRemainingVacationDays(nextYearAccount, workingTimeSettings))
+            .map(this::getUsedRemainingVacationDays)
             .orElse(ZERO);
 
         return VacationDaysLeft.builder()
@@ -405,17 +399,12 @@ public class VacationDaysService {
     }
 
     public BigDecimal getUsedRemainingVacationDays(Account account) {
-        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
-        return getUsedRemainingVacationDays(account, workingTimeSettings);
-    }
-
-    private BigDecimal getUsedRemainingVacationDays(Account account, WorkingTimeSettings workingTimeSettings) {
         final LocalDate firstDayOfYear = Year.of(account.getYear()).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        return getUsedRemainingVacationDays(firstDayOfYear, lastDayOfYear, account, workingTimeSettings);
+        return getUsedRemainingVacationDays(firstDayOfYear, lastDayOfYear, account);
     }
 
-    private BigDecimal getUsedRemainingVacationDays(LocalDate start, LocalDate end, Account account, WorkingTimeSettings workingTimeSettings) {
+    private BigDecimal getUsedRemainingVacationDays(LocalDate start, LocalDate end, Account account) {
 
         if (start.isAfter(end)) {
             return ZERO;
@@ -423,7 +412,7 @@ public class VacationDaysService {
 
         if (account.getRemainingVacationDays().signum() > 0) {
 
-            final VacationDaysLeft left = getVacationDaysLeft(start, end, account, workingTimeSettings);
+            final VacationDaysLeft left = getVacationDaysLeft(start, end, account);
 
             final BigDecimal totalUsed = account.getActualVacationDays()
                 .add(account.getRemainingVacationDays())
@@ -440,9 +429,9 @@ public class VacationDaysService {
         return ZERO;
     }
 
-    private BigDecimal getUsedVacationDays(Application application, Person person, LocalDate firstMilestone, LocalDate lastMilestone, WorkingTimeSettings workingTimeSettings) {
+    private BigDecimal getUsedVacationDays(Application application, Person person, LocalDate firstMilestone, LocalDate lastMilestone) {
         final LocalDate startDate = application.getStartDate().isBefore(firstMilestone) ? firstMilestone : application.getStartDate();
         final LocalDate endDate = application.getEndDate().isAfter(lastMilestone) ? lastMilestone : application.getEndDate();
-        return workDaysCountService.getWorkDaysCount(application.getDayLength(), startDate, endDate, person, workingTimeSettings);
+        return workDaysCountService.getWorkDaysCount(application.getDayLength(), startDate, endDate, person);
     }
 }
