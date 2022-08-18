@@ -96,10 +96,6 @@ public class VacationDaysService {
         return getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, nextYear, workingTimeSettings);
     }
 
-    private VacationDaysLeft getVacationDaysLeft(LocalDate start, LocalDate end, Account account, WorkingTimeSettings workingTimeSettings) {
-        return getVacationDaysLeft(start, end, account, Optional.empty(), workingTimeSettings);
-    }
-
     public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts, LocalDate from, LocalDate to, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
         if (from.isAfter(to) || to.getYear() != from.getYear()) {
             throw new IllegalStateException("'from' must be before 'after' and they both must have the same year.");
@@ -140,6 +136,18 @@ public class VacationDaysService {
                 return new HolidayAccountVacationDays(account, vacationDaysLeftYear, vacationDaysLeftDateRange);
             })
             .collect(toMap(HolidayAccountVacationDays::getAccount, identity()));
+    }
+
+    BigDecimal getUsedVacationDaysBetweenTwoMilestones(Person person, LocalDate firstMilestone, LocalDate lastMilestone, WorkingTimeSettings workingTimeSettings) {
+
+        if (firstMilestone.isAfter(lastMilestone)) {
+            return ZERO;
+        }
+
+        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstMilestone, lastMilestone, person, statuses, HOLIDAY).stream()
+            .map(application -> getUsedVacationDays(application, person, firstMilestone, lastMilestone, workingTimeSettings))
+            .reduce(ZERO, BigDecimal::add);
     }
 
     private Map<Account, UsedVacationDaysTuple> getUsedVacationDays(List<Account> holidayAccounts, LocalDate from, LocalDate to, Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson) {
@@ -241,6 +249,10 @@ public class VacationDaysService {
         }
 
         return new UsedVacationDaysTuple(dateRangeUsedVacationDays, yearUsedVacationDays);
+    }
+
+    private VacationDaysLeft getVacationDaysLeft(LocalDate start, LocalDate end, Account account, WorkingTimeSettings workingTimeSettings) {
+        return getVacationDaysLeft(start, end, account, Optional.empty(), workingTimeSettings);
     }
 
     private BigDecimal divideBy2(BigDecimal value) {
@@ -414,18 +426,6 @@ public class VacationDaysService {
         }
 
         return ZERO;
-    }
-
-    BigDecimal getUsedVacationDaysBetweenTwoMilestones(Person person, LocalDate firstMilestone, LocalDate lastMilestone, WorkingTimeSettings workingTimeSettings) {
-
-        if (firstMilestone.isAfter(lastMilestone)) {
-            return ZERO;
-        }
-
-        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstMilestone, lastMilestone, person, statuses, HOLIDAY).stream()
-            .map(application -> getUsedVacationDays(application, person, firstMilestone, lastMilestone, workingTimeSettings))
-            .reduce(ZERO, BigDecimal::add);
     }
 
     private BigDecimal getUsedVacationDays(Application application, Person person, LocalDate firstMilestone, LocalDate lastMilestone, WorkingTimeSettings workingTimeSettings) {
