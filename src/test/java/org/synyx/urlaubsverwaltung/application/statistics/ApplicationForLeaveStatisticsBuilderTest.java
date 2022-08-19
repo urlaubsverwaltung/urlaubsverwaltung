@@ -16,8 +16,6 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.overtime.LeftOvertime;
-import org.synyx.urlaubsverwaltung.overtime.LeftOvertimeDateRange;
-import org.synyx.urlaubsverwaltung.overtime.LeftOvertimeOverall;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -120,7 +118,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         when(applicationService.getApplicationsForACertainPeriod(from, to, List.of(person))).thenReturn(applications);
 
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
-            .thenReturn(Map.of(person, new LeftOvertime(new LeftOvertimeOverall(Duration.ofHours(9)), new LeftOvertimeDateRange(new DateRange(from, to), Duration.ZERO))));
+            .thenReturn(Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ZERO)));
 
         final VacationDaysLeft personVacationDaysLeftYear = VacationDaysLeft.builder().withAnnualVacation(BigDecimal.valueOf(10)).build();
         final VacationDaysLeft personVacationDaysLeftPeriod = VacationDaysLeft.builder().withAnnualVacation(BigDecimal.valueOf(5)).build();
@@ -178,7 +176,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         when(applicationService.getApplicationsForACertainPeriod(from, to, List.of(person))).thenReturn(applications);
 
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
-            .thenReturn(Map.of(person, new LeftOvertime(new LeftOvertimeOverall(Duration.ofHours(9)), new LeftOvertimeDateRange(new DateRange(from, to), Duration.ZERO))));
+            .thenReturn(Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ZERO)));
 
         final VacationDaysLeft personVacationDaysLeftYear = VacationDaysLeft.builder()
             .withAnnualVacation(BigDecimal.valueOf(30))
@@ -246,7 +244,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         when(applicationService.getApplicationsForACertainPeriod(from, to, List.of(person))).thenReturn(applications);
 
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
-            .thenReturn(Map.of(person, new LeftOvertime(new LeftOvertimeOverall(Duration.ofHours(9)), new LeftOvertimeDateRange(new DateRange(from, to), Duration.ZERO))));
+            .thenReturn(Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ZERO)));
 
         final VacationDaysLeft personVacationDaysLeftYear = VacationDaysLeft.builder()
             .withAnnualVacation(BigDecimal.valueOf(30))
@@ -370,7 +368,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         when(applicationService.getApplicationsForACertainPeriod(from, to, List.of(person))).thenReturn(applications);
 
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
-            .thenReturn(Map.of(person, new LeftOvertime(new LeftOvertimeOverall(Duration.ofHours(9)), new LeftOvertimeDateRange(new DateRange(from, to), Duration.ZERO))));
+            .thenReturn(Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ZERO)));
 
         final VacationDaysLeft personVacationDaysLeftYear = VacationDaysLeft.builder()
             .withAnnualVacation(TEN)
@@ -424,10 +422,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final List<Application> applications = List.of();
         when(applicationService.getApplicationsForACertainPeriod(from, to, persons)).thenReturn(applications);
 
-        final LeftOvertime personLeftOvertime = new LeftOvertime(
-            new LeftOvertimeOverall(Duration.ofHours(9)),
-            new LeftOvertimeDateRange(new DateRange(from, to), Duration.ofHours(3))
-        );
+        final LeftOvertime personLeftOvertime = new LeftOvertime(Duration.ofHours(9), Duration.ofHours(3));
         final Map<Person, LeftOvertime> leftOvertimeByPerson = Map.of(person, personLeftOvertime);
 
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to)).thenReturn(leftOvertimeByPerson);

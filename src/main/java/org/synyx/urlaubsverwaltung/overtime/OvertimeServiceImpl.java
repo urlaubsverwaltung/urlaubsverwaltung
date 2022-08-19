@@ -151,7 +151,6 @@ class OvertimeServiceImpl implements OvertimeService {
                 final Double overallDouble = overallHoursByPerson.getOrDefault(person, 0d);
                 final Duration overallDuration = hoursToDuration(BigDecimal.valueOf(overallDouble));
                 final Duration finalOverallDuration = overallDuration.minus(personOvertimeReduction.getReductionOverall());
-                final LeftOvertimeOverall overallLeftOvertime = new LeftOvertimeOverall(finalOverallDuration);
 
                 // date range
                 final Double dateRangeDouble = dateRangeHoursByPerson.getOrDefault(person, 0d);
@@ -159,9 +158,8 @@ class OvertimeServiceImpl implements OvertimeService {
                 // TODO avoid database call `getTotalOvertimeForPersonBeforeYear`
                 final Duration overallOvertimeBeforeYear = getTotalOvertimeForPersonBeforeYear(person, start.getYear());
                 final Duration finalDateRangeDuration = overallOvertimeBeforeYear.plus(dateRangeDuration).minus(personOvertimeReduction.getReductionDateRange());
-                final LeftOvertimeDateRange dateRangeLeftOvertime = new LeftOvertimeDateRange(dateRange, finalDateRangeDuration);
 
-                return Map.entry(person, new LeftOvertime(overallLeftOvertime, dateRangeLeftOvertime));
+                return Map.entry(person, new LeftOvertime(finalOverallDuration, finalDateRangeDuration));
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
