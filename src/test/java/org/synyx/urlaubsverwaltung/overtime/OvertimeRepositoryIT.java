@@ -161,4 +161,34 @@ class OvertimeRepositoryIT extends TestContainersBase {
         assertThat(overtimes.get(3).getStartDate()).isEqualTo(of(2015, 12, 28));
         assertThat(overtimes.get(3).getDuration()).isEqualTo(Duration.ofHours(4));
     }
+
+    @Test
+    void ensureCalculateTotalHoursForPersonsAndStartDateIsBefore() {
+
+        final Person person = personService.create(new Person("muster", "Muster", "Marlene", "muster@example.org"));
+        final Person person2 = personService.create(new Person("retsum", "Retsum", "Enelram", "retsum@example.org"));
+        final Person person3 = personService.create(new Person("john", "doe", "john", "john@example.org"));
+
+        final List<Person> persons = List.of(person, person2);
+        final LocalDate date = LocalDate.of(2022, 2, 1);
+
+        // should be found
+        sut.save(new Overtime(person, LocalDate.of(2022, 1, 5), LocalDate.of(2022, 1, 5), Duration.ofHours(2)));
+        sut.save(new Overtime(person, LocalDate.of(2022, 1, 31), LocalDate.of(2022, 2, 2), Duration.ofMinutes(90)));
+        sut.save(new Overtime(person, LocalDate.of(2021, 12, 28), LocalDate.of(2021, 12, 28), Duration.ofHours(4)));
+        sut.save(new Overtime(person2, LocalDate.of(2022, 1, 5), LocalDate.of(2022, 1, 5), Duration.ofMinutes(15)));
+        sut.save(new Overtime(person2, LocalDate.of(2022, 1, 31), LocalDate.of(2022, 2, 2), Duration.ofMinutes(30)));
+
+        // should not be found
+        sut.save(new Overtime(person, LocalDate.of(2022, 2, 1), LocalDate.of(2022, 2, 1), Duration.ofHours(10)));
+        sut.save(new Overtime(person3, LocalDate.of(2022, 1, 5), LocalDate.of(2022, 1, 5), Duration.ofHours(2)));
+        sut.save(new Overtime(person3, LocalDate.of(2022, 1, 31), LocalDate.of(2022, 2, 2), Duration.ofMinutes(90)));
+
+        final List<OvertimeDurationSum> actual = sut.calculateTotalHoursForPersonsAndStartDateIsBefore(persons, date);
+        assertThat(actual).hasSize(2);
+        assertThat(actual.get(0).getPerson()).isEqualTo(person);
+        assertThat(actual.get(0).getDurationDouble()).isEqualTo(7.5);
+        assertThat(actual.get(1).getPerson()).isEqualTo(person2);
+        assertThat(actual.get(1).getDurationDouble()).isEqualTo(0.75);
+    }
 }

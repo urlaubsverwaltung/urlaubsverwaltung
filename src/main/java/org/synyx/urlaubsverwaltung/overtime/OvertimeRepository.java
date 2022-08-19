@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,9 @@ interface OvertimeRepository extends CrudRepository<Overtime, Integer> {
 
     @Query("SELECT o.person as person, SUM(o.duration) as durationDouble FROM Overtime o WHERE o.person IN :persons AND o.startDate >= :start AND o.endDate <= :end GROUP BY o.person")
     List<OvertimeDurationSum> calculateTotalHoursForPersons(@Param("persons") List<Person> persons, LocalDate start, LocalDate end);
+
+    @Query("SELECT o.person as person, SUM(o.duration) as durationDouble FROM Overtime o WHERE o.person IN :persons AND o.startDate < :date GROUP BY o.person")
+    List<OvertimeDurationSum> calculateTotalHoursForPersonsAndStartDateIsBefore(@Param("persons") Collection<Person> persons, @Param("date") LocalDate date);
 
     List<Overtime> findByPersonAndStartDateBetweenOrderByStartDateDesc(Person person, LocalDate start, LocalDate end);
 

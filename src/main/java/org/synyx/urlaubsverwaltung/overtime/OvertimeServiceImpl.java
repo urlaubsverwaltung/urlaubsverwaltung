@@ -19,6 +19,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -140,8 +141,7 @@ class OvertimeServiceImpl implements OvertimeService {
 
         final Map<Person, Double> overallHoursByPerson = overallOvertimeDurations.stream().collect(toMap(OvertimeDurationSum::getPerson, OvertimeDurationSum::getDurationDouble));
         final Map<Person, Double> dateRangeHoursByPerson = dateRangeOvertimeDurations.stream().collect(toMap(OvertimeDurationSum::getPerson, OvertimeDurationSum::getDurationDouble));
-
-        final DateRange dateRange = new DateRange(start, end);
+        final Map<Person, Duration> totalOvertimeBeforeYearByPerson = getOverallOvertimeBeforeYear(persons, start.getYear());
 
         return persons.stream()
             .map(person -> {
@@ -155,11 +155,33 @@ class OvertimeServiceImpl implements OvertimeService {
                 // date range
                 final Double dateRangeDouble = dateRangeHoursByPerson.getOrDefault(person, 0d);
                 final Duration dateRangeDuration = hoursToDuration(BigDecimal.valueOf(dateRangeDouble));
-                // TODO avoid database call `getTotalOvertimeForPersonBeforeYear`
-                final Duration overallOvertimeBeforeYear = getTotalOvertimeForPersonBeforeYear(person, start.getYear());
+                final Duration overallOvertimeBeforeYear = totalOvertimeBeforeYearByPerson.getOrDefault(person, ZERO);
                 final Duration finalDateRangeDuration = overallOvertimeBeforeYear.plus(dateRangeDuration).minus(personOvertimeReduction.getReductionDateRange());
 
                 return Map.entry(person, new LeftOvertime(finalOverallDuration, finalDateRangeDuration));
+            })
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private Map<Person, Duration> getOverallOvertimeBeforeYear(Collection<Person> persons, int year) {
+        final LocalDate firstDayOfYear = Year.of(year).atDay(1);
+
+        final Map<Person, Duration> totalReductionBeforeYearByPerson = applicationService.getTotalOvertimeReductionOfPersonsBefore(persons, firstDayOfYear);
+        final Map<Person, Double> totalOvertimeBeforeYearByPerson = overtimeRepository.calculateTotalHoursForPersonsAndStartDateIsBefore(persons, firstDayOfYear)
+            .stream()
+            .collect(toMap(OvertimeDurationSum::getPerson, OvertimeDurationSum::getDurationDouble));
+
+        return persons.stream()
+            .map(person -> {
+                final Duration totalOvertimeReductionBeforeYear = totalReductionBeforeYearByPerson.getOrDefault(person, ZERO);
+
+                final Double totalOvertimeBeforeYear = totalOvertimeBeforeYearByPerson.getOrDefault(person, 0d);
+                final BigDecimal totalOvertimeBeforeYearMinutes = BigDecimal.valueOf(totalOvertimeBeforeYear).multiply(BigDecimal.valueOf(60));
+                final Duration totalOvertimeBeforeYearDuration = Duration.ofMinutes(totalOvertimeBeforeYearMinutes.longValue());
+
+                final Duration duration = totalOvertimeBeforeYearDuration.minus(totalOvertimeReductionBeforeYear);
+
+                return Map.entry(person, duration);
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }

@@ -5,7 +5,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -163,6 +165,15 @@ public interface ApplicationService {
     Duration getTotalOvertimeReductionOfPerson(Person person, LocalDate start, LocalDate end);
 
     Duration getTotalOvertimeReductionOfPersonBefore(Person person, LocalDate before);
+
+    /**
+     * Calculate total overtime reduction for the given persons before the given date.
+     *
+     * @param persons {@link Person}s to consider
+     * @param before {@link LocalDate} use overtime applications before this date
+     * @return overtime reduction duration for every person asked for. duration is zero if a person does not have overtime reduction applications.
+     */
+    Map<Person, Duration> getTotalOvertimeReductionOfPersonsBefore(Collection<Person> persons, LocalDate before);
 
     /**
      * Get a list of all active replacements of the given person and that are active at the given date
