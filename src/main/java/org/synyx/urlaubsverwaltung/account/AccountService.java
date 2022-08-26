@@ -27,4 +27,11 @@ public interface AccountService {
      * @return saved {@link Account}
      */
     Account save(Account account);
+
+    /**
+     * Deletes all {@link Account}s in the database of person id.
+     *
+     * @param person the person whose account should be deleted
+     */
+    void deleteAllByPerson(Person person);
 }

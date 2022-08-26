@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
@@ -105,6 +106,22 @@ class PersonServiceImpl implements PersonService {
         applicationEventPublisher.publishEvent(toPersonUpdateEvent(updatedPerson));
 
         return updatedPerson;
+    }
+
+    @Override
+    @Transactional
+    public void delete(Person person) {
+
+        if (!personRepository.existsById(person.getId())) {
+            throw new IllegalArgumentException("Can not find a person for ID = " + person.getId());
+        }
+
+        applicationEventPublisher.publishEvent(new PersonDeletedEvent(person));
+        accountInteractionService.deleteAllByPerson(person);
+        workingTimeWriteService.deleteAllByPerson(person);
+        personRepository.delete(person);
+
+        LOG.info("Deleted person with id {}", person.getId());
     }
 
     @Override

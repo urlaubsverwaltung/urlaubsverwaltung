@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -92,5 +93,14 @@ class AccountServiceImplTest {
 
         Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, mock(Person.class));
         assertThat(optionalHolidaysAccount).isEmpty();
+    }
+
+    @Test
+    void deleteAllDelegatesToRepository() {
+        final Person person = new Person();
+
+        accountService.deleteAllByPerson(person);
+
+        verify(accountRepository).deleteByPerson(person);
     }
 }

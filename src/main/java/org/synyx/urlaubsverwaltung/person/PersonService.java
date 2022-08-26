@@ -58,6 +58,12 @@ public interface PersonService {
     Person update(Person person);
 
     /**
+     * Deletes a {@link Person} in the database by its primary key.
+     *
+     * @param person the person to be deleted
+     */
+    void delete(Person person);
+    /**
      * finds a {@link Person} in the database by its primary key.
      *
      * @param id Integer the id of the person

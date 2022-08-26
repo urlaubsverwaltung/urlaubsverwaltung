@@ -25,4 +25,6 @@ interface WorkingTimeRepository extends CrudRepository<WorkingTimeEntity, Intege
             + "AND x.validFrom = (SELECT MAX(w.validFrom) from working_time w WHERE w.person = ?1 AND w.validFrom <= ?2)"
     )
     WorkingTimeEntity findByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date);
+
+    void deleteByPerson(Person person);
 }
