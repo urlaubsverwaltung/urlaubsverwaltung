@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.user;
 
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Locale;
@@ -14,6 +15,7 @@ class UserSettingsAwareSessionLocaleResolver extends SessionLocaleResolver {
         this.userSettingsService = userSettingsService;
     }
 
+    @Nonnull
     @Override
     protected Locale determineDefaultLocale(HttpServletRequest request) {
 
