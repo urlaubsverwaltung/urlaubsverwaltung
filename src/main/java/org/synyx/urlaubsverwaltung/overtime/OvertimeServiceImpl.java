@@ -2,10 +2,12 @@ package org.synyx.urlaubsverwaltung.overtime;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.DecimalConverter;
@@ -167,6 +169,13 @@ class OvertimeServiceImpl implements OvertimeService {
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
         return signedInUser.hasRole(OFFICE)
             || signedInUser.equals(personOfOvertime) && (!overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged());
+    }
+
+    @Override
+    @EventListener
+    public void deleteAll(PersonDeletedEvent event) {
+        overtimeCommentRepository.deleteByOvertimePerson(event.getPerson());
+        overtimeRepository.deleteByPerson(event.getPerson());
     }
 
     private Duration getTotalOvertimeForPerson(Person person) {

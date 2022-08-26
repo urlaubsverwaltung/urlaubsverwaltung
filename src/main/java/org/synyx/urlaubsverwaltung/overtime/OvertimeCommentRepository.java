@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
 import org.springframework.data.repository.CrudRepository;
+import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ import java.util.List;
 interface OvertimeCommentRepository extends CrudRepository<OvertimeComment, Integer> {
 
     List<OvertimeComment> findByOvertime(Overtime overtime);
+
+    void deleteByOvertimePerson(Person person);
 }

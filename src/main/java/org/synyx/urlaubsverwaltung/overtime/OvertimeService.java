@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -105,4 +107,11 @@ public interface OvertimeService {
      * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
      */
     boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime);
+
+    /**
+     * Deletes all {@link Overtime} in the database of person with id.
+     *
+     * @param event deletion event with the id of the person which is deleted
+     */
+    void deleteAll(PersonDeletedEvent event);
 }

@@ -25,4 +25,6 @@ interface OvertimeRepository extends CrudRepository<Overtime, Integer> {
     List<Overtime> findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Person person, LocalDate start, LocalDate end);
 
     List<Overtime> findByPersonAndStartDateIsBefore(Person person, LocalDate before);
+
+    void deleteByPerson(Person personId);
 }
