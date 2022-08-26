@@ -46,4 +46,9 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
     public List<SickNoteCommentEntity> getCommentsBySickNote(SickNote sickNote) {
         return sickNoteCommentEntityRepository.findBySickNote(sickNote);
     }
+
+    @Override
+    public void deleteAllByPerson(Person sickNotePerson) {
+        sickNoteCommentEntityRepository.deleteBySickNotePerson(sickNotePerson);
+    }
 }

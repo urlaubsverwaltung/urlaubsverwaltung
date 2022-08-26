@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 /**
  * Provides interactions with sick notes, i.e. create, edit etc.
@@ -64,4 +65,12 @@ public interface SickNoteInteractionService {
      * @return the cancelled sick note
      */
     SickNote cancel(SickNote sickNote, Person canceller);
+
+    /**
+     * Deletes all {@link SickNote} and {@link org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity}
+     * in the database of person.
+     *
+     * @param event the person which is deleted and whose sicknotes should be deleted
+     */
+    void deleteAll(PersonDeletedEvent event);
 }

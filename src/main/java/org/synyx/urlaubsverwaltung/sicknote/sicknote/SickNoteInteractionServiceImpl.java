@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.Absence;
@@ -13,6 +14,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
@@ -143,6 +145,13 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         }
 
         return savedSickNote;
+    }
+
+    @Override
+    @EventListener
+    public void deleteAll(PersonDeletedEvent event) {
+        commentService.deleteAllByPerson(event.getPerson());
+        sickNoteService.deleteAllByPerson(event.getPerson());
     }
 
     private void updateAbsence(SickNote sickNote) {

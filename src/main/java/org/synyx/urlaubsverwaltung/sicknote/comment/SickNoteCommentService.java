@@ -40,4 +40,12 @@ public interface SickNoteCommentService {
      * @return all comments for the given sick note.
      */
     List<SickNoteCommentEntity> getCommentsBySickNote(SickNote sickNote);
+
+    /**
+     * Deletes all {@link SickNoteCommentEntity} in the database for given person.
+     * This does not delete comments of this person on other persons sicknotes
+     *
+     * @param sickNotePerson is the person whose sicknotes should be deleted
+     */
+    void deleteAllByPerson(Person sickNotePerson);
 }

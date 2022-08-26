@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.Absence;
@@ -15,6 +16,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
@@ -22,6 +24,7 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
@@ -32,6 +35,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.SICKNOTE;
@@ -275,6 +279,20 @@ class SickNoteInteractionServiceImplTest {
         verify(calendarSyncService).update(any(Absence.class), anyString());
         verify(absenceMappingService).delete(absenceMapping);
         verify(absenceMappingService).create(isNull(), eq(VACATION), anyString());
+    }
+
+    @Test
+    void ensureDeletionOfAllSickNotesAndAllCommentsOnPersonDeletedEvent() {
+        final Person person = new Person();
+        final int personId = 1;
+        person.setId(personId);
+
+        sut.deleteAll(new PersonDeletedEvent(person));
+
+        final InOrder inOrder = inOrder(commentService, sickNoteService);
+
+        inOrder.verify(commentService).deleteAllByPerson(person);
+        inOrder.verify(sickNoteService).deleteAllByPerson(person);
     }
 
     private SickNote getSickNote() {
