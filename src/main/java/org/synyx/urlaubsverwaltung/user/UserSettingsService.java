@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.user;
 
 import org.slf4j.Logger;
+import org.springframework.context.event.EventListener;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -23,6 +25,11 @@ class UserSettingsService {
     UserSettingsService(UserSettingsRepository userSettingsRepository, ApplicationEventPublisher applicationEventPublisher) {
         this.userSettingsRepository = userSettingsRepository;
         this.applicationEventPublisher = applicationEventPublisher;
+    }
+
+    @EventListener
+    public void delete(PersonDeletedEvent event) {
+        userSettingsRepository.deleteByPerson(event.getPerson());
     }
 
     UserSettings getUserSettingsForPerson(Person person) {

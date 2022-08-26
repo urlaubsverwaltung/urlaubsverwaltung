@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -183,5 +184,14 @@ class UserSettingsServiceTest {
 
         final Optional<Theme> actual = sut.findThemeForUsername("batman");
         assertThat(actual).hasValue(Theme.DARK);
+    }
+
+    @Test
+    void ensureDeletionOnPersonDeletionEvent() {
+        final Person person = new Person();
+
+        sut.delete(new PersonDeletedEvent(person));
+
+        verify(userSettingsRepository).deleteByPerson(person);
     }
 }
