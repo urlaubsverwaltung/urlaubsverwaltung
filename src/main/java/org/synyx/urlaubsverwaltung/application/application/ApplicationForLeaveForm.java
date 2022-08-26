@@ -61,6 +61,7 @@ public class ApplicationForLeaveForm {
 
     private List<HolidayReplacementDto> holidayReplacements = new ArrayList<>();
 
+    @Deprecated
     // Address and phone number during holiday
     private String address;
 
@@ -78,10 +79,12 @@ public class ApplicationForLeaveForm {
         this.person = person;
     }
 
+    @Deprecated
     public String getAddress() {
         return address;
     }
 
+    @Deprecated
     public void setAddress(String address) {
         this.address = address;
     }

@@ -116,6 +116,7 @@ public class Application {
     @ElementCollection
     private List<HolidayReplacementEntity> holidayReplacements = new ArrayList<>();
 
+    @Deprecated
     /**
      * Further information: address, phone number etc.
      */
@@ -172,10 +173,12 @@ public class Application {
         this.id = id;
     }
 
+    @Deprecated
     public String getAddress() {
         return address;
     }
 
+    @Deprecated
     public void setAddress(String address) {
         this.address = address;
     }
