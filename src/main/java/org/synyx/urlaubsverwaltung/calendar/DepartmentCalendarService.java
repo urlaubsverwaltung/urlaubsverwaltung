@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Clock;
@@ -113,6 +115,12 @@ class DepartmentCalendarService {
         final Person person = getPersonOrThrow(personId);
 
         departmentCalendarRepository.deleteByPerson(person);
+    }
+
+    @EventListener
+    public void deleteCalendarForPerson(PersonDeletedEvent event) {
+
+        departmentCalendarRepository.deleteByPerson(event.getPerson());
     }
 
     private Department getDepartmentOrThrow(Integer departmentId) {
