@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 
@@ -176,6 +177,18 @@ class DepartmentServiceImpl implements DepartmentService {
         LOG.info("Updated department: {}", updatedDepartment);
 
         return updatedDepartment;
+    }
+
+    @Override
+    public void deleteAssignedDepartmentsOfMember(PersonDeletedEvent event) {
+
+        getAssignedDepartmentsOfMember(event.getPerson()).forEach(department -> {
+            department.setMembers(department.getMembers().stream()
+                .filter(person -> !person.equals(event.getPerson()))
+                .collect(toList()));
+
+            update(department);
+        });
     }
 
     @Override

@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
@@ -1959,6 +1960,30 @@ class DepartmentServiceImplTest {
             .containsEntry(new PersonId(1), List.of("Department A", "Department B"))
             .containsEntry(new PersonId(2), List.of("Department C", "Department A", "Department B"))
             .containsEntry(new PersonId(3), List.of("Department C"));
+    }
+
+    @Test
+    void ensureDeletionOfMembershipOnPersonDeletionEvent() {
+        final Person person = new Person();
+        person.setId(42);
+
+        final DepartmentEntity department = new DepartmentEntity();
+        department.setId(1);
+        final DepartmentMemberEmbeddable departmentMemberEmbeddable = new DepartmentMemberEmbeddable();
+        departmentMemberEmbeddable.setPerson(person);
+        department.setMembers(List.of(departmentMemberEmbeddable));
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(department));
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(department));
+        when(departmentRepository.save(department)).thenReturn(department);
+
+        sut.deleteAssignedDepartmentsOfMember(new PersonDeletedEvent(person));
+
+        verify(departmentRepository).findByMembersPerson(person);
+
+        final DepartmentEntity emptyDepartment = new DepartmentEntity();
+        emptyDepartment.setId(1);
+        emptyDepartment.setMembers(emptyList());
+        verify(departmentRepository).save(emptyDepartment);
     }
 
     private static PageableSearchQuery defaultPersonSearchQuery() {

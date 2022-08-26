@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.department;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -47,6 +48,14 @@ public interface DepartmentService {
      * @param department the {@link Department} to update
      */
     Department update(Department department);
+
+
+    /**
+     * Deletes all membership of the given person.
+     *
+     * @param event the person who is deleted
+     */
+    void deleteAssignedDepartmentsOfMember(PersonDeletedEvent event);
 
     /**
      * Deletes department with given id.
