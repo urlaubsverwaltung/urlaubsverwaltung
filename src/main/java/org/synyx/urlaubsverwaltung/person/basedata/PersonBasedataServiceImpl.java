@@ -1,7 +1,9 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -36,5 +38,11 @@ class PersonBasedataServiceImpl implements PersonBasedataService {
     @Override
     public void update(PersonBasedata personBasedata) {
         personBasedataRepository.save(mapToEntity(personBasedata));
+    }
+
+    @Override
+    @EventListener
+    public void delete(PersonDeletedEvent event) {
+        personBasedataRepository.deleteByPerson(event.getPerson());
     }
 }

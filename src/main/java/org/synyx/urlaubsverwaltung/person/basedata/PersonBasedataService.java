@@ -4,6 +4,8 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.util.List;
 import java.util.Map;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
+
 import java.util.Optional;
 
 public interface PersonBasedataService {
@@ -32,4 +34,11 @@ public interface PersonBasedataService {
      * @param personBasedata to update
      */
     void update(PersonBasedata personBasedata);
+
+    /**
+     * Deletes {@link PersonBasedata} in the database of person id.
+     *
+     * @param event includes the id of the person to be deleted
+     */
+    void delete(PersonDeletedEvent event);
 }
