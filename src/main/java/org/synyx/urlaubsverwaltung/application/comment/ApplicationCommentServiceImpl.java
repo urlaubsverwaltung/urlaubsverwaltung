@@ -43,4 +43,9 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
     public List<ApplicationComment> getCommentsByApplication(Application application) {
         return commentRepository.findByApplication(application);
     }
+
+    @Override
+    public void deleteByApplicationPerson(Person applicationPerson) {
+        commentRepository.deleteByApplicationPerson(applicationPerson);
+    }
 }

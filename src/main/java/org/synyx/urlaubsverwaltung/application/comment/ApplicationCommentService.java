@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.comment;
 
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,4 +31,12 @@ public interface ApplicationCommentService {
      * @return all {@link ApplicationComment}s for the given {@link Application}
      */
     List<ApplicationComment> getCommentsByApplication(Application application);
+
+    /**
+     * Deletes all {@link ApplicationComment} in the database for given person.
+     * This does not delete comments of this person on other persons applications.
+     *
+     * @param applicationPerson is the person whose applications should be deleted
+     */
+    void deleteByApplicationPerson(Person applicationPerson);
 }

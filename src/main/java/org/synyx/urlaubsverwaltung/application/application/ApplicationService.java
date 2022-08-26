@@ -164,4 +164,11 @@ public interface ApplicationService {
      * @return List of applications where the given person is the active replacement
      */
     List<Application> getForHolidayReplacement(Person holidayReplacement, LocalDate date);
+
+    /**
+     * Deletes all {@link Application} in the database of applicant with person id.
+     *
+     * @param person the person whose applications should be deleted
+     */
+    List<Application> deleteApplicationsByPerson(Person person);
 }

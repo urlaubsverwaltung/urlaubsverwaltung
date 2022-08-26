@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.Absence;
@@ -17,6 +18,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
@@ -523,6 +525,13 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         }
 
         return savedEditedApplication;
+    }
+
+    @Override
+    @EventListener
+    public void deleteAllByPerson(PersonDeletedEvent event) {
+        commentService.deleteByApplicationPerson(event.getPerson());
+        applicationService.deleteApplicationsByPerson(event.getPerson());
     }
 
     private List<HolidayReplacementEntity> replacementAdded(Application oldApplication, Application savedEditedApplication) {

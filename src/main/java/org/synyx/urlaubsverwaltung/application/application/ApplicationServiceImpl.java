@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
@@ -138,5 +139,10 @@ class ApplicationServiceImpl implements ApplicationService {
     public List<Application> getForHolidayReplacement(Person holidayReplacement, LocalDate date) {
         final List<ApplicationStatus> status = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
         return applicationRepository.findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(holidayReplacement, date, status);
+    }
+
+    @Override
+    public List<Application> deleteApplicationsByPerson(Person person) {
+        return applicationRepository.deleteByPerson(person);
     }
 }

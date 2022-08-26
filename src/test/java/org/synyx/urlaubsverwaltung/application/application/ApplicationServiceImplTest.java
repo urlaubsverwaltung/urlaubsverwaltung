@@ -298,4 +298,16 @@ class ApplicationServiceImplTest {
         final List<Application> holidayReplacementApplications = sut.getApplicationsForACertainPeriodAndPersonAndVacationCategory(from, to, person, statuses, HOLIDAY);
         assertThat(holidayReplacementApplications).hasSize(1).contains(application);
     }
+
+    @Test
+    void deleteOnPersonDeletionEvent() {
+        final Person person = new Person();
+        final List<Application> deletedApplications = List.of(new Application());
+        when(applicationRepository.deleteByPerson(person)).thenReturn(deletedApplications);
+
+        final List<Application> actualListOfApplications = sut.deleteApplicationsByPerson(person);
+
+        assertThat(actualListOfApplications).containsExactlyElementsOf(deletedApplications);
+        verify(applicationRepository).deleteByPerson(person);
+    }
 }
