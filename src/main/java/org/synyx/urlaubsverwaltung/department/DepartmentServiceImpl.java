@@ -325,6 +325,14 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public boolean isSignedInUserAllowedToAccessDepartmentData(Person signedInUser,  Department department) {
+
+        return signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) ||
+            (department.getDepartmentHeads().contains(signedInUser) && signedInUser.hasRole(DEPARTMENT_HEAD)) ||
+            (department.getSecondStageAuthorities().contains(signedInUser) && signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
+    }
+
+    @Override
     public long getNumberOfDepartments() {
         return departmentRepository.count();
     }

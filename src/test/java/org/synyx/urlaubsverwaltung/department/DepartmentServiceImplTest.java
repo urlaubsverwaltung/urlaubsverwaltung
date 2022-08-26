@@ -1414,6 +1414,78 @@ class DepartmentServiceImplTest {
     }
 
     @Test
+    void ensureSignedInBossUserCanAccessDepartmentData() {
+
+        final Department department = new Department();
+        department.setId(1);
+
+        final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        boss.setId(2);
+        boss.setPermissions(List.of(USER, BOSS));
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessDepartmentData(boss, department);
+        assertThat(isAllowed).isTrue();
+    }
+
+    @Test
+    void ensureSignedInOfficeUserCanAccessDepartmentData() {
+
+        final Department department = new Department();
+        department.setId(1);
+
+        final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        boss.setId(2);
+        boss.setPermissions(List.of(USER, OFFICE));
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessDepartmentData(boss, department);
+        assertThat(isAllowed).isTrue();
+    }
+
+    @Test
+    void ensureSignedInDepartmentHeadUserCanAccessDepartmentData() {
+
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        departmentHead.setId(2);
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+        final Department department = new Department();
+        department.setId(1);
+        department.setDepartmentHeads(List.of(departmentHead));
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessDepartmentData(departmentHead, department);
+        assertThat(isAllowed).isTrue();
+    }
+
+    @Test
+    void ensureSignedInSecondStageUserCanAccessDepartmentData() {
+
+        final Person secondStageuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        secondStageuthority.setId(2);
+        secondStageuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
+        final Department department = new Department();
+        department.setId(1);
+        department.setSecondStageAuthorities(List.of(secondStageuthority));
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessDepartmentData(secondStageuthority, department);
+        assertThat(isAllowed).isTrue();
+    }
+
+    @Test
+    void ensureSignedInUserCanNotAccessDepartmentData() {
+
+        final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        user.setId(2);
+        user.setPermissions(List.of(USER));
+
+        final Department department = new Department();
+        department.setId(1);
+
+        boolean isAllowed = sut.isSignedInUserAllowedToAccessDepartmentData(user, department);
+        assertThat(isAllowed).isFalse();
+    }
+
+    @Test
     void ensureSignedInDepartmentHeadOfPersonCanAccessPersonData() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");

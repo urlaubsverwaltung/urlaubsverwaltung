@@ -109,24 +109,21 @@ public class PersonsViewController {
         final Pageable personPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), personSort);
 
         final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(personPageable, query);
-        final Page<Person> personPage;
+        Page<Person> personPage = active
+            ? getRelevantActivePersons(signedInUser, personPageableSearchQuery)
+            : getRelevantInactivePersons(signedInUser, personPageableSearchQuery);
 
         if (requestedDepartmentId.isPresent()) {
             final Integer departmentId = requestedDepartmentId.get();
             final Department department = departmentService.getDepartmentById(departmentId)
                 .orElseThrow(() -> new UnknownDepartmentException(departmentId));
 
-            model.addAttribute("department", department);
-
-            personPage = active
-                ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery)
-                : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery);
-
-
-        } else {
-            personPage = active
-                ? getRelevantActivePersons(signedInUser, personPageableSearchQuery)
-                : getRelevantInactivePersons(signedInUser, personPageableSearchQuery);
+            if (departmentService.isSignedInUserAllowedToAccessDepartmentData(signedInUser, department)) {
+                model.addAttribute("department", department);
+                personPage = active
+                    ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery)
+                    : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery);
+            }
         }
 
         preparePersonView(signedInUser, personPage, personSort, accountSort, pageable.getSort(), selectedYear, model);
