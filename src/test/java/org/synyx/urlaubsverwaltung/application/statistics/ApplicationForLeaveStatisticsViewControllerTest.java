@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -97,7 +98,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), eq(filterPeriod), any(Pageable.class)))
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), eq(filterPeriod), eq(defaultPersonSearchQuery())))
             .thenReturn(new PageImpl<>(List.of()));
 
         final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
@@ -146,7 +147,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         statistic.addWaitingVacationDays(vacationType, BigDecimal.valueOf(3));
         statistic.addAllowedVacationDays(vacationType, BigDecimal.valueOf(4));
 
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), eq(filterPeriod), eq(defaultPageRequest())))
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), eq(filterPeriod), eq(defaultPersonSearchQuery())))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -179,6 +180,36 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(view().name("thymeleaf/application/application-statistics"));
     }
 
+    @Test
+    void applicationForLeaveStatisticsWithSearchQuery() throws Exception {
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person();
+        person.setId(2);
+        person.setFirstName("Max");
+
+        final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
+
+        final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "person.firstName"));
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "max");
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageableSearchQuery)))
+            .thenReturn(new PageImpl<>(List.of(statistic)));
+
+        final ResultActions resultActions = perform(get("/web/application/statistics")
+            .param("query", "max"));
+
+        resultActions
+            .andExpect(model().attribute("statistics", hasItems(
+                allOf(
+                    instanceOf(ApplicationForLeaveStatisticsDto.class),
+                    hasProperty("firstName", is("Max"))
+                )
+            )));
+    }
+
     @ParameterizedTest
     @CsvSource(value = {
         "person.firstName,ASC:person.firstName",
@@ -200,7 +231,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, expectedSortProperty));
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest)))
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageableSearchQuery)))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -236,7 +268,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, expectedSortProperty));
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest)))
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageableSearchQuery)))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -264,7 +297,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
         final PageRequest pageRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "person.lastName"));
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageRequest)))
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageRequest, "");
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(pageableSearchQuery)))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -291,7 +325,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         signedInUser.setId(1);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), any(Pageable.class)))
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(defaultPersonSearchQuery())))
             .thenReturn(new PageImpl<>(List.of()));
 
         perform(get("/web/application/statistics/download")
@@ -315,7 +349,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), any(Pageable.class)))
+        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(defaultPersonSearchQuery())))
             .thenReturn(new PageImpl<>(List.of(statistics)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
@@ -326,6 +360,10 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .param("to", "01.08.2019"))
             .andExpect(status().isOk())
             .andExpect(content().string("csv-resource"));
+    }
+
+    private static PageableSearchQuery defaultPersonSearchQuery() {
+        return new PageableSearchQuery(defaultPageRequest(), "");
     }
 
     private static Pageable defaultPageRequest() {

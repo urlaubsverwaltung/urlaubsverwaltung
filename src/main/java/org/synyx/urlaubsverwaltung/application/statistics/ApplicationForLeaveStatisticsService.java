@@ -52,12 +52,13 @@ class ApplicationForLeaveStatisticsService {
      *
      * @param person   person to restrict the returned page content
      * @param period   filter result set for a given period of time
-     * @param pageable the page request
+     * @param pageableSearchQuery the page request
      * @return filtered page of {@link ApplicationForLeaveStatistics}
      */
-    Page<ApplicationForLeaveStatistics> getStatistics(Person person, FilterPeriod period, Pageable pageable) {
+    Page<ApplicationForLeaveStatistics> getStatistics(Person person, FilterPeriod period, PageableSearchQuery pageableSearchQuery) {
+        final Pageable pageable = pageableSearchQuery.getPageable();
         final List<VacationType> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
-        final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, pageable);
+        final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, pageableSearchQuery);
         final List<Integer> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).collect(toList());
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
 
@@ -81,21 +82,19 @@ class ApplicationForLeaveStatisticsService {
         return new PageImpl<>(content, pageable, relevantPersonsPage.getTotalElements());
     }
 
-    private Page<Person> getAllRelevantPersons(Person person, Pageable pageable) {
+    private Page<Person> getAllRelevantPersons(Person person, PageableSearchQuery pageableSearchQuery) {
+        final Pageable pageable = pageableSearchQuery.getPageable();
         final boolean sortByPerson = isSortByPersonAttribute(pageable);
 
         if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
-            if (sortByPerson) {
-                final PageRequest pageRequest = mapToPersonPageRequest(pageable);
-                final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(pageRequest);
-                return personService.getActivePersons(personPageableSearchQuery);
-            } else {
-                final List<Person> activePersons = personService.getActivePersons();
-                return new PageImpl<>(activePersons);
-            }
+            final PageableSearchQuery query = sortByPerson
+                ? new PageableSearchQuery(mapToPersonPageRequest(pageable), pageableSearchQuery.getQuery())
+                : new PageableSearchQuery(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), pageableSearchQuery.getQuery());
+
+            return personService.getActivePersons(query);
         }
 
-        final PageableSearchQuery query = new PageableSearchQuery(sortByPerson ? mapToPersonPageRequest(pageable) : Pageable.unpaged());
+        final PageableSearchQuery query = new PageableSearchQuery(sortByPerson ? mapToPersonPageRequest(pageable) : Pageable.unpaged(), pageableSearchQuery.getQuery());
         return departmentService.getManagedMembersOfPerson(person, query);
     }
 

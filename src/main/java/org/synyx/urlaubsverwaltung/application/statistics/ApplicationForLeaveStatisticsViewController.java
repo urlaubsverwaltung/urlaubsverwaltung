@@ -23,6 +23,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.web.html.HtmlOptgroupDto;
@@ -30,6 +31,8 @@ import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +84,7 @@ class ApplicationForLeaveStatisticsViewController {
                                                 Pageable pageable,
                                                 @RequestParam(value = "from", defaultValue = "") String from,
                                                 @RequestParam(value = "to", defaultValue = "") String to,
+                                                @RequestParam(value = "query", required = false, defaultValue = "") String query,
                                                 @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
                                                 Model model, Locale locale) {
 
@@ -89,6 +93,7 @@ class ApplicationForLeaveStatisticsViewController {
 
         final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
         model.addAttribute("sortSelect", sortSelectDto);
+        model.addAttribute("query", query);
 
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
             model.addAttribute("period", period);
@@ -98,8 +103,9 @@ class ApplicationForLeaveStatisticsViewController {
         }
 
         final Person signedInUser = personService.getSignedInUser();
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageable, query);
 
-        final Page<ApplicationForLeaveStatistics> personsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageable);
+        final Page<ApplicationForLeaveStatistics> personsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageableSearchQuery);
 
         final List<ApplicationForLeaveStatisticsDto> statisticsDtos = personsPage.stream()
             .map(applicationForLeaveStatistics -> mapToApplicationForLeaveStatisticsDto(applicationForLeaveStatistics, locale, messageSource)).collect(toList());
@@ -137,9 +143,12 @@ class ApplicationForLeaveStatisticsViewController {
                             })
                             Pageable pageable,
                             @RequestParam(value = "from", defaultValue = "") String from,
-                                                         @RequestParam(value = "to", defaultValue = "") String to) {
+                            @RequestParam(value = "to", defaultValue = "") String to,
+                            @RequestParam(value = "query", required = false, defaultValue = "") String query,
+                            HttpServletResponse response) throws IOException {
 
         final FilterPeriod period = toFilterPeriod(from, to);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageable, query);
 
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
@@ -148,7 +157,7 @@ class ApplicationForLeaveStatisticsViewController {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        final Page<ApplicationForLeaveStatistics> statisticsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageable);
+        final Page<ApplicationForLeaveStatistics> statisticsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageableSearchQuery);
         final List<ApplicationForLeaveStatistics> statistics = statisticsPage.getContent();
         final CSVFile csvFile = applicationForLeaveStatisticsCsvExportService.generateCSV(period, statistics);
 

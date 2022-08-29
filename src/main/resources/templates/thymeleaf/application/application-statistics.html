@@ -47,7 +47,7 @@
           <th:block th:ref="absences-statistics-heading-actions">
             <a
               id="statistics-csv-download-link"
-              th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery})}"
+              th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
               class="icon-link tw-px-1"
               th:data-title="#{action.download}"
             >
@@ -59,57 +59,98 @@
         </div>
 
         <div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4">
-          <form method="get" action="#" th:action="@{/web/application/statistics}">
-            <div id="statistics-filter-inputs">
-              <input type="hidden" name="sort" th:value="${sortQuery}" />
-            </div>
-            <div class="tw-flex tw-flex-col tw-gap-1">
-              <fieldset>
-                <legend class="tw-sr-only" th:text="#{applications.statistics.period.legend.text}">Zeitraum</legend>
-                <div
-                  th:replace="fragments/details-dropdown::details-dropdown(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)"
-                >
-                  <th:block th:ref="period-dropdown-summary">
-                    <th:block th:text="#{applications.statistics.period.legend.text}"></th:block>
-                    <span
-                      id="period-text"
-                      th:with="start=${{period.startDate}}, end=${{period.endDate}}"
-                      th:text="#{applications.statistics.period.selected(${start}, ${end})}"
-                    ></span>
-                  </th:block>
-                  <th:block th:ref="period-dropdown-content">
-                    <div class="tw-flex tw-flex-col">
-                      <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="tw-m-0" />
-                      <input
-                        id="from-date-input"
-                        name="from"
-                        th:value="${{period.startDate}}"
-                        th:data-iso-value="${period.startDateIsoValue}"
-                        th:placeholder="#{pattern.date}"
-                        class="form-control tw-mt-0.5"
-                      />
-                      <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0 tw-mt-4" />
-                      <input
-                        id="to-date-input"
-                        name="to"
-                        th:value="${{period.endDate}}"
-                        th:data-iso-value="${period.endDateIsoValue}"
-                        th:placeholder="#{pattern.date}"
-                        class="form-control tw-mt-0.5"
-                      />
-                    </div>
-                    <div class="tw-mt-6">
-                      <button
-                        th:text="#{action.confirm}"
-                        class="button-main tw-py-1.5 tw-px-3 tw-w-full"
-                        type="submit"
-                      />
-                    </div>
-                  </th:block>
-                </div>
-              </fieldset>
-            </div>
-          </form>
+          <div class="tw-flex tw-gap-2">
+            <form method="get" action="#" th:action="@{/web/application/statistics}">
+              <div id="statistics-filter-inputs">
+                <input type="hidden" name="sort" th:value="${sortQuery}" />
+                <input type="hidden" name="query" th:value="${query}" />
+              </div>
+              <div class="tw-flex tw-flex-col tw-gap-1">
+                <fieldset>
+                  <legend class="tw-sr-only" th:text="#{applications.statistics.period.legend.text}">Zeitraum</legend>
+                  <div
+                    th:replace="fragments/details-dropdown::details-dropdown(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)"
+                  >
+                    <th:block th:ref="period-dropdown-summary">
+                      <th:block th:text="#{applications.statistics.period.legend.text}"></th:block>
+                      <span
+                        id="period-text"
+                        th:with="start=${{period.startDate}}, end=${{period.endDate}}"
+                        th:text="#{applications.statistics.period.selected(${start}, ${end})}"
+                      ></span>
+                    </th:block>
+                    <th:block th:ref="period-dropdown-content">
+                      <div class="tw-flex tw-flex-col">
+                        <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="tw-m-0" />
+                        <input
+                          id="from-date-input"
+                          name="from"
+                          th:value="${{period.startDate}}"
+                          th:data-iso-value="${period.startDateIsoValue}"
+                          th:placeholder="#{pattern.date}"
+                          class="form-control tw-mt-0.5"
+                        />
+                        <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0 tw-mt-4" />
+                        <input
+                          id="to-date-input"
+                          name="to"
+                          th:value="${{period.endDate}}"
+                          th:data-iso-value="${period.endDateIsoValue}"
+                          th:placeholder="#{pattern.date}"
+                          class="form-control tw-mt-0.5"
+                        />
+                      </div>
+                      <div class="tw-mt-6">
+                        <button
+                          th:text="#{action.confirm}"
+                          class="button-main tw-py-1.5 tw-px-3 tw-w-full"
+                          type="submit"
+                        />
+                      </div>
+                    </th:block>
+                  </div>
+                </fieldset>
+              </div>
+            </form>
+            <form
+              action="#"
+              th:action="@{/web/application/statistics}"
+              method="get"
+              data-turbo-frame="frame-statistics"
+              data-turbo-action="advance"
+              class="tw-flex"
+            >
+              <div id="statistics-form-query-inputs">
+                <input type="hidden" name="from" th:value="${period.startDateIsoValue}" />
+                <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
+                <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
+                <input type="hidden" name="sort" th:value="${sortQuery}" />
+              </div>
+              <div class="tw-flex tw-flex-col md:tw-flex-row">
+                <label for="search" th:text="#{action.search}" class="tw-sr-only"></label>
+                <span class="tw-flex-1 tw-relative tw-border dark:tw-border-neutral-600 tw-rounded-md">
+                  <input
+                    type="text"
+                    id="search"
+                    name="query"
+                    th:value="${query}"
+                    class="form-control tw-h-full tw-pr-8 tw-border-none tw-w-full md:tw-w-auto"
+                    th:placeholder="#{action.search}"
+                    data-auto-submit="search-submit"
+                    data-auto-submit-delay="100"
+                  />
+                  <button
+                    type="submit"
+                    id="search-submit"
+                    class="tw-absolute tw-bottom-0 tw-right-0 dark:tw-bg-zinc-800 tw-py-3 tw-px-2 tw-rounded-r-md tw-h-full tw-flex tw-items-center"
+                  >
+                    <svg th:replace="icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')"></svg>
+                    <span class="tw-sr-only" th:text="#{action.search}">Suche</span>
+                  </button>
+                </span>
+              </div>
+            </form>
+          </div>
           <div class="md:tw-ml-auto">
             <form
               action="#"
@@ -122,6 +163,7 @@
                 <input type="hidden" name="from" th:value="${period.startDateIsoValue}" />
                 <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
                 <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
+                <input type="hidden" name="query" th:value="${query}" />
               </div>
               <div class="tw-flex tw-flex-col md:tw-flex-row md:tw-items-center">
                 <label for="sort-select" class="tw-m-0 tw-mr-2">
@@ -169,6 +211,9 @@
             </turbo-stream>
             <turbo-stream target="statistics-filter-inputs" action="replace">
               <template th:insert="::#statistics-filter-inputs"></template>
+            </turbo-stream>
+            <turbo-stream target="statistics-form-query-inputs" action="replace">
+              <template th:insert="::#statistics-form-query-inputs"></template>
             </turbo-stream>
             <turbo-stream target="period-text" action="replace">
               <template th:insert="::#period-text"></template>
@@ -392,6 +437,7 @@
               <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
               <input type="hidden" name="page" th:value="${statisticsPagination.page.number + 1}" />
               <input type="hidden" name="sort" th:value="${sortQuery}" />
+              <input type="hidden" name="query" th:value="${query}" />
             </div>
             <div class="tw-flex tw-items-center tw-gap-2">
               <label for="pagination-size-select" class="tw-m-0" th:text="#{pagination.page.size.label.text}">

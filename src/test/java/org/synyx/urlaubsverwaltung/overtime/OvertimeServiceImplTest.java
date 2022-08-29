@@ -530,12 +530,12 @@ class OvertimeServiceImplTest {
         assertThat(actual).containsKey(person2);
 
         final LeftOvertime leftOvertime = actual.get(person);
-        assertThat(leftOvertime.getLeftOvertimeOverall().getLeftOvertime()).isEqualTo(Duration.ofMinutes(30));
-        assertThat(leftOvertime.getLeftOvertimeDateRange().getLeftOvertime()).isEqualTo(Duration.ofHours(1));
+        assertThat(leftOvertime.getLeftOvertimeOverall()).isEqualTo(Duration.ofMinutes(30));
+        assertThat(leftOvertime.getLeftOvertimeDateRange()).isEqualTo(Duration.ofHours(1));
 
         final LeftOvertime leftOvertime2 = actual.get(person2);
-        assertThat(leftOvertime2.getLeftOvertimeOverall().getLeftOvertime()).isEqualTo(Duration.ofHours(20));
-        assertThat(leftOvertime2.getLeftOvertimeDateRange().getLeftOvertime()).isEqualTo(Duration.ofHours(10));
+        assertThat(leftOvertime2.getLeftOvertimeOverall()).isEqualTo(Duration.ofHours(20));
+        assertThat(leftOvertime2.getLeftOvertimeDateRange()).isEqualTo(Duration.ofHours(10));
     }
 
     @Test
