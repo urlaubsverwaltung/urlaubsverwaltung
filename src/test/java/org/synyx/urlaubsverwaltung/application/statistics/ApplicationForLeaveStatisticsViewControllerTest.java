@@ -82,6 +82,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .param("from", "01.01.2019")
             .param("to", "01.08.2020"))
             .andExpect(model().attribute("errors", "INVALID_PERIOD"))
+            .andExpect(model().attributeExists("sortSelect", "statisticsPagination"))
             .andExpect(view().name("thymeleaf/application/application-statistics"));
     }
 

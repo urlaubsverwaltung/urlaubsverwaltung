@@ -85,10 +85,15 @@ class ApplicationForLeaveStatisticsViewController {
                                                 Model model, Locale locale) {
 
         final FilterPeriod period = toFilterPeriod(from, to);
+        final String pageLinkPrefix = buildPageLinkPrefix(pageable, Map.of("from", period.getStartDateIsoValue(), "to", period.getEndDateIsoValue()));
+
+        final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
+        model.addAttribute("sortSelect", sortSelectDto);
+
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
-            // TODO model attributes for validation error case
             model.addAttribute("period", period);
             model.addAttribute("errors", "INVALID_PERIOD");
+            model.addAttribute("statisticsPagination", new PaginationDto<>(new PageImpl<>(List.of(), pageable, 0), pageLinkPrefix));
             return "thymeleaf/application/application-statistics";
         }
 
@@ -103,7 +108,6 @@ class ApplicationForLeaveStatisticsViewController {
             .anyMatch(statisticsDto -> hasText(statisticsDto.getPersonnelNumber()));
 
         final PageImpl<ApplicationForLeaveStatisticsDto> statisticsPage = new PageImpl<>(statisticsDtos, pageable, personsPage.getTotalElements());
-        final String pageLinkPrefix = buildPageLinkPrefix(pageable, Map.of("from", period.getStartDateIsoValue(), "to", period.getEndDateIsoValue()));
         final PaginationDto<ApplicationForLeaveStatisticsDto> statisticsPagination = new PaginationDto<>(statisticsPage, pageLinkPrefix);
 
         model.addAttribute("statisticsPagination", statisticsPagination);
@@ -116,12 +120,8 @@ class ApplicationForLeaveStatisticsViewController {
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("vacationTypes", vacationTypeService.getAllVacationTypes());
 
-        final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
-        model.addAttribute("sortSelect", sortSelectDto);
-
         final boolean turboFrameRequested = hasText(turboFrame);
         model.addAttribute("turboFrameRequested", turboFrameRequested);
-
 
         if (turboFrameRequested) {
             return "thymeleaf/application/application-statistics::#" + turboFrame;
