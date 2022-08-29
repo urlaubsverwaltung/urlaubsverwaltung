@@ -141,7 +141,8 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
             .collect(groupingBy(WorkingTime::getPerson));
 
         return persons.stream().map(person -> {
-            final List<WorkingTime> workingTimesInDateRange = workingTimesByPerson.get(person).stream()
+            final List<WorkingTime> workingTimesInDateRange = workingTimesByPerson.getOrDefault(person, List.of())
+                .stream()
                 .filter(workingTime -> !workingTime.getValidFrom().isAfter(dateRange.getEndDate()))
                 .collect(toList());
 

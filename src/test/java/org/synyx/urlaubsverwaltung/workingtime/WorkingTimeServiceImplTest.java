@@ -778,4 +778,24 @@ class WorkingTimeServiceImplTest {
 
         verify(workingTimeRepository).deleteByPerson(person);
     }
+
+    @Test
+    void ensureGetWorkingTimesByPersonsAndDateRangeReturnsEmptyWorkingTimeCalendarForPersonWithoutWorkingTime() {
+        final Person person = new Person();
+        person.setId(1);
+
+        final List<Person> persons = List.of(person);
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of());
+
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
+        assertThat(actual).hasSize(1);
+        assertThat(actual).containsKey(person);
+
+        final WorkingTimeCalendar workingTimeCalendar = actual.get(person);
+        for (LocalDate date : dateRange) {
+            assertThat(workingTimeCalendar.workingTime(date)).isEmpty();
+        }
+    }
 }
