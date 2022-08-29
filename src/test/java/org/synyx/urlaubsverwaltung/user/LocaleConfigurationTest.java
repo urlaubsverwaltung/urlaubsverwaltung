@@ -6,9 +6,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,12 +22,10 @@ class LocaleConfigurationTest {
     @Test
     void beansHaveBeenCreated() {
         this.contextRunner
-            .withBean(UserSettingsRepository.class, () -> mock(UserSettingsRepository.class))
-            .withBean(UserSettingsService.class)
             .withBean(LocaleModelInterceptor.class)
             .withUserConfiguration(LocaleConfiguration.class)
             .run(context -> {
-                assertThat(context).getBean("localeResolver").isInstanceOf(UserSettingsAwareSessionLocaleResolver.class);
+                assertThat(context).getBean("localeResolver").isInstanceOf(SessionLocaleResolver.class);
             });
     }
 

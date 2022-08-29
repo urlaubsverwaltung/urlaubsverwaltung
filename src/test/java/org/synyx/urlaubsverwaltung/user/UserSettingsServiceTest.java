@@ -3,14 +3,18 @@ package org.synyx.urlaubsverwaltung.user;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.Locale;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -20,10 +24,16 @@ class UserSettingsServiceTest {
 
     @Mock
     private UserSettingsRepository userSettingsRepository;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    @Captor
+    private ArgumentCaptor<UserLocaleChangedEvent> userLocaleChangedEventCaptor;
+
 
     @BeforeEach
     void setUp() {
-        sut = new UserSettingsService(userSettingsRepository);
+        sut = new UserSettingsService(userSettingsRepository, applicationEventPublisher);
     }
 
     @Test
@@ -79,8 +89,11 @@ class UserSettingsServiceTest {
         when(userSettingsRepository.save(entityToSave)).thenReturn(entityToSave);
 
         final UserSettings updatedUserSettings = sut.updateUserThemePreference(person, Theme.LIGHT, Locale.GERMAN);
-
         assertThat(updatedUserSettings.theme()).isEqualTo(Theme.LIGHT);
+
+        verify(applicationEventPublisher).publishEvent(userLocaleChangedEventCaptor.capture());
+        final UserLocaleChangedEvent userLocaleChangedEvent = userLocaleChangedEventCaptor.getValue();
+        assertThat(userLocaleChangedEvent.getLocale()).isEqualTo(Locale.GERMAN);
     }
 
     @Test
@@ -99,8 +112,11 @@ class UserSettingsServiceTest {
         when(userSettingsRepository.save(entityToSave)).thenReturn(entityToSave);
 
         final UserSettings updatedUserSettings = sut.updateUserThemePreference(person, Theme.LIGHT, Locale.GERMAN);
-
         assertThat(updatedUserSettings.theme()).isEqualTo(Theme.LIGHT);
+
+        verify(applicationEventPublisher).publishEvent(userLocaleChangedEventCaptor.capture());
+        final UserLocaleChangedEvent userLocaleChangedEvent = userLocaleChangedEventCaptor.getValue();
+        assertThat(userLocaleChangedEvent.getLocale()).isEqualTo(Locale.GERMAN);
     }
 
     @Test

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 @Configuration
 class LocaleConfiguration implements WebMvcConfigurer {
@@ -21,7 +22,7 @@ class LocaleConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    LocaleResolver localeResolver(UserSettingsService userSettingsService) {
-        return new UserSettingsAwareSessionLocaleResolver(userSettingsService);
+    LocaleResolver localeResolver() {
+        return new SessionLocaleResolver();
     }
 }

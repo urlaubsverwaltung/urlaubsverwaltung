@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.user;
 
 import org.slf4j.Logger;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -18,9 +18,11 @@ class UserSettingsService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final UserSettingsRepository userSettingsRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    UserSettingsService(UserSettingsRepository userSettingsRepository) {
+    UserSettingsService(UserSettingsRepository userSettingsRepository, ApplicationEventPublisher applicationEventPublisher) {
         this.userSettingsRepository = userSettingsRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     UserSettings getUserSettingsForPerson(Person person) {
@@ -37,9 +39,8 @@ class UserSettingsService {
     }
 
     /**
-     *
      * @param person the person to update the {@link UserSettings} for.
-     * @param theme the {@link Theme} for the person.
+     * @param theme  the {@link Theme} for the person.
      * @param locale the locale to set for the person. must be a {@link SupportedLocale} or {@code null} to use the user-agent as fallback.
      * @return the updated {@link UserSettings}
      */
@@ -51,7 +52,7 @@ class UserSettingsService {
         entity.setLocale(locale);
 
         final UserSettingsEntity persistedEntity = userSettingsRepository.save(entity);
-        LocaleContextHolder.setLocale(locale);
+        applicationEventPublisher.publishEvent(new UserLocaleChangedEvent(persistedEntity.getLocale()));
 
         return toUserSettings(persistedEntity);
     }
