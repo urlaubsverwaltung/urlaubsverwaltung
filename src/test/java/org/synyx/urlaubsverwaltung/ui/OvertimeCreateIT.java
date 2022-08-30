@@ -29,6 +29,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
@@ -150,14 +151,14 @@ class OvertimeCreateIT {
 
         final int currentYear = LocalDate.now().getYear();
         final LocalDate validFrom = LocalDate.of(currentYear - 1, 1, 1);
-        final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).stream().map(DayOfWeek::getValue).collect(toList());
+        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).map(DayOfWeek::getValue).collect(toList());
         workingTimeWriteService.touch(workingDays, validFrom, savedPerson);
 
         final LocalDate firstDayOfYear = LocalDate.of(currentYear, JANUARY, 1);
         final LocalDate lastDayOfYear = LocalDate.of(currentYear, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(currentYear, APRIL, 1);
-        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, expiryDate, TEN, TEN, TEN, ZERO, null);
-        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), expiryDate.plusDays(1), TEN, TEN, TEN, ZERO, null);
+        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, true, expiryDate, TEN, TEN, TEN, ZERO, null);
+        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), true, expiryDate.plusDays(1), TEN, TEN, TEN, ZERO, null);
 
         return savedPerson;
     }

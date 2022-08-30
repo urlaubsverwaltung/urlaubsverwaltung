@@ -172,8 +172,8 @@ public final class TestDataCreator {
         final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
         final LocalDate expiryDate = LocalDate.of(year, Month.APRIL, 1);
 
-        return new Account(person, firstDayOfYear, lastDayOfYear, expiryDate, annualVacationDays, remainingVacationDays,
-            remainingVacationDaysNotExpiring, comment);
+        return new Account(person, firstDayOfYear, lastDayOfYear, true, expiryDate,
+            annualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
     }
 
     // Working time ----------------------------------------------------------------------------------------------------

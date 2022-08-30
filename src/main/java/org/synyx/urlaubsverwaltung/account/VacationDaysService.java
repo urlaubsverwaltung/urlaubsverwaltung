@@ -59,7 +59,8 @@ public class VacationDaysService {
     }
 
     public BigDecimal calculateTotalLeftVacationDays(LocalDate start, LocalDate end, LocalDate today, Account account) {
-        return getVacationDaysLeft(start, end, account, Optional.empty()).getLeftVacationDays(today, account.getExpiryDate());
+        return getVacationDaysLeft(start, end, account, Optional.empty())
+            .getLeftVacationDays(today, account.isDoRemainingVacationDaysExpire(), account.getExpiryDate());
     }
 
     /**
@@ -83,14 +84,23 @@ public class VacationDaysService {
         final BigDecimal remainingVacationDays = account.getRemainingVacationDays();
         final BigDecimal remainingVacationDaysNotExpiring = account.getRemainingVacationDaysNotExpiring();
 
-        final LocalDate lastDayBeforeExpiryDate = account.getExpiryDate().minusDays(1);
-        final LocalDate endBeforeExpiryDate = end.isAfter(lastDayBeforeExpiryDate) ? lastDayBeforeExpiryDate : end;
+        final BigDecimal usedVacationDaysBeforeExpiryDate;
+        final BigDecimal usedVacationDaysAfterExpiryDate;
 
-        final LocalDate expiryDate = account.getExpiryDate();
-        final LocalDate startAfterExpiryDate = start.isBefore(expiryDate) ? expiryDate : start;
+        if (account.isDoRemainingVacationDaysExpire()) {
+            final LocalDate lastDayBeforeExpiryDate = account.getExpiryDate().minusDays(1);
+            final LocalDate endBeforeExpiryDate = end.isAfter(lastDayBeforeExpiryDate) ? lastDayBeforeExpiryDate : end;
 
-        final BigDecimal usedVacationDaysBeforeExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), start, endBeforeExpiryDate);
-        final BigDecimal usedVacationDaysAfterExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), startAfterExpiryDate, end);
+            final LocalDate expiryDate = account.getExpiryDate();
+            final LocalDate startAfterExpiryDate = start.isBefore(expiryDate) ? expiryDate : start;
+
+            usedVacationDaysBeforeExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), start, endBeforeExpiryDate);
+            usedVacationDaysAfterExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), startAfterExpiryDate, end);
+        } else {
+            usedVacationDaysBeforeExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), start, end);
+            usedVacationDaysAfterExpiryDate = ZERO;
+        }
+
         final BigDecimal usedVacationDaysNextYear = nextYear.map(this::getUsedRemainingVacationDays).orElse(ZERO);
 
         return VacationDaysLeft.builder()

@@ -27,6 +27,8 @@ public class Account {
 
     private LocalDate validTo;
 
+    private boolean doRemainingVacationDaysExpire;
+
     private LocalDate expiryDate;
 
     private LocalDate expiryNotificationSentDate;
@@ -47,12 +49,14 @@ public class Account {
         /* OK */
     }
 
-    public Account(Person person, LocalDate validFrom, LocalDate validTo, LocalDate expiryDate, BigDecimal annualVacationDays,
-                   BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
+    public Account(Person person, LocalDate validFrom, LocalDate validTo, boolean doRemainingVacationDaysExpire,
+                   LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal remainingVacationDays,
+                   BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         this.person = person;
         this.validFrom = validFrom;
         this.validTo = validTo;
+        this.doRemainingVacationDaysExpire = doRemainingVacationDaysExpire;
         this.expiryDate = expiryDate;
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDays = remainingVacationDays;
@@ -124,6 +128,14 @@ public class Account {
         this.validTo = validTo;
     }
 
+    public boolean isDoRemainingVacationDaysExpire() {
+        return doRemainingVacationDaysExpire;
+    }
+
+    public void setDoRemainingVacationDaysExpire(boolean doRemainingVacationDaysExpire) {
+        this.doRemainingVacationDaysExpire = doRemainingVacationDaysExpire;
+    }
+
     public LocalDate getExpiryDate() {
         return expiryDate;
     }
@@ -158,6 +170,7 @@ public class Account {
             "person=" + person +
             ", validFrom=" + validFrom +
             ", validTo=" + validTo +
+            ", doRemainingVacationDaysExpire=" + doRemainingVacationDaysExpire +
             ", expiryDate=" + expiryDate +
             ", annualVacationDays=" + annualVacationDays +
             ", actualVacationDays=" + actualVacationDays +

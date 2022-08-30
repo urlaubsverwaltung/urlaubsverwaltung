@@ -281,6 +281,6 @@ class PersonDetailsViewControllerTest {
 
     private static Account accountForPerson(Person person) {
         final LocalDate expiryDate = LocalDate.now(clock).withMonth(APRIL.getValue()).with(firstDayOfMonth());
-        return new Account(person, LocalDate.now(clock), LocalDate.now(clock), expiryDate, ONE, TEN, TEN, "");
+        return new Account(person, LocalDate.now(clock), LocalDate.now(clock), true, expiryDate, ONE, TEN, TEN, "");
     }
 }

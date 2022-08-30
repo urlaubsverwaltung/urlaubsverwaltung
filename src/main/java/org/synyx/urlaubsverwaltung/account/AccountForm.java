@@ -20,6 +20,7 @@ public class AccountForm {
     private LocalDate holidaysAccountValidFrom;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate holidaysAccountValidTo;
+    private boolean doRemainingVacationDaysExpire;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate expiryDate;
     private BigDecimal annualVacationDays;
@@ -35,6 +36,7 @@ public class AccountForm {
         this.holidaysAccountYear = year;
         this.holidaysAccountValidFrom = Year.of(year).atDay(1);
         this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
+        this.doRemainingVacationDaysExpire = true;
         this.expiryDate = LocalDate.of(year, APRIL, 1);
     }
 
@@ -42,6 +44,7 @@ public class AccountForm {
         this.holidaysAccountYear = holidaysAccount.getValidFrom().getYear();
         this.holidaysAccountValidFrom = holidaysAccount.getValidFrom();
         this.holidaysAccountValidTo = holidaysAccount.getValidTo();
+        this.doRemainingVacationDaysExpire = holidaysAccount.isDoRemainingVacationDaysExpire();
         this.expiryDate = holidaysAccount.getExpiryDate();
         this.annualVacationDays = holidaysAccount.getAnnualVacationDays();
         this.actualVacationDays = holidaysAccount.getActualVacationDays();
@@ -88,6 +91,14 @@ public class AccountForm {
 
     public void setHolidaysAccountValidTo(LocalDate holidaysAccountValidTo) {
         this.holidaysAccountValidTo = holidaysAccountValidTo;
+    }
+
+    public boolean isDoRemainingVacationDaysExpire() {
+        return doRemainingVacationDaysExpire;
+    }
+
+    public void setDoRemainingVacationDaysExpire(boolean doRemainingVacationDaysExpire) {
+        this.doRemainingVacationDaysExpire = doRemainingVacationDaysExpire;
     }
 
     public String getExpiryDateToIsoValue() {

@@ -91,7 +91,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final LocalDate validFrom = of(2014, JANUARY, 1);
         final LocalDate validTo = of(2014, DECEMBER, 31);
         final LocalDate expiryDate = of(2014, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, null);
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2014, person)).thenReturn(Optional.of(account));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofHours(9));
@@ -198,7 +198,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final LocalDate validTo = of(2021, 12, 31);
         final LocalDate expiryDate = of(2021, APRIL, 1);
         // 20 vacation days (10 anual, 10 remaining, not exp. vacation days)
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, null);
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, null);
         when(accountService.getHolidaysAccount(2021, person)).thenReturn(Optional.of(account));
 
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofHours(9));
@@ -268,7 +268,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final LocalDate validFrom = of(2015, JANUARY, 1);
         final LocalDate validTo = of(2015, DECEMBER, 31);
         final LocalDate expiryDate = of(2015, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, null);
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ofMinutes(390));
@@ -302,7 +302,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final LocalDate validFrom = of(2015, 1, 1);
         final LocalDate validTo = of(2015, 12, 31);
         final LocalDate expiryDate = of(2015, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, null);
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2015, person)).thenReturn(Optional.of(account));
 
@@ -331,7 +331,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final LocalDate firstDayOfYear = of(2022, 1, 1);
         final LocalDate lastDayOfYear = of(2022, 12, 31);
         final LocalDate expiryDate = of(2022, APRIL, 1);
-        final Account account = new Account(person, firstDayOfYear, lastDayOfYear, expiryDate, TEN, TEN, TEN, null);
+        final Account account = new Account(person, firstDayOfYear, lastDayOfYear, true, expiryDate, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account));
 
@@ -378,7 +378,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final LocalDate firstDayOfYear = of(2022, 1, 1);
         final LocalDate lastDayOfYear = of(2022, 12, 31);
         final LocalDate expiryDate = of(2022, APRIL, 1);
-        final Account account = new Account(person, firstDayOfYear, lastDayOfYear, expiryDate, TEN, TEN, TEN, null);
+        final Account account = new Account(person, firstDayOfYear, lastDayOfYear, true, expiryDate, TEN, TEN, TEN, null);
 
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account));
 

@@ -121,7 +121,7 @@
       <div class="tw-mb-4 lg:tw-mb-12">
         <table class="list-table selectable-table tw-text-sm">
           <tbody>
-            <tr th:if="${showExpiredVacationDays}" class="active">
+            <tr th:if="${doRemainingVacationDaysExpire && showExpiredVacationDays}" class="active">
               <td></td>
               <td class="tw-py-4">
                 <span class="tw-block tw-mb-1 tw-text-lg" th:text="#{overview.vacations.expired}"></span>

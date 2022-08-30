@@ -93,7 +93,7 @@
             <th:block th:ref="account-remaining-box-body">
               <th:block
                 th:if="${account != null}"
-                th:with="remainingVacationDays=${isBeforeExpiryDate ? vacationDaysLeft.remainingVacationDays : vacationDaysLeft.remainingVacationDaysNotExpiring}"
+                th:with="remainingVacationDays=${!doRemainingVacationDaysExpire || isBeforeExpiryDate ? vacationDaysLeft.remainingVacationDays : vacationDaysLeft.remainingVacationDaysNotExpiring}"
               >
                 <span
                   class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
@@ -114,7 +114,7 @@
                   davon 0 Tage Resturlaub
                 </span>
                 <span
-                  th:if="${not isBeforeExpiryDate && expiredRemainingVacationDays > 0}"
+                  th:if="${doRemainingVacationDaysExpire && not isBeforeExpiryDate && expiredRemainingVacationDays > 0}"
                   th:text="#{person.account.vacation.left.remainingExpired(${expiredRemainingVacationDays})}"
                   class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
                 ></span>

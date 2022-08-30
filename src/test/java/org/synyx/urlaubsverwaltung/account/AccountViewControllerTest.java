@@ -28,6 +28,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -167,16 +168,15 @@ class AccountViewControllerTest {
     void updateAccountCallsEditForExistingAccount() throws Exception {
 
         when(accountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));
-
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
 
-        Account account = someAccount();
+        final Account account = someAccount();
         when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(account));
 
         perform(post("/web/person/" + SOME_PERSON_ID + "/account")
             .flashAttr("account", accountForm));
 
-        verify(accountInteractionService).editHolidaysAccount(eq(account), any(), any(), any(), any(), any(), any(), any(), any());
+        verify(accountInteractionService).editHolidaysAccount(eq(account), any(), any(), anyBoolean(), any(), any(), any(), any(), any(), any());
     }
 
     @Test
@@ -193,7 +193,7 @@ class AccountViewControllerTest {
         perform(post("/web/person/" + SOME_PERSON_ID + "/account")
             .flashAttr("account", mockedAccountForm));
 
-        verify(accountInteractionService).updateOrCreateHolidaysAccount(eq(person), any(), any(), any(), any(), any(), any(), any(), any());
+        verify(accountInteractionService).updateOrCreateHolidaysAccount(eq(person), any(), any(), anyBoolean(), any(), any(), any(), any(), any(), any());
     }
 
     @Test

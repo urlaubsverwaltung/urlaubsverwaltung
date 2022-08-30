@@ -75,12 +75,12 @@ class ApplicationForLeaveStatisticsBuilder {
                 final LocalDate firstDayOfYear = from.with(firstDayOfYear());
                 final LocalDate lastDayOfYear = to.with(lastDayOfYear());
                 final VacationDaysLeft vacationDaysLeftYear = vacationDaysService.getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, empty());
-                statistics.setLeftVacationDaysForYear(vacationDaysLeftYear.getLeftVacationDays(today, account.getExpiryDate()));
-                statistics.setLeftRemainingVacationDaysForYear(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.getExpiryDate()));
+                statistics.setLeftVacationDaysForYear(vacationDaysLeftYear.getLeftVacationDays(today, account.isDoRemainingVacationDaysExpire(), account.getExpiryDate()));
+                statistics.setLeftRemainingVacationDaysForYear(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.isDoRemainingVacationDaysExpire(), account.getExpiryDate()));
 
                 final VacationDaysLeft vacationDaysLeftPeriod = vacationDaysService.getVacationDaysLeft(from, to, account, empty());
-                statistics.setLeftVacationDaysForPeriod(vacationDaysLeftPeriod.getLeftVacationDays(to, account.getExpiryDate()));
-                statistics.setLeftRemainingVacationDaysForPeriod(vacationDaysLeftPeriod.getRemainingVacationDaysLeft(to, account.getExpiryDate()));
+                statistics.setLeftVacationDaysForPeriod(vacationDaysLeftPeriod.getLeftVacationDays(to, account.isDoRemainingVacationDaysExpire(), account.getExpiryDate()));
+                statistics.setLeftRemainingVacationDaysForPeriod(vacationDaysLeftPeriod.getRemainingVacationDaysLeft(to, account.isDoRemainingVacationDaysExpire(), account.getExpiryDate()));
             });
 
         statistics.setLeftOvertimeForYear(overtimeService.getLeftOvertimeForPerson(person));

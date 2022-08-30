@@ -422,12 +422,14 @@ class ApplicationForLeaveDetailsViewController {
             model.addAttribute("vacationDaysLeft", vacationDaysLeft);
 
             final LocalDate now = LocalDate.now(clock);
-            final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, acc.getExpiryDate());
+            final LocalDate expiryDate = acc.getExpiryDate();
+            final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, expiryDate);
+            model.addAttribute("doRemainingVacationDaysExpire", acc.isDoRemainingVacationDaysExpire());
             model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
-            model.addAttribute("expiryDate", acc.getExpiryDate());
+            model.addAttribute("expiryDate", expiryDate);
 
             model.addAttribute("account", acc);
-            model.addAttribute("isBeforeExpiryDate", now.isBefore(acc.getExpiryDate()));
+            model.addAttribute("isBeforeExpiryDate", now.isBefore(expiryDate));
         }
 
         // Signed in person is allowed to manage
