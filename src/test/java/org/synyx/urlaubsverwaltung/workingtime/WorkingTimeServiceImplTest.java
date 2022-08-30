@@ -630,8 +630,9 @@ class WorkingTimeServiceImplTest {
             .thenReturn(List.of(workingTimeEntity, workingTimeEntity2));
 
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
-        assertThat(actual).hasSize(2);
-        assertThat(actual).containsKeys(person, person2);
+        assertThat(actual)
+            .hasSize(2)
+            .containsKeys(person, person2);
 
         final WorkingTimeCalendar personWorkingTimeCalendar = actual.get(person);
         for (LocalDate date : dateRange) {
@@ -714,8 +715,9 @@ class WorkingTimeServiceImplTest {
         when(publicHolidaysService.isPublicHoliday(LocalDate.of(2022, AUGUST, 10), GERMANY_BERLIN)).thenReturn(true);
 
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
-        assertThat(actual).hasSize(2);
-        assertThat(actual).containsKeys(person, person2);
+        assertThat(actual)
+            .hasSize(2)
+            .containsKeys(person, person2);
 
         assertThat(actual.get(person).workingTime(LocalDate.of(2022, AUGUST, 5))).hasValue(BigDecimal.ZERO);
         assertThat(actual.get(person).workingTime(LocalDate.of(2022, AUGUST, 10))).hasValue(BigDecimal.ONE);
@@ -759,8 +761,9 @@ class WorkingTimeServiceImplTest {
             .thenReturn(List.of(workingTimeEntity, outOfDateRange));
 
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
-        assertThat(actual).hasSize(1);
-        assertThat(actual).containsKey(person);
+        assertThat(actual)
+            .hasSize(1)
+            .containsKey(person);
 
         final WorkingTimeCalendar workingTimeCalendar = actual.get(person);
         for (LocalDate date : dateRange) {
@@ -790,8 +793,9 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of());
 
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
-        assertThat(actual).hasSize(1);
-        assertThat(actual).containsKey(person);
+        assertThat(actual)
+            .hasSize(1)
+            .containsKey(person);
 
         final WorkingTimeCalendar workingTimeCalendar = actual.get(person);
         for (LocalDate date : dateRange) {

@@ -130,8 +130,9 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
 
         final Map<Person, ApplicationForLeaveStatistics> actual = sut.build(List.of(person), from, to, List.of(type));
-        assertThat(actual).hasSize(1);
-        assertThat(actual).containsKey(person);
+        assertThat(actual)
+            .hasSize(1)
+            .containsKey(person);
 
         final ApplicationForLeaveStatistics statistics = actual.get(person);
         assertThat(statistics.getPerson()).isEqualTo(person);
@@ -198,8 +199,9 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
 
         final Map<Person, ApplicationForLeaveStatistics> actual = sut.build(List.of(person), from, to, List.of(type));
-        assertThat(actual).hasSize(1);
-        assertThat(actual).containsKey(person);
+        assertThat(actual)
+            .hasSize(1)
+            .containsKey(person);
 
         final ApplicationForLeaveStatistics statistics = actual.get(person);
         assertThat(statistics.getPerson()).isEqualTo(person);
@@ -264,8 +266,9 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
 
         final Map<Person, ApplicationForLeaveStatistics> actual = sut.build(List.of(person), from, to, List.of(type));
-        assertThat(actual).hasSize(1);
-        assertThat(actual).containsKey(person);
+        assertThat(actual)
+            .hasSize(1)
+            .containsKey(person);
 
         final ApplicationForLeaveStatistics statistics = actual.get(person);
         assertThat(statistics.getPerson()).isEqualTo(person);
@@ -386,8 +389,9 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
 
         final Map<Person, ApplicationForLeaveStatistics> actual = sut.build(List.of(person), from, to, List.of(type));
-        assertThat(actual).hasSize(1);
-        assertThat(actual).containsKey(person);
+        assertThat(actual)
+            .hasSize(1)
+            .containsKey(person);
 
         final ApplicationForLeaveStatistics statistics = actual.get(person);
         assertThat(statistics.getPerson()).isEqualTo(person);
@@ -437,8 +441,9 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
 
         final Map<Person, ApplicationForLeaveStatistics> actual = sut.build(persons, from, to, List.of(type));
-        assertThat(actual).hasSize(1);
-        assertThat(actual).containsKey(person);
+        assertThat(actual)
+            .hasSize(1)
+            .containsKey(person);
 
         final ApplicationForLeaveStatistics statistics = actual.get(person);
         assertThat(statistics.getPerson()).isEqualTo(person);

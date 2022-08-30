@@ -474,9 +474,10 @@ class OvertimeServiceImplTest {
         final List<Application> applications = List.of();
 
         final Map<Person, LeftOvertime> actual = sut.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
-        assertThat(actual).hasSize(2);
-        assertThat(actual).containsKey(person);
-        assertThat(actual).containsKey(person2);
+        assertThat(actual)
+            .hasSize(2)
+            .containsKey(person)
+            .containsKey(person2);
 
         final LeftOvertime leftOvertime = actual.get(person);
         assertThat(leftOvertime.getLeftOvertimeOverall()).isEqualTo(Duration.ofHours(2));
@@ -525,9 +526,10 @@ class OvertimeServiceImplTest {
         final List<Application> applications = List.of(personOvertimeReduction);
 
         final Map<Person, LeftOvertime> actual = sut.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
-        assertThat(actual).hasSize(2);
-        assertThat(actual).containsKey(person);
-        assertThat(actual).containsKey(person2);
+        assertThat(actual)
+            .hasSize(2)
+            .containsKey(person)
+            .containsKey(person2);
 
         final LeftOvertime leftOvertime = actual.get(person);
         assertThat(leftOvertime.getLeftOvertimeOverall()).isEqualTo(Duration.ofMinutes(30));
@@ -554,8 +556,9 @@ class OvertimeServiceImplTest {
         final List<Application> applications = List.of();
 
         final Map<Person, LeftOvertime> actual = sut.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
-        assertThat(actual).hasSize(1);
-        assertThat(actual).containsKey(personWithoutOvertime);
+        assertThat(actual)
+            .hasSize(1)
+            .containsKey(personWithoutOvertime);
 
         final LeftOvertime leftOvertime = actual.get(personWithoutOvertime);
         assertThat(leftOvertime).isNotNull();
