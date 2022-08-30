@@ -50,6 +50,7 @@
               th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
               class="icon-link tw-px-1"
               th:data-title="#{action.download}"
+              download
             >
               <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
               <span class="tw-sr-only" th:text="#{action.download}"></span>
