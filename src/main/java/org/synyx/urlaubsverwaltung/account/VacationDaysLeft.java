@@ -41,12 +41,12 @@ public final class VacationDaysLeft {
         this.vacationDaysUsedNextYear = vacationDaysUsedNextYear;
     }
 
-    public BigDecimal getLeftVacationDays(LocalDate today, LocalDate expiryDate) {
-        return vacationDays.add(getRemainingVacationDaysLeft(today, expiryDate));
+    public BigDecimal getLeftVacationDays(LocalDate today, boolean doRemainingVacationDaysExpire, LocalDate expiryDate) {
+        return vacationDays.add(getRemainingVacationDaysLeft(today, doRemainingVacationDaysExpire, expiryDate));
     }
 
-    public BigDecimal getRemainingVacationDaysLeft(LocalDate today, LocalDate expiryDate) {
-        if (today.isBefore(expiryDate)) {
+    public BigDecimal getRemainingVacationDaysLeft(LocalDate today, boolean doRemainingVacationDaysExpire, LocalDate expiryDate) {
+        if (!doRemainingVacationDaysExpire || today.isBefore(expiryDate)) {
             return remainingVacationDays;
         } else {
             // it's after expiry day - only the left not expiring remaining vacation days must be used

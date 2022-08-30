@@ -183,7 +183,7 @@ class CalculationServiceTest {
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2012, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
 
         when(vacationDaysService.getVacationDaysLeft(any(), any())).thenReturn(
@@ -298,13 +298,13 @@ class CalculationServiceTest {
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2012, APRIL, 1);
-        final Optional<Account> account = Optional.of(new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment"));
+        final Optional<Account> account = Optional.of(new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment"));
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(account);
 
         final LocalDate validFromNextYear = LocalDate.of(2013, JANUARY, 1);
         final LocalDate validToNextYear = LocalDate.of(2013, DECEMBER, 31);
         final LocalDate expiryDateNextYear = LocalDate.of(2013, APRIL, 1);
-        final Optional<Account> accountNextYear = Optional.of(new Account(person, validFromNextYear, validToNextYear, expiryDateNextYear, TEN, TEN, TEN, "comment"));
+        final Optional<Account> accountNextYear = Optional.of(new Account(person, validFromNextYear, validToNextYear, true, expiryDateNextYear, TEN, TEN, TEN, "comment"));
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(accountNextYear);
 
         when(vacationDaysService.getUsedRemainingVacationDays(accountNextYear)).thenReturn(ZERO);
@@ -351,7 +351,7 @@ class CalculationServiceTest {
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2012, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
 
         final Optional<Account> account2013 = Optional.empty();
@@ -392,7 +392,7 @@ class CalculationServiceTest {
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2012, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
 
         final Optional<Account> account2013 = Optional.empty();
@@ -433,7 +433,7 @@ class CalculationServiceTest {
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2012, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
 
         final Optional<Account> account2013 = Optional.empty();
@@ -472,13 +472,13 @@ class CalculationServiceTest {
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2012, APRIL, 1);
-        final Optional<Account> account2012 = Optional.of(new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment"));
+        final Optional<Account> account2012 = Optional.of(new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment"));
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
 
         final LocalDate validFrom13 = LocalDate.of(2013, JANUARY, 1);
         final LocalDate validTo13 = LocalDate.of(2013, DECEMBER, 31);
         final LocalDate expiryDate13 = LocalDate.of(2013, APRIL, 1);
-        final Optional<Account> account2013 = Optional.of(new Account(person, validFrom13, validTo13, expiryDate13, TEN, TEN, TEN, "comment"));
+        final Optional<Account> account2013 = Optional.of(new Account(person, validFrom13, validTo13, true, expiryDate13, TEN, TEN, TEN, "comment"));
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
 
         // vacation days would be left after this application for leave
@@ -518,7 +518,7 @@ class CalculationServiceTest {
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2012, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account));
 
         final Optional<Account> account2013 = Optional.empty();
@@ -576,13 +576,13 @@ class CalculationServiceTest {
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2012, APRIL, 1);
-        final Optional<Account> account2012 = Optional.of(new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment"));
+        final Optional<Account> account2012 = Optional.of(new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment"));
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
 
         final LocalDate validFrom13 = LocalDate.of(2013, JANUARY, 1);
         final LocalDate validTo13 = LocalDate.of(2013, DECEMBER, 31);
         final LocalDate expiryDate13 = LocalDate.of(2013, APRIL, 1);
-        final Optional<Account> account2013 = Optional.of(new Account(person, validFrom13, validTo13, expiryDate13, TEN, TEN, TEN, "comment"));
+        final Optional<Account> account2013 = Optional.of(new Account(person, validFrom13, validTo13, true, expiryDate13, TEN, TEN, TEN, "comment"));
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
 
         // vacation days would be left after this application for leave
@@ -621,7 +621,7 @@ class CalculationServiceTest {
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2012, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
 
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.empty());
         when(accountService.getHolidaysAccount(2011, person)).thenReturn(Optional.of(account));
@@ -682,13 +682,13 @@ class CalculationServiceTest {
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2012, APRIL, 1);
-        final Optional<Account> account2012 = Optional.of(new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment"));
+        final Optional<Account> account2012 = Optional.of(new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment"));
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
 
         final LocalDate validFrom13 = LocalDate.of(2013, JANUARY, 1);
         final LocalDate validTo13 = LocalDate.of(2013, DECEMBER, 31);
         final LocalDate expireDate13 = LocalDate.of(2013, APRIL, 1);
-        final Optional<Account> account2013 = Optional.of(new Account(person, validFrom13, validTo13, expireDate13, TEN, TEN, TEN, "comment"));
+        final Optional<Account> account2013 = Optional.of(new Account(person, validFrom13, validTo13, true, expireDate13, TEN, TEN, TEN, "comment"));
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
 
         // vacation days would be left after this application for leave
@@ -729,7 +729,7 @@ class CalculationServiceTest {
         final LocalDate validFrom12 = Year.of(2012).atDay(1);
         final LocalDate lastDayOfYear12 = getLastDayOfYear(2012);
         final LocalDate expireDate12 = LocalDate.of(2012, APRIL, 1);
-        final Optional<Account> account2012 = Optional.of(new Account(person, validFrom12, lastDayOfYear12, expireDate12, TEN, ZERO, ZERO, ""));
+        final Optional<Account> account2012 = Optional.of(new Account(person, validFrom12, lastDayOfYear12, true, expireDate12, TEN, ZERO, ZERO, ""));
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
 
         // here we set up 2013 to have 10 days remaining vacation available from 2012,
@@ -737,7 +737,7 @@ class CalculationServiceTest {
         final LocalDate validFrom13 = Year.of(2013).atDay(1);
         final LocalDate lastDayOfYear13 = getLastDayOfYear(2013);
         final LocalDate expireDate13 = LocalDate.of(2013, APRIL, 1);
-        final Optional<Account> account2013 = Optional.of(new Account(person, validFrom13, lastDayOfYear13, expireDate13, TEN, TEN, TEN, ""));
+        final Optional<Account> account2013 = Optional.of(new Account(person, validFrom13, lastDayOfYear13, true, expireDate13, TEN, TEN, TEN, ""));
         account2013.get().setActualVacationDays(account2013.get().getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);
 
@@ -778,14 +778,14 @@ class CalculationServiceTest {
         final LocalDate validFrom2022 = Year.of(2022).atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
-        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, expireDate2022, TEN, TEN, ZERO, "");
+        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, TEN, ZERO, "");
         account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final LocalDate validFrom2023 = Year.of(2023).atDay(1);
         final LocalDate lastDayOfYear2023 = getLastDayOfYear(2023);
         final LocalDate expireDate2023 = LocalDate.of(2023, APRIL, 1);
-        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, expireDate2023, TEN, TEN, ZERO, "");
+        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, true, expireDate2023, TEN, TEN, ZERO, "");
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
@@ -826,14 +826,14 @@ class CalculationServiceTest {
         final LocalDate validFrom2022 = Year.of(2022).atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
-        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, expireDate2022, TEN, TEN, ZERO, "");
+        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, TEN, ZERO, "");
         account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final LocalDate validFrom2023 = Year.of(2023).atDay(1);
         final LocalDate lastDayOfYear2023 = getLastDayOfYear(2023);
         final LocalDate expireDate2023 = LocalDate.of(2023, APRIL, 1);
-        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, expireDate2023, TEN, TEN, ZERO, "");
+        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, true, expireDate2023, TEN, TEN, ZERO, "");
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
@@ -873,14 +873,14 @@ class CalculationServiceTest {
         final LocalDate validFrom2022 = Year.of(2022).atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
-        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, expireDate2022, TEN, TEN, ZERO, "");
+        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, TEN, ZERO, "");
         account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final LocalDate validFrom2023 = Year.of(2023).atDay(1);
         final LocalDate lastDayOfYear2023 = getLastDayOfYear(2023);
         final LocalDate expireDate2023 = LocalDate.of(2023, APRIL, 1);
-        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, expireDate2023, TEN, TEN, ZERO, "");
+        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, true, expireDate2023, TEN, TEN, ZERO, "");
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
@@ -920,14 +920,14 @@ class CalculationServiceTest {
         final LocalDate validFrom2022 = Year.of(2022).atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
-        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, expireDate2022, TEN, ONE, ZERO, "");
+        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, ONE, ZERO, "");
         account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final LocalDate validFrom2023 = Year.of(2023).atDay(1);
         final LocalDate lastDayOfYear2023 = getLastDayOfYear(2023);
         final LocalDate expireDate2023 = LocalDate.of(2023, APRIL, 1);
-        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, expireDate2023, TEN, TEN, ZERO, "");
+        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, true, expireDate2023, TEN, TEN, ZERO, "");
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
@@ -968,14 +968,14 @@ class CalculationServiceTest {
         final LocalDate validFrom2022 = Year.of(2022).atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
-        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, expireDate2022, TEN, TEN, ZERO, "");
+        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, TEN, ZERO, "");
         account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final LocalDate validFrom2023 = Year.of(2023).atDay(1);
         final LocalDate lastDayOfYear2023 = getLastDayOfYear(2023);
         final LocalDate expireDate2023 = LocalDate.of(2023, APRIL, 1);
-        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, expireDate2023, TEN, TEN, ZERO, "");
+        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, true, expireDate2023, TEN, TEN, ZERO, "");
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
@@ -1016,14 +1016,14 @@ class CalculationServiceTest {
         final LocalDate validFrom2022 = Year.of(2022).atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
-        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, expireDate2022, TEN, TEN, ZERO, "");
+        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, TEN, TEN, ZERO, "");
         account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final LocalDate validFrom2023 = Year.of(2023).atDay(1);
         final LocalDate lastDayOfYear2023 = getLastDayOfYear(2023);
         final LocalDate expireDate2023 = LocalDate.of(2023, APRIL, 1);
-        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, expireDate2023, TEN, TEN, ZERO, "");
+        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, true, expireDate2023, TEN, TEN, ZERO, "");
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
@@ -1064,14 +1064,14 @@ class CalculationServiceTest {
         final LocalDate validFrom2022 = Year.of(2022).atDay(1);
         final LocalDate lastDayOfYear2022 = getLastDayOfYear(2022);
         final LocalDate expireDate2022 = LocalDate.of(2022, APRIL, 1);
-        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, expireDate2022, ZERO, TEN, ZERO, "");
+        final Account account2022 = new Account(person, validFrom2022, lastDayOfYear2022, true, expireDate2022, ZERO, TEN, ZERO, "");
         account2022.setActualVacationDays(account2022.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final LocalDate validFrom2023 = Year.of(2023).atDay(1);
         final LocalDate lastDayOfYear2023 = getLastDayOfYear(2023);
         final LocalDate expireDate2023 = LocalDate.of(2023, APRIL, 1);
-        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, expireDate2023, TEN, TEN, ZERO, "");
+        final Account account2023 = new Account(person, validFrom2023, lastDayOfYear2023, true, expireDate2023, TEN, TEN, ZERO, "");
         account2023.setActualVacationDays(account2023.getAnnualVacationDays());
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
@@ -1103,19 +1103,19 @@ class CalculationServiceTest {
         final LocalDate validFrom = LocalDate.of(2012, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2012, DECEMBER, 31);
         final LocalDate expireDate = LocalDate.of(2012, APRIL, 1);
-        final Account account12 = new Account(person, validFrom, validTo, expireDate, TEN, TEN, TEN, "comment");
+        final Account account12 = new Account(person, validFrom, validTo, true, expireDate, TEN, TEN, TEN, "comment");
         final Optional<Account> account2012 = Optional.of(account12);
 
         final LocalDate validFrom13 = LocalDate.of(2013, JANUARY, 1);
         final LocalDate validTo13 = LocalDate.of(2013, DECEMBER, 31);
         final LocalDate expireDate13 = LocalDate.of(2013, APRIL, 1);
-        final Account account13 = new Account(person, validFrom13, validTo13, expireDate13, TEN, TEN, TEN, "comment");
+        final Account account13 = new Account(person, validFrom13, validTo13, true, expireDate13, TEN, TEN, TEN, "comment");
         final Optional<Account> account2013 = Optional.of(account13);
 
         final LocalDate validFrom14 = LocalDate.of(2013, JANUARY, 1);
         final LocalDate validTo14 = LocalDate.of(2013, DECEMBER, 31);
         final LocalDate expireDate14 = LocalDate.of(2014, APRIL, 1);
-        final Account account14 = new Account(person, validFrom14, validTo14, expireDate14, TEN, TEN, TEN, "comment");
+        final Account account14 = new Account(person, validFrom14, validTo14, true, expireDate14, TEN, TEN, TEN, "comment");
         final Optional<Account> account2014 = Optional.of(account14);
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(account2012);
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(account2013);

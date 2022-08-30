@@ -127,7 +127,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -163,7 +163,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -190,7 +190,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
@@ -220,7 +220,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
@@ -250,7 +250,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
@@ -282,7 +282,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
-        final Account account = new Account(signedInPerson, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(signedInPerson, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(anyInt(), eq(signedInPerson))).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -302,7 +302,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
         final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
         final LocalDate expiryDate = LocalDate.now(clock).withMonth(APRIL.getValue()).withDayOfMonth(1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), person)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -323,7 +323,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
         final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
         final LocalDate expiryDate = LocalDate.now(clock).withMonth(APRIL.getValue()).withDayOfMonth(1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), person)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -342,7 +342,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
 
         final LocalDate now = LocalDate.now(clock);
-        final Account account = new Account(signedInUser, now, now, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
+        final Account account = new Account(signedInUser, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInUser)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -400,7 +400,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
         final LocalDate validTo = LocalDate.now(clock).withMonth(DECEMBER.getValue()).withDayOfMonth(31);
         final LocalDate expiryDate = LocalDate.now(clock).withMonth(APRIL.getValue()).withDayOfMonth(1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(LocalDate.now(clock).getYear(), person)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -443,7 +443,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -482,7 +482,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expireDate = LocalDate.of(2014, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expireDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expireDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(account));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
         when(settingsService.getSettings()).thenReturn(new Settings());
@@ -615,7 +615,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final LocalDate now = LocalDate.now(clock);
-        final Account account = new Account(signedInPerson, now, now, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
+        final Account account = new Account(signedInPerson, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
@@ -683,7 +683,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final LocalDate now = LocalDate.now(clock);
-        final Account account = new Account(signedInPerson, now, now,  LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
+        final Account account = new Account(signedInPerson, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -796,7 +796,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final LocalDate now = LocalDate.now(clock);
-        final Account account = new Account(signedInPerson, now, now,  LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
+        final Account account = new Account(signedInPerson, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -839,7 +839,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getActivePersons()).thenReturn(List.of(signedInPerson, bruce, clark, joker));
 
         final LocalDate now = LocalDate.now(clock);
-        final Account account = new Account(signedInPerson, now, now,  LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
+        final Account account = new Account(signedInPerson, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -871,7 +871,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expireDate = LocalDate.of(2014, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo,  expireDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expireDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
         final Settings settings = new Settings();
@@ -925,7 +925,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expireDate = LocalDate.of(2014, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expireDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expireDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
         final Settings settings = new Settings();
@@ -960,7 +960,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expireDate = LocalDate.of(2014, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expireDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, true, expireDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
         final Settings settings = new Settings();
@@ -1043,7 +1043,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final LocalDate now = LocalDate.now(clock);
-        final Account account = new Account(signedInPerson, now, now, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
+        final Account account = new Account(signedInPerson, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -1080,7 +1080,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final LocalDate now = LocalDate.now(clock);
-        final Account account = new Account(signedInPerson, now, now, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
+        final Account account = new Account(signedInPerson, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -1124,7 +1124,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getActivePersons()).thenReturn(List.of(signedInPerson, bruce, clark, joker));
 
         final LocalDate now = LocalDate.now(clock);
-        final Account account = new Account(signedInPerson, now, now, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
+        final Account account = new Account(signedInPerson, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 

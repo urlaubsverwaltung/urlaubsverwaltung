@@ -100,10 +100,12 @@ class VacationDaysReminderServiceTest {
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         final Account account2022 = new Account();
+        account2022.setDoRemainingVacationDaysExpire(true);
         account2022.setExpiryDate(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account();
+        account2023.setDoRemainingVacationDaysExpire(true);
         account2023.setExpiryDate(LocalDate.of(2023, 4, 1));
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
@@ -130,10 +132,12 @@ class VacationDaysReminderServiceTest {
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         final Account account2022 = new Account();
-        account2022.setExpiryDate(LocalDate.of(2022,4,1));
+        account2022.setDoRemainingVacationDaysExpire(true);
+        account2022.setExpiryDate(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account();
+        account2023.setDoRemainingVacationDaysExpire(true);
         account2023.setExpiryDate(LocalDate.of(2023, 4, 1));
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
@@ -158,7 +162,7 @@ class VacationDaysReminderServiceTest {
             entry("recipientNiceName", "Marlene Muster"),
             entry("personId", 42),
             entry("remainingVacationDays", TEN),
-            entry("dayBeforeExpiryDate", LocalDate.of(2022,3,31))
+            entry("dayBeforeExpiryDate", LocalDate.of(2022, 3, 31))
         );
     }
 
@@ -210,10 +214,12 @@ class VacationDaysReminderServiceTest {
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         final Account account2022 = new Account();
+        account2022.setDoRemainingVacationDaysExpire(true);
         account2022.setExpiryDate(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account();
+        account2023.setDoRemainingVacationDaysExpire(true);
         account2023.setExpiryDate(LocalDate.of(2023, 4, 1));
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
@@ -232,6 +238,24 @@ class VacationDaysReminderServiceTest {
     }
 
     @Test
+    void ensureNoNotificationWhenExpireIsDisabled() {
+
+        final Clock clock = Clock.fixed(Instant.parse("2022-04-01T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
+
+        final Person person = person();
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        final Account account2022 = new Account();
+        account2022.setDoRemainingVacationDaysExpire(false);
+        when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
+
+        sut.notifyForExpiredRemainingVacationDays();
+
+        verifyNoInteractions(mailService);
+    }
+
+    @Test
     void ensureNotificationForExpiredRemainingVacationDays() {
 
         final Clock clock = Clock.fixed(Instant.parse("2022-04-01T06:00:00Z"), ZoneId.of("UTC"));
@@ -241,10 +265,12 @@ class VacationDaysReminderServiceTest {
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         final Account account2022 = new Account();
+        account2022.setDoRemainingVacationDaysExpire(true);
         account2022.setExpiryDate(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account();
+        account2023.setDoRemainingVacationDaysExpire(true);
         account2023.setExpiryDate(LocalDate.of(2023, 4, 1));
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
@@ -272,7 +298,7 @@ class VacationDaysReminderServiceTest {
             entry("expiredRemainingVacationDays", BigDecimal.valueOf(9L)),
             entry("totalLeftVacationDays", BigDecimal.valueOf(11L)),
             entry("remainingVacationDaysNotExpiring", ONE),
-            entry("expiryDate", LocalDate.of(2022,4,1))
+            entry("expiryDate", LocalDate.of(2022, 4, 1))
         );
     }
 

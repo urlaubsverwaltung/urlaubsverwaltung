@@ -446,7 +446,7 @@ class OverviewViewControllerTest {
         final LocalDate expiryDate = LocalDate.now(clock).withMonth(APRIL.getValue()).with(firstDayOfMonth());
         final LocalDate validFrom = LocalDate.now().minusDays(10);
         final LocalDate validTo = LocalDate.now().plusDays(10);
-        return new Account(somePerson(), validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        return new Account(somePerson(), validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
     }
 
     private VacationDaysLeft someVacationDaysLeft() {

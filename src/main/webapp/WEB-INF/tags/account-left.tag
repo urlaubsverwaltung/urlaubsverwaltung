@@ -6,6 +6,7 @@
 <%@attribute name="account" type="org.synyx.urlaubsverwaltung.account.Account" required="true" %>
 <%@attribute name="vacationDaysLeft" type="org.synyx.urlaubsverwaltung.account.VacationDaysLeft" required="true" %>
 <%@attribute name="expiredRemainingVacationDays" type="java.math.BigDecimal" required="true" %>
+<%@attribute name="doRemainingVacationDaysExpire" type="java.lang.Boolean" required="true" %>
 <%@attribute name="expiryDate" type="java.time.LocalDate" required="true" %>
 <%@attribute name="beforeExpiryDate" type="java.lang.Boolean" required="true" %>
 <%@attribute name="className" type="java.lang.String" required="false" %>
@@ -14,6 +15,7 @@
     account="${account}"
     vacationDaysLeft="${vacationDaysLeft}"
     expiredRemainingVacationDays="${expiredRemainingVacationDays}"
+    doRemainingVacationDaysExpire="${doRemainingVacationDaysExpire}"
     expiryDate="${expiryDate}"
     beforeExpiryDate="${beforeExpiryDate}"
     className="tw-p-5 ${className}"

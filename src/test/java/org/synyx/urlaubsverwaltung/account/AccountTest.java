@@ -27,12 +27,12 @@ class AccountTest {
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "Comment");
+        final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "Comment");
 
         final String accountToString = account.toString();
-        assertThat(accountToString).isEqualTo("Account{person=Person{id='10'}, validFrom=2014-01-01, validTo=2014-12-31, " +
-            "expiryDate=2014-04-01, annualVacationDays=10, actualVacationDays=null, " +
-            "remainingVacationDays=10, remainingVacationDaysNotExpiring=10}");
+        assertThat(accountToString).isEqualTo("Account{person=Person{id='10'}, validFrom=2014-01-01, " +
+            "validTo=2014-12-31, doRemainingVacationDaysExpire=true, expiryDate=2014-04-01, annualVacationDays=10, " +
+            "actualVacationDays=null, remainingVacationDays=10, remainingVacationDaysNotExpiring=10}");
     }
 
     @Test
