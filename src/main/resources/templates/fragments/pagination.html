@@ -15,7 +15,7 @@
           <a
             href="#"
             th:href="${pagination.hrefForPage(page.number)}"
-            class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
+            class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center print:no-link"
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
           >
@@ -27,7 +27,7 @@
           <a
             href="#"
             th:href="${pagination.hrefForPage(1)}"
-            class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+            class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors print:no-link"
             th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
             th:attr="aria-current=${isSelected ? 'page' : ''}"
             th:aria-label="#{pagination.page('1')}"
@@ -45,7 +45,7 @@
             <a
               href="#"
               th:href="${pagination.hrefForPage(pageNumber)}"
-              class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+              class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors print:no-link"
               th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
               th:text="${pageNumber}"
               th:attr="aria-current=${isSelected ? 'page' : ''}"
@@ -68,7 +68,7 @@
           <a
             href="#"
             th:href="${pagination.hrefForPage(page.totalPages)}"
-            class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
+            class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors print:no-link"
             th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
             th:text="${page.totalPages}"
             th:attr="aria-current=${isSelected ? 'page' : ''}"
@@ -83,7 +83,7 @@
           <a
             href="#"
             th:href="${pagination.hrefForPage(page.number + 2)}"
-            class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
+            class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center print:no-link"
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
           >
