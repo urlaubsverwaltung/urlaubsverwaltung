@@ -24,10 +24,7 @@ interface OvertimeRepository extends CrudRepository<Overtime, Integer> {
     Optional<Double> calculateTotalHoursForPerson(@Param("person") Person person);
 
     @Query("SELECT o.person as person, SUM(o.duration) as durationDouble FROM Overtime o WHERE o.person IN :persons GROUP BY o.person")
-    List<OvertimeDurationSum> calculateTotalHoursForPersons(@Param("persons") List<Person> persons);
-
-    @Query("SELECT o.person as person, SUM(o.duration) as durationDouble FROM Overtime o WHERE o.person IN :persons AND o.startDate >= :start AND o.endDate <= :end GROUP BY o.person")
-    List<OvertimeDurationSum> calculateTotalHoursForPersons(@Param("persons") List<Person> persons, LocalDate start, LocalDate end);
+    List<OvertimeDurationSum> calculateTotalHoursForPersons(@Param("persons") Collection<Person> persons);
 
     @Query("SELECT o.person as person, SUM(o.duration) as durationDouble FROM Overtime o WHERE o.person IN :persons AND o.startDate < :date GROUP BY o.person")
     List<OvertimeDurationSum> calculateTotalHoursForPersonsAndStartDateIsBefore(@Param("persons") Collection<Person> persons, @Param("date") LocalDate date);
@@ -35,6 +32,8 @@ interface OvertimeRepository extends CrudRepository<Overtime, Integer> {
     List<Overtime> findByPersonAndStartDateBetweenOrderByStartDateDesc(Person person, LocalDate start, LocalDate end);
 
     List<Overtime> findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Person person, LocalDate start, LocalDate end);
+
+    List<Overtime> findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Collection<Person> persons, LocalDate start, LocalDate end);
 
     List<Overtime> findByPersonAndStartDateIsBefore(Person person, LocalDate before);
 

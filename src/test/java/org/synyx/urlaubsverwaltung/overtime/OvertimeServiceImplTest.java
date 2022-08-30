@@ -463,13 +463,21 @@ class OvertimeServiceImplTest {
         final List<Person> persons = List.of(person, person2);
 
         final OvertimeDurationSum personOvertimeDurationSum = overtimeDurationSum(person, 2d);
-        final OvertimeDurationSum personOvertimeDurationSumDateRange = overtimeDurationSum(person, 1d);
+        final Overtime overtimeOne = new Overtime();
+        overtimeOne.setPerson(person);
+        overtimeOne.setStartDate(from);
+        overtimeOne.setEndDate(from.plusDays(1));
+        overtimeOne.setDuration(Duration.ofHours(1));
 
         final OvertimeDurationSum person2OvertimeDurationSum = overtimeDurationSum(person2, 20d);
-        final OvertimeDurationSum person2OvertimeDurationSumDateRange = overtimeDurationSum(person2, 10d);
+        final Overtime overtimeTwo = new Overtime();
+        overtimeTwo.setPerson(person2);
+        overtimeTwo.setStartDate(from.plusDays(4));
+        overtimeTwo.setEndDate(from.plusDays(4));
+        overtimeTwo.setDuration(Duration.ofHours(10));
 
         when(overtimeRepository.calculateTotalHoursForPersons(persons)).thenReturn(List.of(personOvertimeDurationSum, person2OvertimeDurationSum));
-        when(overtimeRepository.calculateTotalHoursForPersons(persons, from, to)).thenReturn(List.of(personOvertimeDurationSumDateRange, person2OvertimeDurationSumDateRange));
+        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to)).thenReturn(List.of(overtimeOne,overtimeTwo));
 
         final List<Application> applications = List.of();
 
@@ -502,13 +510,21 @@ class OvertimeServiceImplTest {
         final List<Person> persons = List.of(person, person2);
 
         final OvertimeDurationSum personOvertimeDurationSum = overtimeDurationSum(person, 2d);
-        final OvertimeDurationSum personOvertimeDurationSumDateRange = overtimeDurationSum(person, 1d);
+        final Overtime overtimeOne = new Overtime();
+        overtimeOne.setPerson(person);
+        overtimeOne.setStartDate(from);
+        overtimeOne.setEndDate(from.plusDays(1));
+        overtimeOne.setDuration(Duration.ofHours(1));
 
         final OvertimeDurationSum person2OvertimeDurationSum = overtimeDurationSum(person2, 20d);
-        final OvertimeDurationSum person2OvertimeDurationSumDateRange = overtimeDurationSum(person2, 10d);
+        final Overtime overtimeTwo = new Overtime();
+        overtimeTwo.setPerson(person2);
+        overtimeTwo.setStartDate(from.plusDays(4));
+        overtimeTwo.setEndDate(from.plusDays(4));
+        overtimeTwo.setDuration(Duration.ofHours(10));
 
         when(overtimeRepository.calculateTotalHoursForPersons(persons)).thenReturn(List.of(personOvertimeDurationSum, person2OvertimeDurationSum));
-        when(overtimeRepository.calculateTotalHoursForPersons(persons, from, to)).thenReturn(List.of(personOvertimeDurationSumDateRange, person2OvertimeDurationSumDateRange));
+        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to)).thenReturn(List.of(overtimeOne, overtimeTwo));
 
         final VacationTypeEntity overtimeVacationTypeEntity = new VacationTypeEntity();
         overtimeVacationTypeEntity.setId(1);
@@ -551,7 +567,7 @@ class OvertimeServiceImplTest {
         final List<Person> persons = List.of(personWithoutOvertime);
 
         when(overtimeRepository.calculateTotalHoursForPersons(persons)).thenReturn(List.of());
-        when(overtimeRepository.calculateTotalHoursForPersons(persons, from, to)).thenReturn(List.of());
+        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to)).thenReturn(List.of());
 
         final List<Application> applications = List.of();
 

@@ -191,4 +191,38 @@ class OvertimeRepositoryIT extends TestContainersBase {
         assertThat(actual.get(1).getPerson()).isEqualTo(person2);
         assertThat(actual.get(1).getDurationDouble()).isEqualTo(0.75);
     }
+
+    @Test
+    void ensureFindByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual() {
+
+        final Person person = personService.create(new Person("muster", "Muster", "Marlene", "muster@example.org"));
+        final Person person2 = personService.create(new Person("retsum", "Retsum", "Enelram", "retsum@example.org"));
+        final Person person3 = personService.create(new Person("john", "doe", "john", "john@example.org"));
+
+        final List<Person> persons = List.of(person, person2);
+        final LocalDate start = LocalDate.of(2022, 2, 1);
+        final LocalDate end = LocalDate.of(2022, 3, 1);
+
+        // should be found
+        sut.save(new Overtime(person, start.minusDays(1), start.plusDays(1), Duration.ofHours(1)));
+        sut.save(new Overtime(person, end, end, Duration.ofHours(2)));
+        sut.save(new Overtime(person2, start, start, Duration.ofHours(4)));
+        sut.save(new Overtime(person2, end.minusDays(1), end.plusDays(1), Duration.ofHours(3)));
+
+        // should not be found
+        sut.save(new Overtime(person, start.minusDays(5), start.minusDays(4), Duration.ofHours(10)));
+        sut.save(new Overtime(person3, start, start, Duration.ofHours(10)));
+
+        final List<Overtime> actual = sut.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, start, end);
+
+        assertThat(actual).hasSize(4);
+        assertThat(actual.get(0).getPerson()).isEqualTo(person);
+        assertThat(actual.get(0).getDuration()).isEqualTo(Duration.ofHours(1));
+        assertThat(actual.get(1).getPerson()).isEqualTo(person);
+        assertThat(actual.get(1).getDuration()).isEqualTo(Duration.ofHours(2));
+        assertThat(actual.get(2).getPerson()).isEqualTo(person2);
+        assertThat(actual.get(2).getDuration()).isEqualTo(Duration.ofHours(4));
+        assertThat(actual.get(3).getPerson()).isEqualTo(person2);
+        assertThat(actual.get(3).getDuration()).isEqualTo(Duration.ofHours(3));
+    }
 }
