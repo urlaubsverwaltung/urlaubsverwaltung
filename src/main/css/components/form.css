@@ -34,7 +34,7 @@ legend {
 .details-dropdown_summary {
   @apply tw-px-3;
   @apply tw-py-2;
-  @apply tw-rounded;
+  @apply tw-rounded-md;
   @apply tw-cursor-pointer;
 }
 
