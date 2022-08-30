@@ -59,7 +59,7 @@
         </div>
 
         <div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4">
-          <div class="tw-flex tw-gap-2">
+          <div class="tw-flex tw-gap-2 print:tw-hidden">
             <form method="get" action="#" th:action="@{/web/application/statistics}">
               <div id="statistics-filter-inputs">
                 <input type="hidden" name="sort" th:value="${sortQuery}" />
