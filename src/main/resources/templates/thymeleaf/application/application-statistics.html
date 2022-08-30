@@ -60,7 +60,9 @@
         </div>
 
         <div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4">
-          <div class="tw-flex tw-gap-2 print:tw-hidden">
+          <div
+            class="tw-flex tw-flex-col md:tw-grid md:tw-grid-rows-2 lg:tw-flex lg:tw-flex-row tw-gap-4 md:tw-gap-2 print:tw-hidden"
+          >
             <form method="get" action="#" th:action="@{/web/application/statistics}">
               <div id="statistics-filter-inputs">
                 <input type="hidden" name="sort" th:value="${sortQuery}" />
@@ -127,25 +129,27 @@
                 <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
                 <input type="hidden" name="sort" th:value="${sortQuery}" />
               </div>
-              <div class="tw-flex tw-flex-col md:tw-flex-row">
-                <label for="search" th:text="#{action.search}" class="tw-sr-only"></label>
+              <div class="tw-flex-1 tw-flex tw-flex-col md:tw-flex-row">
+                <label for="search" class="md:tw-sr-only tw-m-0">
+                  <th:block th:text="#{action.search}">Suchen</th:block>:
+                </label>
                 <span
-                  class="tw-flex-1 tw-relative tw-border tw-border-neutral-300 dark:tw-border-neutral-600 tw-rounded-md"
+                  class="tw-flex-1 tw-flex tw-border tw-border-neutral-300 dark:tw-border-neutral-600 tw-rounded-md focus-within:tw-ring-2 focus-within:tw-ring-blue-300"
                 >
                   <input
                     type="text"
                     id="search"
                     name="query"
                     th:value="${query}"
-                    class="tw-form-control tw-h-full tw-pr-8 tw-border-none tw-w-full md:tw-w-auto"
-                    th:placeholder="#{action.search}"
+                    class="form-control md:tw-h-full tw-border-none tw-text-ellipsis focus:tw-ring-0 tw-rounded-r-none"
+                    th:placeholder="#{action.search.placeholder.firstname-lastname}"
                     data-auto-submit="search-submit"
                     data-auto-submit-delay="100"
                   />
                   <button
                     type="submit"
                     id="search-submit"
-                    class="tw-absolute tw-bottom-0 tw-right-0 dark:tw-bg-zinc-800 tw-py-3 tw-px-2 tw-rounded-r-md tw-h-full tw-flex tw-items-center"
+                    class="dark:tw-bg-zinc-800 tw-px-2 tw-rounded-r-md tw-h-full tw-flex tw-items-center"
                   >
                     <svg th:replace="icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')"></svg>
                     <span class="tw-sr-only" th:text="#{action.search}">Suche</span>
