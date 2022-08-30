@@ -98,7 +98,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), eq(filterPeriod), eq(defaultPersonSearchQuery())))
+        when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery()))
             .thenReturn(new PageImpl<>(List.of()));
 
         final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
@@ -147,7 +147,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         statistic.addWaitingVacationDays(vacationType, BigDecimal.valueOf(3));
         statistic.addAllowedVacationDays(vacationType, BigDecimal.valueOf(4));
 
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), eq(filterPeriod), eq(defaultPersonSearchQuery())))
+        when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery()))
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")

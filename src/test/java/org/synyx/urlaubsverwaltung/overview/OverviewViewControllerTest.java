@@ -153,7 +153,7 @@ class OverviewViewControllerTest {
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
 
-        verify(accountService).getHolidaysAccount(eq(currentYear), eq(person));
+        verify(accountService).getHolidaysAccount(currentYear, person);
     }
 
     @Test
@@ -171,7 +171,7 @@ class OverviewViewControllerTest {
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview")
             .param("year", Integer.toString(expectedYear)));
 
-        verify(accountService).getHolidaysAccount(eq(expectedYear), eq(person));
+        verify(accountService).getHolidaysAccount(expectedYear, person);
     }
 
     @Test
