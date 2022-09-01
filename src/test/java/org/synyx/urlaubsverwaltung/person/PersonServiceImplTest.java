@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
@@ -14,8 +15,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.util.List;
@@ -30,8 +31,8 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
@@ -58,9 +59,10 @@ class PersonServiceImplTest {
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
-    private final ArgumentCaptor<PersonDisabledEvent> personDisabledEventArgumentCaptor = ArgumentCaptor.forClass(PersonDisabledEvent.class);
-    private final ArgumentCaptor<PersonUpdatedEvent> personUpdatedEventArgumentCaptor = ArgumentCaptor.forClass(PersonUpdatedEvent.class);
-    private final ArgumentCaptor<PersonCreatedEvent> personCreatedEventArgumentCaptor = ArgumentCaptor.forClass(PersonCreatedEvent.class);
+    @Captor
+    private ArgumentCaptor<PersonDisabledEvent> personDisabledEventArgumentCaptor;
+    @Captor
+    private ArgumentCaptor<PersonCreatedEvent> personCreatedEventArgumentCaptor;
 
     @BeforeEach
     void setUp() {
@@ -363,7 +365,7 @@ class PersonServiceImplTest {
     @Test
     void ensureCanAppointPersonAsOfficeUser() {
 
-        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE,INACTIVE)).thenReturn(emptyList());
+        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE, INACTIVE)).thenReturn(emptyList());
         when(personRepository.save(any())).then(returnsFirstArg());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -381,7 +383,7 @@ class PersonServiceImplTest {
 
         final Person officePerson = new Person();
         officePerson.setPermissions(List.of(OFFICE));
-        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE,INACTIVE)).thenReturn(List.of(officePerson));
+        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE, INACTIVE)).thenReturn(List.of(officePerson));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER));
@@ -399,34 +401,30 @@ class PersonServiceImplTest {
         activePerson.setId(1);
         when(personRepository.save(activePerson)).thenReturn(activePerson);
 
-        final Person updatedPerson = sut.update(activePerson);
-        verify(applicationEventPublisher).publishEvent(personUpdatedEventArgumentCaptor.capture());
-        assertThat(personUpdatedEventArgumentCaptor.getValue().getPersonId())
-            .isEqualTo(updatedPerson.getId());
+        sut.update(activePerson);
+        verify(applicationEventPublisher).publishEvent(any(PersonUpdatedEvent.class));
     }
 
     @Test
-    void ensurePersonDisabledEventIsFiredAfterPersonSave() {
+    void ensurePersonDisabledEventIsFiredAfterPersonUpdate() {
 
         final Person inactivePerson = createPerson("inactive person", INACTIVE);
         inactivePerson.setId(1);
         when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
 
-        final Person savedInactivePerson = sut.update(inactivePerson);
-        verify(applicationEventPublisher).publishEvent(personDisabledEventArgumentCaptor.capture());
-        assertThat(personDisabledEventArgumentCaptor.getValue().getPersonId())
-            .isEqualTo(savedInactivePerson.getId());
+        sut.update(inactivePerson);
+        verify(applicationEventPublisher).publishEvent(any(PersonDisabledEvent.class));
     }
 
     @Test
-    void ensurePersonDisabledEventIsNotFiredAfterPersonSave() {
+    void ensurePersonDisabledEventIsNotFiredAfterPersonUpdateAndRoleNotInactive() {
 
-        final Person activePerson = createPerson("active person", USER);
-        activePerson.setId(1);
-        when(personRepository.save(activePerson)).thenReturn(activePerson);
+        final Person inactivePerson = createPerson("inactive person", USER);
+        inactivePerson.setId(1);
+        when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
 
-        sut.update(activePerson);
-        verifyNoInteractions(applicationEventPublisher);
+        sut.update(inactivePerson);
+        verify(applicationEventPublisher, never()).publishEvent(any(PersonDisabledEvent.class));
     }
 
     @Test

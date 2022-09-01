@@ -100,7 +100,7 @@ class PersonServiceImpl implements PersonService {
 
         final boolean isInactive = updatedPerson.getPermissions().contains(INACTIVE);
         if (isInactive) {
-            applicationEventPublisher.publishEvent(new PersonDisabledEvent(this, updatedPerson.getId()));
+            applicationEventPublisher.publishEvent(toPersonDisabledEvent(updatedPerson));
         }
 
         applicationEventPublisher.publishEvent(toPersonUpdateEvent(updatedPerson));
@@ -233,5 +233,9 @@ class PersonServiceImpl implements PersonService {
 
     private PersonUpdatedEvent toPersonUpdateEvent(Person updatedPerson) {
         return new PersonUpdatedEvent(this, updatedPerson.getId(), updatedPerson.getNiceName(), updatedPerson.getUsername(), updatedPerson.getEmail());
+    }
+
+    private PersonDisabledEvent toPersonDisabledEvent(Person updatedPerson) {
+        return new PersonDisabledEvent(this, updatedPerson.getId());
     }
 }
