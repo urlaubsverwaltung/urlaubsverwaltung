@@ -56,7 +56,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(OVERTIME_NOTIFICATION_OFFICE));
-        personService.save(office);
+        personService.create(office);
 
         sut.sendOvertimeNotification(overtime, overtimeComment);
 

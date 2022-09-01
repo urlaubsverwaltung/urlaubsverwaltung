@@ -61,7 +61,7 @@ class PersonServiceImpl implements PersonService {
     @Override
     public Person create(Person person) {
 
-        final Person createdPerson = save(person);
+        final Person createdPerson = personRepository.save(person);
         LOG.info("Created person: {}", person);
 
         accountInteractionService.createDefaultAccount(person);
@@ -86,9 +86,7 @@ class PersonServiceImpl implements PersonService {
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
-        LOG.info("Update person: {}", person);
-
-        return save(person);
+        return update(person);
     }
 
     @Override
@@ -100,20 +98,14 @@ class PersonServiceImpl implements PersonService {
 
         LOG.info("Updated person: {}", person);
 
-        return save(person);
-    }
+        final Person updatedPerson = personRepository.save(person);
 
-    @Override
-    public Person save(Person person) {
-
-        final Person persistedPerson = personRepository.save(person);
-
-        final boolean isInactive = persistedPerson.getPermissions().contains(INACTIVE);
+        final boolean isInactive = updatedPerson.getPermissions().contains(INACTIVE);
         if (isInactive) {
-            applicationEventPublisher.publishEvent(new PersonDisabledEvent(this, persistedPerson.getId()));
+            applicationEventPublisher.publishEvent(new PersonDisabledEvent(this, updatedPerson.getId()));
         }
 
-        return persistedPerson;
+        return updatedPerson;
     }
 
     @Override
@@ -205,7 +197,7 @@ class PersonServiceImpl implements PersonService {
         permissions.add(OFFICE);
         person.setPermissions(permissions);
 
-        final Person savedPerson = save(person);
+        final Person savedPerson = personRepository.save(person);
 
         LOG.info("Add 'OFFICE' role to person: {}", person);
 

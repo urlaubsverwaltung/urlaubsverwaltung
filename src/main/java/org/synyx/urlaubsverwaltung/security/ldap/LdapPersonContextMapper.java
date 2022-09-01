@@ -62,7 +62,7 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
             existentPerson.setLastName(ldapLastName);
             existentPerson.setEmail(ldapEmail);
 
-            person = personService.save(existentPerson);
+            person = personService.update(existentPerson);
             LOG.info("Updating person with id '{}'", person.getId());
         } else {
             final Person newPerson = personService.create(

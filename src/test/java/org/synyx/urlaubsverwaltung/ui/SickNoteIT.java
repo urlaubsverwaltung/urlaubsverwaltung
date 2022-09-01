@@ -255,10 +255,10 @@ class SickNoteIT {
         final Person person = new Person("pennyworth", "Pennyworth", "Alfred", "alfred.pennyworth@example.org");
         person.setPassword("2f09520efd37e0add52eb78b19195ff9a07c07acbcfc9b61349be76da7a1bccfc60c9b80218d31ec");
         person.setPermissions(List.of(USER, OFFICE));
-        final Person savedPerson = personService.save(person);
+        final Person savedPerson = personService.create(person);
 
         final int currentYear = LocalDate.now().getYear();
-        final LocalDate validFrom = LocalDate.of(currentYear - 1, 1, 1);
+        final LocalDate validFrom = LocalDate.of(currentYear, 1, 1);
         final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).stream().map(DayOfWeek::getValue).collect(toList());
         workingTimeWriteService.touch(workingDays, validFrom, savedPerson);
 

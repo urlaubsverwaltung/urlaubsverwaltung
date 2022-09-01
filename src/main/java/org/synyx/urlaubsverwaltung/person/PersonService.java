@@ -58,14 +58,6 @@ public interface PersonService {
     Person update(Person person);
 
     /**
-     * saves a {@link Person}.
-     *
-     * @param person {@link Person}
-     * @return saved {@link Person}
-     */
-    Person save(Person person);
-
-    /**
      * finds a {@link Person} in the database by its primary key.
      *
      * @param id Integer the id of the person

@@ -138,6 +138,8 @@ class PersonServiceImplTest {
     void ensureUpdatedPersonHasCorrectAttributes() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(42);
+
         when(personRepository.findById(anyInt())).thenReturn(Optional.of(person));
         when(personRepository.save(person)).thenReturn(person);
 
@@ -186,7 +188,7 @@ class PersonServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personRepository.save(person)).thenReturn(person);
 
-        final Person savedPerson = sut.save(person);
+        final Person savedPerson = sut.create(person);
         assertThat(savedPerson).isEqualTo(person);
     }
 
@@ -381,7 +383,7 @@ class PersonServiceImplTest {
         inactivePerson.setId(1);
         when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
 
-        final Person savedInactivePerson = sut.save(inactivePerson);
+        final Person savedInactivePerson = sut.update(inactivePerson);
         verify(applicationEventPublisher).publishEvent(personDisabledEventArgumentCaptor.capture());
         assertThat(personDisabledEventArgumentCaptor.getValue().getPersonId())
             .isEqualTo(savedInactivePerson.getId());
@@ -394,7 +396,7 @@ class PersonServiceImplTest {
         activePerson.setId(1);
         when(personRepository.save(activePerson)).thenReturn(activePerson);
 
-        sut.save(activePerson);
+        sut.update(activePerson);
         verifyNoInteractions(applicationEventPublisher);
     }
 

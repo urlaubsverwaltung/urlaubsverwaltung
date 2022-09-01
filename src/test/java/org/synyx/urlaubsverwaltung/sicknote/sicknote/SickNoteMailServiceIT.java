@@ -48,7 +48,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(List.of(OFFICE));
         office.setNotifications(List.of(NOTIFICATION_OFFICE));
-        personService.save(office);
+        personService.create(office);
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
@@ -65,7 +65,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
         // Where both mails sent?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice.length).isOne();
+        assertThat(inboxOffice).hasSize(2);
 
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inbox.length).isOne();
@@ -94,7 +94,9 @@ class SickNoteMailServiceIT extends TestContainersBase {
             "Danach wird für gesetzlich Krankenversicherte in der Regel Krankengeld von der Krankenkasse gezahlt.");
 
         // check email of office
-        final Message msgOffice = inboxOffice[0];
+        assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
+
+        final Message msgOffice = inboxOffice[1];
         assertThat(msgOffice.getSubject()).isEqualTo("Ende der Lohnfortzahlung von Lieschen Müller");
 
         // check content of office email

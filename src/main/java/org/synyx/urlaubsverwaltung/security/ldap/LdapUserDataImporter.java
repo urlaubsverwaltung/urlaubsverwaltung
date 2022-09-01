@@ -49,7 +49,7 @@ public class LdapUserDataImporter {
                 person.setFirstName(firstName);
                 person.setLastName(lastName);
                 person.setEmail(email);
-                personService.save(person);
+                personService.update(person);
             } else {
                 personService.create(username, lastName, firstName, email, List.of(NOTIFICATION_USER), List.of(USER));
             }

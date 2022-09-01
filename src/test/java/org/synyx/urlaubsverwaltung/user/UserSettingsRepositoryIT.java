@@ -28,7 +28,7 @@ class UserSettingsRepositoryIT extends TestContainersBase {
     void ensuresToFindUserSettingsByUsername() {
 
         final Person marlene = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person savedMarlene = personService.save(marlene);
+        final Person savedMarlene = personService.create(marlene);
 
         final UserSettingsEntity userSettingMarlene = new UserSettingsEntity();
         userSettingMarlene.setPersonId(savedMarlene.getId());
@@ -37,7 +37,7 @@ class UserSettingsRepositoryIT extends TestContainersBase {
         sut.save(userSettingMarlene);
 
         final Person petra = new Person("petra", "Petra", "Petra", "petra@example.org");
-        final Person savedPetra = personService.save(petra);
+        final Person savedPetra = personService.create(petra);
 
         final UserSettingsEntity userSettingPetra = new UserSettingsEntity();
         userSettingPetra.setPersonId(savedPetra.getId());

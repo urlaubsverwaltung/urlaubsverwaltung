@@ -65,7 +65,7 @@ class OidcPersonAuthoritiesMapperTest {
         final Optional<Person> person = Optional.of(personForLogin);
         when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
 
-        when(personService.save(personForLogin)).thenReturn(personForLogin);
+        when(personService.update(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
@@ -92,13 +92,13 @@ class OidcPersonAuthoritiesMapperTest {
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
         when(personService.getPersonByMailAddress(email)).thenReturn(person);
 
-        when(personService.save(personForLogin)).thenReturn(personForLogin);
+        when(personService.update(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
 
         final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-        verify(personService).save(personArgumentCaptor.capture());
+        verify(personService).update(personArgumentCaptor.capture());
         assertThat(personArgumentCaptor.getValue().getUsername()).isEqualTo(uniqueID);
     }
 
@@ -269,7 +269,7 @@ class OidcPersonAuthoritiesMapperTest {
 
         final Optional<Person> person = Optional.of(personForLogin);
         when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
-        when(personService.save(personForLogin)).thenReturn(personForLogin);
+        when(personService.update(personForLogin)).thenReturn(personForLogin);
 
         final List<OidcUserAuthority> oidcUserAuthorities = List.of(oidcUserAuthority);
         assertThatThrownBy(() -> sut.mapAuthorities(oidcUserAuthorities))

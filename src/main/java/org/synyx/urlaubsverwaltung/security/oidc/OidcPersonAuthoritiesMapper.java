@@ -71,7 +71,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
             existentPerson.setFirstName(firstName);
             existentPerson.setLastName(lastName);
             existentPerson.setEmail(emailAddress);
-            person = personService.save(existentPerson);
+            person = personService.update(existentPerson);
 
             if (person.hasRole(INACTIVE)) {
                 throw new DisabledException("User '" + person.getId() + "' has been deactivated");

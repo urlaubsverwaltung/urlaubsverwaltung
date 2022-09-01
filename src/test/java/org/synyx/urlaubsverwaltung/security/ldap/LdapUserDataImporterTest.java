@@ -65,6 +65,6 @@ class LdapUserDataImporterTest {
         assertThat(person.getEmail()).isEqualTo("Email");
         assertThat(person.getFirstName()).isEqualTo("Vorname");
         assertThat(person.getLastName()).isEqualTo("Nachname");
-        verify(personService).save(person);
+        verify(personService).update(person);
     }
 }

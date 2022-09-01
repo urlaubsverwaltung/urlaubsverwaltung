@@ -12,7 +12,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.MailProperties;
@@ -89,7 +88,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
-        personService.save(office);
+        personService.create(office);
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setPermissions(List.of(BOSS));
@@ -109,7 +108,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // were both emails sent?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice.length).isOne();
+        assertThat(inboxOffice).hasSize(2);
+        assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxUser.length).isOne();
@@ -145,7 +145,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
-        final MimeMessage msgOffice = inboxOffice[0];
+        final MimeMessage msgOffice = inboxOffice[1];
         assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
@@ -200,7 +200,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
-        personService.save(office);
+        personService.create(office);
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setPermissions(singletonList(BOSS));
@@ -222,7 +222,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // were both emails sent?
         MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice.length).isOne();
+        assertThat(inboxOffice).hasSize(2);
+        assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
         MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxUser.length).isOne();
@@ -251,7 +252,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
-        final MimeMessage msgOffice = inboxOffice[0];
+        final MimeMessage msgOffice = inboxOffice[1];
         assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
@@ -285,7 +286,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
-        personService.save(office);
+        personService.create(office);
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setPermissions(singletonList(BOSS));
@@ -310,7 +311,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // were both emails sent?
         MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice.length).isOne();
+        assertThat(inboxOffice).hasSize(2);
+        assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
         MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxUser.length).isOne();
@@ -339,7 +341,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
-        final MimeMessage msgOffice = inboxOffice[0];
+        final MimeMessage msgOffice = inboxOffice[1];
         assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
@@ -476,7 +478,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
-        personService.save(office);
+        personService.create(office);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setPerson(office);
@@ -514,9 +516,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // send mail to office
         MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice.length).isOne();
+        assertThat(inboxOffice).hasSize(2);
+        assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
-        Message msg = inboxOffice[0];
+        Message msg = inboxOffice[1];
         assertThat(msg.getSubject()).contains("Stornierungsantrag abgelehnt");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -553,7 +556,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
-        personService.save(office);
+        personService.create(office);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Bitte stornieren!");
@@ -584,9 +587,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // send mail to all relevant persons?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inbox.length).isOne();
+        assertThat(inbox).hasSize(2);
+        assertThat(inbox[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
-        Message msg = inbox[0];
+        Message msg = inbox[1];
         assertThat(msg.getSubject()).isEqualTo("Ein Benutzer beantragt die Stornierung einer genehmigten Abwesenheit");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
@@ -676,7 +680,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
-        personService.save(office);
+        personService.create(office);
 
         final Application application = createApplication(person);
         application.setApplier(office);
