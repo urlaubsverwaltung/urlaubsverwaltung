@@ -10,8 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.util.ArrayList;
@@ -22,7 +22,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-
 
 /**
  * Implementation for {@link PersonService}.
@@ -67,7 +66,7 @@ class PersonServiceImpl implements PersonService {
         accountInteractionService.createDefaultAccount(person);
         workingTimeWriteService.createDefaultWorkingTime(person);
 
-        applicationEventPublisher.publishEvent(new PersonCreatedEvent(this, person.getId(), person.getNiceName()));
+        applicationEventPublisher.publishEvent(toPersonCreatedEvent(createdPerson));
 
         return createdPerson;
     }
@@ -96,14 +95,15 @@ class PersonServiceImpl implements PersonService {
             throw new IllegalArgumentException("Can not update a person that is not persisted yet");
         }
 
-        LOG.info("Updated person: {}", person);
-
         final Person updatedPerson = personRepository.save(person);
+        LOG.info("Updated person: {}", updatedPerson);
 
         final boolean isInactive = updatedPerson.getPermissions().contains(INACTIVE);
         if (isInactive) {
-            applicationEventPublisher.publishEvent(new PersonDisabledEvent(this, updatedPerson.getId()));
+            applicationEventPublisher.publishEvent(toPersonDisabledEvent(updatedPerson));
         }
+
+        applicationEventPublisher.publishEvent(toPersonUpdateEvent(updatedPerson));
 
         return updatedPerson;
     }
@@ -225,5 +225,17 @@ class PersonServiceImpl implements PersonService {
         }
 
         return implicitSort;
+    }
+
+    private PersonCreatedEvent toPersonCreatedEvent(Person person) {
+        return new PersonCreatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
+    }
+
+    private PersonUpdatedEvent toPersonUpdateEvent(Person person) {
+        return new PersonUpdatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
+    }
+
+    private PersonDisabledEvent toPersonDisabledEvent(Person person) {
+        return new PersonDisabledEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
     }
 }

@@ -2,14 +2,14 @@ package org.synyx.urlaubsverwaltung.person;
 
 import org.springframework.context.ApplicationEvent;
 
-public class PersonCreatedEvent extends ApplicationEvent {
+public class PersonUpdatedEvent extends ApplicationEvent {
 
     private final Integer personId;
     private final String personNiceName;
     private final String username;
     private final String email;
 
-    PersonCreatedEvent(Object source, Integer personId, String personNiceName, String username, String email) {
+    PersonUpdatedEvent(Object source, Integer personId, String personNiceName, String username, String email) {
         super(source);
         this.personId = personId;
         this.personNiceName = personNiceName;
@@ -17,11 +17,11 @@ public class PersonCreatedEvent extends ApplicationEvent {
         this.email = email;
     }
 
-    Integer getPersonId() {
+    public Integer getPersonId() {
         return personId;
     }
 
-    String getPersonNiceName() {
+    public String getPersonNiceName() {
         return personNiceName;
     }
 
