@@ -47,7 +47,7 @@ class PersonMailServiceIT extends TestContainersBase {
 
         // was email sent to office?
         MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice.length).isEqualTo(2);
+        assertThat(inboxOffice).hasSize(2);
         assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
         // check attributes

@@ -12,7 +12,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.MailProperties;
@@ -109,7 +108,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // were both emails sent?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice.length).isEqualTo(2);
+        assertThat(inboxOffice).hasSize(2);
         assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -223,7 +222,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // were both emails sent?
         MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice.length).isEqualTo(2);
+        assertThat(inboxOffice).hasSize(2);
         assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
         MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -312,7 +311,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // were both emails sent?
         MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice.length).isEqualTo(2);
+        assertThat(inboxOffice).hasSize(2);
         assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
         MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -517,7 +516,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // send mail to office
         MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice.length).isEqualTo(2);
+        assertThat(inboxOffice).hasSize(2);
         assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
         Message msg = inboxOffice[1];
@@ -588,7 +587,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // send mail to all relevant persons?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inbox.length).isEqualTo(2);
+        assertThat(inbox).hasSize(2);
         assertThat(inbox[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
         Message msg = inbox[1];

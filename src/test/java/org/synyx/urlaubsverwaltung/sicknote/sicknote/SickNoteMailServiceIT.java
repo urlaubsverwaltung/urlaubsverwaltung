@@ -65,7 +65,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
         // Where both mails sent?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice.length).isEqualTo(2);
+        assertThat(inboxOffice).hasSize(2);
 
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inbox.length).isOne();
