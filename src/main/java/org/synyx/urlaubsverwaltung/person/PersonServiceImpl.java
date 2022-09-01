@@ -10,8 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.util.ArrayList;
@@ -22,7 +22,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-
 
 /**
  * Implementation for {@link PersonService}.
@@ -96,9 +95,8 @@ class PersonServiceImpl implements PersonService {
             throw new IllegalArgumentException("Can not update a person that is not persisted yet");
         }
 
-        LOG.info("Updated person: {}", person);
-
         final Person updatedPerson = personRepository.save(person);
+        LOG.info("Updated person: {}", updatedPerson);
 
         final boolean isInactive = updatedPerson.getPermissions().contains(INACTIVE);
         if (isInactive) {
