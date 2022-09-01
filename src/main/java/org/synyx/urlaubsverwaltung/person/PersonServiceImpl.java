@@ -231,11 +231,11 @@ class PersonServiceImpl implements PersonService {
         return new PersonCreatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
     }
 
-    private PersonUpdatedEvent toPersonUpdateEvent(Person updatedPerson) {
-        return new PersonUpdatedEvent(this, updatedPerson.getId(), updatedPerson.getNiceName(), updatedPerson.getUsername(), updatedPerson.getEmail());
+    private PersonUpdatedEvent toPersonUpdateEvent(Person person) {
+        return new PersonUpdatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
     }
 
-    private PersonDisabledEvent toPersonDisabledEvent(Person updatedPerson) {
-        return new PersonDisabledEvent(this, updatedPerson.getId());
+    private PersonDisabledEvent toPersonDisabledEvent(Person person) {
+        return new PersonDisabledEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
     }
 }
