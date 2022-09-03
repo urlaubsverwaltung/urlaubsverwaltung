@@ -98,8 +98,7 @@ class PersonServiceImpl implements PersonService {
         final Person updatedPerson = personRepository.save(person);
         LOG.info("Updated person: {}", updatedPerson);
 
-        final boolean isInactive = updatedPerson.getPermissions().contains(INACTIVE);
-        if (isInactive) {
+        if (updatedPerson.isInactive()) {
             applicationEventPublisher.publishEvent(toPersonDisabledEvent(updatedPerson));
         }
 
@@ -228,11 +227,11 @@ class PersonServiceImpl implements PersonService {
     }
 
     private PersonCreatedEvent toPersonCreatedEvent(Person person) {
-        return new PersonCreatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
+        return new PersonCreatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail(), person.isActive());
     }
 
     private PersonUpdatedEvent toPersonUpdateEvent(Person person) {
-        return new PersonUpdatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
+        return new PersonUpdatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail(), person.isActive());
     }
 
     private PersonDisabledEvent toPersonDisabledEvent(Person person) {
