@@ -21,6 +21,7 @@ import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -29,10 +30,8 @@ class SickNoteDetailedStatisticsCsvExportServiceTest {
 
     @Mock
     private MessageSource messageSource;
-    @Mock
-    private CSVWriter csvWriter;
 
-    SickNoteDetailedStatisticsCsvExportService sut;
+    private SickNoteDetailedStatisticsCsvExportService sut;
 
     @BeforeEach
     void setUp() {
@@ -45,9 +44,9 @@ class SickNoteDetailedStatisticsCsvExportServiceTest {
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        when(messageSource.getMessage("sicknote.statistics", new String[]{}, GERMAN)).thenReturn("test");
+        when(messageSource.getMessage("sicknotes.statistics", new String[]{}, GERMAN)).thenReturn("test");
 
-        final String fileName = sut.getFileName(period);
+        final String fileName = sut.fileName(period);
         assertThat(fileName).isEqualTo("test_01012018_31122018.csv");
     }
 
@@ -57,9 +56,9 @@ class SickNoteDetailedStatisticsCsvExportServiceTest {
         final LocalDate endDate = LocalDate.parse("2019-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        when(messageSource.getMessage(eq("sicknote.statistics"), any(), any())).thenReturn("test");
+        when(messageSource.getMessage(eq("sicknotes.statistics"), any(), any())).thenReturn("test");
 
-        String fileName = sut.getFileName(period);
+        String fileName = sut.fileName(period);
         assertThat(fileName).isEqualTo("test_01012019_31122019.csv");
     }
 
@@ -90,8 +89,8 @@ class SickNoteDetailedStatisticsCsvExportServiceTest {
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE_CHILD);
         sickNoteWithAub.setSickNoteType(sickNoteType);
 
-        List<SickNote> sicknotes = List.of(sickNote,sickNoteWithAub);
-        List<String> departments = List.of("Here", "There");
+        final List<SickNote> sicknotes = List.of(sickNote,sickNoteWithAub);
+        final List<String> departments = List.of("Here", "There");
         final SickNoteDetailedStatistics sickNoteDetailedStatistics = new
             SickNoteDetailedStatistics("42", person.getFirstName(), person.getLastName(), sicknotes, departments);
 
@@ -107,7 +106,8 @@ class SickNoteDetailedStatisticsCsvExportServiceTest {
         addMessageSource("sicknotes.statistics.type");
         addMessageSource("sicknotes.statistics.certificate");
 
-        sut.writeStatistics(period, statistics, csvWriter);
+        final CSVWriter csvWriter = mock(CSVWriter.class);
+        sut.write(period, statistics, csvWriter);
 
         verify(csvWriter).writeNext(new String[]{"{absence.period}: 01.01.2022 - 31.12.2022"});
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{sicknotes.statistics.departments}", "{sicknotes.statistics.from}", "{sicknotes.statistics.to}", "{sicknotes.statistics.type}", "{sicknotes.statistics.certificate}"});
