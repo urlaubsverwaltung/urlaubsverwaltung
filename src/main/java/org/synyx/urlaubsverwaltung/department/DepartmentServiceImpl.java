@@ -18,13 +18,16 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -321,6 +324,33 @@ class DepartmentServiceImpl implements DepartmentService {
     public long getNumberOfDepartments() {
         return departmentRepository.count();
     }
+
+    @Override
+    public Map<Integer, List<String>> getDepartmentsByMembers(List<Person> persons) {
+
+        final Map<List<Person>, List<Department>> personDepartmentList = departmentRepository.findDistinctByMembersPersonIn(persons).stream()
+            .map(this::mapToDepartment)
+            .collect(groupingBy(Department::getMembers));
+
+        final Map<Integer, List<String>> departmentsByPerson = new HashMap<>();
+        personDepartmentList.forEach((personList, departmentList) -> {
+
+            final List<String> departmentNames = departmentList.stream()
+                .map(Department::getName)
+                .collect(toList());
+
+            personList.forEach(person -> {
+                if (departmentsByPerson.containsKey(person.getId())) {
+                    departmentsByPerson.get(person.getId()).addAll(departmentNames);
+                } else {
+                    departmentsByPerson.put(person.getId(), departmentNames);
+                }
+            });
+        });
+
+        return departmentsByPerson;
+    }
+
 
     private Predicate<Person> isNotSecondStageIn(Department department) {
         return person -> !department.getSecondStageAuthorities().contains(person);

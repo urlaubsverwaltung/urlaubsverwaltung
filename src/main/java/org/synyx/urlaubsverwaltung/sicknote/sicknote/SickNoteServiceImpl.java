@@ -10,11 +10,9 @@ import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
-import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
@@ -69,10 +67,8 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
-    public List<SickNote> getAllActiveByYear(int year) {
-        final LocalDate firstDayOfYear = Year.of(year).atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-        return sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(USER), List.of(ACTIVE), firstDayOfYear, lastDayOfYear);
+    public List<SickNote> getAllActiveByPeriod(LocalDate from, LocalDate to) {
+        return sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(USER), List.of(ACTIVE), from, to);
     }
 
     @Override

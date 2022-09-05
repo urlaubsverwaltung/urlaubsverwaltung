@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -230,4 +231,12 @@ public interface DepartmentService {
      * @return number of departments
      */
     long getNumberOfDepartments();
+
+    /**
+     * Get all departments for the given persons as a map.
+     *
+     * @param persons
+     * @return a map of personId mapped to department names
+     */
+    Map<Integer, List<String>> getDepartmentsByMembers(List<Person> persons);
 }

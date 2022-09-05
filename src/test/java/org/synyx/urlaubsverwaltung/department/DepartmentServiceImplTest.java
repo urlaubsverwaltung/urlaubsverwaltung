@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
@@ -1704,6 +1705,33 @@ class DepartmentServiceImplTest {
 
         final long numberOfDepartments = sut.getNumberOfDepartments();
         assertThat(numberOfDepartments).isEqualTo(10);
+    }
+
+    @Test
+    void getDepartmentsByMembers() {
+
+        final Person person = new Person();
+        person.setId(42);
+
+        final DepartmentMemberEmbeddable existingPersonMember = new DepartmentMemberEmbeddable();
+        existingPersonMember.setPerson(person);
+
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setName("Department A");
+        departmentEntityA.setId(1);
+        departmentEntityA.setMembers(List.of(existingPersonMember));
+
+        final DepartmentEntity departmentEntityB = new DepartmentEntity();
+        departmentEntityB.setName("Department B");
+        departmentEntityB.setId(2);
+        departmentEntityB.setMembers(List.of(existingPersonMember));
+
+        when(departmentRepository.findDistinctByMembersPersonIn(List.of(person))).thenReturn(List.of(departmentEntityA, departmentEntityB));
+
+        final Map<Integer, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(person));
+        assertThat(departmentsByMembers)
+            .containsKey(person.getId())
+            .containsValue(List.of("Department A", "Department B"));
     }
 
     private static PageableSearchQuery defaultPersonSearchQuery() {

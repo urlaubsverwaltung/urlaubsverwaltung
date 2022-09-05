@@ -54,7 +54,7 @@ public interface SickNoteService {
      */
     List<SickNote> getSickNotesReachingEndOfSickPay();
 
-    List<SickNote> getAllActiveByYear(int year);
+    List<SickNote> getAllActiveByPeriod(LocalDate from, LocalDate to);
 
     Long getNumberOfPersonsWithMinimumOneSickNote(int year);
 

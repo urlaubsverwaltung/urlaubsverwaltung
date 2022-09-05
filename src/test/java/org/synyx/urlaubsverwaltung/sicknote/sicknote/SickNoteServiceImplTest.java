@@ -73,9 +73,11 @@ class SickNoteServiceImplTest {
     @Test
     void getAllActiveByYear() {
         final SickNote sickNote = new SickNote();
-        when(sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(USER), List.of(ACTIVE), LocalDate.of(2017, 1, 1), LocalDate.of(2017, 12, 31))).thenReturn(List.of(sickNote));
+        final LocalDate from = LocalDate.of(2017, 1, 1);
+        final LocalDate to = LocalDate.of(2017, 12, 31);
+        when(sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(USER), List.of(ACTIVE), from, to)).thenReturn(List.of(sickNote));
 
-        final List<SickNote> sickNotes = sut.getAllActiveByYear(2017);
+        final List<SickNote> sickNotes = sut.getAllActiveByPeriod(from, to);
         assertThat(sickNotes).contains(sickNote);
     }
 
