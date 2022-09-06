@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Footer fragment</title>
+  </head>
+  <body>
+    <th:block th:ref="footer">
+      <footer class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+        <div class="tw-mb-4">
+          <span class="tw-text-sm"> <a href="https://urlaubsverwaltung.cloud/">urlaubsverwaltung.cloud</a> | </span>
+          <span th:text="|v${version}|" class="tw-text-xs"></span>
+        </div>
+      </footer>
+    </th:block>
+  </body>
+</html>

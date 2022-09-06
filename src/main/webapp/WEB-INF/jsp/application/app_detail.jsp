@@ -234,5 +234,8 @@
     </div> <!-- end of grid container -->
 
 </div> <!-- end of content -->
+
+<uv:footer/>
+
 </body>
 </html>

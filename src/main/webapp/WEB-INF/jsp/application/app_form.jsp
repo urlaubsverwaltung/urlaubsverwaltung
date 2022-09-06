@@ -563,7 +563,9 @@
         </c:choose>
     </div>
     <!-- End of grid container -->
-
 </div>
+
+<uv:footer/>
+
 </body>
 </html>

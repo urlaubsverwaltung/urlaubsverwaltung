@@ -80,7 +80,7 @@ class SettingsViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock, "version", specialLeaveService);
+        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock,  specialLeaveService);
     }
 
     @Test

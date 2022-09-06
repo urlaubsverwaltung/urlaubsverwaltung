@@ -6,17 +6,17 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-class MenuConfiguration implements WebMvcConfigurer {
+class FrameConfiguration implements WebMvcConfigurer {
 
-    private final MenuDataProvider menuDataProvider;
+    private final FrameDataProvider frameDataProvider;
 
     @Autowired
-    MenuConfiguration(MenuDataProvider menuDataProvider) {
-        this.menuDataProvider = menuDataProvider;
+    FrameConfiguration(FrameDataProvider frameDataProvider) {
+        this.frameDataProvider = frameDataProvider;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(menuDataProvider);
+        registry.addInterceptor(frameDataProvider);
     }
 }

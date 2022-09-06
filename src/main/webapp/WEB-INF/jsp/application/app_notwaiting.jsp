@@ -25,5 +25,8 @@
         <spring:message code="application.error.notWaiting.body"/>
     </p>
 </div>
+
+<uv:footer/>
+
 </body>
 </html>

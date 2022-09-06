@@ -304,7 +304,9 @@
 
     </div>
     <%-- End of container --%>
-
 </div>
+
+<uv:footer/>
+
 </body>
 </html>
