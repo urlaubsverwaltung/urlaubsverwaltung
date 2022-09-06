@@ -6,6 +6,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.csv.CsvExportService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -21,7 +22,7 @@ import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 @Service
-class ApplicationForLeaveStatisticsCsvExportService {
+class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<ApplicationForLeaveStatistics> {
 
     private static final Locale LOCALE = Locale.GERMAN;
     private static final String DATE_FORMAT = "ddMMyyyy";
@@ -37,7 +38,15 @@ class ApplicationForLeaveStatisticsCsvExportService {
         this.dateFormatAware = dateFormatAware;
     }
 
-    void writeStatistics(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
+    @Override
+    public String fileName(FilterPeriod period) {
+        return format("%s_%s_%s.csv", getTranslation("applications.statistics"),
+            period.getStartDate().format(ofPattern(DATE_FORMAT)),
+            period.getEndDate().format(ofPattern(DATE_FORMAT)));
+    }
+
+    @Override
+    public void write(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
         final String[] csvHeader = {
             getTranslation("person.account.basedata.personnelNumber"),
             getTranslation("person.data.firstName"),
@@ -111,12 +120,6 @@ class ApplicationForLeaveStatisticsCsvExportService {
                 }
             }
         }
-    }
-
-    String getFileName(FilterPeriod period) {
-        return format("%s_%s_%s.csv", getTranslation("applications.statistics"),
-            period.getStartDate().format(ofPattern(DATE_FORMAT)),
-            period.getEndDate().format(ofPattern(DATE_FORMAT)));
     }
 
     private String getTranslation(String key, Object... args) {

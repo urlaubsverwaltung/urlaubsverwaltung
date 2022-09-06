@@ -86,7 +86,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        sut.writeStatistics(period, statistics, csvWriter);
+        sut.write(period, statistics, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{absence.period}: 01.01.2018 - 31.12.2018"});
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left}", "", "{applications.statistics.left} (2018)", "", "{person.account.basedata.additionalInformation}"});
         verify(csvWriter).writeNext(new String[]{"", "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}", "{duration.vacationDays}", "{duration.overtime}"});
@@ -142,7 +142,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        sut.writeStatistics(period, statistics, csvWriter);
+        sut.write(period, statistics, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{absence.period}: 02.01.2019 - 24.12.2019"});
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}",
             "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}",
@@ -163,7 +163,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         when(messageSource.getMessage("applications.statistics", new String[]{}, GERMAN)).thenReturn("test");
 
-        final String fileName = sut.getFileName(period);
+        final String fileName = sut.fileName(period);
         assertThat(fileName).isEqualTo("test_01012018_31122018.csv");
     }
 
@@ -175,7 +175,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         when(messageSource.getMessage(eq("applications.statistics"), any(), any())).thenReturn("test");
 
-        String fileName = sut.getFileName(period);
+        String fileName = sut.fileName(period);
         assertThat(fileName).isEqualTo("test_01012019_31122019.csv");
     }
 

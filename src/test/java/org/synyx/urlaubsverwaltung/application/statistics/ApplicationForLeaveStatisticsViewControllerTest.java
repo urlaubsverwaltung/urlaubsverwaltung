@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
-import liquibase.util.csv.CSVWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,10 +10,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
@@ -30,7 +31,6 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Locale.ENGLISH;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.empty;
@@ -40,9 +40,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.refEq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -52,7 +49,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-import static org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatisticsViewController.UTF8_BOM;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
@@ -229,7 +225,6 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
     @Test
     void downloadCSVReturnsBadRequestIfPeriodNotTheSameYear() throws Exception {
-
         perform(get("/web/application/statistics/download")
             .param("from", "01.01.2000")
             .param("to", "01.01.2019"))
@@ -239,14 +234,13 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
     void downloadCSVSetsDownloadHeaders(String givenDate) throws Exception {
-
-        final String expectedFilename = "filename.csv";
-        when(applicationForLeaveStatisticsCsvExportService.getFileName(any(FilterPeriod.class))).thenReturn(expectedFilename);
+        when(applicationForLeaveStatisticsCsvExportService.generateCSV(any(FilterPeriod.class), any())).thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
         perform(get("/web/application/statistics/download")
             .param("from", givenDate)
             .param("to", givenDate))
-            .andExpect(header().string("Content-disposition", "attachment;filename=" + expectedFilename));
+            .andExpect(header().string("Content-disposition", "attachment; filename=\"filename.csv\""))
+            .andExpect(header().string("Content-Type", "text/csv"));
     }
 
     @Test
@@ -258,30 +252,12 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         final List<ApplicationForLeaveStatistics> statistics = emptyList();
         when(applicationForLeaveStatisticsService.getStatistics(any(FilterPeriod.class))).thenReturn(statistics);
+        when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, statistics)).thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
         perform(get("/web/application/statistics/download")
             .param("from", "01.01.2019")
-            .param("to", "01.08.2019"));
-
-        verify(applicationForLeaveStatisticsCsvExportService)
-            .writeStatistics(refEq(filterPeriod), eq(statistics), any(CSVWriter.class));
-    }
-
-    @Test
-    void downloadCSVContainsUTF8BOM() throws Exception {
-
-        final LocalDate startDate = LocalDate.parse("2019-01-01");
-        final LocalDate endDate = LocalDate.parse("2019-08-01");
-        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
-
-        when(applicationForLeaveStatisticsService.getStatistics(filterPeriod)).thenReturn(emptyList());
-
-        byte[] response = perform(get("/web/application/statistics/download")
-            .param("from", "01.01.2019")
             .param("to", "01.08.2019"))
-            .andExpect(status().isOk()).andReturn().getResponse().getContentAsByteArray();
-
-        assertThat(response).contains(UTF8_BOM);
+            .andExpect(status().isOk());
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
