@@ -8,13 +8,15 @@ public class PersonUpdatedEvent extends ApplicationEvent {
     private final String personNiceName;
     private final String username;
     private final String email;
+    private boolean active;
 
-    PersonUpdatedEvent(Object source, Integer personId, String personNiceName, String username, String email) {
+    PersonUpdatedEvent(Object source, Integer personId, String personNiceName, String username, String email, boolean active) {
         super(source);
         this.personId = personId;
         this.personNiceName = personNiceName;
         this.username = username;
         this.email = email;
+        this.active = active;
     }
 
     public Integer getPersonId() {
@@ -31,5 +33,9 @@ public class PersonUpdatedEvent extends ApplicationEvent {
 
     public String getEmail() {
         return email;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 }

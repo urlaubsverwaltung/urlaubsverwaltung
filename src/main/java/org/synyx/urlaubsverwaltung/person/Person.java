@@ -123,6 +123,9 @@ public class Person {
     public boolean isInactive() {
         return hasRole(INACTIVE);
     }
+    public boolean isActive() {
+        return !isInactive();
+    }
 
     public boolean isPrivileged() {
         return getPermissions().stream()

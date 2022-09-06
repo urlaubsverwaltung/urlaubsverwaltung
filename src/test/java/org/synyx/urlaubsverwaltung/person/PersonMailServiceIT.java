@@ -43,7 +43,7 @@ class PersonMailServiceIT extends TestContainersBase {
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
         personService.create(office);
 
-        sut.sendPersonCreationNotification(new PersonCreatedEvent(personService, createdPerson.getId(), createdPerson.getNiceName(), createdPerson.getUsername(), createdPerson.getEmail()));
+        sut.sendPersonCreationNotification(new PersonCreatedEvent(personService, createdPerson.getId(), createdPerson.getNiceName(), createdPerson.getUsername(), createdPerson.getEmail(), createdPerson.isActive()));
 
         // was email sent to office?
         MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
