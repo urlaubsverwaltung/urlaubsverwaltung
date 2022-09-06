@@ -47,6 +47,7 @@ public class SickNoteDetailedStatisticsCsvExportService implements CsvExportServ
             getTranslation("sicknotes.statistics.departments"),
             getTranslation("sicknotes.statistics.from"),
             getTranslation("sicknotes.statistics.to"),
+            getTranslation("sicknotes.statistics.length"),
             getTranslation("sicknotes.statistics.type"),
             getTranslation("sicknotes.statistics.certificate")
         };
@@ -77,8 +78,9 @@ public class SickNoteDetailedStatisticsCsvExportService implements CsvExportServ
                 final String[] sickNoteCsvRow = new String[csvHeader.length];
                 sickNoteCsvRow[4] = dateFormatAware.format(sickNote.getStartDate());
                 sickNoteCsvRow[5] = dateFormatAware.format(sickNote.getEndDate());
-                sickNoteCsvRow[6] = getTranslation(sickNote.getSickNoteType().getMessageKey());
-                sickNoteCsvRow[7] = setAub(sickNote);
+                sickNoteCsvRow[6] = getTranslation(sickNote.getDayLength().name());
+                sickNoteCsvRow[7] = getTranslation(sickNote.getSickNoteType().getMessageKey());
+                sickNoteCsvRow[8] = setAub(sickNote);
                 csvWriter.writeNext(sickNoteCsvRow);
             });
         });
