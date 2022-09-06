@@ -359,6 +359,14 @@ vom Typ "Question" erstellen.
 
 ### Repository clonen
 
+Ohne GitHub Account
+
+```bash
+https://github.com/synyx/urlaubsverwaltung.git
+```
+
+mit GitHub Account
+
 ```bash
 git clone git@github.com:synyx/urlaubsverwaltung.git
 ```
