@@ -1792,6 +1792,46 @@ class DepartmentServiceImplTest {
             .containsEntry(new PersonId(1), List.of("Department A"));
     }
 
+    @Test
+    void getDepartmentsByMembersWithDepartmentMemberIntersection() {
+
+        final Person personOne = anyPerson(1);
+        final Person personTwo = anyPerson(2);
+        final Person personThree = anyPerson(3);
+
+        final DepartmentMemberEmbeddable departmentMemberOne = new DepartmentMemberEmbeddable();
+        departmentMemberOne.setPerson(personOne);
+
+        final DepartmentMemberEmbeddable departmentMemberTwo = new DepartmentMemberEmbeddable();
+        departmentMemberTwo.setPerson(personTwo);
+
+        final DepartmentMemberEmbeddable departmentMemberThree = new DepartmentMemberEmbeddable();
+        departmentMemberThree.setPerson(personThree);
+
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setId(1);
+        departmentEntityA.setName("Department A");
+        departmentEntityA.setMembers(List.of(departmentMemberOne, departmentMemberTwo));
+
+        final DepartmentEntity departmentEntityB = new DepartmentEntity();
+        departmentEntityB.setId(2);
+        departmentEntityB.setName("Department B");
+        departmentEntityB.setMembers(List.of(departmentMemberOne, departmentMemberTwo));
+
+        final DepartmentEntity departmentEntityC = new DepartmentEntity();
+        departmentEntityC.setId(3);
+        departmentEntityC.setName("Department C");
+        departmentEntityC.setMembers(List.of(departmentMemberTwo, departmentMemberThree));
+
+        when(departmentRepository.findDistinctByMembersPersonIn(List.of(personOne, personTwo, personThree))).thenReturn(List.of(departmentEntityA, departmentEntityB, departmentEntityC));
+
+        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(personOne, personTwo, personThree));
+        assertThat(departmentsByMembers)
+            .containsEntry(new PersonId(1), List.of("Department A", "Department B"))
+            .containsEntry(new PersonId(2), List.of("Department C", "Department A", "Department B"))
+            .containsEntry(new PersonId(3), List.of("Department C"));
+    }
+
     private static PageableSearchQuery defaultPersonSearchQuery() {
         return new PageableSearchQuery(defaultPageRequest(), "");
     }

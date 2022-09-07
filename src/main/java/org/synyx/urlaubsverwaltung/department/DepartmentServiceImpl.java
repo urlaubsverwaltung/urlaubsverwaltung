@@ -18,18 +18,21 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -338,16 +341,13 @@ class DepartmentServiceImpl implements DepartmentService {
 
             final List<String> departmentNames = departmentList.stream()
                 .map(Department::getName)
-                .collect(toList());
+                .collect(toUnmodifiableList());
 
             personList.forEach(person -> {
                 if (persons.contains(person)) {
                     final PersonId personId = new PersonId(person.getId());
-                    if (departmentsByPerson.containsKey(personId)) {
-                        departmentsByPerson.get(personId).addAll(departmentNames);
-                    } else {
-                        departmentsByPerson.put(personId, departmentNames);
-                    }
+                    final List<String> bucket = departmentsByPerson.getOrDefault(personId, List.of());
+                    departmentsByPerson.put(personId, merge(departmentNames, bucket));
                 }
             });
         });
@@ -355,6 +355,9 @@ class DepartmentServiceImpl implements DepartmentService {
         return departmentsByPerson;
     }
 
+    private static List<String> merge(Collection<String> departmentNames, Collection<String> bucket) {
+        return Stream.concat(bucket.stream(), departmentNames.stream()).collect(toList());
+    }
 
     private Predicate<Person> isNotSecondStageIn(Department department) {
         return person -> !department.getSecondStageAuthorities().contains(person);
