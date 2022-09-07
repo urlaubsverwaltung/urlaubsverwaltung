@@ -56,20 +56,23 @@ class TurnOfTheYearAccountUpdaterServiceTest {
     @Test
     void ensureUpdatesHolidaysAccountsOfAllActivePersons() {
 
-        Person user1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person user2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        Person user3 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person user1 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person user2 = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person user3 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        Account account1 = createHolidaysAccount(user1, LAST_YEAR);
-        Account account2 = createHolidaysAccount(user2, LAST_YEAR);
-        Account account3 = createHolidaysAccount(user3, LAST_YEAR);
+        final Account account1 = createHolidaysAccount(user1, LAST_YEAR);
+        account1.setId(1);
+        final Account account2 = createHolidaysAccount(user2, LAST_YEAR);
+        account2.setId(2);
+        final Account account3 = createHolidaysAccount(user3, LAST_YEAR);
+        account3.setId(3);
 
         when(personService.getActivePersons()).thenReturn(asList(user1, user2, user3));
         when(accountService.getHolidaysAccount(LAST_YEAR, user1)).thenReturn(Optional.of(account1));
         when(accountService.getHolidaysAccount(LAST_YEAR, user2)).thenReturn(Optional.of(account2));
         when(accountService.getHolidaysAccount(LAST_YEAR, user3)).thenReturn(Optional.of(account3));
 
-        Account newAccount = mock(Account.class);
+        final Account newAccount = mock(Account.class);
         when(newAccount.getRemainingVacationDays()).thenReturn(BigDecimal.TEN);
         when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class)))
             .thenReturn(newAccount);

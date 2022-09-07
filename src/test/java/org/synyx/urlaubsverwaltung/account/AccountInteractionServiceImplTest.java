@@ -193,8 +193,11 @@ class AccountInteractionServiceImplTest {
         final BigDecimal annualVacationDays = BigDecimal.valueOf(30);
 
         final Account account2012 = new Account(person, startDate, endDate, true, expiryDate, annualVacationDays, BigDecimal.valueOf(5), ZERO, null);
+        account2012.setId(1);
         final Account account2013 = new Account(person, startDate.withYear(2013), endDate.withYear(2013), true, expiryDate.withYear(2013), annualVacationDays, BigDecimal.valueOf(3), ZERO, "comment1");
+        account2013.setId(2);
         final Account account2014 = new Account(person, startDate.withYear(2014), endDate.withYear(2014), true, expiryDate.withYear(2014), annualVacationDays, BigDecimal.valueOf(8), ZERO, "comment2");
+        account2014.setId(3);
 
         when(accountService.getHolidaysAccount(2012, person)).thenReturn(Optional.of(account2012));
         when(accountService.getHolidaysAccount(2013, person)).thenReturn(Optional.of(account2013));

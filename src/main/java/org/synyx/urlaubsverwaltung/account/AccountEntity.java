@@ -2,6 +2,10 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -9,14 +13,24 @@ import java.util.Objects;
 /**
  * This class describes how many vacation days and remaining vacation days a person has in which period (validFrom, validTo).
  */
-public class Account {
+@Entity(name = "account")
+public class AccountEntity {
 
+    @Id
+    @GeneratedValue
     private Integer id;
+
+    @ManyToOne
     private Person person;
+
     private LocalDate validFrom;
+
     private LocalDate validTo;
+
     private boolean doRemainingVacationDaysExpire;
+
     private LocalDate expiryDate;
+
     private LocalDate expiryNotificationSentDate;
 
     // theoretical number of vacation days a person has, i.e. it's the annual entitlement, but it is possible that
@@ -31,13 +45,13 @@ public class Account {
 
     private String comment;
 
-    public Account() {
+    protected AccountEntity() {
         /* OK */
     }
 
-    public Account(Person person, LocalDate validFrom, LocalDate validTo, boolean doRemainingVacationDaysExpire,
-                   LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal remainingVacationDays,
-                   BigDecimal remainingVacationDaysNotExpiring, String comment) {
+    public AccountEntity(Person person, LocalDate validFrom, LocalDate validTo, boolean doRemainingVacationDaysExpire,
+                         LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal remainingVacationDays,
+                         BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         this.person = person;
         this.validFrom = validFrom;
@@ -153,13 +167,11 @@ public class Account {
     @Override
     public String toString() {
         return "Account{" +
-            "id=" + id +
-            ", person=" + person +
+            "person=" + person +
             ", validFrom=" + validFrom +
             ", validTo=" + validTo +
             ", doRemainingVacationDaysExpire=" + doRemainingVacationDaysExpire +
             ", expiryDate=" + expiryDate +
-            ", expiryNotificationSentDate=" + expiryNotificationSentDate +
             ", annualVacationDays=" + annualVacationDays +
             ", actualVacationDays=" + actualVacationDays +
             ", remainingVacationDays=" + remainingVacationDays +
@@ -175,7 +187,7 @@ public class Account {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Account that = (Account) o;
+        final AccountEntity that = (AccountEntity) o;
         return null != this.getId() && Objects.equals(id, that.id);
     }
 
