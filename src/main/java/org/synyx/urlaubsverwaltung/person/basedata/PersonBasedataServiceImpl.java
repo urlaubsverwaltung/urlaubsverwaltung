@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.util.List;
 import java.util.Map;
@@ -26,10 +27,10 @@ class PersonBasedataServiceImpl implements PersonBasedataService {
     }
 
     @Override
-    public Map<Integer, PersonBasedata> getBasedataByPersonId(List<Integer> personIds) {
+    public Map<PersonId, PersonBasedata> getBasedataByPersonId(List<Integer> personIds) {
         return personBasedataRepository.findAllByPersonIdIn(personIds).stream()
             .map(PersonBasedataMapper::mapFromEntity)
-            .collect(toMap(PersonBasedata::getPersonId, identity()));
+            .collect(toMap((o) -> new PersonId(o.getPersonId()), identity()));
     }
 
     @Override

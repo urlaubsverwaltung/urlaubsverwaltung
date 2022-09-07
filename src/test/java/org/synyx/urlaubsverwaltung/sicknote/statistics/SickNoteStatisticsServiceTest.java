@@ -174,7 +174,7 @@ class SickNoteStatisticsServiceTest {
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(member));
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(member), startDate, endDate)).thenReturn(List.of(sickNote));
 
-        final Map<Integer, PersonBasedata> personIdBasedatamap = Map.of(departmentHead.getId(), personBasedata);
+        final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(departmentHead.getId()), personBasedata);
         when(personBasedataService.getBasedataByPersonId(List.of(departmentHead.getId()))).thenReturn(personIdBasedatamap);
 
         when(departmentService.getDepartmentsByMembers(List.of(departmentHead))).thenReturn(Map.of(new PersonId(departmentHead.getId()), List.of("Kitchen", "Service")));

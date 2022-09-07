@@ -67,7 +67,7 @@ public class SickNoteStatisticsService {
         final List<Person> personsWithSickNotes = new ArrayList<>(sickNotesByPerson.keySet());
 
         final List<Integer> personIds = personsWithSickNotes.stream().map(Person::getId).collect(toList());
-        Map<Integer, PersonBasedata> basedataForPersons = personBasedataService.getBasedataByPersonId(personIds);
+        Map<PersonId, PersonBasedata> basedataForPersons = personBasedataService.getBasedataByPersonId(personIds);
         Map<PersonId, List<String>> departmentsForPersons = departmentService.getDepartmentsByMembers(personsWithSickNotes);
 
         return sickNotesByPerson.entrySet().stream()
@@ -75,7 +75,7 @@ public class SickNoteStatisticsService {
             .collect(toList());
     }
 
-    private Function<Map.Entry<Person, List<SickNote>>, SickNoteDetailedStatistics> toSickNoteDetailedStatistics(Map<Integer, PersonBasedata> basedataForPersons, Map<PersonId, List<String>> departmentsForPersons) {
+    private Function<Map.Entry<Person, List<SickNote>>, SickNoteDetailedStatistics> toSickNoteDetailedStatistics(Map<PersonId, PersonBasedata> basedataForPersons, Map<PersonId, List<String>> departmentsForPersons) {
         return personListEntry ->
         {
             final Person person = personListEntry.getKey();

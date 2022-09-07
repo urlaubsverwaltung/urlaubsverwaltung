@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.util.List;
 import java.util.Map;
@@ -73,9 +74,9 @@ class PersonBasedataServiceImplTest {
 
         when(personBasedataRepository.findAllByPersonIdIn(List.of(1,2))).thenReturn(List.of(personBasedataEntity, personBasedataEntity2));
 
-        final Map<Integer, PersonBasedata> basedataByPersonIds = sut.getBasedataByPersonId(List.of(1,2));
-        assertThat(basedataByPersonIds).containsKeys(1,2);
-        assertThat(basedataByPersonIds.get(1).getPersonnelNumber()).isEqualTo("1337");
-        assertThat(basedataByPersonIds.get(2).getPersonnelNumber()).isEqualTo("1887");
+        final Map<PersonId, PersonBasedata> basedataByPersonIds = sut.getBasedataByPersonId(List.of(1,2));
+        assertThat(basedataByPersonIds).containsKeys(new PersonId(1), new PersonId(2));
+        assertThat(basedataByPersonIds.get(new PersonId(1)).getPersonnelNumber()).isEqualTo("1337");
+        assertThat(basedataByPersonIds.get(new PersonId(2)).getPersonnelNumber()).isEqualTo("1887");
     }
 }
