@@ -17,7 +17,7 @@
     </th:block>
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
-    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
+    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
       <div
         th:replace="fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})"
       >

@@ -5,7 +5,7 @@
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
     <main th:fragment="main">
-      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5 tw-pb-32">
+      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
         <div class="feedback">
           <p th:if="${createSuccess}" th:text="#{person.account.action.create.success}" class="alert alert-success"></p>
           <p th:if="${updateSuccess}" th:text="#{person.account.action.update.success}" class="alert alert-success"></p>

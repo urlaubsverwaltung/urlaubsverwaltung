@@ -45,7 +45,7 @@
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
     <main th:fragment="main">
-      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
+      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
         <div class="row">
           <form
             method="post"
@@ -93,7 +93,10 @@
                 <aside class="help-block tw-text-sm">
                   <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
                   <th:block th:text="#{overtime.data.description.general}"></th:block>
-                  <th:block th:if="${overtimeReductionPossible}" th:text="| #{overtime.data.description.overtimeReductionPossible}|"></th:block>
+                  <th:block
+                    th:if="${overtimeReductionPossible}"
+                    th:text="| #{overtime.data.description.overtimeReductionPossible}|"
+                  ></th:block>
                 </aside>
               </div>
               <div class="col-md-8 col-md-pull-4">
