@@ -1732,6 +1732,39 @@ class DepartmentServiceImplTest {
         assertThat(departmentsByMembers).containsEntry(person.getId(), List.of("Department A", "Department B"));
     }
 
+    @Test
+    void getDepartmentsByMembersForDifferentDepartmentsAndPersons() {
+
+        final Person person = new Person();
+        person.setId(42);
+
+        final Person personTwo = new Person();
+        personTwo.setId(1337);
+
+        final DepartmentMemberEmbeddable existingPersonMember = new DepartmentMemberEmbeddable();
+        existingPersonMember.setPerson(person);
+
+        final DepartmentMemberEmbeddable existingPersonMemberTwo = new DepartmentMemberEmbeddable();
+        existingPersonMemberTwo.setPerson(personTwo);
+
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setName("Department A");
+        departmentEntityA.setId(1);
+        departmentEntityA.setMembers(List.of(existingPersonMember));
+
+        final DepartmentEntity departmentEntityB = new DepartmentEntity();
+        departmentEntityB.setName("Department B");
+        departmentEntityB.setId(2);
+        departmentEntityB.setMembers(List.of(existingPersonMemberTwo));
+
+        when(departmentRepository.findDistinctByMembersPersonIn(List.of(person, personTwo))).thenReturn(List.of(departmentEntityA, departmentEntityB));
+
+        final Map<Integer, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(person, personTwo));
+
+        assertThat(departmentsByMembers).containsEntry(42, List.of("Department A"));
+        assertThat(departmentsByMembers).containsEntry(1337, List.of("Department B"));
+    }
+
     private static PageableSearchQuery defaultPersonSearchQuery() {
         return new PageableSearchQuery(defaultPageRequest(), "");
     }
