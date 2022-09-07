@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
@@ -1728,8 +1729,8 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findDistinctByMembersPersonIn(List.of(person))).thenReturn(List.of(departmentEntityA, departmentEntityB));
 
-        final Map<Integer, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(person));
-        assertThat(departmentsByMembers).containsEntry(person.getId(), List.of("Department A", "Department B"));
+        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(person));
+        assertThat(departmentsByMembers).containsEntry(new PersonId(42), List.of("Department A", "Department B"));
     }
 
     @Test
@@ -1759,10 +1760,10 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findDistinctByMembersPersonIn(List.of(person, personTwo))).thenReturn(List.of(departmentEntityA, departmentEntityB));
 
-        final Map<Integer, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(person, personTwo));
+        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(person, personTwo));
 
-        assertThat(departmentsByMembers).containsEntry(42, List.of("Department A"));
-        assertThat(departmentsByMembers).containsEntry(1337, List.of("Department B"));
+        assertThat(departmentsByMembers).containsEntry(new PersonId(42), List.of("Department A"));
+        assertThat(departmentsByMembers).containsEntry(new PersonId(1337), List.of("Department B"));
     }
 
     @Test
@@ -1784,11 +1785,11 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findDistinctByMembersPersonIn(List.of(personOne))).thenReturn(List.of(departmentEntityA));
 
-        final Map<Integer, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(personOne));
+        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(personOne));
 
         assertThat(departmentsByMembers)
             .hasSize(1)
-            .containsEntry(1, List.of("Department A"));
+            .containsEntry(new PersonId(1), List.of("Department A"));
     }
 
     private static PageableSearchQuery defaultPersonSearchQuery() {

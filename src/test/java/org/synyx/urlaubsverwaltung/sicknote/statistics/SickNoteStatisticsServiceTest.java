@@ -9,12 +9,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
-import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
@@ -177,7 +177,7 @@ class SickNoteStatisticsServiceTest {
         final Map<Integer, PersonBasedata> personIdBasedatamap = Map.of(departmentHead.getId(), personBasedata);
         when(personBasedataService.getBasedataByPersonId(List.of(departmentHead.getId()))).thenReturn(personIdBasedatamap);
 
-        when(departmentService.getDepartmentsByMembers(List.of(departmentHead))).thenReturn(Map.of(departmentHead.getId(), List.of("Kitchen", "Service")));
+        when(departmentService.getDepartmentsByMembers(List.of(departmentHead))).thenReturn(Map.of(new PersonId(departmentHead.getId()), List.of("Kitchen", "Service")));
 
         final List<SickNoteDetailedStatistics> allSicknotes = sut.getAllSickNotes(departmentHead, startDate, endDate);
         assertThat(allSicknotes)

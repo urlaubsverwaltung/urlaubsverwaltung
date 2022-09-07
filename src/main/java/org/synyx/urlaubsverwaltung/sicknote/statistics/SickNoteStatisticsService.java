@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
@@ -67,19 +68,19 @@ public class SickNoteStatisticsService {
 
         final List<Integer> personIds = personsWithSickNotes.stream().map(Person::getId).collect(toList());
         Map<Integer, PersonBasedata> basedataForPersons = personBasedataService.getBasedataByPersonId(personIds);
-        Map<Integer, List<String>> departmentsForPersons = departmentService.getDepartmentsByMembers(personsWithSickNotes);
+        Map<PersonId, List<String>> departmentsForPersons = departmentService.getDepartmentsByMembers(personsWithSickNotes);
 
         return sickNotesByPerson.entrySet().stream()
             .map(toSickNoteDetailedStatistics(basedataForPersons, departmentsForPersons))
             .collect(toList());
     }
 
-    private Function<Map.Entry<Person, List<SickNote>>, SickNoteDetailedStatistics> toSickNoteDetailedStatistics(Map<Integer, PersonBasedata> basedataForPersons, Map<Integer, List<String>> departmentsForPersons) {
+    private Function<Map.Entry<Person, List<SickNote>>, SickNoteDetailedStatistics> toSickNoteDetailedStatistics(Map<Integer, PersonBasedata> basedataForPersons, Map<PersonId, List<String>> departmentsForPersons) {
         return personListEntry ->
         {
             final Person person = personListEntry.getKey();
             final String personnelNumber = Optional.of(basedataForPersons.get(person.getId()).getPersonnelNumber()).orElse("");
-            final List<String> departments = Optional.of(departmentsForPersons.get(person.getId())).orElse(List.of());
+            final List<String> departments = Optional.of(departmentsForPersons.get(new PersonId(person.getId()))).orElse(List.of());
             return new SickNoteDetailedStatistics(personnelNumber, person.getFirstName(), person.getLastName(), personListEntry.getValue(), departments);
         };
     }

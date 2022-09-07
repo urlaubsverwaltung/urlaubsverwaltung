@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 
@@ -326,13 +327,13 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Map<Integer, List<String>> getDepartmentsByMembers(List<Person> persons) {
+    public Map<PersonId, List<String>> getDepartmentsByMembers(List<Person> persons) {
 
         final Map<List<Person>, List<Department>> personDepartmentList = departmentRepository.findDistinctByMembersPersonIn(persons).stream()
             .map(this::mapToDepartment)
             .collect(groupingBy(Department::getMembers));
 
-        final Map<Integer, List<String>> departmentsByPerson = new HashMap<>();
+        final Map<PersonId, List<String>> departmentsByPerson = new HashMap<>();
         personDepartmentList.forEach((personList, departmentList) -> {
 
             final List<String> departmentNames = departmentList.stream()
@@ -341,10 +342,11 @@ class DepartmentServiceImpl implements DepartmentService {
 
             personList.forEach(person -> {
                 if (persons.contains(person)) {
-                    if (departmentsByPerson.containsKey(person.getId())) {
-                        departmentsByPerson.get(person.getId()).addAll(departmentNames);
+                    final PersonId personId = new PersonId(person.getId());
+                    if (departmentsByPerson.containsKey(personId)) {
+                        departmentsByPerson.get(personId).addAll(departmentNames);
                     } else {
-                        departmentsByPerson.put(person.getId(), departmentNames);
+                        departmentsByPerson.put(personId, departmentNames);
                     }
                 }
             });
