@@ -340,10 +340,12 @@ class DepartmentServiceImpl implements DepartmentService {
                 .collect(toList());
 
             personList.forEach(person -> {
-                if (departmentsByPerson.containsKey(person.getId())) {
-                    departmentsByPerson.get(person.getId()).addAll(departmentNames);
-                } else {
-                    departmentsByPerson.put(person.getId(), departmentNames);
+                if (persons.contains(person)) {
+                    if (departmentsByPerson.containsKey(person.getId())) {
+                        departmentsByPerson.get(person.getId()).addAll(departmentNames);
+                    } else {
+                        departmentsByPerson.put(person.getId(), departmentNames);
+                    }
                 }
             });
         });

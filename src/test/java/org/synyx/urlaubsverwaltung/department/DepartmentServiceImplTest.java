@@ -1765,6 +1765,32 @@ class DepartmentServiceImplTest {
         assertThat(departmentsByMembers).containsEntry(1337, List.of("Department B"));
     }
 
+    @Test
+    void getDepartmentsByMembersReturnsOnlyRequestedPersons() {
+
+        final Person personOne = anyPerson(1);
+        final Person personTwo = anyPerson(2);
+
+        final DepartmentMemberEmbeddable departmentMemberOne = new DepartmentMemberEmbeddable();
+        departmentMemberOne.setPerson(personOne);
+
+        final DepartmentMemberEmbeddable departmentMemberTwo = new DepartmentMemberEmbeddable();
+        departmentMemberTwo.setPerson(personTwo);
+
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setName("Department A");
+        departmentEntityA.setId(1);
+        departmentEntityA.setMembers(List.of(departmentMemberOne, departmentMemberTwo));
+
+        when(departmentRepository.findDistinctByMembersPersonIn(List.of(personOne))).thenReturn(List.of(departmentEntityA));
+
+        final Map<Integer, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(personOne));
+
+        assertThat(departmentsByMembers)
+            .hasSize(1)
+            .containsEntry(1, List.of("Department A"));
+    }
+
     private static PageableSearchQuery defaultPersonSearchQuery() {
         return new PageableSearchQuery(defaultPageRequest(), "");
     }
