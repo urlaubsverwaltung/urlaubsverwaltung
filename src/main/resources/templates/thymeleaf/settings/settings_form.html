@@ -8,7 +8,7 @@
   </head>
   <body th:replace="_layout::body(~{::content}, ~{})">
     <th:block th:ref="content">
-      <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 tw-pb-32">
+      <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
         <h1 th:text="#{settings.header.title}" class="tw-sr-only"></h1>
 
         <form method="post" th:action="@{/web/settings}" th:object="${settings}" class="form-horizontal" role="form">
@@ -156,12 +156,6 @@
           </div>
         </form>
       </main>
-      <footer class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
-        <div class="tw-mb-4">
-          <span class="tw-text-sm"> <a href="https://urlaubsverwaltung.cloud/">urlaubsverwaltung.cloud</a> | </span>
-          <span th:text="|v${version}|" class="tw-text-xs"></span>
-        </div>
-      </footer>
     </th:block>
   </body>
 </html>

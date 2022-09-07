@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,13 +47,12 @@ public class SettingsViewController {
     private final List<CalendarProvider> calendarProviders;
     private final SettingsValidator settingsValidator;
     private final Clock clock;
-    private final String applicationVersion;
     private final SpecialLeaveSettingsService specialLeaveSettingsService;
 
     @Autowired
     public SettingsViewController(AccountProperties accountProperties, WorkingTimeProperties workingTimeProperties,
                                   SettingsService settingsService, VacationTypeService vacationTypeService, List<CalendarProvider> calendarProviders,
-                                  SettingsValidator settingsValidator, Clock clock, @Value("${info.app.version}") String applicationVersion, SpecialLeaveSettingsService specialLeaveService) {
+                                  SettingsValidator settingsValidator, Clock clock, SpecialLeaveSettingsService specialLeaveService) {
         this.accountProperties = accountProperties;
         this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
@@ -62,7 +60,6 @@ public class SettingsViewController {
         this.calendarProviders = calendarProviders;
         this.settingsValidator = settingsValidator;
         this.clock = clock;
-        this.applicationVersion = applicationVersion;
         this.specialLeaveSettingsService = specialLeaveService;
     }
 
@@ -164,7 +161,6 @@ public class SettingsViewController {
         }
 
         model.addAttribute("authorizedRedirectUrl", authorizedRedirectUrl);
-        model.addAttribute("version", applicationVersion);
     }
 
     private SettingsDto settingsToDto(Settings settings) {

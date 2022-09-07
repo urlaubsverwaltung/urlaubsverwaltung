@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -25,17 +26,20 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
  * Interceptor to add menu specific information to all requests
  */
 @Component
-public class MenuDataProvider implements HandlerInterceptor {
+public class FrameDataProvider implements HandlerInterceptor {
 
     private final PersonService personService;
     private final SettingsService settingsService;
     private final MenuProperties menuProperties;
+    private final String applicationVersion;
 
     @Autowired
-    public MenuDataProvider(PersonService personService, SettingsService settingsService, MenuProperties menuProperties) {
+    public FrameDataProvider(PersonService personService, SettingsService settingsService, MenuProperties menuProperties,
+                             @Value("${info.app.version}") String applicationVersion) {
         this.personService = personService;
         this.settingsService = settingsService;
         this.menuProperties = menuProperties;
+        this.applicationVersion = applicationVersion;
     }
 
     @Override
@@ -46,6 +50,8 @@ public class MenuDataProvider implements HandlerInterceptor {
             final Person signedInUserInModel = (Person) modelAndView.getModelMap().get("signedInUser");
             final Person user = Objects.requireNonNullElseGet(signedInUserInModel, personService::getSignedInUser);
             final String gravatarUrl = user.getGravatarURL();
+
+            modelAndView.addObject("version", applicationVersion);
 
             modelAndView.addObject("userFirstName", user.getFirstName());
             modelAndView.addObject("userLastName", user.getLastName());
@@ -70,7 +76,9 @@ public class MenuDataProvider implements HandlerInterceptor {
             return false;
         }
 
-        return !viewName.startsWith("redirect:") && !viewName.startsWith("thymeleaf/login");
+        return !viewName.startsWith("forward:")
+            && !viewName.startsWith("redirect:")
+            && !viewName.startsWith("thymeleaf/login");
     }
 
     private boolean popupMenuEnabled(Person signedInUser) {

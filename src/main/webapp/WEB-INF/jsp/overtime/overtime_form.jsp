@@ -211,5 +211,7 @@
 </div>
 <%-- End of content --%>
 
+<uv:footer/>
+
 </body>
 </html>

@@ -7,7 +7,7 @@
     </th:block>
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
-    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5 tw-pb-32">
+    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
       <div th:replace="fragments/section-heading::section-heading(~{::person-permissions-body}, ~{})">
         <th:block th:ref="person-permissions-body">
           <h2 th:text="#{person.form.permissions.title(${person.niceName})}">Berechtigungen für</h2>

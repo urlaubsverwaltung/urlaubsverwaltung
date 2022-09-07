@@ -32,9 +32,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
-class MenuDataProviderTest {
+class FrameDataProviderTest {
 
-    private MenuDataProvider sut;
+    private FrameDataProvider sut;
 
     @Mock
     private PersonService personService;
@@ -44,7 +44,7 @@ class MenuDataProviderTest {
 
     @BeforeEach
     void setUp() {
-        sut = new MenuDataProvider(personService, settingsService, new MenuProperties());
+        sut = new FrameDataProvider(personService, settingsService, new MenuProperties(), "version");
     }
 
     @Test
