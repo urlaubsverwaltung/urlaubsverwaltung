@@ -1729,7 +1729,7 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findDistinctByMembersPersonIn(List.of(person))).thenReturn(List.of(departmentEntityA, departmentEntityB));
 
-        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(person));
+        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentNamesByMembers(List.of(person));
         assertThat(departmentsByMembers).containsEntry(new PersonId(42), List.of("Department A", "Department B"));
     }
 
@@ -1760,7 +1760,7 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findDistinctByMembersPersonIn(List.of(person, personTwo))).thenReturn(List.of(departmentEntityA, departmentEntityB));
 
-        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(person, personTwo));
+        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentNamesByMembers(List.of(person, personTwo));
 
         assertThat(departmentsByMembers).containsEntry(new PersonId(42), List.of("Department A"));
         assertThat(departmentsByMembers).containsEntry(new PersonId(1337), List.of("Department B"));
@@ -1785,7 +1785,7 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findDistinctByMembersPersonIn(List.of(personOne))).thenReturn(List.of(departmentEntityA));
 
-        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(personOne));
+        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentNamesByMembers(List.of(personOne));
 
         assertThat(departmentsByMembers)
             .hasSize(1)
@@ -1825,7 +1825,7 @@ class DepartmentServiceImplTest {
 
         when(departmentRepository.findDistinctByMembersPersonIn(List.of(personOne, personTwo, personThree))).thenReturn(List.of(departmentEntityA, departmentEntityB, departmentEntityC));
 
-        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(personOne, personTwo, personThree));
+        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentNamesByMembers(List.of(personOne, personTwo, personThree));
         assertThat(departmentsByMembers)
             .containsEntry(new PersonId(1), List.of("Department A", "Department B"))
             .containsEntry(new PersonId(2), List.of("Department C", "Department A", "Department B"))

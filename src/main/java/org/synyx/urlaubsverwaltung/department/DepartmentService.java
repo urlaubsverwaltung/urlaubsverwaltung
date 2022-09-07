@@ -234,10 +234,10 @@ public interface DepartmentService {
     long getNumberOfDepartments();
 
     /**
-     * Get all departments for the given persons as a map.
+     * Get all department names for the given persons as a map.
      *
      * @param persons
      * @return a map of personId mapped to department names
      */
-    Map<PersonId, List<String>> getDepartmentsByMembers(List<Person> persons);
+    Map<PersonId, List<String>> getDepartmentNamesByMembers(List<Person> persons);
 }

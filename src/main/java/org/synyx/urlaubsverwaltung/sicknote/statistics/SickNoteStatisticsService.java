@@ -68,7 +68,7 @@ public class SickNoteStatisticsService {
 
         final List<Integer> personIds = personsWithSickNotes.stream().map(Person::getId).collect(toList());
         Map<PersonId, PersonBasedata> basedataForPersons = personBasedataService.getBasedataByPersonId(personIds);
-        Map<PersonId, List<String>> departmentsForPersons = departmentService.getDepartmentsByMembers(personsWithSickNotes);
+        Map<PersonId, List<String>> departmentsForPersons = departmentService.getDepartmentNamesByMembers(personsWithSickNotes);
 
         return sickNotesByPerson.entrySet().stream()
             .map(toSickNoteDetailedStatistics(basedataForPersons, departmentsForPersons))

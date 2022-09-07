@@ -330,7 +330,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Map<PersonId, List<String>> getDepartmentsByMembers(List<Person> persons) {
+    public Map<PersonId, List<String>> getDepartmentNamesByMembers(List<Person> persons) {
 
         final Map<List<Person>, List<Department>> personDepartmentList = departmentRepository.findDistinctByMembersPersonIn(persons).stream()
             .map(this::mapToDepartment)
