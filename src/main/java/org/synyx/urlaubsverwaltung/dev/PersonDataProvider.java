@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.dev;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -90,7 +91,7 @@ class PersonDataProvider {
         person.setNotifications(notifications);
         person.setPassword(passwordHash);
         final Person savedPerson = personService.create(person);
-        personBasedataService.update(new PersonBasedata(person.getId(), String.valueOf(personnelNumber), ""));
+        personBasedataService.update(new PersonBasedata(new PersonId(person.getId()), String.valueOf(personnelNumber), ""));
 
         final int currentYear = Year.now(clock).getValue();
         final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);

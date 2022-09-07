@@ -42,7 +42,7 @@ class PersonBasedataServiceImplTest {
 
         final Optional<PersonBasedata> basedata = sut.getBasedataByPersonId(1);
         assertThat(basedata).hasValueSatisfying(personBasedata -> {
-            assertThat(personBasedata.getPersonId()).isEqualTo(1);
+            assertThat(personBasedata.getPersonId()).isEqualTo(new PersonId(1));
             assertThat(personBasedata.getPersonnelNumber()).isEqualTo("1337");
             assertThat(personBasedata.getAdditionalInformation()).isEqualTo("Some additional Information");
         });
@@ -51,7 +51,7 @@ class PersonBasedataServiceImplTest {
     @Test
     void update() {
 
-        final PersonBasedata personBasedata = new PersonBasedata(1, "1337", "Some additional Information");
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(1), "1337", "Some additional Information");
         sut.update(personBasedata);
 
         final ArgumentCaptor<PersonBasedataEntity> captor = ArgumentCaptor.forClass(PersonBasedataEntity.class);

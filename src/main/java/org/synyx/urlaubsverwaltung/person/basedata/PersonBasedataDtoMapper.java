@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 
 final class PersonBasedataDtoMapper {
 
@@ -9,7 +10,7 @@ final class PersonBasedataDtoMapper {
 
     static PersonBasedataDto mapToPersonBasedataDto(PersonBasedata personBasedata, Person person) {
         final PersonBasedataDto personBasedataDto = new PersonBasedataDto();
-        personBasedataDto.setPersonId(personBasedata.getPersonId());
+        personBasedataDto.setPersonId(personBasedata.getPersonId().getValue());
         personBasedataDto.setPersonnelNumber(personBasedata.getPersonnelNumber());
         personBasedataDto.setAdditionalInfo(personBasedata.getAdditionalInformation());
         personBasedataDto.setNiceName(person.getNiceName());
@@ -20,7 +21,7 @@ final class PersonBasedataDtoMapper {
 
     static PersonBasedata mapToPersonBasedata(PersonBasedataDto personBasedataDto) {
         return new PersonBasedata(
-            personBasedataDto.getPersonId(),
+            new PersonId(personBasedataDto.getPersonId()),
             personBasedataDto.getPersonnelNumber(),
             personBasedataDto.getAdditionalInfo());
     }

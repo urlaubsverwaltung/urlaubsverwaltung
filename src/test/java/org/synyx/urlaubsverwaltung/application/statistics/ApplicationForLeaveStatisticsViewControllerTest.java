@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -181,7 +182,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         person.setId(1);
 
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person);
-        statistic.setPersonBasedata(new PersonBasedata(1, "42", "some additional information"));
+        statistic.setPersonBasedata(new PersonBasedata(new PersonId(1), "42", "some additional information"));
         statistic.setLeftOvertimeForYear(Duration.ofHours(10));
         statistic.setLeftVacationDaysForYear(BigDecimal.valueOf(2));
         statistic.addWaitingVacationDays(new VacationType(1, true, HOLIDAY, "message_key_holiday", false, YELLOW, false), BigDecimal.valueOf(3));

@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -58,7 +59,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         final Person person = new Person();
         person.setFirstName("personOneFirstName");
         person.setLastName("personOneLastName");
-        final PersonBasedata basedata = new PersonBasedata(-1, "42", "OneInformation");
+        final PersonBasedata basedata = new PersonBasedata(new PersonId(-1), "42", "OneInformation");
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "holiday", true, YELLOW, false);
 
@@ -104,12 +105,12 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         final Person personOne = new Person();
         personOne.setFirstName("personOneFirstName");
         personOne.setLastName("personOneLastName");
-        final PersonBasedata basedataOne = new PersonBasedata(-1, "42", "OneInformation");
+        final PersonBasedata basedataOne = new PersonBasedata(new PersonId(-1), "42", "OneInformation");
 
         final Person personTwo = new Person();
         personTwo.setFirstName("personTwoFirstName");
         personTwo.setLastName("personTwoLastName");
-        final PersonBasedata basedataTwo = new PersonBasedata(-1, "42", "SecondInformation");
+        final PersonBasedata basedataTwo = new PersonBasedata(new PersonId(-1), "42", "SecondInformation");
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "holiday", true, YELLOW, false);
 

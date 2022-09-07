@@ -145,7 +145,7 @@ public class SickDaysOverviewViewController {
             .filter(Optional::isPresent)
             .map(Optional::get)
             .filter(personBasedata -> hasText(personBasedata.getPersonnelNumber()))
-            .collect(toMap(PersonBasedata::getPersonId, PersonBasedata::getPersonnelNumber));
+            .collect(toMap(basedata -> basedata.getPersonId().getValue(), PersonBasedata::getPersonnelNumber));
     }
 
     private void calculateSickDays(FilterPeriod period, Map<Person, SickDays> sickDays, SickNote sickNote) {

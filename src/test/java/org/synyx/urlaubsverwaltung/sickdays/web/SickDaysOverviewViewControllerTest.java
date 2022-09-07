@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -451,7 +452,7 @@ class SickDaysOverviewViewControllerTest {
         person.setId(1);
         final List<Person> persons = List.of(person);
         when(personService.getActivePersons()).thenReturn(persons);
-        when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(new PersonBasedata(1, "42", null)));
+        when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(new PersonBasedata(new PersonId(1), "42", null)));
 
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);

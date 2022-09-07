@@ -6,10 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
@@ -119,7 +119,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         person.setPermissions(List.of(USER));
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
-        final PersonBasedata personBasedata = new PersonBasedata(1, "42", "additional information");
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(1), "42", "additional information");
         when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(personBasedata));
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);

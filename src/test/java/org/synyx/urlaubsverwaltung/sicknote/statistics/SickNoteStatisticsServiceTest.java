@@ -163,7 +163,7 @@ class SickNoteStatisticsServiceTest {
         departmentHead.setId(42);
 
         final String personnnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(departmentHead.getId(), personnnelNumber, "additionalInfo");
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), personnnelNumber, "additionalInfo");
 
         final SickNote sickNote = new SickNote();
         sickNote.setPerson(departmentHead);

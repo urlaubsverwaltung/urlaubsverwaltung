@@ -79,7 +79,7 @@ public class SickNoteStatisticsService {
         return personListEntry ->
         {
             final Person person = personListEntry.getKey();
-            final String personnelNumber = Optional.of(basedataForPersons.get(person.getId()).getPersonnelNumber()).orElse("");
+            final String personnelNumber = Optional.of(basedataForPersons.get(new PersonId(person.getId())).getPersonnelNumber()).orElse("");
             final List<String> departments = Optional.of(departmentsForPersons.get(new PersonId(person.getId()))).orElse(List.of());
             return new SickNoteDetailedStatistics(personnelNumber, person.getFirstName(), person.getLastName(), personListEntry.getValue(), departments);
         };
