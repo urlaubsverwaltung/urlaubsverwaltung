@@ -1729,9 +1729,7 @@ class DepartmentServiceImplTest {
         when(departmentRepository.findDistinctByMembersPersonIn(List.of(person))).thenReturn(List.of(departmentEntityA, departmentEntityB));
 
         final Map<Integer, List<String>> departmentsByMembers = sut.getDepartmentsByMembers(List.of(person));
-        assertThat(departmentsByMembers)
-            .containsKey(person.getId())
-            .containsValue(List.of("Department A", "Department B"));
+        assertThat(departmentsByMembers).containsEntry(person.getId(), List.of("Department A", "Department B"));
     }
 
     private static PageableSearchQuery defaultPersonSearchQuery() {
