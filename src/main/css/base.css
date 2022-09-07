@@ -82,10 +82,6 @@ hr {
   @apply dark:tw-border-zinc-600;
 }
 
-footer {
-  color: #aaa;
-}
-
 h1 {
   @apply tw-text-2xl;
   @apply tw-font-normal;
