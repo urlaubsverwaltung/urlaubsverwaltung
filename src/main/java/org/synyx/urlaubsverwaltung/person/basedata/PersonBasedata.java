@@ -1,18 +1,20 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
+import org.synyx.urlaubsverwaltung.person.PersonId;
+
 public class PersonBasedata {
 
-    private final int personId;
+    private final PersonId personId;
     private final String personnelNumber;
     private final String additionalInformation;
 
-    public PersonBasedata(int personId, String personnelNumber, String additionalInformation) {
+    public PersonBasedata(PersonId personId, String personnelNumber, String additionalInformation) {
         this.personId = personId;
         this.personnelNumber = personnelNumber;
         this.additionalInformation = additionalInformation;
     }
 
-    public int getPersonId() {
+    public PersonId getPersonId() {
         return personId;
     }
 

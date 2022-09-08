@@ -2,12 +2,14 @@ package org.synyx.urlaubsverwaltung.department;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -230,4 +232,12 @@ public interface DepartmentService {
      * @return number of departments
      */
     long getNumberOfDepartments();
+
+    /**
+     * Get all department names for the given persons as a map.
+     *
+     * @param persons
+     * @return a map of personId mapped to department names
+     */
+    Map<PersonId, List<String>> getDepartmentNamesByMembers(List<Person> persons);
 }

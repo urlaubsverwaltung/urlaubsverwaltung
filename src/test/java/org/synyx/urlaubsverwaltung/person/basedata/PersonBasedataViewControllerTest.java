@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
@@ -49,7 +50,7 @@ class PersonBasedataViewControllerTest {
         person.setId(1);
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        final PersonBasedata personBasedata = new PersonBasedata(1, "1337", "Some additional information");
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(1), "1337", "Some additional information");
         when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(personBasedata));
 
         perform(get("/web/person/1/basedata"))
@@ -102,7 +103,7 @@ class PersonBasedataViewControllerTest {
         verify(personBasedataService).update(captor.capture());
 
         final PersonBasedata personBasedata = captor.getValue();
-        assertThat(personBasedata.getPersonId()).isEqualTo(1);
+        assertThat(personBasedata.getPersonId()).isEqualTo(new PersonId(1));
         assertThat(personBasedata.getPersonnelNumber()).isEqualTo("1337");
         assertThat(personBasedata.getAdditionalInformation()).isEqualTo("Additional Information");
     }

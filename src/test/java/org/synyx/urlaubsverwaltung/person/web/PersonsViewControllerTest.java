@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.department.web.UnknownDepartmentException;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -521,7 +522,7 @@ class PersonsViewControllerTest {
         final PageImpl<Person> page = new PageImpl<>(List.of(wayne, wolf));
         when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
 
-        when(personBasedataService.getBasedataByPersonId(2)).thenReturn(Optional.of(new PersonBasedata(2, "42", null)));
+        when(personBasedataService.getBasedataByPersonId(2)).thenReturn(Optional.of(new PersonBasedata(new PersonId(2), "42", null)));
 
         perform(get("/web/person"))
             .andExpect(

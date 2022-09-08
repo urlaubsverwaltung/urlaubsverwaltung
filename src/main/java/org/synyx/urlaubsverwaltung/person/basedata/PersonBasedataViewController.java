@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
@@ -40,7 +41,7 @@ public class PersonBasedataViewController {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final PersonBasedata personBasedata = personBasedataService.getBasedataByPersonId(personId)
-            .orElse(new PersonBasedata(personId, "", ""));
+            .orElse(new PersonBasedata(new PersonId(personId), "", ""));
 
         model.addAttribute("personBasedata", mapToPersonBasedataDto(personBasedata, person));
 

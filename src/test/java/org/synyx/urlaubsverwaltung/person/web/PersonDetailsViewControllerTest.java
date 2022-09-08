@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -124,7 +125,7 @@ class PersonDetailsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        final PersonBasedata personBasedata = new PersonBasedata(1, "42", "additional information");
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(1), "42", "additional information");
         when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(personBasedata));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));

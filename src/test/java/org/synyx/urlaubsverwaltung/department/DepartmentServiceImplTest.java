@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
@@ -23,6 +24,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
@@ -1704,6 +1706,131 @@ class DepartmentServiceImplTest {
 
         final long numberOfDepartments = sut.getNumberOfDepartments();
         assertThat(numberOfDepartments).isEqualTo(10);
+    }
+
+    @Test
+    void getDepartmentsByMembers() {
+
+        final Person person = new Person();
+        person.setId(42);
+
+        final DepartmentMemberEmbeddable existingPersonMember = new DepartmentMemberEmbeddable();
+        existingPersonMember.setPerson(person);
+
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setName("Department A");
+        departmentEntityA.setId(1);
+        departmentEntityA.setMembers(List.of(existingPersonMember));
+
+        final DepartmentEntity departmentEntityB = new DepartmentEntity();
+        departmentEntityB.setName("Department B");
+        departmentEntityB.setId(2);
+        departmentEntityB.setMembers(List.of(existingPersonMember));
+
+        when(departmentRepository.findDistinctByMembersPersonIn(List.of(person))).thenReturn(List.of(departmentEntityA, departmentEntityB));
+
+        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentNamesByMembers(List.of(person));
+        assertThat(departmentsByMembers).containsEntry(new PersonId(42), List.of("Department A", "Department B"));
+    }
+
+    @Test
+    void getDepartmentsByMembersForDifferentDepartmentsAndPersons() {
+
+        final Person person = new Person();
+        person.setId(42);
+
+        final Person personTwo = new Person();
+        personTwo.setId(1337);
+
+        final DepartmentMemberEmbeddable existingPersonMember = new DepartmentMemberEmbeddable();
+        existingPersonMember.setPerson(person);
+
+        final DepartmentMemberEmbeddable existingPersonMemberTwo = new DepartmentMemberEmbeddable();
+        existingPersonMemberTwo.setPerson(personTwo);
+
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setName("Department A");
+        departmentEntityA.setId(1);
+        departmentEntityA.setMembers(List.of(existingPersonMember));
+
+        final DepartmentEntity departmentEntityB = new DepartmentEntity();
+        departmentEntityB.setName("Department B");
+        departmentEntityB.setId(2);
+        departmentEntityB.setMembers(List.of(existingPersonMemberTwo));
+
+        when(departmentRepository.findDistinctByMembersPersonIn(List.of(person, personTwo))).thenReturn(List.of(departmentEntityA, departmentEntityB));
+
+        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentNamesByMembers(List.of(person, personTwo));
+
+        assertThat(departmentsByMembers)
+            .containsEntry(new PersonId(42), List.of("Department A"))
+            .containsEntry(new PersonId(1337), List.of("Department B"));
+    }
+
+    @Test
+    void getDepartmentsByMembersReturnsOnlyRequestedPersons() {
+
+        final Person personOne = anyPerson(1);
+        final Person personTwo = anyPerson(2);
+
+        final DepartmentMemberEmbeddable departmentMemberOne = new DepartmentMemberEmbeddable();
+        departmentMemberOne.setPerson(personOne);
+
+        final DepartmentMemberEmbeddable departmentMemberTwo = new DepartmentMemberEmbeddable();
+        departmentMemberTwo.setPerson(personTwo);
+
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setName("Department A");
+        departmentEntityA.setId(1);
+        departmentEntityA.setMembers(List.of(departmentMemberOne, departmentMemberTwo));
+
+        when(departmentRepository.findDistinctByMembersPersonIn(List.of(personOne))).thenReturn(List.of(departmentEntityA));
+
+        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentNamesByMembers(List.of(personOne));
+
+        assertThat(departmentsByMembers)
+            .hasSize(1)
+            .containsEntry(new PersonId(1), List.of("Department A"));
+    }
+
+    @Test
+    void getDepartmentsByMembersWithDepartmentMemberIntersection() {
+
+        final Person personOne = anyPerson(1);
+        final Person personTwo = anyPerson(2);
+        final Person personThree = anyPerson(3);
+
+        final DepartmentMemberEmbeddable departmentMemberOne = new DepartmentMemberEmbeddable();
+        departmentMemberOne.setPerson(personOne);
+
+        final DepartmentMemberEmbeddable departmentMemberTwo = new DepartmentMemberEmbeddable();
+        departmentMemberTwo.setPerson(personTwo);
+
+        final DepartmentMemberEmbeddable departmentMemberThree = new DepartmentMemberEmbeddable();
+        departmentMemberThree.setPerson(personThree);
+
+        final DepartmentEntity departmentEntityA = new DepartmentEntity();
+        departmentEntityA.setId(1);
+        departmentEntityA.setName("Department A");
+        departmentEntityA.setMembers(List.of(departmentMemberOne, departmentMemberTwo));
+
+        final DepartmentEntity departmentEntityB = new DepartmentEntity();
+        departmentEntityB.setId(2);
+        departmentEntityB.setName("Department B");
+        departmentEntityB.setMembers(List.of(departmentMemberOne, departmentMemberTwo));
+
+        final DepartmentEntity departmentEntityC = new DepartmentEntity();
+        departmentEntityC.setId(3);
+        departmentEntityC.setName("Department C");
+        departmentEntityC.setMembers(List.of(departmentMemberTwo, departmentMemberThree));
+
+        when(departmentRepository.findDistinctByMembersPersonIn(List.of(personOne, personTwo, personThree))).thenReturn(List.of(departmentEntityA, departmentEntityB, departmentEntityC));
+
+        final Map<PersonId, List<String>> departmentsByMembers = sut.getDepartmentNamesByMembers(List.of(personOne, personTwo, personThree));
+        assertThat(departmentsByMembers)
+            .containsEntry(new PersonId(1), List.of("Department A", "Department B"))
+            .containsEntry(new PersonId(2), List.of("Department C", "Department A", "Department B"))
+            .containsEntry(new PersonId(3), List.of("Department C"));
     }
 
     private static PageableSearchQuery defaultPersonSearchQuery() {

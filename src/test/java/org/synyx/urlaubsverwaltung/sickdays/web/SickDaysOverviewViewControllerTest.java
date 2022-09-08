@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -200,7 +201,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
             .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
-            .andExpect(view().name("sicknote/sick_notes"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_notes"));
     }
 
     @Test
@@ -262,7 +263,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
             .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
-            .andExpect(view().name("sicknote/sick_notes"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_notes"));
     }
 
     @Test
@@ -324,7 +325,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
             .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
-            .andExpect(view().name("sicknote/sick_notes"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_notes"));
     }
 
     @Test
@@ -395,7 +396,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
             .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
-            .andExpect(view().name("sicknote/sick_notes"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_notes"));
     }
 
     @Test
@@ -418,7 +419,7 @@ class SickDaysOverviewViewControllerTest {
         resultActions.andExpect(model().attribute("to", endDate));
         resultActions.andExpect(model().attribute("period", hasProperty("startDate", is(startDate))));
         resultActions.andExpect(model().attribute("period", hasProperty("endDate", is(endDate))));
-        resultActions.andExpect(view().name("sicknote/sick_notes"));
+        resultActions.andExpect(view().name("thymeleaf/sicknote/sick_notes"));
     }
 
     @Test
@@ -436,7 +437,7 @@ class SickDaysOverviewViewControllerTest {
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
-            .andExpect(view().name("sicknote/sick_notes"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_notes"));
     }
 
     @Test
@@ -451,7 +452,7 @@ class SickDaysOverviewViewControllerTest {
         person.setId(1);
         final List<Person> persons = List.of(person);
         when(personService.getActivePersons()).thenReturn(persons);
-        when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(new PersonBasedata(1, "42", null)));
+        when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(new PersonBasedata(new PersonId(1), "42", null)));
 
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
@@ -462,7 +463,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("persons", persons))
             .andExpect(model().attribute("personnelNumberOfPersons", Map.of(1, "42")))
             .andExpect(model().attribute("showPersonnelNumberColumn", true))
-            .andExpect(view().name("sicknote/sick_notes"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_notes"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

@@ -10,6 +10,7 @@ import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -58,7 +59,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         final Person person = new Person();
         person.setFirstName("personOneFirstName");
         person.setLastName("personOneLastName");
-        final PersonBasedata basedata = new PersonBasedata(-1, "42", "OneInformation");
+        final PersonBasedata basedata = new PersonBasedata(new PersonId(-1), "42", "OneInformation");
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "holiday", true, YELLOW, false);
 
@@ -86,7 +87,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        sut.writeStatistics(period, statistics, csvWriter);
+        sut.write(period, statistics, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{absence.period}: 01.01.2018 - 31.12.2018"});
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left}", "", "{applications.statistics.left} (2018)", "", "{person.account.basedata.additionalInformation}"});
         verify(csvWriter).writeNext(new String[]{"", "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}", "{duration.vacationDays}", "{duration.overtime}"});
@@ -104,12 +105,12 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         final Person personOne = new Person();
         personOne.setFirstName("personOneFirstName");
         personOne.setLastName("personOneLastName");
-        final PersonBasedata basedataOne = new PersonBasedata(-1, "42", "OneInformation");
+        final PersonBasedata basedataOne = new PersonBasedata(new PersonId(-1), "42", "OneInformation");
 
         final Person personTwo = new Person();
         personTwo.setFirstName("personTwoFirstName");
         personTwo.setLastName("personTwoLastName");
-        final PersonBasedata basedataTwo = new PersonBasedata(-1, "42", "SecondInformation");
+        final PersonBasedata basedataTwo = new PersonBasedata(new PersonId(-1), "42", "SecondInformation");
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "holiday", true, YELLOW, false);
 
@@ -142,7 +143,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        sut.writeStatistics(period, statistics, csvWriter);
+        sut.write(period, statistics, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{absence.period}: 02.01.2019 - 24.12.2019"});
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}",
             "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}",
@@ -163,7 +164,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         when(messageSource.getMessage("applications.statistics", new String[]{}, GERMAN)).thenReturn("test");
 
-        final String fileName = sut.getFileName(period);
+        final String fileName = sut.fileName(period);
         assertThat(fileName).isEqualTo("test_01012018_31122018.csv");
     }
 
@@ -175,7 +176,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         when(messageSource.getMessage(eq("applications.statistics"), any(), any())).thenReturn("test");
 
-        String fileName = sut.getFileName(period);
+        String fileName = sut.fileName(period);
         assertThat(fileName).isEqualTo("test_01012019_31122019.csv");
     }
 

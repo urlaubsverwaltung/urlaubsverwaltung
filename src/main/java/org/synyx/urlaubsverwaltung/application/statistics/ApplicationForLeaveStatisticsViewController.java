@@ -1,8 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
-import liquibase.util.csv.CSVWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,23 +18,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
+import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static liquibase.util.csv.CSVReader.DEFAULT_QUOTE_CHARACTER;
-import static liquibase.util.csv.opencsv.CSVWriter.NO_QUOTE_CHARACTER;
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.application.statistics.ApplicationForLeaveStatisticsMapper.mapToApplicationForLeaveStatisticsDto;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
@@ -41,9 +38,6 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
 @Controller
 @RequestMapping("/web/application/statistics")
 class ApplicationForLeaveStatisticsViewController {
-
-    protected static final byte[] UTF8_BOM = new byte[]{(byte) 239, (byte) 187, (byte) 191};
-    public static final char SEPARATOR = ';';
 
     private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;
     private final ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService;
@@ -109,35 +103,24 @@ class ApplicationForLeaveStatisticsViewController {
 
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping(value = "/download")
-    public void downloadCSV(@RequestParam(value = "from", defaultValue = "") String from,
-                            @RequestParam(value = "to", defaultValue = "") String to,
-                            HttpServletResponse response) throws IOException {
+    public ResponseEntity<ByteArrayResource> downloadCSV(@RequestParam(value = "from", defaultValue = "") String from,
+                                                         @RequestParam(value = "to", defaultValue = "") String to) {
 
         final FilterPeriod period = toFilterPeriod(from, to);
 
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
-            response.sendError(SC_BAD_REQUEST);
-            return;
+            return ResponseEntity.badRequest().build();
         }
-
-        final String fileName = applicationForLeaveStatisticsCsvExportService.getFileName(period);
-        response.setContentType("text/csv");
-        response.setCharacterEncoding(UTF_8.name());
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
 
         final List<ApplicationForLeaveStatistics> statistics = applicationForLeaveStatisticsService.getStatistics(period);
+        final CSVFile csvFile = applicationForLeaveStatisticsCsvExportService.generateCSV(period, statistics);
 
-        try (final OutputStream os = response.getOutputStream()) {
-            os.write(UTF8_BOM);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("text", "csv"));
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(csvFile.getFileName()).build());
 
-            try (final PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, UTF_8))) {
-                try (final CSVWriter csvWriter = new CSVWriter(printWriter, SEPARATOR, NO_QUOTE_CHARACTER, DEFAULT_QUOTE_CHARACTER)) {
-                    applicationForLeaveStatisticsCsvExportService.writeStatistics(period, statistics, csvWriter);
-                }
-                printWriter.flush();
-            }
-        }
+        return ResponseEntity.status(OK).headers(headers).body(csvFile.getResource());
     }
 
     private FilterPeriod toFilterPeriod(String startDateString, String endDateString) {

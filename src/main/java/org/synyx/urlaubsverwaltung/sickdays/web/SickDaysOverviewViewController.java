@@ -106,7 +106,7 @@ public class SickDaysOverviewViewController {
 
         fillModel(model, sickNotes, period, persons);
 
-        return "sicknote/sick_notes";
+        return "thymeleaf/sicknote/sick_notes";
     }
 
     private void fillModel(Model model, List<SickNote> sickNotes, FilterPeriod period, List<Person> persons) {
@@ -145,7 +145,7 @@ public class SickDaysOverviewViewController {
             .filter(Optional::isPresent)
             .map(Optional::get)
             .filter(personBasedata -> hasText(personBasedata.getPersonnelNumber()))
-            .collect(toMap(PersonBasedata::getPersonId, PersonBasedata::getPersonnelNumber));
+            .collect(toMap(basedata -> basedata.getPersonId().getValue(), PersonBasedata::getPersonnelNumber));
     }
 
     private void calculateSickDays(FilterPeriod period, Map<Person, SickDays> sickDays, SickNote sickNote) {

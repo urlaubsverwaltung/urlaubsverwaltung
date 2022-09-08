@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 
@@ -17,15 +18,21 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -320,6 +327,36 @@ class DepartmentServiceImpl implements DepartmentService {
     @Override
     public long getNumberOfDepartments() {
         return departmentRepository.count();
+    }
+
+    @Override
+    public Map<PersonId, List<String>> getDepartmentNamesByMembers(List<Person> persons) {
+
+        final Map<List<Person>, List<Department>> personDepartmentList = departmentRepository.findDistinctByMembersPersonIn(persons).stream()
+            .map(this::mapToDepartment)
+            .collect(groupingBy(Department::getMembers));
+
+        final Map<PersonId, List<String>> departmentsByPerson = new HashMap<>();
+        personDepartmentList.forEach((personList, departmentList) -> {
+
+            final List<String> departmentNames = departmentList.stream()
+                .map(Department::getName)
+                .collect(toUnmodifiableList());
+
+            personList.forEach(person -> {
+                if (persons.contains(person)) {
+                    final PersonId personId = new PersonId(person.getId());
+                    final List<String> bucket = departmentsByPerson.getOrDefault(personId, List.of());
+                    departmentsByPerson.put(personId, merge(departmentNames, bucket));
+                }
+            });
+        });
+
+        return departmentsByPerson;
+    }
+
+    private static List<String> merge(Collection<String> departmentNames, Collection<String> bucket) {
+        return Stream.concat(bucket.stream(), departmentNames.stream()).collect(toList());
     }
 
     private Predicate<Person> isNotSecondStageIn(Department department) {
