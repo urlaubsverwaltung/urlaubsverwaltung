@@ -67,15 +67,12 @@ public class SickNoteDetailedStatisticsCsvExportService implements CsvExportServ
         csvWriter.writeNext(csvHeader);
 
         allDetailedSickNotes.forEach(detailedSickNote -> {
-            final String[] personCsvRow = new String[csvHeader.length];
-            personCsvRow[0] = detailedSickNote.getPersonalNumber();
-            personCsvRow[1] = detailedSickNote.getFirstName();
-            personCsvRow[2] = detailedSickNote.getLastName();
-            personCsvRow[3] = String.join(", ", detailedSickNote.getDepartments());
-            csvWriter.writeNext(personCsvRow);
-
             detailedSickNote.getSickNotes().forEach(sickNote -> {
                 final String[] sickNoteCsvRow = new String[csvHeader.length];
+                sickNoteCsvRow[0] = detailedSickNote.getPersonalNumber();
+                sickNoteCsvRow[1] = detailedSickNote.getFirstName();
+                sickNoteCsvRow[2] = detailedSickNote.getLastName();
+                sickNoteCsvRow[3] = String.join(", ", detailedSickNote.getDepartments());
                 sickNoteCsvRow[4] = dateFormatAware.format(sickNote.getStartDate());
                 sickNoteCsvRow[5] = dateFormatAware.format(sickNote.getEndDate());
                 sickNoteCsvRow[6] = getTranslation(sickNote.getDayLength().name());
