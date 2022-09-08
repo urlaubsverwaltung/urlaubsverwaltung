@@ -15,7 +15,8 @@ public class Account {
     private Person person;
     private LocalDate validFrom;
     private LocalDate validTo;
-    private boolean doRemainingVacationDaysExpire;
+    private Boolean doRemainingVacationDaysExpireLocally;
+    private boolean doRemainingVacationDaysExpireGlobally;
     private LocalDate expiryDate;
     private LocalDate expiryNotificationSentDate;
 
@@ -35,19 +36,53 @@ public class Account {
         /* OK */
     }
 
-    public Account(Person person, LocalDate validFrom, LocalDate validTo, boolean doRemainingVacationDaysExpire,
+    public Account(Person person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpireLocally,
                    LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal remainingVacationDays,
                    BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         this.person = person;
         this.validFrom = validFrom;
         this.validTo = validTo;
-        this.doRemainingVacationDaysExpire = doRemainingVacationDaysExpire;
+        this.doRemainingVacationDaysExpireLocally = doRemainingVacationDaysExpireLocally;
         this.expiryDate = expiryDate;
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
         this.comment = comment;
+    }
+
+    /**
+     * Returns if the remaining vacation days do expire globally or locally (persons holiday account specific configuration)
+     * <table border="1">
+     *   <tr>
+     *     <th>Globally</th>
+     *     <th>Locally</th>
+     *     <th>Result</th>
+     *   </tr>
+     *   <tr>
+     *     <td><strong>true</strong></td><td>null</td><td><strong>true</strong></td>
+     *   </tr>
+     *   <tr>
+     *     <td><strong>false</strong></td><td>null</td><td><strong>false</strong></td>
+     *   </tr>
+     *   <tr>
+     *     <td>true</td><td><strong>true</strong></td><td><strong>true</strong></td>
+     *   </tr>
+     *   <tr>
+     *     <td>true</td><td><strong>false</strong></td><td><strong>false</strong></td>
+     *   </tr>
+     *   <tr>
+     *     <td>false</td><td><strong>true</strong></td><td><strong>true</strong></td>
+     *   </tr>
+     *   <tr>
+     *     <td>false</td><td><strong>false</strong></td><td><strong>false</strong></td>
+     *   </tr>
+     * </table>
+     *
+     * @return true the remaining vacation days of a user does expire, otherwise false
+     */
+    public boolean doRemainigVacationDaysExpire() {
+        return doRemainingVacationDaysExpireLocally == null ? doRemainingVacationDaysExpireGlobally : doRemainingVacationDaysExpireLocally;
     }
 
     public Integer getId() {
@@ -114,12 +149,20 @@ public class Account {
         this.validTo = validTo;
     }
 
-    public boolean isDoRemainingVacationDaysExpire() {
-        return doRemainingVacationDaysExpire;
+    public Boolean isDoRemainingVacationDaysExpireLocally() {
+        return doRemainingVacationDaysExpireLocally;
     }
 
-    public void setDoRemainingVacationDaysExpire(boolean doRemainingVacationDaysExpire) {
-        this.doRemainingVacationDaysExpire = doRemainingVacationDaysExpire;
+    public void setDoRemainingVacationDaysExpireLocally(Boolean doRemainingVacationDaysExpireLocally) {
+        this.doRemainingVacationDaysExpireLocally = doRemainingVacationDaysExpireLocally;
+    }
+
+    public boolean isDoRemainingVacationDaysExpireGlobally() {
+        return doRemainingVacationDaysExpireGlobally;
+    }
+
+    public void setDoRemainingVacationDaysExpireGlobally(boolean doRemainingVacationDaysExpireGlobally) {
+        this.doRemainingVacationDaysExpireGlobally = doRemainingVacationDaysExpireGlobally;
     }
 
     public LocalDate getExpiryDate() {
@@ -157,7 +200,8 @@ public class Account {
             ", person=" + person +
             ", validFrom=" + validFrom +
             ", validTo=" + validTo +
-            ", doRemainingVacationDaysExpire=" + doRemainingVacationDaysExpire +
+            ", doRemainingVacationDaysExpireLocally=" + doRemainingVacationDaysExpireLocally +
+            ", doRemainingVacationDaysExpireGlobally=" + doRemainingVacationDaysExpireGlobally +
             ", expiryDate=" + expiryDate +
             ", expiryNotificationSentDate=" + expiryNotificationSentDate +
             ", annualVacationDays=" + annualVacationDays +

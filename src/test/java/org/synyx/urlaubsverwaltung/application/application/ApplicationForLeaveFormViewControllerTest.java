@@ -330,7 +330,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = now.withMonth(JANUARY.getValue()).withDayOfMonth(1);
         final LocalDate validTo = now.withMonth(DECEMBER.getValue()).withDayOfMonth(31);
         final LocalDate expiryDate = LocalDate.of(now.getYear(), APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, null, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(now.getYear(), person)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -359,7 +359,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = now.withMonth(JANUARY.getValue()).withDayOfMonth(1);
         final LocalDate validTo = now.withMonth(DECEMBER.getValue()).withDayOfMonth(31);
         final LocalDate expiryDate = LocalDate.of(now.getYear(), APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, null, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(now.getYear(), person)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
@@ -426,7 +426,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate validFrom = now.withMonth(JANUARY.getValue()).withDayOfMonth(1);
         final LocalDate validTo = now.withMonth(DECEMBER.getValue()).withDayOfMonth(31);
         final LocalDate expiryDate = LocalDate.of(now.getYear(), APRIL, 1);
-        final Account account = new Account(person, validFrom, validTo, expiryDate, TEN, TEN, TEN, "comment");
+        final Account account = new Account(person, validFrom, validTo, null, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(now.getYear(), person)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 

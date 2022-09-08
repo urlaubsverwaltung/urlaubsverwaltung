@@ -73,7 +73,7 @@ public class VacationDaysReminderService {
         for (Person person : persons) {
 
             accountService.getHolidaysAccount(year, person)
-                .filter(Account::isDoRemainingVacationDaysExpire)
+                .filter(Account::doRemainigVacationDaysExpire)
                 .ifPresent(account -> {
                     final Optional<Account> accountOfNextYear = accountService.getHolidaysAccount(year + 1, person);
                     final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountOfNextYear);
@@ -99,7 +99,7 @@ public class VacationDaysReminderService {
         final List<Person> persons = personService.getActivePersons();
         for (Person person : persons) {
             accountService.getHolidaysAccount(year, person)
-                .filter(Account::isDoRemainingVacationDaysExpire)
+                .filter(Account::doRemainigVacationDaysExpire)
                 .ifPresent(account -> {
                     final LocalDate expiryDate = account.getExpiryDate();
                     if (account.getExpiryNotificationSentDate() == null && (now.isEqual(expiryDate) || now.isAfter(expiryDate))) {

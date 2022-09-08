@@ -179,29 +179,44 @@
                       >Verfall von Resturlaub:</label
                     >
                     <div class="col-md-9">
-                      <label class="halves">
+                      <label class="thirds">
+                        <input
+                          type="radio"
+                          id="doRemainingVacationDaysExpire.null"
+                          name="doRemainingVacationDaysExpireLocally"
+                          value=""
+                          th:checked="${null eq account.doRemainingVacationDaysExpireLocally}"
+                        />
+                        <th:block
+                          th:with="globallyInfo=${account.doRemainingVacationDaysExpireGlobally ? #messages.msg('person.form.annualVacation.remainingVacation.expire.global.true') : #messages.msg('person.form.annualVacation.remainingVacation.expire.global.false')}"
+                          th:text="#{person.form.annualVacation.remainingVacation.expire.global(${globallyInfo})}"
+                        />
+                      </label>
+                      <label class="thirds">
                         <input
                           type="radio"
                           id="doRemainingVacationDaysExpire.true"
-                          th:field="*{doRemainingVacationDaysExpire}"
+                          name="doRemainingVacationDaysExpireLocally"
                           value="true"
+                          th:checked="${true eq account.doRemainingVacationDaysExpireLocally}"
                         />
                         <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.true}" />
                       </label>
-                      <label class="halves">
+                      <label class="thirds">
                         <input
                           type="radio"
                           id="doRemainingVacationDaysExpire.false"
-                          th:field="*{doRemainingVacationDaysExpire}"
+                          name="doRemainingVacationDaysExpireLocally"
                           value="false"
+                          th:checked="${false eq account.doRemainingVacationDaysExpireLocally}"
                         />
                         <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.false}" />
                       </label>
                       <div
                         class="error tw-mt-1 tw-text-sm"
-                        th:if="${#fields.hasErrors('doRemainingVacationDaysExpire')}"
+                        th:if="${#fields.hasErrors('doRemainingVacationDaysExpireLocally')}"
                       >
-                        <th:block th:errors="*{doRemainingVacationDaysExpire}">
+                        <th:block th:errors="*{doRemainingVacationDaysExpireLocally}">
                           doRemainingVacationDaysExpire Error
                         </th:block>
                       </div>
