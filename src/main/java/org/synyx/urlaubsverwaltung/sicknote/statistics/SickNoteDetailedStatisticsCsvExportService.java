@@ -4,7 +4,6 @@ import liquibase.util.csv.CSVWriter;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.csv.CsvExportService;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -49,7 +48,8 @@ public class SickNoteDetailedStatisticsCsvExportService implements CsvExportServ
             getTranslation("sicknotes.statistics.to"),
             getTranslation("sicknotes.statistics.length"),
             getTranslation("sicknotes.statistics.type"),
-            getTranslation("sicknotes.statistics.certificate")
+            getTranslation("sicknotes.statistics.certificate.from"),
+            getTranslation("sicknotes.statistics.certificate.to")
         };
 
         final String startDateString = dateFormatAware.format(period.getStartDate());
@@ -77,16 +77,13 @@ public class SickNoteDetailedStatisticsCsvExportService implements CsvExportServ
                 sickNoteCsvRow[5] = dateFormatAware.format(sickNote.getEndDate());
                 sickNoteCsvRow[6] = getTranslation(sickNote.getDayLength().name());
                 sickNoteCsvRow[7] = getTranslation(sickNote.getSickNoteType().getMessageKey());
-                sickNoteCsvRow[8] = setAub(sickNote);
+                if (sickNote.isAubPresent()) {
+                    sickNoteCsvRow[8] = dateFormatAware.format(sickNote.getAubStartDate());
+                    sickNoteCsvRow[9] = dateFormatAware.format(sickNote.getAubEndDate());
+                }
                 csvWriter.writeNext(sickNoteCsvRow);
             });
         });
-    }
-
-    private String setAub(SickNote sickNote) {
-        return sickNote.isAubPresent() ?
-            dateFormatAware.format(sickNote.getAubStartDate())
-                + "-" + dateFormatAware.format(sickNote.getAubEndDate()) : "";
     }
 
     private String getTranslation(String key, Object... args) {

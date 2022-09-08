@@ -126,7 +126,8 @@ class SickNoteDetailedStatisticsCsvExportServiceTest {
         addMessageSource("sicknotes.statistics.to");
         addMessageSource("sicknotes.statistics.length");
         addMessageSource("sicknotes.statistics.type");
-        addMessageSource("sicknotes.statistics.certificate");
+        addMessageSource("sicknotes.statistics.certificate.from");
+        addMessageSource("sicknotes.statistics.certificate.to");
         addMessageSource("FULL");
         addMessageSource("MORNING");
         addMessageSource("NOON");
@@ -137,11 +138,11 @@ class SickNoteDetailedStatisticsCsvExportServiceTest {
         sut.write(period, statistics, csvWriter);
 
         verify(csvWriter).writeNext(new String[]{"{absence.period}: 01.01.2022 - 31.12.2022"});
-        verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{sicknotes.statistics.departments}", "{sicknotes.statistics.from}", "{sicknotes.statistics.to}", "{sicknotes.statistics.length}", "{sicknotes.statistics.type}", "{sicknotes.statistics.certificate}"});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "02.01.2022", "{FULL}", "{application.data.sicknotetype.sicknote}", ""});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "04.01.2022", "05.01.2022", "{FULL}", "{application.data.sicknotetype.sicknotechild}", "04.01.2022-05.01.2022"});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "01.01.2022", "{MORNING}", "{application.data.sicknotetype.sicknote}", ""});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "01.01.2022", "{NOON}", "{application.data.sicknotetype.sicknote}", ""});
+        verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{sicknotes.statistics.departments}", "{sicknotes.statistics.from}", "{sicknotes.statistics.to}", "{sicknotes.statistics.length}", "{sicknotes.statistics.type}", "{sicknotes.statistics.certificate.from}", "{sicknotes.statistics.certificate.to}"});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "02.01.2022", "{FULL}", "{application.data.sicknotetype.sicknote}", null, null});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "04.01.2022", "05.01.2022", "{FULL}", "{application.data.sicknotetype.sicknotechild}", "04.01.2022", "05.01.2022"});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "01.01.2022", "{MORNING}", "{application.data.sicknotetype.sicknote}", null, null});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "01.01.2022", "{NOON}", "{application.data.sicknotetype.sicknote}", null, null});
     }
 
     private void addMessageSource(String key) {
