@@ -60,7 +60,7 @@ public class VacationDaysService {
 
     public BigDecimal calculateTotalLeftVacationDays(LocalDate start, LocalDate end, LocalDate today, Account account) {
         return getVacationDaysLeft(start, end, account, Optional.empty())
-            .getLeftVacationDays(today, account.isDoRemainingVacationDaysExpire(), account.getExpiryDate());
+            .getLeftVacationDays(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate());
     }
 
     /**
@@ -87,7 +87,7 @@ public class VacationDaysService {
         final BigDecimal usedVacationDaysBeforeExpiryDate;
         final BigDecimal usedVacationDaysAfterExpiryDate;
 
-        if (account.isDoRemainingVacationDaysExpire()) {
+        if (account.doRemainigVacationDaysExpire()) {
             final LocalDate lastDayBeforeExpiryDate = account.getExpiryDate().minusDays(1);
             final LocalDate endBeforeExpiryDate = end.isAfter(lastDayBeforeExpiryDate) ? lastDayBeforeExpiryDate : end;
 

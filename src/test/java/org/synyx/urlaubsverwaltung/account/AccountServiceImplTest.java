@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.Settings;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
@@ -28,14 +30,18 @@ class AccountServiceImplTest {
 
     @Mock
     private AccountRepository accountRepository;
+    @Mock
+    private SettingsService settingsService;
 
     @BeforeEach
     void setUp() {
-        accountService = new AccountServiceImpl(accountRepository);
+        accountService = new AccountServiceImpl(accountRepository, settingsService);
     }
 
     @Test
     void ensureReturnsOptionalWithHolidaysAccountIfExists() {
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -67,7 +73,8 @@ class AccountServiceImplTest {
         assertThat(holidaysAccount.getPerson()).isEqualTo(person);
         assertThat(holidaysAccount.getValidFrom()).isEqualTo(from);
         assertThat(holidaysAccount.getValidTo()).isEqualTo(to);
-        assertThat(holidaysAccount.isDoRemainingVacationDaysExpire()).isEqualTo(doRemainingVacationDaysExpire);
+        assertThat(holidaysAccount.doRemainigVacationDaysExpire()).isEqualTo(doRemainingVacationDaysExpire);
+        assertThat(holidaysAccount.isDoRemainingVacationDaysExpireGlobally()).isTrue();
         assertThat(holidaysAccount.getExpiryDate()).isEqualTo(expiryDate);
         assertThat(holidaysAccount.getExpiryNotificationSentDate()).isEqualTo(expiryNotificationSentDate);
         assertThat(holidaysAccount.getAnnualVacationDays()).isEqualTo(annualVacationDays);
@@ -80,6 +87,7 @@ class AccountServiceImplTest {
     @Test
     void ensureReturnsAbsentOptionalIfNoHolidaysAccountExists() {
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
         when(accountRepository.getHolidaysAccountByYearAndPerson(anyInt(), any(Person.class))).thenReturn(Optional.empty());
 
         Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, mock(Person.class));

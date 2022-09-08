@@ -22,15 +22,10 @@ public class AccountEntity {
 
     @ManyToOne
     private Person person;
-
     private LocalDate validFrom;
-
     private LocalDate validTo;
-
-    private boolean doRemainingVacationDaysExpire;
-
+    private Boolean doRemainingVacationDaysExpire;
     private LocalDate expiryDate;
-
     private LocalDate expiryNotificationSentDate;
 
     // theoretical number of vacation days a person has, i.e. it's the annual entitlement, but it is possible that
@@ -49,7 +44,7 @@ public class AccountEntity {
         /* OK */
     }
 
-    public AccountEntity(Person person, LocalDate validFrom, LocalDate validTo, boolean doRemainingVacationDaysExpire,
+    public AccountEntity(Person person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
                          LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal remainingVacationDays,
                          BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
@@ -128,11 +123,11 @@ public class AccountEntity {
         this.validTo = validTo;
     }
 
-    public boolean isDoRemainingVacationDaysExpire() {
+    public Boolean isDoRemainingVacationDaysExpire() {
         return doRemainingVacationDaysExpire;
     }
 
-    public void setDoRemainingVacationDaysExpire(boolean doRemainingVacationDaysExpire) {
+    public void setDoRemainingVacationDaysExpire(Boolean doRemainingVacationDaysExpire) {
         this.doRemainingVacationDaysExpire = doRemainingVacationDaysExpire;
     }
 

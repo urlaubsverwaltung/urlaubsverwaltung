@@ -217,7 +217,7 @@ class VacationDaysServiceTest {
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("6"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
-        account.setDoRemainingVacationDaysExpire(true);
+        account.setDoRemainingVacationDaysExpireLocally(true);
 
         final VacationDaysLeft vacationDaysLeft = sut.getVacationDaysLeft(account, Optional.empty());
         assertThat(vacationDaysLeft.getVacationDays()).isEqualByComparingTo(new BigDecimal(12L));
@@ -258,7 +258,7 @@ class VacationDaysServiceTest {
             .thenReturn(List.of(application4Days, application20Days));
 
         final Account account = new Account();
-        account.setDoRemainingVacationDaysExpire(false);
+        account.setDoRemainingVacationDaysExpireLocally(false);
         account.setPerson(person);
         account.setValidFrom(LocalDate.of(2022, 1, 1));
         account.setAnnualVacationDays(new BigDecimal("30"));
@@ -329,7 +329,7 @@ class VacationDaysServiceTest {
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("6"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
-        account.setDoRemainingVacationDaysExpire(true);
+        account.setDoRemainingVacationDaysExpireLocally(true);
 
         // next year has only 12 new days, but using 24, i.e. all 12 from this year
         final Account accountNextYear = new Account();
@@ -340,7 +340,7 @@ class VacationDaysServiceTest {
         accountNextYear.setActualVacationDays(new BigDecimal("12"));
         accountNextYear.setRemainingVacationDays(new BigDecimal("20"));
         accountNextYear.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
-        accountNextYear.setDoRemainingVacationDaysExpire(true);
+        accountNextYear.setDoRemainingVacationDaysExpireLocally(true);
 
         final VacationDaysLeft vacationDaysLeft = sut.getVacationDaysLeft(account, Optional.of(accountNextYear));
         assertThat(vacationDaysLeft.getVacationDaysUsedNextYear()).isEqualByComparingTo(new BigDecimal("12"));
@@ -402,7 +402,7 @@ class VacationDaysServiceTest {
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("10"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("0"));
-        account.setDoRemainingVacationDaysExpire(true);
+        account.setDoRemainingVacationDaysExpireLocally(true);
 
         final BigDecimal remainingVacationDaysAlreadyUsed = sut.getUsedRemainingVacationDays(Optional.of(account));
         assertThat(remainingVacationDaysAlreadyUsed).isEqualTo(TEN);
@@ -444,7 +444,7 @@ class VacationDaysServiceTest {
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("6"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("2"));
-        account.setDoRemainingVacationDaysExpire(true);
+        account.setDoRemainingVacationDaysExpireLocally(true);
 
         // total number = left vacation days + left not expiring remaining vacation days
         // 31 = 30 + 1
@@ -488,7 +488,7 @@ class VacationDaysServiceTest {
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
-        account.setDoRemainingVacationDaysExpire(true);
+        account.setDoRemainingVacationDaysExpireLocally(true);
 
         // total number = left vacation days + left remaining vacation days
         // 32 = 30 + 2
@@ -532,7 +532,7 @@ class VacationDaysServiceTest {
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
-        account.setDoRemainingVacationDaysExpire(true);
+        account.setDoRemainingVacationDaysExpireLocally(true);
 
         // total number = left vacation days + left not expiring remaining vacation days
         // 30 = 30 + 0
@@ -556,7 +556,7 @@ class VacationDaysServiceTest {
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
-        account.setDoRemainingVacationDaysExpire(true);
+        account.setDoRemainingVacationDaysExpireLocally(true);
 
         sut.getVacationDaysLeft(start, end, account, Optional.empty());
 
@@ -580,7 +580,7 @@ class VacationDaysServiceTest {
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
-        account.setDoRemainingVacationDaysExpire(true);
+        account.setDoRemainingVacationDaysExpireLocally(true);
 
         sut.getVacationDaysLeft(start, end, account, Optional.empty());
 
@@ -613,7 +613,7 @@ class VacationDaysServiceTest {
         account.setActualVacationDays(new BigDecimal("30"));
         account.setRemainingVacationDays(new BigDecimal("7"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
-        account.setDoRemainingVacationDaysExpire(true);
+        account.setDoRemainingVacationDaysExpireLocally(true);
 
         assertThat(sut.getUsedRemainingVacationDays(start, end, Optional.of(account))).isEqualTo(ZERO);
     }

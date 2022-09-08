@@ -34,7 +34,7 @@ public interface AccountInteractionService {
      * @param comment                          comment to changes to the annual vacation days
      * @return the created holidays account
      */
-    Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo, boolean doRemainingVacationDaysExpire,
+    Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
                                           LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                           BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
                                           String comment);
@@ -53,7 +53,7 @@ public interface AccountInteractionService {
      * @param comment                          comment to changes to the annual vacation days
      * @return the updated holidays account
      */
-    Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, boolean doRemainingVacationDaysExpire,
+    Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
                                 LocalDate expiryDate,BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                 BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
                                 String comment);

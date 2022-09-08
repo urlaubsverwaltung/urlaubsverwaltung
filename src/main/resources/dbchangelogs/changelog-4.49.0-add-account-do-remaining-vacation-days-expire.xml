@@ -12,7 +12,7 @@
     </preConditions>
 
     <addColumn tableName="account">
-      <column name="do_remaining_vacation_days_expire" type="BIT(1)" defaultValueBoolean="true"/>
+      <column name="do_remaining_vacation_days_expire" type="BIT(1)"/>
     </addColumn>
   </changeSet>
 </databaseChangeLog>

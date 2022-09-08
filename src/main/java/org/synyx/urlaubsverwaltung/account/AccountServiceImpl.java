@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.Optional;
 
@@ -13,25 +14,29 @@ import java.util.Optional;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
+    private final SettingsService settingsService;
 
     @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, SettingsService settingsService) {
         this.accountRepository = accountRepository;
+        this.settingsService = settingsService;
     }
 
     @Override
     public Optional<Account> getHolidaysAccount(int year, Person person) {
-        return accountRepository.getHolidaysAccountByYearAndPerson(year, person).map(this::mapToAccount);
+        final boolean doRemainingVacationDaysExpireGlobally = settingsService.getSettings().getAccountSettings().isDoRemainingVacationDaysExpireGlobally();
+        return accountRepository.getHolidaysAccountByYearAndPerson(year, person).map(account -> mapToAccount(account, doRemainingVacationDaysExpireGlobally));
     }
 
     @Override
     public Account save(Account account) {
         final AccountEntity accountEntity = mapToAccountEntity(account);
         final AccountEntity savedAccountEntity = accountRepository.save(accountEntity);
-        return mapToAccount(savedAccountEntity);
+        final boolean doRemainingVacationDaysExpireGlobally = settingsService.getSettings().getAccountSettings().isDoRemainingVacationDaysExpireGlobally();
+        return mapToAccount(savedAccountEntity, doRemainingVacationDaysExpireGlobally);
     }
 
-    private Account mapToAccount(AccountEntity accountEntity) {
+    private Account mapToAccount(AccountEntity accountEntity, boolean doRemainingVacationDaysExpireGlobally) {
         final Account account = new Account(
             accountEntity.getPerson(),
             accountEntity.getValidFrom(),
@@ -46,6 +51,7 @@ public class AccountServiceImpl implements AccountService {
         account.setId(accountEntity.getId());
         account.setExpiryNotificationSentDate(accountEntity.getExpiryNotificationSentDate());
         account.setActualVacationDays(accountEntity.getActualVacationDays());
+        account.setDoRemainingVacationDaysExpireGlobally(doRemainingVacationDaysExpireGlobally);
         return account;
     }
 
@@ -54,7 +60,7 @@ public class AccountServiceImpl implements AccountService {
             account.getPerson(),
             account.getValidFrom(),
             account.getValidTo(),
-            account.isDoRemainingVacationDaysExpire(),
+            account.isDoRemainingVacationDaysExpireLocally(),
             account.getExpiryDate(),
             account.getAnnualVacationDays(),
             account.getRemainingVacationDays(),
