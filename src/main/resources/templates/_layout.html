@@ -35,6 +35,7 @@
     <meta name="msapplication-TileImage" th:content="@{/favicons/ms-icon-144x144.png}" />
     <meta th:if="${theme != 'dark'}" name="theme-color" content="#fafafa" />
     <meta th:if="${theme == 'dark'}" name="theme-color" content="#18181b" />
+    <meta name="turbo-root" th:content="@{/web}" />
 
     <link rel="stylesheet" type="text/css" asset:href="common.css" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
