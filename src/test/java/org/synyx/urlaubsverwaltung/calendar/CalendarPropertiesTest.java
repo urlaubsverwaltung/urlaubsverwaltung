@@ -28,7 +28,7 @@ class CalendarPropertiesTest {
         calendarProperties.setOrganizer("email@example.org");
         final Set<ConstraintViolation<CalendarProperties>> violations = validator.validate(calendarProperties);
 
-        assertThat(violations.size()).isZero();
+        assertThat(violations).isEmpty();
     }
 
     @ParameterizedTest

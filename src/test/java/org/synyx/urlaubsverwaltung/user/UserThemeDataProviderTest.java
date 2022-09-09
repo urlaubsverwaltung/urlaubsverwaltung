@@ -49,7 +49,7 @@ class UserThemeDataProviderTest {
 
         sut.postHandle(request, null, null, modelAndView);
 
-        assertThat(modelAndView.getModelMap().get("theme")).isEqualTo("light");
+        assertThat(modelAndView.getModelMap()).containsEntry("theme", "light");
     }
 
     @Test
@@ -61,7 +61,7 @@ class UserThemeDataProviderTest {
         request.setLocalName(Locale.GERMAN.getLanguage());
 
         sut.postHandle(request, null, null, modelAndView);
-        assertThat(modelAndView.getModelMap().get("theme")).isEqualTo("system");
+        assertThat(modelAndView.getModelMap()).containsEntry("theme", "system");
     }
 
     @Test
@@ -73,7 +73,7 @@ class UserThemeDataProviderTest {
         request.setLocalName(Locale.GERMAN.getLanguage());
 
         sut.postHandle(request, null, null, modelAndView);
-        assertThat(modelAndView.getModelMap().get("theme")).isEqualTo("system");
+        assertThat(modelAndView.getModelMap()).containsEntry("theme", "system");
     }
 
     @ParameterizedTest

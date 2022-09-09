@@ -419,7 +419,7 @@ class DepartmentServiceImplTest {
         final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
-        assertThat(actual.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(actual.getPageable().getPageNumber()).isZero();
         assertThat(actual.getContent()).hasSize(1);
     }
 
@@ -447,7 +447,7 @@ class DepartmentServiceImplTest {
         final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(departmentHead, 1, pageableSearchQuery);
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
-        assertThat(actual.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(actual.getPageable().getPageNumber()).isZero();
         assertThat(actual.getContent()).hasSize(1);
     }
 
@@ -475,7 +475,7 @@ class DepartmentServiceImplTest {
         final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(secondStageAuthority, 1, pageableSearchQuery);
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
-        assertThat(actual.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(actual.getPageable().getPageNumber()).isZero();
         assertThat(actual.getContent()).hasSize(1);
     }
 
@@ -631,7 +631,7 @@ class DepartmentServiceImplTest {
         final Page<Person> actual = sut.getManagedInactiveMembersOfPersonAndDepartment(person, 1, pageableSearchQuery);
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
-        assertThat(actual.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(actual.getPageable().getPageNumber()).isZero();
         assertThat(actual.getContent()).hasSize(1);
     }
 
@@ -658,7 +658,7 @@ class DepartmentServiceImplTest {
         final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(departmentHead, 1, pageableSearchQuery);
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
-        assertThat(actual.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(actual.getPageable().getPageNumber()).isZero();
         assertThat(actual.getContent()).hasSize(1);
     }
 
@@ -685,7 +685,7 @@ class DepartmentServiceImplTest {
         final Page<Person> actual = sut.getManagedMembersOfPersonAndDepartment(secondStageAuthority, 1, pageableSearchQuery);
 
         assertThat(actual.getTotalPages()).isEqualTo(1);
-        assertThat(actual.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(actual.getPageable().getPageNumber()).isZero();
         assertThat(actual.getContent()).hasSize(1);
     }
 
