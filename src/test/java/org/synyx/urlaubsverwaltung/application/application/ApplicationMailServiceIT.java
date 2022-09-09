@@ -691,7 +691,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("OK, Urlaub kann genommen werden");
 
-        sut.sendConfirmationAllowedDirectlyByOffice(application, comment);
+        sut.sendConfirmationAllowedDirectlyByManagement(application, comment);
 
         // email sent?
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1094,7 +1094,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
 
         application.setApplier(office);
-        sut.sendAppliedForLeaveByOfficeNotification(application, comment);
+        sut.sendAppliedForLeaveByManagementNotification(application, comment);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1136,7 +1136,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
 
         application.setApplier(office);
-        sut.sendAppliedForLeaveByOfficeNotification(application, comment);
+        sut.sendAppliedForLeaveByManagementNotification(application, comment);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1187,7 +1187,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
 
         application.setApplier(office);
-        sut.sendAppliedForLeaveByOfficeNotification(application, comment);
+        sut.sendAppliedForLeaveByManagementNotification(application, comment);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1409,7 +1409,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(office, clock);
         comment.setText("Wrong information - cancelled");
 
-        sut.sendCancelledDirectlyConfirmationByOffice(application, comment);
+        sut.sendCancelledDirectlyConfirmationByManagement(application, comment);
 
         // was email sent to applicant
         final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1457,7 +1457,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);
         when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
 
-        sut.sendCancelledByOfficeNotification(application, comment);
+        sut.sendCancelledConfirmationByManagement(application, comment);
 
         // was email sent to applicant?
         MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());

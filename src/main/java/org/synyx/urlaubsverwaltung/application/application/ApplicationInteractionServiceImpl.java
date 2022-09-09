@@ -45,7 +45,6 @@ import static org.synyx.urlaubsverwaltung.application.comment.ApplicationComment
 import static org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction.REVOKED;
 import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType.VACATION;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Service
 @Transactional
@@ -112,11 +111,9 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             // person himself applies for leave
             // person gets a confirmation email with the data of the application for leave
             applicationMailService.sendConfirmation(savedApplication, createdComment);
-        } else if (applier.hasRole(OFFICE)) {
-            /* TODO */
-            // if a person with the office role applies for leave on behalf of the person.
+        } else {
             // The person gets an email that someone else has applied for leave on behalf
-            applicationMailService.sendAppliedForLeaveByOfficeNotification(savedApplication, createdComment);
+            applicationMailService.sendAppliedForLeaveByManagementNotification(savedApplication, createdComment);
         }
 
         // relevant management person gets email that a new application for leave has been created
@@ -189,11 +186,9 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             // person himself applies for leave
             // person gets a confirmation email with the data of the application for leave
             applicationMailService.sendConfirmationAllowedDirectly(savedApplication, createdComment);
-        } else if (applier.hasRole(OFFICE)) {
-            /* TODO */
-            // if a person with the office role applies for leave on behalf of the person.
+        } else {
             // The person gets an email that someone else has applied for leave on behalf
-            applicationMailService.sendConfirmationAllowedDirectlyByOffice(savedApplication, createdComment);
+            applicationMailService.sendConfirmationAllowedDirectlyByManagement(savedApplication, createdComment);
         }
 
         // relevant management person gets email that a new directly allowed application for leave has been created
@@ -344,11 +339,9 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             // person himself applies for leave
             // person gets a confirmation email with the data of the application for leave
             applicationMailService.sendCancelledDirectlyConfirmationByApplicant(savedApplication, createdComment);
-        } else if (canceller.hasRole(OFFICE)) {
-            /* TODO */
-            // if a person with the office role applies for leave on behalf of the person.
+        } else {
             // The person gets an email that someone else has applied for leave on behalf
-            applicationMailService.sendCancelledDirectlyConfirmationByOffice(savedApplication, createdComment);
+            applicationMailService.sendCancelledDirectlyConfirmationByManagement(savedApplication, createdComment);
         }
 
         applicationMailService.sendCancelledDirectlyInformationToRecipientOfInterest(savedApplication, createdComment);
@@ -394,7 +387,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             LOG.info("Cancelled application for leave: {}", savedApplication);
 
             final ApplicationComment savedComment = commentService.create(savedApplication, CANCELLED, comment, canceller);
-            applicationMailService.sendCancelledByOfficeNotification(savedApplication, savedComment);
+            applicationMailService.sendCancelledConfirmationByManagement(savedApplication, savedComment);
 
             for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
                 applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
