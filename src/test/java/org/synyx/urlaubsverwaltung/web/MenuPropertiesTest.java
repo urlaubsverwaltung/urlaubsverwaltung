@@ -35,7 +35,7 @@ class MenuPropertiesTest {
         menuProperties.getHelp().setUrl("https://urlaubsverwaltung.cloud/hilfe/?source=open-source#dokumentation");
         final Set<ConstraintViolation<MenuProperties>> violations = validator.validate(menuProperties);
 
-        assertThat(violations.size()).isZero();
+        assertThat(violations).isEmpty();
     }
 
     @ParameterizedTest
