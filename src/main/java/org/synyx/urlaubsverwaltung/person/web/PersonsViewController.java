@@ -109,9 +109,7 @@ public class PersonsViewController {
         final Pageable personPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), personSort);
 
         final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(personPageable, query);
-        Page<Person> personPage = active
-            ? getRelevantActivePersons(signedInUser, personPageableSearchQuery)
-            : getRelevantInactivePersons(signedInUser, personPageableSearchQuery);
+        Page<Person> personPage = null;
 
         if (requestedDepartmentId.isPresent()) {
             final Integer departmentId = requestedDepartmentId.get();
@@ -124,6 +122,12 @@ public class PersonsViewController {
                     ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery)
                     : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery);
             }
+        }
+
+        if (personPage == null) {
+            personPage = active
+                ? getRelevantActivePersons(signedInUser, personPageableSearchQuery)
+                : getRelevantInactivePersons(signedInUser, personPageableSearchQuery);
         }
 
         preparePersonView(signedInUser, personPage, personSort, accountSort, pageable.getSort(), selectedYear, model);
