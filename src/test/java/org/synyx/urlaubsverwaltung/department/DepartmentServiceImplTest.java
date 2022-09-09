@@ -1413,6 +1413,95 @@ class DepartmentServiceImplTest {
         assertThat(isAllowed).isTrue();
     }
 
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureIsPersonAllowedToManageDepartment(Role givenRole) {
+
+        final Department department = new Department();
+        department.setId(1);
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(2);
+        person.setPermissions(List.of(USER, givenRole));
+
+        boolean isAllowed = sut.isPersonAllowedToManageDepartment(person, department);
+        assertThat(isAllowed).isTrue();
+    }
+
+    @Test
+    void ensureIsPersonAllowedToManageDepartmentWhenDepartmentHead() {
+
+        final Person departmentHead = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        departmentHead.setId(2);
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+        final Department department = new Department();
+        department.setId(1);
+        department.setDepartmentHeads(List.of(departmentHead));
+
+        boolean isAllowed = sut.isPersonAllowedToManageDepartment(departmentHead, department);
+        assertThat(isAllowed).isTrue();
+    }
+
+    @Test
+    void ensureIsPersonAllowedToManageDepartmentWhenSecondStageAuthority() {
+
+        final Person secondStageuthority = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        secondStageuthority.setId(2);
+        secondStageuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
+        final Department department = new Department();
+        department.setId(1);
+        department.setSecondStageAuthorities(List.of(secondStageuthority));
+
+        boolean isAllowed = sut.isPersonAllowedToManageDepartment(secondStageuthority, department);
+        assertThat(isAllowed).isTrue();
+    }
+
+    @Test
+    void ensureIsPersonAllowedToManageDepartmentIsFalseForUser() {
+
+        final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        user.setId(2);
+        user.setPermissions(List.of(USER));
+
+        final Department department = new Department();
+        department.setId(1);
+
+        boolean isAllowed = sut.isPersonAllowedToManageDepartment(user, department);
+        assertThat(isAllowed).isFalse();
+    }
+
+    @Test
+    void ensureIsPersonAllowedToManageDepartmentIsFalseForNormalDepartmentMember() {
+
+        final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        user.setId(2);
+        user.setPermissions(List.of(USER));
+
+        final Department department = new Department();
+        department.setId(1);
+        department.setMembers(List.of(user));
+
+        boolean isAllowed = sut.isPersonAllowedToManageDepartment(user, department);
+        assertThat(isAllowed).isFalse();
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void ensureIsPersonAllowedToManageDepartmentIsFalseForRoleDepartmentHeadButNotThisDepartment(Role givenRole) {
+
+        final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        user.setId(2);
+        user.setPermissions(List.of(USER, givenRole));
+
+        final Department department = new Department();
+        department.setId(1);
+
+        boolean isAllowed = sut.isPersonAllowedToManageDepartment(user, department);
+        assertThat(isAllowed).isFalse();
+    }
+
     @Test
     void ensureSignedInDepartmentHeadOfPersonCanAccessPersonData() {
 

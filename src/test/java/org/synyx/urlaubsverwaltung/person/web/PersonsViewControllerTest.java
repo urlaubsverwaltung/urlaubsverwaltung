@@ -34,6 +34,7 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
@@ -322,10 +323,75 @@ class PersonsViewControllerTest {
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
         when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1, defaultPersonSearchQuery())).thenReturn(page);
 
+        when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(true);
+
         perform(get("/web/person")
             .param("department", "1")
         )
             .andExpect(model().attribute("department", hasProperty("name", is("awesome-department"))))
+            .andExpect(model().attribute("personPage", hasProperty("content", allOf(
+                hasSize(1),
+                contains(
+                    hasProperty("firstName", is("John"))
+                )
+            ))));
+    }
+
+    @Test
+    void showDepartmentHeadUsesDepartmentWithGivenId() throws Exception {
+
+        final Person signedInUser = personWithRole(DEPARTMENT_HEAD);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Department department = new Department();
+        department.setName("awesome-department");
+        department.setMembers(List.of(signedInUser));
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
+
+        final Person john = new Person();
+        john.setId(2);
+        john.setFirstName("John");
+
+        final PageImpl<Person> page = new PageImpl<>(List.of(john));
+        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1, defaultPersonSearchQuery())).thenReturn(page);
+
+        when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(true);
+
+        perform(get("/web/person")
+            .param("department", "1")
+        )
+            .andExpect(model().attribute("department", hasProperty("name", is("awesome-department"))))
+            .andExpect(model().attribute("personPage", hasProperty("content", allOf(
+                hasSize(1),
+                contains(
+                    hasProperty("firstName", is("John"))
+                )
+            ))));
+    }
+
+    @Test
+    void showDepartmentHeadUsesDepartmentWithGivenIdButNotHisDepartment() throws Exception {
+
+        final Person signedInUser = personWithRole(DEPARTMENT_HEAD);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Department department = new Department();
+        department.setName("awesome-department");
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
+
+        final Person john = new Person();
+        john.setId(2);
+        john.setFirstName("John");
+
+        final PageImpl<Person> page = new PageImpl<>(List.of(john));
+        when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
+
+        when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(false);
+
+        perform(get("/web/person")
+            .param("department", "1")
+        )
+            .andExpect(model().attribute("department", nullValue()))
             .andExpect(model().attribute("personPage", hasProperty("content", allOf(
                 hasSize(1),
                 contains(

@@ -109,21 +109,22 @@ public class PersonsViewController {
         final Pageable personPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), personSort);
 
         final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(personPageable, query);
-        final Page<Person> personPage;
+        Page<Person> personPage = null;
 
         if (requestedDepartmentId.isPresent()) {
             final Integer departmentId = requestedDepartmentId.get();
             final Department department = departmentService.getDepartmentById(departmentId)
                 .orElseThrow(() -> new UnknownDepartmentException(departmentId));
 
-            model.addAttribute("department", department);
+            if (departmentService.isPersonAllowedToManageDepartment(signedInUser, department)) {
+                model.addAttribute("department", department);
+                personPage = active
+                    ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery)
+                    : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery);
+            }
+        }
 
-            personPage = active
-                ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery)
-                : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery);
-
-
-        } else {
+        if (personPage == null) {
             personPage = active
                 ? getRelevantActivePersons(signedInUser, personPageableSearchQuery)
                 : getRelevantInactivePersons(signedInUser, personPageableSearchQuery);
