@@ -41,11 +41,20 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toMap;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToAllowTemporaryAllowedApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToAllowWaitingApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelDirectlyApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToDeclineCancellationRequest;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToEditApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToReferApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToRejectApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToRemindApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToRevokeApplication;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToStartCancellationRequest;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
-import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCEL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -453,61 +462,4 @@ class ApplicationForLeaveDetailsViewController {
         model.addAttribute("shortcut", shortcut);
     }
 
-
-    private boolean isAllowedToAllowWaitingApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
-        return application.hasStatus(WAITING)
-            && (signedInUser.hasRole(BOSS) || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !application.getPerson().equals(signedInUser)));
-    }
-
-    private boolean isAllowedToAllowTemporaryAllowedApplication(Application application, Person signedInUser, boolean isSecondStageAuthorityOfPerson) {
-        return application.hasStatus(TEMPORARY_ALLOWED)
-            && (signedInUser.hasRole(BOSS) || (isSecondStageAuthorityOfPerson && !application.getPerson().equals(signedInUser)));
-    }
-
-    private boolean isAllowedToRejectApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
-        return (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED))
-            && !application.getPerson().equals(signedInUser)
-            && (signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson);
-    }
-
-    private boolean isAllowedToRevokeApplication(Application application, Person signedInUser, boolean requiresApproval) {
-        return application.hasStatus(WAITING)
-            && requiresApproval
-            && (application.getPerson().equals(signedInUser) || signedInUser.hasRole(OFFICE));
-    }
-
-    private boolean isAllowedToCancelApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
-        return (application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
-            && signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL));
-    }
-
-    private boolean isAllowedToCancelDirectlyApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson, boolean requiresApproval) {
-        return (application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
-            && !requiresApproval
-            && (application.getPerson().equals(signedInUser) || signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL)));
-    }
-
-    private boolean isAllowedToStartCancellationRequest(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson, boolean requiresApproval) {
-        return (application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
-            && requiresApproval
-            && !(signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL)));
-    }
-
-    private boolean isAllowedToDeclineCancellationRequest(Application application, Person signedInUser) {
-        return application.hasStatus(ALLOWED_CANCELLATION_REQUESTED) && signedInUser.hasRole(OFFICE);
-    }
-
-    private boolean isAllowedToEditApplication(Application application, Person signedInUser) {
-        return application.hasStatus(WAITING) && application.getPerson().equals(signedInUser);
-    }
-
-    private boolean isAllowedToRemindApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
-        return (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED))
-            && (application.getPerson().equals(signedInUser) && !(signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson));
-    }
-
-    private boolean isAllowedToReferApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
-        return (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED))
-            && signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE) || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !application.getPerson().equals(signedInUser));
-    }
 }

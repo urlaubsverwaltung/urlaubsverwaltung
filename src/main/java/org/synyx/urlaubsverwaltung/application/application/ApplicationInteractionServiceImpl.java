@@ -29,6 +29,7 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToCancelApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
@@ -112,8 +113,9 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             // person gets a confirmation email with the data of the application for leave
             applicationMailService.sendConfirmation(savedApplication, createdComment);
         } else if (applier.hasRole(OFFICE)) {
-            // if a person with the office role applies for leave on behalf of the person
-            // person gets an email that someone else has applied for leave on behalf
+            /* TODO */
+            // if a person with the office role applies for leave on behalf of the person.
+            // The person gets an email that someone else has applied for leave on behalf
             applicationMailService.sendAppliedForLeaveByOfficeNotification(savedApplication, createdComment);
         }
 
@@ -140,7 +142,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     @Override
     public Application allow(Application application, Person privilegedUser, Optional<String> comment) throws NotPrivilegedToApproveException {
 
-        // Boss is a very might dude
+        // Boss is a very mighty dude
         if (privilegedUser.hasRole(BOSS)) {
             return allowFinally(application, privilegedUser, comment);
         }
@@ -188,8 +190,9 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             // person gets a confirmation email with the data of the application for leave
             applicationMailService.sendConfirmationAllowedDirectly(savedApplication, createdComment);
         } else if (applier.hasRole(OFFICE)) {
-            // if a person with the office role applies for leave on behalf of the person
-            // person gets an email that someone else has applied for leave on behalf
+            /* TODO */
+            // if a person with the office role applies for leave on behalf of the person.
+            // The person gets an email that someone else has applied for leave on behalf
             applicationMailService.sendConfirmationAllowedDirectlyByOffice(savedApplication, createdComment);
         }
 
@@ -342,6 +345,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             // person gets a confirmation email with the data of the application for leave
             applicationMailService.sendCancelledDirectlyConfirmationByApplicant(savedApplication, createdComment);
         } else if (canceller.hasRole(OFFICE)) {
+            /* TODO */
             // if a person with the office role applies for leave on behalf of the person.
             // The person gets an email that someone else has applied for leave on behalf
             applicationMailService.sendCancelledDirectlyConfirmationByOffice(savedApplication, createdComment);
@@ -377,12 +381,13 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
     private void cancelApplication(Application application, Person canceller, Optional<String> comment) {
 
-        if (canceller.hasRole(OFFICE)) {
+        final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(canceller, application.getPerson());
+        final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(canceller, application.getPerson());
+        if (isAllowedToCancelApplication(application, canceller, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson)) {
             /*
-             * Only Office can cancel allowed applications for leave directly,
+             * Only management with the role application_cancel can cancel allowed applications for leave directly,
              * users have to request cancellation
              */
-
             application.setStatus(ApplicationStatus.CANCELLED);
             final Application savedApplication = applicationService.save(application);
 
@@ -399,7 +404,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
              * Users cannot cancel already allowed applications directly.
              * Their comment status will be CANCEL_REQUESTED
              * and the application status will be ALLOWED_CANCELLATION_REQUESTED until
-             * the office or a boss approves the request.
+             * someone approves the request.
              */
             application.setStatus(ALLOWED_CANCELLATION_REQUESTED);
             final Application savedApplication = applicationService.save(application);
