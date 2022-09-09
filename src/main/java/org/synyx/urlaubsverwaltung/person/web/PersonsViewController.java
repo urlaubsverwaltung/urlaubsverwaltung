@@ -118,7 +118,7 @@ public class PersonsViewController {
             final Department department = departmentService.getDepartmentById(departmentId)
                 .orElseThrow(() -> new UnknownDepartmentException(departmentId));
 
-            if (departmentService.isSignedInUserAllowedToAccessDepartmentData(signedInUser, department)) {
+            if (departmentService.isPersonAllowedToManageDepartment(signedInUser, department)) {
                 model.addAttribute("department", department);
                 personPage = active
                     ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery)

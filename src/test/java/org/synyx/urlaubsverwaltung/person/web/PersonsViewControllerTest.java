@@ -323,7 +323,7 @@ class PersonsViewControllerTest {
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
         when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1, defaultPersonSearchQuery())).thenReturn(page);
 
-        when(departmentService.isSignedInUserAllowedToAccessDepartmentData(signedInUser, department)).thenReturn(true);
+        when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(true);
 
         perform(get("/web/person")
             .param("department", "1")
@@ -355,7 +355,7 @@ class PersonsViewControllerTest {
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
         when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1, defaultPersonSearchQuery())).thenReturn(page);
 
-        when(departmentService.isSignedInUserAllowedToAccessDepartmentData(signedInUser, department)).thenReturn(true);
+        when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(true);
 
         perform(get("/web/person")
             .param("department", "1")
@@ -386,7 +386,7 @@ class PersonsViewControllerTest {
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
         when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
 
-        when(departmentService.isSignedInUserAllowedToAccessDepartmentData(signedInUser, department)).thenReturn(false);
+        when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(false);
 
         perform(get("/web/person")
             .param("department", "1")

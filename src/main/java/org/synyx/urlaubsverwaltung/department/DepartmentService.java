@@ -227,13 +227,13 @@ public interface DepartmentService {
     boolean isSignedInUserAllowedToAccessPersonData(Person signedInUser, Person person);
 
     /**
-     * Check if the given signed in user is allowed to access the data of the given person.
+     * Check if the given {@link Person} is allowed to access the data of the {@link Department}.
      *
-     * @param signedInUser to check the permissions
+     * @param person to check the permissions
      * @param department   which data should be accessed
      * @return {@code true} if the given user may access the data of the given person, else {@code false}
      */
-    boolean isSignedInUserAllowedToAccessDepartmentData(Person signedInUser, Department department);
+    boolean isPersonAllowedToManageDepartment(Person person, Department department);
 
     /**
      * Returns the number of departments

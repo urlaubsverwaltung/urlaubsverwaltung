@@ -325,11 +325,11 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public boolean isSignedInUserAllowedToAccessDepartmentData(Person signedInUser,  Department department) {
+    public boolean isPersonAllowedToManageDepartment(Person person, Department department) {
 
-        return signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) ||
-            (department.getDepartmentHeads().contains(signedInUser) && signedInUser.hasRole(DEPARTMENT_HEAD)) ||
-            (department.getSecondStageAuthorities().contains(signedInUser) && signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
+        return person.hasRole(OFFICE) || person.hasRole(BOSS) ||
+            (department.getDepartmentHeads().contains(person) && person.hasRole(DEPARTMENT_HEAD)) ||
+            (department.getSecondStageAuthorities().contains(person) && person.hasRole(SECOND_STAGE_AUTHORITY));
     }
 
     @Override
