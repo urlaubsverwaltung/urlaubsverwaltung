@@ -66,7 +66,7 @@ public class SickNoteDetailedStatisticsCsvExportService implements CsvExportServ
         csvWriter.writeNext(new String[]{headerNote});
         csvWriter.writeNext(csvHeader);
 
-        allDetailedSickNotes.forEach(detailedSickNote -> {
+        allDetailedSickNotes.forEach(detailedSickNote ->
             detailedSickNote.getSickNotes().forEach(sickNote -> {
                 final String[] sickNoteCsvRow = new String[csvHeader.length];
                 sickNoteCsvRow[0] = detailedSickNote.getPersonalNumber();
@@ -82,8 +82,8 @@ public class SickNoteDetailedStatisticsCsvExportService implements CsvExportServ
                     sickNoteCsvRow[9] = dateFormatAware.format(sickNote.getAubEndDate());
                 }
                 csvWriter.writeNext(sickNoteCsvRow);
-            });
-        });
+            })
+        );
     }
 
     private String getTranslation(String key, Object... args) {
