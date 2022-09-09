@@ -664,7 +664,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Informationen zum Abwesenheit:" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -1024,7 +1024,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Informationen zum Abwesenheit:" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -1071,7 +1071,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Informationen zum Abwesenheit:" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
