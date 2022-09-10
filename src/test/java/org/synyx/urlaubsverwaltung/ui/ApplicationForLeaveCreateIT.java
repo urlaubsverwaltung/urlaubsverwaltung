@@ -33,9 +33,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.io.File;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
@@ -49,7 +51,6 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.LocalDate.now;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
-import static java.time.Month.JANUARY;
 import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -264,14 +265,13 @@ class ApplicationForLeaveCreateIT {
         person.setPermissions(roles);
         final Person savedPerson = personService.create(person);
 
-        final int currentYear = LocalDate.now().getYear();
-        final LocalDate validFrom = LocalDate.of(currentYear - 1, 1, 1);
-        final List<Integer> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).stream().map(DayOfWeek::getValue).collect(toList());
-        workingTimeWriteService.touch(workingDays, validFrom, savedPerson);
+        final Year currentYear = Year.now();
+        final LocalDate firstDayOfYear = currentYear.atDay(1);
+        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).map(DayOfWeek::getValue).collect(toList());
+        workingTimeWriteService.touch(workingDays, firstDayOfYear, savedPerson);
 
-        final LocalDate firstDayOfYear = LocalDate.of(currentYear, JANUARY, 1);
-        final LocalDate lastDayOfYear = LocalDate.of(currentYear, DECEMBER, 31);
-        final LocalDate expiryDate = LocalDate.of(currentYear, APRIL, 1);
+        final LocalDate lastDayOfYear = firstDayOfYear.withMonth(DECEMBER.getValue()).withDayOfMonth(31);
+        final LocalDate expiryDate = LocalDate.of(currentYear.getValue(), APRIL, 1);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, expiryDate, TEN, TEN, TEN, ZERO, null);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), expiryDate.plusYears(1), TEN, TEN, TEN, ZERO, null);
 
