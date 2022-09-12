@@ -137,6 +137,10 @@ class AccountFormValidator implements Validator {
     }
 
     void validateExpiryDate(AccountForm form, Errors errors) {
+        if (!form.doRemainingVacationDaysExpire()) {
+            // feature disabled. nothing has to be validated.
+            return;
+        }
 
         final LocalDate expiryDate = form.getExpiryDate();
         validateDateNotNull(expiryDate, ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE, errors);
@@ -168,6 +172,10 @@ class AccountFormValidator implements Validator {
     }
 
     void validateRemainingVacationDaysNotExpiring(AccountForm form, Errors errors) {
+        if (!form.doRemainingVacationDaysExpire()) {
+            // feature disabled. nothing has to be validated.
+            return;
+        }
 
         final BigDecimal remainingVacationDays = form.getRemainingVacationDays();
         final BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();

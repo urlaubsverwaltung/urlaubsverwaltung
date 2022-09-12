@@ -111,6 +111,10 @@ public class AccountForm {
         this.doRemainingVacationDaysExpireGlobally = doRemainingVacationDaysExpireGlobally;
     }
 
+    public boolean doRemainingVacationDaysExpire() {
+        return doRemainingVacationDaysExpireLocally == null ? doRemainingVacationDaysExpireGlobally : doRemainingVacationDaysExpireLocally;
+    }
+
     public String getExpiryDateToIsoValue() {
         if (expiryDate == null) {
             return "";
