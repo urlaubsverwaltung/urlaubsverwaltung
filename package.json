@@ -59,7 +59,7 @@
     "autoprefixer": "10.4.8",
     "babel-jest": "29.0.3",
     "babel-loader": "8.2.5",
-    "concurrently": "7.3.0",
+    "concurrently": "7.4.0",
     "cross-env": "7.0.3",
     "css-loader": "5.2.7",
     "cssnano": "5.1.13",
