@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -108,18 +109,21 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
     @Override
     public Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
-                                       LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
+                                       @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                        BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
         account.setDoRemainingVacationDaysExpireLocally(doRemainingVacationDaysExpire);
-        account.setExpiryDate(expiryDate);
         account.setAnnualVacationDays(annualVacationDays);
         account.setActualVacationDays(actualVacationDays);
         account.setRemainingVacationDays(remainingVacationDays);
         account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
         account.setComment(comment);
+
+        if (expiryDate != null) {
+            account.setExpiryDate(expiryDate);
+        }
 
         final Account savedAccount = accountService.save(account);
         LOG.info("Updated holidays account: {}", savedAccount);

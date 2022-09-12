@@ -183,6 +183,21 @@ class AccountInteractionServiceImplTest {
     }
 
     @Test
+    void ensureEditHolidayAccountDoesNotOverrideExpiryDateWhenNullIsPassed() {
+
+        final LocalDate validFrom = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate validTo = LocalDate.of(2022, DECEMBER, 31);
+
+        final Account account = new Account();
+        account.setExpiryDate(LocalDate.of(2022, 4, 1));
+
+        when(accountService.save(any(Account.class))).then(returnsFirstArg());
+
+        final Account editedAccount = sut.editHolidaysAccount(account, validFrom, validTo, true, null, TEN, ONE, ZERO, TEN, "comment");
+        assertThat(editedAccount.getExpiryDate()).isEqualTo(LocalDate.of(2022, 4, 1));
+    }
+
+    @Test
     void testUpdateRemainingVacationDays() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 

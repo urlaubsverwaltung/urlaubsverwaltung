@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import org.springframework.lang.Nullable;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
@@ -54,7 +55,7 @@ public interface AccountInteractionService {
      * @return the updated holidays account
      */
     Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
-                                LocalDate expiryDate,BigDecimal annualVacationDays, BigDecimal actualVacationDays,
+                                @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                 BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
                                 String comment);
 
