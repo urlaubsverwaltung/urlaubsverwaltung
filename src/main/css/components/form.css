@@ -25,6 +25,14 @@ legend {
   @apply dark:tw-border-neutral-600 !important;
 }
 
+input:disabled,
+.form-control[disabled],
+.tw-form-control[disabled] {
+  @apply dark:tw-text-neutral-700 !important;
+  @apply dark:tw-bg-neutral-800 !important;
+  @apply tw-border-0 !important;
+}
+
 .form-control:focus,
 .duet-date__input:focus,
 .duet-date__toggle:focus {

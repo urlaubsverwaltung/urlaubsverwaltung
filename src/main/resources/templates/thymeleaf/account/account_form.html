@@ -207,6 +207,7 @@
                           id="doRemainingVacationDaysExpire.null"
                           name="doRemainingVacationDaysExpireLocally"
                           value=""
+                          th:data-value="${account.doRemainingVacationDaysExpireGlobally}"
                           th:checked="${null eq account.doRemainingVacationDaysExpireLocally}"
                         />
                         <th:block
@@ -220,6 +221,7 @@
                           id="doRemainingVacationDaysExpire.true"
                           name="doRemainingVacationDaysExpireLocally"
                           value="true"
+                          data-value="true"
                           th:checked="${true eq account.doRemainingVacationDaysExpireLocally}"
                         />
                         <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.true}" />
@@ -230,6 +232,7 @@
                           id="doRemainingVacationDaysExpire.false"
                           name="doRemainingVacationDaysExpireLocally"
                           value="false"
+                          data-value="false"
                           th:checked="${false eq account.doRemainingVacationDaysExpireLocally}"
                         />
                         <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.false}" />
@@ -262,6 +265,7 @@
                         th:placeholder="#{pattern.date}"
                         class="form-control"
                         th:errorclass="error"
+                        th:disabled="${not account.doRemainingVacationDaysExpire}"
                       />
                       <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('expiryDate')}">
                         <th:block th:errors="*{expiryDate}"> expiryDate Error </th:block>
@@ -283,6 +287,7 @@
                         th:errorclass="error"
                         step="0.5"
                         th:value="${account.remainingVacationDaysNotExpiring}"
+                        th:disabled="${not account.doRemainingVacationDaysExpire}"
                       />
                       <div
                         class="error tw-mt-1 tw-text-sm"

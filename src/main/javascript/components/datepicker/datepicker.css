@@ -20,6 +20,21 @@ duet-date-picker {
   --duet-z-index: 600;
 }
 
+duet-date-picker[disabled] {
+  @apply dark:tw-border-0 !important;
+}
+
+duet-date-picker[disabled] input, duet-date-picker[disabled] button {
+  @apply tw-cursor-not-allowed;
+}
+
+duet-date-picker[disabled] input {
+  background-color: #eee; /* bootstrap .form-input[disabled] forms.less:L170 */
+}
+.tw-dark duet-date-picker[disabled] input {
+  background-color: revert; /* override light theme bg-color and use input:disabled bg-color */
+}
+
 .duet-date__dialog-content {
   @apply dark:tw-border-zinc-600;
 }
