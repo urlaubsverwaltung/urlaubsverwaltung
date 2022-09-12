@@ -56,7 +56,7 @@ public interface AccountInteractionService {
      */
     Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
                                 @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
-                                BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
+                                BigDecimal remainingVacationDays, @Nullable BigDecimal remainingVacationDaysNotExpiring,
                                 String comment);
 
     /**

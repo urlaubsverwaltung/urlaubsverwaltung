@@ -110,7 +110,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     @Override
     public Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
                                        @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
-                                       BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
+                                       BigDecimal remainingVacationDays, @Nullable BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
@@ -118,8 +118,11 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         account.setAnnualVacationDays(annualVacationDays);
         account.setActualVacationDays(actualVacationDays);
         account.setRemainingVacationDays(remainingVacationDays);
-        account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
         account.setComment(comment);
+
+        if (remainingVacationDaysNotExpiring != null) {
+            account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
+        }
 
         if (expiryDate != null) {
             account.setExpiryDate(expiryDate);
