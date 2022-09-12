@@ -38,8 +38,11 @@ public class OidcSecurityProperties {
      * <p>e.g. for <i>keycloak</i> this would be
      * <pre>'https://$provider/auth/realms/$realm/protocol/openid-connect/logout'</pre>
      * </p>
+     *
+     * @deprecated
      */
     @NotEmpty
+    @Deprecated(forRemoval = true, since = "4.49.0")
     private String logoutUri;
 
     /**
