@@ -19,6 +19,7 @@
     <!-- The 2022 spring bank holiday was moved from the 4th of May to the second of June -->
     <tns:Fixed month="JUNE" day="2" validFrom="2022" validTo="2022" descriptionPropertiesKey="SPRING_BANK_HOLIDAY"/>
     <tns:Fixed month="JUNE" day="3" validFrom="2022" validTo="2022" descriptionPropertiesKey="QUEENS_PLATINUM_JUBILEE"/>
+    <tns:Fixed month="SEPTEMBER" day="19" validFrom="2022" validTo="2022" descriptionPropertiesKey="QUEENS_STATE_FUNERAL"/>
 
     <tns:FixedWeekday which="FIRST" weekday="MONDAY" month="MAY" validFrom="1900" validTo="2019" descriptionPropertiesKey="EARLY_MAY_BANK_HOLIDAY"/>
     <tns:FixedWeekday which="SECOND" weekday="FRIDAY" month="MAY" validFrom="2020" validTo="2020" descriptionPropertiesKey="EARLY_MAY_BANK_HOLIDAY"/>
