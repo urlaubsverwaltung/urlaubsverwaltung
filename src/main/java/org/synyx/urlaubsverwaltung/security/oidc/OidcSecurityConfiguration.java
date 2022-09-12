@@ -20,9 +20,6 @@ import java.util.List;
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
 import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
 
-/**
- * @author Florian Krupicka - krupicka@synyx.de
- */
 @Configuration
 @ConditionalOnProperty(value = "uv.security.auth", havingValue = "oidc")
 @EnableConfigurationProperties(OidcSecurityProperties.class)
@@ -55,22 +52,22 @@ public class OidcSecurityConfiguration {
     }
 
     @Bean
-    public OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
+    OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
         return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
     }
 
     @Bean
-    public OAuth2AuthorizedClientRepository authorizedClientRepository(OAuth2AuthorizedClientService authorizedClientService) {
+    OAuth2AuthorizedClientRepository authorizedClientRepository(OAuth2AuthorizedClientService authorizedClientService) {
         return new AuthenticatedPrincipalOAuth2AuthorizedClientRepository(authorizedClientService);
     }
 
     @Bean
-    public OidcPersonAuthoritiesMapper oidcPersonAuthoritiesMapper(PersonService personService) {
+    OidcPersonAuthoritiesMapper oidcPersonAuthoritiesMapper(PersonService personService) {
         return new OidcPersonAuthoritiesMapper(personService);
     }
 
     @Bean
-    public OidcLoginLogger oidcLoginLogger(PersonService personService) {
+    OidcLoginLogger oidcLoginLogger(PersonService personService) {
         return new OidcLoginLogger(personService);
     }
 
