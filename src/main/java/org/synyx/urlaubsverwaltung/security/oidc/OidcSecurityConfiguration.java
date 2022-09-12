@@ -73,8 +73,8 @@ public class OidcSecurityConfiguration {
 
     @Bean
     OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
-        OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-        oidcClientInitiatedLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
+        final OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+        oidcClientInitiatedLogoutSuccessHandler.setPostLogoutRedirectUri(properties.getPostLogoutRedirectUri());
         return oidcClientInitiatedLogoutSuccessHandler;
     }
 }

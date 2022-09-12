@@ -51,6 +51,15 @@ public class OidcSecurityProperties {
     @NotEmpty
     private List<String> scopes = List.of("openid", "profile", "email");
 
+    /**
+     * OIDC post logout redirect uri.
+     * <p>
+     * Redirects the user to the given url after logout.
+     * Default is the base url of the request.
+     */
+    @NotEmpty
+    private String postLogoutRedirectUri = "{baseUrl}";
+
     public String getIssuerUri() {
         return issuerUri;
     }
@@ -89,5 +98,13 @@ public class OidcSecurityProperties {
 
     public void setScopes(List<String> scopes) {
         this.scopes = scopes;
+    }
+
+    public String getPostLogoutRedirectUri() {
+        return postLogoutRedirectUri;
+    }
+
+    public void setPostLogoutRedirectUri(String postLogoutRedirectUri) {
+        this.postLogoutRedirectUri = postLogoutRedirectUri;
     }
 }
