@@ -91,7 +91,7 @@ public class VacationDaysService {
 
         final BigDecimal usedVacationDaysBeforeExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), start, endBeforeExpiryDate);
         final BigDecimal usedVacationDaysAfterExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), startAfterExpiryDate, end);
-        final BigDecimal usedVacationDaysNextYear = getUsedRemainingVacationDays(nextYear);
+        final BigDecimal usedVacationDaysNextYear = nextYear.map(this::getUsedRemainingVacationDays).orElse(ZERO);
 
         return VacationDaysLeft.builder()
             .withAnnualVacation(vacationDays)
@@ -103,20 +103,20 @@ public class VacationDaysService {
             .build();
     }
 
-    public BigDecimal getUsedRemainingVacationDays(Optional<Account> account) {
+    public BigDecimal getUsedRemainingVacationDays(Account account) {
 
-        if (account.isPresent() && account.get().getRemainingVacationDays().signum() > 0) {
+        if (account.getRemainingVacationDays().signum() > 0) {
 
-            final LocalDate firstDayOfYear = Year.of(account.get().getYear()).atDay(1);
+            final LocalDate firstDayOfYear = Year.of(account.getYear()).atDay(1);
             final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-            final VacationDaysLeft left = getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account.get(), Optional.empty());
+            final VacationDaysLeft left = getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account, Optional.empty());
 
-            final BigDecimal totalUsed = account.get().getActualVacationDays()
-                .add(account.get().getRemainingVacationDays())
+            final BigDecimal totalUsed = account.getActualVacationDays()
+                .add(account.getRemainingVacationDays())
                 .subtract(left.getVacationDays())
                 .subtract(left.getRemainingVacationDays());
 
-            final BigDecimal remainingUsed = totalUsed.subtract(account.get().getActualVacationDays());
+            final BigDecimal remainingUsed = totalUsed.subtract(account.getActualVacationDays());
 
             if (remainingUsed.signum() > 0) {
                 return remainingUsed;

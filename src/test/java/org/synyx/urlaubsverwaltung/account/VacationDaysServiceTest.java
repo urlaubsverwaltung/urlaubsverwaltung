@@ -303,19 +303,13 @@ class VacationDaysServiceTest {
     }
 
     @Test
-    void testGetVacationDaysUsedOfEmptyAccount() {
-        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getUsedRemainingVacationDays(Optional.empty());
-        assertThat(remainingVacationDaysAlreadyUsed).isEqualTo(ZERO);
-    }
-
-    @Test
     void testGetVacationDaysUsedOfZeroRemainingVacationDays() {
 
         final Account account = new Account();
         account.setValidFrom(LocalDate.of(2022, 1, 1));
         account.setRemainingVacationDays(ZERO);
 
-        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getUsedRemainingVacationDays(Optional.of(account));
+        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getUsedRemainingVacationDays(account);
         assertThat(remainingVacationDaysAlreadyUsed).isEqualTo(ZERO);
     }
 
@@ -356,7 +350,7 @@ class VacationDaysServiceTest {
         account.setRemainingVacationDays(new BigDecimal("10"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("0"));
 
-        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getUsedRemainingVacationDays(Optional.of(account));
+        final BigDecimal remainingVacationDaysAlreadyUsed = sut.getUsedRemainingVacationDays(account);
         assertThat(remainingVacationDaysAlreadyUsed).isEqualTo(TEN);
     }
 
@@ -536,11 +530,6 @@ class VacationDaysServiceTest {
     }
 
     @Test
-    void ensureUsesRemainingVacationDaysWithInconsistentTimeRangeReturnsZero() {
-        assertThat(sut.getUsedRemainingVacationDays(Optional.empty())).isEqualTo(ZERO);
-    }
-
-    @Test
     void ensureUsesRemainingVacationDaysWithNegativeRemainingUsedReturnsZero() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -555,6 +544,6 @@ class VacationDaysServiceTest {
         account.setRemainingVacationDays(new BigDecimal("7"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
 
-        assertThat(sut.getUsedRemainingVacationDays(Optional.of(account))).isEqualTo(ZERO);
+        assertThat(sut.getUsedRemainingVacationDays(account)).isEqualTo(ZERO);
     }
 }
