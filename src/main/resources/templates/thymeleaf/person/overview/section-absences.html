@@ -127,9 +127,9 @@
                 <span class="tw-block tw-mb-1 tw-text-lg" th:text="#{overview.vacations.expired}"></span>
                 <th:block
                   th:with="
-                expired=${expiredRemainingVacationDays.doubleValue % 1 == 0 ? #numbers.formatDecimal(expiredRemainingVacationDays.doubleValue,1,0) : #numbers.formatDecimal(expiredRemainingVacationDays.doubleValue,1,1)},
-                remaining=${vacationDaysLeft.remainingVacationDays.doubleValue % 1 == 0 ? #numbers.formatDecimal(vacationDaysLeft.remainingVacationDays.doubleValue,1,0) : #numbers.formatDecimal(vacationDaysLeft.remainingVacationDays.doubleValue,1,1)}
-              "
+                    expired=${expiredRemainingVacationDays.doubleValue % 1 == 0 ? #numbers.formatDecimal(expiredRemainingVacationDays.doubleValue,1,0) : #numbers.formatDecimal(expiredRemainingVacationDays.doubleValue,1,1)},
+                    remaining=${vacationDaysLeft.remainingVacationDays.doubleValue % 1 == 0 ? #numbers.formatDecimal(vacationDaysLeft.remainingVacationDays.doubleValue,1,0) : #numbers.formatDecimal(vacationDaysLeft.remainingVacationDays.doubleValue,1,1)}
+                  "
                   th:text="#{overview.vacations.expired.description(${expired}, ${remaining})}"
                 ></th:block>
               </td>
