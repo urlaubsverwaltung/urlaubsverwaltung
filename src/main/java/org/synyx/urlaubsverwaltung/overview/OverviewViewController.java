@@ -196,10 +196,17 @@ public class OverviewViewController {
             final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, account.getExpiryDate());
             model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
             model.addAttribute("expiryDate", account.getExpiryDate());
-            model.addAttribute("isBeforeExpiryDate", now.isBefore(account.getExpiryDate()));
+
+            final boolean isBeforeExpiryDate = now.isBefore(account.getExpiryDate());
+            final boolean showExpiredVacationDays = !isBeforeExpiryDate && expiredRemainingVacationDays.compareTo(BigDecimal.ZERO) > 0;
+            model.addAttribute("showExpiredVacationDays", showExpiredVacationDays);
+            model.addAttribute("isBeforeExpiryDate", isBeforeExpiryDate);
             model.addAttribute("remainingVacationDays", account.getRemainingVacationDays());
 
             model.addAttribute("account", account);
+
+        } else {
+            model.addAttribute("showExpiredVacationDays", false);
         }
     }
 
