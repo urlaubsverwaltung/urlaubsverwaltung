@@ -253,9 +253,6 @@ class VacationDaysServiceTest {
         when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate.of(2022, 4, 1), LocalDate.of(2022, 12, 31), person, statuses, HOLIDAY))
             .thenReturn(List.of(application20Days));
 
-        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31), person, statuses, HOLIDAY))
-            .thenReturn(List.of(application4Days, application20Days));
-
         final Application application4DaysIn2023 = new Application();
         application4DaysIn2023.setStartDate(LocalDate.of(2023, JANUARY, 3));
         application4DaysIn2023.setEndDate(LocalDate.of(2023, JANUARY, 7));
@@ -263,6 +260,9 @@ class VacationDaysServiceTest {
         application4DaysIn2023.setPerson(person);
         application4DaysIn2023.setStatus(ALLOWED);
         application4DaysIn2023.setVacationType(createVacationTypeEntity(HOLIDAY));
+        when(workDaysCountService.getWorkDaysCount(application4DaysIn2023.getDayLength(), application4DaysIn2023.getStartDate(), application4DaysIn2023.getEndDate(), application4DaysIn2023.getPerson())).thenReturn(BigDecimal.valueOf(4L));
+        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 3, 31), person, statuses, HOLIDAY))
+            .thenReturn(List.of(application4DaysIn2023));
 
         final Application application20DaysIn2023 = new Application();
         application20DaysIn2023.setStartDate(LocalDate.of(2023, APRIL, 2));
@@ -271,6 +271,9 @@ class VacationDaysServiceTest {
         application20DaysIn2023.setPerson(person);
         application20DaysIn2023.setStatus(ALLOWED);
         application20DaysIn2023.setVacationType(createVacationTypeEntity(HOLIDAY));
+        when(workDaysCountService.getWorkDaysCount(application20DaysIn2023.getDayLength(), application20DaysIn2023.getStartDate(), application20DaysIn2023.getEndDate(), application20DaysIn2023.getPerson())).thenReturn(BigDecimal.valueOf(20L));
+        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate.of(2023, 4, 1), LocalDate.of(2023, 12, 31), person, statuses, HOLIDAY))
+            .thenReturn(List.of(application20DaysIn2023));
 
         // 36 Total, using 24, so 12 left
         final Account account = new Account();
@@ -534,11 +537,7 @@ class VacationDaysServiceTest {
 
     @Test
     void ensureUsesRemainingVacationDaysWithInconsistentTimeRangeReturnsZero() {
-        final LocalDate today = LocalDate.now();
-        final LocalDate start = today.with(lastDayOfYear());
-        final LocalDate end = today.with(firstDayOfYear());
-
-        assertThat(sut.getUsedRemainingVacationDays(start, end, Optional.empty())).isEqualTo(ZERO);
+        assertThat(sut.getUsedRemainingVacationDays(Optional.empty())).isEqualTo(ZERO);
     }
 
     @Test
@@ -546,8 +545,6 @@ class VacationDaysServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate today = LocalDate.now();
-        final LocalDate start = today.with(firstDayOfYear());
-        final LocalDate end = today.with(lastDayOfYear());
 
         final Account account = new Account();
         account.setPerson(person);
@@ -558,6 +555,6 @@ class VacationDaysServiceTest {
         account.setRemainingVacationDays(new BigDecimal("7"));
         account.setRemainingVacationDaysNotExpiring(new BigDecimal("3"));
 
-        assertThat(sut.getUsedRemainingVacationDays(start, end, Optional.of(account))).isEqualTo(ZERO);
+        assertThat(sut.getUsedRemainingVacationDays(Optional.of(account))).isEqualTo(ZERO);
     }
 }

@@ -91,7 +91,7 @@ public class VacationDaysService {
 
         final BigDecimal usedVacationDaysBeforeExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), start, endBeforeExpiryDate);
         final BigDecimal usedVacationDaysAfterExpiryDate = getUsedVacationDaysBetweenTwoMilestones(account.getPerson(), startAfterExpiryDate, end);
-        final BigDecimal usedVacationDaysNextYear = getUsedRemainingVacationDays(start, end, nextYear);
+        final BigDecimal usedVacationDaysNextYear = getUsedRemainingVacationDays(nextYear);
 
         return VacationDaysLeft.builder()
             .withAnnualVacation(vacationDays)
@@ -103,30 +103,13 @@ public class VacationDaysService {
             .build();
     }
 
-    /**
-     * Returns the already used vacations from last year of the given account.
-     *
-     * @param account the account for the year to calculate the vacation days that are used from the year before
-     * @return total number of used vacations
-     */
     public BigDecimal getUsedRemainingVacationDays(Optional<Account> account) {
-        return account
-            .map(presentAccount -> {
-                final LocalDate firstDayOfYear = Year.of(presentAccount.getYear()).atDay(1);
-                final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-                return getUsedRemainingVacationDays(firstDayOfYear, lastDayOfYear, account);
-            }).orElse(ZERO);
-    }
-
-    public BigDecimal getUsedRemainingVacationDays(LocalDate start, LocalDate end, Optional<Account> account) {
-
-        if (start.isAfter(end)) {
-            return ZERO;
-        }
 
         if (account.isPresent() && account.get().getRemainingVacationDays().signum() > 0) {
 
-            final VacationDaysLeft left = getVacationDaysLeft(start, end, account.get(), Optional.empty());
+            final LocalDate firstDayOfYear = Year.of(account.get().getYear()).atDay(1);
+            final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+            final VacationDaysLeft left = getVacationDaysLeft(firstDayOfYear, lastDayOfYear, account.get(), Optional.empty());
 
             final BigDecimal totalUsed = account.get().getActualVacationDays()
                 .add(account.get().getRemainingVacationDays())
