@@ -77,7 +77,7 @@ class SickNoteStatisticsViewController {
         }
 
         final Person signedInUser = personService.getSignedInUser();
-        final List<SickNoteDetailedStatistics> allDetailedSickNotes = sickNoteStatisticsService.getAllSickNotes(signedInUser, period.getStartDate(), period.getEndDate());
+        final List<SickNoteDetailedStatistics> allDetailedSickNotes = sickNoteStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate());
         final CSVFile csvFile = sickNoteDetailedStatisticsCsvExportService.generateCSV(period, allDetailedSickNotes);
 
         final HttpHeaders headers = new HttpHeaders();

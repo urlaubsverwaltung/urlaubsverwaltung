@@ -18,7 +18,6 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -58,7 +57,15 @@ public class SickNoteStatisticsService {
         return new SickNoteStatistics(clock, sickNotes, workDaysCountService);
     }
 
-    List<SickNoteDetailedStatistics> getAllSickNotes(Person person, LocalDate from, LocalDate to) {
+    /**
+     * Returns a list of all sick notes detailed statistics that the person is allowed to access.
+     *
+     * @param person to ask for the statistics
+     * @param from a specific date
+     * @param to a specific date
+     * @return list of all {@link SickNoteDetailedStatistics} that the person can access
+     */
+    List<SickNoteDetailedStatistics> getAll(Person person, LocalDate from, LocalDate to) {
 
         final List<SickNote> sickNotes = getSickNotes(person, from, to);
         final Map<Person, List<SickNote>> sickNotesByPerson = sickNotes.stream()
@@ -67,8 +74,8 @@ public class SickNoteStatisticsService {
         final List<Person> personsWithSickNotes = new ArrayList<>(sickNotesByPerson.keySet());
 
         final List<Integer> personIds = personsWithSickNotes.stream().map(Person::getId).collect(toList());
-        Map<PersonId, PersonBasedata> basedataForPersons = personBasedataService.getBasedataByPersonId(personIds);
-        Map<PersonId, List<String>> departmentsForPersons = departmentService.getDepartmentNamesByMembers(personsWithSickNotes);
+        final Map<PersonId, PersonBasedata> basedataForPersons = personBasedataService.getBasedataByPersonId(personIds);
+        final Map<PersonId, List<String>> departmentsForPersons = departmentService.getDepartmentNamesByMembers(personsWithSickNotes);
 
         return sickNotesByPerson.entrySet().stream()
             .map(toSickNoteDetailedStatistics(basedataForPersons, departmentsForPersons))
@@ -79,8 +86,9 @@ public class SickNoteStatisticsService {
         return personListEntry ->
         {
             final Person person = personListEntry.getKey();
-            final String personnelNumber = Optional.of(basedataForPersons.get(new PersonId(person.getId())).getPersonnelNumber()).orElse("");
-            final List<String> departments = Optional.of(departmentsForPersons.get(new PersonId(person.getId()))).orElse(List.of());
+            final PersonId personId = new PersonId(person.getId());
+            final String personnelNumber = basedataForPersons.getOrDefault(personId, new PersonBasedata(personId, "", "")).getPersonnelNumber();
+            final List<String> departments = departmentsForPersons.getOrDefault(personId, List.of());
             return new SickNoteDetailedStatistics(personnelNumber, person.getFirstName(), person.getLastName(), personListEntry.getValue(), departments);
         };
     }

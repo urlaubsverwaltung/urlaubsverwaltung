@@ -129,7 +129,7 @@ class SickNoteStatisticsViewControllerTest {
         when(dateFormatAware.parse(dateString)).thenReturn(Optional.of(date));
 
         final List<SickNoteDetailedStatistics> statistics = emptyList();
-        when(statisticsService.getAllSickNotes(signedInUser, date, date)).thenReturn(statistics);
+        when(statisticsService.getAll(signedInUser, date, date)).thenReturn(statistics);
         when(sickNoteDetailedStatisticsCsvExportService.generateCSV(filterPeriod, statistics)).thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
         perform(get("/web/sicknote/statistics/download")
@@ -156,7 +156,7 @@ class SickNoteStatisticsViewControllerTest {
         when(dateFormatAware.parse(endString)).thenReturn(Optional.of(endDate));
 
         final List<SickNoteDetailedStatistics> statistics = emptyList();
-        when(statisticsService.getAllSickNotes(signedInUser, startDate, endDate)).thenReturn(statistics);
+        when(statisticsService.getAll(signedInUser, startDate, endDate)).thenReturn(statistics);
         when(sickNoteDetailedStatisticsCsvExportService.generateCSV(filterPeriod, statistics)).thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
         perform(get("/web/sicknote/statistics/download")

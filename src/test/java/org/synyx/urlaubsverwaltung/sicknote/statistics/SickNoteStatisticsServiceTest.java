@@ -179,7 +179,7 @@ class SickNoteStatisticsServiceTest {
 
         when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead))).thenReturn(Map.of(new PersonId(departmentHead.getId()), List.of("Kitchen", "Service")));
 
-        final List<SickNoteDetailedStatistics> allSicknotes = sut.getAllSickNotes(departmentHead, startDate, endDate);
+        final List<SickNoteDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
         assertThat(allSicknotes)
             .extracting(SickNoteDetailedStatistics::getPersonalNumber,
                 SickNoteDetailedStatistics::getFirstName,
@@ -188,5 +188,82 @@ class SickNoteStatisticsServiceTest {
                 SickNoteDetailedStatistics::getSickNotes
             )
             .contains(tuple(personnnelNumber, "Department", "Head", List.of("Kitchen", "Service"), List.of(sickNote)));
+    }
+
+    @Test
+    void ensureStatisticsCanBeCreatedWithPersonWithoutDepartments() {
+
+        final LocalDate startDate = LocalDate.parse("2022-01-01");
+        final LocalDate endDate = LocalDate.parse("2022-12-31");
+
+        final Person departmentHead = new Person();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        departmentHead.setFirstName("Department");
+        departmentHead.setLastName("Head");
+        departmentHead.setId(42);
+
+        final String personnnelNumber = "Passagier1337";
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), personnnelNumber, "additionalInfo");
+
+        final SickNote sickNote = new SickNote();
+        sickNote.setPerson(departmentHead);
+        sickNote.setStartDate(startDate.plusDays(5));
+        sickNote.setEndDate(startDate.plusDays(6));
+
+        final Person member = new Person();
+        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(member));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(member), startDate, endDate)).thenReturn(List.of(sickNote));
+
+        final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(departmentHead.getId()), personBasedata);
+        when(personBasedataService.getBasedataByPersonId(List.of(departmentHead.getId()))).thenReturn(personIdBasedatamap);
+
+        when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead))).thenReturn(Map.of());
+
+        final List<SickNoteDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
+        assertThat(allSicknotes)
+            .extracting(SickNoteDetailedStatistics::getPersonalNumber,
+                SickNoteDetailedStatistics::getFirstName,
+                SickNoteDetailedStatistics::getLastName,
+                SickNoteDetailedStatistics::getDepartments,
+                SickNoteDetailedStatistics::getSickNotes
+            )
+            .contains(tuple(personnnelNumber, "Department", "Head", List.of(), List.of(sickNote)));
+    }
+
+    @Test
+    void ensureStatisticsCanBeCreatedWithPersonWithoutBaseData() {
+
+        final LocalDate startDate = LocalDate.parse("2022-01-01");
+        final LocalDate endDate = LocalDate.parse("2022-12-31");
+
+        final Person departmentHead = new Person();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        departmentHead.setFirstName("Department");
+        departmentHead.setLastName("Head");
+        departmentHead.setId(42);
+
+        final SickNote sickNote = new SickNote();
+        sickNote.setPerson(departmentHead);
+        sickNote.setStartDate(startDate.plusDays(5));
+        sickNote.setEndDate(startDate.plusDays(6));
+
+        final Person member = new Person();
+        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(member));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(member), startDate, endDate)).thenReturn(List.of(sickNote));
+
+        final Map<PersonId, PersonBasedata> personIdBaseDataMap = Map.of();
+        when(personBasedataService.getBasedataByPersonId(List.of(departmentHead.getId()))).thenReturn(personIdBaseDataMap);
+
+        when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead))).thenReturn(Map.of(new PersonId(departmentHead.getId()), List.of("Kitchen", "Service")));
+
+        final List<SickNoteDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
+        assertThat(allSicknotes)
+            .extracting(SickNoteDetailedStatistics::getPersonalNumber,
+                SickNoteDetailedStatistics::getFirstName,
+                SickNoteDetailedStatistics::getLastName,
+                SickNoteDetailedStatistics::getDepartments,
+                SickNoteDetailedStatistics::getSickNotes
+            )
+            .contains(tuple("", "Department", "Head", List.of("Kitchen", "Service"), List.of(sickNote)));
     }
 }
