@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.groupingBy;
@@ -27,6 +28,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
 /**
@@ -61,8 +63,8 @@ public class SickNoteStatisticsService {
      * Returns a list of all sick notes detailed statistics that the person is allowed to access.
      *
      * @param person to ask for the statistics
-     * @param from a specific date
-     * @param to a specific date
+     * @param from   a specific date
+     * @param to     a specific date
      * @return list of all {@link SickNoteDetailedStatistics} that the person can access
      */
     List<SickNoteDetailedStatistics> getAll(Person person, LocalDate from, LocalDate to) {
@@ -94,15 +96,27 @@ public class SickNoteStatisticsService {
     }
 
     private List<SickNote> getSickNotes(Person person, LocalDate from, LocalDate to) {
+
+        if (person.hasRole(OFFICE) || (person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW))) {
+            return sickNoteService.getAllActiveByPeriod(from, to);
+        }
+
         final List<SickNote> sickNotes;
-        if (person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) {
-            final List<Person> members = person.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(person) : departmentService.getMembersForSecondStageAuthority(person);
+        if ((person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && person.hasRole(SICK_NOTE_VIEW)) {
+            final List<Person> members = getMembersForPerson(person);
             sickNotes = sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, from, to);
-        } else if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
-            sickNotes = sickNoteService.getAllActiveByPeriod(from, to);
         } else {
             sickNotes = List.of();
         }
+
         return sickNotes;
+    }
+
+    private List<Person> getMembersForPerson(Person person) {
+        final List<Person> membersDH = person.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(person) : List.of();
+        final List<Person> membersSSA = person.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(person) : List.of();
+        return Stream.concat(membersDH.stream(), membersSSA.stream())
+            .distinct()
+            .collect(toList());
     }
 }
