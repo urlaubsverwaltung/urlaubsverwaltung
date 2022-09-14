@@ -196,6 +196,26 @@ class OverviewViewControllerTest {
     }
 
     @Test
+    void showOverviewWithoutExistingAccount() throws Exception {
+        final Person person = new Person();
+        person.setId(1);
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
+
+        when(accountService.getHolidaysAccount(1984, person)).thenReturn(Optional.empty());
+
+        perform(get("/web/person/1/overview").param("year", "1984"))
+            .andExpect(model().attribute("showExpiredVacationDays", false))
+            .andExpect(model().attributeDoesNotExist("vacationDaysLeft"))
+            .andExpect(model().attributeDoesNotExist("expiredRemainingVacationDays"))
+            .andExpect(model().attributeDoesNotExist("expiryDate"))
+            .andExpect(model().attributeDoesNotExist("isBeforeExpiryDate"))
+            .andExpect(model().attributeDoesNotExist("remainingVacationDays"));
+    }
+
+    @Test
     void showOverviewCanAccessAbsenceOverview() throws Exception {
         final Person person = new Person();
         person.setId(1);

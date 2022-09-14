@@ -121,15 +121,15 @@
       <div class="tw-mb-4 lg:tw-mb-12">
         <table class="list-table selectable-table tw-text-sm">
           <tbody>
-            <tr th:if="${!isBeforeExpiryDate && expiredRemainingVacationDays > 0}" class="active">
+            <tr th:if="${showExpiredVacationDays}" class="active">
               <td></td>
               <td class="tw-py-4">
                 <span class="tw-block tw-mb-1 tw-text-lg" th:text="#{overview.vacations.expired}"></span>
                 <th:block
                   th:with="
-                expired=${expiredRemainingVacationDays.doubleValue % 1 == 0 ? #numbers.formatDecimal(expiredRemainingVacationDays.doubleValue,1,0) : #numbers.formatDecimal(expiredRemainingVacationDays.doubleValue,1,1)},
-                remaining=${vacationDaysLeft.remainingVacationDays.doubleValue % 1 == 0 ? #numbers.formatDecimal(vacationDaysLeft.remainingVacationDays.doubleValue,1,0) : #numbers.formatDecimal(vacationDaysLeft.remainingVacationDays.doubleValue,1,1)}
-              "
+                    expired=${expiredRemainingVacationDays.doubleValue % 1 == 0 ? #numbers.formatDecimal(expiredRemainingVacationDays.doubleValue,1,0) : #numbers.formatDecimal(expiredRemainingVacationDays.doubleValue,1,1)},
+                    remaining=${vacationDaysLeft.remainingVacationDays.doubleValue % 1 == 0 ? #numbers.formatDecimal(vacationDaysLeft.remainingVacationDays.doubleValue,1,0) : #numbers.formatDecimal(vacationDaysLeft.remainingVacationDays.doubleValue,1,1)}
+                  "
                   th:text="#{overview.vacations.expired.description(${expired}, ${remaining})}"
                 ></th:block>
               </td>
