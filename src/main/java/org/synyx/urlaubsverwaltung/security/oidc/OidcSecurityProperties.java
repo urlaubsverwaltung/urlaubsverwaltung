@@ -38,8 +38,11 @@ public class OidcSecurityProperties {
      * <p>e.g. for <i>keycloak</i> this would be
      * <pre>'https://$provider/auth/realms/$realm/protocol/openid-connect/logout'</pre>
      * </p>
+     *
+     * @deprecated
      */
     @NotEmpty
+    @Deprecated(forRemoval = true, since = "4.49.0")
     private String logoutUri;
 
     /**
@@ -47,6 +50,15 @@ public class OidcSecurityProperties {
      */
     @NotEmpty
     private List<String> scopes = List.of("openid", "profile", "email");
+
+    /**
+     * OIDC post logout redirect uri.
+     * <p>
+     * Redirects the user to the given url after logout.
+     * Default is the base url of the request.
+     */
+    @NotEmpty
+    private String postLogoutRedirectUri = "{baseUrl}";
 
     public String getIssuerUri() {
         return issuerUri;
@@ -86,5 +98,13 @@ public class OidcSecurityProperties {
 
     public void setScopes(List<String> scopes) {
         this.scopes = scopes;
+    }
+
+    public String getPostLogoutRedirectUri() {
+        return postLogoutRedirectUri;
+    }
+
+    public void setPostLogoutRedirectUri(String postLogoutRedirectUri) {
+        this.postLogoutRedirectUri = postLogoutRedirectUri;
     }
 }
