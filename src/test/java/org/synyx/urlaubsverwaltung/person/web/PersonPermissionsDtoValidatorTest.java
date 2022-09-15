@@ -7,14 +7,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
@@ -36,9 +39,12 @@ class PersonPermissionsDtoValidatorTest {
     @Mock
     private Errors errors;
 
+    @Mock
+    private PersonService personService;
+
     @BeforeEach
     void setUp() {
-        sut = new PersonPermissionsDtoValidator();
+        sut = new PersonPermissionsDtoValidator(personService);
     }
 
     @Test
@@ -80,7 +86,7 @@ class PersonPermissionsDtoValidatorTest {
     void ensureIfSelectedInactiveAsRoleNoOtherRoleCanBeSelected() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(INACTIVE, USER));
+        personPermissionsDto.setPermissions(List.of(INACTIVE, USER));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verify(errors).rejectValue("permissions", "person.form.permissions.error.inactive");
@@ -110,7 +116,7 @@ class PersonPermissionsDtoValidatorTest {
     void ensureDepartmentHeadRoleAndOfficeRoleCanBeSelectedBoth() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, OFFICE, DEPARTMENT_HEAD));
+        personPermissionsDto.setPermissions(List.of(USER, OFFICE, DEPARTMENT_HEAD));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);
@@ -120,7 +126,7 @@ class PersonPermissionsDtoValidatorTest {
     void ensureSecondStageRoleAndOfficeRoleCanBeSelectedBoth() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, OFFICE, SECOND_STAGE_AUTHORITY));
+        personPermissionsDto.setPermissions(List.of(USER, OFFICE, SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);
@@ -130,7 +136,7 @@ class PersonPermissionsDtoValidatorTest {
     void ensureDepartmentHeadRoleAndBossRoleCanBeSelectedBoth() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, BOSS, DEPARTMENT_HEAD));
+        personPermissionsDto.setPermissions(List.of(USER, BOSS, DEPARTMENT_HEAD));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);
@@ -140,7 +146,7 @@ class PersonPermissionsDtoValidatorTest {
     void ensureSecondStageRoleAndBossRoleCanBeSelectedBoth() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, BOSS, SECOND_STAGE_AUTHORITY));
+        personPermissionsDto.setPermissions(List.of(USER, BOSS, SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);
@@ -150,7 +156,7 @@ class PersonPermissionsDtoValidatorTest {
     void ensureValidBossRoleSelectionHasNoValidationError() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, BOSS));
+        personPermissionsDto.setPermissions(List.of(USER, BOSS));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);
@@ -160,7 +166,7 @@ class PersonPermissionsDtoValidatorTest {
     void ensureValidOfficeRoleSelectionHasNoValidationError() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, OFFICE));
+        personPermissionsDto.setPermissions(List.of(USER, OFFICE));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);
@@ -170,7 +176,7 @@ class PersonPermissionsDtoValidatorTest {
     void ensureValidBossAndOfficeRoleSelectionHasNoValidationError() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, BOSS, OFFICE));
+        personPermissionsDto.setPermissions(List.of(USER, BOSS, OFFICE));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);
@@ -180,7 +186,7 @@ class PersonPermissionsDtoValidatorTest {
     void ensureSecondStageRoleAndDepartmentHeadRolesCanBeSelectedBoth() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        personPermissionsDto.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);
@@ -200,8 +206,8 @@ class PersonPermissionsDtoValidatorTest {
     void ensureDepartmentHeadMailNotificationIsOnlyValidIfDepartmentHeadRoleSelected() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, BOSS));
-        personPermissionsDto.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_DEPARTMENT_HEAD));
+        personPermissionsDto.setPermissions(List.of(USER, BOSS));
+        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_DEPARTMENT_HEAD));
 
         sut.validateNotifications(personPermissionsDto, errors);
         verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
@@ -211,8 +217,8 @@ class PersonPermissionsDtoValidatorTest {
     void ensureSecondStageMailNotificationIsOnlyValidIfSecondStageRoleSelected() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, DEPARTMENT_HEAD));
-        personPermissionsDto.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_SECOND_STAGE_AUTHORITY));
+        personPermissionsDto.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_SECOND_STAGE_AUTHORITY));
 
         sut.validateNotifications(personPermissionsDto, errors);
         verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
@@ -223,7 +229,7 @@ class PersonPermissionsDtoValidatorTest {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
         personPermissionsDto.setPermissions(singletonList(USER));
-        personPermissionsDto.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
+        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
         sut.validateNotifications(personPermissionsDto, errors);
         verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
@@ -233,8 +239,8 @@ class PersonPermissionsDtoValidatorTest {
     void ensureOfficeMailNotificationIsOnlyValidIfOfficeRoleSelected() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, BOSS));
-        personPermissionsDto.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL, NOTIFICATION_OFFICE));
+        personPermissionsDto.setPermissions(List.of(USER, BOSS));
+        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL, NOTIFICATION_OFFICE));
 
         sut.validateNotifications(personPermissionsDto, errors);
         verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
@@ -244,8 +250,8 @@ class PersonPermissionsDtoValidatorTest {
     void ensureValidNotificationSelectionForDepartmentHeadHasNoValidationError() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, DEPARTMENT_HEAD));
-        personPermissionsDto.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_DEPARTMENT_HEAD));
+        personPermissionsDto.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_DEPARTMENT_HEAD));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);
@@ -255,8 +261,8 @@ class PersonPermissionsDtoValidatorTest {
     void ensureValidNotificationSelectionForSecondStageHasNoValidationError() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, SECOND_STAGE_AUTHORITY));
-        personPermissionsDto.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_SECOND_STAGE_AUTHORITY));
+        personPermissionsDto.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_SECOND_STAGE_AUTHORITY));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);
@@ -266,8 +272,8 @@ class PersonPermissionsDtoValidatorTest {
     void ensureValidNotificationSelectionForBossHasNoValidationError() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, BOSS));
-        personPermissionsDto.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
+        personPermissionsDto.setPermissions(List.of(USER, BOSS));
+        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);
@@ -277,10 +283,46 @@ class PersonPermissionsDtoValidatorTest {
     void ensureValidNotificationSelectionForOfficeHasNoValidationError() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(asList(USER, OFFICE));
-        personPermissionsDto.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_OFFICE));
+        personPermissionsDto.setPermissions(List.of(USER, OFFICE));
+        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_OFFICE));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);
+    }
+
+    @Test
+    void ensureAtLeastOnePersonWithTheRoleOfficeIsMe() {
+
+        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
+        personPermissionsDto.setPermissions(List.of(USER, OFFICE));
+
+        sut.validateAtLeastOnePersonWithOffice(personPermissionsDto, errors);
+        verifyNoInteractions(errors);
+    }
+
+    @Test
+    void ensureAtLeastOneOtherPersonWithTheRoleOffice() {
+
+        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
+        personPermissionsDto.setId(1);
+        personPermissionsDto.setPermissions(List.of(USER));
+
+        when(personService.numberOfPersonsWithRoleWithoutId(Role.OFFICE, 1)).thenReturn(1);
+
+        sut.validateAtLeastOnePersonWithOffice(personPermissionsDto, errors);
+        verifyNoInteractions(errors);
+    }
+
+    @Test
+    void ensureErrorIfNoPersonWithTheRoleOffice() {
+
+        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
+        personPermissionsDto.setId(1);
+        personPermissionsDto.setPermissions(List.of(USER));
+
+        when(personService.numberOfPersonsWithRoleWithoutId(Role.OFFICE, 1)).thenReturn(0);
+
+        sut.validateAtLeastOnePersonWithOffice(personPermissionsDto, errors);
+        verify(errors).rejectValue("permissions", "person.form.permissions.error.mandatory.office");
     }
 }

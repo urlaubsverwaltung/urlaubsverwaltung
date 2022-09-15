@@ -47,6 +47,30 @@ class PersonRepositoryIT extends TestContainersBase {
     }
 
     @Test
+    void ensureToFindPersonsWithRoleWithoutTheId() {
+
+        final Person marlene = new Person("marlene", "Muster", "Marlene", "muster@example.org");
+        marlene.setPermissions(List.of(USER, INACTIVE));
+        personService.create(marlene);
+
+        final Person peter = new Person("peter", "Muster", "Peter", "peter@example.org");
+        peter.setPermissions(List.of(USER, OFFICE));
+        personService.create(peter);
+
+        final Person simone = new Person("simone", "Muster", "Peter", "simone@example.org");
+        simone.setPermissions(List.of(USER, OFFICE));
+        personService.create(simone);
+
+        final Person bettina = new Person("bettina", "Muster", "bettina", "bettina@example.org");
+        bettina.setPermissions(List.of(USER, OFFICE));
+        final Person savedBettina = personService.create(bettina);
+
+        final Integer id = savedBettina.getId();
+        final int countOfActivePersons = sut.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(id));
+        assertThat(countOfActivePersons).isEqualTo(2);
+    }
+
+    @Test
     void findByPersonByPermissionsNotContaining() {
 
         final Person marlene = new Person("marlene", "Muster", "Marlene", "muster@example.org");

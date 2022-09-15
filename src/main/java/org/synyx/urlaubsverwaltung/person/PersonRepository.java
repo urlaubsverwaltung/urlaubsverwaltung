@@ -20,6 +20,8 @@ interface PersonRepository extends JpaRepository<Person, Integer> {
 
     int countByPermissionsNotContaining(Role permission);
 
+    int countByPermissionsContainingAndIdNotIn(Role permission, List<Integer> id);
+
     List<Person> findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(Role permission);
 
     @Query("select p from Person p where :permission not member of p.permissions and (p.firstName like %:query% or p.lastName like %:query%)")
