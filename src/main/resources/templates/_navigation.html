@@ -232,11 +232,12 @@
                     <a
                       href="#"
                       th:href="@{/web/overview}"
-                      id="home-link"
+                      th:id="home-link"
                       class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
                     >
                       <span class="tw-flex tw-items-center">
                         <svg
+                          th:ref="home-link-icon"
                           th:replace="icon/home::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
                         ></svg>
                         <span
@@ -248,89 +249,62 @@
                   </li>
                   <li class="tw-flex tw-items-center">
                     <a
-                      href="#"
-                      th:href="@{/web/application/new}"
-                      id="application-new-link"
-                      class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+                      th:replace="::navigation-item(id='application-new-link', href=@{/web/application/new}, text=#{nav.apply.title}, icon=~{::application-new-link-icon})"
                     >
-                      <span class="tw-flex tw-items-center">
-                        <svg
-                          th:replace="icon/plus-circle::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
-                        ></svg>
-                        <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.apply.title}"></span>
-                      </span>
+                      <svg
+                        th:ref="application-new-link-icon"
+                        th:replace="icon/plus-circle::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
+                      ></svg>
                     </a>
                   </li>
                   <li class="tw-flex tw-items-center">
                     <a
-                      href="#"
-                      th:href="@{/web/application}"
-                      class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+                      th:replace="::navigation-item(id='application-link', href=@{/web/application}, text=#{nav.vacation.title}, icon=~{::application-link-icon})"
                     >
-                      <span class="tw-flex tw-items-center">
-                        <svg
-                          th:replace="icon/calendar::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
-                        ></svg>
-                        <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.vacation.title}"></span>
-                      </span>
+                      <svg
+                        th:ref="application-link-icon"
+                        th:replace="icon/calendar::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
+                      ></svg>
                     </a>
                   </li>
                   <li class="tw-flex tw-items-center" th:if="${navigationSickNoteStatisticsAccess}">
                     <a
-                      href="#"
-                      th:href="@{/web/sicknote}"
-                      class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
-                      data-test-id="navigation-sick-notes-link"
+                      th:replace="::navigation-item(id='sicknote-link', href=@{/web/sicknote}, text=#{nav.sicknote.title}, icon=~{::sicknote-link-icon})"
                     >
-                      <span class="tw-flex tw-items-center">
-                        <svg
-                          th:replace="icon/medkit::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
-                        ></svg>
-                        <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.sicknote.title}"></span>
-                      </span>
+                      <svg
+                        th:ref="sicknote-link-icon"
+                        th:replace="icon/medkit::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
+                      ></svg>
                     </a>
                   </li>
                   <li class="tw-flex tw-items-center" th:if="${navigationPersonListAccess}">
                     <a
-                      href="#"
-                      th:href="@{/web/person(active=true)}"
-                      class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+                      th:replace="::navigation-item(id='person-link', href=@{/web/person(active=true)}, text=#{nav.person.title}, icon=~{::person-link-icon})"
                     >
-                      <span class="tw-flex tw-items-center">
-                        <svg
-                          th:replace="icon/user::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
-                        ></svg>
-                        <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.person.title}"></span>
-                      </span>
+                      <svg
+                        th:ref="person-link-icon"
+                        th:replace="icon/user::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
+                      ></svg>
                     </a>
                   </li>
                   <li class="tw-flex tw-items-center" th:if="${navigationDepartmentAccess}">
                     <a
-                      href="#"
-                      th:href="@{/web/department}"
-                      class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+                      th:replace="::navigation-item(id='department-link', href=@{/web/department}, text=#{nav.department.title}, icon=~{::department-link-icon})"
                     >
-                      <span class="tw-flex tw-items-center">
-                        <svg
-                          th:replace="icon/user-group::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
-                        ></svg>
-                        <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.department.title}"></span>
-                      </span>
+                      <svg
+                        th:ref="department-link-icon"
+                        th:replace="icon/user-group::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
+                      ></svg>
                     </a>
                   </li>
                   <li class="tw-flex tw-items-center" th:if="${navigationSettingsAccess}">
                     <a
-                      href="#"
-                      th:href="@{/web/settings}"
-                      class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
-                      data-test-id="navigation-settings-link"
+                      th:replace="::navigation-item(id='person-link', href=@{/web/settings}, text=#{nav.settings.title}, icon=~{::settings-link-icon})"
                     >
-                      <span class="tw-flex tw-items-center">
-                        <svg
-                          th:replace="icon/cog::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
-                        ></svg>
-                        <span class="tw-ml-5 lg:tw-ml-2" th:text="#{nav.settings.title}"></span>
-                      </span>
+                      <svg
+                        th:ref="settings-link-icon"
+                        th:replace="icon/cog::svg(className='navigation-link-icon tw-w-6 tw-h-6 lg:tw-w-4 lg:tw-h-4')"
+                      ></svg>
                     </a>
                   </li>
                 </ul>
@@ -345,5 +319,18 @@
       </div>
       <div style="height: 48px; margin-bottom: 2rem"></div>
     </th:block>
+
+    <a
+      th:fragment="navigation-item(id, href, text, icon)"
+      href="#"
+      th:href="${href}"
+      th:id="${id}"
+      class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+    >
+      <span class="tw-flex tw-items-center">
+        <svg th:replace="${icon}"></svg>
+        <span class="tw-ml-5 lg:tw-ml-2 xl:tw-ml-2" th:text="${text}"></span>
+      </span>
+    </a>
   </body>
 </html>
