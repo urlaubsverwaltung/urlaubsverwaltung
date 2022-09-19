@@ -40,6 +40,10 @@
   @apply tw-transition-colors;
   @apply dark:tw-text-zinc-100;
   @apply dark:tw-text-opacity-100;
+  @apply tw-w-6;
+  @apply tw-h-6;
+  @apply lg:tw-w-4;
+  @apply lg:tw-h-4;
 }
 
 .navigation-link:is(:hover, :focus) .navigation-link-icon {
