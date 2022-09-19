@@ -23,17 +23,16 @@
   @apply dark:tw-border-b-zinc-800;
 }
 
-@media screen and (min-width: 1024px) {
-  /* screen lg */
-  .navigation-list-item {
-    /* TODO fit max-width to visible navigation items */
-    max-width: 9vw;
-  }
+.navigation-list {
+  @apply tw-grid;
+  @apply tw-gap-8;
 }
 
-@media screen and (min-width: 1330px) {
-  .navigation-list-item {
-    max-width: revert;
+@screen lg {
+  .navigation-list {
+    @apply tw-grid-flow-col;
+    grid-template-columns: repeat(auto-fit, minmax(0, min-content));
+    max-width:100%;
   }
 }
 
