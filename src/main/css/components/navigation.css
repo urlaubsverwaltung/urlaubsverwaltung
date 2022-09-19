@@ -34,7 +34,7 @@
   text-decoration: none !important;
 }
 
-.navigation-link-icon {
+.navigation-link svg {
   @apply tw-text-zinc-900;
   @apply tw-text-opacity-50;
   @apply tw-transition-colors;
@@ -46,7 +46,7 @@
   @apply lg:tw-h-4;
 }
 
-.navigation-link:is(:hover, :focus) .navigation-link-icon {
+.navigation-link:is(:hover, :focus) svg {
   @apply tw-text-blue-400;
   @apply dark:tw-text-zinc-400;
 }
