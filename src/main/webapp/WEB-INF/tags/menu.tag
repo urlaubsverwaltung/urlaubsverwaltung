@@ -36,7 +36,7 @@
                                         <span class="tw-sr-only">
                                             <spring:message code="nav.add.button.text" />
                                         </span>
-                                        <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
+                                        <span class="dropdown-caret"></span>
                                     </a>
                                     <div
                                         id="add-something-new-menu"
@@ -125,7 +125,7 @@
                                     height="24px"
                                     onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                 />
-                                <span class="dropdown-caret tw-translate-x-px tw-ml-0.5 tw-mt-0.5"></span>
+                                <span class="dropdown-caret tw-translate-x-px"></span>
                             </a>
                             <div
                                 id="avatar-menu"
