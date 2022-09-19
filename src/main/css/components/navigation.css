@@ -24,6 +24,9 @@
 }
 
 .navigation-link {
+  @apply tw-flex;
+  @apply tw-items-center;
+
   @apply tw-text-zinc-900;
   @apply hover:tw-text-blue-400;
   @apply focus:tw-text-blue-400;
@@ -36,9 +39,40 @@
   @apply lg:tw-text-lg;
   @apply tw-font-medium;
   @apply lg:tw-font-normal;
+  @apply tw-no-underline;
+
+
+  @apply tw-space-x-5;
+  @apply lg:tw-space-x-2;
+  @apply xl:tw-space-x-2;
+
+  width: 100%;
 }
 
-.navigation-link svg {
+.navigation-link > span {
+  min-width: 0;
+  @apply tw-overflow-hidden;
+  @apply tw-text-ellipsis;
+  @apply tw-whitespace-nowrap;
+}
+
+
+@media screen and (min-width: 1024px) {
+  /* screen lg */
+  .navigation-list-item {
+    /* TODO fit max-width to visible navigation items */
+    max-width: 9vw;
+  }
+}
+
+@media screen and (min-width: 1330px) {
+  .navigation-list-item {
+    max-width: revert;
+  }
+}
+
+.navigation-link > svg {
+  @apply tw-shrink-0;
   @apply tw-text-zinc-900;
   @apply tw-text-opacity-50;
   @apply tw-transition-colors;
