@@ -33,7 +33,9 @@
                       data-test-id="add-something-new"
                       tabindex="-1"
                     >
-                      <svg th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7')"></svg>
+                      <svg
+                        th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9')"
+                      ></svg>
                       <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
                       <span class="dropdown-caret tw-ml-0.5 tw-mt-0.5"></span>
                     </a>
@@ -94,7 +96,9 @@
                     data-test-id="new-application"
                     th:if="${not navigationRequestPopupEnabled}"
                   >
-                    <svg th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7')"></svg>
+                    <svg
+                      th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9')"
+                    ></svg>
                     <span class="tw-sr-only" th:text="#{nav.add.vacation}"></span>
                   </a>
                   <div class="tw-relative">
@@ -110,9 +114,9 @@
                         src="#"
                         th:src="${menuGravatarUrl + '?d=mm'}"
                         alt=""
-                        class="gravatar tw-rounded-full nav-popup-menu-button_icon tw-w-6 tw-h-6"
-                        width="24px"
-                        height="24px"
+                        class="gravatar tw-rounded-full nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9"
+                        width="52px"
+                        height="52px"
                         onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                       />
                       <span class="dropdown-caret tw-translate-x-px tw-ml-0.5 tw-mt-0.5"></span>
