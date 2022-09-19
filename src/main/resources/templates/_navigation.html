@@ -218,55 +218,41 @@
                 >
                   <li class="navigation-list-item tw-flex tw-items-center">
                     <a
-                      th:replace="::navigation-item(id='home-link', href=@{/web/overview}, text=#{nav.home.title}, icon=~{::home-link-icon})"
-                    >
-                      <svg th:ref="home-link-icon" th:replace="icon/home::svg"></svg>
-                    </a>
+                      th:replace="::navigation-item(id='home-link', href=@{/web/overview}, text=#{nav.home.title}, icon=~{icon/home::svg})"
+                    ></a>
                   </li>
                   <li class="navigation-list-item tw-flex tw-items-center">
                     <a
-                      th:replace="::navigation-item(id='application-new-link', href=@{/web/application/new}, text=#{nav.apply.title}, icon=~{::application-new-link-icon})"
-                    >
-                      <svg th:ref="application-new-link-icon" th:replace="icon/plus-circle::svg"></svg>
-                    </a>
+                      th:replace="::navigation-item(id='application-new-link', href=@{/web/application/new}, text=#{nav.apply.title}, icon=~{icon/plus-circle::svg})"
+                    ></a>
                   </li>
                   <li class="navigation-list-item tw-flex tw-items-center">
                     <a
-                      th:replace="::navigation-item(id='application-link', href=@{/web/application}, text=#{nav.vacation.title}, icon=~{::application-link-icon})"
-                    >
-                      <svg th:ref="application-link-icon" th:replace="icon/calendar::svg"></svg>
-                    </a>
+                      th:replace="::navigation-item(id='application-link', href=@{/web/application}, text=#{nav.vacation.title}, icon=~{icon/calendar::svg})"
+                    ></a>
                   </li>
                   <li
                     class="navigation-list-item tw-flex tw-items-center"
                     th:if="${navigationSickNoteStatisticsAccess}"
                   >
                     <a
-                      th:replace="::navigation-item(id='sicknote-link', href=@{/web/sicknote}, text=#{nav.sicknote.title}, icon=~{::sicknote-link-icon}, dataTestId='navigation-sick-notes-link')"
-                    >
-                      <svg th:ref="sicknote-link-icon" th:replace="icon/medkit::svg"></svg>
-                    </a>
+                      th:replace="::navigation-item(id='sicknote-link', href=@{/web/sicknote}, text=#{nav.sicknote.title}, icon=~{icon/medkit::svg}, dataTestId='navigation-sick-notes-link')"
+                    ></a>
                   </li>
                   <li class="navigation-list-item tw-flex tw-items-center" th:if="${navigationPersonListAccess}">
                     <a
-                      th:replace="::navigation-item(id='person-link', href=@{/web/person(active=true)}, text=#{nav.person.title}, icon=~{::person-link-icon})"
-                    >
-                      <svg th:ref="person-link-icon" th:replace="icon/user::svg"></svg>
-                    </a>
+                      th:replace="::navigation-item(id='person-link', href=@{/web/person(active=true)}, text=#{nav.person.title}, icon=~{icon/user::svg})"
+                    ></a>
                   </li>
                   <li class="navigation-list-item tw-flex tw-items-center" th:if="${navigationDepartmentAccess}">
                     <a
-                      th:replace="::navigation-item(id='department-link', href=@{/web/department}, text=#{nav.department.title}, icon=~{::department-link-icon})"
-                    >
-                      <svg th:ref="department-link-icon" th:replace="icon/user-group::svg"></svg>
-                    </a>
+                      th:replace="::navigation-item(id='department-link', href=@{/web/department}, text=#{nav.department.title}, icon=~{icon/user-group::svg})"
+                    ></a>
                   </li>
                   <li class="navigation-list-item tw-flex tw-items-center" th:if="${navigationSettingsAccess}">
                     <a
-                      th:replace="::navigation-item(id='settings-link', href=@{/web/settings}, text=#{nav.settings.title}, icon=~{::settings-link-icon}, dataTestId='navigation-settings-link')"
-                    >
-                      <svg th:ref="settings-link-icon" th:replace="icon/cog::svg"></svg>
-                    </a>
+                      th:replace="::navigation-item(id='settings-link', href=@{/web/settings}, text=#{nav.settings.title}, icon=~{icon/cog::svg}, dataTestId='navigation-settings-link')"
+                    ></a>
                   </li>
                 </ul>
               </div>
@@ -289,10 +275,11 @@
       class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
       th:data-test-id="${dataTestId}"
     >
-      <svg
-        class="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400"
-        th:replace="${icon}"
-      ></svg>
+      <th:block
+        th:with="className='tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400'"
+      >
+        <svg th:replace="${icon}"></svg>
+      </th:block>
       <span
         class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap"
         style="min-width: 0"
