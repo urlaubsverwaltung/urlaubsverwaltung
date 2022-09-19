@@ -226,14 +226,14 @@
               </div>
               <div class="tw-flex-1 tw-flex navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
                 <ul
-                  class="tw-list-none tw-m-0 tw-py-3 tw-px-5 tw-flex tw-flex-col tw-space-y-4 lg:tw-flex-row lg:tw-space-y-0 lg:tw-space-x-8 lg:tw-px-2 xl:tw-px-0"
+                  class="tw-list-none tw-m-0 tw-p-8 tw-flex tw-flex-col tw-space-y-8 lg:tw-flex-row lg:tw-space-y-0 lg:tw-space-x-8 lg:tw-py-3 lg:tw-px-2 xl:tw-px-0"
                 >
                   <li class="tw-flex tw-items-center">
                     <a
                       href="#"
                       th:href="@{/web/overview}"
                       th:id="home-link"
-                      class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+                      class="navigation-link tw-inline-block tw-no-underline"
                     >
                       <span class="tw-flex tw-items-center">
                         <svg th:replace="icon/home::svg"></svg>
@@ -304,7 +304,7 @@
       href="#"
       th:href="${href}"
       th:id="${id}"
-      class="navigation-link tw-inline-block tw-no-underline tw-text-lg lg:tw-text-base"
+      class="navigation-link tw-inline-block tw-no-underline"
     >
       <span class="tw-flex tw-items-center">
         <svg th:replace="${icon}"></svg>

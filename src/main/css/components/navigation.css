@@ -32,6 +32,10 @@
   @apply dark:hover:tw-text-zinc-400;
   @apply dark:focus:tw-text-zinc-400;
   text-decoration: none !important;
+  @apply tw-text-2xl;
+  @apply lg:tw-text-lg;
+  @apply tw-font-medium;
+  @apply lg:tw-font-normal;
 }
 
 .navigation-link svg {
@@ -40,10 +44,10 @@
   @apply tw-transition-colors;
   @apply dark:tw-text-zinc-100;
   @apply dark:tw-text-opacity-100;
-  @apply tw-w-6;
-  @apply tw-h-6;
-  @apply lg:tw-w-4;
-  @apply lg:tw-h-4;
+  @apply tw-w-8;
+  @apply tw-h-8;
+  @apply lg:tw-w-5;
+  @apply lg:tw-h-5;
 }
 
 .navigation-link:is(:hover, :focus) svg {
