@@ -89,6 +89,12 @@
   @apply dark:tw-text-zinc-400;
 }
 
+.navigation-content-gap {
+  height: 48px;
+  @apply tw-mb-8;
+  @apply lg:tw-mb-12;
+}
+
 .navigation-content-spacer {
   @apply tw-bg-white;
   @apply dark:tw-bg-zinc-900;
