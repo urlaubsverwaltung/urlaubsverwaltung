@@ -240,6 +240,7 @@
                                 href="${URL_PREFIX}/overview"
                                 id="home-link"
                                 class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+                                title="<spring:message code="nav.home.title"/>"
                             >
                                 <icon:home className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
                                 <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
@@ -252,6 +253,7 @@
                                 href="${URL_PREFIX}/application/new"
                                 id="application-new-link"
                                 class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+                                title="<spring:message code="nav.apply.title"/>"
                             >
                                 <icon:plus-circle className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
                                 <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
@@ -263,6 +265,7 @@
                             <a
                                 href="${URL_PREFIX}/application"
                                 class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+                                tile="<spring:message code="nav.vacation.title"/>"
                             >
                                 <icon:calendar className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
                                 <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
@@ -275,6 +278,7 @@
                             <a
                                 href="${URL_PREFIX}/sicknote"
                                 class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2" data-test-id="navigation-sick-notes-link"
+                                title="<spring:message code="nav.sicknote.title"/>"
                             >
                                 <icon:medkit className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
                                 <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
@@ -288,6 +292,7 @@
                             <a
                                 href="${URL_PREFIX}/person?active=true"
                                 class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+                                title="<spring:message code="nav.person.title"/>"
                             >
                                 <icon:user className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
                                 <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
@@ -301,6 +306,7 @@
                             <a
                                 href="${URL_PREFIX}/department"
                                 class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+                                title="<spring:message code="nav.department.title"/>"
                             >
                                 <icon:user-group className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
                                 <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
@@ -315,6 +321,7 @@
                                 href="${URL_PREFIX}/settings"
                                 class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
                                 data-test-id="navigation-settings-link"
+                                <spring:message code="nav.settings.title"/>
                             >
                                 <icon:cog className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
                                 <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
