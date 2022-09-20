@@ -1,261 +1,263 @@
-.navigation {
-  @apply tw-fixed;
-  @apply tw-top-0;
-  @apply tw-w-full;
-  @apply tw-z-50;
-}
-
-.navigation::before {
-  content: "";
-  @apply tw-absolute;
-  @apply tw-inset-0;
-  @apply tw-bg-zinc-100;
-  @apply dark:tw-bg-zinc-900;
-  @apply dark:tw-backdrop-blur;
-  @apply supports-backdrop-blur:dark:tw-bg-zinc-900/[0.85];
-  @apply lg:dark:tw-border-b;
-  @apply lg:dark:tw-border-b-zinc-800;
-}
-
-.navigation-inner {
-  @apply dark:tw-border-b;
-  @apply lg:dark:tw-border-b-0;
-  @apply dark:tw-border-b-zinc-800;
-}
-
-.navigation-list {
-  @apply tw-grid;
-  @apply tw-gap-8;
-}
-
-@screen lg {
-  .navigation-list {
-    @apply tw-grid-flow-col;
-    grid-template-columns: repeat(auto-fit, minmax(0, min-content));
-    max-width:100%;
+@layer components {
+  .navigation {
+    @apply tw-fixed;
+    @apply tw-top-0;
+    @apply tw-w-full;
+    @apply tw-z-50;
   }
-}
 
-.navigation-content-gap {
-  height: 48px;
-  @apply tw-mb-8;
-  @apply lg:tw-mb-12;
-}
+  .navigation::before {
+    content: "";
+    @apply tw-absolute;
+    @apply tw-inset-0;
+    @apply tw-bg-zinc-100;
+    @apply dark:tw-bg-zinc-900;
+    @apply dark:tw-backdrop-blur;
+    @apply supports-backdrop-blur:dark:tw-bg-zinc-900/[0.85];
+    @apply lg:dark:tw-border-b;
+    @apply lg:dark:tw-border-b-zinc-800;
+  }
 
-.navigation-content-spacer {
-  @apply tw-bg-white;
-  @apply dark:tw-bg-zinc-900;
-}
+  .navigation-inner {
+    @apply dark:tw-border-b;
+    @apply lg:dark:tw-border-b-0;
+    @apply dark:tw-border-b-zinc-800;
+  }
 
-.navigation-content-spacer--left,
-.navigation-content-spacer--right {
-  position: relative;
-  @apply dark:tw-hidden;
-}
+  .navigation-list {
+    @apply tw-grid;
+    @apply tw-gap-8;
+  }
 
-.navigation-content-spacer--left::before,
-.navigation-content-spacer--right::before,
-.navigation-content-spacer--left::after,
-.navigation-content-spacer--right::after {
-  content: "";
-  position: absolute;
-  @apply tw-inset-0;
-}
+  @screen lg {
+    .navigation-list {
+      @apply tw-grid-flow-col;
+      grid-template-columns: repeat(auto-fit, minmax(0, min-content));
+      max-width:100%;
+    }
+  }
 
-.navigation-content-spacer--left::before,
-.navigation-content-spacer--right::before {
-  @apply tw-bg-zinc-100;
-  @apply dark:tw-bg-zinc-800;
-}
+  .navigation-content-gap {
+    height: 48px;
+    @apply tw-mb-8;
+    @apply lg:tw-mb-12;
+  }
 
-.navigation-content-spacer--left::after,
-.navigation-content-spacer--right::after {
-  @apply tw-bg-white;
-  @apply dark:tw-bg-zinc-900;
-}
+  .navigation-content-spacer {
+    @apply tw-bg-white;
+    @apply dark:tw-bg-zinc-900;
+  }
 
-.navigation-content-spacer--left::after {
-  @apply tw-rounded-tl-full;
-}
+  .navigation-content-spacer--left,
+  .navigation-content-spacer--right {
+    position: relative;
+    @apply dark:tw-hidden;
+  }
 
-.navigation-content-spacer--right::after {
-  @apply tw-rounded-tr-full;
-}
+  .navigation-content-spacer--left::before,
+  .navigation-content-spacer--right::before,
+  .navigation-content-spacer--left::after,
+  .navigation-content-spacer--right::after {
+    content: "";
+    position: absolute;
+    @apply tw-inset-0;
+  }
 
-#menu-toggle-checkbox ~ label ~ nav .navigation-items {
-  overflow: hidden;
-  transition: max-height 400ms ease-in;
-}
-#menu-toggle-checkbox:checked ~ label ~ nav .navigation-items,
-#menu-toggle-checkbox ~ label ~ nav .navigation-items:focus-within {
-  max-height: 90vh !important;
-}
+  .navigation-content-spacer--left::before,
+  .navigation-content-spacer--right::before {
+    @apply tw-bg-zinc-100;
+    @apply dark:tw-bg-zinc-800;
+  }
 
-#menu-toggle-checkbox + label > span:first-child {
-  width: 30px;
-  height: 18px;
-  position: relative;
-}
+  .navigation-content-spacer--left::after,
+  .navigation-content-spacer--right::after {
+    @apply tw-bg-white;
+    @apply dark:tw-bg-zinc-900;
+  }
 
-#menu-toggle-checkbox + label > span > span {
-  padding: 0;
-  width: 30px;
-  height: 4px;
-  display: block;
-  border-radius: 4px;
-  transition: all 0.4s ease-in-out;
-  position: absolute;
-  background-color: #353535;
-  @apply dark:tw-bg-zinc-300;
-}
+  .navigation-content-spacer--left::after {
+    @apply tw-rounded-tl-full;
+  }
 
-#menu-toggle-checkbox + label > span > span:nth-child(1) {
-  top: 0;
-  transition: all 0.4s ease-in-out, transform 0.4s ease-in-out 0.4s;
-}
+  .navigation-content-spacer--right::after {
+    @apply tw-rounded-tr-full;
+  }
 
-#menu-toggle-checkbox + label > span > span:nth-child(2) {
-  top: 6.5px;
-  width: 1px;
-  transform: rotate(90deg);
-  left: 6.5px;
-}
+  #menu-toggle-checkbox ~ label ~ nav .navigation-items {
+    overflow: hidden;
+    transition: max-height 400ms ease-in;
+  }
+  #menu-toggle-checkbox:checked ~ label ~ nav .navigation-items,
+  #menu-toggle-checkbox ~ label ~ nav .navigation-items:focus-within {
+    max-height: 90vh !important;
+  }
 
-#menu-toggle-checkbox + label > span > span:nth-child(3) {
-  top: 6.5px;
-  right: 0;
-  width: 1px;
-  left: 6.5px;
-}
+  #menu-toggle-checkbox + label > span:first-child {
+    width: 30px;
+    height: 18px;
+    position: relative;
+  }
 
-#menu-toggle-checkbox + label > span > span:nth-child(4) {
-  bottom: 0;
-  top: 6.5px;
-}
+  #menu-toggle-checkbox + label > span > span {
+    padding: 0;
+    width: 30px;
+    height: 4px;
+    display: block;
+    border-radius: 4px;
+    transition: all 0.4s ease-in-out;
+    position: absolute;
+    background-color: #353535;
+    @apply dark:tw-bg-zinc-300;
+  }
 
-#menu-toggle-checkbox + label > span > span:nth-child(5) {
-  bottom: 0;
-}
+  #menu-toggle-checkbox + label > span > span:nth-child(1) {
+    top: 0;
+    transition: all 0.4s ease-in-out, transform 0.4s ease-in-out 0.4s;
+  }
 
-#menu-toggle-checkbox:checked + label > span > span:nth-child(1) {
-  top: 6.5px;
-  background-color: transparent;
-}
+  #menu-toggle-checkbox + label > span > span:nth-child(2) {
+    top: 6.5px;
+    width: 1px;
+    transform: rotate(90deg);
+    left: 6.5px;
+  }
 
-#menu-toggle-checkbox:checked + label > span > span:nth-child(2) {
-  left: 0;
-  width: 30px;
-  transform: rotate(45deg);
-}
+  #menu-toggle-checkbox + label > span > span:nth-child(3) {
+    top: 6.5px;
+    right: 0;
+    width: 1px;
+    left: 6.5px;
+  }
 
-#menu-toggle-checkbox:checked + label > span > span:nth-child(3) {
-  left: 0;
-  width: 30px;
-  transform: rotate(-45deg);
-}
+  #menu-toggle-checkbox + label > span > span:nth-child(4) {
+    bottom: 0;
+    top: 6.5px;
+  }
 
-#menu-toggle-checkbox:checked + label > span > span:nth-child(4) {
-  background-color: transparent !important;
-}
+  #menu-toggle-checkbox + label > span > span:nth-child(5) {
+    bottom: 0;
+  }
 
-#menu-toggle-checkbox:checked + label > span > span:nth-child(5) {
-  bottom: 6.5px;
-  background-color: transparent !important;
-}
+  #menu-toggle-checkbox:checked + label > span > span:nth-child(1) {
+    top: 6.5px;
+    background-color: transparent;
+  }
 
-.nav-popup-menu::before {
-  content: "";
-  border-color: transparent;
-  border-width: 8px;
-  @apply tw-border-b-gray-200;
-  position: absolute;
-  top: -17px;
-  @apply tw-right-8;
-  @apply lg:tw-right-7;
-  @apply dark:tw-border-b-neutral-600;
-}
+  #menu-toggle-checkbox:checked + label > span > span:nth-child(2) {
+    left: 0;
+    width: 30px;
+    transform: rotate(45deg);
+  }
 
-.nav-popup-menu {
-  @apply tw-transition-transform;
-  @apply tw-origin-top-right;
-  @apply tw-scale-0;
-  @apply tw-border;
-  @apply tw-border-gray-200;
-  @apply tw-shadow-xl;
-  @apply tw-mt-3;
-  @apply tw-z-50;
-  @apply tw-absolute;
-  @apply -tw-right-2;
-  @apply tw-top-full;
-  @apply tw-rounded-2xl;
-  @apply lg:tw-right-0;
-  @apply dark:tw-border-zinc-800;
-  @apply dark:tw-shadow-none;
-}
+  #menu-toggle-checkbox:checked + label > span > span:nth-child(3) {
+    left: 0;
+    width: 30px;
+    transform: rotate(-45deg);
+  }
 
-.nav-popup-menu-inner {
-  @apply tw-rounded-2xl;
-  @apply tw-border-gray-200;
-  @apply tw-bg-white;
-  @apply tw-backdrop-blur;
-  @apply supports-backdrop-blur:tw-bg-white/[0.85];
-  @apply supports-backdrop-blur:dark:tw-bg-zinc-900/[0.85];
-  @apply dark:tw-bg-zinc-900;
-  @apply dark:tw-border-zinc-800
-}
+  #menu-toggle-checkbox:checked + label > span > span:nth-child(4) {
+    background-color: transparent !important;
+  }
 
-.nav-popup-menu-inner ul li:first-of-type .nav-popup-menu_link {
-  @apply tw-rounded-t-2xl;
-}
+  #menu-toggle-checkbox:checked + label > span > span:nth-child(5) {
+    bottom: 6.5px;
+    background-color: transparent !important;
+  }
 
-.nav-popup-menu-inner ul li:last-of-type .nav-popup-menu_link {
-  @apply tw-rounded-b-2xl;
-}
+  .nav-popup-menu::before {
+    content: "";
+    border-color: transparent;
+    border-width: 8px;
+    @apply tw-border-b-gray-200;
+    position: absolute;
+    top: -17px;
+    @apply tw-right-8;
+    @apply lg:tw-right-7;
+    @apply dark:tw-border-b-neutral-600;
+  }
 
-.nav-popup-menu-inner ul li[role="separator"] {
-  @apply tw-border-t;
-  @apply tw-border-gray-200;
-  @apply dark:tw-border-zinc-700;
-}
+  .nav-popup-menu {
+    @apply tw-transition-transform;
+    @apply tw-origin-top-right;
+    @apply tw-scale-0;
+    @apply tw-border;
+    @apply tw-border-gray-200;
+    @apply tw-shadow-xl;
+    @apply tw-mt-3;
+    @apply tw-z-50;
+    @apply tw-absolute;
+    @apply -tw-right-2;
+    @apply tw-top-full;
+    @apply tw-rounded-2xl;
+    @apply lg:tw-right-0;
+    @apply dark:tw-border-zinc-800;
+    @apply dark:tw-shadow-none;
+  }
 
-.nav-popup-menu.visible,
-.nav-popup-menu:focus-within {
-  @apply tw-scale-100;
-}
+  .nav-popup-menu-inner {
+    @apply tw-rounded-2xl;
+    @apply tw-border-gray-200;
+    @apply tw-bg-white;
+    @apply tw-backdrop-blur;
+    @apply dark:tw-bg-zinc-900;
+    @apply dark:tw-border-zinc-800;
+    @apply supports-backdrop-blur:tw-bg-white/[0.85];
+    @apply supports-backdrop-blur:dark:tw-bg-zinc-900/[0.85];
+  }
 
-.nav-popup-menu-button_icon {
-  @apply tw-text-zinc-900;
-  @apply tw-text-opacity-75;
-  @apply tw-transition-colors;
-  @apply dark:tw-text-zinc-100;
-  @apply dark:hover:tw-text-opacity-100;
-}
+  .nav-popup-menu-inner ul li:first-of-type .nav-popup-menu_link {
+    @apply tw-rounded-t-2xl;
+  }
 
-.nav-popup-menu-button:is(:hover, :focus) .nav-popup-menu-button_icon {
-  @apply tw-text-opacity-100;
-  @apply tw-text-zinc-800;
-  @apply dark:tw-text-zinc-100;
-}
+  .nav-popup-menu-inner ul li:last-of-type .nav-popup-menu_link {
+    @apply tw-rounded-b-2xl;
+  }
 
-.nav-popup-menu_link {
-  @apply tw-w-full;
-  @apply tw-flex;
-  @apply tw-items-center;
-  @apply tw-p-2;
-  @apply tw-pr-10;
-  @apply tw-no-underline;
-  @apply hover:tw-no-underline;
-  @apply focus:tw-no-underline;
-  @apply tw-text-base;
-  @apply tw-text-gray-700;
-  @apply tw-bg-transparent;
-  @apply hover:tw-text-black;
-  @apply focus:tw-text-black;
-  @apply hover:tw-bg-gray-50;
-  @apply focus:tw-bg-gray-50;
-  @apply dark:tw-text-zinc-50;
-  @apply dark:hover:tw-text-zinc-200;
-  @apply dark:focus:tw-text-zinc-200;
-  @apply dark:hover:tw-bg-slate-800;
-  @apply dark:focus:tw-bg-slate-800;
+  .nav-popup-menu-inner ul li[role="separator"] {
+    @apply tw-border-t;
+    @apply tw-border-gray-200;
+    @apply dark:tw-border-zinc-700;
+  }
+
+  .nav-popup-menu.visible,
+  .nav-popup-menu:focus-within {
+    @apply tw-scale-100;
+  }
+
+  .nav-popup-menu-button_icon {
+    @apply tw-text-zinc-900;
+    @apply tw-text-opacity-75;
+    @apply tw-transition-colors;
+    @apply dark:tw-text-zinc-100;
+    @apply dark:hover:tw-text-opacity-100;
+  }
+
+  .nav-popup-menu-button:is(:hover, :focus) .nav-popup-menu-button_icon {
+    @apply tw-text-opacity-100;
+    @apply tw-text-zinc-800;
+    @apply dark:tw-text-zinc-100;
+  }
+
+  .nav-popup-menu_link {
+    @apply tw-w-full;
+    @apply tw-flex;
+    @apply tw-items-center;
+    @apply tw-p-2;
+    @apply tw-pr-10;
+    @apply tw-no-underline;
+    @apply hover:tw-no-underline;
+    @apply focus:tw-no-underline;
+    @apply tw-text-base;
+    @apply tw-text-gray-700;
+    @apply tw-bg-transparent;
+    @apply hover:tw-text-black;
+    @apply focus:tw-text-black;
+    @apply hover:tw-bg-gray-50;
+    @apply focus:tw-bg-gray-50;
+    @apply dark:tw-text-zinc-50;
+    @apply dark:hover:tw-text-zinc-200;
+    @apply dark:focus:tw-text-zinc-200;
+    @apply dark:hover:tw-bg-slate-800;
+    @apply dark:focus:tw-bg-slate-800;
+  }
 }
