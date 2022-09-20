@@ -183,7 +183,8 @@
     @apply tw-border;
     @apply tw-border-gray-200;
     @apply tw-shadow-xl;
-    @apply tw-mt-3;
+    @apply tw-mt-4;
+    @apply lg:tw-mt-3;
     @apply tw-z-50;
     @apply tw-absolute;
     @apply -tw-right-2;
