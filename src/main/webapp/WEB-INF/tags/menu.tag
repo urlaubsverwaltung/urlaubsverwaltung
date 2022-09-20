@@ -156,11 +156,11 @@
                                                     height="64px"
                                                     onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                                 />
-                                                <p>
+                                                <p class="tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis">
                                                     <span class="tw-text-sm tw-block tw-text-gray-600 dark:tw-text-zinc-100">
                                                         <spring:message code="nav.avatar-menu.signed-in-as" />
                                                     </span>
-                                                    <span class="tw-text-lg tw-leading-none tw-text-gray-700 hover:tw-text-black focus:tw-text-black tw-whitespace-nowrap tw-max-w-prose tw-text-ellipsis dark:tw-text-zinc-200">
+                                                    <span class="tw-text-lg tw-leading-none tw-text-gray-700 hover:tw-text-black focus:tw-text-black dark:tw-text-zinc-200">
                                                         ${userFirstName} ${userLastName}
                                                     </span>
                                                 </p>

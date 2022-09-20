@@ -142,13 +142,13 @@
                                 height="64px"
                                 onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                               />
-                              <p class="tw-m-0">
+                              <p class="tw-m-0 tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis">
                                 <span
                                   th:text="#{nav.avatar-menu.signed-in-as}"
                                   class="tw-text-sm tw-block tw-text-gray-600 dark:tw-text-zinc-100"
                                 ></span>
                                 <span
-                                  class="tw-text-lg tw-leading-none tw-text-gray-700 hover:tw-text-black focus:tw-text-black tw-whitespace-nowrap tw-max-w-prose tw-text-ellipsis dark:tw-text-zinc-200"
+                                  class="tw-text-lg tw-leading-none tw-text-gray-700 hover:tw-text-black focus:tw-text-black dark:tw-text-zinc-200"
                                   th:text="${userFirstName + ' ' + userLastName}"
                                 >
                                   Max Mustermann
