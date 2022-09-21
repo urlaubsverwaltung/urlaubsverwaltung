@@ -24,6 +24,9 @@ module.exports = {
   },
   theme: {
     extend: {
+      fontFamily: {
+        logo: ["KaushanScript"],
+      },
       borderWidth: {
         3: "3px",
       },

@@ -506,6 +506,7 @@
             <exclude>mvnw</exclude>
             <exclude>mvnw.cmd</exclude>
             <exclude>src/main/resources/static/lib/**</exclude>
+            <exclude>src/main/resources/static/fonts/**</exclude>
           </excludes>
         </configuration>
       </plugin>
