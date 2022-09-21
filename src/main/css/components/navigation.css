@@ -177,7 +177,7 @@
   }
 
   .nav-popup-menu {
-    @apply tw-w-64;
+    @apply tw-w-72;
     @apply tw-transition-transform;
     @apply tw-origin-top-right;
     @apply tw-scale-0;
