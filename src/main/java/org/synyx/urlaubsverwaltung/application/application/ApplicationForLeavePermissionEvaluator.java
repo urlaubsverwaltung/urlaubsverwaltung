@@ -12,6 +12,10 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 class ApplicationForLeavePermissionEvaluator {
 
+    private ApplicationForLeavePermissionEvaluator() {
+        // ok
+    }
+
     static boolean isAllowedToAllowWaitingApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
         return application.hasStatus(WAITING)
             && (signedInUser.hasRole(BOSS) || ((isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && !application.getPerson().equals(signedInUser)));
