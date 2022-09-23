@@ -198,22 +198,6 @@ class AccountInteractionServiceImplTest {
     }
 
     @Test
-    void ensureEditHolidayAccountDoesNotOverrideRemainingVacationDaysNotExpiringWhenNullIsPassed() {
-
-        final LocalDate validFrom = LocalDate.of(2022, JANUARY, 1);
-        final LocalDate validTo = LocalDate.of(2022, DECEMBER, 31);
-        final LocalDate expiryDate = LocalDate.of(2022, APRIL, 1);
-
-        final Account account = new Account();
-        account.setRemainingVacationDaysNotExpiring(BigDecimal.valueOf(13.37));
-
-        when(accountService.save(any(Account.class))).then(returnsFirstArg());
-
-        final Account editedAccount = sut.editHolidaysAccount(account, validFrom, validTo, true, expiryDate, TEN, ONE, ZERO, null, "comment");
-        assertThat(editedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.valueOf(13.37));
-    }
-
-    @Test
     void testUpdateRemainingVacationDays() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 

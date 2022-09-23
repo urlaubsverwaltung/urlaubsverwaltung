@@ -118,11 +118,8 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         account.setAnnualVacationDays(annualVacationDays);
         account.setActualVacationDays(actualVacationDays);
         account.setRemainingVacationDays(remainingVacationDays);
+        account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
         account.setComment(comment);
-
-        if (remainingVacationDaysNotExpiring != null) {
-            account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
-        }
 
         if (expiryDate != null) {
             account.setExpiryDate(expiryDate);

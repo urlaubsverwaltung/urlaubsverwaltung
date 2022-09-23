@@ -46,6 +46,7 @@ public interface AccountInteractionService {
      * @param account                          to be edited
      * @param validFrom                        defines the start of the validity period, e.g. 1.1.2012
      * @param validTo                          defines the end of the validity period, e.g. 31.12.2012
+     * @param doRemainingVacationDaysExpire    {@code true}/{@code false} to define account specifics, {@code null} to use global settings.
      * @param expiryDate                       defines the date when the remaining vacation days will expire e.g. 1.4.2012
      * @param annualVacationDays               defines number of annual vacation days
      * @param actualVacationDays               the actual vacation days for the period
@@ -54,7 +55,7 @@ public interface AccountInteractionService {
      * @param comment                          comment to changes to the annual vacation days
      * @return the updated holidays account
      */
-    Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
+    Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, @Nullable Boolean doRemainingVacationDaysExpire,
                                 @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                 BigDecimal remainingVacationDays, @Nullable BigDecimal remainingVacationDaysNotExpiring,
                                 String comment);
