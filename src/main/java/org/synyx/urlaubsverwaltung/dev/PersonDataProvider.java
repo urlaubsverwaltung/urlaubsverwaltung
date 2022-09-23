@@ -104,7 +104,7 @@ class PersonDataProvider {
             savedPerson,
             firstDayOfYear,
             lastDayOfYear,
-            true,
+            null,
             LocalDate.of(currentYear, APRIL, 1),
             BigDecimal.valueOf(30),
             BigDecimal.valueOf(30),
