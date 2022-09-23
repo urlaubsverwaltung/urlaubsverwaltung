@@ -435,4 +435,13 @@ class PersonServiceImplTest {
         final int numberOfActivePersons = sut.numberOfActivePersons();
         assertThat(numberOfActivePersons).isEqualTo(2);
     }
+
+    @Test
+    void numberOfPersonsWithRoleWithoutId() {
+
+        when(personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(1))).thenReturn(2);
+
+        final int numberOfOfficeExceptId = sut.numberOfPersonsWithOfficeRoleExcludingPerson(1);
+        assertThat(numberOfOfficeExceptId).isEqualTo(2);
+    }
 }

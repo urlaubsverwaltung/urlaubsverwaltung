@@ -75,6 +75,7 @@ public interface PersonService {
 
     /**
      * finds a {@link Person} in the database by mail address.
+     *
      * @param mailAddress of the person
      * @return optional {@link Person} for the given mail address
      */
@@ -150,4 +151,12 @@ public interface PersonService {
      * @return number of active users
      */
     int numberOfActivePersons();
+
+    /**
+     * Returns the number of persons that have {@link Role#OFFICE} role but exclude the given id from the request
+     *
+     * @param excludingId without the user with this id
+     * @return number of persons with {@link Role#OFFICE} excluding the person with the id
+     */
+    int numberOfPersonsWithOfficeRoleExcludingPerson(int excludingId);
 }
