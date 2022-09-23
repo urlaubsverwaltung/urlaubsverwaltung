@@ -1748,7 +1748,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of user email
         String contentUser = (String) msg.getContent();
         assertThat(contentUser).contains("Hallo Lieschen Müller");
-        assertThat(contentUser).contains("Bitte beachte, dass dieser erst noch von einem entsprechend Verantwortlichen freigegeben werden muss");
+        assertThat(contentUser).contains("Bitte beachte, dass diese erst noch von einem entsprechenden Verantwortlichen freigegeben werden muss");
         assertThat(contentUser).contains(comment.getText());
         assertThat(contentUser).contains(comment.getPerson().getNiceName());
         assertThat(contentUser).contains("Link zur Abwesenheit:");
@@ -1762,7 +1762,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of office email
         assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "es liegt ein neuer zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
+            "es liegt ein neue zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -1833,7 +1833,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of office email
         assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "es liegt ein neuer zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
+            "es liegt ein neue zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -1909,7 +1909,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of office email
         assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "es liegt ein neuer zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
+            "es liegt ein neue zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
