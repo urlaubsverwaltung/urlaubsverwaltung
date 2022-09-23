@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -307,7 +306,7 @@ class PersonPermissionsDtoValidatorTest {
         personPermissionsDto.setId(1);
         personPermissionsDto.setPermissions(List.of(USER));
 
-        when(personService.numberOfPersonsWithRoleWithoutId(Role.OFFICE, 1)).thenReturn(1);
+        when(personService.numberOfPersonsWithOfficeRoleExcludingPerson(1)).thenReturn(1);
 
         sut.validateAtLeastOnePersonWithOffice(personPermissionsDto, errors);
         verifyNoInteractions(errors);
@@ -320,7 +319,7 @@ class PersonPermissionsDtoValidatorTest {
         personPermissionsDto.setId(1);
         personPermissionsDto.setPermissions(List.of(USER));
 
-        when(personService.numberOfPersonsWithRoleWithoutId(Role.OFFICE, 1)).thenReturn(0);
+        when(personService.numberOfPersonsWithOfficeRoleExcludingPerson(1)).thenReturn(0);
 
         sut.validateAtLeastOnePersonWithOffice(personPermissionsDto, errors);
         verify(errors).rejectValue("permissions", "person.form.permissions.error.mandatory.office");

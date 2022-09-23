@@ -209,8 +209,8 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public int numberOfPersonsWithRoleWithoutId(Role role, int excludingId) {
-        return personRepository.countByPermissionsContainingAndIdNotIn(role, List.of(excludingId));
+    public int numberOfPersonsWithOfficeRoleExcludingPerson(int excludingId) {
+        return personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(excludingId));
     }
 
     private static Sort mapToImplicitPersonSort(Sort requestedSort) {

@@ -6,7 +6,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.Collection;
 
@@ -58,7 +57,7 @@ class PersonPermissionsDtoValidator implements Validator {
 
     void validateAtLeastOnePersonWithOffice(PersonPermissionsDto personPermissionsDto, Errors errors) {
         if (!personPermissionsDto.getPermissions().contains(OFFICE) &&
-            personService.numberOfPersonsWithRoleWithoutId(Role.OFFICE, personPermissionsDto.getId()) == 0) {
+            personService.numberOfPersonsWithOfficeRoleExcludingPerson(personPermissionsDto.getId()) == 0) {
             errors.rejectValue(ATTRIBUTE_PERMISSIONS, ERROR_PERMISSIONS_MANDATORY_OFFICE);
         }
     }

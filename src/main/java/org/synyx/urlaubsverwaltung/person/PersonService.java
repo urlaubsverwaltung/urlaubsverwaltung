@@ -153,11 +153,10 @@ public interface PersonService {
     int numberOfActivePersons();
 
     /**
-     * Returns the number of persons that have a specific role but exclude the given id from the request
+     * Returns the number of persons that have {@link Role#OFFICE} role but exclude the given id from the request
      *
-     * @param role        to be counted
      * @param excludingId without the user with this id
-     * @return number of persons with a specific {@link Role} excluding the person with the id
+     * @return number of persons with {@link Role#OFFICE} excluding the person with the id
      */
-    int numberOfPersonsWithRoleWithoutId(Role role, int excludingId);
+    int numberOfPersonsWithOfficeRoleExcludingPerson(int excludingId);
 }

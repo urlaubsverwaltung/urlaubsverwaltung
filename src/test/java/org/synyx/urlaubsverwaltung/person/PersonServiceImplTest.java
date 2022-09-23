@@ -441,7 +441,7 @@ class PersonServiceImplTest {
 
         when(personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(1))).thenReturn(2);
 
-        final int numberOfOfficeExceptId = sut.numberOfPersonsWithRoleWithoutId(OFFICE, 1);
+        final int numberOfOfficeExceptId = sut.numberOfPersonsWithOfficeRoleExcludingPerson(1);
         assertThat(numberOfOfficeExceptId).isEqualTo(2);
     }
 }
