@@ -201,6 +201,25 @@
                       Verfall von Resturlaub:
                     </label>
                     <div class="col-md-9">
+                      <p
+                        class="account-form-remaining-vacation-expire-description tw-mb-0"
+                        th:with="
+                          settingsLink=@{/web/settings},
+                          settingsMessage=${'<a href=&quot;'+ settingsLink +'&quot;>' + #messages.msg('person.form.annualVacation.remainingVacation.expire.global-info.settings') + '</a>'},
+                          status=${account.doRemainingVacationDaysExpireGlobally ? #messages.msg('person.form.annualVacation.remainingVacation.expire.global.true') : #messages.msg('person.form.annualVacation.remainingVacation.expire.global.false')},
+                          statusMessage=${'<em>' + status + '</em>.'}
+                        "
+                        th:utext="#{person.form.annualVacation.remainingVacation.expire.global-info(${settingsMessage}, ${statusMessage})}"
+                      >
+                        Der Verfall von Resturlaub ist in den <a href="#">Einstellungen</a> <em>aktiviert</em>.
+                      </p>
+                      <p
+                        class="tw-text-sm dark:tw-text-zinc-400"
+                        th:text="#{person.form.annualVacation.remainingVacation.expire.override-info(${person.niceName})}"
+                      >
+                        Verwende die globale Einstellung, oder individualisiere den Verfall von Resturlaub für Marlene
+                        Muster.
+                      </p>
                       <label class="thirds">
                         <input
                           type="radio"
@@ -210,10 +229,7 @@
                           th:data-value="${account.doRemainingVacationDaysExpireGlobally}"
                           th:checked="${null eq account.doRemainingVacationDaysExpireLocally}"
                         />
-                        <th:block
-                          th:with="globallyInfo=${account.doRemainingVacationDaysExpireGlobally ? #messages.msg('person.form.annualVacation.remainingVacation.expire.global.true') : #messages.msg('person.form.annualVacation.remainingVacation.expire.global.false')}"
-                          th:text="#{person.form.annualVacation.remainingVacation.expire.global(${globallyInfo})}"
-                        />
+                        <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.global}" />
                       </label>
                       <label class="thirds">
                         <input
@@ -247,7 +263,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="form-group is-required">
+                  <div class="tw-mt-8 form-group is-required">
                     <label
                       class="control-label col-md-3 tw-leading-snug"
                       th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|"

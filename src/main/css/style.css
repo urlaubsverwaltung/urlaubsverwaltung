@@ -61,3 +61,22 @@
     --uv-cal-public-holiday-color: 23, 23, 23; /* neutral.900 */
   }
 }
+
+@layer components {
+  .account-form-remaining-vacation-expire-description {
+    @apply tw-text-sm;
+    @apply dark:tw-text-zinc-400;
+  }
+
+  .account-form-remaining-vacation-expire-description a {
+    @apply tw-underline;
+    @apply tw-text-current !important;
+    @apply hover:tw-text-gray-900 !important;
+    @apply dark:hover:tw-text-zinc-100 !important;
+  }
+
+  .account-form-remaining-vacation-expire-description em {
+    @apply tw-not-italic;
+    @apply tw-font-bold;
+  }
+}
