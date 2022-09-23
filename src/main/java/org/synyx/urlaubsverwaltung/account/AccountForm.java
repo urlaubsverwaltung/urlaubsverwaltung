@@ -20,6 +20,7 @@ public class AccountForm {
     private LocalDate holidaysAccountValidFrom;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate holidaysAccountValidTo;
+    private boolean overrideVacationDaysExpire;
     private Boolean doRemainingVacationDaysExpireLocally;
     private boolean doRemainingVacationDaysExpireGlobally;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
@@ -37,6 +38,7 @@ public class AccountForm {
         this.holidaysAccountYear = year;
         this.holidaysAccountValidFrom = Year.of(year).atDay(1);
         this.holidaysAccountValidTo = holidaysAccountValidFrom.with(lastDayOfYear());
+        this.overrideVacationDaysExpire = false;
         this.doRemainingVacationDaysExpireLocally = true;
         this.expiryDate = LocalDate.of(year, APRIL, 1);
     }
@@ -45,6 +47,7 @@ public class AccountForm {
         this.holidaysAccountYear = holidaysAccount.getValidFrom().getYear();
         this.holidaysAccountValidFrom = holidaysAccount.getValidFrom();
         this.holidaysAccountValidTo = holidaysAccount.getValidTo();
+        this.overrideVacationDaysExpire = holidaysAccount.isDoRemainingVacationDaysExpireLocally() != null;
         this.doRemainingVacationDaysExpireLocally = holidaysAccount.isDoRemainingVacationDaysExpireLocally();
         this.doRemainingVacationDaysExpireGlobally = holidaysAccount.isDoRemainingVacationDaysExpireGlobally();
         this.expiryDate = holidaysAccount.getExpiryDate();
@@ -93,6 +96,14 @@ public class AccountForm {
 
     public void setHolidaysAccountValidTo(LocalDate holidaysAccountValidTo) {
         this.holidaysAccountValidTo = holidaysAccountValidTo;
+    }
+
+    public boolean isOverrideVacationDaysExpire() {
+        return overrideVacationDaysExpire;
+    }
+
+    public void setOverrideVacationDaysExpire(boolean overrideVacationDaysExpire) {
+        this.overrideVacationDaysExpire = overrideVacationDaysExpire;
     }
 
     public Boolean getDoRemainingVacationDaysExpireLocally() {

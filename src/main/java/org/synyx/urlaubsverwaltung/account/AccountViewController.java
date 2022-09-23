@@ -109,7 +109,9 @@ public class AccountViewController {
 
         final LocalDate validFrom = accountForm.getHolidaysAccountValidFrom();
         final LocalDate validTo = accountForm.getHolidaysAccountValidTo();
-        final Boolean doRemainingVacationDaysExpireLocally = accountForm.getDoRemainingVacationDaysExpireLocally();
+        final Boolean doRemainingVacationDaysExpireLocally = accountForm.isOverrideVacationDaysExpire()
+            ? accountForm.getDoRemainingVacationDaysExpireLocally()
+            : null;
         final LocalDate expiryDate = accountForm.getExpiryDate();
         final BigDecimal annualVacationDays = accountForm.getAnnualVacationDays();
         final BigDecimal actualVacationDays = accountForm.getActualVacationDays();

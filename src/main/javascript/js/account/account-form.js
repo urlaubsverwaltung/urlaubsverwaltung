@@ -11,18 +11,33 @@ createDatepicker("#holidaysAccountValidFrom", { urlPrefix, getPersonId });
 createDatepicker("#holidaysAccountValidTo", { urlPrefix, getPersonId });
 createDatepicker("#expiryDate", { urlPrefix, getPersonId });
 
-document.addEventListener("change", function enabledDisableVacationDaysExpireElements(event) {
-  if (event.target.matches("[name='doRemainingVacationDaysExpireLocally']")) {
-    const dateElement = document.querySelector("[name='expiryDate']");
-    const notExpiringElement = document.querySelector("[name='remainingVacationDaysNotExpiring']");
+const form = document.querySelector("#holiday-account-settings-form");
+const fieldset = document.querySelector("#remaining-vacation-days-expire-fieldset");
+const fieldsetGloballyEnabled = fieldset.dataset.globallyEnabled === "true";
 
-    const enable = event.target.dataset.value === "true";
-    if (enable) {
-      dateElement.removeAttribute("readonly");
-      notExpiringElement.removeAttribute("readonly");
+form.addEventListener("change", function enabledDisableVacationDaysExpireElements(event) {
+  const { target } = event;
+  if (
+    target.matches("[name=overrideVacationDaysExpire]") ||
+    target.matches("[name=doRemainingVacationDaysExpireLocally]")
+  ) {
+    const formData = new FormData(form);
+    const override = formData.get("overrideVacationDaysExpire");
+    const locally = formData.get("doRemainingVacationDaysExpireLocally");
+
+    if ((override === "true" && locally === "true") || (override !== "true" && fieldsetGloballyEnabled)) {
+      fieldset.removeAttribute("disabled");
     } else {
-      dateElement.setAttribute("readonly", "");
-      notExpiringElement.setAttribute("readonly", "");
+      fieldset.setAttribute("disabled", "");
+    }
+
+    const radioButtons = document.querySelectorAll("[name='doRemainingVacationDaysExpireLocally']");
+    for (const button of radioButtons) {
+      if (override !== "true") {
+        button.setAttribute("disabled", "");
+      } else {
+        button.removeAttribute("disabled");
+      }
     }
   }
 });

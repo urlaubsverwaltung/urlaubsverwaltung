@@ -64,8 +64,8 @@
 
 @layer components {
   .account-form-remaining-vacation-expire-description {
-    @apply tw-text-sm;
-    @apply dark:tw-text-zinc-400;
+    @apply tw-text-base;
+    @apply dark:tw-text-zinc-100;
   }
 
   .account-form-remaining-vacation-expire-description a {

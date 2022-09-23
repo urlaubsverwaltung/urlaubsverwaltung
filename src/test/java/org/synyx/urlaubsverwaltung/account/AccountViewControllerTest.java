@@ -10,27 +10,31 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
+import static java.time.Month.MARCH;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -63,8 +67,6 @@ class AccountViewControllerTest {
     private VacationTypeViewModelService vacationTypeViewModelService;
     @Mock
     private AccountFormValidator validator;
-    @Mock
-    private AccountForm accountForm;
 
     private final Clock clock = Clock.systemUTC();
 
@@ -165,18 +167,73 @@ class AccountViewControllerTest {
     }
 
     @Test
-    void updateAccountCallsEditForExistingAccount() throws Exception {
+    void updateAccountCallsEditForExistingAccountWithoutOverridingExpireVacationDays() throws Exception {
 
-        when(accountForm.getHolidaysAccountValidFrom()).thenReturn(LocalDate.now(clock));
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(signedInPerson));
+
+        final LocalDate validFrom = LocalDate.now(clock).with(firstDayOfYear());
+        final LocalDate validTo = validFrom.with(lastDayOfYear());
 
         final Account account = someAccount();
+        account.setValidFrom(validFrom);
+        account.setValidTo(validTo);
+        account.setAnnualVacationDays(ZERO);
+        account.setActualVacationDays(ZERO);
+        account.setRemainingVacationDays(ZERO);
+
         when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(account));
+
+        final LocalDate expiryDate = validFrom.withMonth(MARCH.getValue()).withDayOfMonth(1);
+
+        final AccountForm accountForm = new AccountForm(account);
+        accountForm.setExpiryDate(expiryDate);
+        accountForm.setRemainingVacationDaysNotExpiring(BigDecimal.valueOf(5L));
+        accountForm.setOverrideVacationDaysExpire(false);
+        accountForm.setDoRemainingVacationDaysExpireLocally(null);
+        accountForm.setComment("comment");
 
         perform(post("/web/person/" + SOME_PERSON_ID + "/account")
             .flashAttr("account", accountForm));
 
-        verify(accountInteractionService).editHolidaysAccount(eq(account), any(), any(), anyBoolean(), any(), any(), any(), any(), any(), any());
+        verify(accountInteractionService).editHolidaysAccount(account, validFrom, validTo, null, expiryDate, ZERO, ZERO, ZERO, BigDecimal.valueOf(5L), "comment");
+    }
+
+    @Test
+    void updateAccountCallsEditForExistingAccountOverridingExpireVacationDays() throws Exception {
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(signedInPerson));
+
+        final LocalDate validFrom = LocalDate.now(clock).with(firstDayOfYear());
+        final LocalDate validTo = validFrom.with(lastDayOfYear());
+
+        final Account account = someAccount();
+        account.setValidFrom(validFrom);
+        account.setValidTo(validTo);
+        account.setAnnualVacationDays(ZERO);
+        account.setActualVacationDays(ZERO);
+        account.setRemainingVacationDays(ZERO);
+
+        when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(account));
+
+        final LocalDate expiryDate = validFrom.withMonth(MARCH.getValue()).withDayOfMonth(1);
+
+        final AccountForm accountForm = new AccountForm(account);
+        accountForm.setExpiryDate(expiryDate);
+        accountForm.setRemainingVacationDaysNotExpiring(BigDecimal.valueOf(5L));
+        accountForm.setOverrideVacationDaysExpire(true);
+        accountForm.setDoRemainingVacationDaysExpireLocally(false);
+        accountForm.setComment("comment");
+
+        perform(post("/web/person/" + SOME_PERSON_ID + "/account")
+            .flashAttr("account", accountForm));
+
+        verify(accountInteractionService).editHolidaysAccount(account, validFrom, validTo, false, expiryDate, ZERO, ZERO, ZERO, BigDecimal.valueOf(5L), "comment");
     }
 
     @Test
@@ -193,7 +250,7 @@ class AccountViewControllerTest {
         perform(post("/web/person/" + SOME_PERSON_ID + "/account")
             .flashAttr("account", mockedAccountForm));
 
-        verify(accountInteractionService).updateOrCreateHolidaysAccount(eq(person), any(), any(), anyBoolean(), any(), any(), any(), any(), any(), any());
+        verify(accountInteractionService).updateOrCreateHolidaysAccount(eq(person), any(), any(), isNull(), any(), any(), any(), any(), any(), any());
     }
 
     @Test

@@ -25,9 +25,12 @@ legend {
   @apply dark:tw-border-neutral-600 !important;
 }
 
-input:read-only,
-.form-control[readonly],
-.tw-form-control[readonly] {
+input[disabled],
+.form-control[disabled],
+.tw-form-control[disabled],
+fieldset[disabled] input,
+fieldset[disabled] .form-control,
+fieldset[disabled] .tw-form-control {
   @apply dark:tw-text-neutral-700 !important;
   @apply dark:tw-bg-neutral-800 !important;
   @apply tw-border-0 !important;

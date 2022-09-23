@@ -20,6 +20,8 @@ import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static java.util.Objects.requireNonNullElse;
+import static java.util.Objects.requireNonNullElseGet;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -83,6 +85,9 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
                                                  BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
                                                  String comment) {
 
+        remainingVacationDays = requireNonNullElse(remainingVacationDays, ZERO);
+        remainingVacationDaysNotExpiring = requireNonNullElse(remainingVacationDaysNotExpiring, ZERO);
+
         final Account account;
         final Optional<Account> optionalAccount = accountService.getHolidaysAccount(validFrom.getYear(), person);
         if (optionalAccount.isPresent()) {
@@ -112,18 +117,18 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
                                        @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                        BigDecimal remainingVacationDays, @Nullable BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
+        expiryDate = requireNonNullElseGet(expiryDate, account::getExpiryDate);
+        remainingVacationDaysNotExpiring = requireNonNullElseGet(remainingVacationDaysNotExpiring, account::getRemainingVacationDaysNotExpiring);
+
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
         account.setDoRemainingVacationDaysExpireLocally(doRemainingVacationDaysExpire);
+        account.setExpiryDate(expiryDate);
         account.setAnnualVacationDays(annualVacationDays);
         account.setActualVacationDays(actualVacationDays);
         account.setRemainingVacationDays(remainingVacationDays);
         account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
         account.setComment(comment);
-
-        if (expiryDate != null) {
-            account.setExpiryDate(expiryDate);
-        }
 
         final Account savedAccount = accountService.save(account);
         LOG.info("Updated holidays account: {}", savedAccount);

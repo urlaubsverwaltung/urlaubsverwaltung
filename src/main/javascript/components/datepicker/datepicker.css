@@ -20,16 +20,19 @@ duet-date-picker {
   --duet-z-index: 600;
 }
 
-duet-date-picker[readonly] {
+fieldset[disabled] duet-date-picker,
+duet-date-picker[disabled] {
   @apply dark:tw-border-0 !important;
 }
 
-.tw-dark duet-date-picker[readonly] input {
+.tw-dark fieldset[disabled] duet-date-picker input,
+.tw-dark duet-date-picker[disabled] input {
   @apply tw-text-neutral-700 !important; /* color of `input:read-only` */
   background-color: unset !important; /* override light theme bg-color and use input:read-only bg-color */
 }
 
-duet-date-picker[readonly] input {
+fieldset[disabled] duet-date-picker input,
+duet-date-picker[disabled] input {
   background-color: #eee !important; /* bootstrap .form-input[readonly] forms.less:L170 */
 }
 
