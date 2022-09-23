@@ -18,11 +18,11 @@ document.addEventListener("change", function enabledDisableVacationDaysExpireEle
 
     const enable = event.target.dataset.value === "true";
     if (enable) {
-      dateElement.removeAttribute("disabled");
-      notExpiringElement.removeAttribute("disabled");
+      dateElement.removeAttribute("readonly");
+      notExpiringElement.removeAttribute("readonly");
     } else {
-      dateElement.setAttribute("disabled", "");
-      notExpiringElement.setAttribute("disabled", "");
+      dateElement.setAttribute("readonly", "");
+      notExpiringElement.setAttribute("readonly", "");
     }
   }
 });

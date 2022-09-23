@@ -22,12 +22,12 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
   const duetDateElement = await replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, localisation);
 
   mutation(duetDateElement.querySelector(".duet-date__input"))
-    .attributeChanged(["disabled"])
+    .attributeChanged(["readonly"])
     .subscribe(function (event) {
-      if (event.target.hasAttribute("disabled")) {
-        duetDateElement.setAttribute("disabled", "");
+      if (event.target.hasAttribute("readonly")) {
+        duetDateElement.setAttribute("readonly", "");
       } else {
-        duetDateElement.removeAttribute("disabled");
+        duetDateElement.removeAttribute("readonly");
       }
     });
 
@@ -124,8 +124,8 @@ async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, l
   duetDateElement.setAttribute("value", dateElement.dataset.isoValue || "");
   duetDateElement.setAttribute("identifier", dateElement.getAttribute("id"));
 
-  if (dateElement.getAttribute("disabled")) {
-    duetDateElement.setAttribute("disabled", "");
+  if (dateElement.getAttribute("readonly")) {
+    duetDateElement.setAttribute("readonly", "");
   }
 
   if (dateElement.dataset.min) {
