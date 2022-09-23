@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of interface {@link MailService}.
@@ -68,7 +69,7 @@ class MailServiceImpl implements MailService {
             recipients.add(new Person(null, null, "Administrator", mailProperties.getAdministrator()));
         }
 
-        return recipients;
+        return recipients.stream().distinct().collect(Collectors.toList());
     }
 
     private String getTranslation(String key, Object... args) {

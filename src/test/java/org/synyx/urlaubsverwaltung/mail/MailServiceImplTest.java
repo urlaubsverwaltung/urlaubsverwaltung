@@ -20,6 +20,7 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
@@ -237,6 +238,29 @@ class MailServiceImplTest {
         verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody");
         verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody");
         verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("admin@example.org"), "subject", "emailBody");
+    }
+
+    @Test
+    void ensureDistinctRecipientsForSendMail() {
+
+        setupMockServletRequest();
+
+        final Person franz = new Person();
+        franz.setEmail("franz@example.org");
+
+        final String subjectMessageKey = "subject.overtime.created";
+        final String templateName = "overtime_office";
+
+        final Mail mail = Mail.builder()
+                .withRecipient(List.of(franz,franz))
+                .withSubject(subjectMessageKey)
+                .withTemplate(templateName, new HashMap<>())
+                .build();
+
+        sut.send(mail);
+
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody");
+        verifyNoMoreInteractions(mailSenderService);
     }
 
     private void setupMockServletRequest() {
