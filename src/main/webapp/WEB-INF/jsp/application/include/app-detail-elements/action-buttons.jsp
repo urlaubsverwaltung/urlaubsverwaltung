@@ -20,10 +20,20 @@
 
 <%-- ALLOW WAITING APPLICATION ACTION --%>
 <c:if test="${isAllowedToAllowWaitingApplication}">
-    <button class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-emerald-500" data-title="<spring:message code='action.temporary_allow'/>"
+    <c:set var="message">
+        <c:choose>
+            <c:when test="${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && application.twoStageApproval}">
+                <spring:message code='action.temporary_allow'/>
+            </c:when>
+            <c:otherwise>
+                <spring:message code='action.allow'/>
+            </c:otherwise>
+        </c:choose>
+    </c:set>
+    <button class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-emerald-500" data-title="${message}"
        onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#allow').show();">
         <icon:check className="tw-w-5 tw-h-5" solid="true" />
-        <span class="tw-sr-only"><spring:message code='action.temporary_allow'/></span>
+        <span class="tw-sr-only">${message}</span>
     </button>
 </c:if>
 
