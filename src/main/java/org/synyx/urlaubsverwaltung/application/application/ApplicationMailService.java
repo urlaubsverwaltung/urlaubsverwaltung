@@ -90,20 +90,12 @@ class ApplicationMailService {
         final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
         final Mail mailToRelevantRecipients = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
-            .withSubject("subject.application.allowed.boss", application.getPerson().getNiceName())
-            .withTemplate("allowed_office_boss", model)
+            .withRecipient(NOTIFICATION_OFFICE)
+            .withSubject("subject.application.allowed.management", application.getPerson().getNiceName())
+            .withTemplate("allowed_management", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToRelevantRecipients);
-
-        // Inform office that there is a new allowed application for leave
-        final Mail mailToOffice = Mail.builder()
-            .withRecipient(NOTIFICATION_OFFICE)
-            .withSubject("subject.application.allowed.office", application.getPerson().getNiceName())
-            .withTemplate("allowed_office_boss", model)
-            .withAttachment(CALENDAR_ICS, calendarFile)
-            .build();
-        mailService.send(mailToOffice);
     }
 
     /**
@@ -294,12 +286,12 @@ class ApplicationMailService {
 
     /**
      * Sends an email to the person of the given application
-     * that the office has entered a application directly on behalf of himself.
+     * that some management person has entered an application directly on behalf of himself.
      *
      * @param application confirmed application on behalf
      * @param comment     additional comment for the application
      */
-    void sendConfirmationAllowedDirectlyByOffice(Application application, ApplicationComment comment) {
+    void sendConfirmationAllowedDirectlyByManagement(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -309,8 +301,8 @@ class ApplicationMailService {
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
-            .withSubject("subject.application.allowedDirectly.office")
-            .withTemplate("new_directly_allowed_applications_by_office", model)
+            .withSubject("subject.application.allowedDirectly.management")
+            .withTemplate("new_directly_allowed_applications_by_management", model)
             .build();
 
         mailService.send(mailToApplicant);
@@ -497,12 +489,12 @@ class ApplicationMailService {
 
     /**
      * Sends an email to the person of the given application
-     * that the office has applied for leave on behalf of himself.
+     * that some management person has applied for leave on behalf of himself.
      *
      * @param application confirmed application on behalf
      * @param comment     additional comment for the application
      */
-    void sendAppliedForLeaveByOfficeNotification(Application application, ApplicationComment comment) {
+    void sendAppliedForLeaveByManagementNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -512,8 +504,8 @@ class ApplicationMailService {
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
-            .withSubject("subject.application.applied.office")
-            .withTemplate("new_application_by_office", model)
+            .withSubject("subject.application.applied.management")
+            .withTemplate("new_application_by_management", model)
             .build();
 
         mailService.send(mailToApplicant);
@@ -616,12 +608,12 @@ class ApplicationMailService {
 
     /**
      * Sends an email to the person of the given application
-     * that the office has cancelled a application directly on behalf of himself.
+     * that some management person has cancelled an application directly on behalf of himself.
      *
      * @param application confirmed application on behalf
      * @param comment     additional comment for the application
      */
-    void sendCancelledDirectlyConfirmationByOffice(Application application, ApplicationComment comment) {
+    void sendCancelledDirectlyConfirmationByManagement(Application application, ApplicationComment comment) {
 
         final Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -631,20 +623,20 @@ class ApplicationMailService {
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
-            .withSubject("subject.application.cancelledDirectly.office")
-            .withTemplate("cancelled_directly_confirmation_office", model)
+            .withSubject("subject.application.cancelledDirectly.management")
+            .withTemplate("cancelled_directly_confirmation_management", model)
             .build();
 
         mailService.send(mailToApplicant);
     }
 
     /**
-     * Sends an email to the applicant if an application for leave got cancelled by office.
+     * Sends an email to the applicant if an application for leave got cancelled by management.
      *
      * @param application the application which got cancelled
      * @param comment     describes the reason of the cancellation
      */
-    void sendCancelledByOfficeNotification(Application application, ApplicationComment comment) {
+    void sendCancelledConfirmationByManagement(Application application, ApplicationComment comment) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED);
 
@@ -656,7 +648,7 @@ class ApplicationMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancelled.user")
-            .withTemplate("cancelled_by_office", model)
+            .withTemplate("cancelled_by_management", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
@@ -668,7 +660,7 @@ class ApplicationMailService {
         final Mail mailToRelevantPersons = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancelled.management")
-            .withTemplate("cancelled_by_office_management", model)
+            .withTemplate("cancelled_by_management_management", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 

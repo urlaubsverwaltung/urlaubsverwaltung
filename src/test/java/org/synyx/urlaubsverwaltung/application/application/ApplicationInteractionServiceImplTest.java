@@ -165,7 +165,7 @@ class ApplicationInteractionServiceImplTest {
         sut.apply(applicationForLeave, person, of("Foo"));
 
         verify(applicationMailService).sendConfirmation(applicationForLeave, applicationComment);
-        verify(applicationMailService, never()).sendAppliedForLeaveByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService, never()).sendAppliedForLeaveByManagementNotification(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService).sendNewApplicationNotification(applicationForLeave, applicationComment);
     }
 
@@ -188,7 +188,7 @@ class ApplicationInteractionServiceImplTest {
         sut.apply(applicationForLeave, applier, of("Foo"));
 
         verify(applicationMailService, never()).sendConfirmation(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(applicationMailService).sendAppliedForLeaveByOfficeNotification(applicationForLeave, applicationComment);
+        verify(applicationMailService).sendAppliedForLeaveByManagementNotification(applicationForLeave, applicationComment);
         verify(applicationMailService).sendNewApplicationNotification(applicationForLeave, applicationComment);
     }
 
@@ -234,7 +234,7 @@ class ApplicationInteractionServiceImplTest {
         verifyNoInteractions(absenceMappingService);
 
         verify(applicationMailService).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByOffice(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).sendNewDirectlyAllowedApplicationNotification(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
     }
@@ -262,7 +262,7 @@ class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person);
 
         verify(applicationMailService).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByOffice(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).sendNewDirectlyAllowedApplicationNotification(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
     }
@@ -293,7 +293,7 @@ class ApplicationInteractionServiceImplTest {
         verifyNoInteractions(absenceMappingService);
 
         verify(applicationMailService, never()).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(applicationMailService).sendConfirmationAllowedDirectlyByOffice(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService).sendConfirmationAllowedDirectlyByManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).sendNewDirectlyAllowedApplicationNotification(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
     }
@@ -887,7 +887,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getCancelDate()).isEqualTo(LocalDate.now(UTC));
         assertThat(applicationForLeave.isFormerlyAllowed()).isTrue();
 
-        verify(applicationMailService).sendCancelledByOfficeNotification(applicationForLeave, applicationComment);
+        verify(applicationMailService).sendCancelledConfirmationByManagement(applicationForLeave, applicationComment);
     }
 
     @Test
@@ -916,7 +916,7 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(applicationForLeave, CANCELLED, comment, canceller);
-        verify(applicationMailService).sendCancelledByOfficeNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendCancelledConfirmationByManagement(eq(applicationForLeave), any(ApplicationComment.class));
     }
 
     @Test
@@ -1057,7 +1057,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(savedApplication.getCanceller()).isEqualTo(office);
         assertThat(savedApplication.getCancelDate()).isEqualTo(LocalDate.now(UTC));
 
-        verify(applicationMailService).sendCancelledDirectlyConfirmationByOffice(savedApplication, applicationComment);
+        verify(applicationMailService).sendCancelledDirectlyConfirmationByManagement(savedApplication, applicationComment);
         verify(applicationMailService).sendCancelledDirectlyInformationToRecipientOfInterest(savedApplication, applicationComment);
 
         verify(applicationMailService).notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);

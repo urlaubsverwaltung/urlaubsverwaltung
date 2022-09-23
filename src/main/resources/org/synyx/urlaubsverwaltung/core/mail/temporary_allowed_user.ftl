@@ -1,7 +1,7 @@
 Hallo ${application.person.niceName},
 
-dein am ${application.applicationDate.format("dd.MM.yyyy")} gestellte Abwesenheit wurde vorläufig genehmigt.
-Bitte beachte, dass dieser erst noch von einem entsprechend Verantwortlichen freigegeben werden muss.
+deine am ${application.applicationDate.format("dd.MM.yyyy")} gestellte Abwesenheit wurde vorläufig genehmigt.
+Bitte beachte, dass diese von einem entsprechenden Verantwortlichen freigegeben werden muss.
 
 <#if (comment.text)?has_content>
 Kommentar von ${comment.person.niceName}:

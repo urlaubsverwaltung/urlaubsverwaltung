@@ -664,7 +664,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Informationen zum Abwesenheit:" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -691,7 +691,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("OK, Urlaub kann genommen werden");
 
-        sut.sendConfirmationAllowedDirectlyByOffice(application, comment);
+        sut.sendConfirmationAllowedDirectlyByManagement(application, comment);
 
         // email sent?
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1024,7 +1024,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Informationen zum Abwesenheit:" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -1071,7 +1071,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Informationen zum Abwesenheit:" + EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -1094,7 +1094,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
 
         application.setApplier(office);
-        sut.sendAppliedForLeaveByOfficeNotification(application, comment);
+        sut.sendAppliedForLeaveByManagementNotification(application, comment);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1136,7 +1136,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
 
         application.setApplier(office);
-        sut.sendAppliedForLeaveByOfficeNotification(application, comment);
+        sut.sendAppliedForLeaveByManagementNotification(application, comment);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1187,7 +1187,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
 
         application.setApplier(office);
-        sut.sendAppliedForLeaveByOfficeNotification(application, comment);
+        sut.sendAppliedForLeaveByManagementNotification(application, comment);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1409,7 +1409,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(office, clock);
         comment.setText("Wrong information - cancelled");
 
-        sut.sendCancelledDirectlyConfirmationByOffice(application, comment);
+        sut.sendCancelledDirectlyConfirmationByManagement(application, comment);
 
         // was email sent to applicant
         final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1457,7 +1457,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);
         when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
 
-        sut.sendCancelledByOfficeNotification(application, comment);
+        sut.sendCancelledConfirmationByManagement(application, comment);
 
         // was email sent to applicant?
         MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1748,7 +1748,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of user email
         String contentUser = (String) msg.getContent();
         assertThat(contentUser).contains("Hallo Lieschen Müller");
-        assertThat(contentUser).contains("Bitte beachte, dass dieser erst noch von einem entsprechend Verantwortlichen freigegeben werden muss");
+        assertThat(contentUser).contains("Bitte beachte, dass diese von einem entsprechenden Verantwortlichen freigegeben werden muss");
         assertThat(contentUser).contains(comment.getText());
         assertThat(contentUser).contains(comment.getPerson().getNiceName());
         assertThat(contentUser).contains("Link zur Abwesenheit:");
@@ -1762,7 +1762,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of office email
         assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "es liegt ein neuer zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
+            "es liegt eine neue zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -1833,7 +1833,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of office email
         assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "es liegt ein neuer zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
+            "es liegt eine neue zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -1909,7 +1909,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of office email
         assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "es liegt ein neuer zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
+            "es liegt eine neue zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +

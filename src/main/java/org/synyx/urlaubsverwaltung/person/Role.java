@@ -14,6 +14,8 @@ public enum Role {
     OFFICE,
     ADMIN,
     INACTIVE,
+    APPLICATION_ADD,
+    APPLICATION_CANCEL,
     SICK_NOTE_VIEW,
     SICK_NOTE_ADD,
     SICK_NOTE_EDIT,

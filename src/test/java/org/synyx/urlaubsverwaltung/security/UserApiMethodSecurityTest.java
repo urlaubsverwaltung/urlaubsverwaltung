@@ -54,10 +54,7 @@ class UserApiMethodSecurityTest {
         ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         when(personService.getPersonByUsername(usernameSSA)).thenReturn(Optional.of(ssa));
 
-        final Department department = new Department();
-        department.setMembers(List.of(member, ssa));
-        department.setDepartmentHeads(List.of(ssa));
-        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(ssa)).thenReturn(List.of(department));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, member)).thenReturn(true);
 
         final Authentication authentication = getAuthenticationToken(usernameSSA);
         final boolean inDepartmentOfAuthenticatedSSAPersonId = sut.isInDepartmentOfSecondStageAuthority(authentication, 1);
@@ -66,15 +63,15 @@ class UserApiMethodSecurityTest {
 
     @Test
     void isNotInDepartmentOfAuthenticatedSSAPersonId() {
-        final Person member = new Person("Member", "lastname", "firstName", "email");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(member));
+        final Person notMember = new Person("Member", "lastname", "firstName", "email");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(notMember));
 
         final String usernameSSA = "SSA";
         final Person departmentHead = new Person(usernameSSA, "lastname", "firstName", "email");
         departmentHead.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         when(personService.getPersonByUsername(usernameSSA)).thenReturn(Optional.of(departmentHead));
 
-        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(departmentHead)).thenReturn(List.of(new Department()));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(departmentHead, notMember)).thenReturn(false);
 
         final Authentication authentication = getAuthenticationToken(usernameSSA);
         final boolean inDepartmentOfAuthenticatedSSAPersonId = sut.isInDepartmentOfSecondStageAuthority(authentication, 1);
@@ -129,10 +126,7 @@ class UserApiMethodSecurityTest {
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getPersonByUsername(usernameDepartmentHead)).thenReturn(Optional.of(departmentHead));
 
-        final Department department = new Department();
-        department.setMembers(List.of(member, departmentHead));
-        department.setDepartmentHeads(List.of(departmentHead));
-        when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(List.of(department));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, member)).thenReturn(true);
 
         final Authentication authentication = getAuthenticationToken(usernameDepartmentHead);
         final boolean inDepartmentOfAuthenticatedHeadPersonId = sut.isInDepartmentOfDepartmentHead(authentication, 1);
@@ -141,15 +135,15 @@ class UserApiMethodSecurityTest {
 
     @Test
     void isNotInDepartmentOfAuthenticatedHeadPersonId() {
-        final Person member = new Person("Member", "lastname", "firstName", "email");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(member));
+        final Person notMember = new Person("Member", "lastname", "firstName", "email");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(notMember));
 
         final String usernameDepartmentHead = "Head";
         final Person departmentHead = new Person(usernameDepartmentHead, "lastname", "firstName", "email");
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getPersonByUsername(usernameDepartmentHead)).thenReturn(Optional.of(departmentHead));
 
-        when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(List.of(new Department()));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, notMember)).thenReturn(false);
 
         final Authentication authentication = getAuthenticationToken(usernameDepartmentHead);
         final boolean inDepartmentOfAuthenticatedHeadPersonId = sut.isInDepartmentOfDepartmentHead(authentication, 1);
