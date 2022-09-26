@@ -53,7 +53,41 @@ class VacationDaysReminderServiceTest {
         final Account account = new Account();
         account.setExpiryDate(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account));
+
+        sut.remindForCurrentlyLeftVacationDays();
+
+        verifyNoInteractions(mailService);
+    }
+
+    @Test
+    void ensureNoReminderIfRemainingVacationDaysToNotExpire() {
+
+        final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
+
+        final Person person = person();
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        final Account account = new Account();
+        account.setDoRemainingVacationDaysExpireGlobally(true);
+        when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account));
         when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(ZERO);
+
+        sut.remindForCurrentlyLeftVacationDays();
+
+        verifyNoInteractions(mailService);
+    }
+
+    @Test
+    void ensureNoReminderIfAccountIsEmpty() {
+
+        final Clock clock = Clock.fixed(Instant.parse("2022-10-31T06:00:00Z"), ZoneId.of("UTC"));
+        final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
+
+        final Person person = person();
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.empty());
 
         sut.remindForCurrentlyLeftVacationDays();
 
@@ -70,6 +104,7 @@ class VacationDaysReminderServiceTest {
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         final Account account = new Account();
+        account.setDoRemainingVacationDaysExpireGlobally(true);
         account.setExpiryDate(LocalDate.of(2022, 4, 1));
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account));
         when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(TEN);

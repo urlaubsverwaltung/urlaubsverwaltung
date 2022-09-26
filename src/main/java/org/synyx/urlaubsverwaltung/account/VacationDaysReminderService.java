@@ -50,15 +50,15 @@ public class VacationDaysReminderService {
         final List<Person> persons = personService.getActivePersons();
 
         for (Person person : persons) {
-
-            accountService.getHolidaysAccount(year, person).ifPresent(account -> {
-
-                final BigDecimal vacationDaysLeft = vacationDaysService.calculateTotalLeftVacationDays(account);
-                if (vacationDaysLeft.compareTo(ZERO) > 0) {
-                    sendReminderForCurrentlyLeftVacationDays(person, vacationDaysLeft, year + 1);
-                    LOG.info("Reminded person with id {} for {} currently left vacation days", person.getId(), vacationDaysLeft);
-                }
-            });
+            accountService.getHolidaysAccount(year, person)
+                .filter(Account::doRemainigVacationDaysExpire)
+                .ifPresent(account -> {
+                    final BigDecimal vacationDaysLeft = vacationDaysService.calculateTotalLeftVacationDays(account);
+                    if (vacationDaysLeft.compareTo(ZERO) > 0) {
+                        sendReminderForCurrentlyLeftVacationDays(person, vacationDaysLeft, year + 1);
+                        LOG.info("Reminded person with id {} for {} currently left vacation days", person.getId(), vacationDaysLeft);
+                    }
+                });
         }
     }
 
