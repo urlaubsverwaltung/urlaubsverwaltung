@@ -207,10 +207,9 @@
                         th:with="
                           settingsLink=@{/web/settings},
                           settingsMessage=${'<a href=&quot;'+ settingsLink +'&quot;>' + #messages.msg('person.form.annualVacation.remainingVacation.expire.global-info.settings') + '</a>'},
-                          status=${account.doRemainingVacationDaysExpireGlobally ? #messages.msg('person.form.annualVacation.remainingVacation.expire.global.true') : #messages.msg('person.form.annualVacation.remainingVacation.expire.global.false')},
-                          statusMessage=${'<em>' + status + '</em>'}
+                          messageKey=${account.doRemainingVacationDaysExpireGlobally ? 'person.form.annualVacation.remainingVacation.expire.global-info.true' : 'person.form.annualVacation.remainingVacation.expire.global-info.false'}
                         "
-                        th:utext="#{person.form.annualVacation.remainingVacation.expire.global-info(${settingsMessage}, ${statusMessage})}"
+                        th:utext="${#messages.msg(messageKey, settingsMessage)}"
                       >
                         Der Verfall von Resturlaub ist in den <a href="#">Einstellungen</a> <em>aktiviert</em>.
                       </p>
