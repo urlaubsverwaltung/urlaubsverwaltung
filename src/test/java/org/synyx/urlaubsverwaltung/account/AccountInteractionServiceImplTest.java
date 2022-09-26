@@ -291,7 +291,7 @@ class AccountInteractionServiceImplTest {
         final LocalDate expiryDate = LocalDate.of(year, APRIL, 1);
         final BigDecimal leftDays = BigDecimal.ONE;
 
-        final Account referenceHolidaysAccount = new Account(person, startDate, endDate, true,
+        final Account referenceHolidaysAccount = new Account(person, startDate, endDate, null,
             expiryDate, BigDecimal.valueOf(30), BigDecimal.valueOf(8), BigDecimal.valueOf(4), "comment");
 
         when(accountService.getHolidaysAccount(nextYear, person)).thenReturn(Optional.empty());
@@ -306,7 +306,8 @@ class AccountInteractionServiceImplTest {
         assertThat(createdHolidaysAccount.getValidFrom()).isEqualTo(LocalDate.of(nextYear, 1, 1));
         assertThat(createdHolidaysAccount.getValidTo()).isEqualTo(LocalDate.of(nextYear, 12, 31));
         assertThat(createdHolidaysAccount.getExpiryDate()).isEqualTo(expiryDate.plusYears(1));
-        assertThat(createdHolidaysAccount.doRemainigVacationDaysExpire()).isTrue();
+        assertThat(createdHolidaysAccount.isDoRemainingVacationDaysExpireLocally()).isNull();
+        assertThat(createdHolidaysAccount.doRemainigVacationDaysExpire()).isFalse();
 
         verify(accountService).save(createdHolidaysAccount);
         verify(vacationDaysService).calculateTotalLeftVacationDays(referenceHolidaysAccount);
@@ -344,6 +345,7 @@ class AccountInteractionServiceImplTest {
         assertThat(account.getValidFrom()).isEqualTo(nextYearAccount.getValidFrom());
         assertThat(account.getValidTo()).isEqualTo(nextYearAccount.getValidTo());
         assertThat(account.getExpiryDate()).isEqualTo(expiryDateOld);
+        assertThat(account.isDoRemainingVacationDaysExpireLocally()).isTrue();
         assertThat(account.doRemainigVacationDaysExpire()).isTrue();
 
         verify(accountService).save(account);

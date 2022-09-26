@@ -185,7 +185,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
 
         final LocalDate validFrom = Year.of(nextYear).atDay(1);
         final LocalDate validTo = validFrom.with(lastDayOfYear());
-        final boolean doRemainingVacationDaysExpire = referenceAccount.doRemainigVacationDaysExpire();
+        final Boolean doRemainingVacationDaysExpireLocally = referenceAccount.isDoRemainingVacationDaysExpireLocally();
         final LocalDate expiryDate = referenceAccount.getExpiryDate().withYear(nextYear);
         final BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(referenceAccount);
 
@@ -193,7 +193,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             referenceAccount.getPerson(),
             validFrom,
             validTo,
-            doRemainingVacationDaysExpire,
+            doRemainingVacationDaysExpireLocally,
             expiryDate,
             referenceAccount.getAnnualVacationDays(),
             referenceAccount.getAnnualVacationDays(),
