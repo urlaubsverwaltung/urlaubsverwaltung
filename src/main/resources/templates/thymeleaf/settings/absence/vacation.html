@@ -129,6 +129,35 @@
               </label>
             </div>
           </div>
+
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.vacation.remainingVacationDaysExpire}:|"
+              class="control-label col-md-4"
+              for="accountSettings.doRemainingVacationDaysExpireGlobally.true"
+            >
+            </label>
+            <div class="col-md-8 radio">
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="accountSettings.doRemainingVacationDaysExpireGlobally.true"
+                  th:field="*{accountSettings.doRemainingVacationDaysExpireGlobally}"
+                  value="true"
+                />
+                <th:block th:text="#{settings.vacation.remainingVacationDaysExpire.true}" />
+              </label>
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="accountSettings.doRemainingVacationDaysExpireGlobally.false"
+                  th:field="*{accountSettings.doRemainingVacationDaysExpireGlobally}"
+                  value="false"
+                />
+                <th:block th:text="#{settings.vacation.remainingVacationDaysExpire.false}" />
+              </label>
+            </div>
+          </div>
         </div>
       </div>
     </th:block>

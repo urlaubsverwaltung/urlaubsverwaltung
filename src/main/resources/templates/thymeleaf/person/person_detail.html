@@ -255,6 +255,12 @@
                   >
                   </span>
                   <span
+                    th:if="${not account.doRemainigVacationDaysExpire}"
+                    th:text="#{person.account.vacation.entitlement.remaining.doNotExpire}"
+                    class="tw-mt-2 tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                  ></span>
+                  <span
+                    th:if="${account.doRemainigVacationDaysExpire}"
                     class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
                   >
                     <th:block

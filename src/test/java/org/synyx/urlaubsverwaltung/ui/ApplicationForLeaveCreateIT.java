@@ -272,8 +272,8 @@ class ApplicationForLeaveCreateIT {
 
         final LocalDate lastDayOfYear = firstDayOfYear.withMonth(DECEMBER.getValue()).withDayOfMonth(31);
         final LocalDate expiryDate = LocalDate.of(currentYear.getValue(), APRIL, 1);
-        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, expiryDate, TEN, TEN, TEN, ZERO, null);
-        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), expiryDate.plusYears(1), TEN, TEN, TEN, ZERO, null);
+        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, true, expiryDate, TEN, TEN, TEN, ZERO, null);
+        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), true, expiryDate.plusYears(1), TEN, TEN, TEN, ZERO, null);
 
         return savedPerson;
     }

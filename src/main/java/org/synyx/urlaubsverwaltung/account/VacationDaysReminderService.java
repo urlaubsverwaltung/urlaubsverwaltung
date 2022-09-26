@@ -50,15 +50,15 @@ public class VacationDaysReminderService {
         final List<Person> persons = personService.getActivePersons();
 
         for (Person person : persons) {
-
-            accountService.getHolidaysAccount(year, person).ifPresent(account -> {
-
-                final BigDecimal vacationDaysLeft = vacationDaysService.calculateTotalLeftVacationDays(account);
-                if (vacationDaysLeft.compareTo(ZERO) > 0) {
-                    sendReminderForCurrentlyLeftVacationDays(person, vacationDaysLeft, year + 1);
-                    LOG.info("Reminded person with id {} for {} currently left vacation days", person.getId(), vacationDaysLeft);
-                }
-            });
+            accountService.getHolidaysAccount(year, person)
+                .filter(Account::doRemainigVacationDaysExpire)
+                .ifPresent(account -> {
+                    final BigDecimal vacationDaysLeft = vacationDaysService.calculateTotalLeftVacationDays(account);
+                    if (vacationDaysLeft.compareTo(ZERO) > 0) {
+                        sendReminderForCurrentlyLeftVacationDays(person, vacationDaysLeft, year + 1);
+                        LOG.info("Reminded person with id {} for {} currently left vacation days", person.getId(), vacationDaysLeft);
+                    }
+                });
         }
     }
 
@@ -72,19 +72,20 @@ public class VacationDaysReminderService {
 
         for (Person person : persons) {
 
-            accountService.getHolidaysAccount(year, person).ifPresent(account -> {
+            accountService.getHolidaysAccount(year, person)
+                .filter(Account::doRemainigVacationDaysExpire)
+                .ifPresent(account -> {
+                    final Optional<Account> accountOfNextYear = accountService.getHolidaysAccount(year + 1, person);
+                    final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountOfNextYear);
 
-                final Optional<Account> accountOfNextYear = accountService.getHolidaysAccount(year + 1, person);
-                final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountOfNextYear);
+                    final BigDecimal remainingVacationDaysLeft = vacationDaysLeft.getRemainingVacationDays()
+                        .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
 
-                final BigDecimal remainingVacationDaysLeft = vacationDaysLeft.getRemainingVacationDays()
-                    .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-
-                if (remainingVacationDaysLeft.compareTo(ZERO) > 0) {
-                    sendReminderForRemainingVacationDaysNotification(person, remainingVacationDaysLeft, account.getExpiryDate().minusDays(1));
-                    LOG.info("Reminded person with id {} for {} remaining vacation days in year {}.", person.getId(), remainingVacationDaysLeft, year);
-                }
-            });
+                    if (remainingVacationDaysLeft.compareTo(ZERO) > 0) {
+                        sendReminderForRemainingVacationDaysNotification(person, remainingVacationDaysLeft, account.getExpiryDate().minusDays(1));
+                        LOG.info("Reminded person with id {} for {} remaining vacation days in year {}.", person.getId(), remainingVacationDaysLeft, year);
+                    }
+                });
         }
     }
 
@@ -97,27 +98,28 @@ public class VacationDaysReminderService {
 
         final List<Person> persons = personService.getActivePersons();
         for (Person person : persons) {
-            accountService.getHolidaysAccount(year, person).ifPresent(account -> {
+            accountService.getHolidaysAccount(year, person)
+                .filter(Account::doRemainigVacationDaysExpire)
+                .ifPresent(account -> {
+                    final LocalDate expiryDate = account.getExpiryDate();
+                    if (account.getExpiryNotificationSentDate() == null && (now.isEqual(expiryDate) || now.isAfter(expiryDate))) {
 
-                final LocalDate expiryDate = account.getExpiryDate();
-                if (account.getExpiryNotificationSentDate() == null && (now.isEqual(expiryDate) || now.isAfter(expiryDate))) {
+                        final Optional<Account> accountOfNextYear = accountService.getHolidaysAccount(year + 1, person);
+                        final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountOfNextYear);
 
-                    final Optional<Account> accountOfNextYear = accountService.getHolidaysAccount(year + 1, person);
-                    final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(account, accountOfNextYear);
+                        final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getRemainingVacationDays()
+                            .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
+                        if (expiredRemainingVacationDays.compareTo(ZERO) > 0) {
+                            final BigDecimal totalLeftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(account);
 
-                    final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getRemainingVacationDays()
-                        .subtract(vacationDaysLeft.getRemainingVacationDaysNotExpiring());
-                    if (expiredRemainingVacationDays.compareTo(ZERO) > 0) {
-                        final BigDecimal totalLeftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(account);
+                            sendNotificationForExpiredRemainingVacationDays(person, expiredRemainingVacationDays, totalLeftVacationDays, vacationDaysLeft.getRemainingVacationDaysNotExpiring(), account.getExpiryDate());
+                            LOG.info("Notified person with id {} for {} expired remaining vacation days in year {}.", person.getId(), expiredRemainingVacationDays, year);
 
-                        sendNotificationForExpiredRemainingVacationDays(person, expiredRemainingVacationDays, totalLeftVacationDays, vacationDaysLeft.getRemainingVacationDaysNotExpiring(), account.getExpiryDate());
-                        LOG.info("Notified person with id {} for {} expired remaining vacation days in year {}.", person.getId(), expiredRemainingVacationDays, year);
-
-                        account.setExpiryNotificationSentDate(now);
-                        accountService.save(account);
+                            account.setExpiryNotificationSentDate(now);
+                            accountService.save(account);
+                        }
                     }
-                }
-            });
+                });
         }
     }
 

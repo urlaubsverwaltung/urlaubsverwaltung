@@ -108,4 +108,6 @@
   <include file="dbchangelogs/changelog-4.43.1-add-account-expiry-date-default-expiry.xml"/>
   <include file="dbchangelogs/changelog-4.45.0-add-sick-note-applier.xml"/>
   <include file="dbchangelogs/changelog-4.45.0-add-user-locale.xml"/>
+  <include file="dbchangelogs/changelog-4.49.0-add-account-do-remaining-vacation-days-expire.xml"/>
+  <include file="dbchangelogs/changelog-4.49.0-settings-add-global-do-remaing-vacation-days-expire.xml"/>
 </databaseChangeLog>

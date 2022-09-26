@@ -2,6 +2,10 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -9,14 +13,18 @@ import java.util.Objects;
 /**
  * This class describes how many vacation days and remaining vacation days a person has in which period (validFrom, validTo).
  */
-public class Account {
+@Entity(name = "account")
+public class AccountEntity {
 
+    @Id
+    @GeneratedValue
     private Integer id;
+
+    @ManyToOne
     private Person person;
     private LocalDate validFrom;
     private LocalDate validTo;
-    private Boolean doRemainingVacationDaysExpireLocally;
-    private boolean doRemainingVacationDaysExpireGlobally;
+    private Boolean doRemainingVacationDaysExpire;
     private LocalDate expiryDate;
     private LocalDate expiryNotificationSentDate;
 
@@ -32,57 +40,23 @@ public class Account {
 
     private String comment;
 
-    public Account() {
+    protected AccountEntity() {
         /* OK */
     }
 
-    public Account(Person person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpireLocally,
-                   LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal remainingVacationDays,
-                   BigDecimal remainingVacationDaysNotExpiring, String comment) {
+    public AccountEntity(Person person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
+                         LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal remainingVacationDays,
+                         BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         this.person = person;
         this.validFrom = validFrom;
         this.validTo = validTo;
-        this.doRemainingVacationDaysExpireLocally = doRemainingVacationDaysExpireLocally;
+        this.doRemainingVacationDaysExpire = doRemainingVacationDaysExpire;
         this.expiryDate = expiryDate;
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
         this.comment = comment;
-    }
-
-    /**
-     * Returns if the remaining vacation days do expire globally or locally (persons holiday account specific configuration)
-     * <table border="1">
-     *   <tr>
-     *     <th>Globally</th>
-     *     <th>Locally</th>
-     *     <th>Result</th>
-     *   </tr>
-     *   <tr>
-     *     <td><strong>true</strong></td><td>null</td><td><strong>true</strong></td>
-     *   </tr>
-     *   <tr>
-     *     <td><strong>false</strong></td><td>null</td><td><strong>false</strong></td>
-     *   </tr>
-     *   <tr>
-     *     <td>true</td><td><strong>true</strong></td><td><strong>true</strong></td>
-     *   </tr>
-     *   <tr>
-     *     <td>true</td><td><strong>false</strong></td><td><strong>false</strong></td>
-     *   </tr>
-     *   <tr>
-     *     <td>false</td><td><strong>true</strong></td><td><strong>true</strong></td>
-     *   </tr>
-     *   <tr>
-     *     <td>false</td><td><strong>false</strong></td><td><strong>false</strong></td>
-     *   </tr>
-     * </table>
-     *
-     * @return true the remaining vacation days of a user does expire, otherwise false
-     */
-    public boolean doRemainigVacationDaysExpire() {
-        return doRemainingVacationDaysExpireLocally == null ? doRemainingVacationDaysExpireGlobally : doRemainingVacationDaysExpireLocally;
     }
 
     public Integer getId() {
@@ -149,20 +123,12 @@ public class Account {
         this.validTo = validTo;
     }
 
-    public Boolean isDoRemainingVacationDaysExpireLocally() {
-        return doRemainingVacationDaysExpireLocally;
+    public Boolean isDoRemainingVacationDaysExpire() {
+        return doRemainingVacationDaysExpire;
     }
 
-    public void setDoRemainingVacationDaysExpireLocally(Boolean doRemainingVacationDaysExpireLocally) {
-        this.doRemainingVacationDaysExpireLocally = doRemainingVacationDaysExpireLocally;
-    }
-
-    public boolean isDoRemainingVacationDaysExpireGlobally() {
-        return doRemainingVacationDaysExpireGlobally;
-    }
-
-    public void setDoRemainingVacationDaysExpireGlobally(boolean doRemainingVacationDaysExpireGlobally) {
-        this.doRemainingVacationDaysExpireGlobally = doRemainingVacationDaysExpireGlobally;
+    public void setDoRemainingVacationDaysExpire(Boolean doRemainingVacationDaysExpire) {
+        this.doRemainingVacationDaysExpire = doRemainingVacationDaysExpire;
     }
 
     public LocalDate getExpiryDate() {
@@ -196,14 +162,11 @@ public class Account {
     @Override
     public String toString() {
         return "Account{" +
-            "id=" + id +
-            ", person=" + person +
+            "person=" + person +
             ", validFrom=" + validFrom +
             ", validTo=" + validTo +
-            ", doRemainingVacationDaysExpireLocally=" + doRemainingVacationDaysExpireLocally +
-            ", doRemainingVacationDaysExpireGlobally=" + doRemainingVacationDaysExpireGlobally +
+            ", doRemainingVacationDaysExpire=" + doRemainingVacationDaysExpire +
             ", expiryDate=" + expiryDate +
-            ", expiryNotificationSentDate=" + expiryNotificationSentDate +
             ", annualVacationDays=" + annualVacationDays +
             ", actualVacationDays=" + actualVacationDays +
             ", remainingVacationDays=" + remainingVacationDays +
@@ -219,7 +182,7 @@ public class Account {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Account that = (Account) o;
+        final AccountEntity that = (AccountEntity) o;
         return null != this.getId() && Objects.equals(id, that.id);
     }
 

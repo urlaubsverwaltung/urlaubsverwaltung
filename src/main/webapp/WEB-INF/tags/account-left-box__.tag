@@ -20,7 +20,7 @@
         <c:choose>
             <c:when test="${account != null}">
                 <c:choose>
-                    <c:when test="${beforeExpiryDate}">
+                    <c:when test="${!account.doRemainigVacationDaysExpire() || beforeExpiryDate}">
                         <c:set var="remainingVacationDays" value="${vacationDaysLeft.remainingVacationDays}" />
                     </c:when>
                     <c:otherwise>

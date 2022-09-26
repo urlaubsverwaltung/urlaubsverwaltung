@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
@@ -144,9 +145,13 @@ class CalculationService {
     }
 
     private BigDecimal getWorkdaysBeforeExpiryDate(Account account, Application application) {
+        final LocalDate firstDayOfYear = Year.of(account.getYear()).atDay(1);
+        final LocalDate lastDayOfPeriod = account.doRemainigVacationDaysExpire() ?
+            account.getExpiryDate().minusDays(1) : firstDayOfYear.with(lastDayOfYear());
+
         final List<DateRange> beforeExpiryDate = overlapService.getListOfOverlaps(
-            Year.of(account.getYear()).atDay(1),
-            account.getExpiryDate().minusDays(1),
+            firstDayOfYear,
+            lastDayOfPeriod,
             List.of(application),
             List.of()
         );

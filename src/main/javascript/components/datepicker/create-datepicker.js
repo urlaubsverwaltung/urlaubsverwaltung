@@ -2,6 +2,7 @@ import { endOfMonth, formatISO, parseISO } from "date-fns";
 import parse from "../../lib/date-fns/parse";
 import { defineCustomElements } from "@duetds/date-picker/dist/loader";
 import { getJSON } from "../../js/fetch";
+import { mutation } from "./mutation";
 import { createDatepickerLocalization } from "./locale";
 import { addDatepickerCssClassesToNode, removeDatepickerCssClassesFromNode } from "./datepicker-css-classes";
 import { addAbsenceTypeStyleToNode, isNoWorkday, removeAbsenceTypeStyleFromNode } from "../../js/absence";
@@ -19,6 +20,16 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
   const { dateAdapter, dateFormatShort } = createDatepickerLocalization({ locale: localisation.locale });
 
   const duetDateElement = await replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, localisation);
+
+  mutation(duetDateElement.querySelector(".duet-date__input"))
+    .attributeChanged(["readonly"])
+    .subscribe(function (event) {
+      if (event.target.hasAttribute("readonly")) {
+        duetDateElement.setAttribute("readonly", "");
+      } else {
+        duetDateElement.removeAttribute("readonly");
+      }
+    });
 
   const monthElement = duetDateElement.querySelector(".duet-date__select--month");
   const yearElement = duetDateElement.querySelector(".duet-date__select--year");
@@ -112,6 +123,10 @@ async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, l
   duetDateElement.setAttribute("class", dateElement.getAttribute("class"));
   duetDateElement.setAttribute("value", dateElement.dataset.isoValue || "");
   duetDateElement.setAttribute("identifier", dateElement.getAttribute("id"));
+
+  if (dateElement.getAttribute("readonly")) {
+    duetDateElement.setAttribute("readonly", "");
+  }
 
   if (dateElement.dataset.min) {
     duetDateElement.setAttribute("min", dateElement.dataset.min);

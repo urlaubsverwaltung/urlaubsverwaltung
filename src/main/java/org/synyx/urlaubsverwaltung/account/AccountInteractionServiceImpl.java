@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -19,8 +20,9 @@ import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static java.util.Objects.requireNonNullElse;
+import static java.util.Objects.requireNonNullElseGet;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
  * Implementation of interface {@link AccountInteractionService}.
@@ -67,6 +69,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
             person,
             today.with(firstDayOfYear()), //from the first day of year...
             today.with(lastDayOfYear()), //...until end of year
+            true,
             today.withMonth(APRIL.getValue()).with(firstDayOfMonth()), // default expiry date on first April
             BigDecimal.valueOf(defaultVacationDays),
             remainingVacationDaysForThisYear,
@@ -76,23 +79,28 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
-    public Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo, LocalDate expiryDate,
+    public Account updateOrCreateHolidaysAccount(Person person, LocalDate validFrom, LocalDate validTo,
+                                                 Boolean doRemainingVacationDaysExpire, LocalDate expiryDate,
                                                  BigDecimal annualVacationDays, BigDecimal actualVacationDays,
                                                  BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring,
                                                  String comment) {
+
+        remainingVacationDays = requireNonNullElse(remainingVacationDays, ZERO);
+        remainingVacationDaysNotExpiring = requireNonNullElse(remainingVacationDaysNotExpiring, ZERO);
 
         final Account account;
         final Optional<Account> optionalAccount = accountService.getHolidaysAccount(validFrom.getYear(), person);
         if (optionalAccount.isPresent()) {
             account = optionalAccount.get();
+            account.setDoRemainingVacationDaysExpireLocally(doRemainingVacationDaysExpire);
             account.setExpiryDate(expiryDate);
             account.setAnnualVacationDays(annualVacationDays);
             account.setRemainingVacationDays(remainingVacationDays);
             account.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
             account.setComment(comment);
         } else {
-            account = new Account(person, validFrom, validTo, expiryDate, annualVacationDays, remainingVacationDays,
-                remainingVacationDaysNotExpiring, comment);
+            account = new Account(person, validFrom, validTo, doRemainingVacationDaysExpire,
+                expiryDate, annualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
         }
 
         account.setActualVacationDays(actualVacationDays);
@@ -105,12 +113,16 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
-    public Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, LocalDate expiryDate,
-                                       BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingVacationDays,
-                                       BigDecimal remainingVacationDaysNotExpiring, String comment) {
+    public Account editHolidaysAccount(Account account, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
+                                       @Nullable LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal actualVacationDays,
+                                       BigDecimal remainingVacationDays, @Nullable BigDecimal remainingVacationDaysNotExpiring, String comment) {
+
+        expiryDate = requireNonNullElseGet(expiryDate, account::getExpiryDate);
+        remainingVacationDaysNotExpiring = requireNonNullElseGet(remainingVacationDaysNotExpiring, account::getRemainingVacationDaysNotExpiring);
 
         account.setValidFrom(validFrom);
         account.setValidTo(validTo);
+        account.setDoRemainingVacationDaysExpireLocally(doRemainingVacationDaysExpire);
         account.setExpiryDate(expiryDate);
         account.setAnnualVacationDays(annualVacationDays);
         account.setActualVacationDays(actualVacationDays);
@@ -172,18 +184,20 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         }
 
         final LocalDate validFrom = Year.of(nextYear).atDay(1);
-        final LocalDate validTo = getLastDayOfYear(nextYear);
+        final LocalDate validTo = validFrom.with(lastDayOfYear());
+        final Boolean doRemainingVacationDaysExpireLocally = referenceAccount.isDoRemainingVacationDaysExpireLocally();
         final LocalDate expiryDate = referenceAccount.getExpiryDate().withYear(nextYear);
-        final BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(referenceAccount);
+        final BigDecimal remainingVacationDays = vacationDaysService.calculateTotalLeftVacationDays(referenceAccount);
 
         return updateOrCreateHolidaysAccount(
             referenceAccount.getPerson(),
             validFrom,
             validTo,
+            doRemainingVacationDaysExpireLocally,
             expiryDate,
             referenceAccount.getAnnualVacationDays(),
             referenceAccount.getAnnualVacationDays(),
-            leftVacationDays,
+            remainingVacationDays,
             ZERO,
             referenceAccount.getComment()
         );

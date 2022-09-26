@@ -224,7 +224,7 @@ class AccountFormValidatorTest {
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(null);
 
-        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
+        sut.validateRemainingVacationDays(form, errors);
         verify(errors).rejectValue("remainingVacationDays", "error.entry.mandatory");
     }
 
@@ -233,7 +233,7 @@ class AccountFormValidatorTest {
         final AccountForm form = new AccountForm(2013);
         form.setRemainingVacationDays(BigDecimal.valueOf(-1));
 
-        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
+        sut.validateRemainingVacationDays(form, errors);
         verify(errors).rejectValue("remainingVacationDays", "error.entry.min", new Object[]{"0"}, "");
     }
 
@@ -243,18 +243,8 @@ class AccountFormValidatorTest {
         form.setRemainingVacationDays(new BigDecimal("10.3"));
         form.setRemainingVacationDaysNotExpiring(new BigDecimal(11));
 
-        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
+        sut.validateRemainingVacationDays(form, errors);
         verify(errors).rejectValue("remainingVacationDays", "error.entry.fullOrHalfNumber");
-    }
-
-    @Test
-    void ensureRemainingVacationDaysMustNotBeGreaterThanGivenMax() {
-        final AccountForm form = new AccountForm(2013);
-        form.setRemainingVacationDays(new BigDecimal("41"));
-        form.setRemainingVacationDaysNotExpiring(new BigDecimal(10));
-
-        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
-        verify(errors).rejectValue("remainingVacationDays", "person.form.annualVacation.error.remainingVacationDays.tooBig", new Object[]{"40"}, "");
     }
 
     @Test
@@ -321,7 +311,7 @@ class AccountFormValidatorTest {
         form.setRemainingVacationDays(remainingVacationDays);
         form.setRemainingVacationDaysNotExpiring(remainingVacationDaysNotExpiring);
 
-        sut.validateRemainingVacationDays(form, errors, BigDecimal.valueOf(40));
+        sut.validateRemainingVacationDays(form, errors);
         verifyNoInteractions(errors);
     }
 

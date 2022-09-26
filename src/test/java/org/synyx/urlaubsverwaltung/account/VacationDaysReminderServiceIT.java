@@ -61,6 +61,7 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
 
         final Account account = new Account();
         account.setExpiryDate(LocalDate.of(2022, 4, 1));
+        account.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account));
         when(vacationDaysService.calculateTotalLeftVacationDays(account)).thenReturn(TEN);
 
@@ -95,10 +96,12 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
 
         final Account account2022 = new Account();
         account2022.setExpiryDate(LocalDate.of(2022,4,1));
+        account2022.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account();
         account2023.setExpiryDate(LocalDate.of(2023, 4, 1));
+        account2023.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
@@ -143,10 +146,12 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
 
         final Account account2022 = new Account();
         account2022.setExpiryDate(LocalDate.of(2022,4,1));
+        account2022.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2022, person)).thenReturn(Optional.of(account2022));
 
         final Account account2023 = new Account();
         account2023.setExpiryDate(LocalDate.of(2023, 4, 1));
+        account2023.setDoRemainingVacationDaysExpireLocally(true);
         when(accountService.getHolidaysAccount(2023, person)).thenReturn(Optional.of(account2023));
 
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()

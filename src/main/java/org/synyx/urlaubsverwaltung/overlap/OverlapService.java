@@ -108,8 +108,9 @@ public class OverlapService {
         final Stream<DateRange> sickNoteDateRanges = sickNotes.stream()
             .map(sickNote -> new DateRange(sickNote.getStartDate(), sickNote.getEndDate()));
 
+        final DateRange periodDateRange = new DateRange(startDate, endDate);
         return Stream.concat(applicationDateRanges, sickNoteDateRanges)
-            .map(dateRange -> dateRange.overlap(new DateRange(startDate, endDate)))
+            .map(dateRange -> dateRange.overlap(periodDateRange))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .collect(toList());

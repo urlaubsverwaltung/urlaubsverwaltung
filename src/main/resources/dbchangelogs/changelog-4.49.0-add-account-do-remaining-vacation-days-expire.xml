@@ -1,0 +1,18 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="add-account-do-remaining-vacation-days-expire">
+    <preConditions>
+      <tableExists tableName="account"/>
+      <not>
+        <columnExists tableName="account" columnName="do_remaining_vacation_days_expire"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="account">
+      <column name="do_remaining_vacation_days_expire" type="BIT(1)"/>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

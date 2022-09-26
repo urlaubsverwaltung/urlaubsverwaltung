@@ -54,7 +54,7 @@ class AccountFormValidator implements Validator {
         validateAnnualVacation(form, errors, maxAnnualVacationDays);
         validateActualVacation(form, errors);
         validateExpiryDate(form, errors);
-        validateRemainingVacationDays(form, errors, maxAnnualVacationDays);
+        validateRemainingVacationDays(form, errors);
         validateRemainingVacationDaysNotExpiring(form, errors);
         validateComment(form, errors);
     }
@@ -137,6 +137,10 @@ class AccountFormValidator implements Validator {
     }
 
     void validateExpiryDate(AccountForm form, Errors errors) {
+        if (!form.doRemainingVacationDaysExpire()) {
+            // feature disabled. nothing has to be validated.
+            return;
+        }
 
         final LocalDate expiryDate = form.getExpiryDate();
         validateDateNotNull(expiryDate, ATTR_HOLIDAYS_ACCOUNT_EXPIRY_DATE, errors);
@@ -151,7 +155,7 @@ class AccountFormValidator implements Validator {
         }
     }
 
-    void validateRemainingVacationDays(AccountForm form, Errors errors, BigDecimal maxAnnualVacationDays) {
+    void validateRemainingVacationDays(AccountForm form, Errors errors) {
 
         final BigDecimal remainingVacationDays = form.getRemainingVacationDays();
 
@@ -161,13 +165,15 @@ class AccountFormValidator implements Validator {
             validateFullOrHalfDay(remainingVacationDays, ATTRIBUTE_REMAINING_VACATION_DAYS, errors);
             if (isNegative(remainingVacationDays)) {
                 reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS, ERROR_ENTRY_MIN, "0");
-            } else if (isGreater(remainingVacationDays, maxAnnualVacationDays)) {
-                reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS, msg("remainingVacationDays.tooBig"), asIntString(maxAnnualVacationDays));
             }
         }
     }
 
     void validateRemainingVacationDaysNotExpiring(AccountForm form, Errors errors) {
+        if (!form.doRemainingVacationDaysExpire()) {
+            // feature disabled. nothing has to be validated.
+            return;
+        }
 
         final BigDecimal remainingVacationDays = form.getRemainingVacationDays();
         final BigDecimal remainingVacationDaysNotExpiring = form.getRemainingVacationDaysNotExpiring();

@@ -27,6 +27,7 @@ import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
@@ -39,7 +40,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
  * Provides person demo data.
@@ -95,15 +95,16 @@ class PersonDataProvider {
 
         final int currentYear = Year.now(clock).getValue();
         final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).map(DayOfWeek::getValue).collect(toList());
         workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
 
-        final LocalDate lastDayOfYear = getLastDayOfYear(currentYear);
         accountInteractionService.updateOrCreateHolidaysAccount(
             savedPerson,
             firstDayOfYear,
             lastDayOfYear,
+            null,
             LocalDate.of(currentYear, APRIL, 1),
             BigDecimal.valueOf(30),
             BigDecimal.valueOf(30),

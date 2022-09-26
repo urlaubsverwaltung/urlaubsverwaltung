@@ -34,10 +34,10 @@ class VacationDaysLeftTest {
         final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder().build();
 
         final LocalDate now = LocalDate.now();
-        assertThat(vacationDaysLeft.getLeftVacationDays(now, now)).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getLeftVacationDays(now, true, now)).isEqualByComparingTo(ZERO);
         assertThat(vacationDaysLeft.getRemainingVacationDays()).isEqualByComparingTo(ZERO);
         assertThat(vacationDaysLeft.getVacationDays()).isEqualByComparingTo(ZERO);
-        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(now, now)).isEqualByComparingTo(ZERO);
+        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(now, true, now)).isEqualByComparingTo(ZERO);
         assertThat(vacationDaysLeft.getRemainingVacationDaysNotExpiring()).isEqualByComparingTo(ZERO);
         assertThat(vacationDaysLeft.getVacationDaysUsedNextYear()).isEqualByComparingTo(ZERO);
     }
@@ -173,7 +173,7 @@ class VacationDaysLeftTest {
     }
 
     @Test
-    void getRemainingVacationDaysLeftForThisYearAndbeforeExpiryDate() {
+    void getRemainingVacationDaysLeftForThisYearAndBeforeExpiryDate() {
         final VacationDaysLeft vacationDaysLeft = builder
             .withAnnualVacation(new BigDecimal("10"))
             .withRemainingVacation(new BigDecimal("5"))
@@ -182,9 +182,24 @@ class VacationDaysLeftTest {
             .forUsedVacationDaysAfterExpiry(ZERO)
             .build();
 
-        final LocalDate someDaybeforeExpiryDate = LocalDate.now().with(firstDayOfYear());
+        final LocalDate someDayBeforeExpiryDate = LocalDate.now().with(firstDayOfYear());
         final LocalDate expiryDate = LocalDate.now().withMonth(Month.APRIL.getValue()).with(firstDayOfMonth());
-        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(someDaybeforeExpiryDate, expiryDate)).isEqualByComparingTo("4");
+        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(someDayBeforeExpiryDate, true, expiryDate)).isEqualByComparingTo("4");
+    }
+
+    @Test
+    void getRemainingVacationDaysLeftIfDaysDoesNotExpire() {
+        final VacationDaysLeft vacationDaysLeft = builder
+            .withAnnualVacation(new BigDecimal("10"))
+            .withRemainingVacation(new BigDecimal("4"))
+            .notExpiring(new BigDecimal("0"))
+            .forUsedVacationDaysBeforeExpiry(ZERO)
+            .forUsedVacationDaysAfterExpiry(ZERO)
+            .build();
+
+        final LocalDate someDayBeforeExpiryDate = LocalDate.now().with(firstDayOfYear());
+        final LocalDate expiryDate = LocalDate.now().withMonth(Month.APRIL.getValue()).with(firstDayOfMonth());
+        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(someDayBeforeExpiryDate, false, expiryDate)).isEqualByComparingTo("4");
     }
 
     @Test
@@ -197,9 +212,8 @@ class VacationDaysLeftTest {
             .forUsedVacationDaysAfterExpiry(ONE)
             .build();
 
-        final LocalDate someDaybeforeExpiryDate = LocalDate.now().with(lastDayOfYear());
+        final LocalDate someDayBeforeExpiryDate = LocalDate.now().with(lastDayOfYear());
         final LocalDate expiryDate = LocalDate.now().withMonth(Month.APRIL.getValue()).with(firstDayOfMonth());
-        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(someDaybeforeExpiryDate, expiryDate)).isEqualByComparingTo("3");
-
+        assertThat(vacationDaysLeft.getRemainingVacationDaysLeft(someDayBeforeExpiryDate, true, expiryDate)).isEqualByComparingTo("3");
     }
 }

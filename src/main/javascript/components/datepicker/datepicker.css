@@ -20,6 +20,22 @@ duet-date-picker {
   --duet-z-index: 600;
 }
 
+fieldset[disabled] duet-date-picker,
+duet-date-picker[disabled] {
+  @apply dark:tw-border-0 !important;
+}
+
+.tw-dark fieldset[disabled] duet-date-picker input,
+.tw-dark duet-date-picker[disabled] input {
+  @apply tw-text-neutral-700 !important; /* color of `input:read-only` */
+  background-color: unset !important; /* override light theme bg-color and use input:read-only bg-color */
+}
+
+fieldset[disabled] duet-date-picker input,
+duet-date-picker[disabled] input {
+  background-color: #eee !important; /* bootstrap .form-input[readonly] forms.less:L170 */
+}
+
 .duet-date__dialog-content {
   @apply dark:tw-border-zinc-600;
 }

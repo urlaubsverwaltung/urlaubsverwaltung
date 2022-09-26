@@ -18,6 +18,11 @@ public class AccountSettings {
      */
     private Integer maximumAnnualVacationDays = 40;
 
+    /**
+     * Specifies if remaining vacation days will expire globally
+     */
+    private boolean doRemainingVacationDaysExpireGlobally = true;
+
     public Integer getDefaultVacationDays() {
         return defaultVacationDays;
     }
@@ -32,5 +37,13 @@ public class AccountSettings {
 
     public void setMaximumAnnualVacationDays(Integer maximumAnnualVacationDays) {
         this.maximumAnnualVacationDays = maximumAnnualVacationDays;
+    }
+
+    public boolean isDoRemainingVacationDaysExpireGlobally() {
+        return doRemainingVacationDaysExpireGlobally;
+    }
+
+    public void setDoRemainingVacationDaysExpireGlobally(boolean doRemainingVacationDaysExpireGlobally) {
+        this.doRemainingVacationDaysExpireGlobally = doRemainingVacationDaysExpireGlobally;
     }
 }
