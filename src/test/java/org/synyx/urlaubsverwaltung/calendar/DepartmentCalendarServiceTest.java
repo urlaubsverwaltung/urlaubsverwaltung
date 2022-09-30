@@ -116,7 +116,7 @@ class DepartmentCalendarServiceTest {
 
         when(messageSource.getMessage(eq("calendar.department.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Abteilung DepartmentName");
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar");
-        when(iCalService.getCalendar("Abwesenheitskalender der Abteilung DepartmentName", fullDayAbsences)).thenReturn(iCal);
+        when(iCalService.getCalendar("Abwesenheitskalender der Abteilung DepartmentName", fullDayAbsences, person)).thenReturn(iCal);
 
         final ByteArrayResource calendar = sut.getCalendarForDepartment(1, 10, "secret", GERMAN);
         assertThat(calendar).isEqualTo(iCal);

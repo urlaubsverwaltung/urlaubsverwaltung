@@ -42,22 +42,27 @@ class ICalServiceTest {
     @Test
     void getCalendarForPersonAndNoAbsenceFound() {
 
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of());
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(), null);
         assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
             .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
             .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
             .contains("X-WR-CALNAME:Abwesenheitskalender")
-            .contains("REFRESH-INTERVAL:P1D");
+            .contains("REFRESH-INTERVAL:P1D")
+
+            .doesNotContain("TRANS:TRANSPARENT");
     }
 
     @Test
     void getCalendarForPersonForOneFullDay() {
 
-        final Absence fullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
 
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(fullDayAbsence));
+        final Absence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
+
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(fullDayAbsence), person);
         assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
@@ -70,15 +75,20 @@ class ICalServiceTest {
             .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
             .contains("DTSTART;VALUE=DATE:20190326")
 
-            .contains("ORGANIZER:mailto:no-reply@example.org");
+            .contains("ORGANIZER:mailto:no-reply@example.org")
+
+            .doesNotContain("TRANS:TRANSPARENT");
     }
 
     @Test
     void getCalendarForPersonForHalfDayMorning() {
 
-        final Absence morningAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
 
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(morningAbsence));
+        final Absence morningAbsence = absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
+
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(morningAbsence), person);
         assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
@@ -91,15 +101,20 @@ class ICalServiceTest {
             .contains("DTSTART:20190426T080000Z")
             .contains("DTEND:20190426T120000Z")
 
-            .contains("ORGANIZER:mailto:no-reply@example.org");
+            .contains("ORGANIZER:mailto:no-reply@example.org")
+
+            .doesNotContain("TRANS:TRANSPARENT");
     }
 
     @Test
     void getCalendarForPersonForMultipleFullDays() {
 
-        final Absence manyFullDayAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
 
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence));
+        final Absence manyFullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
+
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(manyFullDayAbsence), person);
 
         assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
@@ -114,15 +129,20 @@ class ICalServiceTest {
             .contains("DTSTART;VALUE=DATE:20190326")
             .contains("DTEND;VALUE=DATE:20190402")
 
-            .contains("ORGANIZER:mailto:no-reply@example.org");
+            .contains("ORGANIZER:mailto:no-reply@example.org")
+
+            .doesNotContain("TRANS:TRANSPARENT");
     }
 
     @Test
     void getCalendarForPersonForHalfDayNoon() {
 
-        final Absence noonAbsence = absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
 
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence));
+        final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
+
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), person);
         assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
@@ -135,19 +155,23 @@ class ICalServiceTest {
             .contains("DTSTART:20190526T120000Z")
             .contains("DTEND:20190526T160000Z")
 
-            .contains("ORGANIZER:mailto:no-reply@example.org");
+            .contains("ORGANIZER:mailto:no-reply@example.org")
+
+            .doesNotContain("TRANS:TRANSPARENT");
     }
 
     @Test
     void getCalendarPublishEvent() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
         final ICalService sut = new ICalService(calendarProperties);
-        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence));
+        final ByteArrayResource calendar = sut.getCalendar("Abwesenheitskalender", List.of(noonAbsence), person);
         assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
@@ -156,25 +180,29 @@ class ICalServiceTest {
             .contains("X-WR-CALNAME:Abwesenheitskalender")
             .contains("REFRESH-INTERVAL:P1D")
 
-            .contains("UID:497ED5D042F718878138A3E2F8C3C35C")
+            .contains("UID:BB2267885BD8DF263E88D3062853E8A7")
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("DTSTART:20190526T120000Z")
             .contains("DTEND:20190526T160000Z")
             .contains("ORGANIZER:mailto:no-reply@example.org")
-            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
+
+            .doesNotContain("TRANS:TRANSPARENT");
     }
 
     @Test
     void cancelSingleAppointment() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
         final ICalService sut = new ICalService(calendarProperties);
 
-        final ByteArrayResource calendar = sut.getSingleAppointment(noonAbsence, CANCELLED);
+        final ByteArrayResource calendar = sut.getSingleAppointment(noonAbsence, CANCELLED, person);
         assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
@@ -185,24 +213,27 @@ class ICalServiceTest {
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("DTSTART:20190526T120000Z")
             .contains("DTEND:20190526T160000Z")
-            .contains("UID:497ED5D042F718878138A3E2F8C3C35C")
+            .contains("UID:BB2267885BD8DF263E88D3062853E8A7")
             .contains("SEQUENCE:1")
 
             .contains("ORGANIZER:mailto:no-reply@example.org")
-            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
+
+            .doesNotContain("TRANS:TRANSPARENT");
     }
 
     @Test
     void singleAppointment() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final CalendarProperties calendarProperties = new CalendarProperties();
         calendarProperties.setOrganizer("no-reply@example.org");
         final ICalService sut = new ICalService(calendarProperties);
 
-        final ByteArrayResource calendar = sut.getSingleAppointment(noonAbsence, PUBLISHED);
+        final ByteArrayResource calendar = sut.getSingleAppointment(noonAbsence, PUBLISHED, person);
         assertThat(convertCalendar(calendar))
             .contains("VERSION:2.0")
             .contains("CALSCALE:GREGORIAN")
@@ -212,7 +243,41 @@ class ICalServiceTest {
             .contains("SUMMARY:Marlene Muster abwesend")
             .contains("DTSTART:20190526T120000Z")
             .contains("DTEND:20190526T160000Z")
-            .contains("UID:497ED5D042F718878138A3E2F8C3C35C")
+            .contains("UID:BB2267885BD8DF263E88D3062853E8A7")
+
+            .contains("ORGANIZER:mailto:no-reply@example.org")
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org")
+
+            .doesNotContain("TRANS:TRANSPARENT");
+    }
+
+    @Test
+    void appointmentOfOtherPerson() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+
+        final Person recipient = new Person();
+        recipient.setId(2);
+
+        final Absence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
+
+        final CalendarProperties calendarProperties = new CalendarProperties();
+        calendarProperties.setOrganizer("no-reply@example.org");
+        final ICalService sut = new ICalService(calendarProperties);
+
+        final ByteArrayResource calendar = sut.getSingleAppointment(absence, PUBLISHED, recipient);
+        assertThat(convertCalendar(calendar))
+            .contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
+
+            .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
+            .contains("DTSTART;VALUE=DATE:20190526")
+            .contains("TRANSP:TRANSPARENT")
+            .contains("UID:22D8DC26F4271C049ED5601345B58D9C")
 
             .contains("ORGANIZER:mailto:no-reply@example.org")
             .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
@@ -229,21 +294,21 @@ class ICalServiceTest {
         calendarProperties.setOrganizer("no-reply@example.org");
         final ICalService sut = new ICalService(calendarProperties);
 
-        final ByteArrayResource calendar = sut.getSingleAppointment(holidayReplacement, PUBLISHED);
+        final ByteArrayResource calendar = sut.getSingleAppointment(holidayReplacement, PUBLISHED, person);
         assertThat(convertCalendar(calendar))
-            .contains("VERSION:2.0")
-            .contains("CALSCALE:GREGORIAN")
-            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
-            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
+                .contains("VERSION:2.0")
+                .contains("CALSCALE:GREGORIAN")
+                .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+                .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
 
-            .contains("SUMMARY:Vertretung für Marlene Muster")
-            .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
-            .contains("DTSTART;VALUE=DATE:20190526")
-            .contains("TRANSP:TRANSPARENT")
-            .contains("UID:D2A4772AEB3FD20D5F6997FCD8F28719")
+                .contains("SUMMARY:Vertretung für Marlene Muster")
+                .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
+                .contains("DTSTART;VALUE=DATE:20190526")
+                .contains("TRANSP:TRANSPARENT")
+                .contains("UID:D2A4772AEB3FD20D5F6997FCD8F28719")
 
-            .contains("ORGANIZER:mailto:no-reply@example.org")
-            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
+                .contains("ORGANIZER:mailto:no-reply@example.org")
+                .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {

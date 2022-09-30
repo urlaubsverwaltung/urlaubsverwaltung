@@ -77,7 +77,7 @@ class ApplicationMailServiceTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
-        when(iCalService.getSingleAppointment(any(), any())).thenReturn(attachment);
+        when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
 
         when(messageSource.getMessage(any(), any(), any())).thenReturn("something");
 
@@ -360,7 +360,7 @@ class ApplicationMailServiceTest {
         model.put("dayLength", "FULL");
 
         final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
-        when(iCalService.getSingleAppointment(any(), any())).thenReturn(attachment);
+        when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
 
         sut.notifyHolidayReplacementAllow(replacementEntity, application);
 
@@ -459,7 +459,7 @@ class ApplicationMailServiceTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
-        when(iCalService.getSingleAppointment(any(), any())).thenReturn(attachment);
+        when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
 
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
@@ -802,7 +802,7 @@ class ApplicationMailServiceTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
-        when(iCalService.getSingleAppointment(any(), any())).thenReturn(attachment);
+        when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
 
         final DayLength dayLength = FULL;
         when(messageSource.getMessage(eq(dayLength.name()), any(), any())).thenReturn("FULL");
@@ -889,7 +889,7 @@ class ApplicationMailServiceTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
-        when(iCalService.getSingleAppointment(any(), any())).thenReturn(attachment);
+        when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
 
         final Person person = new Person();
         final Person office = new Person();
