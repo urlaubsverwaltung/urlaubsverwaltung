@@ -530,8 +530,10 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     @Override
     @EventListener
     public void deleteAllByPerson(PersonDeletedEvent event) {
-        commentService.deleteByApplicationPerson(event.getPerson());
-        applicationService.deleteApplicationsByPerson(event.getPerson());
+        final Person personToBeDeleted = event.getPerson();
+        commentService.deleteByApplicationPerson(personToBeDeleted);
+        commentService.deleteCommentAuthor(personToBeDeleted);
+        applicationService.deleteApplicationsByPerson(personToBeDeleted);
     }
 
     private List<HolidayReplacementEntity> replacementAdded(Application oldApplication, Application savedEditedApplication) {

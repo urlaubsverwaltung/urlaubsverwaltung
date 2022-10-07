@@ -38,4 +38,12 @@ public interface ApplicationCommentService {
      * @param applicationPerson is the person whose applications should be deleted
      */
     void deleteByApplicationPerson(Person applicationPerson);
+
+    /**
+     * Removes the author of a {@link ApplicationComment}. This is used to delte a user.
+     * The author remains empty (null). Which must be displayed as 'unknown author'.
+     *
+     * @param author is the person who is deleted from {@link ApplicationComment}
+     */
+    void deleteCommentAuthor(Person author);
 }

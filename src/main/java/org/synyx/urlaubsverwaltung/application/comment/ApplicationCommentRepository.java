@@ -13,5 +13,7 @@ interface ApplicationCommentRepository extends CrudRepository<ApplicationComment
 
     List<ApplicationComment> findByApplication(Application application);
 
+    List<ApplicationComment> findByPerson(Person person);
+
     void deleteByApplicationPerson(Person person);
 }
