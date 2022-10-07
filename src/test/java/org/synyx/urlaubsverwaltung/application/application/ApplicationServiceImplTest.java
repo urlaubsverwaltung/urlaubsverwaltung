@@ -3,8 +3,10 @@ package org.synyx.urlaubsverwaltung.application.application;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -309,5 +311,39 @@ class ApplicationServiceImplTest {
 
         assertThat(actualListOfApplications).containsExactlyElementsOf(deletedApplications);
         verify(applicationRepository).deleteByPerson(person);
+    }
+
+    @Test
+    void deleteBossInteractionOnPersonDeletionEvent() {
+        final Person boss = new Person();
+        boss.setId(1);
+        final Application application = new Application();
+        application.setId(1);
+        application.setCanceller(boss);
+        when(applicationRepository.findByBoss(boss)).thenReturn(List.of(application));
+
+        sut.deleteInteractionWithApplications(boss);
+
+        final ArgumentCaptor<Application> argument = ArgumentCaptor.forClass(Application.class);
+        verify(applicationRepository).save(argument.capture());
+
+        assertThat(argument.getValue().getBoss()).isNull();
+    }
+
+    @Test
+    void deleteCancellerInteractionOnPersonDeletionEvent() {
+        final Person canceller = new Person();
+        canceller.setId(1);
+        final Application application = new Application();
+        application.setId(1);
+        application.setCanceller(canceller);
+        when(applicationRepository.findByCanceller(canceller)).thenReturn(List.of(application));
+
+        sut.deleteInteractionWithApplications(canceller);
+
+        final ArgumentCaptor<Application> argument = ArgumentCaptor.forClass(Application.class);
+        verify(applicationRepository).save(argument.capture());
+
+        assertThat(argument.getValue().getCanceller()).isNull();
     }
 }

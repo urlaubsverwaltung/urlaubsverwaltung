@@ -144,4 +144,15 @@ class ApplicationServiceImpl implements ApplicationService {
     public List<Application> deleteApplicationsByPerson(Person person) {
         return applicationRepository.deleteByPerson(person);
     }
+
+    @Override
+    public void deleteInteractionWithApplications(Person person) {
+        final List<Application> applicationsWithoutBoss = applicationRepository.findByBoss(person);
+        applicationsWithoutBoss.forEach(application -> application.setBoss(null));
+        applicationsWithoutBoss.forEach(applicationRepository::save);
+
+        final List<Application> applicationsWithoutCanceller = applicationRepository.findByCanceller(person);
+        applicationsWithoutCanceller.forEach(application -> application.setCanceller(null));
+        applicationsWithoutCanceller.forEach(applicationRepository::save);
+    }
 }

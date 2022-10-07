@@ -533,6 +533,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         final Person personToBeDeleted = event.getPerson();
         commentService.deleteByApplicationPerson(personToBeDeleted);
         commentService.deleteCommentAuthor(personToBeDeleted);
+        applicationService.deleteInteractionWithApplications(personToBeDeleted);
         applicationService.deleteApplicationsByPerson(personToBeDeleted);
     }
 

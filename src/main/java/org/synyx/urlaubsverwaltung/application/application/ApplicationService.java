@@ -171,4 +171,11 @@ public interface ApplicationService {
      * @param person the person whose applications should be deleted
      */
     List<Application> deleteApplicationsByPerson(Person person);
+
+    /**
+     * Deletes all interaction with {@link Application} with person id as boss / privileged person or canceller
+     *
+     * @param person the person whose interactions should be deleted
+     */
+    void deleteInteractionWithApplications(Person person);
 }

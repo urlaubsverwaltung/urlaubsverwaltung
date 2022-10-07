@@ -1444,6 +1444,7 @@ class ApplicationInteractionServiceImplTest {
 
         inOrder.verify(commentService).deleteByApplicationPerson(person);
         inOrder.verify(commentService).deleteCommentAuthor(person);
+        inOrder.verify(applicationService).deleteInteractionWithApplications(person);
         inOrder.verify(applicationService).deleteApplicationsByPerson(person);
     }
 
