@@ -17,13 +17,12 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 public class UrlaubsverwaltungOAuth2UserService implements OAuth2UserService<OidcUserRequest, OidcUser> {
-
-    // TODO make this constants configurable from application.properties
-    private static final String PERMISSION_CLAIM = "groups";
     private final OidcUserService delegate;
+    private final String claimName;
 
-    public UrlaubsverwaltungOAuth2UserService(OidcUserService delegate) {
+    public UrlaubsverwaltungOAuth2UserService(OidcUserService delegate, String claimName) {
         this.delegate = delegate;
+        this.claimName = claimName;
     }
 
     @Override
@@ -39,7 +38,7 @@ public class UrlaubsverwaltungOAuth2UserService implements OAuth2UserService<Oid
     }
 
     private List<GrantedAuthority> parseAuthoritiesFromGroupsClaim(Map<String, Object> claims) {
-        return extractFromList(claims, PERMISSION_CLAIM)
+        return extractFromList(claims, claimName)
             .stream()
             .map(role -> new SimpleGrantedAuthority(String.valueOf(role)))
             .collect(toList());

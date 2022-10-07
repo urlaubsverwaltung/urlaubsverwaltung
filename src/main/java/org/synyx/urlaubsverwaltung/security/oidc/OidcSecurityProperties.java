@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -60,6 +61,9 @@ public class OidcSecurityProperties {
     @NotEmpty
     private String postLogoutRedirectUri = "{baseUrl}";
 
+    @NotNull
+    private GroupClaim groupClaim = new GroupClaim();
+
     public String getIssuerUri() {
         return issuerUri;
     }
@@ -106,5 +110,48 @@ public class OidcSecurityProperties {
 
     public void setPostLogoutRedirectUri(String postLogoutRedirectUri) {
         this.postLogoutRedirectUri = postLogoutRedirectUri;
+    }
+
+    public GroupClaim getGroupClaim() {
+        return groupClaim;
+    }
+
+    public void setGroupClaim(GroupClaim groupClaim) {
+        this.groupClaim = groupClaim;
+    }
+
+    public static class GroupClaim {
+
+        private boolean enabled = false;
+
+        @NotEmpty
+        private String claimName = "groups";
+
+        @NotEmpty
+        private String permittedGroup = "urlaubsverwaltung-user";
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getClaimName() {
+            return claimName;
+        }
+
+        public void setClaimName(String claimName) {
+            this.claimName = claimName;
+        }
+
+        public String getPermittedGroup() {
+            return permittedGroup;
+        }
+
+        public void setPermittedGroup(String permittedGroup) {
+            this.permittedGroup = permittedGroup;
+        }
     }
 }

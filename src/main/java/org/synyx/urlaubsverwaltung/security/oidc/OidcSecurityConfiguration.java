@@ -73,8 +73,8 @@ public class OidcSecurityConfiguration {
     }
 
     @Bean
-    public UrlaubsverwaltungOAuth2UserService urlaubsverwaltungOAuth2UserService() {
-        return new UrlaubsverwaltungOAuth2UserService(new OidcUserService());
+    public UrlaubsverwaltungOAuth2UserService urlaubsverwaltungOAuth2UserService(OidcSecurityProperties oidcSecurityProperties) {
+        return new UrlaubsverwaltungOAuth2UserService(new OidcUserService(), oidcSecurityProperties.getGroupClaim().getClaimName());
     }
 
     @Bean
