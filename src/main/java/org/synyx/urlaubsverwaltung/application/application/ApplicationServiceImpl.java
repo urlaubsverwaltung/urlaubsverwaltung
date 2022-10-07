@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;

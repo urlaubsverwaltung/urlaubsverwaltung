@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.application.comment;
 
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 
 import java.util.List;
 import java.util.Optional;

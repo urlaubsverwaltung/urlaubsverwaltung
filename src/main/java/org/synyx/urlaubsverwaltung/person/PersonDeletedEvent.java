@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import org.springframework.context.ApplicationEvent;
-
 public class PersonDeletedEvent {
 
     private final Person person;

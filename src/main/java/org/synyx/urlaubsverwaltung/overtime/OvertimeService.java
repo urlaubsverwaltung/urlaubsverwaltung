@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
-import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
