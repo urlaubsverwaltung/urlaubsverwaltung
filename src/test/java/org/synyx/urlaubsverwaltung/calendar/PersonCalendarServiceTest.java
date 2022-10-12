@@ -78,7 +78,7 @@ class PersonCalendarServiceTest {
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
-        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", fullDayAbsences)).thenReturn(iCal);
+        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", fullDayAbsences, person)).thenReturn(iCal);
 
         final ByteArrayResource calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
         assertThat(calendar).isEqualTo(iCal);
@@ -101,7 +101,7 @@ class PersonCalendarServiceTest {
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
-        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", morningAbsences)).thenReturn(iCal);
+        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", morningAbsences, person)).thenReturn(iCal);
 
         final ByteArrayResource calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
         assertThat(calendar).isEqualTo(iCal);
@@ -124,7 +124,7 @@ class PersonCalendarServiceTest {
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
-        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", manyFullDayAbsences)).thenReturn(iCal);
+        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", manyFullDayAbsences, person)).thenReturn(iCal);
 
         final ByteArrayResource calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
         assertThat(calendar).isEqualTo(iCal);
@@ -147,7 +147,7 @@ class PersonCalendarServiceTest {
 
         when(messageSource.getMessage(eq("calendar.person.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender von Marlene Muster");
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
-        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", noonAbsences)).thenReturn(iCal);
+        when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", noonAbsences, person)).thenReturn(iCal);
 
         final ByteArrayResource calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
         assertThat(calendar).isEqualTo(iCal);

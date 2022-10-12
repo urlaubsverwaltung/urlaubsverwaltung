@@ -80,7 +80,7 @@ class CompanyCalendarServiceTest {
 
         when(messageSource.getMessage(eq("calendar.company.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Firma");
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
-        when(iCalService.getCalendar("Abwesenheitskalender der Firma", absences)).thenReturn(iCal);
+        when(iCalService.getCalendar("Abwesenheitskalender der Firma", absences, person)).thenReturn(iCal);
 
         final ByteArrayResource calendar = sut.getCalendarForAll(10, "secret", GERMAN);
         assertThat(calendar).isEqualTo(iCal);

@@ -69,7 +69,7 @@ class ApplicationMailService {
 
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
 
-        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT);
+        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, application.getPerson());
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -344,7 +344,7 @@ class ApplicationMailService {
      */
     void notifyHolidayReplacementAboutDirectlyAllowedApplication(HolidayReplacementEntity holidayReplacement, Application application) {
 
-        final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT);
+        final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -395,7 +395,7 @@ class ApplicationMailService {
      */
     void notifyHolidayReplacementAllow(HolidayReplacementEntity holidayReplacement, Application application) {
 
-        final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT);
+        final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -422,7 +422,7 @@ class ApplicationMailService {
      */
     void notifyHolidayReplacementAboutCancellation(HolidayReplacementEntity holidayReplacement, Application application) {
 
-        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED);
+        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, holidayReplacement.getPerson());
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -587,7 +587,8 @@ class ApplicationMailService {
      */
     void sendCancelledDirectlyConfirmationByApplicant(Application application, ApplicationComment comment) {
 
-        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED);
+        final Person recipient = application.getPerson();
+        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, recipient);
 
         final Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -597,7 +598,7 @@ class ApplicationMailService {
 
         // send cancelled by office information to the applicant
         final Mail mailToApplicant = Mail.builder()
-            .withRecipient(application.getPerson())
+            .withRecipient(recipient)
             .withSubject("subject.application.cancelledDirectly.user")
             .withTemplate("cancelled_directly_confirmation_applicant", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
@@ -638,7 +639,7 @@ class ApplicationMailService {
      */
     void sendCancelledConfirmationByManagement(Application application, ApplicationComment comment) {
 
-        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED);
+        final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, application.getPerson());
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -837,13 +838,13 @@ class ApplicationMailService {
         return messageSource.getMessage(key, args, GERMAN);
     }
 
-    private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType) {
-        return generateCalendar(application, absenceType, PUBLISHED);
+    private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType, Person recipient) {
+        return generateCalendar(application, absenceType, PUBLISHED, recipient);
     }
 
-    private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType, ICalType iCalType) {
+    private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType, ICalType iCalType, Person recipient) {
         final Absence absence = new Absence(application.getPerson(), application.getPeriod(), getAbsenceTimeConfiguration(), absenceType);
-        return iCalService.getSingleAppointment(absence, iCalType);
+        return iCalService.getSingleAppointment(absence, iCalType, recipient);
     }
 
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
