@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="_layout::head(~{::title}, ~{}, ~{})">
+    <title th:text="#{person.form.notifications.header.title}"></title>
+  </head>
+
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+      <div th:replace="fragments/section-heading::section-heading(~{::person-notifications-body}, ~{})">
+        <th:block th:ref="person-notifications-body">
+          <h1 th:text="#{person.form.notifications.title}">E-Mail-Benachrichtigungen</h1>
+        </th:block>
+      </div>
+
+      <div class="tw-mt-8">
+        <form
+          method="post"
+          th:action="@{/web/person/__${personNotificationsDto.id}__/notifications}"
+          th:object="${personNotificationsDto}"
+          class="form-horizontal"
+        >
+          <input type="hidden" th:field="*{id}" th:value="${id}" />
+          <input type="hidden" th:field="*{name}" th:value="${name}" />
+
+          <div class="form-section tw-mb-16">
+            <p class="alert alert-danger" th:if="${#fields.hasErrors('notifications')}">
+              <th:block th:errors="*{notifications}">notifications errors</th:block>
+            </p>
+
+            <!-- It's obligatory for now that users get mail notifications about progress of their own applications for leave -->
+            <input type="hidden" name="notifications" value="NOTIFICATION_USER" />
+
+            <div
+              th:if="${#lists.contains(personNotificationsDto.permissions, T(org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto).DEPARTMENT_HEAD)}"
+              class="checkbox tw-pb-2 tw-mb-2"
+            >
+              <strong th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD}" class="tw-mb-2 tw-block"></strong>
+              <label class="tw-leading-snug">
+                <input type="checkbox" th:field="*{notifications}" value="NOTIFICATION_DEPARTMENT_HEAD" />
+                <th:block th:text="#{person.form.notifications.DEPARTMENT_HEAD}" />
+              </label>
+            </div>
+
+            <div
+              th:if="${#lists.contains(personNotificationsDto.permissions, T(org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto).SECOND_STAGE_AUTHORITY)}"
+              class="checkbox tw-pb-2 tw-mb-2"
+            >
+              <strong
+                th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY}"
+                class="tw-mb-2 tw-block"
+              ></strong>
+              <label class="tw-leading-snug tw-pb-2">
+                <input type="checkbox" th:field="*{notifications}" value="NOTIFICATION_SECOND_STAGE_AUTHORITY" />
+                <th:block th:text="#{person.form.notifications.SECOND_STAGE_AUTHORITY}" />
+              </label>
+            </div>
+
+            <div
+              th:if="${#lists.contains(personNotificationsDto.permissions, T(org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto).BOSS)}"
+              class="checkbox tw-pb-2 tw-mb-2"
+            >
+              <strong th:text="#{person.form.permissions.roles.BOSS}" class="tw-mb-2 tw-block"></strong>
+              <label class="tw-leading-snug tw-mb-2 tw-block">
+                <input type="radio" th:field="*{notifications}" value="NOTIFICATION_BOSS_ALL" />
+                <th:block th:text="#{person.form.notifications.BOSS.all}" />
+              </label>
+              <label class="tw-leading-snug tw-mb-2 tw-block">
+                <input type="radio" th:field="*{notifications}" value="NOTIFICATION_BOSS_DEPARTMENTS" />
+                <th:block th:text="#{person.form.notifications.BOSS.departments}" />
+              </label>
+              <label class="tw-leading-snug tw-block">
+                <input type="radio" th:field="*{notifications}" value="" />
+                <th:block th:text="#{person.form.notifications.BOSS.none}" />
+              </label>
+            </div>
+
+            <div
+              th:if="${#lists.contains(personNotificationsDto.permissions, T(org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto).OFFICE)}"
+              class="checkbox tw-pb-2 tw-mb-2"
+            >
+              <strong th:text="#{person.form.permissions.roles.OFFICE}" class="tw-mb-2 tw-block"></strong>
+              <label class="tw-leading-snug tw-mb-2 tw-block">
+                <input type="checkbox" th:field="*{notifications}" value="NOTIFICATION_OFFICE" />
+                <th:block th:text="#{person.form.notifications.OFFICE}" />
+              </label>
+              <label class="tw-leading-snug tw-block">
+                <input type="checkbox" th:field="*{notifications}" value="OVERTIME_NOTIFICATION_OFFICE" />
+                <th:block th:text="#{person.form.notifications.OFFICE.overtime}" />
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section tw-mb-16">
+            <hr />
+            <button
+              th:text="#{action.save}"
+              class="button-main-green col-xs-12 col-sm-5 col-md-2"
+              type="submit"
+            ></button>
+            <button
+              th:text="#{action.cancel}"
+              type="button"
+              class="button col-xs-12 col-sm-5 col-md-2 pull-right"
+              data-back-button
+            ></button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </body>
+</html>
