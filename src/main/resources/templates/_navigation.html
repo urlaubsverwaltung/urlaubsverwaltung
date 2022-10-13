@@ -210,6 +210,17 @@
                           <li class="tw-mb-1">
                             <a
                               href="#"
+                              th:replace="::nav-popup-menu-link(href=@{/web/person/{userId}/notifications(userId=${userId})}, icon=~{::menu-notifications-icon}, text=#{nav.notifications.title})"
+                            >
+                              <svg
+                                th:ref="menu-notifications-icon"
+                                th:replace="icon/mail::svg(className='tw-w-6 tw-h-6')"
+                              ></svg>
+                            </a>
+                          </li>
+                          <li class="tw-mb-1">
+                            <a
+                              href="#"
                               th:replace="~{::nav-popup-menu-link(href=@{/web/person/{userId}/settings(userId=${userId})}, icon=~{::menu-user-settings-icon}, text=#{nav.user-settings.title})}"
                             >
                               <svg
@@ -231,8 +242,7 @@
                               </button>
                             </form>
                           </li>
-                        </ul>
-                      </div>
+                        </ul></div>
                     </div>
                   </div>
                 </div>
