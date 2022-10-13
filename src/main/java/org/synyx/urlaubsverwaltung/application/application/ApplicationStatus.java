@@ -27,7 +27,8 @@ public enum ApplicationStatus {
 
     /**
      * Status after the application for leave was allowed but the applicant wants to cancel the own application.
-     * The application for leave is at this point not cancelled and can only be approved by OFFICE Role.
+     * The application for leave is at this point not cancelled and can only be approved or the request of
+     * cancellation can be declined.
      */
     ALLOWED_CANCELLATION_REQUESTED,
 

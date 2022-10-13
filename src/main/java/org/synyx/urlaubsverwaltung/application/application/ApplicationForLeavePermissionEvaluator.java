@@ -7,6 +7,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCEL;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -55,9 +56,9 @@ class ApplicationForLeavePermissionEvaluator {
             && !(signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL)));
     }
 
-    static boolean isAllowedToDeclineCancellationRequest(Application application, Person signedInUser) {
+    static boolean isAllowedToDeclineCancellationRequest(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson) {
         return application.hasStatus(ALLOWED_CANCELLATION_REQUESTED)
-            && signedInUser.hasRole(OFFICE);
+            && (signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED)));
     }
 
     static boolean isAllowedToEditApplication(Application application, Person signedInUser) {

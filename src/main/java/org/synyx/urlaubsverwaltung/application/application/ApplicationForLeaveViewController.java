@@ -35,6 +35,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -90,7 +91,7 @@ class ApplicationForLeaveViewController {
 
         model.addAttribute("canAddApplicationForAnotherUser", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
         model.addAttribute("canAccessApplicationStatistics", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
-        model.addAttribute("canAccessCancellationRequests", signedInUser.hasRole(OFFICE));
+        model.addAttribute("canAccessCancellationRequests", signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) ));
 
         final List<Person> membersAsDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(signedInUser) : List.of();
         final List<Person> membersAsSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(signedInUser) : List.of();
@@ -103,9 +104,9 @@ class ApplicationForLeaveViewController {
         final List<ApplicationForLeaveDto> otherApplicationsDtos = mapToApplicationForLeaveDtoList(otherApplications, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
         model.addAttribute("otherApplications", otherApplicationsDtos);
 
-        if (signedInUser.hasRole(OFFICE)) {
-            final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests(signedInUser);
-            final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
+        final List<ApplicationForLeave> applicationsForLeaveCancellationRequests = getAllRelevantApplicationsForLeaveCancellationRequests(signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority);
+        final List<ApplicationForLeaveDto> cancellationDtoList = mapToApplicationForLeaveDtoList(applicationsForLeaveCancellationRequests, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, locale);
+        if(!cancellationDtoList.isEmpty()) {
             model.addAttribute("applications_cancellation_request", cancellationDtoList);
         }
 
@@ -214,16 +215,27 @@ class ApplicationForLeaveViewController {
             .collect(toList());
     }
 
-    private List<ApplicationForLeave> getAllRelevantApplicationsForLeaveCancellationRequests(Person signedInUser) {
+    private List<ApplicationForLeave> getAllRelevantApplicationsForLeaveCancellationRequests(Person signedInUser, List<Person> membersAsDepartmentHead, List<Person> membersAsSecondStageAuthority) {
 
-        List<Application> cancellationRequests;
-        if (signedInUser.hasRole(OFFICE)) {
-            cancellationRequests = applicationService.getForStates(List.of(ALLOWED_CANCELLATION_REQUESTED));
+        if (!signedInUser.hasRole(OFFICE) && !signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED)) {
+            return List.of();
+        }
+
+        final List<Application> cancellationRequests = new ArrayList<>();
+        if (signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(BOSS) && signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED))) {
+            cancellationRequests.addAll(applicationService.getForStates(List.of(ALLOWED_CANCELLATION_REQUESTED)));
         } else {
-            cancellationRequests = List.of();
+            if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY) && signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED)) {
+                cancellationRequests.addAll(applicationService.getForStatesAndPerson(List.of(ALLOWED_CANCELLATION_REQUESTED), membersAsSecondStageAuthority));
+            }
+
+            if (signedInUser.hasRole(DEPARTMENT_HEAD) && signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED)) {
+                cancellationRequests.addAll(applicationService.getForStatesAndPerson(List.of(ALLOWED_CANCELLATION_REQUESTED), membersAsDepartmentHead));
+            }
         }
 
         return cancellationRequests.stream()
+            .distinct()
             .filter(withoutApplicationsOf(signedInUser))
             .map(application -> new ApplicationForLeave(application, workDaysCountService))
             .sorted(comparing(ApplicationForLeave::getStartDate))
