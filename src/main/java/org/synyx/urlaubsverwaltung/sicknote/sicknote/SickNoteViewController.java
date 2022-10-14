@@ -283,7 +283,7 @@ class SickNoteViewController {
         model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote));
         model.addAttribute("vacationTypes", getActiveVacationTypes());
 
-        return "sicknote/sick_note_convert";
+        return "thymeleaf/sicknote/sick_note_convert";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -301,7 +301,7 @@ class SickNoteViewController {
             model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
             model.addAttribute("vacationTypes", getActiveVacationTypes());
 
-            return "sicknote/sick_note_convert";
+            return "thymeleaf/sicknote/sick_note_convert";
         }
 
         sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(clock), personService.getSignedInUser());

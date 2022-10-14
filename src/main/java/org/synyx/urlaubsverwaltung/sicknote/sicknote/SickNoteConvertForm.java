@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -97,5 +98,13 @@ public class SickNoteConvertForm {
         applicationForLeave.setEditedDate(LocalDate.now(clock));
 
         return applicationForLeave;
+    }
+
+    public DayOfWeek getWeekDayOfStartDate() {
+        return getStartDate().getDayOfWeek();
+    }
+
+    public DayOfWeek getWeekDayOfEndDate() {
+        return getEndDate().getDayOfWeek();
     }
 }

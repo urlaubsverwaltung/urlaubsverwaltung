@@ -1091,7 +1091,7 @@ class SickNoteViewControllerTest {
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
-            .andExpect(view().name("sicknote/sick_note_convert"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_convert"));
     }
 
     @Test
@@ -1118,7 +1118,7 @@ class SickNoteViewControllerTest {
         }).when(sickNoteConvertFormValidator).validate(any(), any());
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
-            .andExpect(view().name("sicknote/sick_note_convert"))
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_convert"))
             .andExpect(model().attribute("errors", instanceOf(Errors.class)))
             .andExpect(model().attribute("sickNote", instanceOf(ExtendedSickNote.class)))
             .andExpect(model().attribute("sickNoteConvertForm", instanceOf(SickNoteConvertForm.class)))
@@ -1141,7 +1141,7 @@ class SickNoteViewControllerTest {
         }).when(sickNoteConvertFormValidator).validate(any(), any());
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
-            .andExpect(view().name("sicknote/sick_note_convert"))
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_convert"))
             .andExpect(model().attribute("errors", instanceOf(Errors.class)))
             .andExpect(model().attribute("sickNote", instanceOf(ExtendedSickNote.class)))
             .andExpect(model().attribute("sickNoteConvertForm", instanceOf(SickNoteConvertForm.class)))
