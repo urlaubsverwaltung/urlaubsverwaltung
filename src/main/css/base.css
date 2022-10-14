@@ -24,10 +24,10 @@
   }
 
   @font-face {
-    font-family: 'KaushanScript';
-    src: local('KaushanScript'), local('KaushanScript Regular'), local('KaushanScript-Regular'),
-    url('/fonts/kaushanscript/KaushanScript-Regular.woff2') format('woff2'),
-    url('/fonts/kaushanscript/KaushanScript-Regular.woff') format('woff');
+    font-family: "KaushanScript";
+    src: local("KaushanScript"), local("KaushanScript Regular"), local("KaushanScript-Regular"),
+      url("/fonts/kaushanscript/KaushanScript-Regular.woff2") format("woff2"),
+      url("/fonts/kaushanscript/KaushanScript-Regular.woff") format("woff");
     font-display: swap;
   }
 }

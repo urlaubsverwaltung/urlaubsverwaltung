@@ -138,7 +138,7 @@ class SickNoteViewController {
 
             model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNote.getPerson()));
 
-            return "sicknote/sick_note";
+            return "thymeleaf/sicknote/sick_note";
         }
 
         throw new AccessDeniedException(format(
