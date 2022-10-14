@@ -53,8 +53,8 @@ class ApplicationForLeaveFormValidator implements Validator {
     private static final String ERROR_PERIOD = "error.entry.invalidPeriod";
     private static final String ERROR_HALF_DAY_PERIOD = "application.error.halfDayPeriod";
     private static final String ERROR_MISSING_REASON = "application.error.missingReasonForSpecialLeave";
-    private static final String ERROR_PAST = "application.error.tooFarInThePast";
-    private static final String ERROR_TOO_LONG = "application.error.tooFarInTheFuture";
+    private static final String ERROR_TOO_FAR_IN_PAST = "application.error.tooFarInThePast";
+    private static final String ERROR_TOO_FAR_IN_FUTURE = "application.error.tooFarInTheFuture";
     private static final String ERROR_ZERO_DAYS = "application.error.zeroDays";
     private static final String ERROR_OVERLAP = "application.error.overlap";
     private static final String ERROR_WORKING_TIME = "application.error.noValidWorkingTime";
@@ -259,7 +259,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         final LocalDate future = ZonedDateTime.now(clock).plusMonths(maximumMonths).toLocalDate();
 
         if (date.isAfter(future)) {
-            errors.reject(ERROR_TOO_LONG, new Object[]{settings.getMaximumMonthsToApplyForLeaveInAdvance()}, null);
+            errors.reject(ERROR_TOO_FAR_IN_FUTURE, new Object[]{settings.getMaximumMonthsToApplyForLeaveInAdvance()}, null);
         }
     }
 
@@ -269,7 +269,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         final LocalDate past = ZonedDateTime.now(clock).minusMonths(maximumMonths).toLocalDate();
 
         if (date.isBefore(past)) {
-            errors.reject(ERROR_PAST);
+            errors.reject(ERROR_TOO_FAR_IN_PAST, new Object[]{settings.getMaximumMonthsToApplyForLeaveInAdvance()}, null);
         }
     }
 

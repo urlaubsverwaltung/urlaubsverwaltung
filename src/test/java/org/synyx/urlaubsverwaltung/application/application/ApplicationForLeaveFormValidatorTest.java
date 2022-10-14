@@ -24,7 +24,6 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Time;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -161,7 +160,7 @@ class ApplicationForLeaveFormValidatorTest {
     @Test
     void ensureVeryPastDateIsNotValid() {
 
-        setupOvertimeSettings();
+        final Settings settings = setupOvertimeSettings();
 
         final LocalDate pastDate = LocalDate.now(UTC).minusYears(10);
 
@@ -171,7 +170,9 @@ class ApplicationForLeaveFormValidatorTest {
 
         sut.validate(appForm, errors);
 
-        verify(errors).reject("application.error.tooFarInThePast");
+        verify(errors)
+            .reject("application.error.tooFarInThePast",
+                new Object[]{settings.getApplicationSettings().getMaximumMonthsToApplyForLeaveInAdvance()}, null);
     }
 
     @Test
