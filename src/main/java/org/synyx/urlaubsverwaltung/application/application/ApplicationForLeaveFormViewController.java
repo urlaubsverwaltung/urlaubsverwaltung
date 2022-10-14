@@ -317,12 +317,12 @@ class ApplicationForLeaveFormViewController {
 
         final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
         if (maybeApplication.isEmpty()) {
-            return "application/app_notwaiting";
+            return "thymeleaf/application/application-notwaiting";
         }
 
         final Application application = maybeApplication.get();
         if (!WAITING.equals(application.getStatus())) {
-            return "application/app_notwaiting";
+            return "thymeleaf/application/application-notwaiting";
         }
 
         final Person signedInUser = personService.getSignedInUser();
@@ -390,7 +390,7 @@ class ApplicationForLeaveFormViewController {
         try {
             savedApplicationForLeave = applicationInteractionService.edit(application, editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()));
         } catch (EditApplicationForLeaveNotAllowedException e) {
-            return "application/app_notwaiting";
+            return "thymeleaf/application/application-notwaiting";
         }
 
         LOG.debug("Edited application with success applied {}", savedApplicationForLeave);

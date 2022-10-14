@@ -1247,7 +1247,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
-            .andExpect(view().name("application/app_notwaiting"));
+            .andExpect(view().name("thymeleaf/application/application-notwaiting"));
     }
 
     @Test
@@ -1261,7 +1261,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
-            .andExpect(view().name("application/app_notwaiting"));
+            .andExpect(view().name("thymeleaf/application/application-notwaiting"));
     }
 
     @Test
@@ -1515,7 +1515,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("dayLength", "FULL")
             .param("comment", "comment"))
             .andExpect(status().isOk())
-            .andExpect(view().name("application/app_notwaiting"));
+            .andExpect(view().name("thymeleaf/application/application-notwaiting"));
     }
 
     @Test
