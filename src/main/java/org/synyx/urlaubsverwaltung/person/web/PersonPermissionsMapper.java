@@ -67,6 +67,7 @@ final class PersonPermissionsMapper {
                 case APPLICATION_ADD_CANCEL:
                     mappedToRoles.add(Role.APPLICATION_ADD);
                     mappedToRoles.add(Role.APPLICATION_CANCEL);
+                    mappedToRoles.add(Role.APPLICATION_CANCELLATION_REQUESTED);
                     break;
                 default:
                     break;
@@ -110,6 +111,7 @@ final class PersonPermissionsMapper {
                     break;
                 case APPLICATION_ADD:
                 case APPLICATION_CANCEL:
+                case APPLICATION_CANCELLATION_REQUESTED:
                     mappedToRolesDto.add(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL);
                     break;
                 default:

@@ -11,9 +11,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
-import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
+import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -51,6 +51,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -923,9 +924,125 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     @Test
-    void cancelCancellationRequestApplication() throws Exception {
+    void cancelCancellationRequestApplicationAllowedForOffice() throws Exception {
 
         final Person signedInPerson = personWithRole(OFFICE);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final Application cancellationRequestedApplication = cancellationRequestedApplication();
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication));
+
+        perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+
+        verify(applicationInteractionService).declineCancellationRequest(eq(cancellationRequestedApplication), eq(signedInPerson), any());
+    }
+
+    @Test
+    void cancelCancellationRequestApplicationNotAllowedForDepartmentHeadWithoutCancellationRequested() {
+
+        final Person signedInPerson = personWithRole(DEPARTMENT_HEAD);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final Application cancellationRequestedApplication = cancellationRequestedApplication();
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, cancellationRequestedApplication.getPerson())).thenReturn(true);
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void cancelCancellationRequestApplicationNotAllowedForDepartmentHeadForPersonNotInDepartment() {
+
+        final Person signedInPerson = personWithRole(DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final Application cancellationRequestedApplication = cancellationRequestedApplication();
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, cancellationRequestedApplication.getPerson())).thenReturn(false);
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void cancelCancellationRequestApplicationAllowedForDepartmentHeadWithCancellationRequested() throws Exception {
+
+        final Person signedInPerson = personWithRole(DEPARTMENT_HEAD, APPLICATION_CANCELLATION_REQUESTED);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final Application cancellationRequestedApplication = cancellationRequestedApplication();
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, cancellationRequestedApplication.getPerson())).thenReturn(true);
+
+        perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+
+        verify(applicationInteractionService).declineCancellationRequest(eq(cancellationRequestedApplication), eq(signedInPerson), any());
+    }
+
+    @Test
+    void cancelCancellationRequestApplicationNotAllowedForSecondStageAuthorityWithoutCancellationRequested() {
+
+        final Person signedInPerson = personWithRole(SECOND_STAGE_AUTHORITY);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final Application cancellationRequestedApplication = cancellationRequestedApplication();
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, cancellationRequestedApplication.getPerson())).thenReturn(true);
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void cancelCancellationRequestApplicationNotAllowedForSecondStageAuthorityForPersonNotInDepartment() {
+
+        final Person signedInPerson = personWithRole(SECOND_STAGE_AUTHORITY, APPLICATION_CANCELLATION_REQUESTED);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final Application cancellationRequestedApplication = cancellationRequestedApplication();
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, cancellationRequestedApplication.getPerson())).thenReturn(false);
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void cancelCancellationRequestApplicationAllowedSecondStageAuthorityWithCancellationRequested() throws Exception {
+
+        final Person signedInPerson = personWithRole(SECOND_STAGE_AUTHORITY, APPLICATION_CANCELLATION_REQUESTED);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final Application cancellationRequestedApplication = cancellationRequestedApplication();
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, cancellationRequestedApplication.getPerson())).thenReturn(true);
+
+        perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+
+        verify(applicationInteractionService).declineCancellationRequest(eq(cancellationRequestedApplication), eq(signedInPerson), any());
+    }
+
+    @Test
+    void cancelCancellationRequestApplicationNotAllowedForBossWithoutCancellationRequested() {
+
+        final Person signedInPerson = personWithRole(BOSS);
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final Application cancellationRequestedApplication = cancellationRequestedApplication();
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/decline-cancellation-request"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void cancelCancellationRequestApplicationAllowedForBossWithCancellationRequested() throws Exception {
+
+        final Person signedInPerson = personWithRole(BOSS, APPLICATION_CANCELLATION_REQUESTED);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         final Application cancellationRequestedApplication = cancellationRequestedApplication();
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(cancellationRequestedApplication));
@@ -1082,7 +1199,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
     private static Application allowedApplication() {
 
-        Application application = someApplication();
+        final Application application = someApplication();
         application.setStatus(ALLOWED);
 
         return application;
@@ -1090,7 +1207,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
     private static Application temporaryAllowedApplication() {
 
-        Application application = someApplication();
+        final Application application = someApplication();
         application.setStatus(TEMPORARY_ALLOWED);
 
         return application;
@@ -1098,7 +1215,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
     private static Application waitingApplication() {
 
-        Application application = someApplication();
+        final Application application = someApplication();
         application.setStatus(WAITING);
 
         return application;
@@ -1106,7 +1223,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
     private static Application cancellationRequestedApplication() {
 
-        Application application = someApplication();
+        final Application application = someApplication();
         application.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
         return application;
@@ -1114,18 +1231,16 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
     private static Application rejectedApplication() {
 
-        Application application = someApplication();
+        final Application application = someApplication();
         application.setStatus(REJECTED);
 
         return application;
     }
 
-    private static Person personWithRole(Role role) {
-
-        Person person = new Person();
+    private static Person personWithRole(Role... role) {
+        final Person person = new Person();
         person.setId(1);
-        person.setPermissions(singletonList(role));
-
+        person.setPermissions(List.of(role));
         return person;
     }
 

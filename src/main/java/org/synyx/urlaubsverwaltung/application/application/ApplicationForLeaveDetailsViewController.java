@@ -320,9 +320,12 @@ class ApplicationForLeaveDetailsViewController {
         final Application application = applicationService.getApplicationById(applicationId)
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
 
+        final Person person = application.getPerson();
         final Person signedInUser = personService.getSignedInUser();
 
-        final boolean allowedToDeclineCancellationRequest = isAllowedToDeclineCancellationRequest(application, signedInUser);
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
+        final boolean allowedToDeclineCancellationRequest = isAllowedToDeclineCancellationRequest(application, signedInUser, isDepartmentHead, isSecondStageAuthority);
         if (!allowedToDeclineCancellationRequest) {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to cancel a cancellation request of " +
                 "application for leave of user '%s'", signedInUser.getId(), application.getPerson().getId()));
@@ -446,7 +449,7 @@ class ApplicationForLeaveDetailsViewController {
         model.addAttribute("isAllowedToCancelDirectlyApplication", isAllowedToCancelDirectlyApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApproval));
         model.addAttribute("isAllowedToStartCancellationRequest", isAllowedToStartCancellationRequest(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApproval));
 
-        model.addAttribute("isAllowedToDeclineCancellationRequest", isAllowedToDeclineCancellationRequest(application, signedInUser));
+        model.addAttribute("isAllowedToDeclineCancellationRequest", isAllowedToDeclineCancellationRequest(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
 
         model.addAttribute("isAllowedToEditApplication", isAllowedToEditApplication(application, signedInUser));
         model.addAttribute("isAllowedToRemindApplication", isAllowedToRemindApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
