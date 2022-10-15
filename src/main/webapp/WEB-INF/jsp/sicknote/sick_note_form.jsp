@@ -21,7 +21,7 @@
     </title>
     <uv:custom-head/>
     <script>
-        window.uv = {};
+        window.uv = window.uv || {};
         window.uv.personId = '<c:out value="${person.id}" />';
         window.uv.webPrefix = "<spring:url value='/web' />";
         window.uv.apiPrefix = "<spring:url value='/api' />";
