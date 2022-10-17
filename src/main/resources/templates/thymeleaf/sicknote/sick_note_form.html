@@ -20,7 +20,7 @@
     <script th:inline="javascript">
       /*<![CDATA[*/
       window.uv = window.uv || {};
-      window.uv.personId = /*[[${userId}]]*/ "personId";
+      window.uv.personId = /*[[${sickNote.person == null ? userId : sickNote.person.id}]]*/ "personId";
       window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
       window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
       window.uv.sickNote = {};
