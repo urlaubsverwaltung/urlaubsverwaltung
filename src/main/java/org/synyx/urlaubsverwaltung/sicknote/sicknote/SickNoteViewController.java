@@ -64,7 +64,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteMapper.merge
 class SickNoteViewController {
 
     private static final String PERSONS_ATTRIBUTE = "persons";
-    private static final String SICKNOTE_SICK_NOTE_FORM = "sicknote/sick_note_form";
+    private static final String SICKNOTE_SICK_NOTE_FORM = "thymeleaf/sicknote/sick_note_form";
     private static final String SICK_NOTE = "sickNote";
     private static final String SICK_NOTE_TYPES = "sickNoteTypes";
     private static final String REDIRECT_WEB_SICKNOTE = "redirect:/web/sicknote/";

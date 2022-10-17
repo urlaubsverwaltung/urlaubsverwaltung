@@ -129,7 +129,7 @@ class SickNoteViewControllerTest {
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", activePersons))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
-            .andExpect(view().name("sicknote/sick_note_form"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
 
     @Test
@@ -148,7 +148,7 @@ class SickNoteViewControllerTest {
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", departmentPersons))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
-            .andExpect(view().name("sicknote/sick_note_form"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
 
     @Test
@@ -167,7 +167,7 @@ class SickNoteViewControllerTest {
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", departmentPersons))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
-            .andExpect(view().name("sicknote/sick_note_form"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
 
     @Test
@@ -198,7 +198,7 @@ class SickNoteViewControllerTest {
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", of(person, person2)))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
-            .andExpect(view().name("sicknote/sick_note_form"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
 
     @Test
@@ -224,7 +224,7 @@ class SickNoteViewControllerTest {
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", of(person)))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
-            .andExpect(view().name("sicknote/sick_note_form"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
 
     @Test
@@ -255,7 +255,7 @@ class SickNoteViewControllerTest {
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", of(person2, person)))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
-            .andExpect(view().name("sicknote/sick_note_form"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
 
     @Test
@@ -276,7 +276,7 @@ class SickNoteViewControllerTest {
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("sicknote/sick_note_form"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
 
     @Test
@@ -719,7 +719,7 @@ class SickNoteViewControllerTest {
 
         perform(post("/web/sicknote"))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("sicknote/sick_note_form"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
 
     @ParameterizedTest
@@ -898,7 +898,7 @@ class SickNoteViewControllerTest {
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("sicknote/sick_note_form"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
 
     @Test

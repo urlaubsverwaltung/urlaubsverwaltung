@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="_layout::head(~{::title}, ~{::styles}, ~{::scripts})">
+  <title th:text="${sickNote.id == null} ? #{sicknote.create.header.title} : #{sicknote.edit.header.title}">
+    Neue Krankmeldung
+  </title>
+  <th:block th:fragment="styles">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      asset:href="account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      asset:href="account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css"
+    />
+  </th:block>
+  <th:block th:fragment="scripts">
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      window.uv = window.uv || {};
+      window.uv.personId = /*[[${userId}]]*/ "personId";
+      window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
+      window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
+      window.uv.sickNote = {};
+      window.uv.sickNote.id = /*[[${sickNote.id}]]*/ "sickNoteId";
+      window.uv.sickNote.person = {};
+      window.uv.sickNote.person.id = /*[[${sickNote.person != null ? sickNote.person.id : ''}]]*/ "sickNotePersonId";
+      window.uv.params = {};
+      window.uv.params.person = /*[[${param.person}]]*/ "paramPerson";
+      /*]]>*/
+    </script>
+    <script defer asset:src="npm.duetds.js"></script>
+    <script defer asset:src="npm.date-fns.js"></script>
+    <script
+      defer
+      asset:src="account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.js"
+    ></script>
+    <script
+      defer
+      asset:src="account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.js"
+    ></script>
+    <script
+      defer
+      asset:src="account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~704d57c1.js"
+    ></script>
+    <script defer asset:src="sick_note_form.js"></script>
+    <script th:replace="fragments/datepicker-localization"></script>
+    <script th:replace="fragments/vacation-type-colors-script :: vacation-type-colors-script"></script>
+  </th:block>
+</head>
+<body th:replace="_layout::body(~{::main}, ~{})">
+<main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+  <form
+    method="post"
+    th:action="${sickNote.id == null ? '/web/sicknote' : '/web/sicknote/__${sickNote.id}__/edit/'}"
+    th:object="${sickNote}"
+    class="form-horizontal"
+  >
+    <div class="row">
+      <p class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}"></p>
+    </div>
+
+    <div class="form-section tw-mb-4 lg:tw-mb-6">
+      <div th:replace="fragments/section-heading::section-heading(~{::sicknote-heading-body}, ~{})">
+        <th:block th:ref="sicknote-heading-body">
+          <h2
+            th:with="createOrEditTranslation=${sickNote.id == null} ? #{sicknote.create.title} : #{sicknote.edit.title}"
+            th:text="${createOrEditTranslation}"
+          >
+            AU-Bescheinigung
+          </h2>
+        </th:block>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 col-md-push-8">
+              <span class="help-block help-block tw-text-sm">
+                <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                <th:block th:text="#{sicknote.data.description}"></th:block>
+              </span>
+        </div>
+
+        <div class="col-md-8 col-md-pull-4">
+          <div class="form-group is-required">
+            <label th:text="|#{sicknote.data.person}:|" class="control-label col-md-3" for="employee"> </label>
+
+            <div class="col-md-9">
+              <th:block th:if="${sickNote.id == null}">
+                <select
+                  th:replace="fragments/select::one(id='employee', name='person', options=~{::sicknote-person-select-options}, testId='person-select')"
+                  id="employee"
+                >
+                  <th:block th:fragment="sicknote-person-select-options">
+                    <option
+                      th:each="person: ${persons}"
+                      th:text="${person.niceName}"
+                      th:value="${person.id}"
+                      th:selected="${sickNote.person != null && sickNote.person.id == person.id}"
+                    ></option>
+                  </th:block>
+                </select>
+              </th:block>
+              <th:block th:if="${sickNote.id != null}">
+                <input type="hidden" th:field="*{id}">
+                <input type="hidden" th:field="*{person}" th:value="${sickNote.person.id}">
+                <th:block th:text="${sickNote.person.niceName}"></th:block>
+              </th:block>
+            </div>
+          </div>
+
+          <div class="form-group is-required">
+            <label th:text="|#{sicknote.data.type}:|" class="control-label col-md-3" for="sickNoteType"> </label>
+
+            <div class="col-md-9">
+              <select
+                th:replace="fragments/select::one(id='sickNoteType', name='sickNoteType', options=~{::sicknotetype-select-options}, testId='sicknote-type-select')"
+                id="sickNoteType"
+              >
+                <th:block th:fragment="sicknotetype-select-options">
+                  <option
+                    th:each="sickNoteType: ${sickNoteTypes}"
+                    th:text="#{__${sickNoteType.messageKey}__}"
+                    th:value="${sickNoteType.id}"
+                    th:selected="${sickNoteType == sickNote.sickNoteType}"
+                  ></option>
+                </th:block>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group is-required">
+            <label th:text="|#{absence.period}:|" class="control-label col-md-3" for="dayLength"> </label>
+            <div class="col-md-9">
+              <div class="radio">
+                <label class="thirds">
+                  <input
+                    id="dayLength"
+                    type="radio"
+                    th:field="*{dayLength}"
+                    value="FULL"
+                    th:selected="true"
+                    data-test-id="day-type-full"
+                  />
+                  <th:block th:text="#{FULL}"/>
+                </label>
+                <label class="thirds">
+                  <input
+                    type="radio"
+                    th:field="*{dayLength}"
+                    value="MORNING"
+                    checked="checked"
+                    data-test-id="day-type-morning"
+                  />
+                  <th:block th:text="#{MORNING}"/>
+                </label>
+                <label class="thirds">
+                  <input
+                    type="radio"
+                    th:field="*{dayLength}"
+                    value="NOON"
+                    checked="checked"
+                    data-test-id="day-type-noon"
+                  />
+                  <th:block th:text="#{NOON}"/>
+                </label>
+              </div>
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('dayLength')}"
+              >
+                <th:block th:errors="*{dayLength}">dayLength Error</th:block>
+              </p>
+            </div>
+          </div>
+
+          <div class="form-group is-required">
+            <label th:text="|#{absence.period.startDate}:|" class="control-label col-md-3" for="from"> </label>
+            <div class="col-md-9">
+              <input
+                id="from"
+                th:field="*{startDate}"
+                th:data-iso-value="${sickNote.startDateIsoValue}"
+                class="form-control"
+                th:errorclass="error"
+                autocomplete="off"
+                th:placeholder="#{pattern.date}"
+                data-test-id="sicknote-from-date"
+              />
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('startDate')}"
+              >
+                <th:block th:errors="*{startDate}">startDate Error</th:block>
+              </p>
+            </div>
+          </div>
+
+          <div class="form-group is-required">
+            <label th:text="|#{absence.period.endDate}:|" class="control-label col-md-3" for="to"> </label>
+            <div class="col-md-9">
+              <input
+                id="to"
+                th:field="*{endDate}"
+                th:data-iso-value="${sickNote.endDateIsoValue}"
+                class="form-control"
+                th:errorclass="error"
+                autocomplete="off"
+                th:placeholder="#{pattern.date}"
+                data-test-id="sicknote-to-date"
+              />
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('endDate')}"
+              >
+                <th:block th:errors="*{endDate}">endDate Error</th:block>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section tw-mb-4 lg:tw-mb-6">
+      <div th:replace="fragments/section-heading::section-heading(~{::sicknote-au-heading-body}, ~{})">
+        <th:block th:ref="sicknote-au-heading-body">
+          <h2 th:text="#{sicknote.data.aub.short}">AU-Bescheinigung</h2>
+        </th:block>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 col-md-push-8">
+              <span class="help-block help-block tw-text-sm">
+                <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                &nbsp<th:block th:text="#{sicknote.data.aub.description}"></th:block>
+              </span>
+        </div>
+        <div class="col-md-8 col-md-pull-4">
+          <div class="form-group AU">
+            <label th:text="|#{absence.period.startDate}:|" class="control-label col-md-3" for="aubFrom"> </label>
+
+            <div class="col-md-9">
+              <input
+                id="aubFrom"
+                th:field="*{aubStartDate}"
+                th:data-iso-value="${sickNote.aubStartDateIsoValue}"
+                class="form-control"
+                th:errorclass="error"
+                autocomplete="off"
+                th:placeholder="#{pattern.date}"
+                data-test-id="sicknote-aub-from"
+              />
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('aubStartDate')}"
+              >
+                <th:block th:errors="*{aubStartDate}">aubStartDate Error</th:block>
+              </p>
+            </div>
+          </div>
+          <div class="form-group AU">
+            <label th:text="|#{absence.period.endDate}|" class="control-label col-md-3" for="aubTo"> </label>
+
+            <div class="col-md-9">
+              <input
+                id="aubTo"
+                th:field="*{aubEndDate}"
+                th:data-iso-value="${sickNote.aubEndDateIsoValue}"
+                class="form-control"
+                th:errorclass="error"
+                autocomplete="off"
+                th:placeholder="#{pattern.date}"
+                data-test-id="sicknote-aub-to"
+              />
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('aubEndDate')}"
+              >
+                <th:block th:errors="*{aubEndDate}">aubEndDate Error</th:block>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section tw-mb-16">
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::sicknote-further-information-heading-body}, ~{})"
+      >
+        <th:block th:ref="sicknote-further-information-heading-body">
+          <h2 th:text="#{sicknote.data.furtherInformation.title}">Weitere Informationen</h2>
+        </th:block>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 col-md-push-8">
+              <span class="help-block help-block tw-text-sm">
+                <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                &nbsp;<th:block th:text="#{sicknote.data.furtherInformation.description}"></th:block>
+              </span>
+        </div>
+        <div class="col-md-8 col-md-pull-4">
+          <div class="form-group">
+            <label
+              th:text="|#{sicknote.data.furtherInformation.comment}:|"
+              class="control-label col-md-3"
+              for="comment"
+            >
+            </label>
+            <div class="col-md-9">
+              <small>
+                <span id="text-comment"></span>
+                <th:block th:text="#{action.comment.maxChars}"></th:block>
+              </small>
+              <textarea
+                id="comment"
+                rows="1"
+                th:field="*{comment}"
+                class="form-control"
+                th:errorclass="error"
+                onkeyup="count(this.value, 'text-comment');"
+                onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
+              ></textarea>
+              <p
+                class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('comment')}"
+              >
+                <th:block th:errors="*{comment}">comment Error</th:block>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="row tw-mb-16">
+        <div class="col-xs-12">
+          <hr/>
+          <button
+            th:text="#{action.save}"
+            class="button-main-green col-xs-12 col-sm-5 col-md-2"
+            type="submit"
+            data-test-id="sicknote-submit-button"
+          ></button>
+          <button
+            th:text="#{action.cancel}"
+            class="button col-xs-12 col-sm-5 col-md-2 pull-right"
+            type="button"
+            data-back-button
+          ></button>
+        </div>
+      </div>
+    </div>
+  </form>
+</main>
+</body>
+</html>

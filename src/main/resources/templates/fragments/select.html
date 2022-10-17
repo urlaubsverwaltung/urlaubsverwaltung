@@ -9,13 +9,13 @@
       th:fragment="one(id, name, options)"
       class="tw-inline-block tw-relative tw-w-full"
       th:classappend="${class}"
-      th:with="autosubmit=${autosubmit ?: ''}"
+      th:with="autosubmit=${autosubmit ?: ''}, testId=${testId ?: ''}"
     >
       <select
         th:id="${id}"
         th:name="${name}"
         class="form-control tw-appearance-none tw-pr-8"
-        th:attrappend="data-auto-submit=${#strings.isEmpty(autosubmit) ? '' : autosubmit}"
+        th:attrappend="data-auto-submit=${#strings.isEmpty(autosubmit) ? '' : autosubmit}, data-test-id=${#strings.isEmpty(testId) ? '' : testId}"
       >
         <option th:replace="${options}"></option>
       </select>
@@ -38,8 +38,15 @@
       th:fragment="multi(id, name, options)"
       class="tw-inline-block tw-relative tw-w-full"
       th:classappend="${class}"
+      th:with="testId=${testId ?: ''}"
     >
-      <select multiple th:id="${id}" th:name="${name}" class="form-control tw-appearance-none tw-pr-8">
+      <select
+        multiple
+        th:id="${id}"
+        th:name="${name}"
+        class="form-control tw-appearance-none tw-pr-8"
+        th:attrappend="data-test-id=${#strings.isEmpty(testId) ? '' : testId}"
+      >
         <option th:replace="${options}"></option>
       </select>
       <span

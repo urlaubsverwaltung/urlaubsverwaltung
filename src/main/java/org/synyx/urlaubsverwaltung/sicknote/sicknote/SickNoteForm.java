@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ISO_DATE;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
@@ -24,7 +25,7 @@ public class SickNoteForm {
     private LocalDate startDate;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate endDate;
-    private DayLength dayLength;
+    private DayLength dayLength = FULL;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate aubStartDate;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
