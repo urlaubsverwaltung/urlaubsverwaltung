@@ -53,6 +53,6 @@ class ApplicationCommentServiceImpl implements ApplicationCommentService {
     public void deleteCommentAuthor(Person author) {
         final List<ApplicationComment> applicationComments = commentRepository.findByPerson(author);
         applicationComments.forEach(applicationComment -> applicationComment.setPerson(null));
-        applicationComments.forEach(commentRepository::save);
+        commentRepository.saveAll(applicationComments);
     }
 }

@@ -149,7 +149,7 @@ class ApplicationServiceImpl implements ApplicationService {
     public void deleteInteractionWithApplications(Person person) {
         final List<Application> applicationsWithoutBoss = applicationRepository.findByBoss(person);
         applicationsWithoutBoss.forEach(application -> application.setBoss(null));
-        applicationsWithoutBoss.forEach(applicationRepository::save);
+        applicationRepository.saveAll(applicationsWithoutBoss);
 
         final List<Application> applicationsWithoutCanceller = applicationRepository.findByCanceller(person);
         applicationsWithoutCanceller.forEach(application -> application.setCanceller(null));
