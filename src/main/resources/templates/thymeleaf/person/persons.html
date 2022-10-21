@@ -9,6 +9,9 @@
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0" data-turbo="true">
+      <div class="feedback">
+        <p th:if="${personDeletionSuccess}" th:text="#{person.account.action.deletion.success(${personDeletionSuccess})}" class="alert alert-success"></p>
+      </div>
       <div
         th:replace="fragments/section-heading::section-heading(~{::persons-overview-heading-body}, ~{::persons-overview-heading-actions})"
       >

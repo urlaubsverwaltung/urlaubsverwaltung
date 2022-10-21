@@ -432,7 +432,6 @@
                 </a>
               </th:block>
             </div>
-
             <div
               th:replace="fragments/box::box-with-icon(~{::person-details-federalstate-box-icon}, ~{::person-details-federalstate-box-body})"
             >
@@ -461,6 +460,42 @@
                     <th:block th:text="#{__${federalStateCode}__}"></th:block>
                   </span>
                 </p>
+              </th:block>
+            </div>
+          </div>
+
+          <div class="md:tw-col-start-2 md:tw-row-start-4">
+            <div
+                    th:replace="fragments/section-heading::section-heading(~{::person-details-dangerzone-body}, ~{::person-details-dangerzone-actions})"
+            >
+              <th:block th:ref="person-details-dangerzone-body">
+                <h2 th:text="#{person.account.dangerzone.title}">Löschen</h2>
+              </th:block>
+            </div>
+            <div
+                    th:replace="fragments/box::box-with-icon(~{::person-details-dangerzone-box-icon}, ~{::person-details-dangerzone-box-body})"
+            >
+              <th:block th:ref="person-details-dangerzone-box-icon">
+                <div
+                        th:replace="fragments/rounded::block(content=~{::person-details-dangerzone-box-icon-rounded}, className='tw-bg-red-500 tw-text-white dark:tw-bg-red-500 dark:tw-text-zinc-900')"
+                >
+                  <th:block th:ref="person-details-dangerzone-box-icon-rounded">
+                    <svg th:replace="icon/trash::svg(className='tw-w-8 tw-h-8')" />
+                  </th:block>
+                </div>
+              </th:block>
+              <th:block th:ref="person-details-dangerzone-box-body">
+                <form
+                        id="person-delete-form"
+                        method="post"
+                        th:action="@{/web/person/__${person.id}__/delete}"
+                >
+                  <button
+                          th:text="#{person.account.dangerzone.button}"
+                          class="button-danger tw-w-48 tw-h-8"
+                          type="submit"
+                  >Benutzer endgültig löschen</button>
+                </form>
               </th:block>
             </div>
           </div>
