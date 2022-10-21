@@ -15,7 +15,7 @@
         th:id="${id}"
         th:name="${name}"
         class="form-control tw-appearance-none tw-pr-8"
-        th:attrappend="data-auto-submit=${#strings.isEmpty(autosubmit) ? '' : autosubmit}, data-test-id=${#strings.isEmpty(testId) ? '' : testId}"
+        th:attrappend="data-auto-submit=${autosubmit}, data-test-id=${testId}"
       >
         <option th:replace="${options}"></option>
       </select>
@@ -45,7 +45,7 @@
         th:id="${id}"
         th:name="${name}"
         class="form-control tw-appearance-none tw-pr-8"
-        th:attrappend="data-test-id=${#strings.isEmpty(testId) ? '' : testId}"
+        th:attrappend="data-test-id=${testId}"
       >
         <option th:replace="${options}"></option>
       </select>
