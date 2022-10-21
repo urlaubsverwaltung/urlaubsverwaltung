@@ -103,6 +103,7 @@ fieldset[disabled] .tw-form-control {
 
 **************************************************************************/
 
+label.is-required:after,
 .form-group.is-required > label:after {
   content: "*";
 }
