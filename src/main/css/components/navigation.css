@@ -33,7 +33,7 @@
     .navigation-list {
       @apply tw-grid-flow-col;
       grid-template-columns: repeat(auto-fit, minmax(0, min-content));
-      max-width:100%;
+      max-width: 100%;
     }
   }
 

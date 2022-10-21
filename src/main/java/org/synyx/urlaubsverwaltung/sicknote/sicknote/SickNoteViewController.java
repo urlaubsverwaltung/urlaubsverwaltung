@@ -64,7 +64,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteMapper.merge
 class SickNoteViewController {
 
     private static final String PERSONS_ATTRIBUTE = "persons";
-    private static final String SICKNOTE_SICK_NOTE_FORM = "sicknote/sick_note_form";
+    private static final String SICKNOTE_SICK_NOTE_FORM = "thymeleaf/sicknote/sick_note_form";
     private static final String SICK_NOTE = "sickNote";
     private static final String SICK_NOTE_TYPES = "sickNoteTypes";
     private static final String REDIRECT_WEB_SICKNOTE = "redirect:/web/sicknote/";
@@ -138,7 +138,7 @@ class SickNoteViewController {
 
             model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNote.getPerson()));
 
-            return "sicknote/sick_note";
+            return "thymeleaf/sicknote/sick_note";
         }
 
         throw new AccessDeniedException(format(
@@ -283,7 +283,7 @@ class SickNoteViewController {
         model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote));
         model.addAttribute("vacationTypes", getActiveVacationTypes());
 
-        return "sicknote/sick_note_convert";
+        return "thymeleaf/sicknote/sick_note_convert";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -301,7 +301,7 @@ class SickNoteViewController {
             model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
             model.addAttribute("vacationTypes", getActiveVacationTypes());
 
-            return "sicknote/sick_note_convert";
+            return "thymeleaf/sicknote/sick_note_convert";
         }
 
         sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(clock), personService.getSignedInUser());
