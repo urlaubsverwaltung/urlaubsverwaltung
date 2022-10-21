@@ -29,7 +29,7 @@
                         Urlaubsverwaltung
                     </a>
                 </div>
-                <div class="tw-flex-1 tw-order-last tw-flex tw-justify-end">
+                <div class="tw-flex-1 tw-order-last tw-flex tw-items-start">
                     <div class="tw-py-3 lg:tw-py-2 tw-flex tw-space-x-2">
                         <c:choose>
                             <c:when test="${navigationRequestPopupEnabled}">
