@@ -13,7 +13,10 @@
   </head>
 
   <body th:replace="_layout::body(~{::main}, ~{})">
-    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+    <main
+      th:fragment="main"
+      class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 lg:tw-grid lg:tw-grid-cols-2 lg:tw-gap-8"
+    >
       <div>
         <div
           th:replace="fragments/section-heading::section-heading(~{::sicknote-heading-body}, ~{::sicknote-heading-actions})"
@@ -167,7 +170,6 @@
           </tbody>
         </table>
       </div>
-
       <div>
         <div
           th:replace="fragments/section-heading::section-heading(~{::sicknote-progress-heading-body}, ~{::sicknote-progress-heading-actions})"
