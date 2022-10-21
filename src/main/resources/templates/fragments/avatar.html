@@ -12,9 +12,12 @@
       alt=""
       th:alt="#{gravatar.alt(${username})}"
       class="gravatar gravatar--medium tw-rounded-full"
+      th:classappend="${className}"
       th:width="${width == null ? '32px' : width}"
       th:height="${height == null ? '32px' : height}"
-      onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+      th:with="fallbackAvatarUrl=@{/web/avatar (name=${username})}"
+      th:data-fallback="${fallbackAvatarUrl}"
+      onerror="this.onerror=null;this.src=this.dataset.fallback"
     />
 
     <span

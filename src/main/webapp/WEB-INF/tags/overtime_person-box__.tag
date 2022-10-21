@@ -13,12 +13,12 @@
     <jsp:attribute name="icon">
         <uv:box-icon>
             <img
-                src="<c:out value='${person.gravatarUrl}?d=mm&s=60'/>"
+                src="<c:out value='${person.gravatarUrl}?d=404&s=60'/>"
                 alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
                 class="gravatar tw-rounded-full"
                 width="60px"
                 height="60px"
-                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                onerror="this.onerror=null;this.src='<c:out value="${URL_PREFIX}/avatar?name=${person.niceName}"/>'"
             />
         </uv:box-icon>
     </jsp:attribute>

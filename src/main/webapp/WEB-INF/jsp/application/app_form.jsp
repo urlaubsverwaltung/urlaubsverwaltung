@@ -415,12 +415,12 @@
                                                         <div>
                                                             <div class="tw-flex">
                                                                 <img
-                                                                    src="<c:out value='${holidayReplacement.person.gravatarURL}?d=mm&s=40'/>"
+                                                                    src="<c:out value='${holidayReplacement.person.gravatarURL}?d=404&s=40'/>"
                                                                     alt="<spring:message code="gravatar.alt" arguments="${holidayReplacement.person.niceName}"/>"
                                                                     class="gravatar tw-rounded-full tw-mr-4 tw-mt-1"
                                                                     width="40px"
                                                                     height="40px"
-                                                                    onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                                                    onerror="this.onerror=null;this.src='<c:out value="${URL_PREFIX}/avatar?name=${holidayReplacement.person.niceName}"/>'"
                                                                 />
                                                                 <div>
                                                                     <div class="tw-flex tw-items-center tw-flex-wrap">

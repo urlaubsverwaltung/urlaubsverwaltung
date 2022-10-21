@@ -179,7 +179,7 @@
                                 <tr>
                                     <td>
                                         <uv:avatar
-                                            url="${application.person.gravatarURL}?d=mm&s=40"
+                                            url="${application.person.gravatarURL}?d=404&s=40"
                                             username="${application.person.niceName}"
                                             width="40px"
                                             height="40px"

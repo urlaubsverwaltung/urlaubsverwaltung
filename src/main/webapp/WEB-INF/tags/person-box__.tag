@@ -14,12 +14,12 @@
     <jsp:attribute name="icon">
         <div class="tw-inline-block tw-rounded-full tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-p-1">
             <img
-                src="<c:out value='${person.gravatarURL}?d=mm&s=60'/>"
+                src="<c:out value='${person.gravatarURL}?d=404&s=60'/>"
                 alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
                 class="gravatar tw-rounded-full"
                 width="60px"
                 height="60px"
-                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                onerror="this.onerror=null;this.src='<c:out value="${URL_PREFIX}/avatar?name=${person.niceName}"/>'"
             />
         </div>
     </jsp:attribute>

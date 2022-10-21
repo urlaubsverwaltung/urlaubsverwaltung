@@ -18,12 +18,12 @@
             <tr>
                 <td class="print:tw-hidden">
                     <img
-                        src="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"
+                        src="<c:out value='${comment.person.gravatarURL}?d=404&s=40'/>"
                         alt="<spring:message code="gravatar.alt" arguments="${comment.person.niceName}"/>"
                         class="gravatar gravatar--medium tw-rounded-full"
                         width="40px"
                         height="40px"
-                        onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                        onerror="this.onerror=null;this.src='<c:out value="${URL_PREFIX}/avatar?name=${comment.person.niceName}"/>'"
                     />
                 </td>
                 <td>

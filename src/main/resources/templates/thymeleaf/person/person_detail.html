@@ -37,7 +37,7 @@
             >
               <th:block th:ref="person-details-basedata-box-icon">
                 <img
-                  th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL},username=${person.niceName},width='60px',height='60px')"
+                  th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404'},username=${person.niceName},width='60px',height='60px')"
                   alt=""
                 />
               </th:block>

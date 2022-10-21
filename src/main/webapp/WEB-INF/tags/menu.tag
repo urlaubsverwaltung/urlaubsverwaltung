@@ -225,12 +225,12 @@
                             tabindex="-1"
                         >
                             <img
-                                src="<c:out value='${menuGravatarUrl}?d=mm'/>"
+                                src="<c:out value='${menuGravatarUrl}?d=404'/>"
                                 alt=""
                                 class="gravatar tw-rounded-full nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9"
                                 width="52px"
                                 height="52px"
-                                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                onerror="this.onerror=null;this.src='<c:out value="${URL_PREFIX}/avatar?name=${userFirstName + ' ' + userLastName}"/>'"
                             />
                             <span class="dropdown-caret tw-translate-x-px"></span>
                         </a>
@@ -247,12 +247,12 @@
                                             class="tw-bg-gradient-to-br tw-from-blue-50 tw-via-gray-100 tw-to-blue-100 dark:tw-from-sky-800 dark:tw-via-slate-800 dark:tw-to-sky-900 tw-bg-blue-50 tw-px-6 tw-py-3 tw-rounded-t-2xl tw-flex tw-items-center tw-gap-4 hover:tw-no-underline focus:tw-no-underline"
                                         >
                                             <img
-                                                src="<c:out value='${menuGravatarUrl}?d=mm&s=128'/>"
+                                                src="<c:out value='${menuGravatarUrl}?d=404&s=128'/>"
                                                 alt=""
                                                 class="gravatar tw-rounded-full"
                                                 width="64px"
                                                 height="64px"
-                                                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                                onerror="this.onerror=null;this.src='<c:out value="${URL_PREFIX}/avatar?name=${userFirstName}"/>'"
                                             />
                                             <p class="tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis">
                                                 <span class="tw-text-sm tw-block tw-text-gray-600 dark:tw-text-zinc-100">
