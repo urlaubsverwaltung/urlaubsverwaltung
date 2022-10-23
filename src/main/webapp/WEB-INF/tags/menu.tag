@@ -29,7 +29,106 @@
                         Urlaubsverwaltung
                     </a>
                 </div>
-                <div class="tw-absolute tw-right-0 tw-top-0 lg:tw-static lg:tw-order-last tw-flex tw-items-start">
+                <div class="tw-w-full tw-max-w-6xl tw-flex navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
+                    <ul class="navigation-list tw-list-none tw-m-0 tw-px-0 tw-py-8 lg:tw-py-3 lg:tw-px-2 xl:tw-px-0">
+                        <li class="tw-flex tw-items-center">
+                            <a
+                                href="${URL_PREFIX}/overview"
+                                id="home-link"
+                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+                                title="<spring:message code="nav.home.title"/>"
+                            >
+                                <icon:home className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
+                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
+                                    <spring:message code="nav.home.title"/>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="tw-flex tw-items-center">
+                            <a
+                                href="${URL_PREFIX}/application/new"
+                                id="application-new-link"
+                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+                                title="<spring:message code="nav.apply.title"/>"
+                            >
+                                <icon:plus-circle className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
+                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
+                                    <spring:message code="nav.apply.title"/>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="tw-flex tw-items-center">
+                            <a
+                                href="${URL_PREFIX}/application"
+                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+                                tile="<spring:message code="nav.vacation.title"/>"
+                            >
+                                <icon:calendar className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
+                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
+                                    <spring:message code="nav.vacation.title"/>
+                                </span>
+                            </a>
+                        </li>
+                        <c:if test="${navigationSickNoteStatisticsAccess}">
+                        <li class="tw-flex tw-items-center">
+                            <a
+                                href="${URL_PREFIX}/sicknote"
+                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2" data-test-id="navigation-sick-notes-link"
+                                title="<spring:message code="nav.sicknote.title"/>"
+                            >
+                                <icon:medkit className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
+                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
+                                    <spring:message code="nav.sicknote.title"/>
+                                </span>
+                            </a>
+                        </li>
+                        </c:if>
+                        <c:if test="${navigationPersonListAccess}">
+                        <li class="tw-flex tw-items-center">
+                            <a
+                                href="${URL_PREFIX}/person?active=true"
+                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+                                title="<spring:message code="nav.person.title"/>"
+                            >
+                                <icon:user className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
+                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
+                                    <spring:message code="nav.person.title"/>
+                                </span>
+                            </a>
+                        </li>
+                        </c:if>
+                        <c:if test="${navigationDepartmentAccess}">
+                        <li class="tw-flex tw-items-center">
+                            <a
+                                href="${URL_PREFIX}/department"
+                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+                                title="<spring:message code="nav.department.title"/>"
+                            >
+                                <icon:user-group className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
+                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
+                                    <spring:message code="nav.department.title"/>
+                                </span>
+                            </a>
+                        </li>
+                        </c:if>
+                        <c:if test="${navigationSettingsAccess}">
+                        <li class="tw-flex tw-items-center">
+                            <a
+                                href="${URL_PREFIX}/settings"
+                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+                                data-test-id="navigation-settings-link"
+                                <spring:message code="nav.settings.title"/>
+                            >
+                                <icon:cog className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
+                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
+                                    <spring:message code="nav.settings.title"/>
+                                </span>
+                            </a>
+                        </li>
+                        </c:if>
+                    </ul>
+                </div>
+                <div class="tw-absolute tw-right-0 tw-top-0 lg:tw-static tw-flex tw-items-start">
                     <div class="tw-px-6 lg:tw-px-0 tw-py-3 lg:tw-py-2 tw-flex tw-space-x-2">
                         <c:choose>
                             <c:when test="${navigationRequestPopupEnabled}">
@@ -232,105 +331,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="tw-w-full tw-max-w-6xl tw-flex navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
-                    <ul class="navigation-list tw-list-none tw-m-0 tw-px-0 tw-py-8 lg:tw-py-3 lg:tw-px-2 xl:tw-px-0">
-                        <li class="tw-flex tw-items-center">
-                            <a
-                                href="${URL_PREFIX}/overview"
-                                id="home-link"
-                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
-                                title="<spring:message code="nav.home.title"/>"
-                            >
-                                <icon:home className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
-                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
-                                    <spring:message code="nav.home.title"/>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="tw-flex tw-items-center">
-                            <a
-                                href="${URL_PREFIX}/application/new"
-                                id="application-new-link"
-                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
-                                title="<spring:message code="nav.apply.title"/>"
-                            >
-                                <icon:plus-circle className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
-                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
-                                    <spring:message code="nav.apply.title"/>
-                                </span>
-                            </a>
-                        </li>
-                        <li class="tw-flex tw-items-center">
-                            <a
-                                href="${URL_PREFIX}/application"
-                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
-                                tile="<spring:message code="nav.vacation.title"/>"
-                            >
-                                <icon:calendar className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
-                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
-                                    <spring:message code="nav.vacation.title"/>
-                                </span>
-                            </a>
-                        </li>
-                        <c:if test="${navigationSickNoteStatisticsAccess}">
-                        <li class="tw-flex tw-items-center">
-                            <a
-                                href="${URL_PREFIX}/sicknote"
-                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2" data-test-id="navigation-sick-notes-link"
-                                title="<spring:message code="nav.sicknote.title"/>"
-                            >
-                                <icon:medkit className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
-                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
-                                    <spring:message code="nav.sicknote.title"/>
-                                </span>
-                            </a>
-                        </li>
-                        </c:if>
-                        <c:if test="${navigationPersonListAccess}">
-                        <li class="tw-flex tw-items-center">
-                            <a
-                                href="${URL_PREFIX}/person?active=true"
-                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
-                                title="<spring:message code="nav.person.title"/>"
-                            >
-                                <icon:user className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
-                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
-                                    <spring:message code="nav.person.title"/>
-                                </span>
-                            </a>
-                        </li>
-                        </c:if>
-                        <c:if test="${navigationDepartmentAccess}">
-                        <li class="tw-flex tw-items-center">
-                            <a
-                                href="${URL_PREFIX}/department"
-                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
-                                title="<spring:message code="nav.department.title"/>"
-                            >
-                                <icon:user-group className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
-                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
-                                    <spring:message code="nav.department.title"/>
-                                </span>
-                            </a>
-                        </li>
-                        </c:if>
-                        <c:if test="${navigationSettingsAccess}">
-                        <li class="tw-flex tw-items-center">
-                            <a
-                                href="${URL_PREFIX}/settings"
-                                class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
-                                data-test-id="navigation-settings-link"
-                                <spring:message code="nav.settings.title"/>
-                            >
-                                <icon:cog className="tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400" />
-                                <span class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap" style="min-width: 0;">
-                                    <spring:message code="nav.settings.title"/>
-                                </span>
-                            </a>
-                        </li>
-                        </c:if>
-                    </ul>
                 </div>
             </div>
             <div class="navigation-content-spacer tw-flex tw-justify-between tw-w-full lg:tw-hidden">
