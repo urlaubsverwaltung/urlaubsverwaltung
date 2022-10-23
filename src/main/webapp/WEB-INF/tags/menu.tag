@@ -19,7 +19,7 @@
             </span>
         </label>
         <nav>
-            <div class="navigation-inner tw-flex tw-px-4 lg:tw-px-8">
+            <div class="navigation-inner tw-flex lg:tw-justify-between tw-px-6 lg:tw-px-8">
                 <div class="tw-flex-1 tw-hidden 2xl:tw-flex xl:tw-items-center">
                     <a
                         href="/"
@@ -29,8 +29,8 @@
                         Urlaubsverwaltung
                     </a>
                 </div>
-                <div class="tw-flex-1 tw-order-last tw-flex tw-items-start">
-                    <div class="tw-py-3 lg:tw-py-2 tw-flex tw-space-x-2">
+                <div class="tw-absolute tw-right-0 tw-top-0 lg:tw-static lg:tw-order-last tw-flex tw-items-start">
+                    <div class="tw-px-6 lg:tw-px-0 tw-py-3 lg:tw-py-2 tw-flex tw-space-x-2">
                         <c:choose>
                             <c:when test="${navigationRequestPopupEnabled}">
                                 <div class="tw-relative">
@@ -233,7 +233,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="tw-grow tw-w-full tw-max-w-6xl tw-px-4 lg:tw-px-0 tw-flex navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
+                <div class="tw-w-full tw-max-w-6xl tw-flex navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
                     <ul class="navigation-list tw-list-none tw-m-0 tw-px-0 tw-py-8 lg:tw-py-3 lg:tw-px-2 xl:tw-px-0">
                         <li class="tw-flex tw-items-center">
                             <a
