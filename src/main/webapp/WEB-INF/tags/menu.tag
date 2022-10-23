@@ -128,7 +128,7 @@
                         </c:if>
                     </ul>
                 </div>
-                <div class="tw-absolute tw-right-0 tw-top-0 lg:tw-static tw-flex tw-items-start">
+                <div class="tw-absolute tw-right-0 tw-top-0 lg:tw-static lg:tw-flex-1 tw-flex tw-justify-end">
                     <div class="tw-px-6 lg:tw-px-0 tw-py-3 lg:tw-py-2 tw-flex tw-space-x-2">
                         <c:choose>
                             <c:when test="${navigationRequestPopupEnabled}">
