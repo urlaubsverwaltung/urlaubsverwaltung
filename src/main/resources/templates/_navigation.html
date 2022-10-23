@@ -36,37 +36,37 @@
                 class="tw-grow tw-w-full tw-max-w-6xl tw-flex navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full"
               >
                 <ul class="navigation-list tw-list-none tw-m-0 tw-px-0 tw-py-8 lg:tw-py-3 lg:tw-px-2 xl:tw-px-0">
-                  <li class="tw-flex tw-items-center">
+                  <li>
                     <a
                       th:replace="::navigation-item(id='home-link', href=@{/web/overview}, text=#{nav.home.title}, icon=~{icon/home::svg})"
                     ></a>
                   </li>
-                  <li class="tw-flex tw-items-center">
+                  <li>
                     <a
                       th:replace="::navigation-item(id='application-new-link', href=@{/web/application/new}, text=#{nav.apply.title}, icon=~{icon/plus-circle::svg})"
                     ></a>
                   </li>
-                  <li class="tw-flex tw-items-center">
+                  <li>
                     <a
                       th:replace="::navigation-item(id='application-link', href=@{/web/application}, text=#{nav.vacation.title}, icon=~{icon/calendar::svg})"
                     ></a>
                   </li>
-                  <li class="tw-flex tw-items-center" th:if="${navigationSickNoteStatisticsAccess}">
+                  <li th:if="${navigationSickNoteStatisticsAccess}">
                     <a
                       th:replace="::navigation-item(id='sicknote-link', href=@{/web/sicknote}, text=#{nav.sicknote.title}, icon=~{icon/medkit::svg}, dataTestId='navigation-sick-notes-link')"
                     ></a>
                   </li>
-                  <li class="tw-flex tw-items-center" th:if="${navigationPersonListAccess}">
+                  <li th:if="${navigationPersonListAccess}">
                     <a
                       th:replace="::navigation-item(id='person-link', href=@{/web/person(active=true)}, text=#{nav.person.title}, icon=~{icon/user::svg})"
                     ></a>
                   </li>
-                  <li class="tw-flex tw-items-center" th:if="${navigationDepartmentAccess}">
+                  <li th:if="${navigationDepartmentAccess}">
                     <a
                       th:replace="::navigation-item(id='department-link', href=@{/web/department}, text=#{nav.department.title}, icon=~{icon/user-group::svg})"
                     ></a>
                   </li>
-                  <li class="tw-flex tw-items-center" th:if="${navigationSettingsAccess}">
+                  <li th:if="${navigationSettingsAccess}">
                     <a
                       th:replace="::navigation-item(id='settings-link', href=@{/web/settings}, text=#{nav.settings.title}, icon=~{icon/cog::svg}, dataTestId='navigation-settings-link')"
                     ></a>

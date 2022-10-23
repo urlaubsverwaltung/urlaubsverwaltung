@@ -31,7 +31,7 @@
                 </div>
                 <div class="tw-w-full tw-max-w-6xl tw-flex navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
                     <ul class="navigation-list tw-list-none tw-m-0 tw-px-0 tw-py-8 lg:tw-py-3 lg:tw-px-2 xl:tw-px-0">
-                        <li class="tw-flex tw-items-center">
+                        <li>
                             <a
                                 href="${URL_PREFIX}/overview"
                                 id="home-link"
@@ -44,7 +44,7 @@
                                 </span>
                             </a>
                         </li>
-                        <li class="tw-flex tw-items-center">
+                        <li>
                             <a
                                 href="${URL_PREFIX}/application/new"
                                 id="application-new-link"
@@ -57,7 +57,7 @@
                                 </span>
                             </a>
                         </li>
-                        <li class="tw-flex tw-items-center">
+                        <li>
                             <a
                                 href="${URL_PREFIX}/application"
                                 class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
@@ -70,7 +70,7 @@
                             </a>
                         </li>
                         <c:if test="${navigationSickNoteStatisticsAccess}">
-                        <li class="tw-flex tw-items-center">
+                        <li>
                             <a
                                 href="${URL_PREFIX}/sicknote"
                                 class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2" data-test-id="navigation-sick-notes-link"
@@ -84,7 +84,7 @@
                         </li>
                         </c:if>
                         <c:if test="${navigationPersonListAccess}">
-                        <li class="tw-flex tw-items-center">
+                        <li>
                             <a
                                 href="${URL_PREFIX}/person?active=true"
                                 class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
@@ -98,7 +98,7 @@
                         </li>
                         </c:if>
                         <c:if test="${navigationDepartmentAccess}">
-                        <li class="tw-flex tw-items-center">
+                        <li>
                             <a
                                 href="${URL_PREFIX}/department"
                                 class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
@@ -112,7 +112,7 @@
                         </li>
                         </c:if>
                         <c:if test="${navigationSettingsAccess}">
-                        <li class="tw-flex tw-items-center">
+                        <li>
                             <a
                                 href="${URL_PREFIX}/settings"
                                 class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
