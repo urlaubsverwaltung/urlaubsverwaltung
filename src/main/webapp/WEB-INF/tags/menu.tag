@@ -8,17 +8,17 @@
 
 <div class="navigation print:tw-hidden">
     <div class="tw-relative">
-        <input id="menu-toggle-checkbox" type="checkbox" class="tw-hidden">
-        <label for="menu-toggle-checkbox" class="tw-flex tw-items-center tw-m-0 tw-px-4 tw-py-4 tw-absolute tw-top-0 tw-left-0 lg:tw-hidden tw-cursor-pointer">
-            <span class="tw-inline-block">
-                <span class="hamburger-bar"></span>
-                <span class="hamburger-bar"></span>
-                <span class="hamburger-bar"></span>
-                <span class="hamburger-bar"></span>
-                <span class="hamburger-bar"></span>
-            </span>
-        </label>
         <nav>
+            <input id="menu-toggle-checkbox" type="checkbox" class="tw-hidden">
+            <label for="menu-toggle-checkbox" class="tw-flex tw-items-center tw-m-0 tw-px-4 tw-py-4 lg:tw-hidden tw-cursor-pointer">
+                <span class="tw-inline-block">
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                </span>
+            </label>
             <div class="navigation-inner tw-flex lg:tw-justify-between tw-px-6 lg:tw-px-8">
                 <div class="tw-flex-1 tw-hidden 2xl:tw-flex xl:tw-items-center">
                     <a
@@ -29,7 +29,7 @@
                         Urlaubsverwaltung
                     </a>
                 </div>
-                <div class="tw-w-full tw-max-w-6xl tw-flex navigation-items tw-mt-12 lg:tw-mt-0 tw-max-h-0 lg:tw-max-h-full">
+                <div class="tw-w-full tw-max-w-6xl tw-flex navigation-items tw-max-h-0 lg:tw-max-h-full">
                     <ul class="navigation-list tw-list-none tw-m-0 tw-px-0 tw-py-8 lg:tw-py-3 lg:tw-px-2 xl:tw-px-0">
                         <li>
                             <a
