@@ -83,12 +83,12 @@
     @apply tw-rounded-tr-full;
   }
 
-  #menu-toggle-checkbox ~ label ~ nav .navigation-items {
+  #menu-toggle-checkbox ~ label ~ div .navigation-items {
     overflow: hidden;
     transition: max-height 400ms ease-in;
   }
-  #menu-toggle-checkbox:checked ~ label ~ nav .navigation-items,
-  #menu-toggle-checkbox ~ label ~ nav .navigation-items:focus-within {
+  #menu-toggle-checkbox:checked ~ label ~ div .navigation-items,
+  #menu-toggle-checkbox ~ label ~ div .navigation-items:focus-within {
     max-height: 90vh !important;
   }
 
