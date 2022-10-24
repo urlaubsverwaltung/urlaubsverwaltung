@@ -153,6 +153,7 @@ class ApplicationServiceImpl implements ApplicationService {
 
         final List<Application> applicationsWithoutCanceller = applicationRepository.findByCanceller(person);
         applicationsWithoutCanceller.forEach(application -> application.setCanceller(null));
-        applicationsWithoutCanceller.forEach(applicationRepository::save);
+        applicationRepository.saveAll(applicationsWithoutCanceller);
+    }
     }
 }

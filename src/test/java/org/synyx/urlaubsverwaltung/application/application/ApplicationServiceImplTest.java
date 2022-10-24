@@ -3,10 +3,8 @@ package org.synyx.urlaubsverwaltung.application.application;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -17,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -320,14 +319,13 @@ class ApplicationServiceImplTest {
         final Application application = new Application();
         application.setId(1);
         application.setCanceller(boss);
-        when(applicationRepository.findByBoss(boss)).thenReturn(List.of(application));
+        final List<Application> applicationsOfBoss = List.of(application);
+        when(applicationRepository.findByBoss(boss)).thenReturn(applicationsOfBoss);
 
         sut.deleteInteractionWithApplications(boss);
 
-        final ArgumentCaptor<Application> argument = ArgumentCaptor.forClass(Application.class);
-        verify(applicationRepository).save(argument.capture());
-
-        assertThat(argument.getValue().getBoss()).isNull();
+        verify(applicationRepository, atLeastOnce()).saveAll(applicationsOfBoss);
+        assertThat(applicationsOfBoss).extracting("boss").containsOnlyNulls();
     }
 
     @Test
@@ -337,13 +335,12 @@ class ApplicationServiceImplTest {
         final Application application = new Application();
         application.setId(1);
         application.setCanceller(canceller);
-        when(applicationRepository.findByCanceller(canceller)).thenReturn(List.of(application));
+        final List<Application> applicationsOfCanceller = List.of(application);
+        when(applicationRepository.findByCanceller(canceller)).thenReturn(applicationsOfCanceller);
 
         sut.deleteInteractionWithApplications(canceller);
 
-        final ArgumentCaptor<Application> argument = ArgumentCaptor.forClass(Application.class);
-        verify(applicationRepository).save(argument.capture());
-
-        assertThat(argument.getValue().getCanceller()).isNull();
+        verify(applicationRepository, atLeastOnce()).saveAll(applicationsOfCanceller);
+        assertThat(applicationsOfCanceller).extracting("canceller").containsOnlyNulls();
     }
 }

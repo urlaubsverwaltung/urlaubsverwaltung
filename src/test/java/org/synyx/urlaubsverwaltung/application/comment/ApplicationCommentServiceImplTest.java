@@ -100,15 +100,15 @@ class ApplicationCommentServiceImplTest {
 
         final ApplicationComment applicationComment = new ApplicationComment(person, Clock.fixed(Instant.ofEpochSecond(0), ZoneId.systemDefault()));
         applicationComment.setId(1);
-        when(commentRepository.findByPerson(person)).thenReturn(List.of(applicationComment));
+        final List<ApplicationComment> applicationCommentsOfAuthor = List.of(applicationComment);
+        when(commentRepository.findByPerson(person)).thenReturn(applicationCommentsOfAuthor);
 
         commentService.deleteCommentAuthor(person);
 
         verify(commentRepository).findByPerson(person);
 
-        final ArgumentCaptor<ApplicationComment> argument = ArgumentCaptor.forClass(ApplicationComment.class);
-        verify(commentRepository).save(argument.capture());
-
-        assertThat(argument.getValue().getPerson()).isNull();
+        final ArgumentCaptor<List<ApplicationComment>> argument = ArgumentCaptor.forClass(List.class);
+        verify(commentRepository).saveAll(argument.capture());
+        assertThat(argument.getValue().get(0).getPerson()).isNull();
     }
 }
