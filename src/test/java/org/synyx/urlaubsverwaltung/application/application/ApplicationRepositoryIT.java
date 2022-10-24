@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
@@ -748,6 +749,21 @@ class ApplicationRepositoryIT extends TestContainersBase {
 
         final List<Application> actualApplications = sut.findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(statuses, marlene, askedStartDate, askedEndDate, OVERTIME);
         assertThat(actualApplications).containsOnly(appStartBeforeAsked, appEndAfterAsked, appInBetween, appStartingAtPeriod, appEndingAtPeriod);
+    }
+
+    @Test
+    void findAllByReplacements_Person() {
+
+        final Person person = personService.create(new Person("muster", "Mustermann", "Max", "mustermann@example.org"));
+
+        Application application = new Application();
+        final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
+        holidayReplacement.setPerson(person);
+        application.setHolidayReplacements(List.of(holidayReplacement));
+        sut.save(application);
+
+        final List<Application> applicationsByHolidayReplacement = sut.findAllByHolidayReplacements_Person(person);
+        assertThat(applicationsByHolidayReplacement).contains(application);
     }
 
     private VacationTypeEntity getVacationType(VacationCategory category) {

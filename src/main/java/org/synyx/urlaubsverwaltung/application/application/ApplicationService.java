@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -178,4 +179,11 @@ public interface ApplicationService {
      * @param person the person whose interactions should be deleted
      */
     void deleteInteractionWithApplications(Person person);
+
+    /**
+     * Deletes all application replacements of applications.
+     *
+     * @param event the person which is deleted
+     */
+    void deleteHolidayReplacements(PersonDeletedEvent event);
 }

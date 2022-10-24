@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
 import java.math.BigDecimal;
@@ -12,8 +14,10 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static java.math.RoundingMode.HALF_EVEN;
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -155,5 +159,26 @@ class ApplicationServiceImpl implements ApplicationService {
         applicationsWithoutCanceller.forEach(application -> application.setCanceller(null));
         applicationRepository.saveAll(applicationsWithoutCanceller);
     }
+
+    @Override
+    @EventListener
+    public void deleteHolidayReplacements(PersonDeletedEvent event) {
+        final List<Application> applicationsWithReplacedApplicationReplacements = applicationRepository.findAllByHolidayReplacements_Person(event.getPerson()).stream()
+            .map(deleteHolidayReplacement(event.getPerson()))
+            .collect(toList());
+        applicationRepository.saveAll(applicationsWithReplacedApplicationReplacements);
+    }
+
+    private Function<Application, Application> deleteHolidayReplacement(Person deletedPerson) {
+        return application -> {
+            application.getHolidayReplacements()
+                .forEach(holidayReplacement -> {
+                    if(holidayReplacement.getPerson().equals(deletedPerson)) {
+                        holidayReplacement.setPerson(null);
+                    }
+                });
+
+            return application;
+        };
     }
 }

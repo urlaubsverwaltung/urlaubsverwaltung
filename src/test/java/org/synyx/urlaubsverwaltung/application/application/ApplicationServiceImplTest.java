@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -342,5 +343,23 @@ class ApplicationServiceImplTest {
 
         verify(applicationRepository, atLeastOnce()).saveAll(applicationsOfCanceller);
         assertThat(applicationsOfCanceller).extracting("canceller").containsOnlyNulls();
+    }
+
+    @Test
+    void deleteApplicationReplacement() {
+        Person person = new Person();
+
+        Application application = new Application();
+        final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
+        holidayReplacement.setPerson(person);
+        application.setHolidayReplacements(List.of(holidayReplacement));
+        final List<Application> applicationsOfHolidayReplacement = List.of(application);
+        when(applicationRepository.findAllByHolidayReplacements_Person(person)).thenReturn(applicationsOfHolidayReplacement);
+
+        sut.deleteHolidayReplacements(new PersonDeletedEvent(person));
+
+        verify(applicationRepository).saveAll(applicationsOfHolidayReplacement);
+        assertThat(applicationsOfHolidayReplacement.get(0).getPerson()).isNull();
+
     }
 }
