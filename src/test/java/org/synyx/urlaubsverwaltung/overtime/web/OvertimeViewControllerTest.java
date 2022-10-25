@@ -338,7 +338,7 @@ class OvertimeViewControllerTest {
 
         perform(get("/web/overtime/2"))
             .andExpect(status().isOk())
-            .andExpect(view().name("overtime/overtime_details"))
+            .andExpect(view().name("thymeleaf/overtime/overtime_details"))
             .andExpect(model().attribute("signedInUser", is(overtimePerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
             .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
