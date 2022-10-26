@@ -26,7 +26,7 @@
         <div class="tw-flex tw-items-center tw-gap-4 sm:tw-gap-6 tw-mb-4 md:tw-mb-12">
           <div class="tw-p-1">
             <img
-              th:replace="fragments/avatar::avatar-bordered(url=${personBasedata.gravatarURL + '?d=404&s=60'},username=${personBasedata.niceName},width='60px',height='60px')"
+              th:replace="fragments/avatar::avatar-bordered(url=${personBasedata.gravatarURL + '?d=404&s=60'},niceName=${personBasedata.niceName},width='60px',height='60px')"
               alt=""
             />
           </div>

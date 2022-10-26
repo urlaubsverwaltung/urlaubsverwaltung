@@ -6,25 +6,25 @@
   </head>
   <body>
     <img
-      th:fragment="avatar(url,username,width,height)"
+      th:fragment="avatar(url,niceName,width,height)"
       src="#"
       th:src="${url}"
       alt=""
-      th:alt="#{gravatar.alt(${username})}"
+      th:alt="#{gravatar.alt(${niceName})}"
       class="gravatar gravatar--medium tw-rounded-full"
       th:classappend="${className}"
       th:width="${width == null ? '32px' : width}"
       th:height="${height == null ? '32px' : height}"
-      th:with="fallbackAvatarUrl=@{/web/avatar (name=${username})}"
+      th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
       th:data-fallback="${fallbackAvatarUrl}"
       onerror="this.onerror=null;this.src=this.dataset.fallback"
     />
 
     <span
-      th:fragment="avatar-bordered(url,username,width,height)"
+      th:fragment="avatar-bordered(url,niceName,width,height)"
       class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-rounded-full tw-p-1 tw-inline-block"
     >
-      <img src="#" alt="" th:replace="::avatar(${url},${username},${width},${height})" />
+      <img src="#" alt="" th:replace="::avatar(${url},${niceName},${width},${height})" />
     </span>
   </body>
 </html>

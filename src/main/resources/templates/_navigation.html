@@ -148,7 +148,7 @@
                     tabindex="-1"
                   >
                     <img
-                      th:replace="fragments/avatar::avatar(className='nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9',url=${menuGravatarUrl + '?d=404'},username=${userFirstName + ' ' + userLastName},width='52px',height='52px')"
+                      th:replace="fragments/avatar::avatar(className='nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9',url=${menuGravatarUrl + '?d=404'},niceName=${userFirstName + ' ' + userLastName},width='52px',height='52px')"
                       alt=""
                     />
                     <span class="dropdown-caret tw-translate-x-px"></span>
@@ -163,7 +163,7 @@
                             class="tw-bg-gradient-to-br tw-from-blue-50 tw-via-gray-100 tw-to-blue-100 dark:tw-from-sky-800 dark:tw-via-slate-800 dark:tw-to-sky-900 tw-bg-blue-50 tw-px-6 tw-py-3 tw-rounded-t-2xl tw-flex tw-items-center tw-gap-4 hover:tw-no-underline focus:tw-no-underline"
                           >
                             <img
-                              th:replace="fragments/avatar::avatar(url=${menuGravatarUrl + '?d=404&s=128'},username=${userFirstName + ' ' + userLastName},width='64px',height='64px')"
+                              th:replace="fragments/avatar::avatar(url=${menuGravatarUrl + '?d=404&s=128'},niceName=${userFirstName + ' ' + userLastName},width='64px',height='64px')"
                               alt=""
                             />
                             <p class="tw-m-0 tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis">

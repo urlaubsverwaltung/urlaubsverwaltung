@@ -196,7 +196,7 @@
             <tr th:each="comment, loopStatus : ${comments}">
               <td class="print:tw-hidden">
                 <img
-                  th:replace="fragments/avatar::avatar-bordered(url=${comment.person.gravatarURL + '?d=404&s=40'},username=${comment.person.niceName},width='40px',height='40px')"
+                  th:replace="fragments/avatar::avatar-bordered(url=${comment.person.gravatarURL + '?d=404&s=40'},niceName=${comment.person.niceName},width='40px',height='40px')"
                   alt=""
                 />
               </td>

@@ -138,7 +138,7 @@
           >
             <td class="is-centered print:tw-hidden">
               <img
-                th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404&s=40'},username=${person.niceName},width='40px',height='40px')"
+                th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404&s=40'},niceName=${person.niceName},width='40px',height='40px')"
                 alt=""
               />
             </td>

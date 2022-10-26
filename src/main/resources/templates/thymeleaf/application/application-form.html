@@ -26,7 +26,7 @@
           <div class="tw-flex">
             <div class="tw-mr-4 tw-mt-1">
               <img
-                th:replace="fragments/avatar::avatar(url=${holidayReplacement.person.gravatarURL + '?d=404&s=40'},username=${holidayReplacement.person.niceName},width='40px',height='40px')"
+                th:replace="fragments/avatar::avatar(url=${holidayReplacement.person.gravatarURL + '?d=404&s=40'},niceName=${holidayReplacement.person.niceName},width='40px',height='40px')"
                 alt=""
               />
             </div>

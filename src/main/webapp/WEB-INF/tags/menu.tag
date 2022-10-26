@@ -230,7 +230,7 @@
                                 class="gravatar tw-rounded-full nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9"
                                 width="52px"
                                 height="52px"
-                                onerror="this.onerror=null;this.src='<c:out value="${URL_PREFIX}/avatar?name=${userFirstName + ' ' + userLastName}"/>'"
+                                onerror="this.onerror=null;this.src='<c:out value="${URL_PREFIX}/avatar?name=${userFirstName} ${userLastName}"/>'"
                             />
                             <span class="dropdown-caret tw-translate-x-px"></span>
                         </a>
