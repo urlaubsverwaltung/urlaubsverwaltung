@@ -26,7 +26,7 @@ export function post(url, options = {}) {
   );
 }
 
-function doGet(url, options) {
+export function doGet(url, options) {
   return fetch(
     url,
     defaults(options, {

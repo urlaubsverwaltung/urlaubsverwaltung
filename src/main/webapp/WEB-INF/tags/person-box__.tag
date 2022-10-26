@@ -12,14 +12,15 @@
 
 <uv:box__ className="tw-items-center ${cssClass}">
     <jsp:attribute name="icon">
-        <div class="tw-inline-block tw-rounded-full tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-p-1">
+        <div class="tw-inline-flex tw-rounded-full tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-p-1 tw-text-blue-50 dark:tw-text-sky-800">
             <img
                 src="<c:out value='${person.gravatarURL}?d=404&s=60'/>"
                 alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
                 class="gravatar tw-rounded-full"
                 width="60px"
                 height="60px"
-                onerror="this.onerror=null;this.src='<c:out value="${URL_PREFIX}/avatar?name=${person.niceName}"/>'"
+                data-fallback="<c:out value="${URL_PREFIX}/avatar?name=${person.niceName}"/>"
+                is="uv-avatar"
             />
         </div>
     </jsp:attribute>

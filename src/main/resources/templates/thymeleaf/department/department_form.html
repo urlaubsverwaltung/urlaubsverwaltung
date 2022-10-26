@@ -156,7 +156,7 @@
                         th:with="isInactive=${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).INACTIVE)}, isMember=${#lists.contains(department.members, person)}"
                         th:classappend="${isMember ? ( isInactive ? 'is-inactive' : 'is-assigned') : ''}"
                       >
-                        <div class="department--member-image">
+                        <div class="department--member-image tw-text-blue-50 dark:tw-text-sky-800">
                           <img
                             th:replace="fragments/avatar::avatar(url=${person.gravatarURL + '?d=404&s=40'},niceName=${person.niceName},width='40px',height='40px')"
                           />

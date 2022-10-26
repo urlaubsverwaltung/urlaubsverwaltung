@@ -225,7 +225,7 @@
                   th:onclick="|navigate('/web/person/${person.id}/overview');|"
                 >
                   <td class="is-centered">
-                    <div class="print:tw-hidden">
+                    <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                       <img
                         th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=40'},niceName=${person.niceName},width='40px',height='40px')"
                       />

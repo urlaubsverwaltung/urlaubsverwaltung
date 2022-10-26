@@ -16,14 +16,15 @@
 
         <c:forEach items="${comments}" var="comment">
             <tr>
-                <td class="print:tw-hidden">
+                <td class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                     <img
                         src="<c:out value='${comment.person.gravatarURL}?d=404&s=40'/>"
                         alt="<spring:message code="gravatar.alt" arguments="${comment.person.niceName}"/>"
                         class="gravatar gravatar--medium tw-rounded-full"
                         width="40px"
                         height="40px"
-                        onerror="this.onerror=null;this.src='<c:out value="${URL_PREFIX}/avatar?name=${comment.person.niceName}"/>'"
+                        data-fallback="<c:out value="${URL_PREFIX}/avatar?name=${comment.person.niceName}"/>"
+                        is="uv-avatar"
                     />
                 </td>
                 <td>

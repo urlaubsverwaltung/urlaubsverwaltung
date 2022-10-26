@@ -113,7 +113,7 @@
             style="top: 3.25rem"
           >
             <div class="tw-flex tw-space-x-5 lg:tw-space-x-6">
-              <span class="print:tw-hidden">
+              <span class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                 <img
                   th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=404&s=104'},niceName=${signedInUser.niceName},width='52px',height='52px')"
                   alt=""
@@ -222,7 +222,7 @@
             style="top: 3.25rem"
           >
             <div class="tw-flex tw-space-x-5 md:tw-space-x-6">
-              <span class="print:tw-hidden">
+              <span class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                 <img
                   th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=404&s=104'},niceName=${signedInUser.niceName},width='52px',height='52px')"
                   alt=""
@@ -242,7 +242,7 @@
               th:each="replacementInfo,loopStatus : ${applications_holiday_replacements}"
             >
               <div class="tw-flex tw-flex-row-reverse tw-gap-4">
-                <div class="tw-self-center print:tw-hidden">
+                <div class="tw-self-center print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                   <img
                     th:replace="fragments/avatar::avatar-bordered(url=${replacementInfo.person.avatarUrl + '?d=404&s=104'},niceName=${replacementInfo.person.name},width='52px',height='52px')"
                     alt=""
@@ -302,7 +302,9 @@
             class="tw-relative md:tw-flex md:tw-items-top lg:tw-items-center md:tw-space-x-12 lg:tw-p-2 dark:tw-rounded"
           >
             <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
-              <span class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden">
+              <span
+                class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800"
+              >
                 <img
                   th:replace="fragments/avatar::avatar-bordered(url=${otherRequestForLeave.person.avatarUrl + '?d=404&s=104'},niceName=${otherRequestForLeave.person.name},width='52px',height='52px')"
                   alt=""
@@ -420,7 +422,9 @@
               class="tw-relative md:tw-flex md:tw-items-top lg:tw-items-center md:tw-space-x-12 lg:tw-p-2 dark:tw-rounded"
             >
               <div class="md:tw-w-1/4 tw-flex tw-items-start md:tw-space-x-5 lg:tw-space-x-6 lg:tw-items-center">
-                <span class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden">
+                <span
+                  class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800"
+                >
                   <img
                     th:replace="fragments/avatar::avatar-bordered(url=${cancellationRequest.person.avatarUrl + '?d=404&s=104'},niceName=${cancellationRequest.person.name},width='52px',height='52px')"
                     alt=""

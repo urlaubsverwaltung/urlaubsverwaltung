@@ -8,7 +8,7 @@
 <%@attribute name="height" type="java.lang.String" required="false" %>
 <%@attribute name="border" type="java.lang.Boolean" required="false" %>
 
-<spring:url var="URL_PREFIX" value="/web"/>
+<spring:url var="fallbackAvatarUrl" value="/web/avatar?name=${username}"/>
 
 <c:set var="avatar">
     <img
@@ -17,7 +17,8 @@
         class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
         width="${width == null ? '32px' : width}"
         height="${height == null ? '32px' : height}"
-        onerror="this.onerror=null;this.src='<c:out value="${URL_PREFIX}/avatar?name=${username}"/>'"
+        data-fallback="${fallbackAvatarUrl}"
+        is="uv-avatar"
     />
 </c:set>
 

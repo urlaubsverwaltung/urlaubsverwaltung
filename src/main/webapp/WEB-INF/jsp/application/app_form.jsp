@@ -56,7 +56,7 @@
     <script defer
             src="<asset:url value='account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.js' />"></script>
     <script defer
-            src="<asset:url value='account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~704d57c1.js' />"></script>
+            src="<asset:url value='account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js' />"></script>
     <script defer src="<asset:url value='app_form.js' />"></script>
 </head>
 
@@ -414,14 +414,17 @@
                                                     <div class="col-md-push-3 col-md-9">
                                                         <div>
                                                             <div class="tw-flex">
-                                                                <img
-                                                                    src="<c:out value='${holidayReplacement.person.gravatarURL}?d=404&s=40'/>"
-                                                                    alt="<spring:message code="gravatar.alt" arguments="${holidayReplacement.person.niceName}"/>"
-                                                                    class="gravatar tw-rounded-full tw-mr-4 tw-mt-1"
-                                                                    width="40px"
-                                                                    height="40px"
-                                                                    onerror="this.onerror=null;this.src='<c:out value="${URL_PREFIX}/avatar?name=${holidayReplacement.person.niceName}"/>'"
-                                                                />
+                                                                <span class="tw-text-blue-50 dark:tw-text-sky-800">
+                                                                    <img
+                                                                        src="<c:out value='${holidayReplacement.person.gravatarURL}?d=404&s=40'/>"
+                                                                        alt="<spring:message code="gravatar.alt" arguments="${holidayReplacement.person.niceName}"/>"
+                                                                        class="gravatar tw-rounded-full tw-mr-4 tw-mt-1"
+                                                                        width="40px"
+                                                                        height="40px"
+                                                                        data-fallback="<c:out value="${URL_PREFIX}/avatar?name=${holidayReplacement.person.niceName}"/>"
+                                                                        is="uv-avatar"
+                                                                    />
+                                                                </span>
                                                                 <div>
                                                                     <div class="tw-flex tw-items-center tw-flex-wrap">
                                                                         <span>

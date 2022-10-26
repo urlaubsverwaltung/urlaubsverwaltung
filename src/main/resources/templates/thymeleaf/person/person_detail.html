@@ -36,10 +36,12 @@
               th:replace="fragments/box::box-with-icon(~{::person-details-basedata-box-icon}, ~{::person-details-basedata-box-body})"
             >
               <th:block th:ref="person-details-basedata-box-icon">
-                <img
-                  th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404'},niceName=${person.niceName},width='60px',height='60px')"
-                  alt=""
-                />
+                <span class="tw-text-blue-50 dark:tw-text-sky-800">
+                  <img
+                    th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404'},niceName=${person.niceName},width='60px',height='60px')"
+                    alt=""
+                  />
+                </span>
               </th:block>
               <th:block th:ref="person-details-basedata-box-body">
                 <a
