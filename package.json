@@ -35,7 +35,7 @@
   "dependencies": {
     "@babel/polyfill": "7.12.1",
     "@duetds/date-picker": "1.4.0",
-    "@hotwired/turbo": "7.2.0",
+    "@hotwired/turbo": "7.2.4",
     "@ungap/custom-elements": "1.1.0",
     "bootstrap": "3.4.1",
     "datalist-polyfill": "1.25.0",
