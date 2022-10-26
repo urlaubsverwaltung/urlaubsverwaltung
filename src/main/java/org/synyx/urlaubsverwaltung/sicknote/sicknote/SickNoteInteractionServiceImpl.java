@@ -150,7 +150,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     @Override
     @EventListener
     public void deleteAll(PersonDeletedEvent event) {
-        commentService.deleteAllByPerson(event.getPerson());
+        commentService.deleteCommentAuthor(event.getPerson());
+        commentService.deleteAllBySickNotePerson(event.getPerson());
         sickNoteService.deleteAllByPerson(event.getPerson());
     }
 

@@ -24,7 +24,6 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
@@ -291,7 +290,8 @@ class SickNoteInteractionServiceImplTest {
 
         final InOrder inOrder = inOrder(commentService, sickNoteService);
 
-        inOrder.verify(commentService).deleteAllByPerson(person);
+        inOrder.verify(commentService).deleteCommentAuthor(person);
+        inOrder.verify(commentService).deleteAllBySickNotePerson(person);
         inOrder.verify(sickNoteService).deleteAllByPerson(person);
     }
 

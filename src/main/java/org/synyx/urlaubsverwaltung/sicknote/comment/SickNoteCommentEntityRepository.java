@@ -13,5 +13,7 @@ interface SickNoteCommentEntityRepository extends CrudRepository<SickNoteComment
 
     List<SickNoteCommentEntity> findBySickNote(SickNote sickNote);
 
+    List<SickNoteCommentEntity> findByPerson(Person author);
+
     void deleteBySickNotePerson(Person person);
 }

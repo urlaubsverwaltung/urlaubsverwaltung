@@ -48,7 +48,14 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
     }
 
     @Override
-    public void deleteAllByPerson(Person sickNotePerson) {
+    public void deleteAllBySickNotePerson(Person sickNotePerson) {
         sickNoteCommentEntityRepository.deleteBySickNotePerson(sickNotePerson);
+    }
+
+    @Override
+    public void deleteCommentAuthor(Person author) {
+        final List<SickNoteCommentEntity> sickNoteComments = sickNoteCommentEntityRepository.findByPerson(author);
+        sickNoteComments.forEach(sickNoteComment -> sickNoteComment.setPerson(null));
+        sickNoteCommentEntityRepository.saveAll(sickNoteComments);
     }
 }

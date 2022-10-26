@@ -47,5 +47,13 @@ public interface SickNoteCommentService {
      *
      * @param sickNotePerson is the person whose sicknotes should be deleted
      */
-    void deleteAllByPerson(Person sickNotePerson);
+    void deleteAllBySickNotePerson(Person sickNotePerson);
+
+    /**
+     * Removes the author of a {@link SickNoteCommentEntity}. This is used to delete a user.
+     * The author remains empty (null). Which must be displayed as 'unknown author'.
+     *
+     * @param author is the person who is deleted from {@link SickNoteCommentEntity}
+     */
+    void deleteCommentAuthor(Person author);
 }
