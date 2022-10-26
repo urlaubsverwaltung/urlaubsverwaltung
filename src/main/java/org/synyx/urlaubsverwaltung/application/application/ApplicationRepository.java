@@ -82,6 +82,8 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
 
     List<Application> findByCanceller(Person person);
 
+    List<Application> findByApplier(Person person);
+
     List<Application> deleteByPerson(Person person);
 
     List<Application> findAllByHolidayReplacements_Person(Person person);

@@ -346,6 +346,22 @@ class ApplicationServiceImplTest {
     }
 
     @Test
+    void deleteApplierInteractionOnPersonDeletionEvent() {
+        final Person applier = new Person();
+        applier.setId(1);
+        final Application application = new Application();
+        application.setId(1);
+        application.setApplier(applier);
+        final List<Application> applicationsOfApplier = List.of(application);
+        when(applicationRepository.findByApplier(applier)).thenReturn(applicationsOfApplier);
+
+        sut.deleteInteractionWithApplications(applier);
+
+        verify(applicationRepository, atLeastOnce()).saveAll(applicationsOfApplier);
+        assertThat(applicationsOfApplier).extracting("applier").containsOnlyNulls();
+    }
+
+    @Test
     void deleteApplicationReplacement() {
         Person person = new Person();
 
