@@ -19,7 +19,7 @@
                 <td class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                     <img
                         src="<c:out value='${comment.person.gravatarURL}?d=404&s=40'/>"
-                        alt="<spring:message code="gravatar.alt" arguments="${comment.person.niceName}"/>"
+                        alt=""
                         class="gravatar gravatar--medium tw-rounded-full"
                         width="40px"
                         height="40px"

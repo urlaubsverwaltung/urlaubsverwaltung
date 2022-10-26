@@ -417,7 +417,7 @@
                                                                 <span class="tw-text-blue-50 dark:tw-text-sky-800">
                                                                     <img
                                                                         src="<c:out value='${holidayReplacement.person.gravatarURL}?d=404&s=40'/>"
-                                                                        alt="<spring:message code="gravatar.alt" arguments="${holidayReplacement.person.niceName}"/>"
+                                                                        alt=""
                                                                         class="gravatar tw-rounded-full tw-mr-4 tw-mt-1"
                                                                         width="40px"
                                                                         height="40px"

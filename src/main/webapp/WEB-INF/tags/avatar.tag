@@ -13,7 +13,7 @@
 <c:set var="avatar">
     <img
         src="${url}"
-        alt="<spring:message code="gravatar.alt" arguments="${username}"/>"
+        alt=""
         class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
         width="${width == null ? '32px' : width}"
         height="${height == null ? '32px' : height}"

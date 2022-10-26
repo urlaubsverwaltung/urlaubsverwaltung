@@ -15,7 +15,7 @@
             <span class="tw-text-blue-50 dark:tw-text-sky-800">
                 <img
                     src="<c:out value='${person.gravatarUrl}?d=404&s=60'/>"
-                    alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
+                    alt=""
                     class="gravatar tw-rounded-full"
                     width="60px"
                     height="60px"

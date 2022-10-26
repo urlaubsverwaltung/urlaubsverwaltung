@@ -15,7 +15,7 @@
         <div class="tw-inline-flex tw-rounded-full tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-p-1 tw-text-blue-50 dark:tw-text-sky-800">
             <img
                 src="<c:out value='${person.gravatarURL}?d=404&s=60'/>"
-                alt="<spring:message code="gravatar.alt" arguments="${person.niceName}"/>"
+                alt=""
                 class="gravatar tw-rounded-full"
                 width="60px"
                 height="60px"
