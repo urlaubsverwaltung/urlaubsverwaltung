@@ -36,7 +36,7 @@
       ></script>
       <script
         defer
-        asset:src="account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~704d57c1.js"
+        asset:src="account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js"
       ></script>
       <script defer asset:src="sick_notes.js"></script>
     </th:block>
@@ -136,9 +136,9 @@
             th:with="navigateLink=@{/web/person/__${person.id}__/overview#anchorSickNotes}"
             th:onclick="navigate([[${navigateLink}]])"
           >
-            <td class="is-centered print:tw-hidden">
+            <td class="is-centered print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
               <img
-                th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=mm&s=40'},username=${person.niceName},width='40px',height='40px')"
+                th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404&s=40'},niceName=${person.niceName},width='40px',height='40px')"
                 alt=""
               />
             </td>

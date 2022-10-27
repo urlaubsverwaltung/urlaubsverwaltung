@@ -24,21 +24,11 @@
 
       <div class="tw-mt-4 md:tw-mt-6">
         <div class="tw-flex tw-items-center tw-gap-4 sm:tw-gap-6 tw-mb-4 md:tw-mb-12">
-          <div class="tw-p-1">
-            <span
-              class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-rounded-full tw-p-1 tw-inline-block"
-            >
-              <img
-                src="#"
-                th:src="${personBasedata.gravatarURL + '?d=mm&s=120'}"
-                alt="avatar image"
-                th:alt="#{gravatar.alt(${personBasedata.niceName})}"
-                class="gravatar gravatar--medium tw-rounded-full"
-                width="60px"
-                height="60px"
-                onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-              />
-            </span>
+          <div class="tw-p-1 tw-text-blue-50 dark:tw-text-sky-800">
+            <img
+              th:replace="fragments/avatar::avatar-bordered(url=${personBasedata.gravatarURL + '?d=404&s=60'},niceName=${personBasedata.niceName},width='60px',height='60px')"
+              alt=""
+            />
           </div>
           <div>
             <div class="tw-mb-1">

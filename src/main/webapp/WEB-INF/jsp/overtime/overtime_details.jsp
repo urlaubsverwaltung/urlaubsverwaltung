@@ -89,14 +89,15 @@
                     <tbody>
                     <c:forEach items="${comments}" var="comment">
                         <tr>
-                            <td>
+                            <td class="tw-text-blue-50 dark:tw-text-sky-800">
                                 <img
-                                    src="<c:out value='${comment.person.gravatarUrl}?d=mm&s=40'/>"
-                                    alt="<spring:message code="gravatar.alt" arguments="${comment.person.niceName}"/>"
+                                    src="<c:out value='${comment.person.gravatarUrl}?d=404&s=40'/>"
+                                    alt=""
                                     class="gravatar gravatar--medium tw-rounded-full print:tw-hidden"
                                     width="40px"
                                     height="40px"
-                                    onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                                    data-fallback="<c:out value="${URL_PREFIX}/avatar?name=${comment.person.niceName}"/>"
+                                    is="uv-avatar"
                                 />
                             </td>
                             <td>

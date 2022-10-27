@@ -29,7 +29,7 @@
     </script>
     <script defer src="<asset:url value='npm.date-fns.js' />"></script>
     <script defer src="<asset:url value='app_detail~app_form~person_overview.js' />"></script>
-    <script defer src="<asset:url value='account_form~app_detail~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_no~704d57c1.js' />"></script>
+    <script defer src="<asset:url value='account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js' />"></script>
     <script defer src="<asset:url value='app_detail.js' />"></script>
 </head>
 
@@ -177,9 +177,9 @@
                         <c:otherwise>
                             <c:forEach items="${departmentApplications}" var="application">
                                 <tr>
-                                    <td>
+                                    <td class="tw-text-blue-50 dark:tw-text-sky-800">
                                         <uv:avatar
-                                            url="${application.person.gravatarURL}?d=mm&s=40"
+                                            url="${application.person.gravatarURL}?d=404&s=40"
                                             username="${application.person.niceName}"
                                             width="40px"
                                             height="40px"

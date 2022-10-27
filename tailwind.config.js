@@ -12,6 +12,7 @@ module.exports = {
     "./src/main/webapp/**/*.tag",
     "./src/main/javascript/**/*.js",
     "./src/main/resources/templates/**/*.html",
+    "./src/main/resources/templates/**/*.svg",
   ],
   // use a prefix to not conflict with bootstrap
   prefix: "tw-",

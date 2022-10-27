@@ -141,21 +141,18 @@
                 <div class="tw-relative">
                   <a
                     href="#avatar-menu"
-                    class="nav-popup-menu-button tw-flex tw-items-center tw-gap-1 tw-no-underline tw-outline-none"
+                    class="nav-popup-menu-button tw-h-full tw-flex tw-items-center tw-gap-1 tw-no-underline tw-outline-none"
                     id="avatar-link"
                     data-test-id="avatar"
                     aria-hidden="true"
                     tabindex="-1"
                   >
-                    <img
-                      src="#"
-                      th:src="${menuGravatarUrl + '?d=mm'}"
-                      alt=""
-                      class="gravatar tw-rounded-full nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9"
-                      width="52px"
-                      height="52px"
-                      onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-                    />
+                    <span class="tw-inline-flex tw-text-blue-200 dark:tw-text-sky-800">
+                      <img
+                        th:replace="fragments/avatar::avatar(className='tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9',url=${menuGravatarUrl + '?d=404'},niceName=${userFirstName + ' ' + userLastName},width='40px',height='40px')"
+                        alt=""
+                      />
+                    </span>
                     <span class="dropdown-caret tw-translate-x-px"></span>
                   </a>
                   <div id="avatar-menu" class="nav-popup-menu" data-test-id="avatar-popupmenu">
@@ -167,15 +164,12 @@
                             th:href="@{/web/person/{userId}/overview(userId=${userId})}"
                             class="tw-bg-gradient-to-br tw-from-blue-50 tw-via-gray-100 tw-to-blue-100 dark:tw-from-sky-800 dark:tw-via-slate-800 dark:tw-to-sky-900 tw-bg-blue-50 tw-px-6 tw-py-3 tw-rounded-t-2xl tw-flex tw-items-center tw-gap-4 hover:tw-no-underline focus:tw-no-underline"
                           >
-                            <img
-                              src="#"
-                              th:src="${menuGravatarUrl + '?d=mm&s=128'}"
-                              alt=""
-                              class="gravatar tw-rounded-full"
-                              width="64px"
-                              height="64px"
-                              onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
-                            />
+                            <span class="tw-text-blue-200 dark:tw-text-sky-800">
+                              <img
+                                th:replace="fragments/avatar::avatar(url=${menuGravatarUrl + '?d=404&s=128'},niceName=${userFirstName + ' ' + userLastName},width='64px',height='64px')"
+                                alt=""
+                              />
+                            </span>
                             <p class="tw-m-0 tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis">
                               <span
                                 th:text="#{nav.avatar-menu.signed-in-as}"

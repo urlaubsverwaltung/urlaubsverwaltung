@@ -195,9 +195,9 @@
                   scope="row"
                   class="tw-p-0.5 print:tw-hidden tw-sticky tw--left-px tw-bg-gradient-to-r tw-from-white dark:tw-from-zinc-900 dark:tw-via-zinc-900 tw-z-40 tw-border-l-0 tw-z-10"
                 >
-                  <div class="print:tw-hidden">
+                  <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                     <img
-                      th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=mm&s=32'},username=${person.firstName + ' ' + person.lastName},width='32',height='32')"
+                      th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=32'},niceName=${person.firstName + ' ' + person.lastName},width='32',height='32')"
                       alt=""
                     />
                   </div>
