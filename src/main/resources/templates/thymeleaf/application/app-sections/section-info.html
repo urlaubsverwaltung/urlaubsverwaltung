@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="section">
+      <div class="tw-h-32 tw-mb-4">
+        <div class="box tw-p-5">
+          <div
+            th:replace="fragments/box::box-with-icon(~{::application-details-box-icon}, ~{::application-details-box-body})"
+          >
+            <th:block th:ref="application-details-box-icon">
+              <div
+                th:replace="fragments/rounded::block(content=~{::application-details-box-icon-rounded}, className='tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900')"
+              >
+                <th:block th:ref="application-details-box-icon-rounded">
+                  <th:block th:if="${app.vacationType.category.name == 'HOLIDAY'}">
+                    <svg th:replace="icon/sun::svg(className='tw-w-8 tw-h-8')" />
+                  </th:block>
+                  <th:block th:if="${app.vacationType.category.name != 'HOLIDAY'}">
+                    <svg th:replace="icon/flag::svg(className='tw-w-8 tw-h-8')" />
+                  </th:block>
+                </th:block>
+              </div>
+            </th:block>
+            <th:block th:ref="application-details-box-body">
+              <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">
+                <th:block th:text="${app.person.niceName}" />
+                <th:block
+                  th:text="${(app.status.name == 'ALLOWED' && app.editedDate == null) ? #messages.msg('application.applier.appliedDirectly') : #messages.msg('application.applier.applied')}"
+                />
+              </span>
+              <span class="tw-my-1 tw-text-lg tw-font-medium">
+                <th:block th:text="#{__${app.vacationType.messageKey}__}" />
+                <span
+                  class="state pull-right print:tw-hidden"
+                  th:classappend="${app.status.name}"
+                  th:title="${app.status.name}"
+                >
+                  <th:block th:switch="${app.status.name}">
+                    <th:block th:case="'WAITING'">
+                      <svg th:replace="icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                    </th:block>
+                    <th:block th:case="'TEMPORARY_ALLOWED'">
+                      <svg th:replace="icon/check-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                    </th:block>
+                    <th:block th:case="'ALLOWED'">
+                      <svg th:replace="icon/check-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                    </th:block>
+                    <th:block th:case="'ALLOWED_CANCELLATION_REQUESTED'">
+                      <svg th:replace="icon/check-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                      <svg th:replace="icon/arrow-narrow-right::svg(className='tw-w-6 tw-h-6')"></svg>
+                      <svg th:replace="icon/trash::svg(className='tw-w-6 tw-h-6')"></svg>
+                    </th:block>
+                    <th:block th:case="'REJECTED'">
+                      <svg th:replace="icon/ban::svg(className='tw-w-6 tw-h-6')"></svg>
+                    </th:block>
+                    <th:block th:case="'CANCELLED'">
+                      <svg th:replace="icon/trash::svg(className='tw-w-6 tw-h-6')"></svg>
+                    </th:block>
+                    <th:block th:case="'REVOKED'">
+                      <svg th:replace="icon/trash::svg(className='tw-w-6 tw-h-6')"></svg>
+                    </th:block>
+                    <th:block th:case="*"> &nbsp; </th:block>
+                  </th:block>
+                </span>
+              </span>
+              <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">
+                &nbsp;<th:block
+                  th:replace="fragments/date-range::date-range(from=${app.startDate}, to=${app.endDate}, pattern='E, dd.MM.yyyy')"
+                ></th:block>
+              </span>
+            </th:block>
+          </div>
+        </div>
+      </div>
+
+      <table class="list-table striped-table bordered-table tw-text-sm tw-table-fixed">
+        <tr>
+          <td th:text="#{absence.period.duration}"></td>
+          <td>
+            <strong>
+              <th:block th:replace="fragments/number::number(${app.workDays})"></th:block>&nbsp;<th:block
+                th:text="#{duration.days}"
+              />
+            </strong>
+            <th:block th:if="${app.startDate.year != app.endDate.year}">
+              <span class="text-muted days">
+                <!--filled by javascript-->
+                <!--see app_info.js-->
+              </span>
+            </th:block>
+            <th:block th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}">
+              <span class="text-muted">
+                <br />
+                <th:block th:text="${{app.hours}}" />
+                <th:block th:text="#{application.data.hours.number}" />
+              </span>
+            </th:block>
+          </td>
+        </tr>
+        <tr class="visible-print">
+          <td th:text="#{application.data.status}"></td>
+          <td th:text="#{__${app.status.name}__}"></td>
+        </tr>
+        <tr>
+          <!--          needed for correct altering of table rows:
+          there is a problem because the only in print visible row is altered too -->
+        </tr>
+        <tr>
+          <td th:text="#{application.data.time}"></td>
+          <td>
+            <th:block
+              th:if="${app.startTime != null && app.endTime != null}"
+              th:text="#{absence.period.time(${{app.startTime}},${{app.endTime}})}"
+            ></th:block>
+            <th:block
+              th:if="${app.startTime == null || app.endTime == null}"
+              th:text="#{application.data.furtherInformation.notSpecified}"
+            ></th:block>
+          </td>
+        </tr>
+        <tr>
+          <td th:text="#{application.data.reason}"></td>
+          <td class="tw-break-words">
+            <th:block
+              th:text="${not #strings.isEmpty(app.reason) ? app.reason : #messages.msg('application.data.furtherInformation.notSpecified')}"
+            ></th:block>
+          </td>
+        </tr>
+
+        <tr>
+          <td th:text="#{application.data.holidayReplacement}"></td>
+          <td>
+            <ul
+              th:if="${not #lists.isEmpty(app.holidayReplacements)}"
+              class="tw-list-none tw-m-0 tw-p-0"
+              data-test-id="holiday-replacement-list"
+            >
+              <li
+                th:each="replacementInfo : ${app.holidayReplacements}"
+                th:text="${replacementInfo.person.niceName}"
+              ></li>
+            </ul>
+            <th:block
+              th:if="${#lists.isEmpty(app.holidayReplacements)}"
+              th:text="#{application.data.furtherInformation.notSpecified}"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td th:text="#{application.data.furtherInformation.address}"></td>
+          <td class="tw-break-words">
+            <th:block
+              th:text="${not #strings.isEmpty(app.address) ? app.address : #messages.msg('application.data.furtherInformation.notSpecified')}"
+            ></th:block>
+          </td>
+        </tr>
+        <tr>
+          <td th:text="#{application.data.teamInformed}"></td>
+          <td>
+            <div class="tw-flex tw-items-center">
+              <th:block th:if="${app.teamInformed == true}">
+                <svg th:replace="icon/emoji-happy::svg(className='tw-w-4 tw-h-4')"></svg>
+                &nbsp; <span th:text="#{application.data.teamInformed.true}"></span>
+              </th:block>
+              <th:block th:if="${app.teamInformed == false}">
+                <svg th:replace="icon/emoji-sad::svg(className='tw-w-4 tw-h-4')"></svg>
+                &nbsp; <span th:text="#{application.data.teamInformed.false}"></span>
+              </th:block>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </th:block>
+  </body>
+</html>

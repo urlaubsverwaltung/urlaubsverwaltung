@@ -33,6 +33,7 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,7 +126,7 @@ class ApplicationForLeaveDetailsViewController {
         final int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
         prepareDetailView(application, year, action, shortcut, model, signedInUser);
 
-        return "application/app_detail";
+        return "thymeleaf/application/application-detail";
     }
 
     /*
@@ -401,7 +402,7 @@ class ApplicationForLeaveDetailsViewController {
         }
 
         // APPLICATION FOR LEAVE
-        model.addAttribute("application", new ApplicationForLeave(application, workDaysCountService));
+        model.addAttribute("app", new ApplicationForLeave(application, workDaysCountService));
 
         final Map<DateRange, WorkingTime> workingTime = workingTimeService.getWorkingTimesByPersonAndDateRange(
                 application.getPerson(), new DateRange(application.getStartDate(), application.getEndDate())).entrySet().stream()
@@ -428,6 +429,7 @@ class ApplicationForLeaveDetailsViewController {
             final LocalDate expiryDate = acc.getExpiryDate();
             final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, expiryDate);
             model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
+            model.addAttribute("doRemainingVacationDaysExpire", acc.doRemainigVacationDaysExpire());
             model.addAttribute("expiryDate", expiryDate);
 
             model.addAttribute("account", acc);
@@ -461,9 +463,9 @@ class ApplicationForLeaveDetailsViewController {
         model.addAttribute("isOffice", signedInUser.hasRole(OFFICE));
 
         // UNSPECIFIC ATTRIBUTES
-        model.addAttribute("year", year);
+        model.addAttribute("selectedYear", year);
+        model.addAttribute("currentYear", Year.now(clock).getValue());
         model.addAttribute("action", action);
         model.addAttribute("shortcut", shortcut);
     }
-
 }

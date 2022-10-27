@@ -129,7 +129,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         perform(get("/web/application/" + APPLICATION_ID)
             .param("year", Integer.toString(requestedYear))
-        ).andExpect(model().attribute("year", requestedYear));
+        ).andExpect(model().attribute("selectedYear", requestedYear));
     }
 
     @Test
@@ -165,7 +165,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         final int applicationEndYear = application.getEndDate().getYear();
         perform(get("/web/application/" + APPLICATION_ID))
-            .andExpect(model().attribute("year", applicationEndYear));
+            .andExpect(model().attribute("selectedYear", applicationEndYear));
     }
 
     @Test
@@ -177,7 +177,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         perform(get("/web/application/" + APPLICATION_ID))
-            .andExpect(view().name("application/app_detail"));
+            .andExpect(view().name("thymeleaf/application/application-detail"));
     }
 
     @Test
@@ -192,7 +192,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(boss);
 
         perform(get("/web/application/" + APPLICATION_ID))
-            .andExpect(view().name("application/app_detail"))
+            .andExpect(view().name("thymeleaf/application/application-detail"))
             .andExpect(model().attribute("isBoss", true));
     }
 
@@ -208,7 +208,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(office);
 
         perform(get("/web/application/" + APPLICATION_ID))
-            .andExpect(view().name("application/app_detail"))
+            .andExpect(view().name("thymeleaf/application/application-detail"))
             .andExpect(model().attribute("isOffice", true));
     }
 
@@ -225,7 +225,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(departmentService.isDepartmentHeadAllowedToManagePerson(eq(departmentHead), any(Person.class))).thenReturn(true);
 
         perform(get("/web/application/" + APPLICATION_ID))
-            .andExpect(view().name("application/app_detail"))
+            .andExpect(view().name("thymeleaf/application/application-detail"))
             .andExpect(model().attribute("isDepartmentHeadOfPerson", true));
     }
 
@@ -242,7 +242,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(eq(ssa), any(Person.class))).thenReturn(true);
 
         perform(get("/web/application/" + APPLICATION_ID))
-            .andExpect(view().name("application/app_detail"))
+            .andExpect(view().name("thymeleaf/application/application-detail"))
             .andExpect(model().attribute("isSecondStageAuthorityOfPerson", true));
     }
 

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>app action edit</title>
+  </head>
+  <body>
+    <th:block th:fragment="button">
+      <a
+        th:if="${isAllowedToEditApplication}"
+        th:href="@{/web/application/__${app.id}__/edit}"
+        class="icon-link tw-px-1"
+        th:data-title="#{action.edit}"
+        data-test-id="application-edit-button"
+      >
+        <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5')"></svg>
+        <span class="tw-sr-only" th:text="#{action.edit}"></span>
+      </a>
+    </th:block>
+
+    <th:block th:fragment="form"> </th:block>
+  </body>
+</html>

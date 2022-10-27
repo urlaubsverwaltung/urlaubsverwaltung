@@ -6,9 +6,7 @@ import "../js/application/app-form-day-length-change-listener";
 import "../components/back-button";
 import "../components/application-replacement-select";
 
-import vacationTypeChanged from "../js/application/vacation-type-changed";
-
-window.vacationTypeChanged = vacationTypeChanged;
+import "../js/application/vacation-type-changed";
 
 import holidayReplacementChanged from "../js/application/holiday-replacement-changed";
 

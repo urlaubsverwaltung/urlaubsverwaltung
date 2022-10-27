@@ -7,21 +7,34 @@ import sendGetDaysRequest from "../send-get-days-request";
 import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
 $(document).ready(async function () {
-  const { apiPrefix: urlPrefix, personId } = window.uv;
+  const person = window.uv.params.personId;
+  if (person) {
+    const personSelectElement = document.querySelector("#person-select");
+    if (personSelectElement) {
+      personSelectElement.value = person;
+    }
+  }
+
+  const apiPrefix = window.uv.apiPrefix;
+  const applicationForLeavePersonId = window.uv.application.person.id;
+
   let fromDateElement;
   let toDateElement;
+
+  function getPersonId() {
+    if (!applicationForLeavePersonId) {
+      return $("#person-select option:selected").val();
+    }
+    return applicationForLeavePersonId;
+  }
 
   function updateSelectionHints() {
     const dayLength = $("input:radio[name=dayLength]:checked").val();
     const startDate = parseISO(fromDateElement.value);
     const toDate = parseISO(toDateElement.value);
 
-    sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days");
-    sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
-  }
-
-  function getPersonId() {
-    return personId;
+    sendGetDaysRequest(apiPrefix, startDate, toDate, dayLength, getPersonId(), ".days");
+    sendGetDepartmentVacationsRequest(apiPrefix, startDate, toDate, getPersonId(), "#departmentVacations");
   }
 
   function setDefaultToDateValue() {
@@ -32,12 +45,12 @@ $(document).ready(async function () {
 
   const [fromDateResult, toDateResult] = await Promise.allSettled([
     createDatepicker("#from", {
-      urlPrefix,
+      urlPrefix: apiPrefix,
       getPersonId,
       onSelect: compose(updateSelectionHints, setDefaultToDateValue),
     }),
-    createDatepicker("#to", { urlPrefix, getPersonId, onSelect: updateSelectionHints }),
-    createDatepicker("#at", { urlPrefix, getPersonId, onSelect: updateSelectionHints }),
+    createDatepicker("#to", { urlPrefix: apiPrefix, getPersonId, onSelect: updateSelectionHints }),
+    createDatepicker("#at", { urlPrefix: apiPrefix, getPersonId, onSelect: updateSelectionHints }),
   ]);
 
   fromDateElement = fromDateResult.value;
@@ -50,12 +63,11 @@ $(document).ready(async function () {
     const endDate = parseISO(to || from);
 
     let dayLength = $("input:radio[name=dayLength]:checked").val();
-    sendGetDaysRequest(urlPrefix, startDate, endDate, dayLength, personId, ".days");
-    sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, "#departmentVacations");
+    sendGetDaysRequest(apiPrefix, startDate, endDate, dayLength, getPersonId(), ".days");
+    sendGetDepartmentVacationsRequest(apiPrefix, startDate, endDate, getPersonId(), "#departmentVacations");
   }
 
   // Timepicker for optional startTime and endTime
-
   $("#startTime").timepicker({
     step: 15,
     timeFormat: "H:i",
