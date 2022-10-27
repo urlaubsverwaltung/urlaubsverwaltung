@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.department;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -180,13 +181,38 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @EventListener
     public void deleteAssignedDepartmentsOfMember(PersonDeletedEvent event) {
 
         getAssignedDepartmentsOfMember(event.getPerson()).forEach(department -> {
             department.setMembers(department.getMembers().stream()
                 .filter(person -> !person.equals(event.getPerson()))
                 .collect(toList()));
+            update(department);
+        });
+    }
 
+    @Override
+    @EventListener
+    public void deleteDepartmentHead(PersonDeletedEvent event) {
+
+        getManagedDepartmentsOfDepartmentHead(event.getPerson()).forEach(department -> {
+            department.setDepartmentHeads(department.getDepartmentHeads().stream()
+                    .filter(person -> !person.equals(event.getPerson()))
+                    .collect(toList()));
+            update(department);
+        });
+    }
+
+
+    @Override
+    @EventListener
+    public void deleteSecondStageAuthority(PersonDeletedEvent event) {
+
+        getManagedDepartmentsOfSecondStageAuthority(event.getPerson()).forEach(department -> {
+            department.setSecondStageAuthorities(department.getDepartmentHeads().stream()
+                    .filter(person -> !person.equals(event.getPerson()))
+                    .collect(toList()));
             update(department);
         });
     }

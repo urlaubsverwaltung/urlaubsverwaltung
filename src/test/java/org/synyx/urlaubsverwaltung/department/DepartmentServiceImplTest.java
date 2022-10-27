@@ -1980,10 +1980,51 @@ class DepartmentServiceImplTest {
 
         verify(departmentRepository).findByMembersPerson(person);
 
-        final DepartmentEntity emptyDepartment = new DepartmentEntity();
-        emptyDepartment.setId(1);
-        emptyDepartment.setMembers(emptyList());
-        verify(departmentRepository).save(emptyDepartment);
+        ArgumentCaptor<DepartmentEntity> argument = ArgumentCaptor.forClass(DepartmentEntity.class);
+        verify(departmentRepository).save(argument.capture());
+        assertThat(argument.getValue().getMembers()).isEmpty();
+    }
+
+    @Test
+    void ensureDeletionOfDepartmentHeadAssignmentOnPersonDeletionEvent() {
+        final Person departmentHead = new Person();
+        departmentHead.setId(42);
+
+        final DepartmentEntity department = new DepartmentEntity();
+        department.setId(1);
+        department.setDepartmentHeads(List.of(departmentHead));
+        when(departmentRepository.findByDepartmentHeads(departmentHead)).thenReturn(List.of(department));
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(department));
+        when(departmentRepository.save(department)).thenReturn(department);
+
+        sut.deleteDepartmentHead(new PersonDeletedEvent(departmentHead));
+
+        verify(departmentRepository).findByDepartmentHeads(departmentHead);
+
+        ArgumentCaptor<DepartmentEntity> argument = ArgumentCaptor.forClass(DepartmentEntity.class);
+        verify(departmentRepository).save(argument.capture());
+        assertThat(argument.getValue().getDepartmentHeads()).isEmpty();
+    }
+
+    @Test
+    void ensureDeletionOfSecondStageAuthorityAssignmentOnPersonDeletionEvent() {
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setId(42);
+
+        final DepartmentEntity department = new DepartmentEntity();
+        department.setId(1);
+        department.setSecondStageAuthorities(List.of(secondStageAuthority));
+        when(departmentRepository.findBySecondStageAuthorities(secondStageAuthority)).thenReturn(List.of(department));
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(department));
+        when(departmentRepository.save(department)).thenReturn(department);
+
+        sut.deleteSecondStageAuthority(new PersonDeletedEvent(secondStageAuthority));
+
+        verify(departmentRepository).findBySecondStageAuthorities(secondStageAuthority);
+
+        ArgumentCaptor<DepartmentEntity> argument = ArgumentCaptor.forClass(DepartmentEntity.class);
+        verify(departmentRepository).save(argument.capture());
+        assertThat(argument.getValue().getSecondStageAuthorities()).isEmpty();
     }
 
     private static PageableSearchQuery defaultPersonSearchQuery() {
