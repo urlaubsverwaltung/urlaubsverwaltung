@@ -2,8 +2,34 @@ apiVersion: v1
 entries:
   urlaubsverwaltung:
   - apiVersion: v2
+    appVersion: 4.51.0
+    created: "2022-10-28T16:29:46.481132486+02:00"
+    dependencies:
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.3.3
+    description: Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht,
+      Urlaubsanträge von Mitarbeitern elektronisch zu verwalten.
+    digest: d22666b60b1c8dd1d1933c5882e1d7d10d5019db1215073746fcedcde5e9b5a7
+    home: https://github.com/synyx/urlaubsverwaltung
+    keywords:
+    - urlaub
+    maintainers:
+    - email: graf@synyx.de
+      name: Johannes Graf
+    - email: schneider@synyx.de
+      name: Tobias Schneider
+    name: urlaubsverwaltung
+    sources:
+    - https://github.com/synyx/urlaubsverwaltung
+    type: application
+    urls:
+    - https://synyx.github.io/urlaubsverwaltung/chart_repo/urlaubsverwaltung-2.1.0.tgz
+    version: 2.1.0
+  - apiVersion: v2
     appVersion: 3.4.5
-    created: "2020-10-16T19:24:56.019363862+02:00"
+    created: "2022-10-28T16:29:46.476584488+02:00"
     dependencies:
     - condition: mariadb.enabled
       name: mariadb
@@ -29,7 +55,7 @@ entries:
     version: 2.0.0
   - apiVersion: v1
     appVersion: 3.0.1
-    created: "2020-10-16T19:24:56.013428688+02:00"
+    created: "2022-10-28T16:29:46.473889171+02:00"
     dependencies:
     - condition: urlaubsverwaltung.deployMariaDb
       name: mariadb
@@ -54,7 +80,7 @@ entries:
     version: 1.0.1
   - apiVersion: v1
     appVersion: 3.0.0
-    created: "2020-10-16T19:24:56.009732465+02:00"
+    created: "2022-10-28T16:29:46.471283181+02:00"
     dependencies:
     - condition: urlaubsverwaltung.deployMariaDb
       name: mariadb
@@ -79,7 +105,7 @@ entries:
     version: 1.0.0
   - apiVersion: v1
     appVersion: 2.35.0
-    created: "2020-10-16T19:24:56.005112292+02:00"
+    created: "2022-10-28T16:29:46.469433223+02:00"
     dependencies:
     - condition: urlaubsverwaltung.deployMariaDb
       name: mariadb
@@ -100,4 +126,4 @@ entries:
     urls:
     - https://synyx.github.io/urlaubsverwaltung/chart_repo/urlaubsverwaltung-0.1.0.tgz
     version: 0.1.0
-generated: "2020-10-16T19:24:56.002640135+02:00"
+generated: "2022-10-28T16:29:46.467764504+02:00"
