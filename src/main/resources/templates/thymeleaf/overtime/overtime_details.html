@@ -4,9 +4,11 @@
     <title th:text="#{overtime.details.header.title}">Überstunden</title>
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
-    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
-      <div th:if="${overtimeRecord != null}" class="tw-w-1/3 feedback">
-        <p th:text="#{'overtime.feedback.' + ${overtimeRecord}}" class="alert alert-success"></p>
+    <main th:fragment="main">
+      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
+        <div th:if="${overtimeRecord != null}" class="tw-w-1/3 feedback">
+          <p th:text="#{'overtime.feedback.' + ${overtimeRecord}}" class="alert alert-success"></p>
+        </div>
       </div>
 
       <div
