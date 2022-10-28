@@ -363,19 +363,28 @@ class ApplicationServiceImplTest {
 
     @Test
     void deleteApplicationReplacement() {
-        Person person = new Person();
 
         Application application = new Application();
+
+        final Person person = new Person();
+        person.setId(42);
         final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
         holidayReplacement.setPerson(person);
-        application.setHolidayReplacements(List.of(holidayReplacement));
+
+
+        final HolidayReplacementEntity otherHolidayReplacement = new HolidayReplacementEntity();
+        final Person other = new Person();
+        other.setId(21);
+        otherHolidayReplacement.setPerson(other);
+
+        application.setHolidayReplacements(List.of(holidayReplacement, otherHolidayReplacement));
         final List<Application> applicationsOfHolidayReplacement = List.of(application);
         when(applicationRepository.findAllByHolidayReplacements_Person(person)).thenReturn(applicationsOfHolidayReplacement);
 
         sut.deleteHolidayReplacements(new PersonDeletedEvent(person));
 
         verify(applicationRepository).saveAll(applicationsOfHolidayReplacement);
-        assertThat(applicationsOfHolidayReplacement.get(0).getPerson()).isNull();
+        assertThat(applicationsOfHolidayReplacement.get(0).getHolidayReplacements()).containsExactly(otherHolidayReplacement);
 
     }
 }
