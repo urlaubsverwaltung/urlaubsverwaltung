@@ -469,7 +469,7 @@
                     th:replace="fragments/section-heading::section-heading(~{::person-details-dangerzone-body}, ~{::person-details-dangerzone-actions})"
             >
               <th:block th:ref="person-details-dangerzone-body">
-                <h2 th:text="#{person.account.dangerzone.title}">Löschen</h2>
+                <h2 th:text="#{person.account.dangerzone.title}">Benutzer löschen</h2>
               </th:block>
             </div>
             <div
@@ -490,8 +490,9 @@
                         method="post"
                         th:action="@{/web/person/__${person.id}__/delete}"
                 >
+                  <p th:text="#{person.account.dangerzone.description}" class="tw-text-base tw-font-medium"></p>
                   <button
-                          th:text="#{person.account.dangerzone.button}"
+                          th:text="#{person.account.dangerzone.delete-button}"
                           class="button-danger tw-w-48 tw-h-8"
                           type="submit"
                   >Benutzer endgültig löschen</button>
