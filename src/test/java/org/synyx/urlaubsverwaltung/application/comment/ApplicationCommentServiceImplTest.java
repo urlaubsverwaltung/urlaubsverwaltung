@@ -111,4 +111,16 @@ class ApplicationCommentServiceImplTest {
         verify(commentRepository).saveAll(argument.capture());
         assertThat(argument.getValue().get(0).getPerson()).isNull();
     }
+
+    @Test
+    void ensureDeletionByApplicationPerson() {
+        final Person applicationPerson = new Person();
+        applicationPerson.setId(1);
+
+        commentService.deleteByApplicationPerson(applicationPerson);
+
+        verify(commentRepository).deleteByApplicationPerson(applicationPerson);
+    }
+
+
 }

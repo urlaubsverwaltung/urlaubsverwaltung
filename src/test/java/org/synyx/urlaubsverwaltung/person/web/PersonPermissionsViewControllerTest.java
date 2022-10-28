@@ -178,6 +178,19 @@ class PersonPermissionsViewControllerTest {
         ).hasCauseInstanceOf(UnknownPersonException.class);
     }
 
+    @Test
+    void deletePerson() throws Exception {
+
+        final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        when(personService.getPersonByID(PERSON_ID)).thenReturn(Optional.of(person));
+
+        perform(post("/web/person/" + PERSON_ID + "/delete"))
+            .andExpect(redirectedUrl("/web/person/"))
+            .andExpect(flash().attribute("personDeletionSuccess", "Marlene Muster"));
+
+        verify(personService).delete(person);
+    }
+
     private static Person personWithId(int personId) {
         final Person person = new Person();
         person.setId(personId);
