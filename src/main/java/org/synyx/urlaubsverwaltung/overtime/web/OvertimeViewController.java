@@ -167,7 +167,7 @@ public class OvertimeViewController {
         model.addAttribute("overtimeLeft", overtimeDetailsDto.getOvertimeLeft());
         model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
 
-        return "overtime/overtime_details";
+        return "thymeleaf/overtime/overtime_details";
     }
 
     @GetMapping("/overtime/new")

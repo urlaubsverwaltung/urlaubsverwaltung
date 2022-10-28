@@ -7,13 +7,13 @@ public class OvertimeDetailPersonDto {
     private final Integer id;
     private final String email;
     private final String niceName;
-    private final String gravatarUrl;
+    private final String gravatarURL;
 
-    OvertimeDetailPersonDto(Integer id, String email, String niceName, String gravatarUrl) {
+    OvertimeDetailPersonDto(Integer id, String email, String niceName, String gravatarURL) {
         this.id = id;
         this.email = email;
         this.niceName = niceName;
-        this.gravatarUrl = gravatarUrl;
+        this.gravatarURL = gravatarURL;
     }
 
     public Integer getId() {
@@ -28,8 +28,8 @@ public class OvertimeDetailPersonDto {
         return niceName;
     }
 
-    public String getGravatarUrl() {
-        return gravatarUrl;
+    public String getGravatarURL() {
+        return gravatarURL;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class OvertimeDetailPersonDto {
             "id=" + id +
             ", email='" + email + '\'' +
             ", niceName='" + niceName + '\'' +
-            ", gravatarUrl='" + gravatarUrl + '\'' +
+            ", gravatarUrl='" + gravatarURL + '\'' +
             '}';
     }
 }
