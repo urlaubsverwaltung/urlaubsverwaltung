@@ -1966,12 +1966,17 @@ class DepartmentServiceImplTest {
     void ensureDeletionOfMembershipOnPersonDeletionEvent() {
         final Person person = new Person();
         person.setId(42);
+        final Person other = new Person();
+        other.setId(21);
 
         final DepartmentEntity department = new DepartmentEntity();
         department.setId(1);
-        final DepartmentMemberEmbeddable departmentMemberEmbeddable = new DepartmentMemberEmbeddable();
-        departmentMemberEmbeddable.setPerson(person);
-        department.setMembers(List.of(departmentMemberEmbeddable));
+        final DepartmentMemberEmbeddable personEmbeddable = new DepartmentMemberEmbeddable();
+        personEmbeddable.setPerson(person);
+        final DepartmentMemberEmbeddable otherEmbeddable = new DepartmentMemberEmbeddable();
+        otherEmbeddable.setPerson(other);
+
+        department.setMembers(List.of(personEmbeddable, otherEmbeddable));
         when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(department));
         when(departmentRepository.findById(1)).thenReturn(Optional.of(department));
         when(departmentRepository.save(department)).thenReturn(department);
@@ -1982,17 +1987,19 @@ class DepartmentServiceImplTest {
 
         ArgumentCaptor<DepartmentEntity> argument = ArgumentCaptor.forClass(DepartmentEntity.class);
         verify(departmentRepository).save(argument.capture());
-        assertThat(argument.getValue().getMembers()).isEmpty();
+        assertThat(argument.getValue().getMembers()).containsExactly(otherEmbeddable);
     }
 
     @Test
     void ensureDeletionOfDepartmentHeadAssignmentOnPersonDeletionEvent() {
         final Person departmentHead = new Person();
         departmentHead.setId(42);
+        final Person other = new Person();
+        other.setId(21);
 
         final DepartmentEntity department = new DepartmentEntity();
         department.setId(1);
-        department.setDepartmentHeads(List.of(departmentHead));
+        department.setDepartmentHeads(List.of(departmentHead, other));
         when(departmentRepository.findByDepartmentHeads(departmentHead)).thenReturn(List.of(department));
         when(departmentRepository.findById(1)).thenReturn(Optional.of(department));
         when(departmentRepository.save(department)).thenReturn(department);
@@ -2003,17 +2010,19 @@ class DepartmentServiceImplTest {
 
         ArgumentCaptor<DepartmentEntity> argument = ArgumentCaptor.forClass(DepartmentEntity.class);
         verify(departmentRepository).save(argument.capture());
-        assertThat(argument.getValue().getDepartmentHeads()).isEmpty();
+        assertThat(argument.getValue().getDepartmentHeads()).containsExactly(other);
     }
 
     @Test
     void ensureDeletionOfSecondStageAuthorityAssignmentOnPersonDeletionEvent() {
         final Person secondStageAuthority = new Person();
         secondStageAuthority.setId(42);
+        final Person other = new Person();
+        other.setId(21);
 
         final DepartmentEntity department = new DepartmentEntity();
         department.setId(1);
-        department.setSecondStageAuthorities(List.of(secondStageAuthority));
+        department.setSecondStageAuthorities(List.of(secondStageAuthority, other));
         when(departmentRepository.findBySecondStageAuthorities(secondStageAuthority)).thenReturn(List.of(department));
         when(departmentRepository.findById(1)).thenReturn(Optional.of(department));
         when(departmentRepository.save(department)).thenReturn(department);
@@ -2024,7 +2033,7 @@ class DepartmentServiceImplTest {
 
         ArgumentCaptor<DepartmentEntity> argument = ArgumentCaptor.forClass(DepartmentEntity.class);
         verify(departmentRepository).save(argument.capture());
-        assertThat(argument.getValue().getSecondStageAuthorities()).isEmpty();
+        assertThat(argument.getValue().getSecondStageAuthorities()).containsExactly(other);
     }
 
     private static PageableSearchQuery defaultPersonSearchQuery() {

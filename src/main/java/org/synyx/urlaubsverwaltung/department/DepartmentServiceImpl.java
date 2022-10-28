@@ -210,7 +210,7 @@ class DepartmentServiceImpl implements DepartmentService {
     public void deleteSecondStageAuthority(PersonDeletedEvent event) {
 
         getManagedDepartmentsOfSecondStageAuthority(event.getPerson()).forEach(department -> {
-            department.setSecondStageAuthorities(department.getDepartmentHeads().stream()
+            department.setSecondStageAuthorities(department.getSecondStageAuthorities().stream()
                     .filter(person -> !person.equals(event.getPerson()))
                     .collect(toList()));
             update(department);
