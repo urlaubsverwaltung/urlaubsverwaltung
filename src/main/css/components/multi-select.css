@@ -1,0 +1,12 @@
+select[multiple] {
+  overflow-y: scroll;
+  scrollbar-width: none; /* firefox */
+}
+
+select[multiple]::-webkit-scrollbar {
+  /* hiding the scrollbar feels shady...  */
+  /* however the best tradeoff for multiselect visualisation cross platform (ipad, smartphone, linux, macos, ...) */
+  /* and disabled/enabled 'show scroll bars' platform feature (when scrolling, always, automatically, ...)  */
+  width: 0;
+  height: 0;
+}

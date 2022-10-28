@@ -1,40 +1,58 @@
 package org.synyx.urlaubsverwaltung.account;
 
-import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
 
-import static java.time.ZoneOffset.UTC;
+import static java.time.Month.APRIL;
+import static java.time.format.DateTimeFormatter.ISO_DATE;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
 
 public class AccountForm {
 
     private int holidaysAccountYear;
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate holidaysAccountValidFrom;
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate holidaysAccountValidTo;
+    private boolean overrideVacationDaysExpire;
+    private Boolean doRemainingVacationDaysExpireLocally;
+    private boolean doRemainingVacationDaysExpireGlobally;
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
+    private LocalDate expiryDate;
     private BigDecimal annualVacationDays;
     private BigDecimal actualVacationDays;
     private BigDecimal remainingVacationDays;
     private BigDecimal remainingVacationDaysNotExpiring;
     private String comment;
 
-    AccountForm() {
-        this(ZonedDateTime.now(UTC).getYear());
+    private AccountForm() {
     }
 
     AccountForm(int year) {
         this.holidaysAccountYear = year;
-        this.holidaysAccountValidFrom = DateUtil.getFirstDayOfYear(year);
-        this.holidaysAccountValidTo = DateUtil.getLastDayOfYear(year);
+        this.holidaysAccountValidFrom = Year.of(year).atDay(1);
+        this.holidaysAccountValidTo = holidaysAccountValidFrom.with(lastDayOfYear());
+        this.overrideVacationDaysExpire = false;
+        this.doRemainingVacationDaysExpireLocally = true;
+        this.expiryDate = LocalDate.of(year, APRIL, 1);
     }
 
     AccountForm(Account holidaysAccount) {
         this.holidaysAccountYear = holidaysAccount.getValidFrom().getYear();
         this.holidaysAccountValidFrom = holidaysAccount.getValidFrom();
         this.holidaysAccountValidTo = holidaysAccount.getValidTo();
+        this.overrideVacationDaysExpire = holidaysAccount.isDoRemainingVacationDaysExpireLocally() != null;
+        this.doRemainingVacationDaysExpireLocally = holidaysAccount.isDoRemainingVacationDaysExpireLocally();
+        this.doRemainingVacationDaysExpireGlobally = holidaysAccount.isDoRemainingVacationDaysExpireGlobally();
+        this.expiryDate = holidaysAccount.getExpiryDate();
         this.annualVacationDays = holidaysAccount.getAnnualVacationDays();
-        this.actualVacationDays = holidaysAccount.getVacationDays();
+        this.actualVacationDays = holidaysAccount.getActualVacationDays();
         this.remainingVacationDays = holidaysAccount.getRemainingVacationDays();
         this.remainingVacationDaysNotExpiring = holidaysAccount.getRemainingVacationDaysNotExpiring();
         this.comment = holidaysAccount.getComment();
@@ -48,6 +66,14 @@ public class AccountForm {
         this.holidaysAccountYear = holidaysAccountYear;
     }
 
+    public String getHolidaysAccountValidFromIsoValue() {
+        if (holidaysAccountValidFrom == null) {
+            return "";
+        }
+
+        return holidaysAccountValidFrom.format(ISO_DATE);
+    }
+
     public LocalDate getHolidaysAccountValidFrom() {
         return holidaysAccountValidFrom;
     }
@@ -56,12 +82,64 @@ public class AccountForm {
         this.holidaysAccountValidFrom = holidaysAccountValidFrom;
     }
 
+    public String getHolidaysAccountValidToIsoValue() {
+        if (holidaysAccountValidTo == null) {
+            return "";
+        }
+
+        return holidaysAccountValidTo.format(ISO_DATE);
+    }
+
     public LocalDate getHolidaysAccountValidTo() {
         return holidaysAccountValidTo;
     }
 
     public void setHolidaysAccountValidTo(LocalDate holidaysAccountValidTo) {
         this.holidaysAccountValidTo = holidaysAccountValidTo;
+    }
+
+    public boolean isOverrideVacationDaysExpire() {
+        return overrideVacationDaysExpire;
+    }
+
+    public void setOverrideVacationDaysExpire(boolean overrideVacationDaysExpire) {
+        this.overrideVacationDaysExpire = overrideVacationDaysExpire;
+    }
+
+    public Boolean getDoRemainingVacationDaysExpireLocally() {
+        return doRemainingVacationDaysExpireLocally;
+    }
+
+    public void setDoRemainingVacationDaysExpireLocally(Boolean doRemainingVacationDaysExpireLocally) {
+        this.doRemainingVacationDaysExpireLocally = doRemainingVacationDaysExpireLocally;
+    }
+
+    public boolean isDoRemainingVacationDaysExpireGlobally() {
+        return doRemainingVacationDaysExpireGlobally;
+    }
+
+    public void setDoRemainingVacationDaysExpireGlobally(boolean doRemainingVacationDaysExpireGlobally) {
+        this.doRemainingVacationDaysExpireGlobally = doRemainingVacationDaysExpireGlobally;
+    }
+
+    public boolean doRemainingVacationDaysExpire() {
+        return doRemainingVacationDaysExpireLocally == null ? doRemainingVacationDaysExpireGlobally : doRemainingVacationDaysExpireLocally;
+    }
+
+    public String getExpiryDateToIsoValue() {
+        if (expiryDate == null) {
+            return "";
+        }
+
+        return expiryDate.format(ISO_DATE);
+    }
+
+    public LocalDate getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
     }
 
     public BigDecimal getAnnualVacationDays() {

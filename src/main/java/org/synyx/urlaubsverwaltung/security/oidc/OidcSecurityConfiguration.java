@@ -6,23 +6,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.ClientRegistrations;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.AuthenticatedPrincipalOAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
 
 import static org.springframework.security.oauth2.core.AuthorizationGrantType.AUTHORIZATION_CODE;
-import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.BASIC;
+import static org.springframework.security.oauth2.core.ClientAuthenticationMethod.CLIENT_SECRET_BASIC;
 
-/**
- * @author Florian Krupicka - krupicka@synyx.de
- */
 @Configuration
 @ConditionalOnProperty(value = "uv.security.auth", havingValue = "oidc")
 @EnableConfigurationProperties(OidcSecurityProperties.class)
@@ -38,12 +35,13 @@ public class OidcSecurityConfiguration {
     public ClientRegistrationRepository clientRegistrationRepository() {
         final ClientRegistration.Builder builder = ClientRegistrations
             .fromOidcIssuerLocation(properties.getIssuerUri())
+            .scope(properties.getScopes())
             .registrationId("oidc");
 
         builder.clientId(properties.getClientId());
 
         if (properties.getClientSecret() != null) {
-            builder.clientSecret(properties.getClientSecret()).clientAuthenticationMethod(BASIC);
+            builder.clientSecret(properties.getClientSecret()).clientAuthenticationMethod(CLIENT_SECRET_BASIC);
         }
 
         builder.authorizationGrantType(AUTHORIZATION_CODE);
@@ -54,27 +52,29 @@ public class OidcSecurityConfiguration {
     }
 
     @Bean
-    public OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
+    OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
         return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
     }
 
     @Bean
-    public OAuth2AuthorizedClientRepository authorizedClientRepository(OAuth2AuthorizedClientService authorizedClientService) {
+    OAuth2AuthorizedClientRepository authorizedClientRepository(OAuth2AuthorizedClientService authorizedClientService) {
         return new AuthenticatedPrincipalOAuth2AuthorizedClientRepository(authorizedClientService);
     }
 
     @Bean
-    public OidcPersonAuthoritiesMapper oidcPersonAuthoritiesMapper(PersonService personService) {
+    OidcPersonAuthoritiesMapper oidcPersonAuthoritiesMapper(PersonService personService) {
         return new OidcPersonAuthoritiesMapper(personService);
     }
 
     @Bean
-    public SecurityContextLogoutHandler oidcLogoutHandler() {
-        return new OidcLogoutHandler(properties);
+    OidcLoginLogger oidcLoginLogger(PersonService personService) {
+        return new OidcLoginLogger(personService);
     }
 
     @Bean
-    public OidcLoginLogger oidcLoginLogger(PersonService personService) {
-        return new OidcLoginLogger(personService);
+    OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
+        final OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+        oidcClientInitiatedLogoutSuccessHandler.setPostLogoutRedirectUri(properties.getPostLogoutRedirectUri());
+        return oidcClientInitiatedLogoutSuccessHandler;
     }
 }

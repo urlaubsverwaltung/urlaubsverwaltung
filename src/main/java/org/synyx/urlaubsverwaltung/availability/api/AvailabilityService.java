@@ -14,6 +14,7 @@ import java.util.List;
 /**
  * Service to retrieve {@link DayAvailability} information.
  */
+@Deprecated(forRemoval = true, since = "4.4.0")
 @Service
 public class AvailabilityService {
 

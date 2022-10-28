@@ -1,35 +1,40 @@
 package org.synyx.urlaubsverwaltung.absence;
 
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import static java.time.ZoneOffset.UTC;
-
+import static java.lang.String.format;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
+import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMENT;
 
 /**
  * Represents a period of time where a person is not at work.
+ *
+ * @deprecated in favor of {@link AbsencePeriod} which supports morning/noon absence state.
  */
+@Deprecated(since = "4.20.0")
 public class Absence {
 
     private final ZonedDateTime startDate;
     private final ZonedDateTime endDate;
     private final Person person;
     private final boolean isAllDay;
+    private final AbsenceType absenceType;
 
-    public Absence(Person person, Period period,
-                   AbsenceTimeConfiguration absenceTimeConfiguration) {
+    public Absence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration) {
+        this(person, period, absenceTimeConfiguration, DEFAULT);
+    }
 
-        Assert.notNull(person, "Person must be given");
-        Assert.notNull(period, "Period must be given");
-        Assert.notNull(absenceTimeConfiguration, "Time configuration must be given");
+    public Absence(Person person, Period period, AbsenceTimeConfiguration absenceTimeConfiguration, AbsenceType absenceType) {
 
         this.person = person;
+        this.absenceType = absenceType;
 
-        ZonedDateTime periodStartDate = period.getStartDate().atStartOfDay(UTC);
-        ZonedDateTime periodEndDate = period.getEndDate().atStartOfDay(UTC);
+        final ZonedDateTime periodStartDate = period.getStartDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
+        final ZonedDateTime periodEndDate = period.getEndDate().atStartOfDay(ZoneId.of(absenceTimeConfiguration.getTimeZoneId()));
 
         switch (period.getDayLength()) {
             case FULL:
@@ -55,34 +60,32 @@ public class Absence {
         }
     }
 
-
     public ZonedDateTime getStartDate() {
-
         return startDate;
     }
 
-
     public ZonedDateTime getEndDate() {
-
         return endDate;
     }
 
-
     public Person getPerson() {
-
         return person;
     }
 
-
     public boolean isAllDay() {
-
         return isAllDay;
     }
 
+    public boolean isHolidayReplacement() {
+        return absenceType == HOLIDAY_REPLACEMENT;
+    }
 
     public String getEventSubject() {
+        if (isHolidayReplacement()) {
+            return format("Vertretung für %s", person.getNiceName());
+        }
 
-        return String.format("%s abwesend", person.getNiceName());
+        return format("%s abwesend", person.getNiceName());
     }
 
     @Override
@@ -92,6 +95,7 @@ public class Absence {
             ", endDate=" + endDate +
             ", person=" + person +
             ", isAllDay=" + isAllDay +
+            ", absenceType=" + absenceType +
             '}';
     }
 }

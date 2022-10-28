@@ -1,4 +1,4 @@
-# Urlaubsverwaltung [![Build Status](https://github.com/synyx/urlaubsverwaltung/workflows/Urlaubsverwaltung%20CI/badge.svg)](https://github.com/synyx/urlaubsverwaltung/actions?query=workflow%3A%22Urlaubsverwaltung+CI%22) [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung) [![Docker Pulls](https://img.shields.io/docker/pulls/synyx/urlaubsverwaltung.svg)](https://hub.docker.com/r/synyx/urlaubsverwaltung) [![Total Downloads](https://img.shields.io/github/downloads/synyx/urlaubsverwaltung/total.svg)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
+# Urlaubsverwaltung [![Build Status](https://github.com/synyx/urlaubsverwaltung/workflows/Build/badge.svg)](https://github.com/synyx/urlaubsverwaltung/actions?query=workflow%3A%22Build) [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung) [![Docker Pulls](https://badgen.net/docker/pulls/synyx/urlaubsverwaltung?icon=docker&label=pulls)](https://hub.docker.com/r/synyx/urlaubsverwaltung/) [![Crowdin](https://badges.crowdin.net/urlaubsverwaltung/localized.svg)](https://crowdin.com/project/urlaubsverwaltung)
 
 Die Urlaubsverwaltung ist eine Web-Anwendung, um *Abwesenheiten* elektronisch verwalten zu können.
 
@@ -7,15 +7,6 @@ abgelehnt oder storniert werden kann. Jeder Mitarbeiter kann seine **Überstunde
 zu behalten und falls doch mal eine Person ausfallen sollte, so kann die **Krankmeldung** direkt gepflegt werden.
 
 Wenn du mehr Informationen und Bilder über dieses Projekt sehen möchtest dann schaue auf unserer [Landingpage] vorbei.
-
-#### End-Of-Life: Version 3.x
-
-| Version 3.x wird nur noch bis zum **31.12.2020** mit Sicherheitsupdates unterstützt.|
-| --- |
-
-Du bist auf der Suche nach Version 3.x? Diese findest du diese auf dem [v3.x branch](https://github.com/synyx/urlaubsverwaltung/tree/v3.x).
-Wenn du wissen möchtest, was alles zu tun ist, um von 3.x auf 4.x umzusteigen?
-Dann wirf einen Blick in den [Migration Guide](https://github.com/synyx/urlaubsverwaltung/wiki/Urlaubsverwaltung-4.0-Migration-Guide).
 
 * [Demo-System](#demo-system)
 * [FAQ](#faq)
@@ -34,7 +25,7 @@ Dann steige über unsere [Landingpage] direkt in das [Demo-System](https://urlau
 
 ## FAQ
 
-Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es ein [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki/FAQ).  
+Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es ein [Hilfe](https://urlaubsverwaltung.cloud/hilfe/).  
 Sollte dieser Fragenkatalog nicht weiterhelfen, kannst du gerne [ein neues Issue](https://github.com/synyx/urlaubsverwaltung/issues/new/choose)
 vom Typ "Question" erstellen.
 
@@ -50,7 +41,7 @@ In der Urlaubsverwaltung gibt es aktuell folgende Arten von Berechtigungen:
 * **Chef**: darf Urlaubsanträge aller Benutzer einsehen, genehmigen und ablehnen
 * **Office**: darf Einstellungen zur Anwendung vornehmen, Mitarbeiter verwalten, Urlaub für Mitarbeiter
 beantragen/stornieren und Krankmeldungen pflegen
-* **Admin**: Keine fachliche Rolle sondern nur für den Zugriff von Management Schnittstellen ([Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html)).
+* **Admin**: Keine fachliche Rolle, sondern nur für den Zugriff von Management Schnittstellen ([Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html)).
 
 Eine aktive Person kann eine oder mehrere Rollen innehaben.
   
@@ -99,7 +90,7 @@ Alle Informationen zum Betrieb mit unserem Docker Image sind im Ordner [.example
 
 ### Konfiguration
 
-Die Anwendung besitzt im Verzeichnis `src/main/resources` eine [Konfigurationsdatei](https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/application.properties).
+Die Anwendung besitzt im Verzeichnis `src/main/resources` eine [Konfigurationsdatei](https://github.com/synyx/urlaubsverwaltung/blob/main/src/main/resources/application.properties).
 Diese beinhaltet gewisse Grundeinstellungen und Standardwerte. Diese allein reichen für die Produktivnahme der
 Anwendung allerdings nicht aus. Spezifische Konfigurationen wie z.B. die [Datenbank Einstellungen](#datenbank-konfigurieren)
 und [Security Provider](#security-provider-konfigurieren) müssen in einer eigenen Konfigurationsdatei hinterlegt werden.
@@ -112,30 +103,36 @@ Nachstehend alle spezifischen Konfigurationsmöglichkeiten der Urlaubsverwaltung
 
 ```properties
 # account
-uv.account.default-vacation-days=20
+uv.account.default-vacation-days=20 # deprecated - kann über 'Einstellungen' gesetzt werden wenn auf '-1' gesetzt
 uv.account.update.cron=0 0 5 1 1 *
 
 # application
 uv.application.reminder-notification.cron=0 0 7 * * *
+uv.application.upcoming-holiday-replacement-notification.cron=0 0 7 * * *
+uv.application.upcoming-notification.cron=0 0 7 * * *
 
 # ical calendar
 uv.calendar.organizer
 uv.calendar.refresh-interval=P1D
 
 # development
-uv.development.demodata.create
+uv.development.demodata.create=false
+uv.development.demodata.additional-active-user=0
+uv.development.demodata.additional-inactive-user=0
 
 # mail
 uv.mail.administrator
+uv.mail.application-url
 uv.mail.sender
+uv.mail.senderDisplayName=Urlaubsverwaltung
 
 # security
 uv.security.auth=default
 
-uv.security.directory-service.identifier
-uv.security.directory-service.last-name
-uv.security.directory-service.first-name
-uv.security.directory-service.mail-address
+uv.security.directory-service.identifier=sAMAccountName
+uv.security.directory-service.last-name=givenName
+uv.security.directory-service.first-name=sn
+uv.security.directory-service.mail-address=mail
 uv.security.directory-service.sync.cron=0 0 1 * * ?
 uv.security.directory-service.filter.member-of
 uv.security.directory-service.filter.object-class=person
@@ -166,6 +163,7 @@ uv.security.oidc.client-id
 uv.security.oidc.client-secret
 uv.security.oidc.issuer-uri
 uv.security.oidc.logout-uri
+uv.security.oidc.scopes=openid,profile,email
 
 # jsp template engine
 uv.template-engine.jsp.use-precompiled=false
@@ -173,7 +171,8 @@ uv.template-engine.jsp.use-precompiled=false
 # sick-note
 uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
 
-# workingtime
+# workingtime - deprecated - kann über 'Einstellungen' gesetzt werden 
+# wenn auf uv.workingtime.default-working-days[0]=-1 gesetzt
 # (monday till friday)
 uv.workingtime.default-working-days[0]=1
 uv.workingtime.default-working-days[1]=2
@@ -205,6 +204,9 @@ Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkei
     * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
       Außerdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
       die 'Allowed Callback URLs' und ggf. weitere Einstellungen vorgenommen werden.
+    * Es wird erwartet, dass der OIDC Provider im Access Token folgende Attribute enthält: `given_name`, `family_name`, `email`.
+      Die Urlaubsverwaltung fragt deswegen standardmäßig den OIDC Provider mit den Scopes `openid`,`profile` und `email` an.
+      Sollten diese Scopes nicht passen, können sie mit dem Property `uv.security.oidc.scopes` überschrieben werden.
 
 Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung und das Pflegen der Einstellungen innerhalb der Anwendung.
@@ -215,7 +217,12 @@ Der Authentifizierungsmodus muss über die Property `uv.security.auth` in der ei
 #### Datenbank konfigurieren
 
 Die Anwendung verwendet zur Speicherung der Daten ein MariaDB-Datenbankmanagementsystem. 
-Erstelle in deinem MariaDB-Datenbankmanagementsystem eine Datenbank mit z.B. dem Namen `urlaubsverwaltung`
+Erstelle in deinem MariaDB-Datenbankmanagementsystem eine Datenbank mit z.B. dem Namen `urlaubsverwaltung`.
+
+```sql
+CREATE DATABASE urlaubsverwaltung DEFAULT CHARACTER SET = utf8mb4 DEFAULT COLLATE = utf8mb4_unicode_ci;
+```
+
 sowie einen Benutzer mit Zugriffsrechten für diese Datenbank und konfiguriere diese
 
 ```properties
@@ -232,7 +239,9 @@ Um den E-Mail-Server zu konfigurieren müssen folgende Konfigurationen vorgenomm
 
 ```properties
 uv.mail.sender=absender@example.org         # Absender der E-Mails
+uv.mail.senderDisplayName=Urlaubsverwaltung # Schönere Darstellung im Postfach
 uv.mail.administrator=admin@example.org     # E-Mail-Adresse des Administrators
+uv.mail.application-url=https://example.org # Diese URL wird in den E-Mails zur Link-Generierung verwendet
 
 spring.mail.host=$HOST
 spring.mail.port=$PORT
@@ -276,8 +285,8 @@ geschrieben wird.
 Da die Anwendung auf Spring Boot basiert, lässt sie sich sehr komfortabel als Service installieren. Wie genau dies
 funktioniert, kann den entsprechenden Kapiteln der Spring Boot Dokumentation entnommen werden:
 
-* [Linux Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-service)
-* [Windows Service](http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-windows.html)
+* [Linux Service](https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#deployment-service)
+* [Windows Service](https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#deployment-windows)
 
 
 ---
@@ -317,7 +326,7 @@ Möchte man, dass beim Starten der Anwendung keine Demodaten generiert werden, m
 
 `uv.development.demodata.create`
 
-in den [application-demodata.properties](https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/application-demodata.properties)
+in den [application-demodata.properties](https://github.com/synyx/urlaubsverwaltung/blob/main/src/main/resources/application-demodata.properties)
 auf `false` gesetzt werden.
 
 
@@ -350,6 +359,14 @@ vom Typ "Question" erstellen.
 
 ### Repository clonen
 
+Ohne GitHub Account
+
+```bash
+https://github.com/synyx/urlaubsverwaltung.git
+```
+
+mit GitHub Account
+
 ```bash
 git clone git@github.com:synyx/urlaubsverwaltung.git
 ```
@@ -367,6 +384,8 @@ Folgende git hooks werden installiert:
 
 * **post-merge**
   * schaut nach einen `pull` ob sich die `package.lock` geändert hat und installiert ggfs. npm dependencies
+* **pre-commit**
+  * formatiert geänderte Dateien mit [prettier](https://prettier.io/) 
 
 ### Anwendung starten
 
@@ -439,9 +458,9 @@ nichts weiter getan werden. Verwendest du das Profil nicht, kannst du das Cachin
 deaktivieren:
 
 ```properties
-spring.resources.chain.cache=false
-spring.resources.cache.cachecontrol.max-age=0
-spring.resources.chain.strategy.content.enabled=false
+spring.web.resources.chain.cache=false
+spring.web.resources.cache.cachecontrol.max-age=0
+spring.web.resources.chain.strategy.content.enabled=false
 ```
 
 

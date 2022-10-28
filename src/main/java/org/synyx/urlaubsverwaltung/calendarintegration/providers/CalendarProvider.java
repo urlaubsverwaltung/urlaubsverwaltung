@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.calendarintegration.providers;
 
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 
 import java.util.Optional;
 
@@ -11,6 +11,13 @@ import java.util.Optional;
  */
 @Deprecated(since = "4.0.0", forRemoval = true)
 public interface CalendarProvider {
+
+    /**
+     * Returns `true` or `false` if a real calendar provider is
+     *
+     * @return true if a real provider is configured
+     */
+    boolean isRealProviderConfigured();
 
     /**
      * Add a person's absence to calendar.

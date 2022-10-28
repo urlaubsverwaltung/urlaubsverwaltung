@@ -1,0 +1,219 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+  <changeSet author="schneider" id="default-naming-strategy-absence-mapping">
+    <preConditions>
+      <tableExists tableName="AbsenceMapping"/>
+    </preConditions>
+    <renameTable oldTableName="AbsenceMapping" newTableName="absence_mapping"/>
+    <renameColumn tableName="absence_mapping" oldColumnName="AbsenceId" newColumnName="absence_id" columnDataType="INT(10)"/>
+    <renameColumn tableName="absence_mapping" oldColumnName="AbsenceMappingType" newColumnName="absence_mapping_type" columnDataType="VARCHAR(255)"/>
+    <renameColumn tableName="absence_mapping" oldColumnName="eventId" newColumnName="event_id" columnDataType="VARCHAR(255)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-account">
+    <preConditions>
+      <tableExists tableName="Account"/>
+    </preConditions>
+    <renameTable oldTableName="Account" newTableName="account"/>
+    <renameColumn tableName="account" oldColumnName="annualVacationDays" newColumnName="annual_vacation_days" columnDataType="DECIMAL(19,2)"/>
+    <renameColumn tableName="account" oldColumnName="remainingVacationDays" newColumnName="remaining_vacation_days" columnDataType="DECIMAL(19,2)"/>
+    <renameColumn tableName="account" oldColumnName="vacationDays" newColumnName="vacation_days" columnDataType="DECIMAL(19,2)"/>
+    <renameColumn tableName="account" oldColumnName="validFrom" newColumnName="valid_from" columnDataType="DATE"/>
+    <renameColumn tableName="account" oldColumnName="validTo" newColumnName="valid_to" columnDataType="DATE"/>
+    <renameColumn tableName="account" oldColumnName="remainingVacationDaysNotExpiring" newColumnName="remaining_vacation_days_not_expiring" columnDataType="DECIMAL(19,2)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-application-application">
+    <preConditions>
+      <tableExists tableName="Application"/>
+    </preConditions>
+    <renameTable oldTableName="Application" newTableName="application"/>
+    <renameColumn tableName="application" oldColumnName="applicationDate" newColumnName="application_date" columnDataType="DATE"/>
+    <renameColumn tableName="application" oldColumnName="endDate" newColumnName="end_date" columnDataType="DATE"/>
+    <renameColumn tableName="application" oldColumnName="startDate" newColumnName="start_date" columnDataType="DATE"/>
+    <renameColumn tableName="application" oldColumnName="dayLength" newColumnName="day_length" columnDataType="VARCHAR(20)"/>
+    <renameColumn tableName="application" oldColumnName="cancelDate" newColumnName="cancel_date" columnDataType="DATE"/>
+    <renameColumn tableName="application" oldColumnName="editedDate" newColumnName="edited_date" columnDataType="DATE"/>
+    <renameColumn tableName="application" oldColumnName="remindDate" newColumnName="remind_date" columnDataType="DATE"/>
+    <renameColumn tableName="application" oldColumnName="teamInformed" newColumnName="team_informed" columnDataType="BIT(1)"/>
+    <renameColumn tableName="application" oldColumnName="twoStageApproval" newColumnName="two_stage_approval" columnDataType="BIT(1)"/>
+    <renameColumn tableName="application" oldColumnName="VacationType_id" newColumnName="vacation_type_id" columnDataType="INT(10)"/>
+    <renameColumn tableName="application" oldColumnName="startTime" newColumnName="start_time" columnDataType="TIME"/>
+    <renameColumn tableName="application" oldColumnName="endTime" newColumnName="end_time" columnDataType="TIME"/>
+    <renameColumn tableName="application" oldColumnName="holidayReplacementNote" newColumnName="holiday_replacement_note" columnDataType="VARCHAR(255)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-application-comment">
+    <preConditions>
+      <tableExists tableName="ApplicationComment"/>
+    </preConditions>
+    <renameTable oldTableName="ApplicationComment" newTableName="application_comment"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-calendar">
+    <preConditions>
+      <tableExists tableName="Calendar"/>
+    </preConditions>
+    <renameTable oldTableName="Calendar" newTableName="calendar"/>
+    <renameColumn tableName="calendar" oldColumnName="DTYPE" newColumnName="dtype" columnDataType="VARCHAR(31)"/>
+    <renameColumn tableName="calendar" oldColumnName="calendarPeriod" newColumnName="calendar_period" columnDataType="VARCHAR(10)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-calendar-accessible">
+    <preConditions>
+      <tableExists tableName="CalendarAccessible"/>
+    </preConditions>
+    <renameTable oldTableName="CalendarAccessible" newTableName="calendar_accessible"/>
+    <renameColumn tableName="calendar_accessible" oldColumnName="DTYPE" newColumnName="dtype" columnDataType="VARCHAR(31)"/>
+    <renameColumn tableName="calendar_accessible" oldColumnName="isAccessible" newColumnName="is_accessible" columnDataType="BIT(1)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-department">
+    <preConditions>
+      <tableExists tableName="Department"/>
+    </preConditions>
+    <renameTable oldTableName="Department" newTableName="department"/>
+    <renameColumn tableName="department" oldColumnName="lastModification" newColumnName="last_modification" columnDataType="DATE"/>
+    <renameColumn tableName="department" oldColumnName="twoStageApproval" newColumnName="two_stage_approval" columnDataType="BIT(1)"/>
+    <renameColumn tableName="department" oldColumnName="createdAt" newColumnName="created_at" columnDataType="DATE"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-department-departmentHead">
+    <preConditions>
+      <tableExists tableName="Department_DepartmentHead"/>
+    </preConditions>
+    <renameTable oldTableName="Department_DepartmentHead" newTableName="department_department_head"/>
+    <renameColumn tableName="department_department_head" oldColumnName="Department_id" newColumnName="department_id" columnDataType="INT(10)"/>
+    <renameColumn tableName="department_department_head" oldColumnName="departmentHeads_id" newColumnName="department_heads_id" columnDataType="INT(10)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-department-member">
+    <preConditions>
+      <tableExists tableName="Department_Member"/>
+    </preConditions>
+    <renameTable oldTableName="Department_Member" newTableName="department_member"/>
+    <renameColumn tableName="department_member" oldColumnName="Department_id" newColumnName="department_id" columnDataType="INT(10)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-department-second-stage-authority">
+    <preConditions>
+      <tableExists tableName="Department_SecondStageAuthority"/>
+    </preConditions>
+    <renameTable oldTableName="Department_SecondStageAuthority" newTableName="department_second_stage_authority"/>
+    <renameColumn tableName="department_second_stage_authority" oldColumnName="Department_id" newColumnName="department_id" columnDataType="INT(10)"/>
+    <renameColumn tableName="department_second_stage_authority" oldColumnName="SecondStageAuthorities_id" newColumnName="second_stage_authorities_id" columnDataType="INT(10)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-overtime">
+    <preConditions>
+      <tableExists tableName="Overtime"/>
+    </preConditions>
+    <renameTable oldTableName="Overtime" newTableName="overtime"/>
+    <renameColumn tableName="overtime" oldColumnName="startDate" newColumnName="start_date" columnDataType="DATE"/>
+    <renameColumn tableName="overtime" oldColumnName="endDate" newColumnName="end_date" columnDataType="DATE"/>
+    <renameColumn tableName="overtime" oldColumnName="lastModificationDate" newColumnName="last_modification_date" columnDataType="DATE"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-overtime-comment">
+    <preConditions>
+      <tableExists tableName="OvertimeComment"/>
+    </preConditions>
+    <renameTable oldTableName="OvertimeComment" newTableName="overtime_comment"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-person">
+    <preConditions>
+      <tableExists tableName="Person"/>
+    </preConditions>
+    <renameTable oldTableName="Person" newTableName="person"/>
+    <renameColumn tableName="person" oldColumnName="firstName" newColumnName="first_name" columnDataType="VARCHAR(255)"/>
+    <renameColumn tableName="person" oldColumnName="lastName" newColumnName="last_name" columnDataType="VARCHAR(255)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-person-notification">
+    <preConditions>
+      <tableExists tableName="Person_notifications"/>
+    </preConditions>
+    <renameTable oldTableName="Person_notifications" newTableName="person_notifications"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-person-permissions">
+    <preConditions>
+      <tableExists tableName="Person_permissions"/>
+    </preConditions>
+    <renameTable oldTableName="Person_permissions" newTableName="person_permissions"/>
+    <renameColumn tableName="person_permissions" oldColumnName="Person_id" newColumnName="person_id" columnDataType="INT(10)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-settings">
+    <preConditions>
+      <tableExists tableName="Settings"/>
+    </preConditions>
+    <renameTable oldTableName="Settings" newTableName="settings"/>
+    <renameColumn tableName="settings" oldColumnName="maximumAnnualVacationDays" newColumnName="maximum_annual_vacation_days" columnDataType="INT(10)"/>
+    <renameColumn tableName="settings" oldColumnName="maximumMonthsToApplyForLeaveInAdvance" newColumnName="maximum_months_to_apply_for_leave_in_advance" columnDataType="INT(10)"/>
+    <renameColumn tableName="settings" oldColumnName="maximumSickPayDays" newColumnName="maximum_sick_pay_days" columnDataType="INT(10)"/>
+    <renameColumn tableName="settings" oldColumnName="daysBeforeEndOfSickPayNotification" newColumnName="days_before_end_of_sick_pay_notification" columnDataType="INT(10)"/>
+    <renameColumn tableName="settings" oldColumnName="workingDurationForNewYearsEve" newColumnName="working_duration_for_new_years_eve" columnDataType="VARCHAR(255)"/>
+    <renameColumn tableName="settings" oldColumnName="workingDurationForChristmasEve" newColumnName="working_duration_for_christmas_eve" columnDataType="VARCHAR(255)"/>
+    <renameColumn tableName="settings" oldColumnName="federalState" newColumnName="federal_state" columnDataType="VARCHAR(255)"/>
+    <renameColumn tableName="settings" oldColumnName="workDayBeginHour" newColumnName="work_day_begin_hour" columnDataType="INT(10)"/>
+    <renameColumn tableName="settings" oldColumnName="workDayEndHour" newColumnName="work_day_end_hour" columnDataType="INT(10)"/>
+    <renameColumn tableName="settings" oldColumnName="calendar_ews_sendInvitationActive" newColumnName="calendar_ews_send_invitation_active" columnDataType="BIT(1)"/>
+    <renameColumn tableName="settings" oldColumnName="remindForWaitingApplications" newColumnName="remind_for_waiting_applications" columnDataType="BIT(1)"/>
+    <renameColumn tableName="settings" oldColumnName="daysBeforeRemindForWaitingApplications" newColumnName="days_before_remind_for_waiting_applications" columnDataType="INT(10)"/>
+    <renameColumn tableName="settings" oldColumnName="defaultVacationDays" newColumnName="default_vacation_days" columnDataType="INT(10)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-sick-note">
+    <preConditions>
+      <tableExists tableName="SickNote"/>
+    </preConditions>
+    <renameTable oldTableName="SickNote" newTableName="sick_note"/>
+    <renameColumn tableName="sick_note" oldColumnName="aubEndDate" newColumnName="aub_end_date" columnDataType="DATE"/>
+    <renameColumn tableName="sick_note" oldColumnName="aubStartDate" newColumnName="aub_start_date" columnDataType="DATE"/>
+    <renameColumn tableName="sick_note" oldColumnName="endDate" newColumnName="end_date" columnDataType="DATE"/>
+    <renameColumn tableName="sick_note" oldColumnName="lastEdited" newColumnName="last_edited" columnDataType="DATE"/>
+    <renameColumn tableName="sick_note" oldColumnName="startDate" newColumnName="start_date" columnDataType="DATE"/>
+    <renameColumn tableName="sick_note" oldColumnName="person_id" newColumnName="person_id" columnDataType="INT(10)"/>
+    <renameColumn tableName="sick_note" oldColumnName="dayLength" newColumnName="day_length" columnDataType="VARCHAR(20)"/>
+    <renameColumn tableName="sick_note" oldColumnName="status" newColumnName="status" columnDataType="VARCHAR(30)"/>
+    <renameColumn tableName="sick_note" oldColumnName="SickNoteType_id" newColumnName="sick_note_type_id" columnDataType="INT(10)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-sick-note-comment">
+    <preConditions>
+      <tableExists tableName="SickNoteComment"/>
+    </preConditions>
+    <renameTable oldTableName="SickNoteComment" newTableName="sick_note_comment"/>
+    <renameColumn tableName="sick_note_comment" oldColumnName="sickNote_id" newColumnName="sick_note_id" columnDataType="INT(10)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-sick-note-type">
+    <preConditions>
+      <tableExists tableName="SickNoteType"/>
+    </preConditions>
+    <renameTable oldTableName="SickNoteType" newTableName="sick_note_type"/>
+    <renameColumn tableName="sick_note_type" oldColumnName="messageKey" newColumnName="message_key" columnDataType="VARCHAR(255)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-vacation-type">
+    <preConditions>
+      <tableExists tableName="VacationType"/>
+    </preConditions>
+    <renameTable oldTableName="VacationType" newTableName="vacation_type"/>
+    <renameColumn tableName="vacation_type" oldColumnName="messageKey" newColumnName="message_key" columnDataType="VARCHAR(255)"/>
+  </changeSet>
+
+  <changeSet author="schneider" id="default-naming-strategy-working-time">
+    <preConditions>
+      <tableExists tableName="WorkingTime"/>
+    </preConditions>
+    <renameTable oldTableName="WorkingTime" newTableName="working_time"/>
+    <renameColumn tableName="working_time" oldColumnName="federalStateOverride" newColumnName="federal_state_override" columnDataType="VARCHAR(255)"/>
+    <renameColumn tableName="working_time" oldColumnName="validFrom" newColumnName="valid_from" columnDataType="DATE"/>
+  </changeSet>
+</databaseChangeLog>

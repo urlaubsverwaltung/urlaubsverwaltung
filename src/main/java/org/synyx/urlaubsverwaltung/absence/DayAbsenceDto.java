@@ -12,9 +12,9 @@ import java.time.format.DateTimeFormatter;
 public class DayAbsenceDto {
 
     public enum Type {
-
         VACATION,
-        SICK_NOTE
+        SICK_NOTE,
+        NO_WORKDAY
     }
 
     private final String date;
@@ -23,14 +23,20 @@ public class DayAbsenceDto {
     private final String type;
     private final String status;
     private final String href;
+    private final Integer vacationTypeId;
 
-    DayAbsenceDto(LocalDate date, BigDecimal dayLength, String absencePeriodName, Type type, String status, Integer id) {
+    DayAbsenceDto(LocalDate date, BigDecimal dayLength, String absencePeriodName, String type, String status, Integer id) {
+        this(date, dayLength, absencePeriodName, type, status, id, null);
+    }
+
+    DayAbsenceDto(LocalDate date, BigDecimal dayLength, String absencePeriodName, String type, String status, Integer id, Integer vacationTypeId) {
         this.date = date.format(DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN));
         this.dayLength = dayLength;
         this.absencePeriodName = absencePeriodName;
-        this.type = type.name();
+        this.type = type;
         this.status = status;
         this.href = id == null ? "" : id.toString();
+        this.vacationTypeId = vacationTypeId;
     }
 
     public String getDate() {
@@ -55,5 +61,9 @@ public class DayAbsenceDto {
 
     public String getHref() {
         return href;
+    }
+
+    public Integer getVacationTypeId() {
+        return vacationTypeId;
     }
 }

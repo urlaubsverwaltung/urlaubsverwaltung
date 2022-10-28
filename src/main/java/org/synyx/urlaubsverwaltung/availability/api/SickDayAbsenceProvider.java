@@ -3,14 +3,15 @@ package org.synyx.urlaubsverwaltung.availability.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated(forRemoval = true, since = "4.4.0")
 @Service
 class SickDayAbsenceProvider extends AbstractTimedAbsenceProvider {
 

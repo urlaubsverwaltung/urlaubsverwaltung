@@ -10,19 +10,23 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest
 class VacationApiControllerSecurityIT extends TestContainersBase {
@@ -57,8 +61,18 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
-    @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    void getVacationsAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+    @WithMockUser(username = "department head", authorities = "DEPARTMENT_HEAD")
+    void getVacationsAsDepartmentHeadUserForOthersNotFromOwnDepartmentIsForbidden() throws Exception {
+
+        final Person requester = new Person();
+        requester.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getPersonByUsername("department head")).thenReturn(Optional.of(requester));
+
+        final Person requestedPerson = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(requester, requestedPerson)).thenReturn(false);
+
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/vacations")
             .param("from", dtf.format(now))
@@ -68,19 +82,18 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    void getVacationsAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/1/vacations")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))));
+    @WithMockUser(username = "second stage authority", authorities = "SECOND_STAGE_AUTHORITY")
+    void getVacationsAsSSAUserForOthersNotFromOwnDepartmentIsForbidden() throws Exception {
 
-        resultActions.andExpect(status().isForbidden());
-    }
+        final Person requester = new Person();
+        requester.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonByUsername("second stage authority")).thenReturn(Optional.of(requester));
 
-    @Test
-    @WithMockUser(authorities = "BOSS")
-    void getVacationsAsBossUserForOtherUserIsForbidden() throws Exception {
+        final Person requestedPerson = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(requester, requestedPerson)).thenReturn(false);
+
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/vacations")
             .param("from", dtf.format(now))
@@ -109,6 +122,62 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
             .param("to", dtf.format(now.plusDays(5))));
 
         resultActions.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "department head", authorities = "DEPARTMENT_HEAD")
+    void getVacationsAsDepartmentHeadUserForOtherUserIsOk() throws Exception {
+
+        final Person requester = new Person();
+        requester.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getPersonByUsername("department head")).thenReturn(Optional.of(requester));
+
+        final Person requestedPerson = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(requester, requestedPerson)).thenReturn(true);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/1/vacations")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))));
+
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "second stage authority", authorities = "SECOND_STAGE_AUTHORITY")
+    void getVacationsAsSecondStageAuthorityUserForOtherUserIsOk() throws Exception {
+
+        final Person requester = new Person();
+        requester.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonByUsername("second stage authority")).thenReturn(Optional.of(requester));
+
+        final Person requestedPerson = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(requester, requestedPerson)).thenReturn(true);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/1/vacations")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))));
+
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    void getVacationsAsBossUserForOtherUserIsOk() throws Exception {
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/1/vacations")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5))));
+
+        resultActions.andExpect(status().isOk());
     }
 
     @Test
@@ -180,8 +249,18 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
-    @WithMockUser(authorities = "DEPARTMENT_HEAD")
+    @WithMockUser(username = "department head", authorities = "DEPARTMENT_HEAD")
     void getVacationsOfDepartmentMembersAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
+
+        final Person requester = new Person();
+        requester.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getPersonByUsername("department head")).thenReturn(Optional.of(requester));
+
+        final Person requestedPerson = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(requester, requestedPerson)).thenReturn(false);
+
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/vacations")
             .param("from", dtf.format(now))
@@ -192,20 +271,18 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
+    @WithMockUser(username = "second stage authority", authorities = "SECOND_STAGE_AUTHORITY")
     void getVacationsOfDepartmentMembersAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/1/vacations")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5)))
-            .param("ofDepartmentMembers", "true"));
 
-        resultActions.andExpect(status().isForbidden());
-    }
+        final Person requester = new Person();
+        requester.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonByUsername("second stage authority")).thenReturn(Optional.of(requester));
 
-    @Test
-    @WithMockUser(authorities = "BOSS")
-    void getVacationsOfDepartmentMembersAsBossUserForOtherUserIsForbidden() throws Exception {
+        final Person requestedPerson = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(requester, requestedPerson)).thenReturn(false);
+
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/vacations")
             .param("from", dtf.format(now))
@@ -240,8 +317,67 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
+    @WithMockUser(username = "department head", authorities = "DEPARTMENT_HEAD")
+    void getVacationsOfDepartmentMembersAsDepartmentHeadUserForOtherUserIsOk() throws Exception {
+
+        final Person requester = new Person();
+        requester.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getPersonByUsername("department head")).thenReturn(Optional.of(requester));
+
+        final Person requestedPerson = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(requester, requestedPerson)).thenReturn(true);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/1/vacations")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+            .param("ofDepartmentMembers", "true"));
+
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "second stage authority", authorities = "SECOND_STAGE_AUTHORITY")
+    void getVacationsOfDepartmentMembersAsSecondStageAuthorityUserForOtherUserIsOk() throws Exception {
+
+        final Person requester = new Person();
+        requester.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonByUsername("second stage authority")).thenReturn(Optional.of(requester));
+
+        final Person requestedPerson = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(requester, requestedPerson)).thenReturn(true);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/1/vacations")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+            .param("ofDepartmentMembers", "true"));
+
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
     @WithMockUser(authorities = "OFFICE")
     void getVacationsOfDepartmentMembersWithOfficeUserIsOk() throws Exception {
+
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/api/persons/1/vacations")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(5)))
+            .param("ofDepartmentMembers", "true"));
+
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = "BOSS")
+    void getVacationsOfDepartmentMembersAsBossUserForOtherUserIsOk() throws Exception {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
 

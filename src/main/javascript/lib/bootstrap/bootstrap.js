@@ -1,6 +1,5 @@
 import "bootstrap/js/affix";
 import "bootstrap/js/alert";
-import "bootstrap/js/button";
 import "bootstrap/js/carousel";
 import "bootstrap/js/collapse";
 import "bootstrap/js/dropdown";

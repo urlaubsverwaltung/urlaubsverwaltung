@@ -1,9 +1,9 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.person.Role;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit test for {@link DemoUser}.
@@ -12,60 +12,40 @@ class TestUserDemo {
 
     @Test
     void ensureReturnsCorrectRolesForTestUser() {
-
-        Role[] roles = DemoUser.USER.getRoles();
-
-        Assert.assertNotNull("Should not be null", roles);
-        Assert.assertEquals("Wrong number of roles", 1, roles.length);
-        Assert.assertEquals("Wrong role", Role.USER, roles[0]);
+        final Role[] roles = DemoUser.USER.getRoles();
+        assertThat(roles).hasSize(1);
+        assertThat(roles[0]).isEqualTo(Role.USER);
     }
-
 
     @Test
     void ensureReturnsCorrectRolesForTestDepartmentHead() {
-
-        Role[] roles = DemoUser.DEPARTMENT_HEAD.getRoles();
-
-        Assert.assertNotNull("Should not be null", roles);
-        Assert.assertEquals("Wrong number of roles", 2, roles.length);
-        Assert.assertEquals("Wrong role", Role.USER, roles[0]);
-        Assert.assertEquals("Wrong role", Role.DEPARTMENT_HEAD, roles[1]);
+        final Role[] roles = DemoUser.DEPARTMENT_HEAD.getRoles();
+        assertThat(roles).hasSize(2);
+        assertThat(roles[0]).isEqualTo(Role.USER);
+        assertThat(roles[1]).isEqualTo(Role.DEPARTMENT_HEAD);
     }
-
 
     @Test
     void ensureReturnsCorrectRolesForTestDepartmentHeadSecondStageAuthority() {
-
-        Role[] roles = DemoUser.SECOND_STAGE_AUTHORITY.getRoles();
-
-        Assert.assertNotNull("Should not be null", roles);
-        Assert.assertEquals("Wrong number of roles", 2, roles.length);
-        Assert.assertEquals("Wrong role", Role.USER, roles[0]);
-        Assert.assertEquals("Wrong role", Role.SECOND_STAGE_AUTHORITY, roles[1]);
+        final Role[] roles = DemoUser.SECOND_STAGE_AUTHORITY.getRoles();
+        assertThat(roles).hasSize(2);
+        assertThat(roles[0]).isEqualTo(Role.USER);
+        assertThat(roles[1]).isEqualTo(Role.SECOND_STAGE_AUTHORITY);
     }
-
 
     @Test
     void ensureReturnsCorrectRolesForTestBoss() {
-
-        Role[] roles = DemoUser.BOSS.getRoles();
-
-        Assert.assertNotNull("Should not be null", roles);
-        Assert.assertEquals("Wrong number of roles", 2, roles.length);
-        Assert.assertEquals("Wrong role", Role.USER, roles[0]);
-        Assert.assertEquals("Wrong role", Role.BOSS, roles[1]);
+        final Role[] roles = DemoUser.BOSS.getRoles();
+        assertThat(roles).hasSize(2);
+        assertThat(roles[0]).isEqualTo(Role.USER);
+        assertThat(roles[1]).isEqualTo(Role.BOSS);
     }
-
 
     @Test
     void ensureReturnsCorrectRolesForTestOffice() {
-
-        Role[] roles = DemoUser.OFFICE.getRoles();
-
-        Assert.assertNotNull("Should not be null", roles);
-        Assert.assertEquals("Wrong number of roles", 3, roles.length);
-        Assert.assertEquals("Wrong role", Role.USER, roles[0]);
-        Assert.assertEquals("Wrong role", Role.BOSS, roles[1]);
-        Assert.assertEquals("Wrong role", Role.OFFICE, roles[2]);
+        final Role[] roles = DemoUser.OFFICE.getRoles();
+        assertThat(roles).hasSize(2);
+        assertThat(roles[0]).isEqualTo(Role.USER);
+        assertThat(roles[1]).isEqualTo(Role.OFFICE);
     }
 }

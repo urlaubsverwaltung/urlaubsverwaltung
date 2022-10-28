@@ -21,13 +21,21 @@ public class WorkingTimeProperties {
      * Default values: Monday, Tuesday, Wednesday, Thursday, Friday
      */
     @NotNull
-    private List<@Min(1) @Max(7) Integer> defaultWorkingDays = List.of(1, 2, 3, 4, 5);
+    @Deprecated
+    private List<@Min(-1) @Max(7) Integer> defaultWorkingDays = List.of(1, 2, 3, 4, 5);
 
+    @Deprecated
     public List<Integer> getDefaultWorkingDays() {
         return defaultWorkingDays;
     }
 
+    @Deprecated
     public void setDefaultWorkingDays(List<Integer> defaultWorkingDays) {
         this.defaultWorkingDays = defaultWorkingDays;
+    }
+
+    @Deprecated
+    public boolean isDefaultWorkingDaysDeactivated() {
+        return defaultWorkingDays.get(0) == -1;
     }
 }

@@ -1,5 +1,7 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="asset" uri="/WEB-INF/asset.tld" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -27,17 +29,35 @@
 <link rel="icon" type="image/png" sizes="196x196" href="<spring:url value='/favicons/favicon-196x196.png' />"/>
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="<spring:url value='/favicons/ms-icon-144x144.png' />"/>
-<meta name="theme-color" content="#ffffff">
+<c:choose>
+    <c:when test="${theme == 'dark'}">
+        <meta name="theme-color" content="#18181b">
+    </c:when>
+    <c:otherwise>
+        <meta name="theme-color" content="#fafafa">
+    </c:otherwise>
+</c:choose>
 
 <link rel="stylesheet" type="text/css" href="<asset:url value='common.css' />"/>
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/style.css' />"/>
+<uv:script-theme-toggler />
+
+<script>
+    window.uv = window.uv || {};
+    window.uv.language = '<c:out value="${language}" />';
+</script>
+
 <script defer src="<asset:url value='runtime.js' />"></script>
 <script defer src="<asset:url value='polyfill.js' />"></script>
 <script defer src="<asset:url value='npm.core-js.js' />"></script>
 <script defer src="<asset:url value='npm.babel.js' />"></script>
 <script defer src="<asset:url value='npm.jquery.js' />"></script>
 <script defer src="<asset:url value='npm.bootstrap.js' />"></script>
-<script defer src="<asset:url value='npm.webpack.js' />"></script>
 <script defer src="<asset:url value='npm.underscore.js' />"></script>
 <script defer src="<asset:url value='npm.datalist-polyfill.js' />"></script>
 <script defer src="<asset:url value='common.js' />"></script>
+<script defer src="<asset:url value='account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js' />"></script>
+<script defer src="<asset:url value='common~copy_to_clipboard_input~person_overview~user_settings.js' />"></script>
+<script defer src="<asset:url value="date-fns-localized.js" />"></script>
+<script defer src="<asset:url value='npm.ungap.js' />"></script>
+<script defer src="<asset:url value='custom-elements-polyfill.js' />"></script>

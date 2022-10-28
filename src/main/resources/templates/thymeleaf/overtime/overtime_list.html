@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+    <title th:text="#{overtime.header.title(${person.niceName})}"></title>
+    <th:block th:ref="scripts">
+      <script defer asset:src="overtime_overview.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::overtime-list-heading-body}, ~{::overtime-list-heading-actions})"
+      >
+        <th:block th:fragment="overtime-list-heading-body">
+          <h2 th:text="#{overtime.title}"></h2>
+          <div
+            th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/overtime?person=${person.id}&year=|, selectedYear=${selectedYear})"
+          ></div>
+        </th:block>
+        <th:block th:fragment="overtime-list-heading-actions">
+          <a
+            th:if="${userIsAllowedToWriteOvertime}"
+            th:href="@{/web/overtime/new?person=__${person.id}__}"
+            class="icon-link tw-px-1"
+            th:data-title="#{action.overtime.new}"
+          >
+            <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
+            <span th:text="#{action.overtime.new}" class="tw-sr-only"></span>
+          </a>
+        </th:block>
+      </div>
+
+      <div class="tw-mb-16">
+        <div class="sm:tw-flex">
+          <div class="sm:tw-flex-1 lg:tw-flex-none lg:tw-w-1/3">
+            <div th:replace="thymeleaf/person/box::person-box(person=${person})"></div>
+          </div>
+          <div class="sm:tw-flex-1 tw-flex tw-flex-col lg:tw-flex-row tw-gap-y-8">
+            <div class="tw-flex-1">
+              <div th:replace="thymeleaf/overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})"></div>
+            </div>
+            <div class="tw-flex-1">
+              <div th:replace="thymeleaf/overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table class="list-table selectable-table tw-text-sm">
+        <caption th:text="#{overtime.list.title}" class="tw-sr-only"></caption>
+        <thead th:if="${not #lists.isEmpty(records)}">
+          <tr>
+            <th th:text="#{overtime.list.col.icon}" class="tw-sr-only" scope="col"></th>
+            <th th:text="#{overtime.list.col.date}" class="tw-font-medium" scope="col"></th>
+            <th th:text="#{overtime.list.col.duration}" class="tw-font-medium tw-text-right" scope="col"></th>
+            <th th:text="#{overtime.list.col.sum}" class="tw-font-medium tw-text-right" scope="col"></th>
+            <th th:text="#{overtime.list.col.actions}" class="tw-sr-only" scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            th:each="record : ${records}"
+            th:with="recordDetailsUrl=${record.type == 'OVERTIME' ? '/web/overtime/__${record.id}__' : '/web/application/__${record.id}__'}"
+            th:onclick="|navigate('__${recordDetailsUrl}__');|"
+            class="active"
+          >
+            <td class="is-centered">
+              <th:block th:if="${record.negative}">
+                <svg th:replace="icon/arrow-down::svg(className='tw-w-5 tw-h-5')"></svg>
+              </th:block>
+              <th:block th:if="${record.positive}">
+                <svg th:replace="icon/arrow-up::svg(className='tw-w-5 tw-h-5')"></svg>
+              </th:block>
+            </td>
+
+            <td>
+              <th:block th:if="${record.type == 'OVERTIME'}">
+                <span th:text="#{overtime.link.overtime}" class="visible-print"></span>
+                <a
+                  th:text="#{overtime.link.overtime}"
+                  class="print:tw-hidden tw-text-lg tw-mb-1"
+                  th:href="@{__${recordDetailsUrl}__}"
+                >
+                </a>
+              </th:block>
+              <th:block th:if="${record.type == 'ABSENCE'}">
+                <span th:text="#{overtime.link.absence}" class="visible-print"></span>
+                <a
+                  th:text="#{overtime.link.absence}"
+                  class="print:tw-hidden tw-text-lg tw-mb-1"
+                  th:href="@{__${recordDetailsUrl}__}"
+                >
+                </a>
+                <th:block th:switch="${record.status}">
+                  <th:block th:case="WAITING">
+                    <svg th:replace="icon/question-mark-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                  </th:block>
+                  <th:block th:case="ALLOWED">
+                    <svg th:replace="icon/check-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                  </th:block>
+                  <th:block th:case="TEMPORARY_ALLOWED">
+                    <svg th:replace="icon/check-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                  </th:block>
+                  <th:block th:case="ALLOWED_CANCELLATION_REQUESTED">
+                    <svg th:replace="icon/check-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="icon/arrow-narrow-right::svg(className='tw-w-5 tw-h-5')"></svg>
+                    <svg th:replace="icon/trash::svg(className='tw-w-4 tw-h-4')"></svg>
+                  </th:block>
+                  <th:block th:case="*"> &nbsp; </th:block>
+                </th:block>
+              </th:block>
+              <p>
+                <th:block th:replace="fragments/date-range(from=${record.startDate}, to=${record.endDate})" />
+              </p>
+            </td>
+
+            <td th:text="${{record.duration}}" class="tw-text-right"></td>
+
+            <td class="tw-text-right">
+              <div class="tw-relative">
+                <span class="tw-absolute tw-right-28">Σ</span>
+              </div>
+              <th:block th:text="${{record.sum}}" />
+            </td>
+
+            <td class="tw-text-right">
+              <a th:if="${record.allowedToEdit}" class="button tw-flex-1" th:href="|@{__${recordDetailsUrl}__/edit}|">
+                <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')"></svg>
+                <span th:text="#{action.edit}" class="tw-sr-only xs:tw-not-sr-only"> </span>
+              </a>
+            </td>
+          </tr>
+
+          <tr th:if="${#lists.isEmpty(records)}">
+            <td
+              th:text="#{overtime.none(${currentYear})}"
+              colspan="5"
+              class="tw-border-t-0 tw-text-center tw-pb-10"
+            ></td>
+          </tr>
+
+          <tr
+            th:with="lastYear=${currentYear - 1}, lastYearUrl=|/web/overtime?person=${person.id}&year=${lastYear}|"
+            th:onclick="|navigate('__${lastYearUrl}__');|"
+          >
+            <td class="tw-border-b-0">
+              <svg th:replace="icon/reply::svg(className='tw-w-5 tw-h-5 tw--scale-x-100')"></svg>
+            </td>
+
+            <td class="tw-border-b-0">
+              <span th:text="#{overtime.link.last-year}" class="visible-print"> </span>
+              <a
+                th:text="#{overtime.link.last-year}"
+                class="print:tw-hidden tw-text-lg tw-mb-1"
+                th:href="@{/web/overtime?person=__${person.id}__&year=__${lastYear}__}"
+              >
+              </a>
+              <p th:text="|#{overtime.list.last-year-details} ${lastYear}|"></p>
+            </td>
+
+            <td th:text="${{overtimeTotalLastYear}}" colspan="2" class="tw-border-b-0 tw-text-right"></td>
+
+            <td class="tw-border-b-0"></td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>

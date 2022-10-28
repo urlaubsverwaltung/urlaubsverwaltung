@@ -20,7 +20,6 @@ public interface AccountService {
      */
     Optional<Account> getHolidaysAccount(int year, Person person);
 
-
     /**
      * Saves the given {@link Account}.
      *

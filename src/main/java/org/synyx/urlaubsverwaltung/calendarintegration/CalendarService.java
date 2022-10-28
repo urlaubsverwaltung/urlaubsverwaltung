@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.providers.noop.NoopCalend
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Deprecated(since = "4.0.0", forRemoval = true)
 @Service
@@ -26,12 +25,10 @@ public class CalendarService {
      * @return configured CalendarProvider or NoopCalendarSyncProvider in case of problems
      */
     public CalendarProvider getCalendarProvider() {
-        String calenderProvider = settingsService.getSettings().getCalendarSettings().getProvider();
-
-        Optional<CalendarProvider> option = calendarProviders.stream()
-            .filter(calendarProvider -> calendarProvider.getClass().getSimpleName().equals(calenderProvider))
-            .findFirst();
-
-        return option.orElse(new NoopCalendarSyncProvider());
+        final String configuredCalendarProvider = settingsService.getSettings().getCalendarSettings().getProvider();
+        return calendarProviders.stream()
+            .filter(calendarProvider -> calendarProvider.getClass().getSimpleName().equals(configuredCalendarProvider))
+            .findFirst()
+            .orElse(new NoopCalendarSyncProvider());
     }
 }

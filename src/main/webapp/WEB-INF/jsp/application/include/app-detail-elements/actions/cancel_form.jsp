@@ -3,13 +3,12 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-
 <c:if test="${action == 'cancel'}">
-<script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function() {
-        $("#cancel").show();
-    })
-</script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            $("#cancel").show();
+        })
+    </script>
 </c:if>
 
 <spring:url var="URL_PREFIX" value="/web"/>
@@ -18,7 +17,17 @@
            action="${URL_PREFIX}/application/${application.id}/cancel" modelAttribute="comment">
 
     <div class="form-group">
-        <strong class="tw-font-medium"><spring:message code='action.delete.confirm'/></strong>
+        <strong class="tw-font-medium">
+            <c:choose>
+                <c:when
+                    test="${application.vacationType.requiresApproval == true && (application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !isOffice && !signedInUser.hasRole('APPLICATION_CANCEL')}">
+                    <spring:message code='action.delete.request.confirm'/>
+                </c:when>
+                <c:otherwise>
+                    <spring:message code='action.delete.confirm'/>
+                </c:otherwise>
+            </c:choose>
+        </strong>
     </div>
 
     <div class="form-group">
@@ -26,7 +35,7 @@
             <c:choose>
                 <%-- comment is obligat if it's not the own application or if the application is in status allowed --%>
                 <c:when
-                    test="${application.person.id != signedInUser.id || application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED'}">
+                    test="${application.person.id != signedInUser.id || application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED' || application.status == 'ALLOWED_CANCELLATION_REQUESTED'}">
                     <spring:message code="action.comment.mandatory"/>
                 </c:when>
                 <%-- otherwise comment is not obligat --%>
@@ -42,10 +51,18 @@
     </div>
 
     <div class="form-group is-sticky row">
-        <button type="submit" class="btn btn-danger col-xs-12 col-sm-5">
-            <spring:message code='action.delete'/>
+        <button type="submit" class="button-danger col-xs-12 col-sm-5">
+            <c:choose>
+                <c:when
+                    test="${application.vacationType.requiresApproval == true && (application.status == 'ALLOWED' || application.status == 'TEMPORARY_ALLOWED') && !isOffice && !signedInUser.hasRole('APPLICATION_CANCEL')}">
+                    <spring:message code='action.delete.request'/>
+                </c:when>
+                <c:otherwise>
+                    <spring:message code='action.delete'/>
+                </c:otherwise>
+            </c:choose>
         </button>
-        <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#cancel').hide();">
+        <button type="button" class="button col-xs-12 col-sm-5 pull-right" onclick="$('#cancel').hide();">
             <spring:message code="action.cancel"/>
         </button>
     </div>

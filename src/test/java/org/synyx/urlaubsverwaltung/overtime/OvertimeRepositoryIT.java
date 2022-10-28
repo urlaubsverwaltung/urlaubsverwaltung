@@ -8,14 +8,14 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-import static java.math.RoundingMode.UNNECESSARY;
+import static java.time.LocalDate.of;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-
 
 @SpringBootTest
 @Transactional
@@ -25,88 +25,103 @@ class OvertimeRepositoryIT extends TestContainersBase {
     private PersonService personService;
 
     @Autowired
-    private OvertimeRepository overtimeRepository;
+    private OvertimeRepository sut;
 
     @Test
     void ensureCanPersistOvertime() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person savedPerson = personService.save(person);
+        final Person savedPerson = personService.create(person);
 
         final LocalDate now = LocalDate.now(UTC);
-        final Overtime overtime = new Overtime(savedPerson, now, now.plusDays(2), BigDecimal.ONE);
+        final Overtime overtime = new Overtime(savedPerson, now, now.plusDays(2), Duration.ofHours(1));
         assertThat(overtime.getId()).isNull();
 
-        overtimeRepository.save(overtime);
-
+        sut.save(overtime);
         assertThat(overtime.getId()).isNotNull();
     }
-
 
     @Test
     void ensureCountsTotalHoursCorrectly() {
 
         final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.save(person);
+        final Person savedPerson = personService.create(person);
 
         final Person otherPerson = new Person("freddy", "Gwin", "freddy", "gwin@example.org");
-        final Person savedOtherPerson = personService.save(otherPerson);
+        final Person savedOtherPerson = personService.create(otherPerson);
 
-        LocalDate now = LocalDate.now(UTC);
+        final LocalDate now = LocalDate.now(UTC);
 
         // Overtime for person
-        overtimeRepository.save(new Overtime(savedPerson, now, now.plusDays(2), new BigDecimal("3")));
-        overtimeRepository.save(new Overtime(savedPerson, now.plusDays(5), now.plusDays(10), new BigDecimal("0.5")));
-        overtimeRepository.save(new Overtime(savedPerson, now.minusDays(8), now.minusDays(4), new BigDecimal("-1")));
+        sut.save(new Overtime(savedPerson, now, now.plusDays(2), Duration.ofHours(3)));
+        sut.save(new Overtime(savedPerson, now.plusDays(5), now.plusDays(10), Duration.ofMinutes(30)));
+        sut.save(new Overtime(savedPerson, now.minusDays(8), now.minusDays(4), Duration.ofHours(-1)));
 
         // Overtime for other person
-        overtimeRepository.save(new Overtime(savedOtherPerson, now.plusDays(5), now.plusDays(10), new BigDecimal("5")));
+        sut.save(new Overtime(savedOtherPerson, now.plusDays(5), now.plusDays(10), Duration.ofHours(5)));
 
-        BigDecimal totalHours = overtimeRepository.calculateTotalHoursForPerson(person);
-
-        assertThat(totalHours).isNotNull();
-        assertThat(totalHours.setScale(1, UNNECESSARY)).isEqualTo(new BigDecimal("2.5").setScale(1,
-            UNNECESSARY));
+        final Optional<Double> totalHours = sut.calculateTotalHoursForPerson(person);
+        assertThat(totalHours).hasValue(2.5);
     }
-
 
     @Test
     void ensureReturnsNullAsTotalOvertimeIfPersonHasNoOvertimeRecords() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        personService.save(person);
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        personService.create(person);
 
-        BigDecimal totalHours = overtimeRepository.calculateTotalHoursForPerson(person);
-
-        assertThat(totalHours).isNull();
+        final Optional<Double> totalHours = sut.calculateTotalHoursForPerson(person);
+        assertThat(totalHours).isEmpty();
     }
-
 
     @Test
     void ensureReturnsAllRecordsWithStartOrEndDateInTheGivenYear() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person savedPerson = personService.save(person);
+        final Person savedPerson = personService.create(person);
 
-        // records for 2015
-        overtimeRepository.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 30), LocalDate.of(2015, 1, 3),
-            new BigDecimal("1")));
-        overtimeRepository.save(new Overtime(savedPerson, LocalDate.of(2015, 10, 5), LocalDate.of(2015, 10, 20),
-            new BigDecimal("2")));
-        overtimeRepository.save(new Overtime(savedPerson, LocalDate.of(2015, 12, 28), LocalDate.of(2016, 1, 6),
-            new BigDecimal("3")));
+        // records to find
+        sut.save(new Overtime(savedPerson, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(2)));
+        sut.save(new Overtime(savedPerson, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(3)));
 
-        // record for 2014
-        overtimeRepository.save(new Overtime(savedPerson, LocalDate.of(2014, 12, 5), LocalDate.of(2014, 12, 31),
-            new BigDecimal("4")));
+        // record not to find
+        sut.save(new Overtime(savedPerson, of(2014, 12, 30), of(2015, 1, 3), Duration.ofHours(1)));
+        sut.save(new Overtime(savedPerson, of(2014, 12, 5), of(2014, 12, 31), Duration.ofHours(4)));
+        sut.save(new Overtime(savedPerson, of(2014, 12, 5), of(2016, 12, 31), Duration.ofHours(4)));
 
-        List<Overtime> records = overtimeRepository.findByPersonAndPeriod(savedPerson,
-            LocalDate.of(2015, 1, 1), LocalDate.of(2015, 12, 31));
+        final List<Overtime> overtimes = sut.findByPersonAndStartDateBetweenOrderByStartDateDesc(savedPerson, of(2015, 1, 1), of(2015, 12, 31));
+        assertThat(overtimes).hasSize(2);
+        assertThat(overtimes.get(0).getStartDate()).isEqualTo(of(2015, 12, 28));
+        assertThat(overtimes.get(1).getStartDate()).isEqualTo(of(2015, 10, 5));
+        assertThat(overtimes.get(0).getDuration()).isEqualTo(Duration.ofHours(3));
+        assertThat(overtimes.get(1).getDuration()).isEqualTo(Duration.ofHours(2));
+    }
 
-        assertThat(records).isNotNull();
-        assertThat(records.size()).isEqualTo(3);
-        assertThat(records.get(0).getHours()).isEqualTo(BigDecimal.valueOf(1));
-        assertThat(records.get(1).getHours()).isEqualTo(BigDecimal.valueOf(2));
-        assertThat(records.get(2).getHours()).isEqualTo(BigDecimal.valueOf(3));
+    @Test
+    void ensureFindByPersonAndStartDateIsBefore() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final Person savedPerson = personService.create(person);
+
+        // records starting before 2016
+        sut.save(new Overtime(savedPerson, of(2012, 1, 1), of(2012, 1, 3), Duration.ofHours(1)));
+        sut.save(new Overtime(savedPerson, of(2014, 12, 30), of(2015, 1, 3), Duration.ofHours(2)));
+        sut.save(new Overtime(savedPerson, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(3)));
+        sut.save(new Overtime(savedPerson, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(4)));
+
+        // record after or in 2016
+        sut.save(new Overtime(savedPerson, of(2016, 12, 5), of(2016, 12, 31), Duration.ofHours(99)));
+        sut.save(new Overtime(savedPerson, of(2016, 1, 1), of(2016, 1, 1), Duration.ofHours(99)));
+
+        final List<Overtime> overtimes = sut.findByPersonAndStartDateIsBefore(savedPerson, of(2016, 1, 1));
+        assertThat(overtimes).hasSize(4);
+        assertThat(overtimes.get(0).getStartDate()).isEqualTo(of(2012, 1, 1));
+        assertThat(overtimes.get(0).getDuration()).isEqualTo(Duration.ofHours(1));
+        assertThat(overtimes.get(1).getStartDate()).isEqualTo(of(2014, 12, 30));
+        assertThat(overtimes.get(1).getDuration()).isEqualTo(Duration.ofHours(2));
+        assertThat(overtimes.get(2).getStartDate()).isEqualTo(of(2015, 10, 5));
+        assertThat(overtimes.get(2).getDuration()).isEqualTo(Duration.ofHours(3));
+        assertThat(overtimes.get(3).getStartDate()).isEqualTo(of(2015, 12, 28));
+        assertThat(overtimes.get(3).getDuration()).isEqualTo(Duration.ofHours(4));
     }
 }

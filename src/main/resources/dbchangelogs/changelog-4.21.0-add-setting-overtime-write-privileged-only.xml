@@ -1,0 +1,14 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="honnel" id="add-setting-overtime-write-privileged-only">
+    <preConditions>
+      <tableExists tableName="settings"/>
+    </preConditions>
+    <addColumn tableName="settings">
+      <column name="overtime_write_privileged_only" type="BIT(1)" defaultValueBoolean="false"/>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

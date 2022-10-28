@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 
 @Component
 @ConfigurationProperties("uv.calendar")
@@ -17,10 +17,13 @@ public class CalendarProperties {
 
     /**
      * Adds the organizer to all iCal events that
-     * where generated through the calender integration
-     * feature
+     * where generated through the calendar integration
+     * feature.
+     *
+     * <p>Input is a valid E-Mail-Address like <code>organizer@example.org</code></p>
      */
     @Email
+    @NotEmpty
     private String organizer;
 
     /**
@@ -36,13 +39,14 @@ public class CalendarProperties {
      * </ul><p>
      * Default refresh interval is one day (P1D).
      * <p>
+     *
      * @see <a href="https://icalendar.org/New-Properties-for-iCalendar-RFC-7986/5-7-refresh-interval-property.html">ICal Spec: RefreshInterval</a>
      */
     @DurationUnit(ChronoUnit.MINUTES)
     private Duration refreshInterval = Duration.ofDays(1);
 
-    public Optional<String> getOrganizer() {
-        return Optional.ofNullable(organizer);
+    public String getOrganizer() {
+        return organizer;
     }
 
     public void setOrganizer(String organizer) {

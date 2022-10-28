@@ -16,17 +16,23 @@ import javax.validation.constraints.NotNull;
 public class AccountProperties {
 
     @NotNull
-    @Min(0)
-    @Max(365)
+    @Min(-1)
+    @Max(366)
+    @Deprecated(since = "4.4.0", forRemoval = true)
     private Integer defaultVacationDays = 20;
 
     @Valid
     private Update update = new Update();
 
+    @Valid
+    private AccountProperties.VacationDaysReminder vacationDaysReminder = new VacationDaysReminder();
+
+    @Deprecated(since = "4.4.0", forRemoval = true)
     public Integer getDefaultVacationDays() {
         return defaultVacationDays;
     }
 
+    @Deprecated(since = "4.4.0", forRemoval = true)
     public void setDefaultVacationDays(Integer defaultVacationDays) {
         this.defaultVacationDays = defaultVacationDays;
     }
@@ -39,10 +45,18 @@ public class AccountProperties {
         this.update = update;
     }
 
+    public VacationDaysReminder getVacationDaysReminder() {
+        return vacationDaysReminder;
+    }
+
+    public void setVacationDaysReminder(VacationDaysReminder vacationDaysReminder) {
+        this.vacationDaysReminder = vacationDaysReminder;
+    }
+
     public static class Update {
 
         /**
-         * Update remaining vacation days for each account by default on 1st January at 05:00 am
+         * Creates or updates the users account for the new year by default on 1st January at 05:00 am
          */
         @CronExpression
         private String cron = "0 0 5 1 1 *";
@@ -56,4 +70,34 @@ public class AccountProperties {
         }
     }
 
+    public static class VacationDaysReminder {
+
+        /**
+         * Remind for vacation days left by default on 1st October at 06:00 am
+         */
+        @CronExpression
+        private String vacationDaysLeftCron = "0 0 6 1 10 *";
+
+        /**
+         * Remind for expired remaining vacation days by default every day at 06:00
+         */
+        @CronExpression
+        private String expiredRemainingVacationDaysCron = "0 0 6 * * *";
+
+        public String getVacationDaysLeftCron() {
+            return vacationDaysLeftCron;
+        }
+
+        public void setVacationDaysLeftCron(String vacationDaysLeftCron) {
+            this.vacationDaysLeftCron = vacationDaysLeftCron;
+        }
+
+        public String getExpiredRemainingVacationDaysCron() {
+            return expiredRemainingVacationDaysCron;
+        }
+
+        public void setExpiredRemainingVacationDaysCron(String expiredRemainingVacationDaysCron) {
+            this.expiredRemainingVacationDaysCron = expiredRemainingVacationDaysCron;
+        }
+    }
 }

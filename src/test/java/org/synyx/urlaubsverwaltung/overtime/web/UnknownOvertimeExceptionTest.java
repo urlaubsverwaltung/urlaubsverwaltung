@@ -1,7 +1,8 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 class UnknownOvertimeExceptionTest {
@@ -11,6 +12,6 @@ class UnknownOvertimeExceptionTest {
 
         UnknownOvertimeException exception = new UnknownOvertimeException(42);
 
-        Assert.assertEquals("Wrong exception message", "No overtime found for ID = 42", exception.getMessage());
+        assertThat(exception.getMessage()).isEqualTo("No overtime found for ID = 42");
     }
 }

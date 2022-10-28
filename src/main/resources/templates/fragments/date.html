@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>date</title>
+  </head>
+  <body>
+    <th:block
+      th:fragment="date(date)"
+      th:with="pattern=${pattern == null ? #messages.msg('pattern.date') : pattern}"
+      th:text="${#temporals.format(date, pattern)}"
+    >
+    </th:block>
+  </body>
+</html>

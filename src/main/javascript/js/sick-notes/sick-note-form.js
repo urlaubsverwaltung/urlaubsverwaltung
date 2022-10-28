@@ -1,13 +1,22 @@
 import $ from "jquery";
-import { createDatepickerInstances } from "../../components/datepicker";
+import { createDatepicker } from "../../components/datepicker";
 
 $(document).ready(async function () {
-  var person = window.uv.params.person;
-  $("#employee").val(person);
+  const person = window.uv.params.person;
+  if (person) {
+    const employeeElement = document.querySelector("#employee");
+    if (employeeElement) {
+      employeeElement.value = person;
+    }
+  }
 
-  var datepickerLocale = window.navigator.language;
-  var urlPrefix = window.uv.apiPrefix;
-  var sickNotePersonId = window.uv.sickNote.person.id;
+  const urlPrefix = window.uv.apiPrefix;
+  const sickNotePersonId = window.uv.sickNote.person.id;
+
+  let fromDateElement;
+  let toDateElement;
+  let aubFromDateElement;
+  let aubToDateElement;
 
   function getPersonId() {
     if (!sickNotePersonId) {
@@ -16,22 +25,27 @@ $(document).ready(async function () {
     return sickNotePersonId;
   }
 
-  var onSelect = function (selectedDate) {
-    var $to = $("#to");
-
-    if (this.id === "from" && $to.val() === "") {
-      $to.datepicker("setDate", selectedDate);
+  function handleFromSelect() {
+    if (!toDateElement.value) {
+      toDateElement.value = fromDateElement.value;
     }
-  };
+  }
 
-  var onSelectAUB = function (selectedDate) {
-    var $aubTo = $("#aubTo");
-
-    if (this.id === "aubFrom" && $aubTo.val() === "") {
-      $aubTo.datepicker("setDate", selectedDate);
+  function handleAubFromSelect() {
+    if (!aubToDateElement.value) {
+      aubToDateElement.value = aubFromDateElement.value;
     }
-  };
+  }
 
-  await createDatepickerInstances(["#from", "#to"], datepickerLocale, urlPrefix, getPersonId, onSelect);
-  await createDatepickerInstances(["#aubFrom", "#aubTo"], datepickerLocale, urlPrefix, getPersonId, onSelectAUB);
+  const [fromResult, toResult, aubFromResult, aubToResult] = await Promise.allSettled([
+    createDatepicker("#from", { urlPrefix, getPersonId, onSelect: handleFromSelect }),
+    createDatepicker("#to", { urlPrefix, getPersonId }),
+    createDatepicker("#aubFrom", { urlPrefix, getPersonId, onSelect: handleAubFromSelect }),
+    createDatepicker("#aubTo", { urlPrefix, getPersonId }),
+  ]);
+
+  fromDateElement = fromResult.value;
+  toDateElement = toResult.value;
+  aubFromDateElement = aubFromResult.value;
+  aubToDateElement = aubToResult.value;
 });

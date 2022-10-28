@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvide
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.noop.NoopCalendarSyncProvider;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -39,7 +38,7 @@ class CalendarServiceTest {
         List<CalendarProvider> calendarProviders = getTypicalProviderList();
         CalendarService cut = new CalendarService(calendarProviders, settingsService);
 
-        assertEquals(expected.getName(), cut.getCalendarProvider().getClass().getName());
+        assertThat(cut.getCalendarProvider().getClass().getName()).isEqualTo(expected.getName());
     }
 
     private SettingsService getPreparedSettingsServiceForProvider(Class provider) {

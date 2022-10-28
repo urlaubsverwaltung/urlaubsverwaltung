@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog
   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
   <include file="dbchangelogs/changelog-0.1-initial-schema-creation.xml"/>
   <include file="dbchangelogs/changelog-0.3-delete-admin-role.xml"/>
@@ -63,4 +64,50 @@
   <include file="dbchangelogs/changelog-3.1.0-add-calendar-table.xml"/>
   <include file="dbchangelogs/changelog-3.1.0-add-calendar-accessible-table.xml"/>
   <include file="dbchangelogs/changelog-4.0.0.M1-remove-gui-mail-settings.xml"/>
+  <include file="dbchangelogs/changelog-4.0.0-add-timezone.xml"/>
+  <include file="dbchangelogs/changelog-4.3.0-increase-application-status-length.xml"/>
+  <include file="dbchangelogs/changelog-4.3.0-increase-application-comment-action-length.xml"/>
+  <include file="dbchangelogs/changelog-4.4.0-accountsettings-default-vacation-days.xml"/>
+  <include file="dbchangelogs/changelog-4.6.0-rename-absencetype-to-absencemappingtype.xml"/>
+  <include file="dbchangelogs/changelog-4.7.0-add-calendar-period.xml"/>
+  <include file="dbchangelogs/changelog-4.10.0-add-replacement-note.xml"/>
+  <include file="dbchangelogs/changelog-4.11.0-rename-overtime-hours-to-overtime-duration.xml"/>
+  <include file="dbchangelogs/changelog-4.12.0-add-department-creation-date-column.xml"/>
+  <include file="dbchangelogs/changelog-4.12.0-default-naming-strategy.xml"/>
+  <include file="dbchangelogs/changelog-4.13.0-add-department-member-accession-date.xml"/>
+  <include file="dbchangelogs/changelog-4.14.0-add-global-default-working-days.xml"/>
+  <include file="dbchangelogs/changelog-4.14.0-split-calendar-tables.xml"/>
+  <include file="dbchangelogs/changelog-4.15.0-delete-department-calendar-on-department-deletion.xml"/>
+  <include file="dbchangelogs/changelog-4.15.0-add-upcoming-vacation-reminder.xml"/>
+  <include file="dbchangelogs/changelog-4.15.0-add-to-allow-half-day-absences.xml"/>
+  <include file="dbchangelogs/changelog-4.16.0-add-holiday-replacement.xml"/>
+  <include file="dbchangelogs/changelog-4.20.6-add-end-of-sickpay-notification-send.xml"/>
+  <include file="dbchangelogs/changelog-4.20.7-no-end-of-sickpay-notification-for-old-sicknotes.xml"/>
+  <include file="dbchangelogs/changelog-4.21.0-add-minimum-overtime-reduction-value.xml"/>
+  <include file="dbchangelogs/changelog-4.21.0-add-overtime-reduction-without-application-active-flag.xml"/>
+  <include file="dbchangelogs/changelog-4.21.0-add-setting-overtime-write-privileged-only.xml"/>
+  <include file="dbchangelogs/changelog-4.24.0-add-upcoming-holiday-replacement-reminder.xml"/>
+  <include file="dbchangelogs/changelog-4.26.0-add-upcoming-application-reminder.xml"/>
+  <include file="dbchangelogs/changelog-4.26.0-add-index-for-absence-mapping-id-and-type.xml"/>
+  <include file="dbchangelogs/changelog-4.26.0-add-activation-of-vacationtypes.xml"/>
+  <include file="dbchangelogs/changelog-4.26.0-add-requires-approval-of-vacationtypes.xml"/>
+  <include file="dbchangelogs/changelog-4.26.0-add-new-vacation-types.xml"/>
+  <include file="dbchangelogs/changelog-4.28.0-add_country_to_federal_state.xml"/>
+  <include file="dbchangelogs/changelog-4.28.4-add_country_to_federal_state_for_missing_states.xml"/>
+  <include file="dbchangelogs/changelog-4.29.0-add-new-vacation-type-employment-ban.xml"/>
+  <include file="dbchangelogs/changelog-4.30.0-create-user-settings-table.xml"/>
+  <include file="dbchangelogs/changelog-4.34.0-add-new-vacation-type-educational-leave.xml"/>
+  <include file="dbchangelogs/changelog-4.34.0-create-special-leave-settings-table.xml"/>
+  <include file="dbchangelogs/changelog-4.35.0-create-person-basedata-table.xml"/>
+  <include file="dbchangelogs/changelog-4.36.0-renaming-accounts.xml"/>
+  <include file="dbchangelogs/changelog-4.38.0-add-spring-session.xml"/>
+  <include file="dbchangelogs/changelog-4.39.0-add-vacation-type-color.xml"/>
+  <include file="dbchangelogs/changelog-4.39.0-add-vacation-type-visible-to-everyone.xml"/>
+  <include file="dbchangelogs/changelog-4.41.0-add-shedlock.xml"/>
+  <include file="dbchangelogs/changelog-4.43.0-add-account-expiry-date.xml"/>
+  <include file="dbchangelogs/changelog-4.43.1-add-account-expiry-date-default-expiry.xml"/>
+  <include file="dbchangelogs/changelog-4.45.0-add-sick-note-applier.xml"/>
+  <include file="dbchangelogs/changelog-4.45.0-add-user-locale.xml"/>
+  <include file="dbchangelogs/changelog-4.49.0-add-account-do-remaining-vacation-days-expire.xml"/>
+  <include file="dbchangelogs/changelog-4.49.0-settings-add-global-do-remaing-vacation-days-expire.xml"/>
 </databaseChangeLog>

@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.person.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -11,7 +14,9 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,6 +48,16 @@ class PersonPropertyEditorTest {
         sut.setValue(personWithId(personId));
 
         assertThat(sut.getAsText()).isEqualTo(Integer.toString(personId));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "", " " })
+    @NullSource
+    void ensureSetAsTextDoesNotThrowWhenGivenTextIsEmpty(String givenText) {
+
+        assertThatCode(() -> sut.setAsText(givenText)).doesNotThrowAnyException();
+
+        verifyNoInteractions(personService);
     }
 
     @Test

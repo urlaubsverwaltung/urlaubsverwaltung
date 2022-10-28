@@ -1,0 +1,38 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="seber" id="create_user_settings_table">
+
+    <createTable tableName="user_settings">
+      <column name="person_id" type="INT(10)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="theme" type="VARCHAR(20)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addForeignKeyConstraint
+      baseTableName="user_settings"
+      baseColumnNames="person_id"
+      constraintName="fk_user_settings_person_id"
+      onDelete="CASCADE"
+      referencedTableName="person"
+      referencedColumnNames="id"
+    />
+
+    <addUniqueConstraint
+      tableName="user_settings"
+      columnNames="person_id"
+      constraintName="unique_user_setting_per_person"
+    />
+
+    <sql>
+      INSERT INTO user_settings(person_id, theme)
+      SELECT id, 'LIGHT' FROM person p;
+    </sql>
+
+  </changeSet>
+</databaseChangeLog>

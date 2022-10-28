@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -62,8 +61,7 @@ class AvailabilityApiControllerTest {
             .andExpect(status().isOk());
 
         verify(availabilityService)
-            .getPersonsAvailabilities(eq(LocalDate.of(2016, 1, 1)),
-                eq(LocalDate.of(2016, 1, 31)), eq(testPerson));
+            .getPersonsAvailabilities(LocalDate.of(2016, 1, 1),LocalDate.of(2016, 1, 31), testPerson);
     }
 
     @Test

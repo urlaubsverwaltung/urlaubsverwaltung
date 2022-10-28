@@ -2,6 +2,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
 <spring:url var="URL_PREFIX" value="/web"/>
 
@@ -13,18 +14,20 @@
     </div>
 
     <div class="form-group">
-        <form:select path="username" cssClass="form-control">
+        <uv:select id="username" name="username">
             <c:forEach items="${bosses}" var="boss">
-                <option value="${boss.username}"><c:out value="${boss.firstName} ${boss.lastName}"/></option>
+                <option value="${boss.username}" ${person.username == boss.username ? 'selected="selected"' : ''}>
+                    <c:out value="${boss.firstName} ${boss.lastName}"/>
+                </option>
             </c:forEach>
-        </form:select>
+        </uv:select>
     </div>
 
     <div class="form-group is-sticky row">
-        <button type="submit" class="btn btn-info col-xs-12 col-sm-5">
+        <button type="submit" class="button-info col-xs-12 col-sm-5">
             <spring:message code='action.refer'/>
         </button>
-        <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#refer').hide();">
+        <button type="button" class="button col-xs-12 col-sm-5 pull-right" onclick="$('#refer').hide();">
             <spring:message code="action.cancel"/>
         </button>
     </div>

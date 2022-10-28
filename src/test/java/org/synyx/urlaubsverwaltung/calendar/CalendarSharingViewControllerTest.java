@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.time.Period;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createDepartment;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -61,6 +61,19 @@ class CalendarSharingViewControllerTest {
     }
 
     @Test
+    void redirectUnpersonalizedPathToPersonalizedPath() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        perform(get("/web/calendars/share"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
+    }
+
+    @Test
     void indexWithoutCompanyCalendarForUserDueToDisabledFeature() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -69,12 +82,12 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(false);
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeDoesNotExist("companyCalendarShare"))
             .andExpect(status().isOk());
     }
@@ -82,7 +95,9 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithCompanyCalendarForUserDueToDisabledFeatureButRoleBoss() throws Exception {
 
-        final Person bossPerson = createPerson("boss", BOSS);
+        final Person bossPerson = new Person("max", "boss", "senior", "max@example.org");
+        bossPerson.setId(2);
+        bossPerson.setPermissions(List.of(USER, BOSS));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
@@ -90,12 +105,12 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(bossPerson);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(false);
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
     }
@@ -103,7 +118,9 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithCompanyCalendarForBossWithRoleBoss() throws Exception {
 
-        final Person bossPerson = createPerson("boss", BOSS);
+        final Person bossPerson = new Person("max", "boss", "senior", "max@example.org");
+        bossPerson.setId(2);
+        bossPerson.setPermissions(List.of(USER, BOSS));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
@@ -111,11 +128,11 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(bossPerson);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
-        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(new CompanyCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(anyCompanyCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(model().attribute("companyCalendarShare", hasProperty("calendarUrl", containsString("/web/company/persons/1/calendar?secret="))))
             .andExpect(status().isOk());
@@ -124,7 +141,9 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithCompanyCalendarForUserDueToDisabledFeatureButRoleOffice() throws Exception {
 
-        final Person officeUser = createPerson("boss", OFFICE);
+        final Person officeUser = new Person("max", "office", "senior", "max@example.org");
+        officeUser.setId(2);
+        officeUser.setPermissions(List.of(USER, OFFICE));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
@@ -132,12 +151,12 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(officeUser);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(false);
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
     }
@@ -145,17 +164,19 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithCompanyCalendarForUser() throws Exception {
 
-        final Person person = createPerson("officeBoss", OFFICE, BOSS);
+        final Person person = new Person("max", "officeBoss", "senior", "max@example.org");
+        person.setId(1);
+        person.setPermissions(List.of(USER, OFFICE, BOSS));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(true);
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
     }
@@ -163,15 +184,17 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithoutCompanyCalendarAccessibleForUser() throws Exception {
 
-        final Person person = createPerson("officeBoss", USER);
+        final Person person = new Person("max", "muster", "senior", "max@example.org");
+        person.setId(1);
+        person.setPermissions(List.of(USER));
 
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeDoesNotExist("companyCalendarAccessible"))
             .andExpect(status().isOk());
     }
@@ -179,15 +202,17 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithCompanyCalendarAccessibleForBoss() throws Exception {
 
-        final Person bossPerson = createPerson("office", BOSS);
+        final Person bossPerson = new Person("max", "boss", "senior", "max@example.org");
+        bossPerson.setId(1);
+        bossPerson.setPermissions(List.of(USER, BOSS));
 
         when(personService.getSignedInUser()).thenReturn(bossPerson);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(bossPerson));
         when(departmentService.getAssignedDepartmentsOfMember(bossPerson)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarAccessible"))
             .andExpect(status().isOk());
     }
@@ -195,15 +220,17 @@ class CalendarSharingViewControllerTest {
     @Test
     void indexWithCompanyCalendarAccessibleForOffice() throws Exception {
 
-        final Person officePerson = createPerson("office", OFFICE);
+        final Person officePerson = new Person("max", "office", "senior", "max@example.org");
+        officePerson.setId(1);
+        officePerson.setPermissions(List.of(USER, OFFICE));
 
         when(personService.getSignedInUser()).thenReturn(officePerson);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(officePerson));
         when(departmentService.getAssignedDepartmentsOfMember(officePerson)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarAccessible"))
             .andExpect(status().isOk());
     }
@@ -217,10 +244,10 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attribute("departmentCalendars", hasSize(0)))
             .andExpect(status().isOk());
     }
@@ -240,10 +267,10 @@ class CalendarSharingViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attribute("departmentCalendars", hasSize(2)))
             .andExpect(status().isOk());
     }
@@ -264,10 +291,10 @@ class CalendarSharingViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(status().isOk());
     }
 
@@ -287,12 +314,12 @@ class CalendarSharingViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
-        when(departmentCalendarService.getCalendarForDepartment(1337, 1)).thenReturn(Optional.of(new DepartmentCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(departmentCalendarService.getCalendarForDepartment(1337, 1)).thenReturn(Optional.of(anyDepartmentCalendar()));
         when(departmentCalendarService.getCalendarForDepartment(42, 1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attribute("departmentCalendars", hasSize(2)))
             .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl", containsString("web/departments/1337/persons/1/calendar?secret=")))))
             .andExpect(model().attribute("departmentCalendars", hasItem(hasProperty("calendarUrl", nullValue()))))
@@ -315,7 +342,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("privateCalendarShare"))
             .andExpect(status().isOk());
     }
@@ -336,7 +363,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeDoesNotExist("companyCalendarAccessible"))
             .andExpect(model().attributeDoesNotExist("companyCalendarShare"))
             .andExpect(status().isOk());
@@ -358,10 +385,10 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(true);
-        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(new CompanyCalendar()));
+        when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(anyCompanyCalendar()));
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarAccessible"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
@@ -383,7 +410,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarAccessible"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
@@ -405,7 +432,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attributeExists("companyCalendarAccessible"))
             .andExpect(model().attributeExists("companyCalendarShare"))
             .andExpect(status().isOk());
@@ -422,7 +449,7 @@ class CalendarSharingViewControllerTest {
 
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
             .andExpect(status().isBadRequest());
@@ -441,7 +468,7 @@ class CalendarSharingViewControllerTest {
         when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attribute("privateCalendarShare", hasProperty("calendarUrl", nullValue())))
             .andExpect(status().isOk());
     }
@@ -456,10 +483,10 @@ class CalendarSharingViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
 
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(new PersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
-            .andExpect(view().name("calendarsharing/index"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
             .andExpect(model().attribute("privateCalendarShare", hasProperty("calendarUrl", containsString("/web/persons/1/calendar?secret="))))
             .andExpect(status().isOk());
     }
@@ -467,11 +494,14 @@ class CalendarSharingViewControllerTest {
     @Test
     void linkPrivateCalendar() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/me"))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/me")
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
 
-        verify(personCalendarService).createCalendarForPerson(1);
+        verify(personCalendarService).createCalendarForPerson(1, java.time.Period.parse("P1Y"));
     }
 
     @Test
@@ -487,11 +517,14 @@ class CalendarSharingViewControllerTest {
     @Test
     void linkDepartmentCalendar() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2"))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/departments/2")
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
 
-        verify(departmentCalendarService).createCalendarForDepartmentAndPerson(2, 1);
+        verify(departmentCalendarService).createCalendarForDepartmentAndPerson(2, 1, java.time.Period.parse("P1Y"));
     }
 
     @Test
@@ -507,11 +540,14 @@ class CalendarSharingViewControllerTest {
     @Test
     void linkCompanyCalendar() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company"))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/company")
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
 
-        verify(companyCalendarService).createCalendarForPerson(1);
+        verify(companyCalendarService).createCalendarForPerson(1, Period.parse("P1Y"));
     }
 
     @Test
@@ -550,6 +586,72 @@ class CalendarSharingViewControllerTest {
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
 
         verify(calendarAccessibleService).disableCompanyCalendar();
+    }
+
+    @Test
+    void indexWatchForAnotherPersonAsBoss() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+
+        final Person bossPerson = new Person("max", "boss", "senior", "max@example.org");
+        bossPerson.setId(2);
+        bossPerson.setPermissions(List.of(USER, BOSS));
+
+        when(personService.getSignedInUser()).thenReturn(bossPerson);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+
+        perform(get("/web/calendars/share/persons/1"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
+            .andExpect(model().attribute("departmentCalendars", hasSize(0)))
+            .andExpect(model().attribute("isSignedInUser", false))
+            .andExpect(model().attribute("personName", "Marlene Muster"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void indexWatchForMyself() throws Exception {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+
+        when(personService.getSignedInUser()).thenReturn(person);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
+        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+
+        perform(get("/web/calendars/share/persons/1"))
+            .andExpect(view().name("thymeleaf/calendarsharing/index"))
+            .andExpect(model().attribute("departmentCalendars", hasSize(0)))
+            .andExpect(model().attribute("isSignedInUser", true))
+            .andExpect(model().attributeDoesNotExist("personName"))
+            .andExpect(status().isOk());
+    }
+
+    private PersonCalendar anyPersonCalendar() {
+
+        final PersonCalendar personCalendar = new PersonCalendar();
+        personCalendar.setCalendarPeriod(Period.parse("P1Y"));
+
+        return personCalendar;
+    }
+
+    private DepartmentCalendar anyDepartmentCalendar() {
+
+        final DepartmentCalendar departmentCalendar = new DepartmentCalendar();
+        departmentCalendar.setCalendarPeriod(Period.parse("P1Y"));
+
+        return departmentCalendar;
+    }
+
+    private CompanyCalendar anyCompanyCalendar() {
+
+        final CompanyCalendar companyCalendar = new CompanyCalendar();
+        companyCalendar.setCalendarPeriod(Period.parse("P1Y"));
+
+        return companyCalendar;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

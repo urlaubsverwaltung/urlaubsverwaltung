@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,6 +22,12 @@ import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartment;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartmentForm;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentOverviewDtoMapper.mapToDepartmentOverviewDtos;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
@@ -33,7 +38,7 @@ public class DepartmentViewController {
     private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String REDIRECT_WEB_DEPARTMENT = "redirect:/web/department/";
     private static final String DEPARTMENT = "department";
-    private static final String DEPARTMENT_DEPARTMENT_FORM = "department/department_form";
+    private static final String DEPARTMENT_DEPARTMENT_FORM = "thymeleaf/department/department_form";
 
     private final DepartmentService departmentService;
     private final PersonService personService;
@@ -55,20 +60,22 @@ public class DepartmentViewController {
     @GetMapping("/department")
     public String showAllDepartments(Model model) {
 
-        List<Department> departments = departmentService.getAllDepartments();
+        final List<Department> departments = departmentService.getAllDepartments();
+        model.addAttribute("departments", mapToDepartmentOverviewDtos(departments));
 
-        model.addAttribute("departments", departments);
+        final Person signedInUser = personService.getSignedInUser();
+        model.addAttribute("canCreateAndModifyDepartment", signedInUser.hasRole(OFFICE));
 
-        return "department/department_list";
+        return "thymeleaf/department/department_list";
     }
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/department/new")
     public String newDepartmentForm(Model model) {
 
-        List<Person> persons = getPersons();
+        final List<Person> persons = personService.getActivePersons();
 
-        model.addAttribute(DEPARTMENT, new Department());
+        model.addAttribute(DEPARTMENT, new DepartmentForm());
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
         return DEPARTMENT_DEPARTMENT_FORM;
@@ -76,18 +83,17 @@ public class DepartmentViewController {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/department")
-    public String newDepartment(@ModelAttribute(DEPARTMENT) Department department,
-                                Errors errors, Model model, RedirectAttributes redirectAttributes) {
+    public String newDepartment(@ModelAttribute(DEPARTMENT) DepartmentForm departmentForm, Errors errors,
+                                Model model, RedirectAttributes redirectAttributes) {
 
-        validator.validate(department, errors);
+        validator.validate(departmentForm, errors);
 
-        if (returnModelErrorAttributes(department, errors, model)) {
+        if (returnModelErrorAttributes(departmentForm, errors, model)) {
             return DEPARTMENT_DEPARTMENT_FORM;
         }
 
-        departmentService.create(department);
-
-        redirectAttributes.addFlashAttribute("createdDepartment", department);
+        final Department createdDepartment = departmentService.create(mapToDepartment(departmentForm));
+        redirectAttributes.addFlashAttribute("createdDepartmentName", createdDepartment.getName());
 
         return REDIRECT_WEB_DEPARTMENT;
     }
@@ -97,11 +103,11 @@ public class DepartmentViewController {
     public String editDepartment(@PathVariable("departmentId") Integer departmentId, Model model)
         throws UnknownDepartmentException {
 
-        final Department department = departmentService.getDepartmentById(departmentId).orElseThrow(() ->
-            new UnknownDepartmentException(departmentId));
-        model.addAttribute(DEPARTMENT, department);
+        final Department department = departmentService.getDepartmentById(departmentId)
+            .orElseThrow(() -> new UnknownDepartmentException(departmentId));
+        model.addAttribute(DEPARTMENT, mapToDepartmentForm(department));
 
-        final List<Person> persons = getPersons();
+        final List<Person> persons = getInactiveDepartmentMembersAndAllActivePersons(department.getMembers());
         model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
         return DEPARTMENT_DEPARTMENT_FORM;
@@ -110,26 +116,25 @@ public class DepartmentViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/department/{departmentId}")
     public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
-                                   @ModelAttribute(DEPARTMENT) Department department, Errors errors, Model model,
-                                   RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
+                                   @ModelAttribute(DEPARTMENT) DepartmentForm departmentForm, Errors errors,
+                                   Model model, RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
 
         final Integer persistedDepartmentId = departmentService.getDepartmentById(departmentId)
             .orElseThrow(() -> new UnknownDepartmentException(departmentId)).getId();
 
-        department.setId(persistedDepartmentId);
-        validator.validate(department, errors);
+        departmentForm.setId(persistedDepartmentId);
+        validator.validate(departmentForm, errors);
 
         if (errors.hasGlobalErrors()) {
             model.addAttribute("errors", errors);
         }
 
-        if (returnModelErrorAttributes(department, errors, model)) {
+        if (returnModelErrorAttributes(departmentForm, errors, model)) {
             return DEPARTMENT_DEPARTMENT_FORM;
         }
 
-        departmentService.update(department);
-
-        redirectAttributes.addFlashAttribute("updatedDepartment", department);
+        final Department updatedDepartment = departmentService.update(mapToDepartment(departmentForm));
+        redirectAttributes.addFlashAttribute("updatedDepartmentName", updatedDepartment.getName());
 
         return REDIRECT_WEB_DEPARTMENT;
     }
@@ -142,17 +147,17 @@ public class DepartmentViewController {
         final Optional<Department> maybeDepartment = departmentService.getDepartmentById(departmentId);
         maybeDepartment.ifPresent(department -> {
             departmentService.delete(department.getId());
-            redirectAttributes.addFlashAttribute("deletedDepartment", department);
+            redirectAttributes.addFlashAttribute("deletedDepartmentName", department.getName());
         });
 
         return REDIRECT_WEB_DEPARTMENT;
     }
 
-    private boolean returnModelErrorAttributes(Department department, Errors errors, Model model) {
+    private boolean returnModelErrorAttributes(DepartmentForm departmentForm, Errors errors, Model model) {
         if (errors.hasErrors()) {
-            final List<Person> persons = getPersons();
+            model.addAttribute(DEPARTMENT, departmentForm);
 
-            model.addAttribute(DEPARTMENT, department);
+            final List<Person> persons = personService.getActivePersons();
             model.addAttribute(PERSONS_ATTRIBUTE, persons);
 
             return true;
@@ -160,7 +165,14 @@ public class DepartmentViewController {
         return false;
     }
 
-    private List<Person> getPersons() {
-        return personService.getActivePersons();
+    private List<Person> getInactiveDepartmentMembersAndAllActivePersons(List<Person> departmentMembers) {
+
+        final List<Person> persons = departmentMembers.stream()
+            .filter(person -> person.getPermissions().contains(INACTIVE))
+            .collect(toList());
+
+        persons.addAll(personService.getActivePersons());
+
+        return persons;
     }
 }

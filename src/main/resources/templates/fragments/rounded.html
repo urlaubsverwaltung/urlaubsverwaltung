@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Rounded</title>
+  </head>
+  <body>
+    <span
+      th:fragment="block(content)"
+      class="tw-p-4 tw-rounded-full tw-flex tw-items-center tw-justify-center"
+      th:classappend="${className}"
+    >
+      <th:block th:replace="${content}" />
+    </span>
+  </body>
+</html>

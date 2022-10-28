@@ -1,19 +1,17 @@
-import $ from "jquery";
-
-export default function vacationTypeChanged(value) {
-  var $reason = $("#form-group--reason");
-  var $hours = $("#form-group--hours");
-
-  var isRequiredCssClass = "is-required";
+function vacationTypeChanged(value) {
+  const overtime = document.querySelector("#overtime");
+  const specialLeave = document.querySelector("#special-leave");
 
   if (value === "SPECIALLEAVE") {
-    $hours.removeClass(isRequiredCssClass);
-    $reason.addClass(isRequiredCssClass);
+    overtime?.classList.add("hidden");
+    specialLeave?.classList.remove("hidden");
   } else if (value === "OVERTIME") {
-    $reason.removeClass(isRequiredCssClass);
-    $hours.addClass(isRequiredCssClass);
+    overtime?.classList.remove("hidden");
+    specialLeave?.classList.add("hidden");
   } else {
-    $reason.removeClass(isRequiredCssClass);
-    $hours.removeClass(isRequiredCssClass);
+    overtime?.classList.add("hidden");
+    specialLeave?.classList.add("hidden");
   }
 }
+
+export default vacationTypeChanged;

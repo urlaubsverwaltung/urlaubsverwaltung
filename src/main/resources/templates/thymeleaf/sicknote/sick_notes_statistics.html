@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="_layout::head(~{::title}, ~{::styles}, ~{::scripts})">
+    <title th:text="#{sicknotes.statistics.header.title(${statistics.year})}">Krankmeldungsstatistik</title>
+    <th:block th:fragment="styles"></th:block>
+    <th:block th:fragment="scripts"></th:block>
+  </head>
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main th:fragment="main">
+      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
+        <div
+          th:replace="fragments/section-heading::section-heading(~{::absences-statistics-heading-body}, ~{::absences-statistics-heading-actions})"
+        >
+          <th:block th:ref="absences-statistics-heading-body">
+            <h1 th:text="#{sicknotes.statistics.title}">Statistik für das Jahr</h1>
+            <div
+              th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/sicknote/statistics?year=|, selectedYear=${statistics.year})"
+            ></div>
+          </th:block>
+          <th:block th:ref="absences-statistics-heading-actions">
+            <a href="#" th:replace="fragments/print::button"></a>
+          </th:block>
+        </div>
+
+        <table class="list-table tw-text-sm">
+          <thead>
+            <tr>
+              <th scope="col" colspan="2" class="tw-text-right">
+                <span th:text="#{filter.validity}"></span>
+                <span th:text="${{statistics.created}}"></span>
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td th:text="#{sicknotes.statistics.totalNumber}"></td>
+              <td th:text="${statistics.totalNumberOfSickNotes}"></td>
+            </tr>
+            <tr>
+              <td th:text="#{sicknotes.statistics.totalNumberOfDays}"></td>
+              <td
+                th:text="${statistics.totalNumberOfSickDays} % 1 == 0 ? ${#numbers.formatDecimal(statistics.totalNumberOfSickDays, 1, 0)} : ${#numbers.formatDecimal(statistics.totalNumberOfSickDays, 1, 1)}"
+              ></td>
+            </tr>
+            <tr>
+              <td th:text="#{sicknotes.statistics.personWithSickNotes}"></td>
+              <td th:text="${statistics.numberOfPersonsWithMinimumOneSickNote}"></td>
+            </tr>
+            <tr>
+              <td th:text="#{sicknotes.statistics.averageSickTime}"></td>
+              <td
+                th:text="${statistics.averageDurationOfDiseasePerPerson} % 1 == 0 ? ${#numbers.formatDecimal(statistics.averageDurationOfDiseasePerPerson, 1, 0)} : ${#numbers.formatDecimal(statistics.averageDurationOfDiseasePerPerson, 1, 1)}"
+              ></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

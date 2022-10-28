@@ -12,14 +12,14 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,6 +35,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartmentForm;
+import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentOverviewDtoMapper.mapToDepartmentOverviewDtos;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentViewControllerTest {
@@ -61,28 +65,52 @@ class DepartmentViewControllerTest {
     @Test
     void showAllDepartmentsAddsDepartmentsToModel() throws Exception {
 
-        final List<Department> departments = Collections.singletonList(new Department());
+        final List<Department> departments = List.of(new Department());
         when(departmentService.getAllDepartments()).thenReturn(departments);
 
+        final Person signedInUser = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        signedInUser.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
         perform(get("/web/department"))
-            .andExpect(model().attribute("departments", departments));
+            .andExpect(model().attribute("departments", mapToDepartmentOverviewDtos(departments)))
+            .andExpect(model().attribute("canCreateAndModifyDepartment", false));
     }
 
     @Test
     void showAllDepartmentsUsesCorrectView() throws Exception {
 
+        final Person signedInUser = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        signedInUser.setPermissions(List.of(USER));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
         perform(get("/web/department"))
-            .andExpect(view().name("department/department_list"));
+            .andExpect(view().name("thymeleaf/department/department_list"))
+            .andExpect(model().attribute("canCreateAndModifyDepartment", false));
+    }
+
+    @Test
+    void ensureThatOfficeCanCreateAndModifyDepartment() throws Exception {
+
+        final List<Department> departments = List.of(new Department());
+        when(departmentService.getAllDepartments()).thenReturn(departments);
+
+        final Person signedInUser = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        signedInUser.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        perform(get("/web/department"))
+            .andExpect(model().attribute("canCreateAndModifyDepartment", true));
     }
 
     @Test
     void getNewDepartmentFormAddsNewDepartmentAndActivePersonsToModel() throws Exception {
 
-        final List<Person> persons = Collections.singletonList(new Person());
+        final List<Person> persons = List.of(new Person());
         when(personService.getActivePersons()).thenReturn(persons);
 
         perform(get("/web/department/new"))
-            .andExpect(model().attribute(DEPARTMENT_ATTRIBUTE, hasProperty("new", equalTo(Boolean.TRUE))))
+            .andExpect(model().attribute(DEPARTMENT_ATTRIBUTE, hasProperty("id", is(nullValue()))))
             .andExpect(model().attribute(PERSONS_ATTRIBUTE, persons));
     }
 
@@ -90,7 +118,7 @@ class DepartmentViewControllerTest {
     void getNewDepartmentFormUsesCorrectView() throws Exception {
 
         perform(get("/web/department/new"))
-            .andExpect(view().name("department/department_form"));
+            .andExpect(view().name("thymeleaf/department/department_form"));
     }
 
     @Test
@@ -104,13 +132,15 @@ class DepartmentViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/department"))
-            .andExpect(view().name("department/department_form"));
+            .andExpect(view().name("thymeleaf/department/department_form"));
 
         verify(departmentService, never()).create(any());
     }
 
     @Test
     void postNewDepartmentCreatesDepartmentCorrectlyIfValidationSuccessful() throws Exception {
+
+        when(departmentService.create(any())).thenReturn(new Department());
 
         perform(post("/web/department"));
 
@@ -120,9 +150,13 @@ class DepartmentViewControllerTest {
     @Test
     void postNewDepartmentAddsFlashAttributeAndRedirectsToDepartment() throws Exception {
 
+        final Department department = new Department();
+        department.setName("department");
+        when(departmentService.create(any())).thenReturn(department);
+
         perform(post("/web/department"))
-            .andExpect(flash().attribute("createdDepartment", instanceOf(Department.class)))
             .andExpect(status().isFound())
+            .andExpect(flash().attribute("createdDepartmentName", "department"))
             .andExpect(redirectedUrl("/web/department/"));
     }
 
@@ -137,15 +171,27 @@ class DepartmentViewControllerTest {
     @Test
     void editDepartmentAddsDepartmentAndActivePersonsToModel() throws Exception {
 
+        final Person activePerson = new Person();
+        final Person inactivePerson = inactivePerson();
+
+        List<Person> departmentMembers = List.of(activePerson, inactivePerson);
         final Department department = new Department();
+        department.setMembers(departmentMembers);
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(department));
 
-        List<Person> persons = Collections.singletonList(new Person());
-        when(personService.getActivePersons()).thenReturn(persons);
+        List<Person> activePersons = List.of(activePerson);
+        when(personService.getActivePersons()).thenReturn(activePersons);
 
         perform(get("/web/department/" + SOME_DEPARTMENT_ID + "/edit"))
-            .andExpect(model().attribute(DEPARTMENT_ATTRIBUTE, department))
-            .andExpect(model().attribute(PERSONS_ATTRIBUTE, persons));
+            .andExpect(model().attribute(DEPARTMENT_ATTRIBUTE, mapToDepartmentForm(department)))
+            .andExpect(model().attribute(PERSONS_ATTRIBUTE, List.of(inactivePerson, activePerson)));
+    }
+
+    private Person inactivePerson() {
+        final Person inactivePerson = new Person();
+        inactivePerson.setPermissions(List.of(Role.INACTIVE));
+
+        return inactivePerson;
     }
 
     @Test
@@ -154,7 +200,7 @@ class DepartmentViewControllerTest {
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(new Department()));
 
         perform(get("/web/department/" + SOME_DEPARTMENT_ID + "/edit"))
-            .andExpect(view().name("department/department_form"));
+            .andExpect(view().name("thymeleaf/department/department_form"));
     }
 
     @Test
@@ -179,7 +225,7 @@ class DepartmentViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID))
-            .andExpect(view().name("department/department_form"));
+            .andExpect(view().name("thymeleaf/department/department_form"));
 
         verify(departmentService, never()).update(any());
     }
@@ -188,6 +234,7 @@ class DepartmentViewControllerTest {
     void updateDepartmentUpdatesDepartmentCorrectIfValidationSuccessful() throws Exception {
 
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(new Department()));
+        when(departmentService.update(any())).thenReturn(new Department());
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID));
 
@@ -197,11 +244,14 @@ class DepartmentViewControllerTest {
     @Test
     void updateDepartmentAddsFlashAttributeAndRedirectsToDepartment() throws Exception {
 
-        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(new Department()));
+        final Department department = new Department();
+        department.setName("department");
+        when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(department));
+        when(departmentService.update(any())).thenReturn(department);
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID))
-            .andExpect(flash().attribute("updatedDepartment", instanceOf(Department.class)))
             .andExpect(status().isFound())
+            .andExpect(flash().attribute("updatedDepartmentName", "department"))
             .andExpect(redirectedUrl("/web/department/"));
     }
 
@@ -210,11 +260,12 @@ class DepartmentViewControllerTest {
 
         final Department department = new Department();
         department.setId(SOME_DEPARTMENT_ID);
+        department.setName("department");
         when(departmentService.getDepartmentById(SOME_DEPARTMENT_ID)).thenReturn(Optional.of(department));
 
         perform(post("/web/department/" + SOME_DEPARTMENT_ID + "/delete"))
             .andExpect(status().isFound())
-            .andExpect(flash().attribute("deletedDepartment", department))
+            .andExpect(flash().attribute("deletedDepartmentName", "department"))
             .andExpect(redirectedUrl("/web/department/"));
 
         verify(departmentService).delete(SOME_DEPARTMENT_ID);

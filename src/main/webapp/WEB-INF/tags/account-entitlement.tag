@@ -4,5 +4,8 @@
 
 <%@attribute name="account" type="org.synyx.urlaubsverwaltung.account.Account" required="true" %>
 <%@attribute name="className" type="java.lang.String" required="false" %>
+<%@attribute name="noPadding" type="java.lang.Boolean" required="false" %>
 
-<uv:account-entitlement-box__ account="${account}" className="tw-p-5 ${className}" />
+<c:set var="paddingCssClass" value="${noPadding ? 'tw-p-0' : 'tw-p-5'}" />
+
+<uv:account-entitlement-box__ account="${account}" className="${paddingCssClass} ${className}" />

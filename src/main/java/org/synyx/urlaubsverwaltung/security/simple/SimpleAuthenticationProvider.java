@@ -34,7 +34,6 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
     private final PasswordEncoder passwordEncoder;
 
     SimpleAuthenticationProvider(PersonService personService, PasswordEncoder passwordEncoder) {
-
         this.personService = personService;
         this.passwordEncoder = passwordEncoder;
     }

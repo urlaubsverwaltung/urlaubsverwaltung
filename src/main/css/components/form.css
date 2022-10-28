@@ -1,9 +1,109 @@
+legend {
+  @apply dark:tw-text-zinc-200;
+  @apply dark:tw-font-normal;
+}
+
+.tw-form-control {
+  @apply tw-outline-0;
+  @apply tw-block;
+  @apply tw-text-sm;
+  @apply tw-w-full;
+  @apply tw-py-1;
+  @apply tw-px-2.5;
+  @apply tw-border;
+  @apply tw-border-neutral-300;
+}
+
+.form-control,
+.tw-form-control {
+  /* ring-0 is required to enable transition to ring-x of the focused form-control */
+  @apply tw-ring-0;
+  @apply tw-transition;
+  @apply tw-duration-150;
+  @apply tw-ease-in-out;
+  @apply tw-rounded-md;
+  @apply dark:tw-border-neutral-600 !important;
+}
+
+input[disabled],
+.form-control[disabled],
+.tw-form-control[disabled],
+fieldset[disabled] input,
+fieldset[disabled] .form-control,
+fieldset[disabled] .tw-form-control {
+  @apply dark:tw-text-neutral-700 !important;
+  @apply dark:tw-bg-neutral-800 !important;
+  @apply tw-border-0 !important;
+}
+
+.form-control:focus,
+.duet-date__input:focus,
+.duet-date__toggle:focus {
+  /* reset bootstrap stuff */
+  border-color: inherit !important;
+  box-shadow: none;
+}
+
+.form-control:focus,
+.tw-form-control:focus,
+.duet-date__input:focus,
+.duet-date__toggle:focus {
+  @apply tw-ring-2 !important;
+  @apply tw-ring-blue-300 !important;
+}
+
+.input-group {
+  @apply tw-rounded-md !important;
+  @apply tw-border;
+  @apply tw-transition;
+  border-color: #ccc;
+  @apply dark:tw-border-neutral-600;
+}
+
+.input-group.has-error {
+  @apply tw-border-red-700;
+}
+
+.input-group .form-control {
+  /* remove border of form-control since the input-group defines it */
+  @apply tw-border-0 !important;
+  /* no right rounded corners since there is an input-group-addon attached to the right */
+  @apply tw-rounded-r-none !important;
+}
+
+.input-group-addon {
+  @apply dark:tw-bg-zinc-800;
+  @apply dark:tw-text-zinc-200;
+}
+
+.input-group .input-group-addon {
+  /* remove border of input-group-addon since the input-group defines it */
+  @apply tw-border-0 !important;
+  /* however, left border should still be visible */
+  @apply tw-border-l-2 !important;
+  border-color: #ccc;
+  @apply dark:tw-border-neutral-600;
+}
+
+.input-group:focus-within {
+  @apply tw-ring-2;
+  @apply tw-ring-blue-300;
+  @apply tw-border-transparent;
+}
+
+.input-group .form-control:focus {
+  /* reset ring since input-group defines it already */
+  @apply tw-ring-0 !important;
+  @apply tw-border-transparent;
+}
+
 /**************************************************************************
 
   REQUIRED FORM FIELDS
 
 **************************************************************************/
 
+label.is-required:after,
 .form-group.is-required > label:after {
   content: "*";
 }
@@ -33,12 +133,12 @@
 **************************************************************************/
 
 .error {
-  color: #b94a48;
+  @apply tw-text-red-800;
 }
 
 input.error,
 textarea.error {
-  border-color: #b94a48;
+  @apply tw-border-red-700;
 }
 
 .info {
@@ -62,12 +162,10 @@ textarea.error {
 
 **************************************************************************/
 
-.form-section .btn:last-child {
-  margin-bottom: 21px;
-}
-
 .form-section .help-block {
   margin-top: 0;
+  @apply dark:tw-text-zinc-200;
+  @apply dark:tw-text-opacity-75;
 }
 
 /**************************************************************************
@@ -82,16 +180,24 @@ textarea.error {
   overflow: auto;
   max-height: 400px;
   width: 100%;
+  @apply dark:tw-border-zinc-600;
 }
 
 .department--member {
   border-bottom: 1px solid #ddd;
   display: table;
   width: 100%;
+  @apply dark:tw-border-zinc-600;
 }
 
 .department--member.is-assigned {
   background-color: #e8efd1;
+  @apply dark:tw-bg-zinc-800;
+}
+
+.department--member.is-inactive {
+  background-color: #fff4ea;
+  @apply dark:tw-bg-transparent;
 }
 
 .department--member:last-child {
@@ -130,4 +236,20 @@ textarea.error {
 
 .search-field {
   margin-bottom: 21px;
+}
+
+.select-caret {
+  @apply tw-text-zinc-700;
+}
+
+input,
+select,
+textarea {
+  @apply dark:tw-border-zinc-600 !important;
+  @apply dark:tw-bg-zinc-700 !important;
+  @apply dark:tw-text-zinc-50 !important;
+}
+
+.select-caret {
+  @apply dark:tw-text-zinc-50;
 }

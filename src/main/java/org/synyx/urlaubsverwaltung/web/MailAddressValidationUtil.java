@@ -22,7 +22,7 @@ public final class MailAddressValidationUtil {
     }
 
     /**
-     * Checks if the provided mail address has a valid format, for example `marlene@firma.test`.
+     * Checks if the provided mail address has a valid format, for example `marlene@example.org`.
      *
      * @param mailAddress to be checked
      * @return {@code true} if the provided mail address has a valid format, {@code false} else

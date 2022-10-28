@@ -1,0 +1,14 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="honnel" id="add-end-of-sickpay-notification-send">
+    <preConditions>
+      <tableExists tableName="sick_note"/>
+    </preConditions>
+    <addColumn tableName="sick_note">
+      <column name="end_of_sick_pay_notification_send" type="date"/>
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

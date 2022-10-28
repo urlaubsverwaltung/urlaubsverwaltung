@@ -2,14 +2,11 @@ package org.synyx.urlaubsverwaltung.overtime.web;
 
 import org.synyx.urlaubsverwaltung.web.AbstractNoResultFoundException;
 
-
 /**
  * Thrown in case no overtime record found for a certain ID.
  */
 public class UnknownOvertimeException extends AbstractNoResultFoundException {
-
-    public UnknownOvertimeException(Integer id) {
-
+    UnknownOvertimeException(Integer id) {
         super(id, "overtime");
     }
 }

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
+import org.slf4j.Logger;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 
@@ -10,14 +11,17 @@ import javax.naming.directory.Attributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Arrays.asList;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.hasText;
-
 
 /**
  * Maps LDAP attributes to {@link LdapUser} class.
  */
 public class LdapUserMapper implements AttributesMapper<LdapUser> {
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final DirectoryServiceSecurityProperties directoryServiceSecurityProperties;
 
@@ -28,10 +32,10 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
     @Override
     public LdapUser mapFromAttributes(Attributes attributes) throws NamingException {
 
-        final Attribute userNameAttribute = attributes.get(directoryServiceSecurityProperties.getIdentifier());
-        if (userNameAttribute == null) {
-            throw new InvalidSecurityConfigurationException("User identifier is configured incorrectly");
-        }
+        final String username = extractAttribute(attributes, directoryServiceSecurityProperties.getIdentifier());
+        final String firstName = extractAttribute(attributes, directoryServiceSecurityProperties.getFirstName());
+        final String lastName = extractAttribute(attributes, directoryServiceSecurityProperties.getLastName());
+        final String email = extractAttribute(attributes, directoryServiceSecurityProperties.getMailAddress());
 
         final List<String> groups = new ArrayList<>();
         final Attribute memberOfAttribute = attributes.get("memberOf");
@@ -42,25 +46,15 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
             }
         }
 
-        final String username = (String) userNameAttribute.get();
-        final String firstName = getAttributeValue(attributes, directoryServiceSecurityProperties.getFirstName());
-        final String lastName = getAttributeValue(attributes, directoryServiceSecurityProperties.getLastName());
-        final String email = getAttributeValue(attributes, directoryServiceSecurityProperties.getMailAddress());
-
         return new LdapUser(username, firstName, lastName, email, groups);
     }
 
     LdapUser mapFromContext(DirContextOperations ctx) throws UnsupportedMemberAffiliationException {
 
-        final String identifier = directoryServiceSecurityProperties.getIdentifier();
-        final String username = ctx.getStringAttribute(identifier);
-        if (username == null) {
-            throw new InvalidSecurityConfigurationException("Can not get a username using '" + identifier + "' attribute to identify the user.");
-        }
-
-        final String firstName = ctx.getStringAttribute(directoryServiceSecurityProperties.getFirstName());
-        final String lastName = ctx.getStringAttribute(directoryServiceSecurityProperties.getLastName());
-        final String email = ctx.getStringAttribute(directoryServiceSecurityProperties.getMailAddress());
+        final String username = extractAttribute(ctx, directoryServiceSecurityProperties.getIdentifier());
+        final String firstName = extractAttribute(ctx, directoryServiceSecurityProperties.getFirstName());
+        final String lastName = extractAttribute(ctx, directoryServiceSecurityProperties.getLastName());
+        final String email = extractAttribute(ctx, directoryServiceSecurityProperties.getMailAddress());
 
         List<String> memberOf = new ArrayList<>();
         final String memberOfProperty = directoryServiceSecurityProperties.getFilter().getMemberOf();
@@ -68,6 +62,7 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
             memberOf = asList(ctx.getStringAttributes("memberOf"));
 
             if (!memberOf.contains(memberOfProperty)) {
+                LOG.error("User '{}' is not a member of '{}'", username, memberOfProperty);
                 throw new UnsupportedMemberAffiliationException("User '" + username + "' is not a member of '" + memberOfProperty + "'");
             }
         }
@@ -75,15 +70,28 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
         return new LdapUser(username, firstName, lastName, email, memberOf);
     }
 
-    private String getAttributeValue(Attributes attributes, String attrID) throws NamingException {
+    private String extractAttribute(Attributes attributes, String identifier) throws NamingException {
+        final Attribute attribute = attributes.get(identifier);
+        if (attribute == null) {
+            LOG.error("Can not retrieve the attribute using the identifier '{}'", identifier);
+            throw new InvalidSecurityConfigurationException("Can not retrieve the attribute using the identifier '" + identifier + "'");
+        }
 
-        String attributeValue = null;
-
-        final Attribute attribute = attributes.get(attrID);
-        if (attribute != null) {
-            attributeValue = (String) attribute.get();
+        final String attributeValue = (String) attribute.get();
+        if (attributeValue == null || attributeValue.isBlank()) {
+            LOG.error("The attribute using the identifier '{}' is blank or null", identifier);
+            throw new InvalidSecurityConfigurationException("The attribute using the identifier '" + identifier + "' is blank or null");
         }
 
         return attributeValue;
+    }
+
+    private String extractAttribute(DirContextOperations dirContextOperations, String identifier) {
+        final String attribute = dirContextOperations.getStringAttribute(identifier);
+        if (attribute == null || attribute.isBlank()) {
+            LOG.error("The attribute using the identifier '{}' is blank or null", identifier);
+            throw new InvalidSecurityConfigurationException("The attribute using the identifier '" + identifier + "' is blank or null");
+        }
+        return attribute;
     }
 }

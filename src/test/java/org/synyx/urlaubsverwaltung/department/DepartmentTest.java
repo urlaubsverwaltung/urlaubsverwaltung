@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.department;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -11,7 +10,7 @@ import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 class DepartmentTest {
@@ -21,17 +20,9 @@ class DepartmentTest {
 
         Department department = new Department();
 
-        Assert.assertNotNull("Last modification date should be set", department.getLastModification());
-        Assert.assertEquals("Wrong last modification date", LocalDate.now(UTC),
-            department.getLastModification());
+        assertThat(department.getLastModification()).isNotNull();
+        assertThat(department.getLastModification()).isEqualTo(LocalDate.now(UTC));
     }
-
-
-    @Test
-    void ensureCanNotSetLastModificationDateToNull() {
-        assertThatIllegalArgumentException().isThrownBy(() -> new Department().setLastModification(null));
-    }
-
 
     @Test
     void ensureReturnsCorrectLastModificationDate() {
@@ -41,9 +32,8 @@ class DepartmentTest {
         Department department = new Department();
         department.setLastModification(lastModification);
 
-        Assert.assertEquals("Wrong last modification date", lastModification, department.getLastModification());
+        assertThat(department.getLastModification()).isEqualTo(lastModification);
     }
-
 
     @Test
     void ensureMembersListIsUnmodifiable() {
@@ -54,14 +44,11 @@ class DepartmentTest {
         Department department = new Department();
         department.setMembers(modifiableList);
 
-        try {
-            department.getMembers().add(new Person("muster", "Muster", "Marlene", "muster@example.org"));
-            Assert.fail("Members list should be unmodifiable!");
-        } catch (UnsupportedOperationException ex) {
-            // Expected
-        }
-    }
+        final Person nextPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final List<Person> departmentMembers = department.getMembers();
 
+        assertThatThrownBy(() -> departmentMembers.add(nextPerson)).isInstanceOf(UnsupportedOperationException.class);
+    }
 
     @Test
     void ensureDepartmentHeadsListIsUnmodifiable() {
@@ -72,12 +59,9 @@ class DepartmentTest {
         Department department = new Department();
         department.setDepartmentHeads(modifiableList);
 
-        try {
-            department.getDepartmentHeads().add(new Person("muster", "Muster", "Marlene", "muster@example.org"));
-            Assert.fail("Department head list should be unmodifiable!");
-        } catch (UnsupportedOperationException ex) {
-            // Expected
-        }
+        final Person nextPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        final List<Person> departmentHeads = department.getDepartmentHeads();
+        assertThatThrownBy(() -> departmentHeads.add(nextPerson)).isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test
@@ -96,5 +80,24 @@ class DepartmentTest {
         assertThat(departmentToString).isEqualTo("Department{name='DepartmentName', description='Description', " +
             "lastModification=+999999999-12-31, twoStageApproval=true, members=[Person{id='null'}], " +
             "departmentHeads=[Person{id='null'}], secondStageAuthorities=[Person{id='null'}]}");
+    }
+
+    @Test
+    void equals() {
+        final Department departmentOne = new Department();
+        departmentOne.setId(1);
+
+        final Department departmentOneOne = new Department();
+        departmentOneOne.setId(1);
+
+        final Department departmentTwo = new Department();
+        departmentTwo.setId(2);
+
+        assertThat(departmentOne)
+            .isEqualTo(departmentOne)
+            .isEqualTo(departmentOneOne)
+            .isNotEqualTo(departmentTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
     }
 }

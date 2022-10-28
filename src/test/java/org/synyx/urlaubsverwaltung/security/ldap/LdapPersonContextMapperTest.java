@@ -22,14 +22,12 @@ import java.util.Optional;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -60,11 +58,6 @@ class LdapPersonContextMapperTest {
     }
 
     @Test
-    void ensureThrowsIfTryingToGetAuthoritiesForNullPerson() {
-        assertThatIllegalArgumentException().isThrownBy(() -> sut.getGrantedAuthorities(null));
-    }
-
-    @Test
     void ensureThrowsIfTryingToGetAuthoritiesOfPersonWithNoRoles() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(emptyList());
@@ -91,7 +84,7 @@ class LdapPersonContextMapperTest {
         when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
         when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
-        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("murygina", "Aljona", "Murygina", "murygina@synyx.de", List.of()));
+        when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("murygina", "Aljona", "Murygina", "murygina@synyx.de", List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(empty());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -115,9 +108,9 @@ class LdapPersonContextMapperTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER));
 
-        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("murygina", "Aljona", "Murygina", "murygina@synyx.de", List.of()));
+        when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("murygina", "Aljona", "Murygina", "murygina@synyx.de", List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
-        when(personService.save(any(Person.class))).thenReturn(person);
+        when(personService.update(any(Person.class))).thenReturn(person);
 
         sut.mapUserFromContext(context, "murygina", null);
 
@@ -125,7 +118,7 @@ class LdapPersonContextMapperTest {
         assertThat(person.getEmail()).isEqualTo("murygina@synyx.de");
         assertThat(person.getFirstName()).isEqualTo("Aljona");
         assertThat(person.getLastName()).isEqualTo("Murygina");
-        verify(personService).save(eq(person));
+        verify(personService).update(person);
     }
 
     @Test
@@ -138,7 +131,7 @@ class LdapPersonContextMapperTest {
         final String userIdentifier = "mgroehning";
         final String userNameSignedInWith = "mgroehning@simpsons.com";
 
-        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser(userIdentifier, null, null, null, List.of()));
+        when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser(userIdentifier, null, null, null, List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(empty());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -159,14 +152,14 @@ class LdapPersonContextMapperTest {
         final String username = person.getUsername();
 
         when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
-        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser(username, person.getFirstName(), person.getLastName(), person.getEmail(), List.of()));
+        when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser(username, person.getFirstName(), person.getLastName(), person.getEmail(), List.of()));
         assertThatThrownBy(() -> sut.mapUserFromContext(context, username, null))
             .isInstanceOf(DisabledException.class);
     }
 
     @Test
     void ensureLoginIsNotPossibleIfLdapUserCanNotBeCreatedBecauseOfInvalidUserIdentifier() throws UnsupportedMemberAffiliationException {
-        when(ldapUserMapper.mapFromContext(eq(context))).thenThrow(new InvalidSecurityConfigurationException("Bad!"));
+        when(ldapUserMapper.mapFromContext(context)).thenThrow(new InvalidSecurityConfigurationException("Bad!"));
 
         assertThatThrownBy(() ->
             sut.mapUserFromContext(context, "username", null)).isInstanceOf(BadCredentialsException.class);
@@ -174,7 +167,7 @@ class LdapPersonContextMapperTest {
 
     @Test
     void ensureLoginIsNotPossibleIfLdapUserHasNotSupportedMemberOfAttribute() throws UnsupportedMemberAffiliationException {
-        when(ldapUserMapper.mapFromContext(eq(context))).thenThrow(new UnsupportedMemberAffiliationException("Bad!"));
+        when(ldapUserMapper.mapFromContext(context)).thenThrow(new UnsupportedMemberAffiliationException("Bad!"));
 
         assertThatThrownBy(() ->
             sut.mapUserFromContext(context, "username", null)).isInstanceOf(BadCredentialsException.class);
@@ -190,9 +183,9 @@ class LdapPersonContextMapperTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER, BOSS));
 
-        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("username", null, null, null, List.of()));
+        when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("username", null, null, null, List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
-        when(personService.save(any(Person.class))).thenReturn(person);
+        when(personService.update(any(Person.class))).thenReturn(person);
 
         final UserDetails userDetails = sut.mapUserFromContext(context, "username", null);
         assertThat(userDetails.getAuthorities()).hasSize(2);
@@ -210,7 +203,7 @@ class LdapPersonContextMapperTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER));
 
-        when(ldapUserMapper.mapFromContext(eq(context))).thenReturn(new LdapUser("username", null, null, null, List.of()));
+        when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("username", null, null, null, List.of()));
         when(personService.getPersonByUsername("username")).thenReturn(Optional.empty());
         when(personService.create("username", null, null, null, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(person)).thenReturn(person);

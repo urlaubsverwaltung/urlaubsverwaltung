@@ -1,151 +1,188 @@
 package org.synyx.urlaubsverwaltung.account;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * This class describes how many vacation days and remaining vacation days a person has in which period (validFrom, validTo).
  */
-@Entity
-public class Account extends AbstractPersistable<Integer> {
+public class Account {
 
-    @ManyToOne
+    private Integer id;
     private Person person;
-
     private LocalDate validFrom;
-
     private LocalDate validTo;
+    private Boolean doRemainingVacationDaysExpireLocally;
+    private boolean doRemainingVacationDaysExpireGlobally;
+    private LocalDate expiryDate;
+    private LocalDate expiryNotificationSentDate;
 
     // theoretical number of vacation days a person has, i.e. it's the annual entitlement, but it is possible that
     // person e.g. will quit soon the company so he has not the full holidays entitlement; the actual number of vacation
     // days for a year describes the field vacationDays
     private BigDecimal annualVacationDays;
-    private BigDecimal vacationDays;
+    private BigDecimal actualVacationDays;
 
-    // remaining vacation days from the last year, if it's after 1st April, only the not expiring remaining vacation
-    // days may be used
-
+    // remaining vacation days from the last year, if it's expiry day, only the not expiring remaining vacation days may be used
     private BigDecimal remainingVacationDays;
     private BigDecimal remainingVacationDaysNotExpiring;
 
     private String comment;
 
     public Account() {
-
         /* OK */
     }
 
-    public Account(Person person, LocalDate validFrom, LocalDate validTo, BigDecimal annualVacationDays,
-                   BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
+    public Account(Person person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpireLocally,
+                   LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal remainingVacationDays,
+                   BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         this.person = person;
         this.validFrom = validFrom;
         this.validTo = validTo;
+        this.doRemainingVacationDaysExpireLocally = doRemainingVacationDaysExpireLocally;
+        this.expiryDate = expiryDate;
         this.annualVacationDays = annualVacationDays;
         this.remainingVacationDays = remainingVacationDays;
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
         this.comment = comment;
     }
 
-    public Person getPerson() {
+    /**
+     * Returns if the remaining vacation days do expire globally or locally (persons holiday account specific configuration)
+     * <table border="1">
+     *   <tr>
+     *     <th>Globally</th>
+     *     <th>Locally</th>
+     *     <th>Result</th>
+     *   </tr>
+     *   <tr>
+     *     <td><strong>true</strong></td><td>null</td><td><strong>true</strong></td>
+     *   </tr>
+     *   <tr>
+     *     <td><strong>false</strong></td><td>null</td><td><strong>false</strong></td>
+     *   </tr>
+     *   <tr>
+     *     <td>true</td><td><strong>true</strong></td><td><strong>true</strong></td>
+     *   </tr>
+     *   <tr>
+     *     <td>true</td><td><strong>false</strong></td><td><strong>false</strong></td>
+     *   </tr>
+     *   <tr>
+     *     <td>false</td><td><strong>true</strong></td><td><strong>true</strong></td>
+     *   </tr>
+     *   <tr>
+     *     <td>false</td><td><strong>false</strong></td><td><strong>false</strong></td>
+     *   </tr>
+     * </table>
+     *
+     * @return true the remaining vacation days of a user does expire, otherwise false
+     */
+    public boolean doRemainigVacationDaysExpire() {
+        return doRemainingVacationDaysExpireLocally == null ? doRemainingVacationDaysExpireGlobally : doRemainingVacationDaysExpireLocally;
+    }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Person getPerson() {
         return person;
     }
 
     public void setPerson(Person person) {
-
         this.person = person;
     }
 
     public BigDecimal getAnnualVacationDays() {
-
         return annualVacationDays;
     }
 
     public void setAnnualVacationDays(BigDecimal annualVacationDays) {
-
         this.annualVacationDays = annualVacationDays;
     }
 
     public BigDecimal getRemainingVacationDays() {
-
         return remainingVacationDays;
     }
 
     public void setRemainingVacationDays(BigDecimal remainingVacationDays) {
-
         this.remainingVacationDays = remainingVacationDays;
     }
 
     public BigDecimal getRemainingVacationDaysNotExpiring() {
-
         return remainingVacationDaysNotExpiring;
     }
 
     public void setRemainingVacationDaysNotExpiring(BigDecimal remainingVacationDaysNotExpiring) {
-
         this.remainingVacationDaysNotExpiring = remainingVacationDaysNotExpiring;
     }
 
-    public BigDecimal getVacationDays() {
-
-        return vacationDays;
+    public BigDecimal getActualVacationDays() {
+        return actualVacationDays;
     }
 
-    public void setVacationDays(BigDecimal vacationDays) {
-
-        this.vacationDays = vacationDays;
+    public void setActualVacationDays(BigDecimal vacationDays) {
+        this.actualVacationDays = vacationDays;
     }
 
     public LocalDate getValidFrom() {
-
-        if (this.validFrom == null) {
-            return null;
-        }
-
         return this.validFrom;
     }
 
     public void setValidFrom(LocalDate validFrom) {
-
         this.validFrom = validFrom;
     }
 
     public LocalDate getValidTo() {
-
-        if (this.validTo == null) {
-            return null;
-        }
-
         return this.validTo;
     }
 
     public void setValidTo(LocalDate validTo) {
-
         this.validTo = validTo;
     }
 
-    public int getYear() {
-
-        return this.validFrom.getYear();
+    public Boolean isDoRemainingVacationDaysExpireLocally() {
+        return doRemainingVacationDaysExpireLocally;
     }
 
-    @Override
-    public String toString() {
-        return "Account{" +
-            "person=" + person +
-            ", validFrom=" + validFrom +
-            ", validTo=" + validTo +
-            ", annualVacationDays=" + annualVacationDays +
-            ", vacationDays=" + vacationDays +
-            ", remainingVacationDays=" + remainingVacationDays +
-            ", remainingVacationDaysNotExpiring=" + remainingVacationDaysNotExpiring +
-            '}';
+    public void setDoRemainingVacationDaysExpireLocally(Boolean doRemainingVacationDaysExpireLocally) {
+        this.doRemainingVacationDaysExpireLocally = doRemainingVacationDaysExpireLocally;
+    }
+
+    public boolean isDoRemainingVacationDaysExpireGlobally() {
+        return doRemainingVacationDaysExpireGlobally;
+    }
+
+    public void setDoRemainingVacationDaysExpireGlobally(boolean doRemainingVacationDaysExpireGlobally) {
+        this.doRemainingVacationDaysExpireGlobally = doRemainingVacationDaysExpireGlobally;
+    }
+
+    public LocalDate getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public LocalDate getExpiryNotificationSentDate() {
+        return expiryNotificationSentDate;
+    }
+
+    public void setExpiryNotificationSentDate(LocalDate expiryDateNotificationSent) {
+        this.expiryNotificationSentDate = expiryDateNotificationSent;
+    }
+
+    public int getYear() {
+        return this.validFrom.getYear();
     }
 
     public String getComment() {
@@ -154,5 +191,40 @@ public class Account extends AbstractPersistable<Integer> {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+            "id=" + id +
+            ", person=" + person +
+            ", validFrom=" + validFrom +
+            ", validTo=" + validTo +
+            ", doRemainingVacationDaysExpireLocally=" + doRemainingVacationDaysExpireLocally +
+            ", doRemainingVacationDaysExpireGlobally=" + doRemainingVacationDaysExpireGlobally +
+            ", expiryDate=" + expiryDate +
+            ", expiryNotificationSentDate=" + expiryNotificationSentDate +
+            ", annualVacationDays=" + annualVacationDays +
+            ", actualVacationDays=" + actualVacationDays +
+            ", remainingVacationDays=" + remainingVacationDays +
+            ", remainingVacationDaysNotExpiring=" + remainingVacationDaysNotExpiring +
+            '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Account that = (Account) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Print</title>
+  </head>
+  <body>
+    <button
+      th:fragment="button"
+      class="tw-bg-transparent icon-link tw-px-1 tw-py-0 tw-hidden sm:tw-flex print:tw-hidden"
+      th:data-title="#{action.print}"
+      onclick="window.print(); return false;"
+    >
+      <svg th:replace="icon/printer::svg(className='tw-w-5 tw-h-5')"></svg>
+      <span class="tw-sr-only" th:text="#{action.print}"></span>
+    </button>
+  </body>
+</html>

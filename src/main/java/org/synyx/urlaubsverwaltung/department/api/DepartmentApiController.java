@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.department.api;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
-@Api("Departments: Get information about the departments of the application")
+@Tag(name = "departments", description = "Departments: Get information about the departments of the application")
 @RestController
 @RequestMapping("/api")
 public class DepartmentApiController {
@@ -28,7 +28,7 @@ public class DepartmentApiController {
         this.departmentService = departmentService;
     }
 
-    @ApiOperation(value = "Get all departments of the application", notes = "Get all departments of the application")
+    @Operation(summary = "Get all departments of the application", description = "Get all departments of the application")
     @GetMapping("/departments")
     @PreAuthorize(IS_OFFICE)
     public DepartmentsDto departments() {

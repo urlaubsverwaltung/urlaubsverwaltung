@@ -7,11 +7,3 @@
 .tab-content .tab-pane {
   padding-top: 24px;
 }
-
-.nav-tabs > li.error > a {
-  color: #b94a48;
-}
-
-.nav-tabs > li.error > a:after {
-  content: " *";
-}

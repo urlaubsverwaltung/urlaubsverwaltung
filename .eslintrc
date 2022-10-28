@@ -1,10 +1,10 @@
 {
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "extends": [
     "eslint:recommended",
     "plugin:@urlaubsverwaltung/recommended",
     "plugin:unicorn/recommended",
-    "prettier"
+    "plugin:prettier/recommended"
   ],
   "env": {
     "browser": true,
@@ -14,8 +14,10 @@
     "Urlaubsverwaltung": true
   },
   "rules": {
-    "unicorn/no-fn-reference-in-iterator": "warn",
-    "unicorn/prefer-reflect-apply": "off"
+    "unicorn/no-fn-reference-in-iterator": "off",
+    "unicorn/prefer-reflect-apply": "off",
+    /* our webpack build cannot handle top-level-await atm */
+    "unicorn/prefer-top-level-await": "off"
   },
   "overrides": [
     {

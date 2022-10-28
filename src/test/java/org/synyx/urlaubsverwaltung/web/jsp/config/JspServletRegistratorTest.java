@@ -6,7 +6,6 @@ import org.mockito.Mockito;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;

@@ -1,25 +1,36 @@
 import $ from "jquery";
 import "tablesorter";
+import { dataValueNumberParser } from "../../components/table-sortable/parser-data-value-number";
 
 $(document).ready(function () {
-  $("table.sortable").tablesorter({
-    sortList: [[1, 0]],
-    headers: {
-      0: { sorter: false },
-      3: { sorter: false },
-      4: { sorter: false },
-      5: { sorter: "commaNumber" },
-      6: { sorter: "commaNumber" },
-      7: { sorter: "commaNumber" },
-    },
-    textExtraction: function (node) {
-      var sortable = $(node).find(".sortable");
+  $.tablesorter.addParser(dataValueNumberParser);
 
-      if (sortable.length > 0) {
-        return sortable[0].innerHTML;
-      }
+  const { length: columnCount } = document.querySelectorAll("#application-statistic-table thead th");
+  const isPersonnelNumberColumnRendered = columnCount === 11;
 
-      return node.innerHTML;
-    },
-  });
+  if (isPersonnelNumberColumnRendered) {
+    $("#application-statistic-table").tablesorter({
+      sortList: [[2, 0]],
+      headers: {
+        0: { sorter: false },
+        4: { sorter: false },
+        5: { sorter: dataValueNumberParser.id },
+        6: { sorter: dataValueNumberParser.id },
+        7: { sorter: dataValueNumberParser.id },
+        8: { sorter: dataValueNumberParser.id },
+      },
+    });
+  } else {
+    $("#application-statistic-table").tablesorter({
+      sortList: [[1, 0]],
+      headers: {
+        0: { sorter: false },
+        3: { sorter: false },
+        4: { sorter: dataValueNumberParser.id },
+        5: { sorter: dataValueNumberParser.id },
+        6: { sorter: dataValueNumberParser.id },
+        7: { sorter: dataValueNumberParser.id },
+      },
+    });
+  }
 });

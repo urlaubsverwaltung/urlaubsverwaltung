@@ -1,0 +1,47 @@
+.text-bubble {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  padding: 1rem 1.5rem;
+  border: 2px solid theme("colors.blue.100");
+  border-radius: 1rem;
+  @apply dark:tw-border-sky-800;
+}
+
+.text-bubble.text-bubble--triangle-top-right {
+  border-top-right-radius: 0;
+}
+
+.text-bubble--triangle-top-right:before {
+  content: " ";
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: auto;
+  right: -2px;
+  top: -12px;
+  bottom: auto;
+  border: 6px solid;
+  border-color: transparent theme("colors.blue.100") theme("colors.blue.100") transparent;
+}
+
+.tw-dark .text-bubble--triangle-top-right:before {
+  border-color: transparent theme("colors.sky.800") theme("colors.sky.800") transparent;
+}
+
+.text-bubble--triangle-top-right:after {
+  content: " ";
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: auto;
+  right: 0;
+  top: -7px;
+  bottom: auto;
+  border: 4px solid;
+  border-color: transparent white white transparent;
+}
+
+.tw-dark .text-bubble--triangle-top-right:after {
+  border-color: transparent theme("colors.neutral.900") theme("colors.neutral.900") transparent;
+}

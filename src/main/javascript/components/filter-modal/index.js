@@ -1,22 +1,7 @@
-import $ from "jquery";
-import datepicker from "jquery-ui/ui/widgets/datepicker";
+import { createDatepicker } from "../datepicker";
 
-$(document).ready(async function () {
-  const locale = window.navigator.language;
-  if (locale === "de") {
-    const { default: de } = await import("jquery-ui/ui/i18n/datepicker-de");
-    datepicker.setDefaults({
-      ...de,
-      weekHeader: "Wo",
-    });
-  } else {
-    const { default: en } = await import("jquery-ui/ui/i18n/datepicker-en-GB");
-    datepicker.setDefaults({
-      ...en,
-      dateFormat: "dd.mm.yy",
-    });
-  }
+const getPersonId = () => {};
+const urlPrefix = ""; // not required, no absences are fetched since we have no single person (personId)
 
-  $("#startDate").datepicker();
-  $("#endDate").datepicker();
-});
+createDatepicker("#startDate", { urlPrefix, getPersonId });
+createDatepicker("#endDate", { urlPrefix, getPersonId });

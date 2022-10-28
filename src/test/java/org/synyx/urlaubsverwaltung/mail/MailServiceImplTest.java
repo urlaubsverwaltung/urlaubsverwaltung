@@ -6,22 +6,21 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
@@ -47,7 +46,9 @@ class MailServiceImplTest {
 
         when(messageSource.getMessage(any(), any(), any())).thenReturn("subject");
         when(mailContentBuilder.buildMailBody(any(), any(), any())).thenReturn("emailBody");
-        when(mailProperties.getSender()).thenReturn("no-reply@firma.test");
+        when(mailProperties.getSender()).thenReturn("no-reply@example.org");
+        when(mailProperties.getSenderDisplayName()).thenReturn("Urlaubsverwaltung");
+        when(mailProperties.getApplicationUrl()).thenReturn("http://localhost:8080");
 
         sut = new MailServiceImpl(messageSource, mailContentBuilder, mailSenderService, mailProperties, personService);
     }
@@ -59,8 +60,8 @@ class MailServiceImplTest {
 
         final Person person = new Person();
         person.setEmail("mail@example.org");
-        final List<Person> persons = singletonList(person);
-        when(personService.getPersonsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(persons);
+        final List<Person> persons = List.of(person);
+        when(personService.getActivePersonsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(persons);
 
         final Map<String, Object> model = new HashMap<>();
         model.put("someModel", "something");
@@ -75,7 +76,7 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(List.of("mail@example.org")), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("mail@example.org"), "subject", "emailBody");
     }
 
     @Test
@@ -84,7 +85,7 @@ class MailServiceImplTest {
         setupMockServletRequest();
 
         final Person hans = new Person();
-        hans.setEmail("hans@firma.test");
+        hans.setEmail("hans@example.org");
 
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
@@ -97,7 +98,7 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(List.of("hans@firma.test")), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody");
     }
 
     @Test
@@ -106,10 +107,10 @@ class MailServiceImplTest {
         setupMockServletRequest();
 
         final Person hans = new Person();
-        hans.setEmail("hans@firma.test");
+        hans.setEmail("hans@example.org");
 
         final Person franz = new Person();
-        franz.setEmail("franz@firma.test");
+        franz.setEmail("franz@example.org");
         final List<Person> persons = asList(hans, franz);
 
         final String subjectMessageKey = "subject.overtime.created";
@@ -123,8 +124,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList("hans@firma.test")), eq("subject"), eq("emailBody"));
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList("franz@firma.test")), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody");
     }
 
     @Test
@@ -133,17 +134,16 @@ class MailServiceImplTest {
         setupMockServletRequest();
 
         final Person hans = new Person();
-        hans.setEmail("hans@firma.test");
+        hans.setEmail("hans@example.org");
 
         final Person franz = new Person();
-        franz.setEmail("franz@firma.test");
+        franz.setEmail("franz@example.org");
         final List<Person> persons = asList(hans, franz);
 
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
 
-        final File iCal = new File("calendar.ics");
-        iCal.deleteOnExit();
+        final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
 
         final Mail mail = Mail.builder()
             .withRecipient(persons)
@@ -154,8 +154,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(List.of("franz@firma.test")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(List.of("hans@firma.test")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
     }
 
     @Test
@@ -164,17 +164,16 @@ class MailServiceImplTest {
         setupMockServletRequest();
 
         final Person hans = new Person();
-        hans.setEmail("hans@firma.test");
+        hans.setEmail("hans@example.org");
 
         final Person franz = new Person();
-        franz.setEmail("franz@firma.test");
+        franz.setEmail("franz@example.org");
         final List<Person> persons = asList(hans, franz);
 
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
 
-        final File iCal = new File("calendar.ics");
-        iCal.deleteOnExit();
+        final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
 
         final Mail mail = Mail.builder()
             .withRecipient(persons)
@@ -185,8 +184,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList("hans@firma.test")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList("franz@firma.test")), eq("subject"), eq("emailBody"), eq(List.of(new MailAttachment("fileName", iCal))));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
     }
 
     @Test
@@ -196,7 +195,7 @@ class MailServiceImplTest {
 
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
-        String to = "admin@firma.test";
+        String to = "admin@example.org";
         when(mailProperties.getAdministrator()).thenReturn(to);
 
         final Mail mail = Mail.builder()
@@ -206,22 +205,22 @@ class MailServiceImplTest {
             .build();
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList(to)), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of(to), "subject", "emailBody");
     }
 
     @Test
     void sendMailToWithNotificationAndPersonsAndAdministrator() {
 
-        when(mailProperties.getAdministrator()).thenReturn("admin@firma.test");
+        when(mailProperties.getAdministrator()).thenReturn("admin@example.org");
 
         setupMockServletRequest();
 
         final Person hans = new Person();
-        hans.setEmail("hans@firma.test");
-        when(personService.getPersonsWithNotificationType(NOTIFICATION_USER)).thenReturn(List.of(hans));
+        hans.setEmail("hans@example.org");
+        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_USER)).thenReturn(List.of(hans));
 
         final Person franz = new Person();
-        franz.setEmail("franz@firma.test");
+        franz.setEmail("franz@example.org");
 
         final String subjectMessageKey = "subject.overtime.created";
         final String templateName = "overtime_office";
@@ -236,9 +235,32 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList("hans@firma.test")), eq("subject"), eq("emailBody"));
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList("franz@firma.test")), eq("subject"), eq("emailBody"));
-        verify(mailSenderService).sendEmail(eq("no-reply@firma.test"), eq(singletonList("admin@firma.test")), eq("subject"), eq("emailBody"));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("admin@example.org"), "subject", "emailBody");
+    }
+
+    @Test
+    void ensureDistinctRecipientsForSendMail() {
+
+        setupMockServletRequest();
+
+        final Person franz = new Person();
+        franz.setEmail("franz@example.org");
+
+        final String subjectMessageKey = "subject.overtime.created";
+        final String templateName = "overtime_office";
+
+        final Mail mail = Mail.builder()
+                .withRecipient(List.of(franz,franz))
+                .withSubject(subjectMessageKey)
+                .withTemplate(templateName, new HashMap<>())
+                .build();
+
+        sut.send(mail);
+
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody");
+        verifyNoMoreInteractions(mailSenderService);
     }
 
     private void setupMockServletRequest() {

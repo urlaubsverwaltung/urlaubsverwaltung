@@ -2,10 +2,10 @@ package org.synyx.urlaubsverwaltung.overtime;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
 
 /**
  * Provides possibility to create and fetch {@link Overtime} records.
@@ -22,7 +22,6 @@ public interface OvertimeService {
      */
     List<Overtime> getOvertimeRecordsForPerson(Person person);
 
-
     /**
      * Fetch all the overtime records for a certain person and year.
      *
@@ -31,7 +30,6 @@ public interface OvertimeService {
      * @return list of matching overtime records
      */
     List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year);
-
 
     /**
      * Saves an overtime record.
@@ -52,7 +50,6 @@ public interface OvertimeService {
      */
     Optional<Overtime> getOvertimeById(Integer id);
 
-
     /**
      * Fetch the comments for a certain overtime record.
      *
@@ -61,16 +58,23 @@ public interface OvertimeService {
      */
     List<OvertimeComment> getCommentsForOvertime(Overtime overtime);
 
-
     /**
-     * Get the total hours of all overtime records of the given person and year.
+     * Get the total duration of all overtime records of the given person and year.
      *
      * @param person to get the total overtime for
      * @param year   to get the total overtime for
      * @return the total overtime for the given year, never {@code null}
      */
-    BigDecimal getTotalOvertimeForPersonAndYear(Person person, int year);
+    Duration getTotalOvertimeForPersonAndYear(Person person, int year);
 
+    /**
+     * Get the total duration of all overtime records for a person and all years before the given year
+     *
+     * @param person to get the total overtime for
+     * @param year   to get the total overtime before this year (exclusive $year)
+     * @return the total overtime for the years, never {@code null}
+     */
+    Duration getTotalOvertimeForPersonBeforeYear(Person person, int year);
 
     /**
      * Get the left overtime hours of the given person: the difference between the total overtime and the overtime
@@ -80,5 +84,25 @@ public interface OvertimeService {
      * @return the left overtime, never {@code null}
      * @since 2.13.0
      */
-    BigDecimal getLeftOvertimeForPerson(Person person);
+    Duration getLeftOvertimeForPerson(Person person);
+
+    /**
+     * Get the left overtime hours of the given person: the difference between the total overtime at start and the
+     * overtime reduction of period between start and end
+     *
+     * @param person to get the left overtime for
+     * @param start of period
+     * @param end of period
+     * @return the left overtime, never {@code null}
+     */
+    Duration getLeftOvertimeForPerson(Person person, LocalDate start, LocalDate end);
+
+    /**
+     * Is signedInUser allowed to write (create or update) overtime records of given personOfOvertime.
+     *
+     * @param signedInUser     person which writes overtime record
+     * @param personOfOvertime person which the overtime record belongs to
+     * @return {@code true} if signedInUser is allowed to write otherwise {@code false}
+     */
+    boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime);
 }

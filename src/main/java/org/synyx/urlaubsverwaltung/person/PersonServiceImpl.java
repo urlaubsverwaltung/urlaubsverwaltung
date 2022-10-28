@@ -3,23 +3,25 @@ package org.synyx.urlaubsverwaltung.person;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-
 
 /**
  * Implementation for {@link PersonService}.
@@ -31,16 +33,16 @@ class PersonServiceImpl implements PersonService {
 
     private final PersonRepository personRepository;
     private final AccountInteractionService accountInteractionService;
-    private final WorkingTimeService workingTimeService;
+    private final WorkingTimeWriteService workingTimeWriteService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     PersonServiceImpl(PersonRepository personRepository, AccountInteractionService accountInteractionService,
-                      WorkingTimeService workingTimeService, ApplicationEventPublisher applicationEventPublisher) {
+                      WorkingTimeWriteService workingTimeWriteService, ApplicationEventPublisher applicationEventPublisher) {
 
         this.personRepository = personRepository;
         this.accountInteractionService = accountInteractionService;
-        this.workingTimeService = workingTimeService;
+        this.workingTimeWriteService = workingTimeWriteService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -49,49 +51,41 @@ class PersonServiceImpl implements PersonService {
                          List<MailNotification> notifications, List<Role> permissions) {
 
         final Person person = new Person(username, lastName, firstName, email);
-
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
-        LOG.info("Create person: {}", person);
-
-        Person persistedPerson = save(person);
-
-        accountInteractionService.createDefaultAccount(person);
-        workingTimeService.createDefaultWorkingTime(person);
-
-        return persistedPerson;
+        return create(person);
     }
 
     @Override
     public Person create(Person person) {
 
-        LOG.info("Create person: {}", person);
+        final Person createdPerson = personRepository.save(person);
+        LOG.info("Created person: {}", person);
 
         accountInteractionService.createDefaultAccount(person);
-        workingTimeService.createDefaultWorkingTime(person);
+        workingTimeWriteService.createDefaultWorkingTime(person);
 
-        return save(person);
+        applicationEventPublisher.publishEvent(toPersonCreatedEvent(createdPerson));
+
+        return createdPerson;
     }
 
     @Override
     public Person update(Integer id, String username, String lastName, String firstName, String email,
                          List<MailNotification> notifications, List<Role> permissions) {
 
-        Person person = getPersonByID(id).orElseThrow(() ->
-            new IllegalArgumentException("Can not find a person for ID = " + id));
+        final Person person = getPersonByID(id)
+            .orElseThrow(() -> new IllegalArgumentException("Can not find a person for ID = " + id));
 
         person.setUsername(username);
         person.setLastName(lastName);
         person.setFirstName(firstName);
         person.setEmail(email);
-
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
-        LOG.info("Update person: {}", person);
-
-        return save(person);
+        return update(person);
     }
 
     @Override
@@ -101,86 +95,81 @@ class PersonServiceImpl implements PersonService {
             throw new IllegalArgumentException("Can not update a person that is not persisted yet");
         }
 
-        LOG.info("Updated person: {}", person);
+        final Person updatedPerson = personRepository.save(person);
+        LOG.info("Updated person: {}", updatedPerson);
 
-        return save(person);
-    }
-
-    @Override
-    public Person save(Person person) {
-
-        final Person persistedPerson = personRepository.save(person);
-
-        final boolean isInactive = persistedPerson.getPermissions().contains(INACTIVE);
-        if (isInactive) {
-            applicationEventPublisher.publishEvent(new PersonDisabledEvent(this, persistedPerson.getId()));
+        if (updatedPerson.isInactive()) {
+            applicationEventPublisher.publishEvent(toPersonDisabledEvent(updatedPerson));
         }
 
-        return persistedPerson;
+        applicationEventPublisher.publishEvent(toPersonUpdateEvent(updatedPerson));
+
+        return updatedPerson;
     }
 
     @Override
     public Optional<Person> getPersonByID(Integer id) {
-
         return personRepository.findById(id);
     }
 
-
     @Override
     public Optional<Person> getPersonByUsername(String username) {
+        return personRepository.findByUsername(username);
+    }
 
-        return Optional.ofNullable(personRepository.findByUsername(username));
+    @Override
+    public Optional<Person> getPersonByMailAddress(String mailAddress) {
+        return personRepository.findByEmail(mailAddress);
     }
 
     @Override
     public List<Person> getActivePersons() {
-
-        return personRepository.findAll()
-            .stream()
-            .filter(person -> !person.hasRole(INACTIVE))
-            .sorted(personComparator())
-            .collect(toList());
+        return personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
     }
 
     @Override
-    public List<Person> getInactivePersons() {
-
-        return personRepository.findAll()
-            .stream()
-            .filter(person -> person.hasRole(INACTIVE))
-            .sorted(personComparator())
-            .collect(toList());
+    public Page<Person> getActivePersons(PageableSearchQuery personPageableSearchQuery) {
+        final Pageable pageable = personPageableSearchQuery.getPageable();
+        final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
+        final String query = personPageableSearchQuery.getQuery();
+        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
+        return personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, pageRequest);
     }
 
     @Override
     public List<Person> getActivePersonsByRole(final Role role) {
-
-        return getActivePersons().stream().filter(person -> person.hasRole(role)).collect(toList());
+        return personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(role, INACTIVE);
     }
 
+    @Override
+    public List<Person> getActivePersonsWithNotificationType(final MailNotification notification) {
+        return personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, notification);
+    }
 
     @Override
-    public List<Person> getPersonsWithNotificationType(final MailNotification notification) {
+    public List<Person> getInactivePersons() {
+        return personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
+    }
 
-        return getActivePersons().stream()
-            .filter(person -> person.hasNotificationType(notification))
-            .collect(toList());
+    @Override
+    public Page<Person> getInactivePersons(PageableSearchQuery personPageableSearchQuery) {
+        final Pageable pageable = personPageableSearchQuery.getPageable();
+        final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
+        final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
+        return personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, personPageableSearchQuery.getQuery(), pageRequest);
     }
 
     @Override
     public Person getSignedInUser() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             throw new IllegalStateException("No authentication found in context.");
         }
 
-        String username = authentication.getName();
-
-        Optional<Person> person = getPersonByUsername(username);
-
-        if (!person.isPresent()) {
+        final String username = authentication.getName();
+        final Optional<Person> person = getPersonByUsername(username);
+        if (person.isEmpty()) {
             throw new IllegalStateException("Can not get the person for the signed in user with username = " + username);
         }
 
@@ -207,14 +196,50 @@ class PersonServiceImpl implements PersonService {
         permissions.add(OFFICE);
         person.setPermissions(permissions);
 
-        final Person savedPerson = save(person);
+        final Person savedPerson = personRepository.save(person);
 
         LOG.info("Add 'OFFICE' role to person: {}", person);
 
         return savedPerson;
     }
 
-    private Comparator<Person> personComparator() {
-        return Comparator.comparing(p -> p.getNiceName().toLowerCase());
+    @Override
+    public int numberOfActivePersons() {
+        return personRepository.countByPermissionsNotContaining(INACTIVE);
+    }
+
+    @Override
+    public int numberOfPersonsWithOfficeRoleExcludingPerson(int excludingId) {
+        return personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(excludingId));
+    }
+
+    private static Sort mapToImplicitPersonSort(Sort requestedSort) {
+        final Sort.Order firstNameOrder = requestedSort.getOrderFor("firstName");
+        final Sort.Order lastNameOrder = requestedSort.getOrderFor("lastName");
+
+        // e.g. if content should be sorted by firstName, use lastName as second sort criteria
+        final Sort implicitSort;
+
+        if (firstNameOrder != null) {
+            implicitSort = requestedSort.and(Sort.by(firstNameOrder.getDirection(), "lastName"));
+        } else if (lastNameOrder != null) {
+            implicitSort = requestedSort.and(Sort.by(lastNameOrder.getDirection(), "firstName"));
+        } else {
+            implicitSort = requestedSort;
+        }
+
+        return implicitSort;
+    }
+
+    private PersonCreatedEvent toPersonCreatedEvent(Person person) {
+        return new PersonCreatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail(), person.isActive());
+    }
+
+    private PersonUpdatedEvent toPersonUpdateEvent(Person person) {
+        return new PersonUpdatedEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail(), person.isActive());
+    }
+
+    private PersonDisabledEvent toPersonDisabledEvent(Person person) {
+        return new PersonDisabledEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
     }
 }

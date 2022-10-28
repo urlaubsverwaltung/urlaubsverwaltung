@@ -11,23 +11,18 @@ import java.util.List;
 /**
  * Repository for accessing {@link WorkingTime} entities.
  */
-interface WorkingTimeRepository extends CrudRepository<WorkingTime, Integer> {
+interface WorkingTimeRepository extends CrudRepository<WorkingTimeEntity, Integer> {
 
-    @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1 ORDER BY x.validFrom")
-    List<WorkingTime> findByPerson(Person person);
+    List<WorkingTimeEntity> findByPersonOrderByValidFromDesc(Person person);
 
-    @Query("SELECT x FROM WorkingTime x WHERE x.person = ?1 AND x.validFrom = ?2")
-    WorkingTime findByPersonAndValidityDate(Person person, LocalDate date);
+    @Query("SELECT x FROM working_time x WHERE x.person = ?1 AND x.validFrom = ?2")
+    WorkingTimeEntity findByPersonAndValidityDate(Person person, LocalDate date);
 
-    @Query(
-        "SELECT x FROM WorkingTime x WHERE x.person = ?1 "
-            + "AND x.validFrom = (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person = ?1 AND w.validFrom <= ?2)"
-    )
-    WorkingTime findByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date);
+    List<WorkingTimeEntity> findByPersonIn(List<Person> persons);
 
     @Query(
-        "SELECT x FROM WorkingTime x WHERE x.person = ?1 "
-            + "AND x.validFrom = (SELECT MAX(w.validFrom) from WorkingTime w WHERE w.person = ?1)"
+        "SELECT x FROM working_time x WHERE x.person = ?1 "
+            + "AND x.validFrom = (SELECT MAX(w.validFrom) from working_time w WHERE w.person = ?1 AND w.validFrom <= ?2)"
     )
-    WorkingTime findLastOneByPerson(Person person);
+    WorkingTimeEntity findByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date);
 }

@@ -1,29 +1,35 @@
 package org.synyx.urlaubsverwaltung.dev;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
+import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ZERO;
-import static java.time.ZoneOffset.UTC;
+import static java.time.DayOfWeek.FRIDAY;
+import static java.time.DayOfWeek.MONDAY;
+import static java.time.DayOfWeek.THURSDAY;
+import static java.time.DayOfWeek.TUESDAY;
+import static java.time.DayOfWeek.WEDNESDAY;
+import static java.time.Month.APRIL;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Arrays.asList;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.FRIDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.MONDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.THURSDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.TUESDAY;
-import static org.synyx.urlaubsverwaltung.period.WeekDay.WEDNESDAY;
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
@@ -41,17 +47,18 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 class PersonDataProvider {
 
     private final PersonService personService;
-    private final WorkingTimeService workingTimeService;
+    private final PersonBasedataService personBasedataService;
+    private final WorkingTimeWriteService workingTimeWriteService;
     private final AccountInteractionService accountInteractionService;
-    private final PasswordEncoder passwordEncoder;
+    private final Clock clock;
 
-    PersonDataProvider(PersonService personService, WorkingTimeService workingTimeService,
-                       AccountInteractionService accountInteractionService, PasswordEncoder passwordEncoder) {
-
+    PersonDataProvider(PersonService personService, PersonBasedataService personBasedataService, WorkingTimeWriteService workingTimeWriteService,
+                       AccountInteractionService accountInteractionService, Clock clock) {
         this.personService = personService;
-        this.workingTimeService = workingTimeService;
+        this.personBasedataService = personBasedataService;
+        this.workingTimeWriteService = workingTimeWriteService;
         this.accountInteractionService = accountInteractionService;
-        this.passwordEncoder = passwordEncoder;
+        this.clock = clock;
     }
 
     boolean isPersonAlreadyCreated(String username) {
@@ -60,16 +67,16 @@ class PersonDataProvider {
         return personByUsername.isPresent();
     }
 
-    Person createTestPerson(DemoUser demoUser, String firstName, String lastName, String email) {
+    Person createTestPerson(DemoUser demoUser, int personnelNumber, String firstName, String lastName, String email) {
 
         final String username = demoUser.getUsername();
-        final String password = demoUser.getPassword();
+        final String passwordHash = demoUser.getPasswordHash();
         final Role[] roles = demoUser.getRoles();
 
-        return createTestPerson(username, password, firstName, lastName, email, roles);
+        return createTestPerson(username, personnelNumber, passwordHash, firstName, lastName, email, roles);
     }
 
-    Person createTestPerson(String username, String password, String firstName, String lastName, String email, Role... roles) {
+    Person createTestPerson(String username, int personnelNumber, String passwordHash, String firstName, String lastName, String email, Role... roles) {
 
         final Optional<Person> personByUsername = personService.getPersonByUsername(username);
         if (personByUsername.isPresent()) {
@@ -79,43 +86,49 @@ class PersonDataProvider {
         final List<Role> permissions = asList(roles);
         final List<MailNotification> notifications = getNotificationsForRoles(permissions);
 
-        final Person person = personService.create(username, lastName, firstName, email, notifications, permissions);
-        person.setPassword(passwordEncoder.encode(password));
+        final Person person = new Person(username, lastName, firstName, email);
+        person.setPermissions(permissions);
+        person.setNotifications(notifications);
+        person.setPassword(passwordHash);
+        final Person savedPerson = personService.create(person);
+        personBasedataService.update(new PersonBasedata(new PersonId(person.getId()), String.valueOf(personnelNumber), ""));
 
-        final Person savedPerson = personService.save(person);
+        final int currentYear = Year.now(clock).getValue();
+        final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
-        final int currentYear = ZonedDateTime.now(UTC).getYear();
-        workingTimeService.touch(
-            asList(MONDAY.getDayOfWeek(), TUESDAY.getDayOfWeek(), WEDNESDAY.getDayOfWeek(), THURSDAY.getDayOfWeek(), FRIDAY.getDayOfWeek()),
-            Optional.empty(), LocalDate.of(currentYear - 1, 1, 1), savedPerson);
+        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).map(DayOfWeek::getValue).collect(toList());
+        workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
 
-        final LocalDate firstDayOfYear = DateUtil.getFirstDayOfYear(currentYear);
-        final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(currentYear);
-        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear,
-            lastDayOfYear, new BigDecimal("30"), new BigDecimal("30"), new BigDecimal("5"),
-            ZERO, null);
+        accountInteractionService.updateOrCreateHolidaysAccount(
+            savedPerson,
+            firstDayOfYear,
+            lastDayOfYear,
+            null,
+            LocalDate.of(currentYear, APRIL, 1),
+            BigDecimal.valueOf(30),
+            BigDecimal.valueOf(30),
+            BigDecimal.valueOf(5),
+            ZERO,
+            null);
 
         return savedPerson;
     }
 
     private List<MailNotification> getNotificationsForRoles(List<Role> roles) {
 
-        List<MailNotification> notifications = new ArrayList<>();
-
+        final List<MailNotification> notifications = new ArrayList<>();
         notifications.add(NOTIFICATION_USER);
 
         if (roles.contains(DEPARTMENT_HEAD)) {
             notifications.add(NOTIFICATION_DEPARTMENT_HEAD);
         }
-
         if (roles.contains(SECOND_STAGE_AUTHORITY)) {
             notifications.add(NOTIFICATION_SECOND_STAGE_AUTHORITY);
         }
-
         if (roles.contains(BOSS)) {
             notifications.add(NOTIFICATION_BOSS_ALL);
         }
-
         if (roles.contains(OFFICE)) {
             notifications.add(NOTIFICATION_OFFICE);
             notifications.add(OVERTIME_NOTIFICATION_OFFICE);

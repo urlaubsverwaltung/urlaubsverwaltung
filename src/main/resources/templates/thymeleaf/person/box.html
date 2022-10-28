@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="person-box(person)">
+      <div th:replace="fragments/box::box-with-icon(~{::person-box-icon}, ~{::person-box-body})">
+        <th:block th:ref="person-box-icon">
+          <span class="tw-text-blue-50 dark:tw-text-sky-800">
+            <img
+              th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404'},niceName=${person.niceName},width='60px',height='60px')"
+              alt=""
+            />
+          </span>
+        </th:block>
+        <th:block th:ref="person-box-body">
+          <div class="tw-text-lg tw-mb-1" th:text="${person.niceName}">Marlene Muster</div>
+          <a href="#" th:href="|mailto:${person.email}|" class="icon-link tw-inline-block tw-text-sm print:no-link">
+            <span class="tw-flex tw-items-center">
+              <svg th:replace="icon/mail::svg" />&nbsp;<span th:text="${person.email}"></span>
+            </span>
+          </a>
+          <ul
+            th:if="${departments != null && not #lists.isEmpty(departments)}"
+            class="tw-mt-1.5 tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
+            th:aria-label="#{overview.person.departments.list.label(${person.niceName})}"
+          >
+            <li
+              class="tw-px-1.5 tw-rounded-full tw-bg-emerald-100 tw-text-emerald-800 dark:tw-border dark:tw-border-green-600 dark:tw-text-green-600 dark:tw-bg-transparent"
+              th:each="department : ${departments}"
+              th:text="${department.name}"
+            >
+              Geschäftsführung
+            </li>
+          </ul>
+        </th:block>
+      </div>
+    </th:block>
+
+    <th:block th:fragment="person-box-with-departments(person, departments)">
+      <th:block th:replace="::person-box(person=${person}, departments=${departments})"></th:block>
+    </th:block>
+  </body>
+</html>

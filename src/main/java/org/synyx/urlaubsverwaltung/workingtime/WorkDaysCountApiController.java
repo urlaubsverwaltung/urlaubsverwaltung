@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -22,13 +22,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static java.util.Objects.requireNonNullElse;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_YEAR;
-import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 
 @RestControllerAdviceMarker
-@Api("Work Days: Get information about work day in a certain period")
+@Tag(name = "work days", description = "Work Days: Get information about work day in a certain period")
 @RestController
 @RequestMapping("/api/persons/{personId}")
 public class WorkDaysCountApiController {
@@ -53,27 +53,30 @@ public class WorkDaysCountApiController {
      * @param personId  id of the person to number of work days for
      * @return number of days as String for the given parameters or "N/A" if parameters are not valid in any way
      */
-    @ApiOperation(
-        value = "Calculate the work days for a certain period and person",
-        notes = "The calculation depends on the working time of the person."
+    @Operation(
+        summary = "Calculate the work days for a certain period and person",
+        description = "The calculation depends on the working time of the person."
     )
     @GetMapping(WORKDAYS)
-    @PreAuthorize(IS_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    @PreAuthorize(IS_BOSS_OR_OFFICE +
+        " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public WorkDaysCountDto personsWorkDays(
-        @ApiParam(value = "ID of the person")
+        @Parameter(description = "ID of the person")
         @PathVariable("personId")
-            Integer personId,
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_YEAR + "-01-01")
+        Integer personId,
+        @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate startDate,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_YEAR + "-01-08")
+        LocalDate startDate,
+        @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate endDate,
-        @ApiParam(value = "Day Length", defaultValue = "FULL", allowableValues = "FULL, MORNING, NOON")
-        @RequestParam("length")
-            String length) {
+        LocalDate endDate,
+        @Parameter(description = "Day Length")
+        @RequestParam(value = "length", required = false)
+        DayLength length) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Parameter 'from' must be before or equals to 'to' parameter");
@@ -84,12 +87,7 @@ public class WorkDaysCountApiController {
             throw new ResponseStatusException(BAD_REQUEST, "No person found for ID=" + personId);
         }
 
-        final DayLength howLong;
-        try {
-            howLong = DayLength.valueOf(length);
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(BAD_REQUEST, e.getMessage());
-        }
+        final DayLength howLong = requireNonNullElse(length, DayLength.FULL);
 
         final BigDecimal days;
         try {

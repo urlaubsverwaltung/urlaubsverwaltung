@@ -1,11 +1,25 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import static org.synyx.urlaubsverwaltung.calendar.CalendarPeriodViewType.HALF_YEAR;
+
+@Validated
 public class DepartmentCalendarDto {
 
+    @NotNull
     private int personId;
+    @NotNull
     private int departmentId;
+    @Size(min = 1)
     private String departmentName;
+    @Size(min = 1)
     private String calendarUrl;
+    @NotNull
+    private CalendarPeriodViewType calendarPeriod = HALF_YEAR;
 
     /**
      * Whether this calendar is currently active/visible in the view or not.
@@ -51,5 +65,13 @@ public class DepartmentCalendarDto {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public CalendarPeriodViewType getCalendarPeriod() {
+        return calendarPeriod;
+    }
+
+    public void setCalendarPeriod(CalendarPeriodViewType calendarPeriod) {
+        this.calendarPeriod = calendarPeriod;
     }
 }

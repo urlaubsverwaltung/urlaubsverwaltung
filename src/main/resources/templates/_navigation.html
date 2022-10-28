@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Navigation fragment</title>
+  </head>
+  <body>
+    <th:block th:ref="nav">
+      <div class="navigation print:tw-hidden">
+        <nav class="tw-relative">
+          <input id="menu-toggle-checkbox" type="checkbox" class="tw-hidden" />
+          <label
+            for="menu-toggle-checkbox"
+            class="tw-flex tw-items-center tw-m-0 tw-px-6 tw-py-5 lg:tw-hidden tw-cursor-pointer"
+          >
+            <span class="tw-inline-block">
+              <span class="hamburger-bar"></span>
+              <span class="hamburger-bar"></span>
+              <span class="hamburger-bar"></span>
+              <span class="hamburger-bar"></span>
+              <span class="hamburger-bar"></span>
+            </span>
+          </label>
+          <div class="navigation-inner tw-flex lg:tw-justify-between tw-px-6 lg:tw-px-8">
+            <div class="tw-flex-1 tw-hidden 2xl:tw-flex xl:tw-items-center">
+              <a
+                href="/"
+                class="tw-font-logo tw-text-xl tw-font-medium tw-mr-8 md:tw-mr-16 tw-text-zinc-900 dark:tw-text-zinc-100 tw-no-underline"
+                th:text="#{nav.urlaubsverwaltung.title}"
+              >
+                Urlaubsverwaltung
+              </a>
+            </div>
+            <div class="tw-grow tw-w-full tw-max-w-6xl tw-flex navigation-items tw-max-h-0 lg:tw-max-h-full">
+              <ul class="navigation-list tw-list-none tw-m-0 tw-px-0 tw-py-8 lg:tw-py-3 lg:tw-px-2 xl:tw-px-0">
+                <li>
+                  <a
+                    th:replace="::navigation-item(id='home-link', href=@{/web/overview}, text=#{nav.home.title}, icon=~{icon/home::svg})"
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    th:replace="::navigation-item(id='application-new-link', href=@{/web/application/new}, text=#{nav.apply.title}, icon=~{icon/plus-circle::svg})"
+                  ></a>
+                </li>
+                <li>
+                  <a
+                    th:replace="::navigation-item(id='application-link', href=@{/web/application}, text=#{nav.vacation.title}, icon=~{icon/calendar::svg})"
+                  ></a>
+                </li>
+                <li th:if="${navigationSickNoteStatisticsAccess}">
+                  <a
+                    th:replace="::navigation-item(id='sicknote-link', href=@{/web/sicknote}, text=#{nav.sicknote.title}, icon=~{icon/medkit::svg}, dataTestId='navigation-sick-notes-link')"
+                  ></a>
+                </li>
+                <li th:if="${navigationPersonListAccess}">
+                  <a
+                    th:replace="::navigation-item(id='person-link', href=@{/web/person(active=true)}, text=#{nav.person.title}, icon=~{icon/user::svg})"
+                  ></a>
+                </li>
+                <li th:if="${navigationDepartmentAccess}">
+                  <a
+                    th:replace="::navigation-item(id='department-link', href=@{/web/department}, text=#{nav.department.title}, icon=~{icon/user-group::svg})"
+                  ></a>
+                </li>
+                <li th:if="${navigationSettingsAccess}">
+                  <a
+                    th:replace="::navigation-item(id='settings-link', href=@{/web/settings}, text=#{nav.settings.title}, icon=~{icon/cog::svg}, dataTestId='navigation-settings-link')"
+                  ></a>
+                </li>
+              </ul>
+            </div>
+            <div class="tw-absolute tw-right-0 tw-top-0 lg:tw-static lg:tw-flex-1 tw-flex tw-justify-end">
+              <div class="tw-px-6 lg:tw-px-0 tw-py-3 lg:tw-py-2 tw-flex tw-space-x-2">
+                <div th:if="${navigationRequestPopupEnabled}" class="tw-relative">
+                  <a
+                    id="add-something-new"
+                    href="#add-something-new-menu"
+                    class="nav-popup-menu-button tw-flex tw-items-center tw-no-underline tw-px-1.5 tw-outline-none"
+                    data-test-id="add-something-new"
+                    tabindex="-1"
+                  >
+                    <svg
+                      th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9')"
+                    ></svg>
+                    <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
+                    <span class="dropdown-caret"></span>
+                  </a>
+                  <div id="add-something-new-menu" class="nav-popup-menu" data-test-id="add-something-new-popupmenu">
+                    <div class="nav-popup-menu-inner">
+                      <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs">
+                        <li>
+                          <a
+                            href="#"
+                            th:replace="::nav-popup-menu-link(href=@{/web/application/new}, icon=~{::menu-add-application-icon}, text=#{nav.add.vacation}, dataTestId='quick-add-new-application')"
+                          >
+                            <svg
+                              th:ref="menu-add-application-icon"
+                              th:replace="icon/document-text::svg(className='tw-w-6 tw-h-6')"
+                            ></svg>
+                          </a>
+                        </li>
+                        <li th:if="${navigationSickNoteAddAccess}">
+                          <a
+                            href="#"
+                            th:replace="::nav-popup-menu-link(href=@{/web/sicknote/new}, icon=~{::menu-add-sicknote-icon}, text=#{nav.add.sicknote}, dataTestId='quick-add-new-sicknote')"
+                          >
+                            <svg
+                              th:ref="menu-add-sicknote-icon"
+                              th:replace="icon/medkit::svg(className='tw-w-6 tw-h-6')"
+                            ></svg>
+                          </a>
+                        </li>
+                        <li th:if="${navigationOvertimeItemEnabled}">
+                          <a
+                            href="#"
+                            th:replace="::nav-popup-menu-link(href=@{/web/overtime/new}, icon=~{::menu-add-overtime-icon}, text=#{nav.add.overtime}, dataTestId='quick-add-new-overtime')"
+                          >
+                            <svg
+                              th:ref="menu-add-overtime-icon"
+                              th:replace="icon/clock::svg(className='tw-w-6 tw-h-6')"
+                            ></svg>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <a
+                  href="#"
+                  th:href="@{/web/application/new}"
+                  class="tw-flex tw-items-center"
+                  data-test-id="new-application"
+                  th:if="${not navigationRequestPopupEnabled}"
+                >
+                  <svg
+                    th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9')"
+                  ></svg>
+                  <span class="tw-sr-only" th:text="#{nav.add.vacation}"></span>
+                </a>
+                <div class="tw-relative">
+                  <a
+                    href="#avatar-menu"
+                    class="nav-popup-menu-button tw-h-full tw-flex tw-items-center tw-gap-1 tw-no-underline tw-outline-none"
+                    id="avatar-link"
+                    data-test-id="avatar"
+                    aria-hidden="true"
+                    tabindex="-1"
+                  >
+                    <span class="tw-inline-flex tw-text-blue-200 dark:tw-text-sky-800">
+                      <img
+                        th:replace="fragments/avatar::avatar(className='tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9',url=${menuGravatarUrl + '?d=404'},niceName=${userFirstName + ' ' + userLastName},width='40px',height='40px')"
+                        alt=""
+                      />
+                    </span>
+                    <span class="dropdown-caret tw-translate-x-px"></span>
+                  </a>
+                  <div id="avatar-menu" class="nav-popup-menu" data-test-id="avatar-popupmenu">
+                    <div class="nav-popup-menu-inner">
+                      <ul class="tw-list-none tw-m-0 tw-p-0 tw-max-w-xs">
+                        <li class="tw-mb-1">
+                          <a
+                            href="#"
+                            th:href="@{/web/person/{userId}/overview(userId=${userId})}"
+                            class="tw-bg-gradient-to-br tw-from-blue-50 tw-via-gray-100 tw-to-blue-100 dark:tw-from-sky-800 dark:tw-via-slate-800 dark:tw-to-sky-900 tw-bg-blue-50 tw-px-6 tw-py-3 tw-rounded-t-2xl tw-flex tw-items-center tw-gap-4 hover:tw-no-underline focus:tw-no-underline"
+                          >
+                            <span class="tw-text-blue-200 dark:tw-text-sky-800">
+                              <img
+                                th:replace="fragments/avatar::avatar(url=${menuGravatarUrl + '?d=404&s=128'},niceName=${userFirstName + ' ' + userLastName},width='64px',height='64px')"
+                                alt=""
+                              />
+                            </span>
+                            <p class="tw-m-0 tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis">
+                              <span
+                                th:text="#{nav.avatar-menu.signed-in-as}"
+                                class="tw-text-sm tw-block tw-text-gray-600 dark:tw-text-zinc-100"
+                              ></span>
+                              <span
+                                class="tw-text-lg tw-leading-none tw-text-gray-700 hover:tw-text-black focus:tw-text-black dark:tw-text-zinc-200"
+                                th:text="${userFirstName + ' ' + userLastName}"
+                              >
+                                Max Mustermann
+                              </span>
+                            </p>
+                          </a>
+                        </li>
+                        <li class="tw-mb-1">
+                          <a
+                            href="#"
+                            th:replace="::nav-popup-menu-link-external(href=${menuHelpUrl}, icon=~{::menu-help-icon}, text=#{nav.help.title})"
+                          >
+                            <svg
+                              th:ref="menu-help-icon"
+                              th:replace="icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')"
+                            ></svg>
+                          </a>
+                        </li>
+                        <li class="tw-mb-1">
+                          <a
+                            href="#"
+                            th:replace="::nav-popup-menu-link(href=@{/web/person/{userId}(userId=${userId})}, icon=~{::menu-person-icon}, text=#{nav.account.title})"
+                          >
+                            <svg
+                              th:ref="menu-person-icon"
+                              th:replace="icon/user-circle::svg(className='tw-w-6 tw-h-6')"
+                            ></svg>
+                          </a>
+                        </li>
+                        <li class="tw-mb-1">
+                          <a
+                            href="#"
+                            th:replace="::nav-popup-menu-link(href=@{/web/person/{userId}/settings(userId=${userId})}, icon=~{::menu-user-settings-icon}, text=#{nav.user-settings.title})"
+                          >
+                            <svg
+                              th:ref="menu-user-settings-icon"
+                              th:replace="icon/adjustments::svg(className='tw-w-6 tw-h-6')"
+                            ></svg>
+                          </a>
+                        </li>
+                        <li role="separator"></li>
+                        <li>
+                          <form action="#" th:action="@{/logout}" method="POST" class="tw-ml-auto tw-w-full">
+                            <button type="submit" class="nav-popup-menu_link tw-rounded-b-2xl" data-test-id="logout">
+                              <span class="tw-flex tw-items-center">
+                                <span class="tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+                                  <svg th:replace="icon/logout::svg(className='tw-w-6 tw-h-6')"></svg>
+                                </span>
+                                <span class="tw-ml-4" th:text="#{nav.signout.title}"></span>
+                              </span>
+                            </button>
+                          </form>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="navigation-content-spacer tw-flex tw-justify-between tw-w-full lg:tw-hidden">
+            <div class="navigation-content-spacer--left tw-h-4 tw-w-4"></div>
+            <div class="navigation-content-spacer--right tw-h-4 tw-w-4"></div>
+          </div>
+        </nav>
+      </div>
+      <div class="navigation-content-gap"></div>
+    </th:block>
+
+    <a
+      th:fragment="navigation-item(id, href, text, icon)"
+      href="#"
+      th:href="${href}"
+      th:id="${id}"
+      class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+      th:data-test-id="${dataTestId}"
+      th:title="${text}"
+    >
+      <th:block
+        th:with="className='tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400'"
+      >
+        <svg th:replace="${icon}"></svg>
+      </th:block>
+      <span
+        class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap"
+        style="min-width: 0"
+        th:text="${text}"
+      ></span>
+    </a>
+
+    <a
+      th:with="external=${false}"
+      th:fragment="nav-popup-menu-link(href, icon, text)"
+      th:href="${href}"
+      class="nav-popup-menu_link"
+      th:data-test-id="${dataTestId}"
+    >
+      <span class="tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+        <svg th:replace="${icon}"></svg>
+      </span>
+      <span
+        class="tw-ml-4 tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden"
+        style="min-width: 0"
+        th:text="${text}"
+      ></span>
+    </a>
+
+    <a
+      th:fragment="nav-popup-menu-link-external(href, icon, text)"
+      th:href="${href}"
+      class="nav-popup-menu_link"
+      target="_blank"
+      rel="noopener"
+      th:data-test-id="${dataTestId}"
+    >
+      <span class="tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
+        <svg th:replace="${icon}"></svg>
+      </span>
+      <span
+        class="tw-ml-4 tw-whitespace-nowrap tw-text-ellipsis tw-overflow-hidden"
+        style="min-width: 0"
+        th:text="${text}"
+      ></span>
+      <svg th:replace="icon/external-link::svg(className='tw-ml-1.5 tw-h-4 tw-w-4')"></svg>
+    </a>
+  </body>
+</html>

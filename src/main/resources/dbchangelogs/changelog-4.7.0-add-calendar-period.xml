@@ -1,0 +1,21 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="weigel" id="add_calendar_period">
+    <preConditions>
+      <tableExists tableName="Calendar"/>
+      <not>
+        <columnExists tableName="Calendar" columnName="calendarPeriod"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="Calendar">
+      <column name="calendarPeriod" type="VARCHAR(10)" defaultValue="P100Y">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+  </changeSet>
+</databaseChangeLog>

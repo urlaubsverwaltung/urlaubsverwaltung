@@ -12,6 +12,10 @@ import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.util.DateAndTimeFormat;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -27,10 +31,15 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     @MockBean
     private PersonService personService;
 
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DateAndTimeFormat.DD_MM_YYYY);
+
     @Test
     @WithMockUser(authorities = "USER")
     void periodsSickNotesWithWrongRole() throws Exception {
-        final ResultActions resultActions = perform(get("/web/sicknote"));
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(get("/web/sicknote")
+            .param("from", dtf.format(now))
+            .param("to", dtf.format(now.plusDays(1))));
         resultActions.andExpect(status().isForbidden());
     }
 
@@ -38,9 +47,63 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = {"USER", "OFFICE"})
     void periodsSickNotesWithCorrectRole() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(new Person());
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
 
-        final ResultActions resultActions = perform(get("/web/sicknote"));
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(
+            get("/web/sicknote")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(1))));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER", "BOSS", "SICK_NOTE_VIEW"})
+    void periodsSickNotesWithBossRole() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(
+            get("/web/sicknote")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(1))));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER", "SECOND_STAGE_AUTHORITY", "SICK_NOTE_VIEW"})
+    void periodsSickNotesWithSSARole() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(
+            get("/web/sicknote")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(1))));
+        resultActions.andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"USER", "DEPARTMENT_HEAD", "SICK_NOTE_VIEW"})
+    void periodsSickNotesWithDHRole() throws Exception {
+
+        final Person person = new Person();
+        person.setId(1);
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final LocalDateTime now = LocalDateTime.now();
+        final ResultActions resultActions = perform(
+            get("/web/sicknote")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(1))));
         resultActions.andExpect(status().isOk());
     }
 

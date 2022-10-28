@@ -3,15 +3,14 @@ package org.synyx.urlaubsverwaltung.security.oidc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
-import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -22,10 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SUB;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
+import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -46,41 +49,205 @@ class OidcPersonAuthoritiesMapperTest {
     @Test
     void mapAuthoritiesFromIdTokenBySync() {
         final String uniqueID = "uniqueID";
-        final String givenName = "test";
-        final String familyName = "me";
+        final String givenName = "given name";
+        final String familyName = "family name";
         final String email = "test.me@example.com";
 
-        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(uniqueID, givenName, familyName, email);
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(
+            SUB, uniqueID,
+            GIVEN_NAME, givenName,
+            FAMILY_NAME, familyName,
+            EMAIL, email
+        ));
 
         final Person personForLogin = new Person();
         personForLogin.setPermissions(List.of(USER));
         final Optional<Person> person = Optional.of(personForLogin);
         when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
 
-        when(personService.save(personForLogin)).thenReturn(personForLogin);
+        when(personService.update(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
     }
 
     @Test
-    void mapAuthoritiesFromIdTokenByCreate() {
+    void mapAuthoritiesFromIdTokenBySyncAndEmailFallback() {
         final String uniqueID = "uniqueID";
-        final String givenName = "test";
-        final String familyName = "me";
+        final String givenName = "given name";
+        final String familyName = "family name";
         final String email = "test.me@example.com";
 
-        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(uniqueID, givenName, familyName, email);
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(
+            SUB, uniqueID,
+            GIVEN_NAME, givenName,
+            FAMILY_NAME, familyName,
+            EMAIL, email
+        ));
 
         final Person personForLogin = new Person();
+        personForLogin.setUsername("idOfOtherIdentityProvider");
         personForLogin.setPermissions(List.of(USER));
-
+        final Optional<Person> person = Optional.of(personForLogin);
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(personForLogin);
-        when(personService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
+        when(personService.getPersonByMailAddress(email)).thenReturn(person);
+
+        when(personService.update(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
+
+        final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
+        verify(personService).update(personArgumentCaptor.capture());
+        assertThat(personArgumentCaptor.getValue().getUsername()).isEqualTo(uniqueID);
+    }
+
+    @Test
+    void mapAuthoritiesFromIdTokenByCreate() {
+        final String uniqueID = "uniqueID";
+        final String givenName = "given name";
+        final String familyName = "family name";
+        final String email = "test.me@example.com";
+
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(
+            SUB, uniqueID,
+            GIVEN_NAME, givenName,
+            FAMILY_NAME, familyName,
+            EMAIL, email
+        ));
+
+        final Person createdPerson = new Person();
+        createdPerson.setPermissions(List.of(USER));
+
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+        when(personService.create(uniqueID, familyName, givenName, email, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(createdPerson);
+        when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
+    }
+
+    @Test
+    void ensureFallbackToUserInfoIfFirstnameIsMissingInIdToken() {
+        final String uniqueID = "uniqueID";
+        final String givenName = "given name";
+        final String familyName = "family name";
+        final String email = "test.me@example.com";
+
+        final OidcUserAuthority oidcUserAuthorities = getOidcUserAuthority(
+            Map.of(
+                SUB, uniqueID,
+                FAMILY_NAME, familyName,
+                EMAIL, email
+            ),
+            Map.of(
+                GIVEN_NAME, givenName
+            )
+        );
+
+        final Person createdPerson = new Person();
+        createdPerson.setPermissions(List.of(USER));
+
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+        when(personService.create(uniqueID, familyName, givenName, email, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(createdPerson);
+        when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
+    }
+
+    @Test
+    void ensureThrowsExceptionIfFirstnameIsMissing() {
+        final List<OidcUserAuthority> oidcUserAuthorities = List.of(getOidcUserAuthority(Map.of(
+            SUB, "uniqueID",
+            FAMILY_NAME, "family name",
+            EMAIL, "test.me@example.com"
+        )));
+
+        assertThatThrownBy(() -> sut.mapAuthorities(oidcUserAuthorities))
+            .isInstanceOf(OidcPersonMappingException.class);
+    }
+
+    @Test
+    void ensureFallbackToUserInfoIfLastnameIsMissingInIdToken() {
+        final String uniqueID = "uniqueID";
+        final String givenName = "given name";
+        final String familyName = "family name";
+        final String email = "test.me@example.com";
+
+        final OidcUserAuthority oidcUserAuthorities = getOidcUserAuthority(
+            Map.of(
+                SUB, uniqueID,
+                GIVEN_NAME, givenName,
+                EMAIL, email
+            ),
+            Map.of(
+                FAMILY_NAME, familyName
+            )
+        );
+
+        final Person createdPerson = new Person();
+        createdPerson.setPermissions(List.of(USER));
+
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+        when(personService.create(uniqueID, familyName, givenName, email, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(createdPerson);
+        when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
+    }
+
+    @Test
+    void ensureThrowsExceptionIfLastnameIsMissing() {
+        final List<OidcUserAuthority> oidcUserAuthorities = List.of(getOidcUserAuthority(Map.of(
+            SUB, "uniqueID",
+            GIVEN_NAME, "given name",
+            EMAIL, "test.me@example.com"
+        )));
+
+        assertThatThrownBy(() -> sut.mapAuthorities(oidcUserAuthorities))
+            .isInstanceOf(OidcPersonMappingException.class);
+    }
+
+    @Test
+    void ensureFallbackToUserInfoIfEmailIsMissingInIdToken() {
+        final String uniqueID = "uniqueID";
+        final String givenName = "given name";
+        final String familyName = "family name";
+        final String email = "test.me@example.com";
+
+        final OidcUserAuthority oidcUserAuthorities = getOidcUserAuthority(
+            Map.of(
+                SUB, uniqueID,
+                GIVEN_NAME, givenName,
+                FAMILY_NAME, familyName
+            ),
+            Map.of(
+                EMAIL, email
+            )
+        );
+
+        final Person createdPerson = new Person();
+        createdPerson.setPermissions(List.of(USER));
+
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+        when(personService.create(uniqueID, familyName, givenName, email, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(createdPerson);
+        when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
+    }
+
+    @Test
+    void ensureThrowsExceptionIfEmailIsMissing() {
+        final List<OidcUserAuthority> oidcUserAuthorities = List.of(getOidcUserAuthority(Map.of(
+            SUB, "uniqueID",
+            GIVEN_NAME, "givenName",
+            FAMILY_NAME, "family name"
+        )));
+
+        assertThatThrownBy(() -> sut.mapAuthorities(oidcUserAuthorities))
+            .isInstanceOf(OidcPersonMappingException.class);
     }
 
     @Test
@@ -90,14 +257,19 @@ class OidcPersonAuthoritiesMapperTest {
         final String familyName = "me";
         final String email = "test.me@example.com";
 
-        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(uniqueID, givenName, familyName, email);
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(
+            SUB, uniqueID,
+            GIVEN_NAME, givenName,
+            FAMILY_NAME, familyName,
+            EMAIL, email
+        ));
 
         final Person personForLogin = new Person();
         personForLogin.setPermissions(List.of(USER, INACTIVE));
 
         final Optional<Person> person = Optional.of(personForLogin);
         when(personService.getPersonByUsername(uniqueID)).thenReturn(person);
-        when(personService.save(personForLogin)).thenReturn(personForLogin);
+        when(personService.update(personForLogin)).thenReturn(personForLogin);
 
         final List<OidcUserAuthority> oidcUserAuthorities = List.of(oidcUserAuthority);
         assertThatThrownBy(() -> sut.mapAuthorities(oidcUserAuthorities))
@@ -111,13 +283,21 @@ class OidcPersonAuthoritiesMapperTest {
         final String familyName = "me";
         final String email = "test.me@example.com";
 
-        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthorityWithUserInfo(uniqueID, givenName, familyName, email);
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(
+            Map.of(
+                SUB, uniqueID
+            ),
+            Map.of(
+                GIVEN_NAME, givenName,
+                FAMILY_NAME, familyName,
+                EMAIL, email
+            ));
 
         final Person personForLogin = new Person();
         personForLogin.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(personForLogin);
+        when(personService.create(uniqueID, familyName, givenName, email, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(personForLogin);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
@@ -131,13 +311,21 @@ class OidcPersonAuthoritiesMapperTest {
         final String familyName = "me";
         final String email = "test.me@example.com";
 
-        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthorityWithUserInfo(uniqueID, givenName, familyName, email);
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(
+            Map.of(
+                SUB, uniqueID
+            ),
+            Map.of(
+                GIVEN_NAME, givenName,
+                FAMILY_NAME, familyName,
+                EMAIL, email
+            ));
 
         final Person personForLogin = new Person();
         personForLogin.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, singletonList(NOTIFICATION_USER), singletonList(USER))).thenReturn(personForLogin);
+        when(personService.create(uniqueID, familyName, givenName, email, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(personForLogin);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
@@ -151,33 +339,14 @@ class OidcPersonAuthoritiesMapperTest {
             .isInstanceOf(OidcPersonMappingException.class);
     }
 
-    private OidcUserAuthority getOidcUserAuthority(String uniqueID, String givenName, String familyName, String email) {
-        final Map<String, Object> claims = Map.of(
-            IdTokenClaimNames.SUB, uniqueID,
-            StandardClaimNames.GIVEN_NAME, givenName,
-            StandardClaimNames.FAMILY_NAME, familyName,
-            StandardClaimNames.EMAIL, email
-        );
-
-        final Instant issuedAt = Instant.now();
-        final Instant expiresAt = Instant.MAX;
-        final OidcIdToken oidcIdToken = new OidcIdToken("tokenValue", issuedAt, expiresAt, claims);
-        return new OidcUserAuthority(oidcIdToken);
+    private OidcUserAuthority getOidcUserAuthority(Map<String, Object> idTokenClaims) {
+        final OidcIdToken idToken = new OidcIdToken("tokenValue", Instant.now(), Instant.MAX, idTokenClaims);
+        return new OidcUserAuthority(idToken);
     }
 
-    private OidcUserAuthority getOidcUserAuthorityWithUserInfo(String uniqueID, String givenName, String familyName, String email) {
-        final Map<String, Object> claims = Map.of(
-            IdTokenClaimNames.SUB, uniqueID,
-            StandardClaimNames.GIVEN_NAME, givenName,
-            StandardClaimNames.FAMILY_NAME, familyName,
-            StandardClaimNames.EMAIL, email
-        );
-        final OidcUserInfo userInfo = new OidcUserInfo(claims);
-
-        final Instant issuedAt = Instant.now();
-        final Instant expiresAt = Instant.MAX;
-        final OidcIdToken oidcIdToken = new OidcIdToken("tokenValue", issuedAt, expiresAt, Map.of(IdTokenClaimNames.SUB, uniqueID));
-
-        return new OidcUserAuthority(oidcIdToken, userInfo);
+    private OidcUserAuthority getOidcUserAuthority(Map<String, Object> idTokenClaims, Map<String, Object> userInfoClaims) {
+        final OidcIdToken idToken = new OidcIdToken("tokenValue", Instant.now(), Instant.MAX, idTokenClaims);
+        final OidcUserInfo userInfo = new OidcUserInfo(userInfoClaims);
+        return new OidcUserAuthority(idToken, userInfo);
     }
 }

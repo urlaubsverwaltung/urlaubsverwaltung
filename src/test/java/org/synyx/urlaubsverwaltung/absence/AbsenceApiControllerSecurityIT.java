@@ -10,29 +10,27 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.SickNoteService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
-import static org.mockito.ArgumentMatchers.any;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
+import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @SpringBootTest
 class AbsenceApiControllerSecurityIT extends TestContainersBase {
@@ -43,11 +41,13 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     @MockBean
     private PersonService personService;
     @MockBean
-    private SickNoteService sickNoteService;
-    @MockBean
-    private ApplicationService applicationService;
-    @MockBean
     private DepartmentService departmentService;
+    @MockBean
+    private AbsenceService absenceService;
+    @MockBean
+    private WorkingTimeService workingTimeService;
+    @MockBean
+    private WorkingTimeWriteService workingTimeWriteService;
 
     @Test
     void getAbsencesWithoutBasicAuthIsUnauthorized() throws Exception {
@@ -95,22 +95,10 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getPersonByUsername("departmentHead")).thenReturn(Optional.of(departmentHead));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
-        final Department department = new Department();
-        department.setMembers(List.of(person));
-        final List<Department> departments = List.of(department);
-        when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHead)).thenReturn(departments);
-
-        final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
-            LocalDate.of(2016, 5, 20), DayLength.FULL);
-        sickNote.setId(1);
-        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
-            .thenReturn(singletonList(sickNote));
-
-        final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
-            LocalDate.of(2016, 4, 6), DayLength.FULL);
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
-            .thenReturn(singletonList(vacation));
+        when(absenceService.getOpenAbsences(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
+            .thenReturn(emptyList());
 
         perform(get("/api/persons/1/absences")
             .param("from", "2016-01-01")
@@ -119,12 +107,45 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    void getAbsencesAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY", username = "ssa")
+    void getAbsencesAsSSAUserForOtherUserIsForbidden() throws Exception {
+        final Person person = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Person ssa = new Person();
+        ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonByUsername("ssa")).thenReturn(Optional.of(ssa));
+
+        final Department department = new Department();
+        department.setMembers(List.of());
+
+        final List<Department> departments = List.of(department);
+        when(departmentService.getManagedDepartmentsOfSecondStageAuthority(ssa)).thenReturn(departments);
+
         perform(get("/api/persons/1/absences")
             .param("from", "2016-01-01")
             .param("to", "2016-12-31"))
             .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY", username = "ssa")
+    void getAbsencesAsSSAUserForOtherUserInSameDepartmentIsOk() throws Exception {
+        final Person person = new Person();
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final Person ssa = new Person();
+        ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        when(personService.getPersonByUsername("ssa")).thenReturn(Optional.of(ssa));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
+
+        when(absenceService.getOpenAbsences(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
+            .thenReturn(emptyList());
+
+        perform(get("/api/persons/1/absences")
+            .param("from", "2016-01-01")
+            .param("to", "2016-12-31"))
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -167,16 +188,8 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
-            LocalDate.of(2016, 5, 20), DayLength.FULL);
-        sickNote.setId(1);
-        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
-            .thenReturn(singletonList(sickNote));
-
-        final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
-            LocalDate.of(2016, 4, 6), DayLength.FULL);
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
-            .thenReturn(singletonList(vacation));
+        when(absenceService.getOpenAbsences(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
+            .thenReturn(emptyList());
 
         perform(get("/api/persons/1/absences")
             .param("from", "2016-01-01")
@@ -202,16 +215,10 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
         final Person person = new Person();
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        final SickNote sickNote = createSickNote(person, LocalDate.of(2016, 5, 19),
-            LocalDate.of(2016, 5, 20), DayLength.FULL);
-        sickNote.setId(1);
-        when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
-            .thenReturn(singletonList(sickNote));
-
-        final Application vacation = createApplication(person, LocalDate.of(2016, 4, 6),
-            LocalDate.of(2016, 4, 6), DayLength.FULL);
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
-            .thenReturn(singletonList(vacation));
+        final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
+        when(workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(startDate, endDate))).thenReturn(Map.of());
+        when(absenceService.getOpenAbsences(person, startDate, endDate)).thenReturn(emptyList());
 
         perform(get("/api/persons/1/absences")
             .param("from", "2016-01-01")

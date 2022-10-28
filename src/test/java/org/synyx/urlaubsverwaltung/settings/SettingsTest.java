@@ -1,7 +1,9 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.person.Person;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /**
@@ -14,8 +16,35 @@ class SettingsTest {
 
         Settings settings = new Settings();
 
-        Assert.assertNotNull("Should not be null", settings.getAbsenceSettings());
-        Assert.assertNotNull("Should not be null", settings.getWorkingTimeSettings());
-        Assert.assertNotNull("Should not be null", settings.getCalendarSettings());
+        assertThat(settings.getApplicationSettings()).isNotNull();
+        assertThat(settings.getWorkingTimeSettings()).isNotNull();
+        assertThat(settings.getCalendarSettings()).isNotNull();
+    }
+
+    @Test
+    void equals() {
+        final Settings settingsOne = new Settings();
+        settingsOne.setId(1);
+
+        final Settings settingsOneOne = new Settings();
+        settingsOneOne.setId(1);
+
+        final Settings settingsTwo = new Settings();
+        settingsTwo.setId(2);
+
+        assertThat(settingsOne)
+            .isEqualTo(settingsOne)
+            .isEqualTo(settingsOneOne)
+            .isNotEqualTo(settingsTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
+    }
+
+    @Test
+    void hashCodeTest() {
+        final Settings settingsOne = new Settings();
+        settingsOne.setId(1);
+
+        assertThat(settingsOne.hashCode()).isEqualTo(32);
     }
 }

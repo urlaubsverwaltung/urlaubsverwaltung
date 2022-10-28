@@ -9,22 +9,20 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.ldap.userdetails.Person.Essence;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-
 
 /**
  * Map granted authorities to application roles described in {@link Role}.
@@ -44,43 +42,40 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
     @Override
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
 
-        final LdapUser ldapUser;
-
-        try {
-            ldapUser = ldapUserMapper.mapFromContext(ctx);
-        } catch (InvalidSecurityConfigurationException | UnsupportedMemberAffiliationException ex) {
-            throw new BadCredentialsException("No authentication possible for user = " + username, ex);
-        }
-
+        final LdapUser ldapUser = getLdapUser(ctx, username);
         final String ldapUsername = ldapUser.getUsername();
-        final Optional<String> firstName = ldapUser.getFirstName();
-        final Optional<String> lastName = ldapUser.getLastName();
-        final Optional<String> email = ldapUser.getEmail();
+        final String ldapFirstName = ldapUser.getFirstName();
+        final String ldapLastName = ldapUser.getLastName();
+        final String ldapEmail = ldapUser.getEmail();
 
         final Person person;
-
         final Optional<Person> maybePerson = personService.getPersonByUsername(ldapUsername);
         if (maybePerson.isPresent()) {
             final Person existentPerson = maybePerson.get();
 
             if (existentPerson.hasRole(INACTIVE)) {
-                LOG.info("User '{}' has been deactivated and can not sign in therefore", username);
-
-                throw new DisabledException("User '" + username + "' has been deactivated");
+                LOG.info("User '{}' has been deactivated and can not sign in therefore", existentPerson.getId());
+                throw new DisabledException("User '" + existentPerson.getId() + "' is inactive and not allowed to log in");
             }
 
-            firstName.ifPresent(existentPerson::setFirstName);
-            lastName.ifPresent(existentPerson::setLastName);
-            email.ifPresent(existentPerson::setEmail);
+            existentPerson.setFirstName(ldapFirstName);
+            existentPerson.setLastName(ldapLastName);
+            existentPerson.setEmail(ldapEmail);
 
-            person = personService.save(existentPerson);
+            person = personService.update(existentPerson);
+            LOG.info("Updating person with id '{}'", person.getId());
         } else {
-            LOG.info("No user found for username '{}'", username);
+            final Person newPerson = personService.create(
+                ldapUsername,
+                ldapLastName,
+                ldapFirstName,
+                ldapEmail,
+                List.of(NOTIFICATION_USER),
+                List.of(USER)
+            );
 
-            final Person createdPerson = personService.create(ldapUsername, lastName.orElse(null), firstName.orElse(null),
-                email.orElse(null), singletonList(NOTIFICATION_USER), singletonList(USER));
-
-            person = personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
+            person = personService.appointAsOfficeUserIfNoOfficeUserPresent(newPerson);
+            LOG.info("Creating new person with id '{}'", person.getId());
         }
 
         /*
@@ -90,11 +85,9 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
         user.setUsername(ldapUsername);
         user.setAuthorities(getGrantedAuthorities(person));
 
-        LOG.info("User '{}' has signed in with roles: {}", username, person.getPermissions());
-
+        LOG.info("User '{}' has signed in with roles: {}", person.getId(), person.getPermissions());
         return user.createUserDetails();
     }
-
 
     /**
      * Gets the granted authorities using the {@link Role}s of the given {@link Person}.
@@ -103,15 +96,12 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
      * @return the granted authorities for the person
      */
     Collection<GrantedAuthority> getGrantedAuthorities(Person person) {
-
-        Assert.notNull(person, "Person must be given.");
-
-        Collection<Role> permissions = person.getPermissions();
+        final Collection<Role> permissions = person.getPermissions();
         if (permissions.isEmpty()) {
             throw new IllegalStateException("Every user must have at least one role, data seems to be corrupt.");
         }
 
-        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        final Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         permissions.forEach(role -> grantedAuthorities.add(role::name));
 
         return grantedAuthorities;
@@ -120,8 +110,15 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
 
     @Override
     public void mapUserToContext(UserDetails user, DirContextAdapter ctx) {
-
         throw new UnsupportedOperationException("LdapPersonContextMapper only supports reading from a context. Please "
             + "use a subclass if mapUserToContext() is required.");
+    }
+
+    private LdapUser getLdapUser(DirContextOperations ctx, String username) {
+        try {
+            return ldapUserMapper.mapFromContext(ctx);
+        } catch (InvalidSecurityConfigurationException | UnsupportedMemberAffiliationException ex) {
+            throw new BadCredentialsException("No authentication possible for user = " + username, ex);
+        }
     }
 }

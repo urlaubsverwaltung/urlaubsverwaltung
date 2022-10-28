@@ -8,8 +8,9 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +18,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.time.ZoneOffset.UTC;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
@@ -33,16 +33,20 @@ public class TurnOfTheYearAccountUpdaterService {
     private final PersonService personService;
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
+    private final VacationDaysReminderService vacationDaysReminderService;
     private final MailService mailService;
+    private final Clock clock;
 
     @Autowired
     public TurnOfTheYearAccountUpdaterService(PersonService personService, AccountService accountService,
-                                              AccountInteractionService accountInteractionService, MailService mailService) {
+                                              AccountInteractionService accountInteractionService, VacationDaysReminderService vacationDaysReminderService, MailService mailService, Clock clock) {
 
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
+        this.vacationDaysReminderService = vacationDaysReminderService;
         this.mailService = mailService;
+        this.clock = clock;
     }
 
     void updateAccountsForNextPeriod() {
@@ -50,7 +54,7 @@ public class TurnOfTheYearAccountUpdaterService {
         LOG.info("Starting update of holidays accounts to calculate the remaining vacation days.");
 
         // what's the new year?
-        final int year = ZonedDateTime.now(UTC).getYear();
+        final int year = Year.now(clock).getValue();
 
         // get all persons
         final List<Person> persons = personService.getActivePersons();
@@ -58,23 +62,18 @@ public class TurnOfTheYearAccountUpdaterService {
         // get all their accounts and calculate the remaining vacation days for the new year
         final List<Account> updatedAccounts = new ArrayList<>();
         for (Person person : persons) {
-            LOG.info("Updating account of person with id {}", person.getId());
-
             final Optional<Account> accountLastYear = accountService.getHolidaysAccount(year - 1, person);
-
             if (accountLastYear.isPresent() && accountLastYear.get().getAnnualVacationDays() != null) {
-                final Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(
-                    accountLastYear.get());
-
-                LOG.info("Setting remaining vacation days of person with id {} to {} for {}",
-                    person.getId(), holidaysAccount.getRemainingVacationDays(), year);
-
+                LOG.info("Updating account of person with id {}", person.getId());
+                final Account holidaysAccount = accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(accountLastYear.get());
+                LOG.info("Setting remaining vacation days of person with id {} to {} for {}", person.getId(), holidaysAccount.getRemainingVacationDays(), year);
                 updatedAccounts.add(holidaysAccount);
             }
         }
 
-        LOG.info("Successfully updated holidays accounts: {} / {}", updatedAccounts.size(), persons.size());
+        LOG.info("Updated holidays accounts: {} / {}", updatedAccounts.size(), persons.size());
         sendSuccessfullyUpdatedAccountsNotification(updatedAccounts);
+        vacationDaysReminderService.remindForRemainingVacationDays();
     }
 
     /**
@@ -87,13 +86,13 @@ public class TurnOfTheYearAccountUpdaterService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("accounts", updatedAccounts);
-        model.put("today", LocalDate.now(UTC));
+        model.put("today", LocalDate.now(clock));
 
         final String subjectMessageKey = "subject.account.updatedRemainingDays";
         final String templateName = "updated_accounts";
 
         // send email to office for printing statistic
-        final Mail mailToOffice= Mail.builder()
+        final Mail mailToOffice = Mail.builder()
             .withRecipient(NOTIFICATION_OFFICE)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, model)

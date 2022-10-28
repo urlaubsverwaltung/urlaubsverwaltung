@@ -1,0 +1,25 @@
+.nav-tabs {
+  @apply dark:tw-border-b-neutral-600;
+}
+
+.nav-tabs > li.active > a {
+  @apply dark:tw-border-b-transparent;
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  @apply dark:tw-bg-zinc-700;
+  @apply dark:tw-text-zinc-100;
+  @apply dark:tw-border-zinc-600;
+}
+
+.nav-tabs > li > a {
+  @apply dark:tw-text-zinc-100;
+}
+
+.nav > li > a:hover,
+.nav > li > a:focus {
+  @apply dark:tw-bg-zinc-800;
+  @apply dark:tw-border-zinc-600;
+}

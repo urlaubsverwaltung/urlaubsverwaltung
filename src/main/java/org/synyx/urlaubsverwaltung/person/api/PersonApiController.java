@@ -1,7 +1,7 @@
 package org.synyx.urlaubsverwaltung.person.api;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.synyx.urlaubsverwaltung.absence.AbsenceApiController;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController;
-import org.synyx.urlaubsverwaltung.vacations.VacationApiController;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.sicknote.api.SickNoteApiController;
+import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteApiController;
+import org.synyx.urlaubsverwaltung.vacations.VacationApiController;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController;
 
 import java.util.List;
@@ -27,13 +27,13 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceApiController.ABSENCES;
 import static org.synyx.urlaubsverwaltung.availability.api.AvailabilityApiController.AVAILABILITIES;
-import static org.synyx.urlaubsverwaltung.vacations.VacationApiController.VACATIONS;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
-import static org.synyx.urlaubsverwaltung.sicknote.api.SickNoteApiController.SICKNOTES;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteApiController.SICKNOTES;
+import static org.synyx.urlaubsverwaltung.vacations.VacationApiController.VACATIONS;
 import static org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountApiController.WORKDAYS;
 
 @RestControllerAdviceMarker
-@Api("Persons: Get information about the persons of the application")
+@Tag(name = "persons", description = "Persons: Get information about the persons of the application")
 @RestController
 @RequestMapping(PersonApiController.ROOT_URL)
 public class PersonApiController {
@@ -48,8 +48,9 @@ public class PersonApiController {
         this.personService = personService;
     }
 
-    @ApiOperation(
-        value = "Get all active persons of the application", notes = "Get all active persons of the application"
+    @Operation(
+        summary = "Get all active persons of the application",
+        description = "Get all active persons of the application"
     )
     @GetMapping
     @PreAuthorize(IS_OFFICE)
@@ -62,7 +63,7 @@ public class PersonApiController {
         return new ResponseEntity<>(persons, OK);
     }
 
-    @ApiOperation(value = "Get one active person by id", notes = "Get one active person by id")
+    @Operation(summary = "Get one active person by id", description = "Get one active person by id")
     @GetMapping(PERSON_URL)
     @PreAuthorize(IS_OFFICE)
     public ResponseEntity<PersonDto> getPerson(@PathVariable Integer id) {
@@ -75,7 +76,7 @@ public class PersonApiController {
     private PersonDto createPersonResponse(Person person) {
         final PersonDto personDto = PersonMapper.mapToDto(person);
         personDto.add(linkTo(methodOn(PersonApiController.class).getPerson(person.getId())).withSelfRel());
-        personDto.add(linkTo(methodOn(AbsenceApiController.class).personsAbsences(person.getId(), null, null, null)).withRel(ABSENCES));
+        personDto.add(linkTo(methodOn(AbsenceApiController.class).personsAbsences(person.getId(), null, null, null, false)).withRel(ABSENCES));
         personDto.add(linkTo(methodOn(AvailabilityApiController.class).personsAvailabilities(person.getId(), null, null)).withRel(AVAILABILITIES));
         personDto.add(linkTo(methodOn(SickNoteApiController.class).personsSickNotes(person.getId(), null, null)).withRel(SICKNOTES));
         personDto.add(linkTo(methodOn(VacationApiController.class).getVacations(person.getId(), null, null)).withRel(VACATIONS));

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>datepicker-localization</title>
+  </head>
+  <body>
+    <script th:fragment="datepicker-localization" th:inline="javascript">
+      window.uv = window.uv || {};
+      window.uv.datepicker = window.uv.datepicker || {};
+      window.uv.datepicker.localisation = {
+        locale: /*[[${language}]]*/ "language",
+        buttonLabel: /*[[#{datepicker.buttonLabel}]]*/ "buttonLabel",
+        placeholder: /*[[#{datepicker.placeholder}]]*/ "placeholder",
+        selectedDateMessage: /*[[#{datepicker.selectedDateMessage}]]*/ "selectedDateMessage",
+        prevMonthLabel: /*[[#{datepicker.prevMonthLabel}]]*/ "prevMonthLabel",
+        nextMonthLabel: /*[[#{datepicker.nextMonthLabel}]]*/ "nextMonthLabel",
+        monthSelectLabel: /*[[#{datepicker.monthSelectLabel}]]*/ "monthSelectLabel",
+        yearSelectLabel: /*[[#{datepicker.yearSelectLabel}]]*/ "yearSelectLabel",
+        closeLabel: /*[[#{datepicker.closeLabel}]]*/ "closeLabel",
+        keyboardInstruction: /*[[#{datepicker.keyboardInstructions}]]*/ "keyboardInstructions",
+        calendarHeading: /*[[#{datepicker.calendarHeading}]]*/ "calendarHeading",
+        dayNames: [
+          /*[[#{SUNDAY}]]*/ "Sunday",
+          /*[[#{MONDAY}]]*/ "Monday",
+          /*[[#{TUESDAY}]]*/ "Tuesday",
+          /*[[#{WEDNESDAY}]]*/ "Wednesday",
+          /*[[#{THURSDAY}]]*/ "Thursday",
+          /*[[#{FRIDAY}]]*/ "Friday",
+          /*[[#{SATURDAY}]]*/ "Saturday",
+        ],
+        monthNames: [
+          /*[[#{month.january}]]*/ "january",
+          /*[[#{month.february}]]*/ "february",
+          /*[[#{month.march}]]*/ "march",
+          /*[[#{month.april}]]*/ "april",
+          /*[[#{month.may}]]*/ "may",
+          /*[[#{month.june}]]*/ "june",
+          /*[[#{month.july}]]*/ "july",
+          /*[[#{month.august}]]*/ "august",
+          /*[[#{month.september}]]*/ "september",
+          /*[[#{month.october}]]*/ "october",
+          /*[[#{month.november}]]*/ "november",
+          /*[[#{month.december}]]*/ "december",
+        ],
+        monthNamesShort: [
+          /*[[#{month.january.short}]]*/ "jan",
+          /*[[#{month.february.short}]]*/ "feb",
+          /*[[#{month.march.short}]]*/ "mar",
+          /*[[#{month.april.short}]]*/ "apr",
+          /*[[#{month.may.short}]]*/ "may",
+          /*[[#{month.june.short}]]*/ "jun",
+          /*[[#{month.july.short}]]*/ "jul",
+          /*[[#{month.august.short}]]*/ "aug",
+          /*[[#{month.september.short}]]*/ "sep",
+          /*[[#{month.october.short}]]*/ "oct",
+          /*[[#{month.november.short}]]*/ "nov",
+          /*[[#{month.december.short}]]*/ "dec",
+        ],
+      };
+    </script>
+  </body>
+</html>

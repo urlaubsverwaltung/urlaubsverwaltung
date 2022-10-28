@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.Absence;
@@ -11,7 +12,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
-import java.io.File;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -26,23 +29,26 @@ class CompanyCalendarService {
     private final ICalService iCalService;
     private final PersonService personService;
     private final MessageSource messageSource;
+    private final Clock clock;
 
     @Autowired
-    CompanyCalendarService(AbsenceService absenceService, CompanyCalendarRepository companyCalendarRepository, ICalService iCalService, PersonService personService, MessageSource messageSource) {
+    CompanyCalendarService(AbsenceService absenceService, CompanyCalendarRepository companyCalendarRepository, ICalService iCalService, PersonService personService, MessageSource messageSource, Clock clock) {
         this.absenceService = absenceService;
         this.companyCalendarRepository = companyCalendarRepository;
         this.iCalService = iCalService;
         this.personService = personService;
         this.messageSource = messageSource;
+        this.clock = clock;
     }
 
-    CompanyCalendar createCalendarForPerson(int personId) {
+    CompanyCalendar createCalendarForPerson(int personId, Period calendarPeriod) {
 
         final Person person = getPersonOrThrow(personId);
 
-        final CompanyCalendar maybeCompanyCalendar = companyCalendarRepository.findByPerson(person);
-        final CompanyCalendar companyCalendar = maybeCompanyCalendar == null ? new CompanyCalendar() : maybeCompanyCalendar;
+        final Optional<CompanyCalendar> maybeCompanyCalendar = companyCalendarRepository.findByPerson(person);
+        final CompanyCalendar companyCalendar = maybeCompanyCalendar.isEmpty() ? new CompanyCalendar() : maybeCompanyCalendar.get();
         companyCalendar.setPerson(person);
+        companyCalendar.setCalendarPeriod(calendarPeriod);
         companyCalendar.generateSecret();
 
         return companyCalendarRepository.save(companyCalendar);
@@ -52,25 +58,28 @@ class CompanyCalendarService {
 
         final Person person = getPersonOrThrow(personId);
 
-        return Optional.ofNullable(companyCalendarRepository.findByPerson(person));
+        return companyCalendarRepository.findByPerson(person);
     }
 
-    File getCalendarForAll(Integer personId, String secret, Locale locale) {
+    ByteArrayResource getCalendarForAll(Integer personId, String secret, Locale locale) {
 
         if (StringUtils.isBlank(secret)) {
             throw new IllegalArgumentException("secret must not be empty.");
         }
 
         final Person person = getPersonOrThrow(personId);
-        final CompanyCalendar calendar = companyCalendarRepository.findBySecretAndPerson(secret, person);
-        if (calendar == null) {
+        final Optional<CompanyCalendar> maybeCompanyCalendar = companyCalendarRepository.findBySecretAndPerson(secret, person);
+        if (maybeCompanyCalendar.isEmpty()) {
             throw new IllegalArgumentException("No calendar found for secret=" + secret);
         }
 
         final String title = messageSource.getMessage("calendar.company.title", new Object[]{}, locale);
-        final List<Absence> absences = absenceService.getOpenAbsences();
 
-        return iCalService.getCalendar(title, absences);
+        final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
+        final LocalDate sinceDate = LocalDate.now(clock).minus(companyCalendar.getCalendarPeriod());
+        final List<Absence> absences = absenceService.getOpenAbsencesSince(sinceDate);
+
+        return iCalService.getCalendar(title, absences, person);
     }
 
     @Transactional

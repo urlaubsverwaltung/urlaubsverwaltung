@@ -1,14 +1,16 @@
-const standardNumberOfRows = 1;
-const expandedNumberOfRows = 4;
+const expandedNumberOfRows = "4";
 
-[...document.querySelectorAll("textarea")].forEach((textarea) => {
-  textarea.addEventListener("focus", () => {
-    textarea.rows = expandedNumberOfRows;
-  });
+const textareas = new WeakMap();
 
-  textarea.addEventListener("blur", () => {
-    if (textarea.value == "") {
-      textarea.rows = standardNumberOfRows;
-    }
-  });
+document.addEventListener("focusin", function (event) {
+  if (event.target.tagName === "TEXTAREA") {
+    textareas.set(event.target, event.target.getAttribute("rows"));
+    event.target.setAttribute("rows", expandedNumberOfRows);
+  }
+});
+
+document.addEventListener("focusout", function (event) {
+  if (event.target.tagName === "TEXTAREA" && !event.target.value) {
+    event.target.setAttribute("rows", textareas.get(event.target) || "1");
+  }
 });

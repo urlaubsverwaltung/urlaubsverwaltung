@@ -10,11 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.util.Collections.singletonList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-
 
 /**
  * Import person data from configured LDAP or Active Directory.
@@ -28,40 +26,32 @@ public class LdapUserDataImporter {
     private final PersonService personService;
 
     LdapUserDataImporter(LdapUserService ldapUserService, PersonService personService) {
-
         this.ldapUserService = ldapUserService;
         this.personService = personService;
     }
 
     @PostConstruct
     void sync() {
-
         LOG.info("STARTING DIRECTORY SERVICE SYNC --------------------------------------------------------------------------------");
 
         final List<LdapUser> users = ldapUserService.getLdapUsers();
-
         LOG.info("Found {} user(s)", users.size());
 
         for (LdapUser user : users) {
             final String username = user.getUsername();
-            final Optional<String> firstName = user.getFirstName();
-            final Optional<String> lastName = user.getLastName();
-            final Optional<String> email = user.getEmail();
+            final String firstName = user.getFirstName();
+            final String lastName = user.getLastName();
+            final String email = user.getEmail();
 
             final Optional<Person> optionalPerson = personService.getPersonByUsername(username);
-
             if (optionalPerson.isPresent()) {
-
-                Person person = optionalPerson.get();
-
-                firstName.ifPresent(person::setFirstName);
-                lastName.ifPresent(person::setLastName);
-                email.ifPresent(person::setEmail);
-
-                personService.save(person);
+                final Person person = optionalPerson.get();
+                person.setFirstName(firstName);
+                person.setLastName(lastName);
+                person.setEmail(email);
+                personService.update(person);
             } else {
-                personService.create(username, lastName.orElse(null), firstName.orElse(null),
-                    email.orElse(null), singletonList(NOTIFICATION_USER), singletonList(USER));
+                personService.create(username, lastName, firstName, email, List.of(NOTIFICATION_USER), List.of(USER));
             }
         }
 

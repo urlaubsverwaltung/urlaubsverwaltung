@@ -6,16 +6,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 
-import java.io.File;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +28,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -60,30 +60,30 @@ class CompanyCalendarServiceTest {
     @BeforeEach
     void setUp() {
 
-        sut = new CompanyCalendarService(absenceService, companyCalendarRepository, iCalService, personService, messageSource);
+        sut = new CompanyCalendarService(absenceService, companyCalendarRepository, iCalService, personService, messageSource, Clock.systemUTC());
     }
 
     @Test
     void getCalendarForAllForOneFullDay() {
 
         final List<Absence> absences = List.of(absence(new Person("muster", "Muster", "Marlene", "muster@example.org"), toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL));
-        when(absenceService.getOpenAbsences()).thenReturn(absences);
+        when(absenceService.getOpenAbsencesSince(any(LocalDate.class))).thenReturn(absences);
 
         final Person person = new Person();
         person.setId(10);
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
 
-        CompanyCalendar companyCalendar = new CompanyCalendar();
+        CompanyCalendar companyCalendar = new CompanyCalendar(person);
         companyCalendar.setId(1L);
-        when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(companyCalendar);
+        companyCalendar.setCalendarPeriod(java.time.Period.parse("P1Y"));
+        when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.of(companyCalendar));
 
         when(messageSource.getMessage(eq("calendar.company.title"), any(), eq(GERMAN))).thenReturn("Abwesenheitskalender der Firma");
-        final File iCal = new File("calendar.ics");
-        iCal.deleteOnExit();
-        when(iCalService.getCalendar("Abwesenheitskalender der Firma", absences)).thenReturn(iCal);
+        final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
+        when(iCalService.getCalendar("Abwesenheitskalender der Firma", absences, person)).thenReturn(iCal);
 
-        final File calendar = sut.getCalendarForAll(10, "secret", GERMAN);
-        assertThat(calendar).hasName("calendar.ics");
+        final ByteArrayResource calendar = sut.getCalendarForAll(10, "secret", GERMAN);
+        assertThat(calendar).isEqualTo(iCal);
     }
 
     @Test
@@ -93,7 +93,7 @@ class CompanyCalendarServiceTest {
         person.setId(10);
         when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
 
-        when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(null);
+        when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> sut.getCalendarForAll(10, "secret", GERMAN));
@@ -161,11 +161,11 @@ class CompanyCalendarServiceTest {
     @Test
     void ensureGetCompanyCalendarReturnsCalendar() {
 
-        final CompanyCalendar expectedCalendar = mock(CompanyCalendar.class);
+        final CompanyCalendar expectedCalendar = new CompanyCalendar();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        when(companyCalendarRepository.findByPerson(person)).thenReturn(expectedCalendar);
+        when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.of(expectedCalendar));
 
         final Optional<CompanyCalendar> actualCompanyCalendar = sut.getCompanyCalendar(1);
 
@@ -177,7 +177,7 @@ class CompanyCalendarServiceTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        when(companyCalendarRepository.findByPerson(person)).thenReturn(null);
+        when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
 
         final Optional<CompanyCalendar> actualCompanyCalendar = sut.getCompanyCalendar(1);
 
@@ -189,7 +189,7 @@ class CompanyCalendarServiceTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.createCalendarForPerson(1));
+            .isThrownBy(() -> sut.createCalendarForPerson(1, java.time.Period.parse("P12M")));
     }
 
     @Test
@@ -198,10 +198,10 @@ class CompanyCalendarServiceTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        when(companyCalendarRepository.findByPerson(person)).thenReturn(null);
+        when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
         when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
 
-        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1);
+        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1, java.time.Period.parse("P12M"));
 
         assertThat(actualCalendarForPerson.getPerson()).isEqualTo(person);
         assertThat(actualCalendarForPerson.getSecret()).isNotBlank();
@@ -216,10 +216,10 @@ class CompanyCalendarServiceTest {
         final CompanyCalendar expectedCompanyCalendar = new CompanyCalendar();
         final String secretBeforeUpdate = expectedCompanyCalendar.getSecret();
 
-        when(companyCalendarRepository.findByPerson(person)).thenReturn(expectedCompanyCalendar);
+        when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.of(expectedCompanyCalendar));
         when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
 
-        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1);
+        final CompanyCalendar actualCalendarForPerson = sut.createCalendarForPerson(1, java.time.Period.parse("P12M"));
 
         assertThat(actualCalendarForPerson.getPerson()).isEqualTo(person);
         assertThat(actualCalendarForPerson.getSecret()).isNotBlank();
@@ -228,7 +228,7 @@ class CompanyCalendarServiceTest {
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {
         final Period period = new Period(start, end, length);
-        final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new CalendarSettings());
+        final AbsenceTimeConfiguration timeConfig = new AbsenceTimeConfiguration(new TimeSettings());
 
         return new Absence(person, period, timeConfig);
     }

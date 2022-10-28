@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.settings.CalendarSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.Optional;
@@ -29,37 +28,35 @@ public class CalendarSyncServiceImpl implements CalendarSyncService {
     public CalendarSyncServiceImpl(SettingsService settingsService, CalendarService calendarService) {
         this.settingsService = settingsService;
         this.calendarService = calendarService;
+        LOG.debug("The following calendar provider is configured: {}", calendarService.getCalendarProvider().getClass());
+    }
 
-        LOG.info("The following calendar provider is configured: {}", calendarService.getCalendarProvider().getClass());
+    @Override
+    public boolean isRealProviderConfigured() {
+        return calendarService.getCalendarProvider().isRealProviderConfigured();
     }
 
     @Override
     public Optional<String> addAbsence(Absence absence) {
-        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
-
-        return calendarService.getCalendarProvider().add(absence, calendarSettings);
+        return calendarService.getCalendarProvider().add(absence, getCalendarSettings());
     }
-
 
     @Override
     public void update(Absence absence, String eventId) {
-        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
-
-        calendarService.getCalendarProvider().update(absence, eventId, calendarSettings);
+        calendarService.getCalendarProvider().update(absence, eventId, getCalendarSettings());
     }
-
 
     @Override
     public void deleteAbsence(String eventId) {
-        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
-
-        calendarService.getCalendarProvider().delete(eventId, calendarSettings);
+        calendarService.getCalendarProvider().delete(eventId, getCalendarSettings());
     }
 
     @Override
     public void checkCalendarSyncSettings() {
-        CalendarSettings calendarSettings = this.settingsService.getSettings().getCalendarSettings();
+        calendarService.getCalendarProvider().checkCalendarSyncSettings(getCalendarSettings());
+    }
 
-        calendarService.getCalendarProvider().checkCalendarSyncSettings(calendarSettings);
+    private CalendarSettings getCalendarSettings() {
+        return this.settingsService.getSettings().getCalendarSettings();
     }
 }

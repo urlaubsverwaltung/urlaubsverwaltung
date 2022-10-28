@@ -16,14 +16,15 @@
 
         <c:forEach items="${comments}" var="comment">
             <tr>
-                <td class="hidden-print">
+                <td class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                     <img
-                        src="<c:out value='${comment.person.gravatarURL}?d=mm&s=40'/>"
-                        alt="<spring:message code="gravatar.alt" arguments="${comment.person.niceName}"/>"
+                        src="<c:out value='${comment.person.gravatarURL}?d=404&s=40'/>"
+                        alt=""
                         class="gravatar gravatar--medium tw-rounded-full"
                         width="40px"
                         height="40px"
-                        onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
+                        data-fallback="<c:out value="${URL_PREFIX}/avatar?name=${comment.person.niceName}"/>"
+                        is="uv-avatar"
                     />
                 </td>
                 <td>
@@ -38,14 +39,17 @@
                                 <uv:date date="${application.applicationDate}"/>
                             </c:when>
                             <c:when
-                                test="${comment.action == 'ALLOWED' || comment.action == 'TEMPORARY_ALLOWED' || comment.action == 'REJECTED' || comment.action == 'CONVERTED'}">
+                                test="${comment.action == 'ALLOWED' || comment.action == 'EDITED' || comment.action == 'TEMPORARY_ALLOWED' || comment.action == 'REJECTED' || comment.action == 'CONVERTED'}">
                                 <uv:date date="${application.editedDate}"/>
                             </c:when>
-                            <c:when test="${comment.action == 'CANCELLED' || comment.action == 'REVOKED'}">
+                            <c:when test="${comment.action == 'ALLOWED_DIRECTLY'}">
+                                <uv:date date="${application.applicationDate}"/>
+                            </c:when>
+                            <c:when test="${comment.action == 'CANCELLED' || comment.action == 'CANCELLED_DIRECTLY' || comment.action == 'REVOKED'}">
                                 <uv:date date="${application.cancelDate}"/>
                             </c:when>
-                            <c:when test="${comment.action == 'REFERRED' || comment.action == 'CANCEL_REQUESTED'}">
-                                <uv:date date="${comment.date}"/>
+                            <c:when test="${comment.action == 'REFERRED' || comment.action == 'CANCEL_REQUESTED' || comment.action == 'CANCEL_REQUESTED_DECLINED'}">
+                                <uv:instant date="${comment.date}"/>
                             </c:when>
                         </c:choose>
 

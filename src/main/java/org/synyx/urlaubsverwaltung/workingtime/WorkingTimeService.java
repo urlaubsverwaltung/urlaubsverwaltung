@@ -1,108 +1,91 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.FederalState;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import static java.lang.invoke.MethodHandles.lookup;
-import static java.time.format.DateTimeFormatter.ofPattern;
-import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.util.DateFormat.PATTERN;
+public interface WorkingTimeService {
 
-@Service
-@Transactional
-public class WorkingTimeService {
+    /**
+     * Returns the used working time of the given person and date.
+     *
+     * @param person to check for working time
+     * @param date   on this given date
+     * @return working time of person, otherwise empty optional
+     */
+    Optional<WorkingTime> getWorkingTime(Person person, LocalDate date);
 
-    private static final Logger LOG = getLogger(lookup().lookupClass());
+    /**
+     * Returns a list of working times for the given person.
+     * <p>
+     * Note: The federal state of the working times are either
+     * the default federate state based on the settings
+     * or the user specific. But never empty.
+     *
+     * @param person to get all working times
+     * @return list of all working times of a person
+     */
+    List<WorkingTime> getByPerson(Person person);
 
-    private final WorkingTimeProperties workingTimeProperties;
-    private final WorkingTimeRepository workingTimeRepository;
-    private final SettingsService settingsService;
-    private final Clock clock;
+    /**
+     * Returns a list of working times for the given persons.
+     * <p>
+     * Note: The federal state of the working times are either
+     * the default federate state based on the settings
+     * or the user specific. But never empty.
+     *
+     * @param persons to get all working times of
+     * @return list of all working times of the persons
+     */
+    List<WorkingTime> getByPersons(List<Person> persons);
 
-    @Autowired
-    public WorkingTimeService(WorkingTimeProperties workingTimeProperties, WorkingTimeRepository workingTimeRepository, SettingsService settingsService, Clock clock) {
-        this.workingTimeProperties = workingTimeProperties;
-        this.workingTimeRepository = workingTimeRepository;
-        this.settingsService = settingsService;
-        this.clock = clock;
-    }
+    /**
+     * Returns a map of date ranges and the associated working time.
+     * <p>
+     * Note: The federal state of the working time is either
+     * the default federate state based on the settings
+     * or the user specific. But never empty.
+     *
+     * @param person    to get the working times
+     * @param dateRange to specify the
+     * @return map of date ranges and the associated working times of a person
+     */
+    Map<DateRange, WorkingTime> getWorkingTimesByPersonAndDateRange(Person person, DateRange dateRange);
 
-    public void touch(List<Integer> workingDays, Optional<FederalState> federalState, LocalDate validFrom, Person person) {
+    /**
+     * Returns a map of date ranges and the associated federal state.
+     * <p>
+     * Note: The federal state of the {@link DateRange} is either
+     * the default federate state based on the settings
+     * or the user specific. But never empty.
+     *
+     * @param person    to get the federal states
+     * @param dateRange to specify the
+     * @return map of date ranges and the associated federal state of a person
+     */
+    Map<DateRange, FederalState> getFederalStatesByPersonAndDateRange(Person person, DateRange dateRange);
 
-        WorkingTime workingTime = workingTimeRepository.findByPersonAndValidityDate(person, validFrom);
+    /**
+     * Returns the federal state of a person.
+     * <p>
+     * Note: That the federal state is either
+     * the default federate state based on the settings
+     * or the user specific.
+     *
+     * @param person to get the current federal state of
+     * @param date   of this given date
+     * @return the federal state of the given date and person
+     */
+    FederalState getFederalStateForPerson(Person person, LocalDate date);
 
-        /*
-         * create a new WorkingTime object if no one existent for the given person and date
-         */
-        if (workingTime == null) {
-            workingTime = new WorkingTime();
-            workingTime.setPerson(person);
-            workingTime.setValidFrom(validFrom);
-        }
-
-        /*
-         * else just change the working days of the current working time object
-         */
-        workingTime.setWorkingDays(workingDays, DayLength.FULL);
-
-        if (federalState.isPresent()) {
-            workingTime.setFederalStateOverride(federalState.get());
-        } else {
-            // reset federal state override, use system default federal state for this user
-            workingTime.setFederalStateOverride(null);
-        }
-
-        workingTimeRepository.save(workingTime);
-        LOG.info("Successfully created working time for person {}", person);
-    }
-
-    public List<WorkingTime> getByPerson(Person person) {
-        return workingTimeRepository.findByPerson(person);
-    }
-
-    public Optional<WorkingTime> getByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date) {
-        return Optional.ofNullable(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date));
-    }
-
-    public Optional<WorkingTime> getCurrentOne(Person person) {
-        return Optional.ofNullable(workingTimeRepository.findLastOneByPerson(person));
-    }
-
-    public FederalState getFederalStateForPerson(Person person, LocalDate date) {
-        Optional<WorkingTime> optionalWorkingTime = getByPersonAndValidityDateEqualsOrMinorDate(person, date);
-
-        if (optionalWorkingTime.isEmpty()) {
-            LOG.debug("No working time found for user '{}' equals or minor {}, using system federal state as fallback",
-                person.getId(), date.format(ofPattern(PATTERN)));
-
-            return getSystemDefaultFederalState();
-        }
-
-        return getFederalState(optionalWorkingTime.get());
-    }
-
-    private FederalState getFederalState(WorkingTime workingTime) {
-        Optional<FederalState> optionalFederalStateOverride = workingTime.getFederalStateOverride();
-        return optionalFederalStateOverride.orElseGet(this::getSystemDefaultFederalState);
-    }
-
-    private FederalState getSystemDefaultFederalState() {
-        return settingsService.getSettings().getWorkingTimeSettings().getFederalState();
-    }
-
-    public void createDefaultWorkingTime(Person person) {
-        LocalDate today = LocalDate.now(clock);
-        this.touch(workingTimeProperties.getDefaultWorkingDays(), Optional.empty(), today, person);
-    }
+    /**
+     * Returns the default federal state based on the settings
+     *
+     * @return default federal state
+     */
+    FederalState getSystemDefaultFederalState();
 }

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="section">
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::reminder-upcoming-application-heading-body}, ~{})"
+      >
+        <th:block th:fragment="reminder-upcoming-application-heading-body">
+          <h2 th:text="#{settings.vacation.remindForUpcomingApplications.title}"></h2>
+        </th:block>
+      </div>
+
+      <div class="row">
+        <aside class="col-md-4 col-md-push-8">
+          <p class="help-block tw-text-sm">
+            <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+            <th:block th:text="#{settings.vacation.remindForUpcomingApplications.description}" />
+          </p>
+        </aside>
+        <div class="col-md-8 col-md-pull-4">
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.vacation.remindForUpcomingApplications}:|"
+              class="control-label col-md-4"
+              for="applicationSettings.remindForUpcomingApplications.true"
+            >
+            </label>
+            <div class="col-md-8 radio">
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="applicationSettings.remindForUpcomingApplications.true"
+                  th:field="*{applicationSettings.remindForUpcomingApplications}"
+                  value="true"
+                />
+                <th:block th:text="#{settings.vacation.remindForUpcomingApplications.true}" />
+              </label>
+              <label class="halves">
+                <input
+                  type="radio"
+                  id="applicationSettings.remindForUpcomingApplications.false"
+                  th:field="*{applicationSettings.remindForUpcomingApplications}"
+                  value="false"
+                />
+                <th:block th:text="#{settings.vacation.remindForUpcomingApplications.false}" />
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group is-required">
+            <label
+              th:text="|#{settings.vacation.daysBeforeRemindForUpcomingApplications}:|"
+              class="control-label col-md-4"
+              for="applicationSettings.daysBeforeRemindForUpcomingApplications"
+            >
+            </label>
+            <div class="col-md-8">
+              <input
+                id="applicationSettings.daysBeforeRemindForUpcomingApplications"
+                th:field="*{applicationSettings.daysBeforeRemindForUpcomingApplications}"
+                class="form-control"
+                th:errorclass="error"
+                type="number"
+                step="1"
+              />
+              <div
+                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('applicationSettings.daysBeforeRemindForUpcomingApplications')}"
+              >
+                <th:block th:errors="*{applicationSettings.daysBeforeRemindForUpcomingApplications}">
+                  applicationSettings.daysBeforeRemindForUpcomingApplications Error
+                </th:block>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </th:block>
+  </body>
+</html>

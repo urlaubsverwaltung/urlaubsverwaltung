@@ -1,117 +1,83 @@
 package org.synyx.urlaubsverwaltung.department;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.data.jpa.domain.AbstractPersistable;
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
-
 
 /**
  * Department represents an organisation unit of a company.
  */
-@Entity
-public class Department extends AbstractPersistable<Integer> {
+public class Department {
 
-    @Column(nullable = false)
+    private Integer id;
     private String name;
-
     private String description;
-
+    private LocalDate createdAt;
     private LocalDate lastModification;
-
-    // flag for two stage approval process
     private boolean twoStageApproval;
-
-    @CollectionTable(name = "Department_Member")
-    @ElementCollection
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> members = new ArrayList<>();
-
-    @CollectionTable(name = "Department_DepartmentHead")
-    @ElementCollection
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> departmentHeads = new ArrayList<>();
-
-    @CollectionTable(name = "Department_SecondStageAuthority")
-    @ElementCollection
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Person> secondStageAuthorities = new ArrayList<>();
 
     public Department() {
-
         this.lastModification = LocalDate.now(UTC);
     }
 
-    public String getName() {
+    public Integer getId() {
+        return id;
+    }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
         return name;
     }
 
-
     public void setName(String name) {
-
         this.name = name;
     }
 
-
     public String getDescription() {
-
         return description;
     }
 
-
     public void setDescription(String description) {
-
         this.description = description;
     }
 
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public LocalDate getLastModification() {
-
         return this.lastModification;
     }
 
-
     public void setLastModification(LocalDate lastModification) {
-
-        Assert.notNull(lastModification, "Last modification date must be set.");
         this.lastModification = lastModification;
     }
 
-
-    @Override
-    public void setId(Integer id) { // NOSONAR - make it public instead of protected
-
-        super.setId(id);
-    }
-
-
     public boolean isTwoStageApproval() {
-
         return twoStageApproval;
     }
 
-
     public void setTwoStageApproval(boolean twoStageApproval) {
-
         this.twoStageApproval = twoStageApproval;
     }
 
-
     public List<Person> getMembers() {
-
         if (members == null) {
             members = Collections.emptyList();
         }
@@ -119,15 +85,11 @@ public class Department extends AbstractPersistable<Integer> {
         return Collections.unmodifiableList(members);
     }
 
-
     public void setMembers(List<Person> members) {
-
         this.members = members;
     }
 
-
     public List<Person> getDepartmentHeads() {
-
         if (departmentHeads == null) {
             departmentHeads = Collections.emptyList();
         }
@@ -135,15 +97,11 @@ public class Department extends AbstractPersistable<Integer> {
         return Collections.unmodifiableList(departmentHeads);
     }
 
-
     public void setDepartmentHeads(List<Person> departmentHeads) {
-
         this.departmentHeads = departmentHeads;
     }
 
-
     public List<Person> getSecondStageAuthorities() {
-
         if (secondStageAuthorities == null) {
             secondStageAuthorities = Collections.emptyList();
         }
@@ -151,11 +109,10 @@ public class Department extends AbstractPersistable<Integer> {
         return Collections.unmodifiableList(secondStageAuthorities);
     }
 
-
     public void setSecondStageAuthorities(List<Person> secondStageAuthorities) {
-
         this.secondStageAuthorities = secondStageAuthorities;
     }
+
 
     @Override
     public String toString() {
@@ -168,5 +125,22 @@ public class Department extends AbstractPersistable<Integer> {
             ", departmentHeads=" + departmentHeads +
             ", secondStageAuthorities=" + secondStageAuthorities +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Department that = (Department) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

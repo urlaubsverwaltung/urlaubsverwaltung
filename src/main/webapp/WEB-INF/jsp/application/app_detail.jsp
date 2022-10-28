@@ -3,7 +3,6 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 <%@taglib prefix="icon" tagdir="/WEB-INF/tags/icons" %>
 <%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
@@ -12,7 +11,7 @@
 <fmt:parseDate value="${application.endDate}" pattern="yyyy-MM-dd" var="parsedEndDate" type="date"/>
 
 <!DOCTYPE html>
-<html lang="${language}">
+<html lang="${language}" class="tw-<c:out value='${theme}' />">
 
 <head>
     <title>
@@ -20,7 +19,7 @@
     </title>
     <uv:custom-head/>
     <script>
-        window.uv = {};
+        window.uv = window.uv || {};
         window.uv.personId = '<c:out value="${application.person.id}" />';
         window.uv.webPrefix = "<spring:url value='/web' />";
         window.uv.apiPrefix = "<spring:url value='/api' />";
@@ -30,6 +29,7 @@
     </script>
     <script defer src="<asset:url value='npm.date-fns.js' />"></script>
     <script defer src="<asset:url value='app_detail~app_form~person_overview.js' />"></script>
+    <script defer src="<asset:url value='account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js' />"></script>
     <script defer src="<asset:url value='app_detail.js' />"></script>
 </head>
 
@@ -39,11 +39,7 @@
 
 <uv:menu/>
 
-<div class="print-info--only-portrait">
-    <h4><spring:message code="print.info.portrait"/></h4>
-</div>
-
-<div class="content print--only-portrait">
+<div class="content">
     <div class="container">
 
         <div class="row">
@@ -63,6 +59,16 @@
 
                 <div class="feedback">
                     <c:choose>
+                        <c:when test="${editSuccess}">
+                            <div class="alert alert-success">
+                                <spring:message code='application.action.apply.edit'/>
+                            </div>
+                        </c:when>
+                        <c:when test="${editError}">
+                            <div class="alert alert-danger">
+                                <spring:message code='application.error.notEditable'/>
+                            </div>
+                        </c:when>
                         <c:when test="${applySuccess}">
                             <div class="alert alert-success">
                                 <spring:message code='application.action.apply.success'/>
@@ -86,6 +92,11 @@
                         <c:when test="${!empty errors}">
                             <div class="alert alert-danger">
                                 <spring:message code="application.action.reason.error"/>
+                            </div>
+                        </c:when>
+                        <c:when test="${notPrivilegedToApprove}">
+                            <div class="alert alert-danger">
+                                <spring:message code="application.action.remind.error.notPrivilegedToApprove"/>
                             </div>
                         </c:when>
                         <c:when test="${allowSuccess}">
@@ -117,10 +128,11 @@
 
                 <%@include file="include/app-detail-elements/app_info.jsp" %>
 
+                <%@include file="include/app-detail-elements/app_workingtime.jsp" %>
             </div>
             <%--End of first column--%>
 
-            <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
+            <div class="col-xs-12 col-sm-12 col-md-6 print:tw-hidden">
 
                 <uv:section-heading>
                     <h2>
@@ -129,10 +141,16 @@
                     <uv:year-selector year="${year}" hrefPrefix="${URL_PREFIX}/application/${application.id}?year="/>
                 </uv:section-heading>
 
-                <uv:person person="${application.person}" cssClass="tw-h-32 tw-mb-4" />
+                <uv:person person="${application.person}" departmentsOfPerson="${departments}" cssClass="tw-h-32 tw-mb-4" />
                 <uv:account-entitlement account="${account}" className="tw-mb-4" />
-                <uv:account-left account="${account}" vacationDaysLeft="${vacationDaysLeft}"
-                                 beforeApril="${beforeApril}"/>
+                <uv:account-left
+                    account="${account}"
+                    vacationDaysLeft="${vacationDaysLeft}"
+                    expiredRemainingVacationDays="${expiredRemainingVacationDays}"
+                    expiryDate="${expiryDate}"
+                    beforeExpiryDate="${isBeforeExpiryDate}"
+                    className="tw-mb-4 lg:tw-mb-6"
+                />
 
             </div><!-- End of second column -->
 
@@ -144,7 +162,7 @@
                 <%@include file="include/app-detail-elements/app_progress.jsp" %>
             </div>
 
-            <div class="col-xs-12 col-sm-12 col-md-6 hidden-print">
+            <div class="col-xs-12 col-sm-12 col-md-6 print:tw-hidden">
                 <uv:section-heading>
                     <h2>
                         <spring:message code="application.department.title"/>
@@ -159,14 +177,12 @@
                         <c:otherwise>
                             <c:forEach items="${departmentApplications}" var="application">
                                 <tr>
-                                    <td>
-                                        <img
-                                            src="<c:out value='${application.person.gravatarURL}?d=mm&s=40'/>"
-                                            alt="<spring:message code="gravatar.alt" arguments="${application.person.niceName}"/>"
-                                            class="gravatar tw-rounded-full ${cssClass}"
+                                    <td class="tw-text-blue-50 dark:tw-text-sky-800">
+                                        <uv:avatar
+                                            url="${application.person.gravatarURL}?d=404&s=40"
+                                            username="${application.person.niceName}"
                                             width="40px"
                                             height="40px"
-                                            onerror="this.src !== '/images/gravatar.jpg' && (this.src = '/images/gravatar.jpg')"
                                         />
                                     </td>
                                     <td>
@@ -199,7 +215,7 @@
                                             </c:otherwise>
                                         </c:choose>
                                         <c:if test="${application.status == 'ALLOWED'}">
-                                            <span class="tw-text-green-500">
+                                            <span class="tw-text-emerald-500">
                                                 <icon:check className="tw-w-5 tw-h-5" solid="true" />
                                             </span>
                                         </c:if>
@@ -219,6 +235,7 @@
 
 </div> <!-- end of content -->
 
-</body>
+<uv:footer/>
 
+</body>
 </html>

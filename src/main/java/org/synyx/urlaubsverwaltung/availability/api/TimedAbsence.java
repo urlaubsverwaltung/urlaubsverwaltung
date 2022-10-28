@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 /**
  * Details for a (partial) absence of a person on a day.
  */
+@Deprecated(forRemoval = true, since = "4.4.0")
 class TimedAbsence {
 
     private final BigDecimal ratio;

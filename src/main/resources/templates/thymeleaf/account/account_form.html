@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="_layout::head(~{::title}, ~{::styles}, ~{::scripts})">
+    <title th:text="#{person.form.annualVacation.header.title(${person.niceName})}">Urlaubsanspruch</title>
+    <th:block th:fragment="styles">
+      <link
+        rel="stylesheet"
+        type="text/css"
+        asset:href="account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css"
+      />
+      <link
+        rel="stylesheet"
+        type="text/css"
+        asset:href="account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.css"
+      />
+    </th:block>
+    <th:block th:fragment="scripts">
+      <script defer asset:src="npm.duetds.js"></script>
+      <script defer asset:src="npm.date-fns.js"></script>
+      <script
+        defer
+        asset:src="account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js"
+      ></script>
+      <script
+        defer
+        asset:src="account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.js"
+      ></script>
+      <script
+        defer
+        asset:src="account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.js"
+      ></script>
+      <script defer asset:src="account_form.js"></script>
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.uv = window.uv || {};
+        window.uv.personId = /*[[${userId}]]*/ "personId";
+        window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
+        window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
+        /*]]>*/
+      </script>
+      <script th:replace="fragments/datepicker-localization :: datepicker-localization"></script>
+      <script th:replace="fragments/vacation-type-colors-script :: vacation-type-colors-script"></script>
+    </th:block>
+  </head>
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main th:fragment="main">
+      <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
+        <div th:replace="fragments/section-heading::section-heading(~{::account-form-heading-body}, ~{})">
+          <th:block th:ref="account-form-heading-body">
+            <h1 th:text="#{person.form.annualVacation.title(${person.niceName})}"></h1>
+            <div
+              th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/person/${person.id}/account?year=|, selectedYear=${selectedYear})"
+            ></div>
+          </th:block>
+        </div>
+
+        <form
+          id="holiday-account-settings-form"
+          method="post"
+          th:action="@{/web/person/__${person.id}__/account}"
+          th:object="${account}"
+          class="form-horizontal"
+        >
+          <input type="hidden" th:field="*{holidaysAccountYear}" />
+
+          <div class="form-section">
+            <div class="row tw-mb-8" th:if="${#fields.hasErrors('*')}">
+              <div class="col-xs-12">
+                <div th:text="#{error.info.message}" class="alert alert-danger tw-text-sm"></div>
+              </div>
+            </div>
+
+            <div class="row tw-mb-16">
+              <div class="col-md-4 col-md-push-8">
+                <span class="help-block tw-text-sm">
+                  <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <span th:text="#{person.form.annualVacation.description}"></span>
+                </span>
+              </div>
+
+              <div class="col-md-8 col-md-pull-4">
+                <div class="form-group is-required">
+                  <label
+                    th:text="|#{person.form.annualVacation.period.start}:|"
+                    for="holidaysAccountValidFrom"
+                    class="control-label col-md-3 tw-leading-snug"
+                  ></label>
+                  <div class="col-md-9">
+                    <input
+                      id="holidaysAccountValidFrom"
+                      th:field="*{holidaysAccountValidFrom}"
+                      th:data-iso-value="${account.holidaysAccountValidFromIsoValue}"
+                      th:data-min="|${year}-01-01|"
+                      th:data-max="|${year}-12-31|"
+                      th:placeholder="#{pattern.date}"
+                      class="form-control"
+                      th:errorclass="error"
+                    />
+                    <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('holidaysAccountValidFrom')}">
+                      <th:block th:errors="*{holidaysAccountValidFrom}"> holidaysAccountValidFrom Error </th:block>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group is-required">
+                  <label
+                    th:text="|#{person.form.annualVacation.period.end}:|"
+                    for="holidaysAccountValidTo"
+                    class="control-label col-md-3 tw-leading-snug"
+                  ></label>
+                  <div class="col-md-9">
+                    <input
+                      id="holidaysAccountValidTo"
+                      th:field="*{holidaysAccountValidTo}"
+                      th:data-iso-value="${account.holidaysAccountValidToIsoValue}"
+                      th:data-min="|${year}-01-01|"
+                      th:data-max="|${year}-12-31|"
+                      th:placeholder="#{pattern.date}"
+                      class="form-control"
+                      th:errorclass="error"
+                    />
+                    <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('holidaysAccountValidTo')}">
+                      <th:block th:errors="*{holidaysAccountValidTo}"> holidaysAccountValidTo Error </th:block>
+                    </div>
+                  </div>
+                </div>
+
+                <fieldset class="tw-mt-8">
+                  <legend th:text="#{person.form.annualVacation.annualVacation.group.legend}">Urlaubsanspruch</legend>
+                  <div class="form-group is-required">
+                    <label
+                      th:text="|#{person.form.annualVacation.annualVacation}|"
+                      class="control-label col-md-3 tw-leading-snug"
+                      for="annualVacationDays"
+                    ></label>
+                    <div class="col-md-9">
+                      <input
+                        id="annualVacationDays"
+                        type="number"
+                        th:field="*{annualVacationDays}"
+                        class="form-control"
+                        th:errorclass="error"
+                        th:value="${account.annualVacationDays}"
+                      />
+                      <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('annualVacationDays')}">
+                        <th:block th:errors="*{annualVacationDays}"> annualVacationDays Error </th:block>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group is-required">
+                    <label
+                      th:text="|#{person.form.annualVacation.actualVacation}:|"
+                      class="control-label col-md-3 tw-leading-snug"
+                      for="actualVacationDays"
+                    ></label>
+                    <div class="col-md-9">
+                      <input
+                        id="actualVacationDays"
+                        type="number"
+                        th:field="*{actualVacationDays}"
+                        class="form-control"
+                        th:errorclass="error"
+                        step="0.5"
+                        th:value="${account.actualVacationDays}"
+                      />
+                      <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('actualVacationDays')}">
+                        <th:block th:errors="*{actualVacationDays}"> actualVacationDays Error </th:block>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <fieldset class="tw-mt-8">
+                  <legend th:text="#{person.form.annualVacation.remainingVacation}">Resturlaub</legend>
+                  <div class="form-group is-required">
+                    <label
+                      th:text="|#{person.form.annualVacation.remainingVacation}:|"
+                      class="control-label col-md-3 tw-leading-snug"
+                      for="remainingVacationDays"
+                    ></label>
+                    <div class="col-md-9">
+                      <input
+                        id="remainingVacationDays"
+                        type="number"
+                        th:field="*{remainingVacationDays}"
+                        class="form-control"
+                        th:errorclass="error"
+                        step="0.5"
+                        th:value="${account.remainingVacationDays}"
+                      />
+                      <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('remainingVacationDays')}">
+                        <th:block th:errors="*{remainingVacationDays}"> remainingVacationDays Error </th:block>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tw-mt-4 md:tw-mt-8 form-group is-required">
+                    <label
+                      class="control-label col-md-3 tw-leading-snug"
+                      th:text="|#{person.form.annualVacation.remainingVacation.expire}:|"
+                      for="expiryDate"
+                    >
+                      Verfall von Resturlaub:
+                    </label>
+                    <div class="col-md-9">
+                      <p
+                        class="account-form-remaining-vacation-expire-description tw-mb-4"
+                        th:with="
+                          settingsLink=@{/web/settings},
+                          settingsMessage=${'<a href=&quot;'+ settingsLink +'&quot;>' + #messages.msg('person.form.annualVacation.remainingVacation.expire.global-info.settings') + '</a>'},
+                          messageKey=${account.doRemainingVacationDaysExpireGlobally ? 'person.form.annualVacation.remainingVacation.expire.global-info.true' : 'person.form.annualVacation.remainingVacation.expire.global-info.false'}
+                        "
+                        th:utext="${#messages.msg(messageKey, settingsMessage)}"
+                      >
+                        Der Verfall von Resturlaub ist in den <a href="#">Einstellungen</a> <em>aktiviert</em>.
+                      </p>
+                      <div class="tw-flex tw-flex-row tw-items-start tw-gap-8">
+                        <span class="checkbox-switch tw-flex tw-items-center tw-gap-2">
+                          <input
+                            type="checkbox"
+                            id="vacation-expiration-checkbox"
+                            th:field="*{overrideVacationDaysExpire}"
+                            class="tw-m-0"
+                          />
+                          <label
+                            for="vacation-expiration-checkbox"
+                            class="tw-m-0 tw-text-base tw-font-normal"
+                            th:text="#{person.form.annualVacation.remainingVacation.expire.override.checkbox}"
+                          >
+                            Individuell
+                          </label>
+                        </span>
+                        <div class="tw-flex tw-flex-col tw-gap-2">
+                          <label class="tw-font-normal tw-text-base tw-m-0">
+                            <input
+                              type="radio"
+                              id="doRemainingVacationDaysExpire.true"
+                              name="doRemainingVacationDaysExpireLocally"
+                              value="true"
+                              data-value="true"
+                              th:checked="${true eq account.doRemainingVacationDaysExpireLocally}"
+                            />
+                            <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.true}" />
+                          </label>
+                          <label class="tw-font-normal tw-text-base tw-m-0">
+                            <input
+                              type="radio"
+                              id="doRemainingVacationDaysExpire.false"
+                              name="doRemainingVacationDaysExpireLocally"
+                              value="false"
+                              data-value="false"
+                              th:checked="${false eq account.doRemainingVacationDaysExpireLocally}"
+                            />
+                            <th:block th:text="#{person.form.annualVacation.remainingVacation.expire.false}" />
+                          </label>
+                        </div>
+                      </div>
+
+                      <div
+                        class="error tw-mt-1 tw-text-sm"
+                        th:if="${#fields.hasErrors('doRemainingVacationDaysExpireLocally')}"
+                      >
+                        <th:block th:errors="*{doRemainingVacationDaysExpireLocally}">
+                          doRemainingVacationDaysExpire Error
+                        </th:block>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <fieldset
+                  class="tw-mt-8"
+                  id="remaining-vacation-days-expire-fieldset"
+                  th:disabled="${not account.doRemainingVacationDaysExpire}"
+                  th:data-globally-enabled="${account.doRemainingVacationDaysExpireGlobally}"
+                >
+                  <legend th:text="#{person.form.annualVacation.remainingVacation.expire}">
+                    Verfall von Resturlaub
+                  </legend>
+                  <div class="form-group is-required">
+                    <label
+                      class="control-label col-md-3 tw-leading-snug"
+                      th:text="|#{person.form.annualVacation.remainingVacation.expiryDate}:|"
+                      for="expiryDate"
+                    >
+                      Resturlaubstage:
+                    </label>
+                    <div class="col-md-9">
+                      <input
+                        id="expiryDate"
+                        th:field="*{expiryDate}"
+                        th:data-iso-value="${account.expiryDateToIsoValue}"
+                        th:data-min="|${year}-01-01|"
+                        th:data-max="|${year}-12-31|"
+                        th:placeholder="#{pattern.date}"
+                        class="form-control"
+                        th:errorclass="error"
+                      />
+                      <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('expiryDate')}">
+                        <th:block th:errors="*{expiryDate}"> expiryDate Error </th:block>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group is-required">
+                    <label
+                      th:text="|#{person.form.annualVacation.remainingVacation.notExpiring}:|"
+                      class="control-label col-md-3 tw-leading-snug"
+                      for="remainingVacationDaysNotExpiring"
+                    ></label>
+                    <div class="col-md-9">
+                      <input
+                        id="remainingVacationDaysNotExpiring"
+                        type="number"
+                        th:field="*{remainingVacationDaysNotExpiring}"
+                        class="form-control"
+                        th:errorclass="error"
+                        step="0.5"
+                        th:value="${account.remainingVacationDaysNotExpiring}"
+                      />
+                      <div
+                        class="error tw-mt-1 tw-text-sm"
+                        th:if="${#fields.hasErrors('remainingVacationDaysNotExpiring')}"
+                      >
+                        <th:block th:errors="*{remainingVacationDaysNotExpiring}">
+                          remainingVacationDaysNotExpiring Error
+                        </th:block>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <div class="tw-mt-8 form-group">
+                  <label
+                    th:text="|#{person.form.annualVacation.comment}:|"
+                    class="control-label col-md-3 tw-leading-snug"
+                    for="comment"
+                  ></label>
+                  <div class="col-md-9">
+                    <small> <span id="text-comment"></span><span th:text="#{action.comment.maxChars}"></span> </small>
+                    <textarea
+                      id="comment"
+                      rows="3"
+                      th:field="*{comment}"
+                      class="form-control"
+                      th:errorclass="error"
+                      onkeyup="count(this.value, 'text-comment');"
+                      onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
+                      th:placeholder="#{person.form.annualVacation.comment.placeholder}"
+                    >
+                    </textarea>
+                    <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('comment')}">
+                      <th:block th:errors="*{comment}"> comment Error </th:block>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="row tw-mb-16">
+              <div class="col-xs-12">
+                <hr />
+                <button
+                  th:text="#{action.save}"
+                  class="button-main-green col-xs-12 col-sm-5 col-md-2"
+                  type="submit"
+                ></button>
+                <button
+                  th:text="#{action.cancel}"
+                  type="button"
+                  class="button col-xs-12 col-sm-5 col-md-2 pull-right"
+                  data-back-button
+                ></button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+  </body>
+</html>

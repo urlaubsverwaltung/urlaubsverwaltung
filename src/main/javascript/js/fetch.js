@@ -13,7 +13,20 @@ export async function getJSON(url) {
   return response.json();
 }
 
-function doGet(url, options) {
+export function post(url, options = {}) {
+  return fetch(
+    url,
+    defaults(options, {
+      method: "POST",
+      credentials: "include",
+      headers: defaults(options.headers, {
+        "X-Requested-With": "ajax",
+      }),
+    }),
+  );
+}
+
+export function doGet(url, options) {
   return fetch(
     url,
     defaults(options, {

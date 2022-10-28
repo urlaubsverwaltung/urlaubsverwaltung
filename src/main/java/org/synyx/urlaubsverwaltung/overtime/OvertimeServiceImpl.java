@@ -3,19 +3,30 @@ package org.synyx.urlaubsverwaltung.overtime;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.synyx.urlaubsverwaltung.application.service.ApplicationService;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.math.RoundingMode.HALF_EVEN;
+import static java.time.Duration.ZERO;
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static org.slf4j.LoggerFactory.getLogger;
-
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
+import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
 /**
  * @since 2.11.0
@@ -30,112 +41,138 @@ class OvertimeServiceImpl implements OvertimeService {
     private final OvertimeCommentRepository overtimeCommentRepository;
     private final ApplicationService applicationService;
     private final OvertimeMailService overtimeMailService;
+    private final SettingsService settingsService;
+    private final Clock clock;
 
     @Autowired
     public OvertimeServiceImpl(OvertimeRepository overtimeRepository, OvertimeCommentRepository overtimeCommentRepository,
-                               ApplicationService applicationService, OvertimeMailService overtimeMailService) {
-
+                               ApplicationService applicationService, OvertimeMailService overtimeMailService,
+                               SettingsService settingsService, Clock clock) {
         this.overtimeRepository = overtimeRepository;
         this.overtimeCommentRepository = overtimeCommentRepository;
         this.applicationService = applicationService;
         this.overtimeMailService = overtimeMailService;
+        this.settingsService = settingsService;
+        this.clock = clock;
     }
 
     @Override
     public List<Overtime> getOvertimeRecordsForPerson(Person person) {
-
-        Assert.notNull(person, "Person to get overtime records for must be given.");
-
         return overtimeRepository.findByPerson(person);
     }
 
-
     @Override
     public List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year) {
-
-        Assert.notNull(person, "Person to get overtime records for must be given.");
-
-        return overtimeRepository.findByPersonAndPeriod(person, DateUtil.getFirstDayOfYear(year), DateUtil.getLastDayOfYear(year));
+        return overtimeRepository.findByPersonAndStartDateBetweenOrderByStartDateDesc(person, Year.of(year).atDay(1), DateUtil.getLastDayOfYear(year));
     }
-
 
     @Override
     public Overtime record(Overtime overtime, Optional<String> comment, Person author) {
 
-        boolean isNewOvertime = overtime.isNew();
+        final boolean isNewOvertime = overtime.getId() == null;
 
         // save overtime record
         overtime.onUpdate();
-        overtimeRepository.save(overtime);
+        final Overtime savedOvertime = overtimeRepository.save(overtime);
 
         // save comment
-        OvertimeAction action = isNewOvertime ? OvertimeAction.CREATED : OvertimeAction.EDITED;
-        OvertimeComment overtimeComment = new OvertimeComment(author, overtime, action);
+        final OvertimeCommentAction action = isNewOvertime ? CREATED : EDITED;
+        final OvertimeComment overtimeComment = new OvertimeComment(author, savedOvertime, action, clock);
         comment.ifPresent(overtimeComment::setText);
+        final OvertimeComment savedOvertimeComment = overtimeCommentRepository.save(overtimeComment);
 
-        overtimeCommentRepository.save(overtimeComment);
+        overtimeMailService.sendOvertimeNotification(savedOvertime, savedOvertimeComment);
+        LOG.info("{} overtime record: {}", isNewOvertime ? "Created" : "Updated", savedOvertime);
 
-        overtimeMailService.sendOvertimeNotification(overtime, overtimeComment);
-
-        LOG.info("{} overtime record: {}", isNewOvertime ? "Created" : "Updated", overtime);
-
-        return overtime;
+        return savedOvertime;
     }
-
 
     @Override
     public Optional<Overtime> getOvertimeById(Integer id) {
-
-        Assert.notNull(id, "ID must be given.");
-
         return overtimeRepository.findById(id);
     }
 
-
     @Override
     public List<OvertimeComment> getCommentsForOvertime(Overtime overtime) {
-
-        Assert.notNull(overtime, "Overtime record to get comments for must be given.");
-
         return overtimeCommentRepository.findByOvertime(overtime);
     }
 
-
     @Override
-    public BigDecimal getTotalOvertimeForPersonAndYear(Person person, int year) {
-
-        Assert.notNull(person, "Person to get total overtime for must be given.");
-        Assert.isTrue(year > 0, "Year must be a valid number.");
-
-        List<Overtime> overtimeRecords = getOvertimeRecordsForPersonAndYear(person, year);
-
-        BigDecimal totalHours = BigDecimal.ZERO;
-
-        for (Overtime record : overtimeRecords) {
-            totalHours = totalHours.add(record.getHours());
-        }
-
-        return totalHours;
+    public Duration getTotalOvertimeForPersonAndYear(Person person, int year) {
+        return getOvertimeRecordsForPersonAndYear(person, year).stream()
+            .map(Overtime::getDuration)
+            .reduce(ZERO, Duration::plus);
     }
 
-
     @Override
-    public BigDecimal getLeftOvertimeForPerson(Person person) {
+    public Duration getTotalOvertimeForPersonBeforeYear(Person person, int year) {
+        final LocalDate firstDayOfYear = Year.of(year).atDay(1);
+        final Duration totalOvertimeReductionBeforeYear = applicationService.getTotalOvertimeReductionOfPersonBefore(person, firstDayOfYear);
+        final Duration totalOvertimeBeforeYear = overtimeRepository.findByPersonAndStartDateIsBefore(person, firstDayOfYear).stream()
+            .map(Overtime::getDuration)
+            .reduce(ZERO, Duration::plus);
 
-        Assert.notNull(person, "Person to get left overtime for must be given.");
-
-        BigDecimal totalOvertime = getTotalOvertimeForPerson(person);
-        BigDecimal overtimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
-
-        return totalOvertime.subtract(overtimeReduction);
+        return totalOvertimeBeforeYear.minus(totalOvertimeReductionBeforeYear);
     }
 
+    @Override
+    public Duration getLeftOvertimeForPerson(Person person) {
+        final Duration totalOvertime = getTotalOvertimeForPerson(person);
+        final Duration overtimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
 
-    private BigDecimal getTotalOvertimeForPerson(Person person) {
+        return totalOvertime.minus(overtimeReduction);
+    }
 
-        Optional<BigDecimal> totalOvertime = Optional.ofNullable(overtimeRepository.calculateTotalHoursForPerson(person));
+    @Override
+    public Duration getLeftOvertimeForPerson(Person person, LocalDate start, LocalDate end) {
 
-        return totalOvertime.orElse(BigDecimal.ZERO);
+        final DateRange dateRangeOfPeriod = new DateRange(start, end);
 
+        final Duration overtimeForPeriod = overtimeRepository.findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, start, end).stream()
+            .map(overtime -> {
+                final DateRange overtimeDateRange = new DateRange(overtime.getStartDate(), overtime.getEndDate());
+                final Duration durationOfOverlap = dateRangeOfPeriod.overlap(overtimeDateRange).map(DateRange::duration).orElse(ZERO);
+                return toFormattedDecimal(overtime.getDuration())
+                    .divide(toFormattedDecimal(overtimeDateRange.duration()), HALF_EVEN)
+                    .multiply(toFormattedDecimal(durationOfOverlap)).setScale(0, HALF_EVEN);
+            })
+            .map(DecimalConverter::toDuration)
+            .reduce(ZERO, Duration::plus);
+
+        final Duration overtimeReductionForPeriod = applicationService.getTotalOvertimeReductionOfPerson(person, start, end);
+
+        final Duration totalOvertimeBeforeYear = getTotalOvertimeForPersonBeforeYear(person, start.getYear());
+        return totalOvertimeBeforeYear.plus(overtimeForPeriod).minus(overtimeReductionForPeriod);
+    }
+
+    /**
+     * Is signedInUser person allowed to write (edit or update) the overtime record of personOfOvertime.
+     * <pre>
+     *  |                        | others | own   |  others | own  |
+     *  |------------------------|--------|-------|---------|------|
+     *  | PrivilegedOnly         | true   |       |  false  |      |
+     *  | OFFICE                 | true   | true  |  true   | true |
+     *  | BOSS                   | false  | true  |  false  | true |
+     *  | SECOND_STAGE_AUTHORITY | false  | true  |  false  | true |
+     *  | DEPARTMENT_HEAD        | false  | true  |  false  | true |
+     *  | USER                   | false  | false |  false  | true |
+     * </pre>
+     *
+     * @param signedInUser     person which writes overtime record
+     * @param personOfOvertime person which the overtime record belongs to
+     * @return @code{true} if allowed, otherwise @code{false}
+     */
+    @Override
+    public boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime) {
+        final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
+        return signedInUser.hasRole(OFFICE)
+            || signedInUser.equals(personOfOvertime) && (!overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged());
+    }
+
+    private Duration getTotalOvertimeForPerson(Person person) {
+        return overtimeRepository.calculateTotalHoursForPerson(person)
+            .map(totalHours -> Math.round(totalHours * 60))
+            .map(totalMinutes -> Duration.of(totalMinutes, MINUTES))
+            .orElse(ZERO);
     }
 }

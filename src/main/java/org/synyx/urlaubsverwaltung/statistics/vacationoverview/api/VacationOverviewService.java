@@ -7,19 +7,22 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.api.PersonMapper;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.settings.FederalState;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfMonth.TypeOfDay.WEEKEND;
 import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfMonth.TypeOfDay.WORKDAY;
+import static org.synyx.urlaubsverwaltung.util.DateUtil.isWorkDay;
 
 /**
  * @deprecated This service purpose was to provide information for the client side rendered vacation overview which is obsolete now.
@@ -28,19 +31,22 @@ import static org.synyx.urlaubsverwaltung.statistics.vacationoverview.api.DayOfM
 @Deprecated(since = "4.0.0", forRemoval = true)
 public class VacationOverviewService {
 
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+
     private final DepartmentService departmentService;
     private final WorkingTimeService workingTimeService;
     private final PublicHolidaysService publicHolidayService;
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private final Clock clock;
 
     @Autowired
     public VacationOverviewService(DepartmentService departmentService,
                                    WorkingTimeService workingTimeService,
-                                   PublicHolidaysService publicHolidayService) {
+                                   PublicHolidaysService publicHolidayService, Clock clock) {
 
         this.departmentService = departmentService;
         this.workingTimeService = workingTimeService;
         this.publicHolidayService = publicHolidayService;
+        this.clock = clock;
     }
 
     public List<VacationOverviewDto> getVacationOverviews(String selectedDepartment,
@@ -54,10 +60,10 @@ public class VacationOverviewService {
 
             for (Person person : department.getMembers()) {
 
-                LocalDate date = LocalDate.now(UTC);
+                LocalDate date = LocalDate.now(clock);
                 int year = selectedYear != null ? selectedYear : date.getYear();
                 int month = selectedMonth != null ? selectedMonth : date.getMonthValue();
-                LocalDate lastDay = DateUtil.getLastDayOfMonth(year, month);
+                LocalDate lastDay = YearMonth.of(year, month).atEndOfMonth();
 
                 VacationOverviewDto holidayOverview = getVacationOverview(person);
 
@@ -80,10 +86,9 @@ public class VacationOverviewService {
     private DayOfMonth.TypeOfDay getTypeOfDay(Person person, LocalDate currentDay) {
         DayOfMonth.TypeOfDay typeOfDay;
 
-        FederalState state = workingTimeService.getFederalStateForPerson(person, currentDay);
-        if (DateUtil.isWorkDay(currentDay)
-            && (publicHolidayService.getWorkingDurationOfDate(currentDay, state).longValue() > 0)) {
-
+        final FederalState state = workingTimeService.getFederalStateForPerson(person, currentDay);
+        final Optional<PublicHoliday> maybePublicHoliday = publicHolidayService.getPublicHoliday(currentDay, state);
+        if (isWorkDay(currentDay) && (maybePublicHoliday.isPresent() && maybePublicHoliday.get().getWorkingDuration().longValue() > 0)) {
             typeOfDay = WORKDAY;
         } else {
             typeOfDay = WEEKEND;

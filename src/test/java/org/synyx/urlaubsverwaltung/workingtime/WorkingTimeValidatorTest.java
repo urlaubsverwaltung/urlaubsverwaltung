@@ -3,16 +3,14 @@ package org.synyx.urlaubsverwaltung.workingtime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.Errors;
-import org.synyx.urlaubsverwaltung.application.domain.Application;
-import org.synyx.urlaubsverwaltung.settings.FederalState;
+import org.synyx.urlaubsverwaltung.application.application.Application;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 
 import static java.time.ZoneOffset.UTC;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -32,7 +30,7 @@ class WorkingTimeValidatorTest {
         errors = mock(Errors.class);
 
         form = new WorkingTimeForm();
-        form.setFederalState(FederalState.BAYERN);
+        form.setFederalState(FederalState.GERMANY_BAYERN);
         form.setValidFrom(LocalDate.now(UTC));
         form.setWorkingDays(Arrays.asList(1, 2, 3, 4, 5));
     }
@@ -45,13 +43,13 @@ class WorkingTimeValidatorTest {
         boolean returnValue;
 
         returnValue = validator.supports(null);
-        assertFalse(returnValue);
+        assertThat(returnValue).isFalse();
 
         returnValue = validator.supports(Application.class);
-        assertFalse(returnValue);
+        assertThat(returnValue).isFalse();
 
         returnValue = validator.supports(WorkingTimeForm.class);
-        assertTrue(returnValue);
+        assertThat(returnValue).isTrue();
     }
 
 

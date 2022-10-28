@@ -41,10 +41,10 @@
     </div>
 
     <div class="form-group is-sticky row">
-        <button type="submit" class="btn btn-danger col-xs-12 col-sm-5">
+        <button type="submit" class="button-danger col-xs-12 col-sm-5">
             <spring:message code='action.reject'/>
         </button>
-        <button type="button" class="btn btn-default col-xs-12 col-sm-5 pull-right" onclick="$('#reject').hide();">
+        <button type="button" class="button col-xs-12 col-sm-5 pull-right" onclick="$('#reject').hide();">
             <spring:message code="action.cancel"/>
         </button>
     </div>

@@ -1,9 +1,8 @@
 package org.synyx.urlaubsverwaltung.publicholiday;
 
-import de.jollyday.Holiday;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -14,32 +13,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_FIRST_DAY_OF_YEAR;
-import static org.synyx.urlaubsverwaltung.api.SwaggerConfig.EXAMPLE_LAST_DAY_OF_YEAR;
+import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @RestControllerAdviceMarker
-@Api("Public Holidays: Get information about public holidays")
+@Tag(name = "public holidays", description = "Public Holidays: Get information about public holidays")
 @RestController
 @RequestMapping("/api")
 public class PublicHolidayApiController {
-
-    public static final String PUBLIC_HOLIDAYS = "public-holidays";
 
     private final PublicHolidaysService publicHolidaysService;
     private final PersonService personService;
@@ -56,18 +52,19 @@ public class PublicHolidayApiController {
         this.settingsService = settingsService;
     }
 
-    @ApiOperation(
-        value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period. "
-        + "Information only reachable for users with role office."
+    @Operation(
+        summary = "Get all public holidays for a certain period",
+        description = "Get all public holidays for a certain period. "
+            + "Information only reachable for users with role office."
     )
-    @GetMapping(PUBLIC_HOLIDAYS)
+    @GetMapping("public-holidays")
     @PreAuthorize(IS_OFFICE)
     public PublicHolidaysDto getPublicHolidays(
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
+        @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate startDate,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
+        @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate endDate) {
@@ -80,23 +77,24 @@ public class PublicHolidayApiController {
         return new PublicHolidaysDto(publicHolidays);
     }
 
-    @ApiOperation(
-        value = "Get all public holidays for a certain period", notes = "Get all public holidays for a certain period. "
+    @Operation(
+        summary = "Get all public holidays for a certain period", description = "Get all public holidays for a certain period. "
         + "Information only reachable for users with role office and for own public holidays."
     )
-    @GetMapping("/persons/{personId}/" + PUBLIC_HOLIDAYS)
-    @PreAuthorize(IS_OFFICE +
+    @GetMapping("/persons/{personId}/public-holidays")
+    @PreAuthorize(IS_BOSS_OR_OFFICE +
         " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
-        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)")
+        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+        " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public PublicHolidaysDto personsPublicHolidays(
-        @ApiParam(value = "ID of the person to get the public holidays for.")
+        @Parameter(description = "ID of the person to get the public holidays for.")
         @PathVariable("personId")
             Integer personId,
-        @ApiParam(value = "Start date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_FIRST_DAY_OF_YEAR)
+        @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate startDate,
-        @ApiParam(value = "End date with pattern yyyy-MM-dd", defaultValue = EXAMPLE_LAST_DAY_OF_YEAR)
+        @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
             LocalDate endDate) {
@@ -109,15 +107,21 @@ public class PublicHolidayApiController {
         }
 
         final Person person = optionalPerson.get();
-        final FederalState federalState = workingTimeService.getFederalStateForPerson(person, startDate);
+        final DateRange dateRange = new DateRange(startDate, endDate);
 
-        final List<PublicHolidayDto> publicHolidays = getPublicHolidays(startDate, endDate, federalState);
+        final List<PublicHolidayDto> publicHolidays = workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
+            .entrySet().stream()
+            .map(entry -> getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
+            .flatMap(List::stream)
+            .sorted(Comparator.comparing(PublicHolidayDto::getDate))
+            .collect(toList());
+
         return new PublicHolidaysDto(publicHolidays);
     }
 
     private List<PublicHolidayDto> getPublicHolidays(LocalDate startDate, LocalDate endDate, FederalState federalState) {
-        return publicHolidaysService.getHolidays(startDate, endDate, federalState).stream()
-            .map(holiday -> this.mapPublicHolidayToDto(holiday, federalState))
+        return publicHolidaysService.getPublicHolidays(startDate, endDate, federalState).stream()
+            .map(this::mapPublicHolidayToDto)
             .collect(toList());
     }
 
@@ -127,9 +131,7 @@ public class PublicHolidayApiController {
         }
     }
 
-    private PublicHolidayDto mapPublicHolidayToDto(Holiday holiday, FederalState federalState) {
-        final BigDecimal workingDuration = publicHolidaysService.getWorkingDurationOfDate(holiday.getDate(), federalState);
-        final DayLength absenceType = publicHolidaysService.getAbsenceTypeOfDate(holiday.getDate(), federalState);
-        return new PublicHolidayDto(holiday, workingDuration, absenceType.name());
+    private PublicHolidayDto mapPublicHolidayToDto(PublicHoliday publicHoliday) {
+        return new PublicHolidayDto(publicHoliday, publicHoliday.getDayLength().getDuration(), publicHoliday.getDayLength().name());
     }
 }

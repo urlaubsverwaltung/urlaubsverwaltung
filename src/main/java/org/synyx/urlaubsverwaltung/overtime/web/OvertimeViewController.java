@@ -14,26 +14,41 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.application.application.Application;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
-import org.synyx.urlaubsverwaltung.overtime.OvertimeAction;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
+import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
-import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
+import static java.lang.String.format;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListMapper.mapToDto;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-
 
 /**
  * Manage overtime of persons.
@@ -43,39 +58,44 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 public class OvertimeViewController {
 
     private static final String PERSON_ATTRIBUTE = "person";
-    private static final String OVERTIME = "overtime";
-    private static final String OVERTIME_OVERTIME_FORM = "overtime/overtime_form";
+    private static final String SIGNED_IN_USER = "signedInUser";
+    private static final String OVERTIME_OVERTIME_FORM = "thymeleaf/overtime/overtime_form";
 
     private final OvertimeService overtimeService;
     private final PersonService personService;
     private final OvertimeFormValidator validator;
     private final DepartmentService departmentService;
+    private final ApplicationService applicationService;
+    private final VacationTypeViewModelService vacationTypeViewModelService;
+    private final SettingsService settingsService;
+    private final Clock clock;
 
     @Autowired
     public OvertimeViewController(OvertimeService overtimeService, PersonService personService,
-                                  OvertimeFormValidator validator, DepartmentService departmentService) {
+                                  OvertimeFormValidator validator, DepartmentService departmentService,
+                                  ApplicationService applicationService, VacationTypeViewModelService vacationTypeViewModelService,
+                                  SettingsService settingsService, Clock clock) {
         this.overtimeService = overtimeService;
         this.personService = personService;
         this.validator = validator;
         this.departmentService = departmentService;
+        this.applicationService = applicationService;
+        this.vacationTypeViewModelService = vacationTypeViewModelService;
+        this.settingsService = settingsService;
+        this.clock = clock;
     }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
-
-        binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
     }
 
-
     @GetMapping("/overtime")
     public String showPersonalOvertime() {
-
         final Person signedInUser = personService.getSignedInUser();
         return "redirect:/web/overtime?person=" + signedInUser.getId();
     }
-
 
     @GetMapping(value = "/overtime", params = PERSON_ATTRIBUTE)
     public String showOvertime(
@@ -83,25 +103,42 @@ public class OvertimeViewController {
         @RequestParam(value = "year", required = false) Integer requestedYear, Model model)
         throws UnknownPersonException {
 
-        final int year = requestedYear == null ? ZonedDateTime.now(UTC).getYear() : requestedYear;
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(String.format(
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to see overtime records of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
 
-        model.addAttribute("year", year);
+        final int currentYear = Year.now(clock).getValue();
+        final int selectedYear = requestedYear != null ? requestedYear : currentYear;
+        model.addAttribute("currentYear", Year.now(clock).getValue());
+        model.addAttribute("selectedYear", selectedYear);
+
         model.addAttribute(PERSON_ATTRIBUTE, person);
-        model.addAttribute("records", overtimeService.getOvertimeRecordsForPersonAndYear(person, year));
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, year));
-        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
+        model.addAttribute(SIGNED_IN_USER, signedInUser);
 
-        return "overtime/overtime_list";
+        final boolean userIsAllowedToWriteOvertime = overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person);
+
+        final OvertimeListDto overtimeListDto = mapToDto(
+            getOvertimeAbsences(selectedYear, person),
+            overtimeService.getOvertimeRecordsForPersonAndYear(person, selectedYear),
+            overtimeService.getTotalOvertimeForPersonAndYear(person, selectedYear),
+            overtimeService.getTotalOvertimeForPersonBeforeYear(person, selectedYear),
+            overtimeService.getLeftOvertimeForPerson(person),
+            signedInUser,
+            userIsAllowedToWriteOvertime);
+
+        model.addAttribute("records", overtimeListDto.getRecords());
+        model.addAttribute("overtimeTotal", overtimeListDto.getOvertimeTotal());
+        model.addAttribute("overtimeTotalLastYear", overtimeListDto.getOvertimeTotalLastYear());
+        model.addAttribute("overtimeLeft", overtimeListDto.getOvertimeLeft());
+        model.addAttribute("userIsAllowedToWriteOvertime", userIsAllowedToWriteOvertime);
+
+        return "thymeleaf/overtime/overtime_list";
     }
-
 
     @GetMapping("/overtime/{id}")
     public String showOvertimeDetails(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException {
@@ -111,19 +148,27 @@ public class OvertimeViewController {
         final Person signedInUser = personService.getSignedInUser();
 
         if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(String.format(
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to see overtime records of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
 
-        model.addAttribute("record", overtime);
-        model.addAttribute("comments", overtimeService.getCommentsForOvertime(overtime));
-        model.addAttribute("overtimeTotal", overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()));
-        model.addAttribute("overtimeLeft", overtimeService.getLeftOvertimeForPerson(person));
+        model.addAttribute(SIGNED_IN_USER, signedInUser);
 
-        return "overtime/overtime_details";
+        final OvertimeDetailsDto overtimeDetailsDto = OvertimeDetailsMapper.mapToDto(
+            overtime,
+            overtimeService.getCommentsForOvertime(overtime),
+            overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()),
+            overtimeService.getLeftOvertimeForPerson(person));
+
+        model.addAttribute("record", overtimeDetailsDto.getRecord());
+        model.addAttribute("comments", overtimeDetailsDto.getComments());
+        model.addAttribute("overtimeTotal", overtimeDetailsDto.getOvertimeTotal());
+        model.addAttribute("overtimeLeft", overtimeDetailsDto.getOvertimeLeft());
+        model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
+
+        return "thymeleaf/overtime/overtime_details";
     }
-
 
     @GetMapping("/overtime/new")
     public String recordOvertime(
@@ -139,36 +184,34 @@ public class OvertimeViewController {
             person = signedInUser;
         }
 
-        if (!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) {
-            throw new AccessDeniedException(String.format(
+        if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to record overtime for user '%s'",
                 signedInUser.getId(), person.getId()));
         }
 
-        model.addAttribute(OVERTIME, new OvertimeForm(person));
-        model.addAttribute(PERSON_ATTRIBUTE, person);
+        final OvertimeForm overtimeForm = new OvertimeForm(person);
+        prepareModelForCreation(model, signedInUser, person, overtimeForm);
 
         return OVERTIME_OVERTIME_FORM;
     }
 
-
     @PostMapping("/overtime")
-    public String recordOvertime(@ModelAttribute(OVERTIME) OvertimeForm overtimeForm, Errors errors, Model model,
-                                 RedirectAttributes redirectAttributes) {
+    public String recordOvertime(@Valid @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors,
+                                 Model model, RedirectAttributes redirectAttributes) {
 
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtimeForm.getPerson();
 
-        if (!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) {
-            throw new AccessDeniedException(String.format(
+        if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to record overtime for user '%s'",
                 signedInUser.getId(), person.getId()));
         }
 
         validator.validate(overtimeForm, errors);
-
         if (errors.hasErrors()) {
-            model.addAttribute(OVERTIME, overtimeForm);
+            prepareModelForCreation(model, signedInUser, person, overtimeForm);
             return OVERTIME_OVERTIME_FORM;
         }
 
@@ -176,10 +219,9 @@ public class OvertimeViewController {
         final Optional<String> overtimeFormComment = Optional.ofNullable(overtimeForm.getComment());
         final Overtime recordedOvertime = overtimeService.record(overtime, overtimeFormComment, signedInUser);
 
-        redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeAction.CREATED.name());
+        redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeCommentAction.CREATED.name());
         return "redirect:/web/overtime/" + recordedOvertime.getId();
     }
-
 
     @GetMapping("/overtime/{id}/edit")
     public String editOvertime(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException {
@@ -188,45 +230,72 @@ public class OvertimeViewController {
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtime.getPerson();
 
-        if (!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) {
-            throw new AccessDeniedException(String.format(
+        if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to edit overtime record of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
 
-        model.addAttribute(OVERTIME, new OvertimeForm(overtime));
-        model.addAttribute(PERSON_ATTRIBUTE, person);
+        prepareModelForEdit(model, signedInUser, person, new OvertimeForm(overtime));
 
         return OVERTIME_OVERTIME_FORM;
     }
 
-
     @PostMapping("/overtime/{id}")
     public String updateOvertime(@PathVariable("id") Integer id,
-                                 @ModelAttribute(OVERTIME) OvertimeForm overtimeForm, Errors errors, Model model,
-                                 RedirectAttributes redirectAttributes) throws UnknownOvertimeException {
+                                 @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors,
+                                 Model model, RedirectAttributes redirectAttributes) throws UnknownOvertimeException {
 
         final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
         final Person signedInUser = personService.getSignedInUser();
         final Person person = overtime.getPerson();
 
-        if (!signedInUser.equals(person) && !signedInUser.hasRole(OFFICE)) {
-            throw new AccessDeniedException(String.format(
+        if (!overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person)) {
+            throw new AccessDeniedException(format(
                 "User '%s' has not the correct permissions to edit overtime record of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
 
         validator.validate(overtimeForm, errors);
-
         if (errors.hasErrors()) {
-            model.addAttribute(OVERTIME, overtimeForm);
+            prepareModelForEdit(model, signedInUser, person, overtimeForm);
             return OVERTIME_OVERTIME_FORM;
         }
 
         overtimeForm.updateOvertime(overtime);
         overtimeService.record(overtime, Optional.ofNullable(overtimeForm.getComment()), signedInUser);
 
-        redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeAction.EDITED.name());
+        redirectAttributes.addFlashAttribute("overtimeRecord", OvertimeCommentAction.EDITED.name());
         return "redirect:/web/overtime/" + id;
+    }
+
+    private void prepareModelForCreation(Model model, Person signedInUser, Person person, OvertimeForm overtimeForm) {
+        if (signedInUser.hasRole(OFFICE)) {
+            final List<Person> persons = personService.getActivePersons();
+            model.addAttribute("persons", persons);
+        }
+
+        prepareModelForEdit(model, signedInUser, person, overtimeForm);
+    }
+
+    private void prepareModelForEdit(Model model, Person signedInUser, Person person, OvertimeForm overtimeForm) {
+        model.addAttribute("overtime", overtimeForm);
+        model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute(SIGNED_IN_USER, signedInUser);
+        model.addAttribute("canAddOvertimeForAnotherUser", signedInUser.hasRole(OFFICE));
+
+        final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
+        model.addAttribute("overtimeReductionPossible", overtimeSettings.isOvertimeReductionWithoutApplicationActive());
+
+        final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
+        model.addAttribute("vacationTypeColors", vacationTypeColors);
+    }
+
+    private List<Application> getOvertimeAbsences(int year, Person person) {
+        final LocalDate firstDayOfYear = Year.of(year).atDay(1);
+        final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
+
+        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        return applicationService.getApplicationsStartingInACertainPeriodAndPersonAndVacationCategory(firstDayOfYear, lastDayOfYear, person, statuses, VacationCategory.OVERTIME);
     }
 }

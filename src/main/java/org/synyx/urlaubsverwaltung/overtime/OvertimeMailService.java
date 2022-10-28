@@ -22,6 +22,8 @@ class OvertimeMailService {
 
         final Map<String, Object> model = new HashMap<>();
         model.put("overtime", overtime);
+        model.put("overtimeDurationHours", overtime.getDuration().toHours() + " Std.");
+        model.put("overtimeDurationMinutes", overtime.getDuration().toMinutesPart() + " Min.");
         model.put("comment", overtimeComment);
 
         final Mail toOffice = Mail.builder()

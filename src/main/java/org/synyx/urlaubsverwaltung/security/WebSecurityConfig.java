@@ -9,7 +9,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import static org.springframework.http.HttpMethod.GET;
 
@@ -23,19 +25,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String USER = "USER";
     private static final String ADMIN = "ADMIN";
 
+    private final PersonService personService;
+    private final SessionService sessionService;
     private final boolean isOauth2Enabled;
-    private SecurityContextLogoutHandler oidcLogoutHandler;
 
-    public WebSecurityConfig(SecurityConfigurationProperties properties) {
+    private OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler;
+
+    public WebSecurityConfig(SecurityConfigurationProperties properties, PersonService personService, SessionService sessionService) {
         isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
+        this.personService = personService;
+        this.sessionService = sessionService;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http
-            .csrf()
-            .disable()
             .authorizeRequests()
             .antMatchers("/favicons/**").permitAll()
             .antMatchers("/browserconfig.xml").permitAll()
@@ -49,14 +54,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(GET, "/web/company/persons/*/calendar").permitAll()
             .antMatchers(GET, "/web/departments/*/persons/*/calendar").permitAll()
             .antMatchers(GET, "/web/persons/*/calendar").permitAll()
-            .antMatchers("/web/overview").hasAuthority(USER)
+            .antMatchers("/web/absences/**").hasAuthority(USER)
             .antMatchers("/web/application/**").hasAuthority(USER)
-            .antMatchers("/web/sicknote/**").hasAuthority(USER)
-            .antMatchers("/web/person/**").hasAuthority(USER)
-            .antMatchers("/web/overtime/**").hasAuthority(USER)
             .antMatchers("/web/department/**").hasAnyAuthority(BOSS, OFFICE)
-            .antMatchers("/web/settings/**").hasAuthority(OFFICE)
             .antMatchers("/web/google-api-handshake/**").hasAuthority(OFFICE)
+            .antMatchers("/web/overview").hasAuthority(USER)
+            .antMatchers("/web/overtime/**").hasAuthority(USER)
+            .antMatchers("/web/person/**").hasAuthority(USER)
+            .antMatchers("/web/sicknote/**").hasAuthority(USER)
+            .antMatchers("/web/settings/**").hasAuthority(OFFICE)
             .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
             .requestMatchers(EndpointRequest.to(PrometheusScrapeEndpoint.class)).permitAll()
             // TODO muss konfigurierbar werden!
@@ -67,7 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         if (isOauth2Enabled) {
             http.oauth2Login().and()
                 .logout()
-                .addLogoutHandler(oidcLogoutHandler);
+                .logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler);
         } else {
             http.formLogin()
                 .loginPage("/login").permitAll()
@@ -78,10 +84,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login");
         }
+
+        http
+            .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService), BasicAuthenticationFilter.class);
     }
 
     @Autowired(required = false)
-    public void setOidcLogoutHandler(SecurityContextLogoutHandler oidcLogoutHandler) {
-        this.oidcLogoutHandler = oidcLogoutHandler;
+    public void setOidcClientInitiatedLogoutSuccessHandler(OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler) {
+        this.oidcClientInitiatedLogoutSuccessHandler = oidcClientInitiatedLogoutSuccessHandler;
     }
 }

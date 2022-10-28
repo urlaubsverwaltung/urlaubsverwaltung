@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated(forRemoval = true, since = "4.4.0")
 @Service
 class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
 
@@ -65,15 +66,12 @@ class FreeTimeAbsenceProvider extends AbstractTimedAbsenceProvider {
 
     private DayLength getExpectedWorkTimeFor(Person person, LocalDate currentDay) {
 
-        Optional<WorkingTime> workingTimeOrNot = workingTimeService.getByPersonAndValidityDateEqualsOrMinorDate(person,
-            currentDay);
-
-        if (workingTimeOrNot.isEmpty()) {
+        final Optional<WorkingTime> maybeWorkingTime = workingTimeService.getWorkingTime(person, currentDay);
+        if (maybeWorkingTime.isEmpty()) {
             throw new FreeTimeAbsenceException("Person " + person + " does not have workingTime configured");
         }
 
-        WorkingTime workingTime = workingTimeOrNot.get();
-
-        return workingTime.getDayLengthForWeekDay(currentDay.getDayOfWeek().getValue());
+        final WorkingTime workingTime = maybeWorkingTime.get();
+        return workingTime.getDayLengthForWeekDay(currentDay.getDayOfWeek());
     }
 }

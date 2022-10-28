@@ -1,40 +1,72 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
+import org.synyx.urlaubsverwaltung.absence.TimeSettings;
+import org.synyx.urlaubsverwaltung.account.AccountSettings;
+import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
+import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
+import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.util.Objects;
 
 
 /**
  * Represents the settings / business rules for the application.
  */
 @Entity
-public class Settings extends AbstractPersistable<Integer> {
+public class Settings {
 
-    private AbsenceSettings absenceSettings;
+    @Id
+    @GeneratedValue
+    private Integer id;
+
+    private ApplicationSettings applicationSettings;
+    private AccountSettings accountSettings;
     private WorkingTimeSettings workingTimeSettings;
+    private OvertimeSettings overtimeSettings;
+    private TimeSettings timeSettings;
+    private SickNoteSettings sickNoteSettings;
 
     @Deprecated(since = "4.0.0", forRemoval = true)
     private CalendarSettings calendarSettings;
 
-    public AbsenceSettings getAbsenceSettings() {
+    public Integer getId() {
+        return id;
+    }
 
-        if (absenceSettings == null) {
-            absenceSettings = new AbsenceSettings();
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public ApplicationSettings getApplicationSettings() {
+        if (applicationSettings == null) {
+            applicationSettings = new ApplicationSettings();
         }
 
-        return absenceSettings;
+        return applicationSettings;
     }
 
-
-    public void setAbsenceSettings(AbsenceSettings absenceSettings) {
-
-        this.absenceSettings = absenceSettings;
+    public void setApplicationSettings(ApplicationSettings applicationSettings) {
+        this.applicationSettings = applicationSettings;
     }
 
+    public AccountSettings getAccountSettings() {
+        if (accountSettings == null) {
+            accountSettings = new AccountSettings();
+        }
+
+        return accountSettings;
+    }
+
+    public void setAccountSettings(AccountSettings accountSettings) {
+        this.accountSettings = accountSettings;
+    }
 
     public WorkingTimeSettings getWorkingTimeSettings() {
-
         if (workingTimeSettings == null) {
             workingTimeSettings = new WorkingTimeSettings();
         }
@@ -42,12 +74,21 @@ public class Settings extends AbstractPersistable<Integer> {
         return workingTimeSettings;
     }
 
-
     public void setWorkingTimeSettings(WorkingTimeSettings workingTimeSettings) {
-
         this.workingTimeSettings = workingTimeSettings;
     }
 
+    public OvertimeSettings getOvertimeSettings() {
+        if (overtimeSettings == null) {
+            overtimeSettings = new OvertimeSettings();
+        }
+
+        return overtimeSettings;
+    }
+
+    public void setOvertimeSettings(OvertimeSettings overtimeSettings) {
+        this.overtimeSettings = overtimeSettings;
+    }
 
     public CalendarSettings getCalendarSettings() {
 
@@ -58,17 +99,52 @@ public class Settings extends AbstractPersistable<Integer> {
         return calendarSettings;
     }
 
-
     @Deprecated(since = "4.0.0", forRemoval = true)
     public void setCalendarSettings(CalendarSettings calendarSettings) {
 
         this.calendarSettings = calendarSettings;
     }
 
+    public TimeSettings getTimeSettings() {
+
+        if (timeSettings == null) {
+            timeSettings = new TimeSettings();
+        }
+
+        return timeSettings;
+    }
+
+    public void setTimeSettings(TimeSettings timeSettings) {
+        this.timeSettings = timeSettings;
+    }
+
+    public SickNoteSettings getSickNoteSettings() {
+
+        if (sickNoteSettings == null) {
+            sickNoteSettings = new SickNoteSettings();
+        }
+
+        return sickNoteSettings;
+    }
+
+    public void setSickNoteSettings(SickNoteSettings sickNoteSettings) {
+        this.sickNoteSettings = sickNoteSettings;
+    }
 
     @Override
-    public void setId(Integer id) { // NOSONAR - make it public instead of protected
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Settings that = (Settings) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
 
-        super.setId(id);
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 /**
  * Represents the availability for a person on a given day. Also contains the reason for being absent.
  */
+@Deprecated(forRemoval = true, since = "4.4.0")
 class DayAvailability {
 
     private final String date;

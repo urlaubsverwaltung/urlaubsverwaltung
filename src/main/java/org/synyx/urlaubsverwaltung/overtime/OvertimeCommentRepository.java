@@ -4,7 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-
 /**
  * Allows access to overtime comments.
  *

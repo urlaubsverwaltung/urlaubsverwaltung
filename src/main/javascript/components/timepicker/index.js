@@ -1,2 +1,2 @@
 import "timepicker";
-import "timepicker/dist/jquery.timepicker.css";
+import "timepicker/jquery.timepicker.css";

@@ -6,9 +6,9 @@ import org.synyx.urlaubsverwaltung.person.api.PersonMapper;
 import org.synyx.urlaubsverwaltung.person.api.PersonsDto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.api.RestApiDateFormat.DATE_PATTERN;
 
 class DepartmentDto {
@@ -28,14 +28,14 @@ class DepartmentDto {
         List<PersonDto> membersResponses = department.getMembers()
             .stream()
             .map(PersonMapper::mapToDto)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         this.members = new PersonsDto(membersResponses);
 
         List<PersonDto> departmentHeadsResponses = department.getDepartmentHeads()
             .stream()
             .map(PersonMapper::mapToDto)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         this.departmentHeads = new PersonsDto(departmentHeadsResponses);
     }

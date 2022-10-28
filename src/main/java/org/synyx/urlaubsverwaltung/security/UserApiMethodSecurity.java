@@ -5,15 +5,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @Component
 public class UserApiMethodSecurity {
@@ -25,6 +24,21 @@ public class UserApiMethodSecurity {
     public UserApiMethodSecurity(PersonService personService, DepartmentService departmentService) {
         this.personService = personService;
         this.departmentService = departmentService;
+    }
+
+    public boolean isInDepartmentOfSecondStageAuthority(Authentication authentication, Integer userId) {
+        final Optional<Person> loggedInUser = personService.getPersonByUsername(userName(authentication));
+
+        if (loggedInUser.isEmpty() || !loggedInUser.get().hasRole(SECOND_STAGE_AUTHORITY)) {
+            return false;
+        }
+
+        final Optional<Person> person = personService.getPersonByID(userId);
+        if (person.isEmpty()) {
+            return false;
+        }
+
+        return departmentService.isSecondStageAuthorityAllowedToManagePerson(loggedInUser.get(), person.get());
     }
 
     public boolean isInDepartmentOfDepartmentHead(Authentication authentication, Integer userId) {
@@ -39,8 +53,7 @@ public class UserApiMethodSecurity {
             return false;
         }
 
-        final List<Department> departmentsOfDepartmentHead = departmentService.getManagedDepartmentsOfDepartmentHead(loggedInUser.get());
-        return departmentsOfDepartmentHead.stream().anyMatch(d -> d.getMembers().contains(person.get()));
+        return departmentService.isDepartmentHeadAllowedToManagePerson(loggedInUser.get(), person.get());
     }
 
     public boolean isSamePersonId(Authentication authentication, Integer userId) {

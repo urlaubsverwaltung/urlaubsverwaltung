@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 /**
  * @author Florian Krupicka - krupicka@synyx.de
@@ -37,9 +38,27 @@ public class OidcSecurityProperties {
      * <p>e.g. for <i>keycloak</i> this would be
      * <pre>'https://$provider/auth/realms/$realm/protocol/openid-connect/logout'</pre>
      * </p>
+     *
+     * @deprecated
      */
     @NotEmpty
+    @Deprecated(forRemoval = true, since = "4.49.0")
     private String logoutUri;
+
+    /**
+     * OIDC client scopes to receive family name, given name and email in the OIDC access token.
+     */
+    @NotEmpty
+    private List<String> scopes = List.of("openid", "profile", "email");
+
+    /**
+     * OIDC post logout redirect uri.
+     * <p>
+     * Redirects the user to the given url after logout.
+     * Default is the base url of the request.
+     */
+    @NotEmpty
+    private String postLogoutRedirectUri = "{baseUrl}";
 
     public String getIssuerUri() {
         return issuerUri;
@@ -71,5 +90,21 @@ public class OidcSecurityProperties {
 
     public void setLogoutUri(String logoutUri) {
         this.logoutUri = logoutUri;
+    }
+
+    public List<String> getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(List<String> scopes) {
+        this.scopes = scopes;
+    }
+
+    public String getPostLogoutRedirectUri() {
+        return postLogoutRedirectUri;
+    }
+
+    public void setPostLogoutRedirectUri(String postLogoutRedirectUri) {
+        this.postLogoutRedirectUri = postLogoutRedirectUri;
     }
 }

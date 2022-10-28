@@ -1,70 +1,56 @@
 import $ from "jquery";
+import { parseISO } from "date-fns";
 import parseQueryString from "../parse-query-string";
-import { createDatepickerInstances } from "../../components/datepicker";
+import { createDatepicker } from "../../components/datepicker";
 import "../../components/timepicker";
 import sendGetDaysRequest from "../send-get-days-request";
 import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
-function valueToDate(dateString) {
-  var match = dateString.match(/\d+/g);
-
-  var y = match[0];
-  var m = match[1] - 1;
-  var d = match[2];
-
-  return new Date(y, m, d);
-}
-
 $(document).ready(async function () {
-  var datepickerLocale = window.navigator.language;
-  var urlPrefix = window.uv.apiPrefix;
-  var personId = window.uv.personId;
+  const { apiPrefix: urlPrefix, personId } = window.uv;
+  let fromDateElement;
+  let toDateElement;
 
-  var getPersonId = function () {
-    return personId;
-  };
+  function updateSelectionHints() {
+    const dayLength = $("input:radio[name=dayLength]:checked").val();
+    const startDate = parseISO(fromDateElement.value);
+    const toDate = parseISO(toDateElement.value);
 
-  var onSelect = function (selectedDate) {
-    var $from = $("#from");
-    var $to = $("#to");
-
-    if (this.id === "from" && $to.val() === "") {
-      $to.datepicker("setDate", selectedDate);
-    }
-
-    var dayLength = $("input:radio[name=dayLength]:checked").val();
-    var startDate = $from.datepicker("getDate");
-    var toDate = $to.datepicker("getDate");
-
-    sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, getPersonId(), ".days");
+    sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days");
     sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
-  };
+  }
 
-  var selectors = ["#from", "#to", "#at"];
+  function getPersonId() {
+    return personId;
+  }
 
-  // createDatepickerInstances also initialises the jquery-ui datepicker
-  // with the correct locale (en or de or ...)
-  // if we don't wait here the datepicker instances below will always be english (default)
-  await createDatepickerInstances(selectors, datepickerLocale, urlPrefix, getPersonId, onSelect);
+  function setDefaultToDateValue() {
+    if (!toDateElement.value) {
+      toDateElement.value = fromDateElement.value;
+    }
+  }
+
+  const [fromDateResult, toDateResult] = await Promise.allSettled([
+    createDatepicker("#from", {
+      urlPrefix,
+      getPersonId,
+      onSelect: compose(updateSelectionHints, setDefaultToDateValue),
+    }),
+    createDatepicker("#to", { urlPrefix, getPersonId, onSelect: updateSelectionHints }),
+    createDatepicker("#at", { urlPrefix, getPersonId, onSelect: updateSelectionHints }),
+  ]);
+
+  fromDateElement = fromDateResult.value;
+  toDateElement = toDateResult.value;
 
   // CALENDAR: PRESET DATE IN APP FORM ON CLICKING DAY
   const { from, to } = parseQueryString(window.location.search);
   if (from) {
-    var startDate = valueToDate(from);
-    var endDate = valueToDate(to || from);
+    const startDate = parseISO(from);
+    const endDate = parseISO(to || from);
 
-    $("#from").datepicker("setDate", startDate);
-    $("#to").datepicker("setDate", endDate);
-
-    sendGetDaysRequest(
-      urlPrefix,
-      startDate,
-      endDate,
-      $("input:radio[name=dayLength]:checked").val(),
-      personId,
-      ".days",
-    );
-
+    let dayLength = $("input:radio[name=dayLength]:checked").val();
+    sendGetDaysRequest(urlPrefix, startDate, endDate, dayLength, personId, ".days");
     sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, "#departmentVacations");
   }
 
@@ -82,4 +68,24 @@ $(document).ready(async function () {
     forceRoundTime: true,
     scrollDefault: "now",
   });
+
+  let applicationSubmitPressed = false;
+  document.querySelector("#apply-application").addEventListener("click", (event) => {
+    event.preventDefault();
+
+    const button = event.target || event.srcElement;
+    if (!applicationSubmitPressed) {
+      button.form.submit();
+    }
+    applicationSubmitPressed = true;
+  });
 });
+
+function compose(...functions) {
+  // eslint-disable-next-line unicorn/no-array-reduce
+  return functions.reduce(
+    (a, b) =>
+      (...arguments_) =>
+        a(b(...arguments_)),
+  );
+}

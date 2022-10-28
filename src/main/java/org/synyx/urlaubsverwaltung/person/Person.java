@@ -1,25 +1,32 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.data.jpa.domain.AbstractPersistable;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Objects;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableCollection;
+import static javax.persistence.EnumType.STRING;
+import static org.hibernate.annotations.LazyCollectionOption.FALSE;
+import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
 
 /**
  * This class describes a person.
  */
 @Entity
-public class Person extends AbstractPersistable<Integer> {
+public class Person {
 
-    private static final long serialVersionUID = 765672310978437L;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     private String username;
     private String password;
@@ -28,17 +35,16 @@ public class Person extends AbstractPersistable<Integer> {
     private String email;
 
     @ElementCollection
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @Enumerated(EnumType.STRING)
+    @LazyCollection(FALSE)
+    @Enumerated(STRING)
     private Collection<Role> permissions;
 
     @ElementCollection
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @Enumerated(EnumType.STRING)
+    @LazyCollection(FALSE)
+    @Enumerated(STRING)
     private Collection<MailNotification> notifications;
 
     public Person() {
-
         /* OK */
     }
 
@@ -47,6 +53,14 @@ public class Person extends AbstractPersistable<Integer> {
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getEmail() {
@@ -95,70 +109,92 @@ public class Person extends AbstractPersistable<Integer> {
 
     public Collection<Role> getPermissions() {
         if (permissions == null) {
-            return Collections.emptyList();
+            return emptyList();
         }
 
-        return Collections.unmodifiableCollection(permissions);
+        return unmodifiableCollection(permissions);
     }
 
     public boolean hasRole(final Role role) {
-        return getPermissions().stream().anyMatch(permission -> permission.equals(role));
+        return getPermissions().stream()
+            .anyMatch(permission -> permission.equals(role));
+    }
+
+    public boolean isInactive() {
+        return hasRole(INACTIVE);
+    }
+    public boolean isActive() {
+        return !isInactive();
+    }
+
+    public boolean isPrivileged() {
+        return getPermissions().stream()
+            .anyMatch(role -> privilegedRoles().contains(role));
     }
 
     public Collection<MailNotification> getNotifications() {
         if (notifications == null) {
-            notifications = Collections.emptyList();
+            notifications = emptyList();
         }
 
-        return Collections.unmodifiableCollection(notifications);
+        return unmodifiableCollection(notifications);
     }
-
 
     public void setNotifications(Collection<MailNotification> notifications) {
         this.notifications = notifications;
     }
 
-
     public boolean hasNotificationType(final MailNotification notification) {
-        return getNotifications().stream().anyMatch(element -> element.equals(notification));
+        return getNotifications().stream()
+            .anyMatch(element -> element.equals(notification));
     }
-
 
     public String getNiceName() {
 
-        StringBuilder builder = new StringBuilder();
-        if (StringUtils.hasText(this.firstName)) {
+        final StringBuilder builder = new StringBuilder();
+        if (hasText(this.firstName)) {
             builder.append(this.firstName);
             builder.append(" ");
         }
-        if (StringUtils.hasText(this.lastName)) {
+        if (hasText(this.lastName)) {
             builder.append(this.lastName);
         }
-        String nicename = builder.toString().trim();
 
-        if (!StringUtils.hasText(nicename)) {
+        final String niceName = builder.toString().trim();
+        if (!hasText(niceName)) {
             return "---";
         }
 
-        return nicename;
+        return niceName;
     }
 
     public String getGravatarURL() {
-        if (StringUtils.hasText(this.email)) {
+        if (hasText(this.email)) {
             return GravatarUtil.createImgURL(this.email);
         }
 
         return "";
     }
 
-
     @Override
-    public void setId(Integer id) { // NOSONAR - needed for setting ID in form
-        super.setId(id);
+    public String toString() {
+        return "Person{id='" + getId() + "'}";
     }
 
     @Override
-    public String toString() {
-        return "Person{id='" + super.getId() + "'}";
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Person that = (Person) o;
+        return null != this.getId() && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

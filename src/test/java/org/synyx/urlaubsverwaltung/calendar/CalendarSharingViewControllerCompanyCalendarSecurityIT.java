@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,6 +40,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @MockBean
     private CalendarAccessibleService calendarAccessibleService;
 
+
     // =========================================================================================================
     // company calendar => link
 
@@ -50,7 +52,11 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/company"))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/company")
+            .with(csrf())
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
@@ -63,7 +69,11 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/company"))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/company")
+            .with(csrf())
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
@@ -76,7 +86,11 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/company"))
+        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/company")
+            .with(csrf())
+            .param("calendarPeriod", "YEAR");
+
+        perform(request)
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
@@ -85,7 +99,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @WithMockUser(authorities = "ADMIN")
     void linkCompanyCalendarAsAdminIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company"))
+        perform(post("/web/calendars/share/persons/1/company").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -93,7 +107,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @WithMockUser(authorities = "INACTIVE")
     void linkCompanyCalendarAsInactiveIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company"))
+        perform(post("/web/calendars/share/persons/1/company").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -101,7 +115,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
     void linkCompanyCalendarAsDepartmentHeadIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company"))
+        perform(post("/web/calendars/share/persons/1/company").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -109,7 +123,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     void linkCompanyCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company"))
+        perform(post("/web/calendars/share/persons/1/company").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -121,7 +135,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/company"))
+        perform(post("/web/calendars/share/persons/1/company").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -136,7 +150,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
@@ -149,7 +163,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
@@ -162,7 +176,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
@@ -171,7 +185,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @WithMockUser(authorities = "ADMIN")
     void unlinkCompanyCalendarAsAdminIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -179,7 +193,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @WithMockUser(authorities = "INACTIVE")
     void unlinkCompanyCalendarAsInactiveIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -187,7 +201,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
     void unlinkCompanyCalendarAsDepartmentHeadIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -195,7 +209,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     void unlinkCompanyCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -207,7 +221,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/company").param("unlink", ""))
+        perform(post("/web/calendars/share/persons/1/company").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -222,7 +236,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/company/accessible"))
+        perform(post("/web/calendars/share/persons/1/company/accessible").with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
@@ -235,7 +249,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
         person.setUsername("user");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/company/accessible"))
+        perform(post("/web/calendars/share/persons/1/company/accessible").with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
     }
@@ -244,7 +258,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @WithMockUser(authorities = "ADMIN")
     void enableCompanyCalendarFeatureAsAdminIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company/accessible"))
+        perform(post("/web/calendars/share/persons/1/company/accessible").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -252,7 +266,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @WithMockUser(authorities = "INACTIVE")
     void enableCompanyCalendarFeatureAsInactiveIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company/accessible"))
+        perform(post("/web/calendars/share/persons/1/company/accessible").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -260,7 +274,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @WithMockUser(authorities = "DEPARTMENT_HEAD")
     void enableCompanyCalendarFeatureAsDepartmentHeadIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company/accessible"))
+        perform(post("/web/calendars/share/persons/1/company/accessible").with(csrf()))
             .andExpect(status().isForbidden());
     }
 
@@ -268,7 +282,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
     void enableCompanyCalendarFeatureAsSecondStageAuthorityIsForbidden() throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/company/accessible"))
+        perform(post("/web/calendars/share/persons/1/company/accessible").with(csrf()))
             .andExpect(status().isForbidden());
     }
 

@@ -14,19 +14,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
-import org.synyx.urlaubsverwaltung.web.LocalDatePropertyEditor;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.time.Year;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static java.time.ZoneOffset.UTC;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 /**
@@ -39,20 +41,22 @@ public class AccountViewController {
     private final PersonService personService;
     private final AccountService accountService;
     private final AccountInteractionService accountInteractionService;
+    private final VacationTypeViewModelService vacationTypeViewModelService;
     private final AccountFormValidator validator;
+    private final Clock clock;
 
     @Autowired
-    public AccountViewController(PersonService personService, AccountService accountService,
-                                 AccountInteractionService accountInteractionService, AccountFormValidator validator) {
+    public AccountViewController(PersonService personService, AccountService accountService, AccountInteractionService accountInteractionService, VacationTypeViewModelService vacationTypeViewModelService, AccountFormValidator validator, Clock clock) {
         this.personService = personService;
         this.accountService = accountService;
         this.accountInteractionService = accountInteractionService;
+        this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.validator = validator;
+        this.clock = clock;
     }
 
     @InitBinder
     public void initBinder(DataBinder binder, Locale locale) {
-        binder.registerCustomEditor(LocalDate.class, new LocalDatePropertyEditor());
         binder.registerCustomEditor(BigDecimal.class, new DecimalNumberPropertyEditor(locale));
     }
 
@@ -65,23 +69,27 @@ public class AccountViewController {
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
 
-        final int yearOfHolidaysAccount = year != null ? year : ZonedDateTime.now(UTC).getYear();
+        final int currentYear = Year.now(clock).getValue();
+        final int selectedYear = year != null ? year : currentYear;
 
-        final Optional<Account> maybeHolidaysAccount = accountService.getHolidaysAccount(yearOfHolidaysAccount, person);
+        final Optional<Account> maybeHolidaysAccount = accountService.getHolidaysAccount(selectedYear, person);
         final AccountForm accountForm = maybeHolidaysAccount.map(AccountForm::new)
-            .orElseGet(() -> new AccountForm(yearOfHolidaysAccount));
+            .orElseGet(() -> new AccountForm(selectedYear));
 
-        model.addAttribute("person", person);
         model.addAttribute("account", accountForm);
-        model.addAttribute("year", yearOfHolidaysAccount);
+        model.addAttribute("person", person);
+        model.addAttribute("selectedYear", selectedYear);
+        model.addAttribute("currentYear", currentYear);
 
-        return "account/account_form";
+        addVacationTypeColorsToModel(model);
+
+        return "thymeleaf/account/account_form";
     }
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/account")
     public String updateAccount(@PathVariable("personId") Integer personId,
-                                @ModelAttribute("account") AccountForm accountForm, Model model, Errors errors,
+                                @ModelAttribute("account") AccountForm accountForm, Errors errors, Model model,
                                 RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId)
@@ -91,13 +99,20 @@ public class AccountViewController {
 
         if (errors.hasErrors()) {
             model.addAttribute("person", person);
-            model.addAttribute("year", accountForm.getHolidaysAccountYear());
+            model.addAttribute("selectedYear", accountForm.getHolidaysAccountYear());
+            model.addAttribute("currentYear", Year.now(clock).getValue());
 
-            return "account/account_form";
+            addVacationTypeColorsToModel(model);
+
+            return "thymeleaf/account/account_form";
         }
 
         final LocalDate validFrom = accountForm.getHolidaysAccountValidFrom();
         final LocalDate validTo = accountForm.getHolidaysAccountValidTo();
+        final Boolean doRemainingVacationDaysExpireLocally = accountForm.isOverrideVacationDaysExpire()
+            ? accountForm.getDoRemainingVacationDaysExpireLocally()
+            : null;
+        final LocalDate expiryDate = accountForm.getExpiryDate();
         final BigDecimal annualVacationDays = accountForm.getAnnualVacationDays();
         final BigDecimal actualVacationDays = accountForm.getActualVacationDays();
         final BigDecimal remainingVacationDays = accountForm.getRemainingVacationDays();
@@ -108,15 +123,20 @@ public class AccountViewController {
         final Optional<Account> account = accountService.getHolidaysAccount(validFrom.getYear(), person);
 
         if (account.isPresent()) {
-            accountInteractionService.editHolidaysAccount(account.get(), validFrom, validTo, annualVacationDays,
+            accountInteractionService.editHolidaysAccount(account.get(), validFrom, validTo, doRemainingVacationDaysExpireLocally, expiryDate, annualVacationDays,
                 actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
         } else {
-            accountInteractionService.updateOrCreateHolidaysAccount(person, validFrom, validTo, annualVacationDays,
-                actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
+            accountInteractionService.updateOrCreateHolidaysAccount(person, validFrom, validTo, doRemainingVacationDaysExpireLocally,
+                expiryDate, annualVacationDays,actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
         }
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);
 
         return "redirect:/web/person/" + personId;
+    }
+
+    private void addVacationTypeColorsToModel(Model model) {
+        final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
+        model.addAttribute("vacationTypeColors", vacationTypeColors);
     }
 }

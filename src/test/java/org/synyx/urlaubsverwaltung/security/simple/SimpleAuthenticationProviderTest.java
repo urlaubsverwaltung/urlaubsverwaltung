@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.security.simple;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -61,9 +61,9 @@ class SimpleAuthenticationProviderTest {
 
         verify(personService).getPersonByUsername(username);
 
-        Assert.assertNotNull("Missing authentication", authentication);
-        Assert.assertEquals("Wrong username", username, authentication.getName());
-        Assert.assertEquals("Wrong authorities", grantedAuthorities, authentication.getAuthorities());
+        assertThat(authentication).isNotNull();
+        assertThat(authentication.getName()).isEqualTo(username);
+        assertThat(authentication.getAuthorities()).isEqualTo(grantedAuthorities);
     }
 
 

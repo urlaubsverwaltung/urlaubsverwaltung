@@ -1,3 +1,4 @@
+import "../js/account/account-form";
 import "../components/back-button";
 
 import count from "../js/count";
