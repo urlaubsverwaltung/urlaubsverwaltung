@@ -23,13 +23,11 @@ final class PersonPermissionsMapper {
         personPermissionsDto.setEmail(person.getEmail());
         personPermissionsDto.setIsInactive(person.isInactive());
         personPermissionsDto.setPermissions(mapRoleToPermissionsDto(List.copyOf(person.getPermissions())));
-        personPermissionsDto.setNotifications(List.copyOf(person.getNotifications()));
         return personPermissionsDto;
     }
 
     static Person merge(Person person, PersonPermissionsDto personPermissionsDto) {
         person.setPermissions(mapPermissionsDtoToRole(personPermissionsDto.getPermissions()));
-        person.setNotifications(personPermissionsDto.getNotifications());
         return person;
     }
 

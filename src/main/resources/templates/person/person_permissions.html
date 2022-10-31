@@ -35,10 +35,6 @@
               <th:block th:errors="*{permissions}"> permissions Error</th:block>
             </p>
 
-            <p class="alert alert-danger" th:if="${#fields.hasErrors('notifications')}">
-              <th:block th:errors="*{notifications}"> notifications Error</th:block>
-            </p>
-
             <aside class="col-md-4 col-md-push-8">
               <p class="help-block tw-text-sm">
                 <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
@@ -63,8 +59,6 @@
                       <input type="checkbox" th:field="*{permissions}" value="USER" />
                       <th:block th:text="#{person.form.permissions.roles.USER.description}" />
                     </label>
-                    <!-- It's obligatory for now that users get mail notifications about progress of their own applications for leave -->
-                    <input type="hidden" name="notifications" value="NOTIFICATION_USER" />
                   </div>
 
                   <h2 th:text="#{person.form.permissions.roles.basic_roles.description}" class="tw-mb-2 tw-block"></h2>
@@ -76,10 +70,6 @@
                     <label class="tw-leading-snug tw-mb-2">
                       <input type="checkbox" th:field="*{permissions}" value="DEPARTMENT_HEAD" />
                       <th:block th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.description}" />
-                    </label>
-                    <label class="tw-leading-snug tw-ml-5 tw-pb-2">
-                      <input type="checkbox" th:field="*{notifications}" value="NOTIFICATION_DEPARTMENT_HEAD" />
-                      <th:block th:text="#{person.form.notifications.DEPARTMENT_HEAD}" />
                     </label>
                     <label th:class="|tw-leading-snug ${not #lists.isEmpty(departments) ? 'info' : ''}|">
                       <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
@@ -105,10 +95,6 @@
                       <input type="checkbox" th:field="*{permissions}" value="SECOND_STAGE_AUTHORITY" />
                       <th:block th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description}" />
                     </label>
-                    <label class="tw-leading-snug tw-ml-5 tw-pb-2">
-                      <input type="checkbox" th:field="*{notifications}" value="NOTIFICATION_SECOND_STAGE_AUTHORITY" />
-                      <th:block th:text="#{person.form.notifications.SECOND_STAGE_AUTHORITY}" />
-                    </label>
                     <label th:class="|tw-leading-snug ${not #lists.isEmpty(secondStageDepartments) ? 'info' : ''}|">
                       <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
                       <th:block
@@ -132,18 +118,6 @@
                       <input type="checkbox" th:field="*{permissions}" value="BOSS" />
                       <th:block th:text="#{person.form.permissions.roles.BOSS.description}" />
                     </label>
-                    <label class="tw-leading-snug tw-mb-2">
-                      <input type="radio" th:field="*{notifications}" value="NOTIFICATION_BOSS_ALL" />
-                      <th:block th:text="#{person.form.notifications.BOSS.all}" />
-                    </label>
-                    <label class="tw-leading-snug">
-                      <input type="radio" th:field="*{notifications}" value="NOTIFICATION_BOSS_DEPARTMENTS" />
-                      <th:block th:text="#{person.form.notifications.BOSS.departments}" />
-                    </label>
-                    <label class="tw-leading-snug">
-                      <input type="radio" th:field="*{notifications}" value="" />
-                      <th:block th:text="#{person.form.notifications.BOSS.none}" />
-                    </label>
                   </div>
 
                   <div class="checkbox tw-pb-4 tw-mb-4">
@@ -151,14 +125,6 @@
                     <label class="tw-leading-snug tw-mb-2">
                       <input type="checkbox" th:field="*{permissions}" value="OFFICE" />
                       <th:block th:text="#{person.form.permissions.roles.OFFICE.description}" />
-                    </label>
-                    <label class="tw-leading-snug tw-ml-5 tw-pb-2">
-                      <input type="checkbox" th:field="*{notifications}" value="NOTIFICATION_OFFICE" />
-                      <th:block th:text="#{person.form.notifications.OFFICE}" />
-                    </label>
-                    <label class="tw-leading-snug tw-ml-5 tw-pb-2">
-                      <input type="checkbox" th:field="*{notifications}" value="OVERTIME_NOTIFICATION_OFFICE" />
-                      <th:block th:text="#{person.form.notifications.OFFICE.overtime}" />
                     </label>
                   </div>
 
