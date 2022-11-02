@@ -62,6 +62,7 @@
           class="form-horizontal"
         >
           <input type="hidden" th:field="*{holidaysAccountYear}" />
+          <input type="hidden" th:field="*{doRemainingVacationDaysExpireGlobally}" />
 
           <div class="form-section">
             <div class="row tw-mb-8" th:if="${#fields.hasErrors('*')}">
