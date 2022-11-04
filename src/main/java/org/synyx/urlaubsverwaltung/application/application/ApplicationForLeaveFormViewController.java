@@ -81,8 +81,6 @@ class ApplicationForLeaveFormViewController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
-    private static final String APP_FORM = "application/app_form";
     private static final String NO_HOLIDAYS_ACCOUNT = "noHolidaysAccount";
     private static final String USER_HAS_NOT_THE_CORRECT_PERMISSIONS = "User '%s' has not the correct permissions to apply for leave for user '%s'";
 
@@ -150,7 +148,7 @@ class ApplicationForLeaveFormViewController {
         }
 
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
-        return APP_FORM;
+        return "thymeleaf/application/application_form";
     }
 
     @PostMapping(value = {"/application/new", "/application/{applicationId}"}, params = "add-holiday-replacement")
@@ -196,11 +194,11 @@ class ApplicationForLeaveFormViewController {
 
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
 
-        return APP_FORM;
+        return "thymeleaf/application/application_form";
     }
 
     @PostMapping(value = {"/application/new/replacements", "/application/{applicationId}/replacements"}, headers = {"X-Requested-With=ajax"})
-    public String ajaxAddHolidayReplacement(@ModelAttribute ApplicationForLeaveForm applicationForLeave, Model model) {
+    public String ajaxAddHolidayReplacement(@ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm applicationForLeave, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
         final Person person = ofNullable(applicationForLeave.getPerson()).orElse(signedInUser);
@@ -233,7 +231,7 @@ class ApplicationForLeaveFormViewController {
     }
 
     @PostMapping(value = {"/application/new", "/application/{applicationId}"}, params = "remove-holiday-replacement")
-    public String removeHolidayReplacement(ApplicationForLeaveForm applicationForLeaveForm,
+    public String removeHolidayReplacement(@ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm applicationForLeaveForm,
                                            @RequestParam(name = "remove-holiday-replacement") Integer personIdToRemove,
                                            Model model) {
 
@@ -263,11 +261,11 @@ class ApplicationForLeaveFormViewController {
 
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
 
-        return APP_FORM;
+        return "thymeleaf/application/application_form";
     }
 
     @PostMapping("/application")
-    public String newApplication(@ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
+    public String newApplication(@ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm appForm, Errors errors,
                                  Model model, RedirectAttributes redirectAttributes) {
         LOG.info("POST new application received: {}", appForm);
 
@@ -294,7 +292,7 @@ class ApplicationForLeaveFormViewController {
             }
 
             LOG.debug("new application ({}) has errors: {}", appForm, errors);
-            return APP_FORM;
+            return "thymeleaf/application/application_form";
         }
 
         final Application app = mapToApplication(appForm);
@@ -309,7 +307,7 @@ class ApplicationForLeaveFormViewController {
 
         redirectAttributes.addFlashAttribute("applySuccess", true);
 
-        return REDIRECT_WEB_APPLICATION + savedApplicationForLeave.getId();
+        return "redirect:/web/application/" + savedApplicationForLeave.getId();
     }
 
     @GetMapping("/application/{applicationId}/edit")
@@ -344,14 +342,14 @@ class ApplicationForLeaveFormViewController {
         }
 
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
-        model.addAttribute("application", applicationForLeaveForm);
+        model.addAttribute("applicationForLeaveForm", applicationForLeaveForm);
 
-        return APP_FORM;
+        return "thymeleaf/application/application_form";
     }
 
     @PostMapping("/application/{applicationId}")
     public String sendEditApplicationForm(@PathVariable("applicationId") Integer applicationId,
-                                          @ModelAttribute("application") ApplicationForLeaveForm appForm, Errors errors,
+                                          @ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm appForm, Errors errors,
                                           Model model, RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
         final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
@@ -362,7 +360,7 @@ class ApplicationForLeaveFormViewController {
         final Application application = maybeApplication.get();
         if (application.getStatus().compareTo(WAITING) != 0) {
             redirectAttributes.addFlashAttribute("editError", true);
-            return REDIRECT_WEB_APPLICATION + applicationId;
+            return "redirect:/web/application/" + applicationId;
         }
 
         final Person signedInUser = personService.getSignedInUser();
@@ -382,7 +380,7 @@ class ApplicationForLeaveFormViewController {
             );
 
             LOG.debug("edit application ({}) has errors: {}", appForm, errors);
-            return APP_FORM;
+            return "thymeleaf/application/application_form";
         }
 
         final Application editedApplication = merge(application, appForm);
@@ -397,7 +395,7 @@ class ApplicationForLeaveFormViewController {
 
         redirectAttributes.addFlashAttribute("editSuccess", true);
 
-        return REDIRECT_WEB_APPLICATION + savedApplicationForLeave.getId();
+        return "redirect:/web/application/" + savedApplicationForLeave.getId();
     }
 
     private Optional<Person> getPersonByRequestParam(Integer personId) {
@@ -429,7 +427,7 @@ class ApplicationForLeaveFormViewController {
         model.addAttribute("specialLeave", mapToSpecialLeaveSettingsDto(specialLeaveSettings));
 
         appendDepartmentsToReplacements(appForm);
-        model.addAttribute("application", appForm);
+        model.addAttribute("applicationForLeaveForm", appForm);
 
         final boolean isHalfDayApplication = ofNullable(appForm.getDayLength()).filter(DayLength::isHalfDay).isPresent();
         final boolean isHalfDaysActivated = settingsService.getSettings().getApplicationSettings().isAllowHalfDays();

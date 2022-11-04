@@ -1,0 +1,7 @@
+.select-with-addon select {
+  @apply tw-rounded-r-none;
+}
+
+.select-with-addon > .select-addon > *:first-child {
+  @apply tw-rounded-l-none;
+}

@@ -7,21 +7,31 @@ import sendGetDaysRequest from "../send-get-days-request";
 import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
 $(document).ready(async function () {
-  const { apiPrefix: urlPrefix, personId } = window.uv;
+  document.querySelector("#person-select")?.addEventListener("change", function (event) {
+    const parameters = new URLSearchParams();
+    parameters.set("personId", event.currentTarget.value);
+    window.location.href = window.location.pathname + "?" + parameters.toString();
+  });
+
+  const apiPrefix = window.uv.apiPrefix;
+
   let fromDateElement;
   let toDateElement;
 
-  function updateSelectionHints() {
-    const dayLength = $("input:radio[name=dayLength]:checked").val();
-    const startDate = parseISO(fromDateElement.value);
-    const toDate = parseISO(toDateElement.value);
-
-    sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days");
-    sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
+  function getPersonId() {
+    return document.querySelector("[name='person']").value;
   }
 
-  function getPersonId() {
-    return personId;
+  function updateSelectionHints() {
+    if (fromDateElement.value && toDateElement.value) {
+      const dayLength = document.querySelector("input[type='radio'][name='dayLength']:checked").value;
+      const startDate = parseISO(fromDateElement.value);
+      const toDate = parseISO(toDateElement.value);
+
+      const personId = getPersonId();
+      sendGetDaysRequest(apiPrefix, startDate, toDate, dayLength, personId, ".days");
+      sendGetDepartmentVacationsRequest(apiPrefix, startDate, toDate, personId, "#departmentVacations");
+    }
   }
 
   function setDefaultToDateValue() {
@@ -32,12 +42,12 @@ $(document).ready(async function () {
 
   const [fromDateResult, toDateResult] = await Promise.allSettled([
     createDatepicker("#from", {
-      urlPrefix,
+      urlPrefix: apiPrefix,
       getPersonId,
       onSelect: compose(updateSelectionHints, setDefaultToDateValue),
     }),
-    createDatepicker("#to", { urlPrefix, getPersonId, onSelect: updateSelectionHints }),
-    createDatepicker("#at", { urlPrefix, getPersonId, onSelect: updateSelectionHints }),
+    createDatepicker("#to", { urlPrefix: apiPrefix, getPersonId, onSelect: updateSelectionHints }),
+    createDatepicker("#at", { urlPrefix: apiPrefix, getPersonId, onSelect: updateSelectionHints }),
   ]);
 
   fromDateElement = fromDateResult.value;
@@ -49,13 +59,14 @@ $(document).ready(async function () {
     const startDate = parseISO(from);
     const endDate = parseISO(to || from);
 
-    let dayLength = $("input:radio[name=dayLength]:checked").val();
-    sendGetDaysRequest(urlPrefix, startDate, endDate, dayLength, personId, ".days");
-    sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, "#departmentVacations");
+    const dayLength = document.querySelector("input[type='radio'][name='dayLength']:checked").value;
+    const personId = getPersonId();
+
+    sendGetDaysRequest(apiPrefix, startDate, endDate, dayLength, personId, ".days");
+    sendGetDepartmentVacationsRequest(apiPrefix, startDate, endDate, personId, "#departmentVacations");
   }
 
   // Timepicker for optional startTime and endTime
-
   $("#startTime").timepicker({
     step: 15,
     timeFormat: "H:i",

@@ -510,7 +510,7 @@ class ApplicationForLeaveFormViewControllerTest {
         resultActions
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
-            .andExpect(model().attribute("application", allOf(
+            .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("startDate", is(givenDateFrom)),
                 hasProperty("startDateIsoValue", is(givenDateFrom.format(formatter))),
                 hasProperty("endDate", is(givenDateFrom)),
@@ -550,7 +550,7 @@ class ApplicationForLeaveFormViewControllerTest {
         resultActions
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
-            .andExpect(model().attribute("application", allOf(
+            .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("startDate", is(LocalDate.parse(expectedFromString))),
                 hasProperty("startDateIsoValue", is(expectedFromString)),
                 hasProperty("endDate", is(LocalDate.parse(expectedToString))),
@@ -565,7 +565,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         perform(get("/web/application/new"))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     @Test
@@ -584,7 +584,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(get("/web/application/new"))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     @Test
@@ -764,7 +764,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(model().attribute("errors", instanceOf(Errors.class)))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     @Test
@@ -882,7 +882,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform
             .andExpect(status().isOk())
-            .andExpect(model().attribute("application", allOf(
+            .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("id", nullValue()),
                 hasProperty("holidayReplacements", allOf(
                     hasSize(2),
@@ -893,7 +893,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 ))
             )))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     @Test
@@ -948,7 +948,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform
             .andExpect(status().isOk())
-            .andExpect(model().attribute("application", allOf(
+            .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("id", nullValue()),
                 hasProperty("holidayReplacements", contains(
                     hasProperty("person", hasProperty("id", is(42)))
@@ -958,7 +958,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 hasProperty("personId", is(1337))
             )))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     @Test
@@ -1063,7 +1063,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform
             .andExpect(status().isOk())
-            .andExpect(model().attribute("application", allOf(
+            .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("id", nullValue()),
                 hasProperty("holidayReplacements", contains(
                     hasProperty("person", hasProperty("id", is(42))),
@@ -1071,7 +1071,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 ))
             )))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     @Test
@@ -1106,11 +1106,11 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform
             .andExpect(status().isOk())
-            .andExpect(model().attribute("application", hasProperty("id", nullValue())))
+            .andExpect(model().attribute("applicationForLeaveForm", hasProperty("id", nullValue())))
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
                 hasProperty("personId", is(1337))
             )))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     @Test
@@ -1144,7 +1144,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(model().attribute("noHolidaysAccount", is(false)))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     @Test
@@ -1199,7 +1199,7 @@ class ApplicationForLeaveFormViewControllerTest {
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("noHolidaysAccount", is(false)))
-            .andExpect(view().name("application/app_form"))
+            .andExpect(view().name("thymeleaf/application/application_form"))
             .andExpect(model().attribute("showHalfDayOption", is(false)));
     }
 
@@ -1235,7 +1235,7 @@ class ApplicationForLeaveFormViewControllerTest {
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("noHolidaysAccount", is(false)))
-            .andExpect(view().name("application/app_form"))
+            .andExpect(view().name("thymeleaf/application/application_form"))
             .andExpect(model().attribute("showHalfDayOption", is(true)));
     }
 
@@ -1284,7 +1284,7 @@ class ApplicationForLeaveFormViewControllerTest {
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("noHolidaysAccount", is(true)))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     @Test
@@ -1310,7 +1310,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform
             .andExpect(status().isOk())
-            .andExpect(model().attribute("application", allOf(
+            .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("id", is(7)),
                 hasProperty("holidayReplacements", allOf(
                     hasSize(2),
@@ -1321,7 +1321,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 ))
             )))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     @Test
@@ -1348,7 +1348,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform
             .andExpect(status().isOk())
-            .andExpect(model().attribute("application", allOf(
+            .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("id", is(7)),
                 hasProperty("holidayReplacements", contains(
                     hasProperty("person", hasProperty("id", is(42))),
@@ -1356,7 +1356,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 ))
             )))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     @Test
@@ -1392,11 +1392,11 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform
             .andExpect(status().isOk())
-            .andExpect(model().attribute("application", hasProperty("id", is(7))))
+            .andExpect(model().attribute("applicationForLeaveForm", hasProperty("id", is(7))))
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
                 hasProperty("personId", is(1337))
             )))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     @Test
@@ -1546,7 +1546,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("dayLength", "FULL")
             .param("comment", "comment"))
             .andExpect(status().isOk())
-            .andExpect(view().name("application/app_form"))
+            .andExpect(view().name("thymeleaf/application/application_form"))
             .andExpect(model().attribute("showHalfDayOption", is(true)));
     }
 
@@ -1589,13 +1589,13 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform
             .andExpect(status().isOk())
-            .andExpect(model().attributeHasFieldErrors("application", "startDate"))
+            .andExpect(model().attributeHasFieldErrors("applicationForLeaveForm", "startDate"))
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
                 hasProperty("personId", is(42)),
                 hasProperty("personId", is(1337)),
                 hasProperty("personId", is(21))
             )))
-            .andExpect(view().name("application/app_form"));
+            .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
     private Person personWithRole(Role... role) {

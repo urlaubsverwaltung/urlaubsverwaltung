@@ -1,6 +1,17 @@
-import vacationTypeChanged from "../vacation-type-changed";
+import "../vacation-type-select";
 
-describe("vacationTypeChanged", function () {
+describe("vacation-type-select", function () {
+  beforeEach(async function () {
+    document.body.innerHTML = `
+      <select id="vacationType" name="vacationType" is="uv-vacation-type-select">
+        <option value="1000" data-vacationtype-category="HOLIDAY">Erholungsurlaub</option>
+        <option value="2000" data-vacationtype-category="SPECIALLEAVE">Sonderurlaub</option>
+        <option value="3000" data-vacationtype-category="UNPAIDLEAVE">Unbezahlter Urlaub</option>
+        <option value="4000" data-vacationtype-category="OVERTIME">Überstundenabbau</option>
+      </select>
+    `;
+  });
+
   afterEach(function () {
     // cleanup DOM
     while (document.body.firstElementChild) {
@@ -14,7 +25,7 @@ describe("vacationTypeChanged", function () {
       overtimeElement.setAttribute("id", "overtime");
       document.body.append(overtimeElement);
 
-      vacationTypeChanged("SPECIALLEAVE");
+      setVacationType("SPECIALLEAVE");
 
       expect(overtimeElement.classList.contains("hidden")).toBeTruthy();
     });
@@ -25,14 +36,14 @@ describe("vacationTypeChanged", function () {
       specialLeaveElement.classList.add("hidden");
       document.body.append(specialLeaveElement);
 
-      vacationTypeChanged("SPECIALLEAVE");
+      setVacationType("SPECIALLEAVE");
 
       expect(specialLeaveElement.classList.contains("hidden")).toBeFalsy();
     });
 
     it("does not throw when no element exists", function () {
       expect(() => {
-        vacationTypeChanged("SPECIALLEAVE");
+        setVacationType("SPECIALLEAVE");
       }).not.toThrow();
     });
   });
@@ -44,7 +55,7 @@ describe("vacationTypeChanged", function () {
       overtimeElement.classList.add("hidden");
       document.body.append(overtimeElement);
 
-      vacationTypeChanged("OVERTIME");
+      setVacationType("OVERTIME");
 
       expect(overtimeElement.classList.contains("hidden")).toBeFalsy();
     });
@@ -54,25 +65,25 @@ describe("vacationTypeChanged", function () {
       specialLeaveElement.setAttribute("id", "special-leave");
       document.body.append(specialLeaveElement);
 
-      vacationTypeChanged("OVERTIME");
+      setVacationType("OVERTIME");
 
       expect(specialLeaveElement.classList.contains("hidden")).toBeTruthy();
     });
 
     it("does not throw when no element exists", function () {
       expect(() => {
-        vacationTypeChanged("OVERTIME");
+        setVacationType("OVERTIME");
       }).not.toThrow();
     });
   });
 
-  describe("any other value", function () {
+  describe.each(["HOLIDAY", "UNPAIDLEAVE"])("%s", function (vacationType) {
     it("adds 'hidden' class to 'overtime' element", function () {
       const overtimeElement = document.createElement("div");
       overtimeElement.setAttribute("id", "overtime");
       document.body.append(overtimeElement);
 
-      vacationTypeChanged("unknown");
+      setVacationType(vacationType);
 
       expect(overtimeElement.classList.contains("hidden")).toBeTruthy();
     });
@@ -82,15 +93,22 @@ describe("vacationTypeChanged", function () {
       specialLeaveElement.setAttribute("id", "special-leave");
       document.body.append(specialLeaveElement);
 
-      vacationTypeChanged("unknown");
+      setVacationType(vacationType);
 
       expect(specialLeaveElement.classList.contains("hidden")).toBeTruthy();
     });
 
     it("does not throw when no element exists", function () {
       expect(() => {
-        vacationTypeChanged("unknown");
+        setVacationType(vacationType);
       }).not.toThrow();
     });
   });
 });
+
+function setVacationType(vacationType) {
+  const value = document.querySelector(`option[data-vacationtype-category='${vacationType}']`).value;
+  const selectElement = document.querySelector("#vacationType");
+  selectElement.value = value;
+  selectElement.dispatchEvent(new Event("change"));
+}
