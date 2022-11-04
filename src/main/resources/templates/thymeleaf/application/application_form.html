@@ -419,7 +419,7 @@
                       <button
                         th:text="#{application.data.holidayReplacement.add-button.text}"
                         type="submit"
-                        class="button button-as-addon--right"
+                        class="button tw-rounded-l-none tw-border-l-0 tw-py-0"
                         name="add-holiday-replacement"
                         formmethod="post"
                         th:formaction="${applicationForLeaveForm.id == null ? '/web/application/new' : '/web/application/__${applicationForLeaveForm.id}__'}"
