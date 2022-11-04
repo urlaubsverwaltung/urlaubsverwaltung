@@ -25,28 +25,24 @@
               <td>
                 <p class="tw-m-0 tw-mb-1">
                   <th:block th:text="#{'application.progress.' + ${comment.action}}"></th:block>
-                  <th:block
-                    th:if="${comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).APPLIED}"
-                  >
+                  <th:block th:if="${comment.action.name == 'APPLIED'}">
                     <th:block th:replace="fragments/date::date(${app.applicationDate})"></th:block>
                   </th:block>
                   <th:block
-                    th:if="${comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).ALLOWED || comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).EDITED || comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).TEMPORARY_ALLOWED || comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).REJECTED || comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).CONVERTED}"
+                    th:if="${comment.action.name == 'ALLOWED' || comment.action.name == 'EDITED' || comment.action.name == 'TEMPORARY_ALLOWED' || comment.action.name == 'REJECTED' || comment.action.name == 'CONVERTED'}"
                   >
                     <th:block th:replace="fragments/date::date(${app.editedDate})"></th:block>
                   </th:block>
-                  <th:block
-                    th:if="${comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).ALLOWED_DIRECTLY}"
-                  >
+                  <th:block th:if="${comment.action.name == 'ALLOWED_DIRECTLY'}">
                     <th:block th:replace="fragments/date::date(${app.applicationDate})"></th:block>
                   </th:block>
                   <th:block
-                    th:if="${comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).CANCELLED || comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).CANCELLED_DIRECTLY || comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).REVOKED}"
+                    th:if="${comment.action.name == 'CANCELLED' || comment.action.name == 'CANCELLED_DIRECTLY' || comment.action.name == 'REVOKED'}"
                   >
                     <th:block th:replace="fragments/date::date(${app.cancelDate})"></th:block>
                   </th:block>
                   <th:block
-                    th:if="${comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).REFERRED || comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).CANCEL_REQUESTED || comment.action == T(org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction).CANCEL_REQUESTED_DECLINED}"
+                    th:if="${comment.action.name == 'REFERRED' || comment.action.name == 'CANCEL_REQUESTED' || comment.action.name == 'CANCEL_REQUESTED_DECLINED'}"
                   >
                     <th:block th:replace="fragments/date::date(${comment.date})"></th:block>
                   </th:block>
