@@ -8,14 +8,11 @@ import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-
 
 $(document).ready(async function () {
   const personSelectElement = document.querySelector("#person-select");
-  const person = window.uv.params.personId;
-
-  if (person && personSelectElement) {
-    personSelectElement.value = person;
-  }
 
   personSelectElement.addEventListener("change", function () {
-    updateSelectionHints();
+    const parameters = new URLSearchParams();
+    parameters.set("personId", personSelectElement.value);
+    window.location.href = window.location.pathname + "?" + parameters.toString();
   });
 
   const apiPrefix = window.uv.apiPrefix;
