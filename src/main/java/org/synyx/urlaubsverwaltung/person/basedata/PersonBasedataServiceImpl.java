@@ -40,9 +40,13 @@ class PersonBasedataServiceImpl implements PersonBasedataService {
         personBasedataRepository.save(mapToEntity(personBasedata));
     }
 
-    @Override
+    /**
+     * Deletes {@link PersonBasedata} in the database of person id.
+     *
+     * @param event includes the id of the person to be deleted
+     */
     @EventListener
-    public void delete(PersonDeletedEvent event) {
+    void delete(PersonDeletedEvent event) {
         personBasedataRepository.deleteByPerson(event.getPerson());
     }
 }

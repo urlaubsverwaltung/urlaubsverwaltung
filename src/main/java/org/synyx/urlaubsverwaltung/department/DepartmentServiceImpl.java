@@ -180,9 +180,13 @@ class DepartmentServiceImpl implements DepartmentService {
         return updatedDepartment;
     }
 
-    @Override
+    /**
+     * Deletes all department head assignments of the given person.
+     *
+     * @param event the person who is deleted
+     */
     @EventListener
-    public void deleteAssignedDepartmentsOfMember(PersonDeletedEvent event) {
+    void deleteAssignedDepartmentsOfMember(PersonDeletedEvent event) {
 
         getAssignedDepartmentsOfMember(event.getPerson()).forEach(department -> {
             department.setMembers(department.getMembers().stream()
@@ -192,9 +196,13 @@ class DepartmentServiceImpl implements DepartmentService {
         });
     }
 
-    @Override
+    /**
+     * Deletes all department head assignments of the given person.
+     *
+     * @param event the person who is deleted
+     */
     @EventListener
-    public void deleteDepartmentHead(PersonDeletedEvent event) {
+    void deleteDepartmentHead(PersonDeletedEvent event) {
 
         getManagedDepartmentsOfDepartmentHead(event.getPerson()).forEach(department -> {
             department.setDepartmentHeads(department.getDepartmentHeads().stream()
@@ -205,9 +213,13 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
 
-    @Override
+    /**
+     * Deletes all second stage authorities assignments of the given person.
+     *
+     * @param event the person who is deleted
+     */
     @EventListener
-    public void deleteSecondStageAuthority(PersonDeletedEvent event) {
+    void deleteSecondStageAuthority(PersonDeletedEvent event) {
 
         getManagedDepartmentsOfSecondStageAuthority(event.getPerson()).forEach(department -> {
             department.setSecondStageAuthorities(department.getSecondStageAuthorities().stream()

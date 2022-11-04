@@ -171,9 +171,13 @@ class OvertimeServiceImpl implements OvertimeService {
             || signedInUser.equals(personOfOvertime) && (!overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged());
     }
 
-    @Override
+    /**
+     * Deletes all {@link Overtime} in the database of person with id.
+     *
+     * @param event deletion event with the id of the person which is deleted
+     */
     @EventListener
-    public void deleteAll(PersonDeletedEvent event) {
+    void deleteAll(PersonDeletedEvent event) {
         overtimeCommentRepository.deleteByOvertimePerson(event.getPerson());
         overtimeRepository.deleteByPerson(event.getPerson());
     }

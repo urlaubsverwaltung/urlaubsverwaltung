@@ -147,9 +147,14 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         return savedSickNote;
     }
 
-    @Override
+    /**
+     * Deletes all {@link SickNote} and {@link org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity}
+     * in the database of person.
+     *
+     * @param event the person which is deleted and whose sicknotes should be deleted
+     */
     @EventListener
-    public void deleteAll(PersonDeletedEvent event) {
+    void deleteAll(PersonDeletedEvent event) {
         commentService.deleteCommentAuthor(event.getPerson());
         commentService.deleteAllBySickNotePerson(event.getPerson());
         sickNoteService.deleteAllByPerson(event.getPerson());

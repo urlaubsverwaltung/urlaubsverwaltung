@@ -132,12 +132,4 @@ public interface ApplicationInteractionService {
      * @return saved application for leave
      */
     Application edit(Application application, Application editedApplication, Person person, Optional<String> comment);
-
-    /**
-     * Deletes all {@link Application} and {@link org.synyx.urlaubsverwaltung.application.comment.ApplicationComment}
-     * in the database of applicant with person.
-     *
-     * @param event the person which is deleted and whose applications should be deleted
-     */
-    void deleteAllByPerson(PersonDeletedEvent event);
 }

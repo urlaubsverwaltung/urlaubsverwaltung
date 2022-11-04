@@ -34,11 +34,4 @@ public interface PersonBasedataService {
      * @param personBasedata to update
      */
     void update(PersonBasedata personBasedata);
-
-    /**
-     * Deletes {@link PersonBasedata} in the database of person id.
-     *
-     * @param event includes the id of the person to be deleted
-     */
-    void delete(PersonDeletedEvent event);
 }

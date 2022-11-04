@@ -118,7 +118,7 @@ class DepartmentCalendarService {
     }
 
     @EventListener
-    public void deleteCalendarForPerson(PersonDeletedEvent event) {
+    void deleteCalendarForPerson(PersonDeletedEvent event) {
 
         departmentCalendarRepository.deleteByPerson(event.getPerson());
     }

@@ -527,9 +527,14 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         return savedEditedApplication;
     }
 
-    @Override
+    /**
+     * Deletes all {@link Application} and {@link org.synyx.urlaubsverwaltung.application.comment.ApplicationComment}
+     * in the database of applicant with person.
+     *
+     * @param event the person which is deleted and whose applications should be deleted
+     */
     @EventListener
-    public void deleteAllByPerson(PersonDeletedEvent event) {
+    void deleteAllByPerson(PersonDeletedEvent event) {
         final Person personToBeDeleted = event.getPerson();
         commentService.deleteByApplicationPerson(personToBeDeleted);
         commentService.deleteCommentAuthor(personToBeDeleted);

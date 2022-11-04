@@ -179,11 +179,4 @@ public interface ApplicationService {
      * @param person the person whose interactions should be deleted
      */
     void deleteInteractionWithApplications(Person person);
-
-    /**
-     * Deletes all application replacements of applications.
-     *
-     * @param event the person which is deleted
-     */
-    void deleteHolidayReplacements(PersonDeletedEvent event);
 }

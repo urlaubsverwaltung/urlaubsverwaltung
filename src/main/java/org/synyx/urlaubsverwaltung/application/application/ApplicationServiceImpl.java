@@ -164,9 +164,13 @@ class ApplicationServiceImpl implements ApplicationService {
         applicationRepository.saveAll(applicationsWithoutApplier);
     }
 
-    @Override
+    /**
+     * Deletes all application replacements of applications.
+     *
+     * @param event the person which is deleted
+     */
     @EventListener
-    public void deleteHolidayReplacements(PersonDeletedEvent event) {
+    void deleteHolidayReplacements(PersonDeletedEvent event) {
         final List<Application> applicationsWithReplacedApplicationReplacements = applicationRepository.findAllByHolidayReplacements_Person(event.getPerson()).stream()
             .map(deleteHolidayReplacement(event.getPerson()))
             .collect(toList());

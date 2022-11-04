@@ -28,7 +28,7 @@ class UserSettingsService {
     }
 
     @EventListener
-    public void delete(PersonDeletedEvent event) {
+    void delete(PersonDeletedEvent event) {
         userSettingsRepository.deleteByPerson(event.getPerson());
     }
 

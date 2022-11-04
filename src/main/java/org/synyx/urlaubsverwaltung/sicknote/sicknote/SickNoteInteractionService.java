@@ -65,12 +65,4 @@ public interface SickNoteInteractionService {
      * @return the cancelled sick note
      */
     SickNote cancel(SickNote sickNote, Person canceller);
-
-    /**
-     * Deletes all {@link SickNote} and {@link org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity}
-     * in the database of person.
-     *
-     * @param event the person which is deleted and whose sicknotes should be deleted
-     */
-    void deleteAll(PersonDeletedEvent event);
 }

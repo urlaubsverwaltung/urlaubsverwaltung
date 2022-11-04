@@ -49,28 +49,6 @@ public interface DepartmentService {
      */
     Department update(Department department);
 
-
-    /**
-     * Deletes all membership of the given person.
-     *
-     * @param event the person who is deleted
-     */
-    void deleteDepartmentHead(PersonDeletedEvent event);
-
-    /**
-     * Deletes all department head assignments of the given person.
-     *
-     * @param event the person who is deleted
-     */
-    void deleteAssignedDepartmentsOfMember(PersonDeletedEvent event);
-
-    /**
-     * Deletes all second stage authorities assignments of the given person.
-     *
-     * @param event the person who is deleted
-     */
-    void deleteSecondStageAuthority(PersonDeletedEvent event);
-
     /**
      * Deletes department with given id.
      *
