@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 /**
  * Provides interactions with sick notes, i.e. create, edit etc.

@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.user;
 
 import org.slf4j.Logger;
-import org.springframework.context.event.EventListener;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;

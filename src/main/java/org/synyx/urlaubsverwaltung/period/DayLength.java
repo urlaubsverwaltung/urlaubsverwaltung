@@ -43,5 +43,7 @@ public enum DayLength {
         return ZERO;
     }
 
-    public boolean isHalfDay() { return isHalfDay; }
+    public boolean isHalfDay() {
+        return isHalfDay;
+    }
 }

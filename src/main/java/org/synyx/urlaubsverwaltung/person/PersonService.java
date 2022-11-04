@@ -63,6 +63,7 @@ public interface PersonService {
      * @param person the person to be deleted
      */
     void delete(Person person);
+
     /**
      * finds a {@link Person} in the database by its primary key.
      *

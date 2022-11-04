@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 
@@ -206,8 +206,8 @@ class DepartmentServiceImpl implements DepartmentService {
 
         getManagedDepartmentsOfDepartmentHead(event.getPerson()).forEach(department -> {
             department.setDepartmentHeads(department.getDepartmentHeads().stream()
-                    .filter(person -> !person.equals(event.getPerson()))
-                    .collect(toList()));
+                .filter(person -> !person.equals(event.getPerson()))
+                .collect(toList()));
             update(department);
         });
     }
@@ -223,8 +223,8 @@ class DepartmentServiceImpl implements DepartmentService {
 
         getManagedDepartmentsOfSecondStageAuthority(event.getPerson()).forEach(department -> {
             department.setSecondStageAuthorities(department.getSecondStageAuthorities().stream()
-                    .filter(person -> !person.equals(event.getPerson()))
-                    .collect(toList()));
+                .filter(person -> !person.equals(event.getPerson()))
+                .collect(toList()));
             update(department);
         });
     }

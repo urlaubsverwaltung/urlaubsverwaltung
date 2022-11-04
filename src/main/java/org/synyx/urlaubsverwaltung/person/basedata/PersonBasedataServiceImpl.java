@@ -2,8 +2,8 @@ package org.synyx.urlaubsverwaltung.person.basedata;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.util.List;
 import java.util.Map;

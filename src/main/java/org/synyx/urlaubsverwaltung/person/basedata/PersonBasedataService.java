@@ -4,8 +4,6 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.util.List;
 import java.util.Map;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
-
 import java.util.Optional;
 
 public interface PersonBasedataService {

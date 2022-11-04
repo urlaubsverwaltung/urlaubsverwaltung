@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -46,10 +45,10 @@ public interface ApplicationService {
      * Returns all {@link Application}s with vacation time starting in between startDate x and endDate y for the given
      * status and filters by the person, status and vacation category
      *
-     * @param startDate {@link LocalDate}
-     * @param endDate {@link LocalDate}
-     * @param person {@link Person}
-     * @param statuses {@link ApplicationStatus} that should be filtered for
+     * @param startDate        {@link LocalDate}
+     * @param endDate          {@link LocalDate}
+     * @param person           {@link Person}
+     * @param statuses         {@link ApplicationStatus} that should be filtered for
      * @param vacationCategory {@link VacationCategory} that should be filtered for
      * @return filters {@link Application}s by status of the given person with vacation category between startDate x and endDate y
      */
@@ -59,10 +58,10 @@ public interface ApplicationService {
      * Returns all {@link Application}s where their start or end date is overlapping with the given period between startDate and endDate
      * and filters by the person, status and vacation category
      *
-     * @param startDate {@link LocalDate}
-     * @param endDate {@link LocalDate}
-     * @param person {@link Person}
-     * @param statuses {@link ApplicationStatus} that should be filtered for
+     * @param startDate        {@link LocalDate}
+     * @param endDate          {@link LocalDate}
+     * @param person           {@link Person}
+     * @param statuses         {@link ApplicationStatus} that should be filtered for
      * @param vacationCategory {@link VacationCategory} that should be filtered for
      * @return filters {@link Application}s by status of the given person with vacation category between startDate x and endDate y
      */

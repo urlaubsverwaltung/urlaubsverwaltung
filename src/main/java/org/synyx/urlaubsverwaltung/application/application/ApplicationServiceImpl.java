@@ -180,8 +180,8 @@ class ApplicationServiceImpl implements ApplicationService {
     private Function<Application, Application> deleteHolidayReplacement(Person deletedPerson) {
         return application -> {
             application.setHolidayReplacements(application.getHolidayReplacements().stream()
-                    .filter(holidayReplacementEntity -> !holidayReplacementEntity.getPerson().equals(deletedPerson))
-                    .collect(toList())
+                .filter(holidayReplacementEntity -> !holidayReplacementEntity.getPerson().equals(deletedPerson))
+                .collect(toList())
             );
 
             return application;

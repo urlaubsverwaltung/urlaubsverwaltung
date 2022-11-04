@@ -52,15 +52,15 @@ public class AvailabilityApiController {
     public AvailabilityListDto personsAvailabilities(
         @Parameter(description = "id of the person")
         @PathVariable("personId")
-            Integer personId,
+        Integer personId,
         @Parameter(description = "start of interval to get availabilities from (inclusive)")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate startDate,
+        LocalDate startDate,
         @Parameter(description = "end of interval to get availabilities from (inclusive)")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate endDate) {
+        LocalDate endDate) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Start date " + startDate + " must not be after end date " + endDate);
