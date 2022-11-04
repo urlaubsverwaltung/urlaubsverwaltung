@@ -10,7 +10,7 @@
         th:if="${isAllowedToDeclineCancellationRequest}"
         class="icon-link tw-bg-transparent tw-px-1 tw-py-0 hover:tw-text-red-500"
         th:data-title="#{action.cancellationRequest}"
-        onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').show();"
+        onclick="document.querySelector('#reject')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.add('tw-hidden'); document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.add('tw-hidden'); $('#decline-cancellation-request').show();"
       >
         <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5')"></svg>
         <span class="tw-sr-only" th:text="#{action.cancellationRequest}">Stornierung ablehnen</span>
@@ -20,7 +20,7 @@
     <th:block th:fragment="form">
       <form
         id="decline-cancellation-request"
-        class="form action-form confirm alert alert-danger"
+        class="form tw-hidden confirm alert alert-danger"
         method="post"
         th:action="@{/web/application/__${app.id}__/decline-cancellation-request}"
         th:object="${comment}"
@@ -60,7 +60,7 @@
             type="button"
             th:text="#{action.cancel}"
             class="button col-xs-12 col-sm-5 pull-right"
-            onclick="$('#decline-cancellation-request').hide();"
+            onclick="document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden');"
           ></button>
         </div>
       </form>

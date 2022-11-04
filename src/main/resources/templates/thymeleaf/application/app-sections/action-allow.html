@@ -10,7 +10,7 @@
         th:if="${isAllowedToAllowTemporaryAllowedApplication}"
         class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-emerald-500"
         th:data-title="#{action.allow}"
-        onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#allow').show();"
+        onclick="document.querySelector('#reject')?.classList.add('tw-hidden'); document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.remove('tw-hidden');"
       >
         <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
         <span class="tw-sr-only" th:text="#{action.allow}"></span>
@@ -21,7 +21,7 @@
         th:with="messageKey=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval ? 'action.temporary_allow' : 'action.allow'}"
         class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-emerald-500"
         th:data-title="#{__${messageKey}__}"
-        onclick="$('#reject').hide(); $('#refer').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#allow').show();"
+        onclick="document.querySelector('#reject')?.classList.add('tw-hidden'); document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.remove('tw-hidden');"
       >
         <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
         <span class="tw-sr-only" th:text="#{__${messageKey}__}"></span>
@@ -29,15 +29,10 @@
     </th:block>
 
     <th:block th:fragment="form">
-      <script th:if="${param.action == 'allow'}" type="text/javascript">
-        document.addEventListener("DOMContentLoaded", function () {
-          $("#allow").show();
-        });
-      </script>
-
       <form
         id="allow"
-        class="form action-form confirm alert alert-success"
+        class="form confirm alert alert-success"
+        th:classappend="${action eq 'allow' ? '' : 'tw-hidden'}"
         method="post"
         th:with="actionUrl=${param.shortcut == true ? '/web/application/__${app.id}__/allow?redirect=/web/application/' : '/web/application/__${app.id}__/allow'},temporary=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval && app.status.name == 'WAITING'}"
         th:action="@{__${actionUrl}__}"
@@ -75,7 +70,7 @@
             type="button"
             th:text="#{action.cancel}"
             class="button col-xs-12 col-sm-5 pull-right"
-            onclick="$('#allow').hide();"
+            onclick="document.querySelector('#allow')?.classList.add('tw-hidden');"
           ></button>
         </div>
       </form>

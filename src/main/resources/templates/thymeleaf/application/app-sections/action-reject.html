@@ -10,7 +10,7 @@
         <button
           class="icon-link tw-bg-transparent tw-px-1 tw-py-0 hover:tw-text-red-500"
           th:data-title="#{action.reject}"
-          onclick="$('#refer').hide(); $('#allow').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#reject').show();"
+          onclick="document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#reject')?.classList.remove('tw-hidden');"
         >
           <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5')"></svg>
           <span class="tw-sr-only" th:text="#{action.reject}"></span>
@@ -19,15 +19,10 @@
     </th:block>
 
     <th:block th:fragment="form">
-      <script th:if="${param.action == 'reject'}" type="text/javascript">
-        document.addEventListener("DOMContentLoaded", function () {
-          $("#reject").show();
-        });
-      </script>
-
       <form
         id="reject"
-        class="form action-form confirm alert alert-danger"
+        class="form confirm alert alert-danger"
+        th:classappend="${action eq 'reject' ? '' : 'tw-hidden'}"
         method="post"
         th:with="actionUrl=${param.shortcut == true ? '/web/application/__${app.id}__/reject?redirect=/web/application/' : '/web/application/__${app.id}__/reject'}"
         th:action="@{__${actionUrl}__}"
@@ -57,7 +52,7 @@
             type="button"
             class="button col-xs-12 col-sm-5 pull-right"
             th:text="#{action.cancel}"
-            onclick="$('#reject').hide();"
+            onclick="document.querySelector('#reject')?.classList.add('tw-hidden');"
           ></button>
         </div>
       </form>

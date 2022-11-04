@@ -10,7 +10,7 @@
         th:if="${isAllowedToReferApplication}"
         class="icon-link tw-bg-transparent tw-px-1 tw-py-0"
         th:data-title="#{action.refer}"
-        onclick="$('#reject').hide(); $('#allow').hide(); $('#cancel').hide(); $('#decline-cancellation-request').hide(); $('#refer').show();"
+        onclick="document.querySelector('#reject')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#refer')?.classList.remove('tw-hidden');"
       >
         <svg th:replace="icon/share::svg(className='tw-w-5 tw-h-5')"></svg>
         <span class="tw-sr-only" th:text="#{action.refer}"></span>
@@ -20,7 +20,7 @@
     <th:block th:fragment="form">
       <form
         id="refer"
-        class="form action-form confirm alert alert-info"
+        class="form tw-hidden confirm alert alert-info"
         method="post"
         th:action="@{/web/application/__${app.id}__/refer}"
         th:object="${referredPerson}"
@@ -50,7 +50,7 @@
             type="button"
             th:text="#{action.cancel}"
             class="button col-xs-12 col-sm-5 pull-right"
-            onclick="$('#refer').hide();"
+            onclick="document.querySelector('#refer')?.classList.add('tw-hidden');"
           ></button>
         </div>
       </form>

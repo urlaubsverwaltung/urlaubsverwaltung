@@ -10,7 +10,7 @@
         th:if="${isAllowedToRevokeApplication || isAllowedToCancelApplication || isAllowedToCancelDirectlyApplication}"
         class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-red-500"
         th:data-title="#{action.delete}"
-        onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#decline-cancellation-request').hide(); $('#cancel').show();"
+        onclick="document.querySelector('#reject')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.add('tw-hidden'); document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.remove('tw-hidden');"
       >
         <svg th:replace="icon/trash::svg(className='tw-w-5 tw-h-5')"></svg>
         <span class="tw-sr-only" th:text="#{action.delete}"></span>
@@ -20,7 +20,7 @@
         th:if="${isAllowedToStartCancellationRequest}"
         class="icon-link tw-bg-transparent tw-px-1 tw-py-0 hover:tw-text-red-500"
         th:data-title="#{action.delete.request}"
-        onclick="$('#reject').hide(); $('#allow').hide(); $('#refer').hide(); $('#decline-cancellation-request').hide(); $('#cancel').show();"
+        onclick="document.querySelector('#reject')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.add('tw-hidden'); document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.remove('tw-hidden');"
       >
         <svg th:replace="icon/trash::svg(className='tw-w-5 tw-h-5')"></svg>
         <span class="tw-sr-only" th:text="#{action.delete.request}"></span>
@@ -28,15 +28,10 @@
     </th:block>
 
     <th:block th:fragment="form">
-      <script th:if="${param.action == 'cancel'}" type="text/javascript">
-        document.addEventListener("DOMContentLoaded", function () {
-          $("#cancel").show();
-        });
-      </script>
-
       <form
         id="cancel"
-        class="form action-form confirm alert alert-danger"
+        class="form confirm alert alert-danger"
+        th:classappend="${action eq 'cancel' ? '' : 'tw-hidden'}"
         method="post"
         th:with="deleteRequest=${app.vacationType.requiresApproval == true && (app.status.name == 'ALLOWED' || app.status.name == 'TEMPORARY_ALLOWED') && !isOffice && !signedInUser.hasRole('APPLICATION_CANCEL')}"
         th:action="@{/web/application/__${app.id}__/cancel}"
@@ -78,7 +73,7 @@
             type="button"
             th:text="#{action.cancel}"
             class="button col-xs-12 col-sm-5 pull-right"
-            onclick="$('#cancel').hide();"
+            onclick="document.querySelector('#cancel')?.classList.add('tw-hidden');"
           ></button>
         </div>
       </form>

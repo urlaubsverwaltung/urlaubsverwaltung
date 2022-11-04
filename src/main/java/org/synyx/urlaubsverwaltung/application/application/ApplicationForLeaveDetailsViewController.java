@@ -41,6 +41,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNullElse;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToAllowTemporaryAllowedApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToAllowWaitingApplication;
@@ -465,7 +466,7 @@ class ApplicationForLeaveDetailsViewController {
         // UNSPECIFIC ATTRIBUTES
         model.addAttribute("selectedYear", year);
         model.addAttribute("currentYear", Year.now(clock).getValue());
-        model.addAttribute("action", action);
+        model.addAttribute("action", requireNonNullElse(action, ""));
         model.addAttribute("shortcut", shortcut);
     }
 }
