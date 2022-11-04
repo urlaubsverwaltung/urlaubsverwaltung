@@ -16,16 +16,12 @@ $(document).ready(async function () {
   }
 
   const apiPrefix = window.uv.apiPrefix;
-  const applicationForLeavePersonId = window.uv.application.person.id;
 
   let fromDateElement;
   let toDateElement;
 
   function getPersonId() {
-    if (!applicationForLeavePersonId) {
-      return document.querySelector("#person-select").value;
-    }
-    return applicationForLeavePersonId;
+    return document.querySelector("[name='person']").value;
   }
 
   function updateSelectionHints() {
