@@ -12,7 +12,7 @@ import static java.lang.String.format;
 
 public class AssetFilenameHashMapper {
 
-    private static final String ASSETS_MANIFEST_FILE = "WEB-INF/assets-manifest.json";
+    private static final String ASSETS_MANIFEST_FILE = "classpath:assets-manifest.json";
 
     private final ResourceLoader resourceLoader;
 

@@ -73,19 +73,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-jasper</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-taglibs</artifactId>
-    </dependency>
 
     <!-- Configuration Properties -->
     <dependency>
@@ -331,47 +318,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.5.3</version>
-      </plugin>
-
-      <!--
-        run jsp compilation as part of build process
-        so we save huge amount on-demand compilation time
-        in multi-tenant container based deployment
-      -->
-      <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-jspc-maven-plugin</artifactId>
-        <version>10.0.12</version>
-        <executions>
-          <execution>
-            <id>jspc</id>
-            <goals>
-              <goal>jspc</goal>
-            </goals>
-            <configuration>
-              <mergeFragment>true</mergeFragment>
-              <sourceVersion>${java.version}</sourceVersion>
-              <targetVersion>${java.version}</targetVersion>
-            </configuration>
-          </execution>
-        </executions>
-        <dependencies>
-          <!-- replace jetty jspc with tomcat jspc -->
-          <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-jasper</artifactId>
-            <version>${tomcat.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <!-- include jspc generated web.xml into war file -->
-          <webXml>${project.basedir}/target/web.xml</webXml>
-        </configuration>
       </plugin>
 
       <plugin>

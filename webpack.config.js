@@ -1,4 +1,4 @@
-const path = require("path");
+const path = require("node:path");
 const webpack = require("webpack");
 const WebpackAssetsManifest = require("webpack-assets-manifest");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -90,7 +90,7 @@ module.exports = {
     // This file is read by the taglib AssetsHashResolverTag.java to ease asset handling in templates
     new WebpackAssetsManifest({
       // output path is relative to webpack.output.path
-      output: path.resolve(__dirname, "src/main/webapp/WEB-INF/assets-manifest.json"),
+      output: path.resolve(__dirname, "src/main/resources/assets-manifest.json"),
       publicPath: true,
     }),
     new webpack.ProvidePlugin({

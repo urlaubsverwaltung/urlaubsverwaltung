@@ -165,9 +165,6 @@ uv.security.oidc.issuer-uri
 uv.security.oidc.logout-uri
 uv.security.oidc.scopes=openid,profile,email
 
-# jsp template engine
-uv.template-engine.jsp.use-precompiled=false
-
 # sick-note
 uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
 
@@ -425,7 +422,7 @@ Die User Experience einiger Seiten wird zur Laufzeit mit JavaScript weiter verbe
 
 Assets sind in `<root>/src/main/javascript` zu finden
 
-* `bundles` sind in den JSPs zu integrieren
+* `bundles` sind in den HTML-Seiten zu integrieren
 * `components` sind einzelne Komponenten zur Wiederverwendung wie z. B. der _datepicker_
 * `js` beinhaltet seitenspezifische Dinge
 * `lib` sind third-party Bibliotheken
@@ -444,13 +441,11 @@ Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auc
 
 Startet man den Maven Build oder baut man die Assets mit dem NPM Task `npm run build` wird eine JSON Datei `assets-manifest.json` angelegt.
 Das Manifest beschreibt ein Mapping der bundles zum generierten Dateinamen inklusive Hash. Dieser gemappte Dateiname muss
-in den JSPs integriert werden. Damit das nicht bei jeder Änderung manuell gemacht werden muss, kann der Dateiname mit Hilfe der
-Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit der JSP automatisiert werden.
+in den Html-Seiten integriert werden. Damit das nicht bei jeder Änderung manuell gemacht werden muss, kann der Dateiname mit Hilfe der
+Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit automatisiert werden.
 
-```jsp
-<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
-
-<script defer src="<asset:url value='npm.jquery.js' />"></script>
+```html
+<script defer asset:src="npm.jquery.js"></script>
 ```
 
 Während der Weiterentwicklung ist es sinnvoll das Caching zu deaktivieren. Wird das `demodata` Profil verwendet muss

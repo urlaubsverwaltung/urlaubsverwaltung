@@ -20,7 +20,7 @@ class AssetFilenameHashMapperTest {
 
         final ResourceLoader resourceLoader = mock(ResourceLoader.class);
         final ClassPathResource manifest = new ClassPathResource("asset-filename-hash-mapper-manifest-file.json");
-        when(resourceLoader.getResource("WEB-INF/assets-manifest.json")).thenReturn(manifest);
+        when(resourceLoader.getResource("classpath:assets-manifest.json")).thenReturn(manifest);
 
         final AssetFilenameHashMapper sut = new AssetFilenameHashMapper(resourceLoader);
 
@@ -36,7 +36,7 @@ class AssetFilenameHashMapperTest {
 
         final ResourceLoader resourceLoader = mock(ResourceLoader.class);
         final ClassPathResource manifest = new ClassPathResource("asset-filename-hash-mapper-manifest-file-empty.json");
-        when(resourceLoader.getResource("WEB-INF/assets-manifest.json")).thenReturn(manifest);
+        when(resourceLoader.getResource("classpath:assets-manifest.json")).thenReturn(manifest);
 
         final AssetFilenameHashMapper sut = new AssetFilenameHashMapper(resourceLoader);
 
@@ -51,7 +51,7 @@ class AssetFilenameHashMapperTest {
         final ResourceLoader resourceLoader = mock(ResourceLoader.class);
         final ClassPathResource manifest = new ClassPathResource("asset-filename-hash-mapper-manifest-file-invalid.json");
 
-        when(resourceLoader.getResource("WEB-INF/assets-manifest.json")).thenReturn(manifest);
+        when(resourceLoader.getResource("classpath:assets-manifest.json")).thenReturn(manifest);
 
         final AssetFilenameHashMapper sut = new AssetFilenameHashMapper(resourceLoader);
 
@@ -73,6 +73,6 @@ class AssetFilenameHashMapperTest {
 
         assertThatIllegalStateException()
             .isThrownBy(() -> sut.getHashedAssetFilename("filename"))
-            .withMessage("could not read WEB-INF/assets-manifest.json");
+            .withMessage("could not read classpath:assets-manifest.json");
     }
 }
