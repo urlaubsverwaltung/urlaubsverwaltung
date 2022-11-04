@@ -404,7 +404,7 @@
                   <div class="col-md-9">
                     <div class="tw-flex">
                       <select
-                        th:replace="fragments/select::one(id='holiday-replacement-select', name='holidayReplacementToAdd', options=~{::application-holidayreplacement-select-options}, class='tw-rounded-l tw-rounded-r-none', testId='holiday-replacement-select')"
+                        th:replace="fragments/select::one(id='holiday-replacement-select', name='holidayReplacementToAdd', options=~{::application-holidayreplacement-select-options}, testId='holiday-replacement-select')"
                         id="holiday-replacement-select"
                       >
                         <th:block th:fragment="application-holidayreplacement-select-options">
