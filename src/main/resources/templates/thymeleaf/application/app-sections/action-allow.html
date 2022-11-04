@@ -34,7 +34,7 @@
         class="form confirm alert alert-success"
         th:classappend="${action eq 'allow' ? '' : 'tw-hidden'}"
         method="post"
-        th:with="actionUrl=${param.shortcut == true ? '/web/application/__${app.id}__/allow?redirect=/web/application/' : '/web/application/__${app.id}__/allow'},temporary=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval && app.status.name == 'WAITING'}"
+        th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/application/__${app.id}__/allow?redirect=/web/application/' : '/web/application/__${app.id}__/allow'},temporary=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval && app.status.name == 'WAITING'}"
         th:action="@{__${actionUrl}__}"
         th:object="${comment}"
       >
