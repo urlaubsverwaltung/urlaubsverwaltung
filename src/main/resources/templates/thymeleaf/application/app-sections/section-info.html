@@ -36,7 +36,7 @@
                 <span
                   class="state pull-right print:tw-hidden"
                   th:classappend="${app.status.name}"
-                  th:title="${app.status.name}"
+                  th:title="${#messages.msg(app.status.name)}"
                 >
                   <th:block th:switch="${app.status.name}">
                     <th:block th:case="'WAITING'">
