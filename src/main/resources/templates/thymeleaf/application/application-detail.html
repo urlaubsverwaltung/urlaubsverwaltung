@@ -30,7 +30,7 @@
     >
       <div>
         <div
-          th:replace="fragments/section-heading::section-heading-paddingless(~{::applications-details-heading-body}, ~{::applications-details-heading-actions})"
+          th:replace="fragments/section-heading::section-heading(~{::applications-details-heading-body}, ~{::applications-details-heading-actions})"
         >
           <th:block th:ref="applications-details-heading-actions">
             <th:block th:include="thymeleaf/application/app-sections/action-allow::button"></th:block>
@@ -120,7 +120,7 @@
       </div>
       <div class="print:tw-hidden">
         <div
-          th:replace="fragments/section-heading::section-heading-paddingless(~{::applications-details-account-heading-body}, ~{})"
+          th:replace="fragments/section-heading::section-heading(~{::applications-details-account-heading-body}, ~{})"
         >
           <th:block th:ref="applications-details-account-heading-body">
             <h2 th:text="#{person.account.vacation.title}"></h2>
@@ -238,7 +238,7 @@
       <div th:replace="thymeleaf/application/app-sections/section-progress::section"></div>
       <div class="print:tw-hidden">
         <div
-          th:replace="fragments/section-heading::section-heading-paddingless(~{::applications-details-department-heading-body}, ~{})"
+          th:replace="fragments/section-heading::section-heading(~{::applications-details-department-heading-body}, ~{})"
         >
           <th:block th:ref="applications-details-department-heading-body">
             <h2 th:text="#{application.department.title}"></h2>
