@@ -244,6 +244,11 @@ serviceMonitor:
   port: http-management
 ```
 
+### From chart versions < 2.1.0
+
+improve k8s support for version >= 1.19
+
+* See `ingress.hosts[]` structure for migration
 
 ### From chart versions < 2.0.0
 
