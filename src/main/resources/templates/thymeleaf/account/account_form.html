@@ -62,6 +62,7 @@
           class="form-horizontal"
         >
           <input type="hidden" th:field="*{holidaysAccountYear}" />
+          <input type="hidden" th:field="*{doRemainingVacationDaysExpireGlobally}" />
 
           <div class="form-section">
             <div class="row tw-mb-8" th:if="${#fields.hasErrors('*')}">
@@ -129,7 +130,7 @@
                   <legend th:text="#{person.form.annualVacation.annualVacation.group.legend}">Urlaubsanspruch</legend>
                   <div class="form-group is-required">
                     <label
-                      th:text="|#{person.form.annualVacation.annualVacation}|"
+                      th:text="|#{person.form.annualVacation.annualVacation}:|"
                       class="control-label col-md-3 tw-leading-snug"
                       for="annualVacationDays"
                     ></label>
