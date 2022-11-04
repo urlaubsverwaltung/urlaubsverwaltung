@@ -7,11 +7,9 @@ import sendGetDaysRequest from "../send-get-days-request";
 import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
 $(document).ready(async function () {
-  const personSelectElement = document.querySelector("#person-select");
-
-  personSelectElement.addEventListener("change", function () {
+  document.querySelector("#person-select")?.addEventListener("change", function (event) {
     const parameters = new URLSearchParams();
-    parameters.set("personId", personSelectElement.value);
+    parameters.set("personId", event.currentTarget.value);
     window.location.href = window.location.pathname + "?" + parameters.toString();
   });
 
