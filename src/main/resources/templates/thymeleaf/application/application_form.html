@@ -404,7 +404,7 @@
                   <div class="col-md-9">
                     <div class="tw-flex">
                       <select
-                        th:replace="fragments/select::one(id='holiday-replacement-select', name='holidayReplacementToAdd', options=~{::application-holidayreplacement-select-options}, testId='holiday-replacement-select')"
+                        th:replace="fragments/select::one-with-addon(id='holiday-replacement-select', name='holidayReplacementToAdd', options=~{::application-holidayreplacement-select-options}, addon=~{::application-holidayreplacement-select-addon}, testId='holiday-replacement-select')"
                         id="holiday-replacement-select"
                       >
                         <th:block th:fragment="application-holidayreplacement-select-options">
@@ -415,15 +415,17 @@
                             th:value="${person.personId}"
                           ></option>
                         </th:block>
+                        <th:block th:ref="application-holidayreplacement-select-addon">
+                          <button
+                            th:text="#{application.data.holidayReplacement.add-button.text}"
+                            type="submit"
+                            class="button tw-rounded-l-none tw-border-l-0 tw-py-0"
+                            name="add-holiday-replacement"
+                            formmethod="post"
+                            th:formaction="${applicationForLeaveForm.id == null ? '/web/application/new' : '/web/application/__${applicationForLeaveForm.id}__'}"
+                          ></button>
+                        </th:block>
                       </select>
-                      <button
-                        th:text="#{application.data.holidayReplacement.add-button.text}"
-                        type="submit"
-                        class="button tw-rounded-l-none tw-border-l-0 tw-py-0"
-                        name="add-holiday-replacement"
-                        formmethod="post"
-                        th:formaction="${applicationForLeaveForm.id == null ? '/web/application/new' : '/web/application/__${applicationForLeaveForm.id}__'}"
-                      ></button>
                     </div>
                   </div>
                 </div>

@@ -34,6 +34,14 @@
     </span>
 
     <span
+      class="select-with-addon tw-w-full tw-flex tw-items-center"
+      th:fragment="one-with-addon(id, name, options, addon)"
+    >
+      <span th:replace="::one(${id}, ${name}, ${options})"></span>
+      <span class="tw-h-full tw-flex select-addon" th:insert="${addon}"></span>
+    </span>
+
+    <span
       th:fragment="multi(id, name, options)"
       class="tw-inline-block tw-relative tw-w-full"
       th:with="testId=${testId ?: ''}"
