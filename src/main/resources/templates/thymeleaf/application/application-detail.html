@@ -42,6 +42,7 @@
             ></th:block>
             <th:block th:include="thymeleaf/application/app-sections/action-remind::button"></th:block>
             <th:block th:include="thymeleaf/application/app-sections/action-refer::button"></th:block>
+            <button th:replace="fragments/print::button"></button>
           </th:block>
           <th:block th:ref="applications-details-heading-body">
             <h1 th:text="#{application.data.title}"></h1>
@@ -257,17 +258,27 @@
             >
               <td class="tw-text-blue-50 dark:tw-text-sky-800">
                 <img
-                  th:replace="fragments/avatar::avatar-bordered(url=${app.person.gravatarURL + '?d=404&s=40'},niceName=${app.person.niceName},width='40px',height='40px')"
+                  th:replace="fragments/avatar::avatar-bordered(url=${departmentApplication.person.gravatarURL + '?d=404&s=40'},niceName=${departmentApplication.person.niceName},width='40px',height='40px')"
                   alt=""
                 />
               </td>
-              <td th:text="${app.person.niceName}"></td>
+              <td th:text="${departmentApplication.person.niceName}"></td>
               <td>
                 <span class="tw-flex tw-items-center">
-                  <th:block
-                    th:replace="fragments/date-range::date-range(from=${app.startDate}, to=${app.endDate}, pattern='E, dd.MM.yyyy')"
-                  ></th:block>
-                  <span th:if="${app.status.name == 'ALLOWED'}" class="tw-text-emerald-500">
+                  <th:block th:if="${departmentApplication.startDate == departmentApplication.endDate}">
+                    <th:block
+                      th:text="|${#messages.msg(departmentApplication.startDate.dayOfWeek + '.short')}|"
+                    ></th:block
+                    >,
+                    <th:block th:replace="fragments/date::date(${departmentApplication.startDate})"></th:block>,&nbsp;
+                    <th:block th:text="${#messages.msg(departmentApplication.dayLength)}"></th:block>
+                  </th:block>
+                  <th:block th:if="${departmentApplication.startDate != departmentApplication.endDate}">
+                    <span
+                      th:replace="fragments/date-range::date-range(from=${departmentApplication.startDate}, to=${departmentApplication.endDate}, pattern='E, dd.MM.yyyy')"
+                    ></span>
+                  </th:block>
+                  <span th:if="${departmentApplication.status.name == 'ALLOWED'}" class="tw-text-emerald-500">
                     <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')" />
                   </span>
                 </span>
