@@ -83,6 +83,8 @@ public class PersonDetailsViewController {
             model.addAttribute("personBasedata", personDetailsBasedataDto);
         }
 
+        model.addAttribute("personDeleteForm", new PersonDeleteForm());
+
         model.addAttribute("departments", departmentService.getAssignedDepartmentsOfMember(person));
         model.addAttribute("departmentHeadOfDepartments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageAuthorityOfDepartments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
@@ -97,6 +99,7 @@ public class PersonDetailsViewController {
         model.addAttribute("canEditDepartments", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditAccounts", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditWorkingtime", signedInUser.hasRole(OFFICE));
+        model.addAttribute("canDeletePerson", signedInUser.hasRole(OFFICE));
 
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(selectedYear, person);
         maybeAccount.ifPresent(account -> model.addAttribute("account", account));

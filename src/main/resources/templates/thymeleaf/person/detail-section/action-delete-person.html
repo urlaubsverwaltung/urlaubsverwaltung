@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>person delete action</title>
+  </head>
+  <body>
+    <th:block th:fragment="section">
+      <th:block th:if="${personDeletionConfirmationValidationError}">
+        <script type="text/javascript">
+          document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector("#person-delete-form")?.classList.remove("tw-hidden");
+            document.querySelector("#person-delete-description")?.classList.add("tw-hidden");
+          });
+        </script>
+      </th:block>
+
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::person-details-dangerzone-body}, ~{::person-details-dangerzone-actions})"
+      >
+        <th:block th:ref="person-details-dangerzone-body">
+          <h2 th:text="#{person.account.dangerzone.title}">Benutzer löschen</h2>
+        </th:block>
+      </div>
+      <div
+        th:replace="fragments/box::box-with-icon(~{::person-details-dangerzone-box-icon}, ~{::person-details-dangerzone-box-body})"
+      >
+        <th:block th:ref="person-details-dangerzone-box-icon">
+          <div
+            th:replace="fragments/rounded::block(content=~{::person-details-dangerzone-box-icon-rounded}, className='tw-bg-red-500 tw-text-white dark:tw-bg-red-500 dark:tw-text-zinc-900')"
+          >
+            <th:block th:ref="person-details-dangerzone-box-icon-rounded">
+              <svg th:replace="icon/trash::svg(className='tw-w-8 tw-h-8')" />
+            </th:block>
+          </div>
+        </th:block>
+        <th:block th:ref="person-details-dangerzone-box-body">
+          <div id="person-delete-description">
+            <p th:text="#{person.account.dangerzone.description}"></p>
+            <button
+              class="button-danger"
+              th:text="#{person.account.dangerzone.delete-button(${person.niceName})}"
+              onclick="document.querySelector('#person-delete-form')?.classList.remove('tw-hidden');document.querySelector('#person-delete-description')?.classList.add('tw-hidden');"
+            >
+              Benutzende löschen
+            </button>
+          </div>
+          <form
+            id="person-delete-form"
+            method="post"
+            th:action="@{/web/person/__${person.id}__/delete}"
+            th:object="${personDeleteForm}"
+            class="tw-hidden"
+          >
+            <p th:text="#{person.account.dangerzone.description(${person.niceName})}"></p>
+            <p th:text="#{person.account.dangerzone.description.extention}"></p>
+
+            <label class="tw-w-full">
+              <span th:text="#{person.account.dangerzone.delete.confirmation(${person.niceName})}"></span>
+              <input th:field="*{niceNameConfirmation}" class="form-control tw-mt-1" />
+            </label>
+
+            <p
+              id="person-delete-form-error"
+              th:if="${personDeletionConfirmationValidationError}"
+              th:text="#{${personDeletionConfirmationValidationError}(${person.niceName})}"
+              class="error tw-text-sm"
+            ></p>
+
+            <div class="tw-flex tw-justify-between tw-mt-4">
+              <button
+                th:text="#{person.account.dangerzone.delete-button.finally(${person.niceName})}"
+                class="button-danger"
+                type="submit"
+              >
+                Benutzer endgültig löschen
+              </button>
+              <button
+                id="person-delete-cancel"
+                type="button"
+                th:text="#{action.cancel}"
+                class="button tw-w-24"
+                onclick="document.querySelector('#person-delete-form-error')?.classList.add('tw-hidden');document.querySelector('#person-delete-form')?.classList.add('tw-hidden');document.querySelector('#person-delete-description')?.classList.remove('tw-hidden');"
+              ></button>
+            </div>
+          </form>
+        </th:block>
+      </div>
+    </th:block>
+  </body>
+</html>

@@ -78,15 +78,4 @@ public class PersonPermissionsViewController {
         redirectAttributes.addFlashAttribute("updateSuccess", true);
         return "redirect:/web/person/" + personId;
     }
-
-    @PreAuthorize(IS_OFFICE)
-    @PostMapping("/person/{personId}/delete")
-    public String deletePerson(@PathVariable("personId") Integer personId, RedirectAttributes redirectAttributes) throws UnknownPersonException {
-
-        final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        personService.delete(person);
-
-        redirectAttributes.addFlashAttribute("personDeletionSuccess", person.getNiceName());
-        return "redirect:/web/person/";
-    }
 }
