@@ -14,7 +14,7 @@
         th:id="${id}"
         th:name="${name}"
         class="form-control tw-appearance-none tw-pr-8"
-        th:attrappend="data-auto-submit=${autosubmit}, data-test-id=${testId}"
+        th:attrappend="data-auto-submit=${autosubmit}, data-test-id=${testId}, is=${is}"
       >
         <option th:replace="${options}"></option>
       </select>

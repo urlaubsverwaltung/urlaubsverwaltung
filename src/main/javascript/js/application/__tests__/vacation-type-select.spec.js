@@ -1,18 +1,15 @@
-import { setup, cleanup, waitForFinishedJQueryReadyCallbacks } from "../../../../../test/javascript/test-setup-helper";
+import "../vacation-type-select";
 
-describe("select", function () {
-  beforeEach(setup);
+describe("vacation-type-select", function () {
   beforeEach(async function () {
     document.body.innerHTML = `
-      <select id="vacationType" name="vacationType" class="form-control tw-appearance-none tw-pr-8" data-test-id="vacation-type-select">
+      <select id="vacationType" name="vacationType" is="uv-vacation-type-select">
         <option value="1000" data-vacationtype-category="HOLIDAY">Erholungsurlaub</option>
         <option value="2000" data-vacationtype-category="SPECIALLEAVE">Sonderurlaub</option>
         <option value="3000" data-vacationtype-category="UNPAIDLEAVE">Unbezahlter Urlaub</option>
         <option value="4000" data-vacationtype-category="OVERTIME">Überstundenabbau</option>
       </select>
     `;
-    await import("../vacation-type-changed");
-    await waitForFinishedJQueryReadyCallbacks();
   });
 
   afterEach(function () {
@@ -21,7 +18,6 @@ describe("select", function () {
       document.body.firstElementChild.remove();
     }
   });
-  afterEach(cleanup);
 
   describe("SPECIAL_LEAVE", function () {
     it("adds 'hidden' class to 'overtime' element", function () {

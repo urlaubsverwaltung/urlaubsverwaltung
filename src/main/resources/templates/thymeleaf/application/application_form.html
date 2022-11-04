@@ -144,7 +144,7 @@
                   </label>
                   <div class="col-md-9">
                     <select
-                      th:replace="fragments/select::one(id='vacationType', name='vacationType', options=~{::application-vacationtype-select-options}, testId='vacation-type-select')"
+                      th:replace="fragments/select::one(id='vacationType', name='vacationType', options=~{::application-vacationtype-select-options}, testId='vacation-type-select', is='uv-vacation-type-select')"
                       id="vacationType"
                     >
                       <th:block th:fragment="application-vacationtype-select-options">
