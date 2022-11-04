@@ -7,13 +7,16 @@ import sendGetDaysRequest from "../send-get-days-request";
 import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
 $(document).ready(async function () {
+  const personSelectElement = document.querySelector("#person-select");
   const person = window.uv.params.personId;
-  if (person) {
-    const personSelectElement = document.querySelector("#person-select");
-    if (personSelectElement) {
-      personSelectElement.value = person;
-    }
+
+  if (person && personSelectElement) {
+    personSelectElement.value = person;
   }
+
+  personSelectElement.addEventListener("change", function () {
+    updateSelectionHints();
+  });
 
   const apiPrefix = window.uv.apiPrefix;
 
@@ -25,13 +28,15 @@ $(document).ready(async function () {
   }
 
   function updateSelectionHints() {
-    const dayLength = document.querySelector("input[type='radio'][name='dayLength']:checked").value;
-    const startDate = parseISO(fromDateElement.value);
-    const toDate = parseISO(toDateElement.value);
+    if (fromDateElement.value && toDateElement.value) {
+      const dayLength = document.querySelector("input[type='radio'][name='dayLength']:checked").value;
+      const startDate = parseISO(fromDateElement.value);
+      const toDate = parseISO(toDateElement.value);
 
-    const personId = getPersonId();
-    sendGetDaysRequest(apiPrefix, startDate, toDate, dayLength, personId, ".days");
-    sendGetDepartmentVacationsRequest(apiPrefix, startDate, toDate, personId, "#departmentVacations");
+      const personId = getPersonId();
+      sendGetDaysRequest(apiPrefix, startDate, toDate, dayLength, personId, ".days");
+      sendGetDepartmentVacationsRequest(apiPrefix, startDate, toDate, personId, "#departmentVacations");
+    }
   }
 
   function setDefaultToDateValue() {
