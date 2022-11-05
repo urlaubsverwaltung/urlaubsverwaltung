@@ -4,11 +4,11 @@
 module.exports = {
   roots: ["<rootDir>/src/main/javascript"],
   collectCoverage: false,
-  collectCoverageFrom: ["**/*.js", "!**/*.{test,spec}.js", "!**/__tests__/**", "!**/WEB-INF/**"],
+  collectCoverageFrom: ["**/*.js", "!**/*.{test,spec}.js", "!**/__tests__/**"],
   coverageDirectory: "<rootDir>/target/js-coverage",
   testEnvironment: "jsdom",
   testEnvironmentOptions: {
-    url: "http://localhost"
+    url: "http://localhost",
   },
   moduleNameMapper: {
     "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
