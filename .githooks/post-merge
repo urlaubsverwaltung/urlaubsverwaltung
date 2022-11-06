@@ -13,5 +13,5 @@ if [ "$packageJsonUpdated" ]; then
     printf "Please wait a moment. I will update frontend modules for you 😽\n"
     printf "%b" "$COL_RESET"
 
-    ./mvnw frontend:install-node-and-npm frontend:npm@npm-install
+    ./mvnw frontend:install-node-and-npm frontend:npm@install-npm-dependencies
 fi
