@@ -374,15 +374,10 @@ Zum Automatisieren verschiedener Dinge bietet dir das Projekt [git hooks](https:
 an. Diese kannst du mit folgendem Befehl installieren:
 
 ```bash
-./scripts/install-git-hooks.sh
+git config core.hooksPath '.githooks'
 ```
 
-Folgende git hooks werden installiert:
-
-* **post-merge**
-  * schaut nach einen `pull` ob sich die `package.lock` geändert hat und installiert ggfs. npm dependencies
-* **pre-commit**
-  * formatiert geänderte Dateien mit [prettier](https://prettier.io/) 
+Die Githooks sind im [.githooks](./.githooks/) Verzeichnis zu finden.
 
 ### Anwendung starten
 
