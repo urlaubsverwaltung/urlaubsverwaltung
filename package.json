@@ -93,7 +93,7 @@
     "webpack-cli": "4.10.0"
   },
   "lint-staged": {
-    "*.{js,html,svg}": [
+    "*.{js,html,svg,css}": [
       "prettier --write"
     ]
   }
