@@ -128,6 +128,7 @@ class SickNoteViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", activePersons))
+            .andExpect(model().attribute("signedInUser", personWithRole))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
@@ -147,6 +148,7 @@ class SickNoteViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", departmentPersons))
+            .andExpect(model().attribute("signedInUser", departmentHead))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
@@ -166,6 +168,7 @@ class SickNoteViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", departmentPersons))
+            .andExpect(model().attribute("signedInUser", secondStageAuthority))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
@@ -197,6 +200,7 @@ class SickNoteViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", of(person, person2)))
+            .andExpect(model().attribute("signedInUser", departmentHeadAndSsa))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
@@ -223,6 +227,7 @@ class SickNoteViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", of(person)))
+            .andExpect(model().attribute("signedInUser", departmentHeadAndSsa))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
@@ -254,6 +259,7 @@ class SickNoteViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", of(person2, person)))
+            .andExpect(model().attribute("signedInUser", departmentHeadAndSsa))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }

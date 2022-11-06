@@ -98,7 +98,7 @@
                           th:each="person: ${persons}"
                           th:text="${person.niceName}"
                           th:value="${person.id}"
-                          th:selected="${sickNote.person != null && sickNote.person.id == person.id}"
+                          th:selected="${(sickNote.person != null && sickNote.person.id == person.id) || signedInUser.id == person.id}"
                         ></option>
                       </th:block>
                     </select>

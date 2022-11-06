@@ -64,7 +64,6 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteMapper.merge
 class SickNoteViewController {
 
     private static final String PERSONS_ATTRIBUTE = "persons";
-    private static final String SICKNOTE_SICK_NOTE_FORM = "thymeleaf/sicknote/sick_note_form";
     private static final String SICK_NOTE = "sickNote";
     private static final String SICK_NOTE_TYPES = "sickNoteTypes";
     private static final String REDIRECT_WEB_SICKNOTE = "redirect:/web/sicknote/";
@@ -151,6 +150,7 @@ class SickNoteViewController {
     public String newSickNote(Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
+        model.addAttribute("signedInUser", signedInUser);
 
         model.addAttribute(SICK_NOTE, new SickNoteForm());
 
@@ -160,7 +160,7 @@ class SickNoteViewController {
 
         addVacationTypeColorsToModel(model);
 
-        return SICKNOTE_SICK_NOTE_FORM;
+        return "thymeleaf/sicknote/sick_note_form";
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_ADD')")
@@ -168,6 +168,7 @@ class SickNoteViewController {
     public String newSickNote(@ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
+        model.addAttribute("signedInUser", signedInUser);
 
         final SickNote sickNote = sickNoteForm.generateSickNote();
         sickNote.setApplier(signedInUser);
@@ -181,7 +182,7 @@ class SickNoteViewController {
 
             addVacationTypeColorsToModel(model);
 
-            return SICKNOTE_SICK_NOTE_FORM;
+            return "thymeleaf/sicknote/sick_note_form";
         }
 
         sickNoteInteractionService.create(sickNote, signedInUser, sickNoteForm.getComment());
@@ -211,7 +212,7 @@ class SickNoteViewController {
 
         addVacationTypeColorsToModel(model);
 
-        return SICKNOTE_SICK_NOTE_FORM;
+        return "thymeleaf/sicknote/sick_note_form";
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
@@ -234,7 +235,7 @@ class SickNoteViewController {
 
             addVacationTypeColorsToModel(model);
 
-            return SICKNOTE_SICK_NOTE_FORM;
+            return "thymeleaf/sicknote/sick_note_form";
         }
 
         final Person signedInUser = personService.getSignedInUser();
