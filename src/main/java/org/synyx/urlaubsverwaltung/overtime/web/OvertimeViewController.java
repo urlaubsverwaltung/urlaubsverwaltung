@@ -190,7 +190,7 @@ public class OvertimeViewController {
                 signedInUser.getId(), person.getId()));
         }
 
-        final OvertimeForm overtimeForm = new OvertimeForm(person);
+        final OvertimeForm overtimeForm = new OvertimeForm();
         prepareModelForCreation(model, signedInUser, person, overtimeForm);
 
         return OVERTIME_OVERTIME_FORM;

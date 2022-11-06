@@ -2,22 +2,31 @@ import $ from "jquery";
 import { createDatepicker } from "../../components/datepicker";
 
 $(document).ready(async function () {
+  const person = window.uv.params.person;
+  if (person) {
+    const personsSelect = document.querySelector("#person-select");
+    if (personsSelect) {
+      personsSelect.value = person;
+    }
+  }
+
   const urlPrefix = window.uv.apiPrefix;
+  const overtimePersonId = window.uv.overtime.person.id;
 
   let startDateElement;
   let endDateElement;
-
-  const personSelect = document.querySelector("select[name='person.id']");
-  if (personSelect) {
-    personSelect.addEventListener("change", function (event) {
-      updateUrl(event.target);
-    });
-  }
 
   function handleStartDateSelect() {
     if (!endDateElement.value) {
       endDateElement.value = startDateElement.value;
     }
+  }
+
+  function getPersonId() {
+    if (!overtimePersonId) {
+      return document.querySelector("#person-select option:checked").value;
+    }
+    return overtimePersonId;
   }
 
   const [startDateResult, endDateResult] = await Promise.allSettled([
@@ -28,13 +37,3 @@ $(document).ready(async function () {
   startDateElement = startDateResult.value;
   endDateElement = endDateResult.value;
 });
-
-function getPersonId() {
-  return document.querySelector("[name='person.id']").value;
-}
-
-function updateUrl(htmlFormInputElement) {
-  const url = new URL(window.location);
-  url.searchParams.set(htmlFormInputElement.getAttribute("name"), htmlFormInputElement.value);
-  window.history.replaceState(undefined, "", url);
-}
