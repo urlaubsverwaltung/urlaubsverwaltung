@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.comment;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.CrudRepository;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
@@ -15,5 +16,6 @@ interface SickNoteCommentEntityRepository extends CrudRepository<SickNoteComment
 
     List<SickNoteCommentEntity> findByPerson(Person author);
 
+    @Modifying
     void deleteBySickNotePerson(Person person);
 }

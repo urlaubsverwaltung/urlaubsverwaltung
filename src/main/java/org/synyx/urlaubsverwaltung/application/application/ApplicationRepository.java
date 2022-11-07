@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -84,6 +85,7 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
 
     List<Application> findByApplier(Person person);
 
+    @Modifying
     List<Application> deleteByPerson(Person person);
 
     List<Application> findAllByHolidayReplacements_Person(Person person);

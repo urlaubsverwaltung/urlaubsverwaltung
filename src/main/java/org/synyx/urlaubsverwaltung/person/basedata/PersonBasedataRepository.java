@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.CrudRepository;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -9,5 +10,6 @@ interface PersonBasedataRepository extends CrudRepository<PersonBasedataEntity, 
 
     List<PersonBasedataEntity> findAllByPersonIdIn(List<Integer> personId);
 
+    @Modifying
     void deleteByPerson(Person person);
 }

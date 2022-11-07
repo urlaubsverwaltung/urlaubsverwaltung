@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -27,5 +28,6 @@ interface OvertimeRepository extends CrudRepository<Overtime, Integer> {
 
     List<Overtime> findByPersonAndStartDateIsBefore(Person person, LocalDate before);
 
+    @Modifying
     void deleteByPerson(Person personId);
 }

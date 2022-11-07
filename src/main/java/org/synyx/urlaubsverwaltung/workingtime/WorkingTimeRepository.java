@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -26,5 +27,6 @@ interface WorkingTimeRepository extends CrudRepository<WorkingTimeEntity, Intege
     )
     WorkingTimeEntity findByPersonAndValidityDateEqualsOrMinorDate(Person person, LocalDate date);
 
+    @Modifying
     void deleteByPerson(Person person);
 }

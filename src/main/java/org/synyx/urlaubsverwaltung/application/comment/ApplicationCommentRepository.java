@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.comment;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.CrudRepository;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -15,5 +16,6 @@ interface ApplicationCommentRepository extends CrudRepository<ApplicationComment
 
     List<ApplicationComment> findByPerson(Person person);
 
+    @Modifying
     void deleteByApplicationPerson(Person person);
 }
