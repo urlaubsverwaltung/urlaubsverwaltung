@@ -242,23 +242,16 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate, LocalDate endDate) {
-
-        final List<Person> departmentMembers = getMembersOfAssignedDepartments(member);
-        final List<Application> departmentApplications = new ArrayList<>();
-
-        departmentMembers.stream()
+        return getMembersOfAssignedDepartments(member).stream()
             .filter(departmentMember -> !departmentMember.equals(member))
-            .forEach(departmentMember ->
-                departmentApplications.addAll(
-                    applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, departmentMember)
-                        .stream()
-                        .filter(application -> application.hasStatus(ALLOWED)
-                            || application.hasStatus(TEMPORARY_ALLOWED)
-                            || application.hasStatus(WAITING)
-                            || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
-                        .collect(toList())));
-
-        return departmentApplications;
+            .map(departmentMember -> applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, departmentMember))
+            .flatMap(Collection::stream)
+            .filter(application -> application.hasStatus(ALLOWED)
+                || application.hasStatus(TEMPORARY_ALLOWED)
+                || application.hasStatus(WAITING)
+                || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
+            .sorted(comparing(Application::getStartDate))
+            .collect(toList());
     }
 
     @Override
