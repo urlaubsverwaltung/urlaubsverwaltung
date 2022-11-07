@@ -11,9 +11,9 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
@@ -80,6 +80,6 @@ class OvertimeMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +
             "    Zeitraum:    16.04.2020 - 23.04.2020" + EMAIL_LINE_BREAK +
-            "    Dauer:       55 Std. 12 Min.");
+            "    Dauer:       55 Std. 12 Min." + EMAIL_LINE_BREAK);
     }
 }

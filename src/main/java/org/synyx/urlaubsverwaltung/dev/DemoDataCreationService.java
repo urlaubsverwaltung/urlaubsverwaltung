@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.dev;
 import org.slf4j.Logger;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;

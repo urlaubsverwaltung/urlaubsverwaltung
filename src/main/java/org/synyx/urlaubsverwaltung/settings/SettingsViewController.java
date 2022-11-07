@@ -21,8 +21,8 @@ import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvide
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.util.List;

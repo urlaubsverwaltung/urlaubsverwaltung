@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.person.basedata;
 import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 @Validated
 public class PersonBasedataDto {

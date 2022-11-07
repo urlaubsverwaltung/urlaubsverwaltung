@@ -1,15 +1,15 @@
 package org.synyx.urlaubsverwaltung.sicknote.comment;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.synyx.urlaubsverwaltung.comment.AbstractComment;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.validation.constraints.NotNull;
 import java.time.Clock;
 
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 /**

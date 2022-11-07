@@ -17,7 +17,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;

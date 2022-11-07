@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.account;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 /**
  * Settings concerning absence of persons because of vacation or sick days.

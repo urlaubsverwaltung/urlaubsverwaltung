@@ -2,8 +2,8 @@ package org.synyx.urlaubsverwaltung.calendar;
 
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import static org.synyx.urlaubsverwaltung.calendar.CalendarPeriodViewType.HALF_YEAR;
 

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -13,7 +14,6 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
@@ -195,7 +195,7 @@ class OvertimeServiceImpl implements OvertimeService {
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private Map<Person, Duration> overtimeDurationProRata(List<Overtime> overtimes,LocalDate start, LocalDate end) {
+    private Map<Person, Duration> overtimeDurationProRata(List<Overtime> overtimes, LocalDate start, LocalDate end) {
         final DateRange requestedDateRange = new DateRange(start, end);
         return overtimes.stream()
             .map(overtime -> {

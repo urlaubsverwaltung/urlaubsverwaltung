@@ -4,12 +4,13 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import org.springdoc.core.Constants;
-import org.springdoc.core.SpringDocConfigProperties;
-import org.springdoc.core.SwaggerUiConfigParameters;
-import org.springdoc.core.SwaggerUiConfigProperties;
-import org.springdoc.core.SwaggerUiOAuthProperties;
+
+import org.springdoc.core.properties.SpringDocConfigProperties;
+import org.springdoc.core.properties.SwaggerUiConfigParameters;
+import org.springdoc.core.properties.SwaggerUiConfigProperties;
+import org.springdoc.core.properties.SwaggerUiOAuthProperties;
 import org.springdoc.core.providers.ObjectMapperProvider;
+import org.springdoc.core.utils.Constants;
 import org.springdoc.webmvc.ui.SwaggerIndexPageTransformer;
 import org.springdoc.webmvc.ui.SwaggerIndexTransformer;
 import org.springdoc.webmvc.ui.SwaggerWelcomeCommon;

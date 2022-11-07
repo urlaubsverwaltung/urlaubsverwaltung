@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.synyx.urlaubsverwaltung.validation.CronExpression;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Component
 @ConfigurationProperties("uv.security.directory-service")

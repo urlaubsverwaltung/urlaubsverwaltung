@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
+import jakarta.persistence.GenerationType;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
@@ -8,9 +9,9 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import java.util.Objects;
 
 
@@ -21,7 +22,7 @@ import java.util.Objects;
 public class Settings {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private ApplicationSettings applicationSettings;

@@ -1,17 +1,18 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import jakarta.persistence.GenerationType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.validator.constraints.Length;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.NotNull;
 import java.time.Period;
 
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
@@ -22,7 +23,7 @@ class DepartmentCalendar {
     private static final int SECRET_LENGTH = 32;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull

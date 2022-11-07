@@ -1,13 +1,14 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.util.Objects;
 
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 
 /**
  * Mapping object between absence (application for leave or sick note) and sync calendar event.
@@ -17,7 +18,7 @@ import static javax.persistence.EnumType.STRING;
 public class AbsenceMapping {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false)

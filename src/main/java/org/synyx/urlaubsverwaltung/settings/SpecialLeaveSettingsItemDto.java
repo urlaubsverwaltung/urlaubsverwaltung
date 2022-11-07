@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 
 public class SpecialLeaveSettingsItemDto {
 

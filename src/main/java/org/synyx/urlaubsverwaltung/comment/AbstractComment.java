@@ -1,12 +1,13 @@
 package org.synyx.urlaubsverwaltung.comment;
 
+import jakarta.persistence.GenerationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MappedSuperclass;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Objects;
@@ -22,7 +23,7 @@ import static java.util.Optional.ofNullable;
 public abstract class AbstractComment {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     // Who has written the comment?

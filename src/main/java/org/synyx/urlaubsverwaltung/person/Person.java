@@ -1,18 +1,19 @@
 package org.synyx.urlaubsverwaltung.person;
 
+import jakarta.persistence.GenerationType;
 import org.hibernate.annotations.LazyCollection;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import java.util.Collection;
 import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableCollection;
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -25,7 +26,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
 public class Person {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String username;

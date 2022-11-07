@@ -33,7 +33,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;

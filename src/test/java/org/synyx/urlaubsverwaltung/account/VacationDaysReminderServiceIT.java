@@ -12,10 +12,10 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
@@ -182,6 +182,6 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
             "Dein aktueller Urlaubsanspruch:" + EMAIL_LINE_BREAK +
             "    10 Tag(e)" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/1/overview");
+            "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/1/overview" + EMAIL_LINE_BREAK);
     }
 }

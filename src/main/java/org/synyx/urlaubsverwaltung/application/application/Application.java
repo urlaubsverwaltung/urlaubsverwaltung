@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import jakarta.persistence.GenerationType;
 import org.hibernate.annotations.LazyCollection;
 import org.synyx.urlaubsverwaltung.DurationConverter;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
@@ -7,15 +8,15 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
 
@@ -36,7 +37,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 public class Application {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     /**

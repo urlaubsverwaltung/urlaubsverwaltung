@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataDtoMapper.mapToPersonBasedata;
 import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataDtoMapper.mapToPersonBasedataDto;

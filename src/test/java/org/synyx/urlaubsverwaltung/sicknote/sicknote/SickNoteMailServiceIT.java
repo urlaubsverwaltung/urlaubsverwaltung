@@ -12,9 +12,9 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;

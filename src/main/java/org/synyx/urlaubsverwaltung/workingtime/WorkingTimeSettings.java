@@ -2,13 +2,13 @@ package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Enumerated;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Enumerated;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;

@@ -1,20 +1,21 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknotetype;
 
+import jakarta.persistence.GenerationType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import java.util.Objects;
 
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 public class SickNoteType {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Enumerated(STRING)

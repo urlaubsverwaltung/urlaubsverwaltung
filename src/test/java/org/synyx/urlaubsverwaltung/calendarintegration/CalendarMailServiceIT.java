@@ -12,9 +12,9 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.ZonedDateTime;

@@ -4,12 +4,12 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.comment.AbstractComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.ManyToOne;
 import java.time.Clock;
 
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 
 /**
  * This class describes the information that every step of an {@link Application}'s lifecycle contains.

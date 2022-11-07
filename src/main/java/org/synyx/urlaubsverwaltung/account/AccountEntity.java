@@ -1,11 +1,12 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import jakarta.persistence.GenerationType;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -17,7 +18,7 @@ import java.util.Objects;
 public class AccountEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne

@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.freemarker.FreeMarkerProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import static freemarker.template.Configuration.VERSION_2_3_30;
 

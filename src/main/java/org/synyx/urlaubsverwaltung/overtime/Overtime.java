@@ -1,14 +1,15 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import jakarta.persistence.GenerationType;
 import org.synyx.urlaubsverwaltung.DurationConverter;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -24,7 +25,7 @@ import static java.time.ZoneOffset.UTC;
 public class Overtime {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
