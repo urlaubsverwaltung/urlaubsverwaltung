@@ -102,7 +102,7 @@ public interface DepartmentService {
 
     /**
      * Get all active (waiting or allowed) applications for leave of the members of the departments of the given person
-     * for the provided period.
+     * for the provided period. Sorted by the start date of the application.
      *
      * @param member    to get the departments of
      * @param startDate of the period

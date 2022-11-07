@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
+import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -242,23 +243,18 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate, LocalDate endDate) {
+        final Predicate<Application> allowed = application -> application.hasStatus(ALLOWED);
+        final Predicate<Application> temporaryAllowed = application -> application.hasStatus(TEMPORARY_ALLOWED);
+        final Predicate<Application> waiting = application -> application.hasStatus(WAITING);
+        final Predicate<Application> allowedCancellationRequested = application -> application.hasStatus(ALLOWED_CANCELLATION_REQUESTED);
 
-        final List<Person> departmentMembers = getMembersOfAssignedDepartments(member);
-        final List<Application> departmentApplications = new ArrayList<>();
-
-        departmentMembers.stream()
-            .filter(departmentMember -> !departmentMember.equals(member))
-            .forEach(departmentMember ->
-                departmentApplications.addAll(
-                    applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, departmentMember)
-                        .stream()
-                        .filter(application -> application.hasStatus(ALLOWED)
-                            || application.hasStatus(TEMPORARY_ALLOWED)
-                            || application.hasStatus(WAITING)
-                            || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
-                        .collect(toList())));
-
-        return departmentApplications;
+        return getMembersOfAssignedDepartments(member).stream()
+            .filter(not(isEqual(member)))
+            .map(departmentMember -> applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, departmentMember))
+            .flatMap(Collection::stream)
+            .filter(allowed.or(temporaryAllowed).or(waiting).or(allowedCancellationRequested))
+            .sorted(comparing(Application::getStartDate))
+            .collect(toList());
     }
 
     @Override

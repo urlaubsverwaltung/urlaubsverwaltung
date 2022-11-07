@@ -1358,15 +1358,19 @@ class DepartmentServiceImplTest {
 
         final Application waitingApplication = new Application();
         waitingApplication.setStatus(TEMPORARY_ALLOWED);
+        waitingApplication.setStartDate(LocalDate.of(2022, 10, 2));
 
         final Application allowedApplication = new Application();
         allowedApplication.setStatus(ALLOWED);
+        allowedApplication.setStartDate(LocalDate.of(2022, 11, 2));
 
         final Application cancellationRequestApplication = new Application();
         cancellationRequestApplication.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        cancellationRequestApplication.setStartDate(LocalDate.of(2022, 9, 12));
 
         final Application otherApplication = new Application();
         otherApplication.setStatus(REJECTED);
+        otherApplication.setStartDate(LocalDate.of(2022, 9, 10));
 
         when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(admins, marketing));
 
@@ -1381,6 +1385,41 @@ class DepartmentServiceImplTest {
             .hasSize(3)
             .contains(waitingApplication, allowedApplication, cancellationRequestApplication)
             .doesNotContain(otherApplication);
+    }
+
+    @Test
+    void ensuresApplicationsFromOthersInDepartmentAreSortedByStartDate() {
+
+        final Person person = new Person();
+        person.setPermissions(List.of(USER));
+
+        final LocalDate date = LocalDate.now(UTC);
+
+        final Person marketing1 = new Person("carl", "carl", "carl", "carl@example.org");
+        final DepartmentMemberEmbeddable marketing1Member = departmentMemberEmbeddable(marketing1);
+
+        final DepartmentEntity marketing = new DepartmentEntity();
+        marketing.setName("marketing");
+        marketing.setMembers(List.of(marketing1Member, departmentMemberEmbeddable(person)));
+
+        final Application waitingApplication = new Application();
+        waitingApplication.setStatus(TEMPORARY_ALLOWED);
+        waitingApplication.setStartDate(LocalDate.of(2022, 10, 2));
+
+        final Application allowedApplication = new Application();
+        allowedApplication.setStatus(ALLOWED);
+        allowedApplication.setStartDate(LocalDate.of(2022, 11, 2));
+
+        final Application cancellationRequestApplication = new Application();
+        cancellationRequestApplication.setStatus(ALLOWED_CANCELLATION_REQUESTED);
+        cancellationRequestApplication.setStartDate(LocalDate.of(2022, 9, 12));
+
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(marketing));
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(marketing1)))
+            .thenReturn(List.of(waitingApplication, allowedApplication, cancellationRequestApplication));
+
+        final List<Application> applications = sut.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, date, date);
+        assertThat(applications).containsExactly(cancellationRequestApplication, waitingApplication, allowedApplication);
     }
 
     @Test
