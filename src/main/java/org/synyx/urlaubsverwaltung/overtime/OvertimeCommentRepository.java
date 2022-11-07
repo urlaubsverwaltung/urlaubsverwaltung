@@ -14,5 +14,7 @@ interface OvertimeCommentRepository extends CrudRepository<OvertimeComment, Inte
 
     List<OvertimeComment> findByOvertime(Overtime overtime);
 
+    List<OvertimeComment> findByPerson(Person person);
+
     void deleteByOvertimePerson(Person person);
 }

@@ -178,8 +178,16 @@ class OvertimeServiceImpl implements OvertimeService {
      */
     @EventListener
     void deleteAll(PersonDeletedEvent event) {
-        overtimeCommentRepository.deleteByOvertimePerson(event.getPerson());
-        overtimeRepository.deleteByPerson(event.getPerson());
+        final Person personToBeDeleted = event.getPerson();
+        overtimeCommentRepository.deleteByOvertimePerson(personToBeDeleted);
+        deleteCommentAuthor(personToBeDeleted);
+        overtimeRepository.deleteByPerson(personToBeDeleted);
+    }
+
+    void deleteCommentAuthor(Person author) {
+        final List<OvertimeComment> overtimeComments = overtimeCommentRepository.findByPerson(author);
+        overtimeComments.forEach(overtimeComment -> overtimeComment.setPerson(null));
+        overtimeCommentRepository.saveAll(overtimeComments);
     }
 
     private Duration getTotalOvertimeForPerson(Person person) {
