@@ -58,4 +58,6 @@ interface SickNoteRepository extends CrudRepository<SickNote, Integer> {
 
     @Modifying
     void deleteByPerson(Person person);
+
+    List<SickNote> findByApplier(Person applier);
 }

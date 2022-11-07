@@ -107,4 +107,11 @@ class SickNoteServiceImpl implements SickNoteService {
     public void deleteAllByPerson(Person person) {
         sickNoteRepository.deleteByPerson(person);
     }
+
+    @Override
+    public void deleteSickNoteApplier(Person applier) {
+        final List<SickNote> sickNotes = sickNoteRepository.findByApplier(applier);
+        sickNotes.forEach(sickNote -> sickNote.setApplier(null));
+        sickNoteRepository.saveAll(sickNotes);
+    }
 }
