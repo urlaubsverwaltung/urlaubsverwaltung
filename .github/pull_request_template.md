@@ -8,7 +8,7 @@ Please look for other issues or pull requests which already work on this topic. 
 # Security Vulnerabilities
 
 🛑 STOP! 🛑 If your contribution fixes a security vulnerability, please do not submit it.
-Instead, please write an E-Mail to urlaubsverwaltung@synyx.de with all the information
+Instead, please write an E-Mail to info@urlaubsverwaltung.cloud with all the information
 to recreate the security vulnerability.
 
 # Describing Your Changes
