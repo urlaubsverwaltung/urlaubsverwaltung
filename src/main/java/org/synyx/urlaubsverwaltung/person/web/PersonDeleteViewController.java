@@ -43,9 +43,11 @@ public class PersonDeleteViewController {
             return "redirect:/web/person/{personId}#person-delete-form";
         }
 
+        final boolean isActive = personToDelete.isActive();
+
         personService.delete(personToDelete, personService.getSignedInUser());
 
         redirectAttributes.addFlashAttribute("personDeletionSuccess", personToDelete.getNiceName());
-        return "redirect:/web/person/";
+        return "redirect:/web/person/?active=" + isActive;
     }
 }

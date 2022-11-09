@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +45,23 @@ class PersonDeleteViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/1/delete").param("niceNameConfirmation", "Marlene Muster"))
-            .andExpect(redirectedUrl("/web/person/"))
+            .andExpect(redirectedUrl("/web/person/?active=true"))
+            .andExpect(flash().attribute("personDeletionSuccess", "Marlene Muster"));
+
+        verify(personService).delete(person, signedInUser);
+    }
+
+    @Test
+    void ensureRedirectToInactivePersons() throws Exception {
+
+        final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+        final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(INACTIVE));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/person/1/delete").param("niceNameConfirmation", "Marlene Muster"))
+            .andExpect(redirectedUrl("/web/person/?active=false"))
             .andExpect(flash().attribute("personDeletionSuccess", "Marlene Muster"));
 
         verify(personService).delete(person, signedInUser);
