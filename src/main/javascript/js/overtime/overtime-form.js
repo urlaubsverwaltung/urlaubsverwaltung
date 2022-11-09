@@ -1,6 +1,10 @@
 import $ from "jquery";
 import { createDatepicker } from "../../components/datepicker";
 
+function getPersonId() {
+  return document.querySelector("[name='person']").value;
+}
+
 $(document).ready(async function () {
   const person = window.uv.params.person;
   if (person) {
@@ -11,7 +15,6 @@ $(document).ready(async function () {
   }
 
   const urlPrefix = window.uv.apiPrefix;
-  const overtimePersonId = window.uv.overtime.person.id;
 
   let startDateElement;
   let endDateElement;
@@ -20,13 +23,6 @@ $(document).ready(async function () {
     if (!endDateElement.value) {
       endDateElement.value = startDateElement.value;
     }
-  }
-
-  function getPersonId() {
-    if (!overtimePersonId) {
-      return document.querySelector("#person-select option:checked").value;
-    }
-    return overtimePersonId;
   }
 
   const [startDateResult, endDateResult] = await Promise.allSettled([
