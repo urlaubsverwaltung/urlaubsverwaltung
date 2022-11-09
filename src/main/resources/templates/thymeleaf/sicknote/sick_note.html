@@ -202,7 +202,7 @@
               </td>
 
               <td th:if="${comment.person != null}" th:text="${comment.person.niceName}"></td>
-              <td th:if="${comment.person == null}" th:text="#{sicknote.progress.unknown-author}"></td>
+              <td th:if="${comment.person == null}" th:text="#{sicknote.progress.deleted-author}"></td>
 
               <td>
                 <th:block th:if="${#strings.isEmpty(comment.text)}">

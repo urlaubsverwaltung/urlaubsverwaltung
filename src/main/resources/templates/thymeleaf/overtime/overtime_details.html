@@ -99,7 +99,7 @@
                   </span>
                 </td>
                 <td th:if="${comment.person != null}" th:text="${comment.person.niceName}"></td>
-                <td th:if="${comment.person == null}" th:text="#{overtime.progress.unknown-author}"></td>
+                <td th:if="${comment.person == null}" th:text="#{overtime.progress.deleted-author}"></td>
                 <td>
                   <th:block th:text="#{'overtime.progress.' + ${comment.action}}"></th:block>
                   <th:block th:replace="fragments/date::date(${comment.date})"></th:block>

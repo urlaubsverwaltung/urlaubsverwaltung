@@ -22,7 +22,7 @@
                 />
               </td>
               <td th:if="${comment.person != null}" th:text="${comment.person.niceName}"></td>
-              <td th:if="${comment.person == null}" th:text="#{application.progress.unknown-author}"></td>
+              <td th:if="${comment.person == null}" th:text="#{application.progress.deleted-author}"></td>
               <td>
                 <p class="tw-m-0 tw-mb-1">
                   <th:block th:text="#{'application.progress.' + ${comment.action}}"></th:block>
