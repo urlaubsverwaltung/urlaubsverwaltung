@@ -60,9 +60,10 @@ public interface PersonService {
     /**
      * Deletes a {@link Person} in the database by its primary key.
      *
-     * @param person the person to be deleted
+     * @param person       the person to be deleted
+     * @param signedInUser the person who wants to delete the given person
      */
-    void delete(Person person);
+    void delete(Person person, Person signedInUser);
 
     /**
      * finds a {@link Person} in the database by its primary key.

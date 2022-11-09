@@ -110,7 +110,7 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
-    public void delete(Person person) {
+    public void delete(Person person, Person signedInUser) {
 
         if (!personRepository.existsById(person.getId())) {
             throw new IllegalArgumentException("Can not find a person for ID = " + person.getId());
@@ -121,7 +121,7 @@ class PersonServiceImpl implements PersonService {
         workingTimeWriteService.deleteAllByPerson(person);
         personRepository.delete(person);
 
-        LOG.info("Deleted person with id {}", person.getId());
+        LOG.info("Deleted person with id {} deleted by {}", person.getId(), signedInUser.getId());
     }
 
     @Override

@@ -444,12 +444,14 @@ class PersonServiceImplTest {
     @Test
     void deletesExistingPersonDelegatesAndSendsEvent() {
 
+        final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
+
         final Person person = new Person();
         final int personId = 42;
         person.setId(personId);
         when(personRepository.existsById(personId)).thenReturn(true);
 
-        sut.delete(person);
+        sut.delete(person, signedInUser);
 
         final InOrder inOrder = inOrder(applicationEventPublisher, accountInteractionService, workingTimeWriteService, personRepository);
 
@@ -465,10 +467,11 @@ class PersonServiceImplTest {
 
     @Test
     void deletingNotExistingPersonThrowsException() {
+        final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
 
         final Person person = new Person();
         person.setId(1);
-        assertThatThrownBy(() -> sut.delete(person)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> sut.delete(person, signedInUser)).isInstanceOf(IllegalArgumentException.class);
 
         verify(personRepository).existsById(1);
         verifyNoMoreInteractions(applicationEventPublisher, workingTimeWriteService, accountInteractionService, personRepository);

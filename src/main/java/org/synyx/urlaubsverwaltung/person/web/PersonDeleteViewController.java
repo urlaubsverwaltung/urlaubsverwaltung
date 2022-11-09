@@ -29,23 +29,23 @@ public class PersonDeleteViewController {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/delete")
-    public String deletePerson(@PathVariable("personId") Integer personId, @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm, Errors errors, RedirectAttributes redirectAttributes) throws UnknownPersonException {
+    public String deletePerson(@PathVariable("personId") Integer personId, @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
-        final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        if (person.getPermissions().contains(OFFICE) &&
-            personService.numberOfPersonsWithOfficeRoleExcludingPerson(person.getId()) == 0) {
+        final Person personToDelete = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        if (personToDelete.getPermissions().contains(OFFICE) &&
+            personService.numberOfPersonsWithOfficeRoleExcludingPerson(personToDelete.getId()) == 0) {
             redirectAttributes.addFlashAttribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.office");
             return "redirect:/web/person/{personId}#person-delete-form";
         }
 
-        if (!person.getNiceName().equals(personDeleteForm.getNiceNameConfirmation())) {
+        if (!personToDelete.getNiceName().equals(personDeleteForm.getNiceNameConfirmation())) {
             redirectAttributes.addFlashAttribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.mismatch");
             return "redirect:/web/person/{personId}#person-delete-form";
         }
 
-        personService.delete(person);
+        personService.delete(personToDelete, personService.getSignedInUser());
 
-        redirectAttributes.addFlashAttribute("personDeletionSuccess", person.getNiceName());
+        redirectAttributes.addFlashAttribute("personDeletionSuccess", personToDelete.getNiceName());
         return "redirect:/web/person/";
     }
 }

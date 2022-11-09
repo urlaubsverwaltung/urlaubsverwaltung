@@ -9,7 +9,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +38,8 @@ class PersonDeleteViewControllerTest {
     @Test
     void deletePerson() throws Exception {
 
+        final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
@@ -46,7 +47,7 @@ class PersonDeleteViewControllerTest {
             .andExpect(redirectedUrl("/web/person/"))
             .andExpect(flash().attribute("personDeletionSuccess", "Marlene Muster"));
 
-        verify(personService).delete(person);
+        verify(personService).delete(person, signedInUser);
     }
 
     @Test
