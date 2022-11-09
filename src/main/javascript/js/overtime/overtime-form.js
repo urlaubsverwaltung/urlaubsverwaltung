@@ -6,14 +6,6 @@ function getPersonId() {
 }
 
 $(document).ready(async function () {
-  const person = window.uv.params.person;
-  if (person) {
-    const personsSelect = document.querySelector("#person-select");
-    if (personsSelect) {
-      personsSelect.value = person;
-    }
-  }
-
   const urlPrefix = window.uv.apiPrefix;
 
   let startDateElement;
