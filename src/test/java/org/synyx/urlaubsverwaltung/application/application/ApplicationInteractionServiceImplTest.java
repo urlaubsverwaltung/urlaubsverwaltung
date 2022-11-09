@@ -1432,16 +1432,9 @@ class ApplicationInteractionServiceImplTest {
         final int personId = 42;
         person.setId(personId);
 
-        final Application application = new Application();
-        final int applicationId = 1;
-        application.setId(applicationId);
-
-        when(applicationService.deleteApplicationsByPerson(person)).thenReturn(List.of(application));
-
         sut.deleteAllByPerson(new PersonDeletedEvent(person));
 
         InOrder inOrder = inOrder(commentService, applicationService);
-
         inOrder.verify(commentService).deleteByApplicationPerson(person);
         inOrder.verify(commentService).deleteCommentAuthor(person);
         inOrder.verify(applicationService).deleteInteractionWithApplications(person);

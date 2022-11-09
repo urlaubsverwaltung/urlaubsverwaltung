@@ -145,8 +145,8 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<Application> deleteApplicationsByPerson(Person person) {
-        return applicationRepository.deleteByPerson(person);
+    public void deleteApplicationsByPerson(Person person) {
+        applicationRepository.deleteByPerson(person);
     }
 
     @Override
