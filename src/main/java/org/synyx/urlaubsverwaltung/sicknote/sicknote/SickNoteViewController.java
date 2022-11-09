@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
@@ -23,6 +24,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
+import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
@@ -147,10 +149,19 @@ class SickNoteViewController {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_ADD')")
     @GetMapping("/sicknote/new")
-    public String newSickNote(Model model) {
+    public String newSickNote(@RequestParam(value = "person", required = false) Integer personId, Model model) throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
+
+        final Person person;
+        if (personId != null) {
+            person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+        } else {
+            person = signedInUser;
+        }
+
         model.addAttribute("signedInUser", signedInUser);
+        model.addAttribute("person", person);
 
         model.addAttribute(SICK_NOTE, new SickNoteForm());
 

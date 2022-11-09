@@ -128,6 +128,32 @@ class SickNoteViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
             .andExpect(model().attribute("persons", activePersons))
+            .andExpect(model().attribute("person", personWithRole))
+            .andExpect(model().attribute("signedInUser", personWithRole))
+            .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
+            .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
+    void ensureGetNewSickNoteProvidesCorrectModelAttributesAndViewWithOtherPersonForRole(Role role) throws Exception {
+
+        final Person personWithRole = personWithRole(role);
+        when(personService.getSignedInUser()).thenReturn(personWithRole);
+
+        final Person otherPerson = personWithId(42);
+        when(personService.getPersonByID(42)).thenReturn(Optional.of(otherPerson));
+
+        final List<Person> activePersons = of(somePerson());
+        when(personService.getActivePersons()).thenReturn(activePersons);
+        final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
+        when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
+
+        perform(get("/web/sicknote/new").param("person", "42"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("person", otherPerson))
+            .andExpect(model().attribute("persons", activePersons))
             .andExpect(model().attribute("signedInUser", personWithRole))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
