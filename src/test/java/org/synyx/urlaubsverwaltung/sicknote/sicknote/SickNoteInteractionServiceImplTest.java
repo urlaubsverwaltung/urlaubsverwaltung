@@ -289,10 +289,10 @@ class SickNoteInteractionServiceImplTest {
         sut.deleteAll(new PersonDeletedEvent(person));
 
         final InOrder inOrder = inOrder(commentService, sickNoteService);
-
-        inOrder.verify(commentService).deleteCommentAuthor(person);
         inOrder.verify(commentService).deleteAllBySickNotePerson(person);
+        inOrder.verify(commentService).deleteCommentAuthor(person);
         inOrder.verify(sickNoteService).deleteAllByPerson(person);
+        inOrder.verify(sickNoteService).deleteSickNoteApplier(person);
     }
 
     private SickNote getSickNote() {
