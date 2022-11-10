@@ -77,6 +77,9 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         when(accountInteractionService.autoCreateOrUpdateNextYearsHolidaysAccount(any(Account.class)))
             .thenReturn(newAccount);
 
+        final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_OFFICE)).thenReturn(List.of(office));
+
         sut.updateAccountsForNextPeriod();
 
         verify(personService).getActivePersons();
@@ -99,7 +102,7 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         verify(mailService, times(2)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
         final Mail mail0 = mails.get(0);
-        assertThat(mail0.getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
+        assertThat(mail0.getMailAddressRecipients()).hasValue(List.of(office));
         assertThat(mail0.getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
         assertThat(mail0.getTemplateName()).isEqualTo("account_cron_updated_accounts_turn_of_the_year");
         assertThat(mail0.getTemplateModel()).containsEntry("totalRemainingVacationDays", BigDecimal.valueOf(30));

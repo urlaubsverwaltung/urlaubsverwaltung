@@ -40,7 +40,6 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationMailServiceTest {
@@ -94,6 +93,9 @@ class ApplicationMailServiceTest {
         final Person boss = new Person();
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss));
 
+        final Person office = new Person();
+        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
+
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
@@ -111,8 +113,7 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
-        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(boss));
-        assertThat(mails.get(1).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(boss, office));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.management");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_allowed_to_management");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);

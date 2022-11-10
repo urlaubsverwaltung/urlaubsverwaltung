@@ -90,6 +90,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
         personService.create(office);
+        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setPermissions(List.of(BOSS));
@@ -211,6 +212,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
         personService.create(office);
+        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setPermissions(singletonList(BOSS));
@@ -231,11 +233,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         sut.sendAllowedNotification(application, comment);
 
         // were both emails sent?
-        MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
         assertThat(inboxOffice).hasSize(2);
         assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
-        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxUser.length).isOne();
 
         // check email user attributes
@@ -301,6 +303,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
         office.setNotifications(singletonList(NOTIFICATION_OFFICE));
         personService.create(office);
+        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
+
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setPermissions(singletonList(BOSS));
@@ -324,11 +328,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         sut.sendAllowedNotification(application, comment);
 
         // were both emails sent?
-        MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
         assertThat(inboxOffice).hasSize(2);
         assertThat(inboxOffice[0].getSubject()).isEqualTo("Ein neuer Benutzer wurde erstellt");
 
-        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxUser.length).isOne();
 
         // check content of user email

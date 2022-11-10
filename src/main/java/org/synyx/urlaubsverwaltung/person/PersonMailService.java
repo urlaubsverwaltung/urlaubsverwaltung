@@ -15,9 +15,11 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_O
 class PersonMailService {
 
     private final MailService mailService;
+    private final PersonService personService;
 
-    PersonMailService(MailService mailService) {
+    PersonMailService(MailService mailService, PersonService personService) {
         this.mailService = mailService;
+        this.personService = personService;
     }
 
     @Async
@@ -29,7 +31,7 @@ class PersonMailService {
         model.put("personNiceName", event.getPersonNiceName());
 
         final Mail toOffice = Mail.builder()
-            .withRecipient(NOTIFICATION_OFFICE)
+            .withRecipient(personService.getActivePersonsWithNotificationType(NOTIFICATION_OFFICE))
             .withSubject("subject.person.created")
             .withTemplate("person_created_office", model)
             .build();

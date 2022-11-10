@@ -31,7 +31,6 @@ import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 
 @Service
 class ApplicationMailService {
@@ -88,7 +87,7 @@ class ApplicationMailService {
         final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
         final Mail mailToRelevantRecipients = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
-            .withRecipient(NOTIFICATION_OFFICE)
+            .withRecipient(applicationRecipientService.getRecipientsWithOfficeNotifications())
             .withSubject("subject.application.allowed.management", application.getPerson().getNiceName())
             .withTemplate("application_allowed_to_management", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
