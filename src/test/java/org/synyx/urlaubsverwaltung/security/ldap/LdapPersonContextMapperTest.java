@@ -31,7 +31,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -95,7 +94,7 @@ class LdapPersonContextMapperTest {
         sut.mapUserFromContext(context, "murygina", null);
 
         verify(ldapUserMapper).mapFromContext(context);
-        verify(personService).create("murygina", "Murygina", "Aljona", "murygina@synyx.de", List.of(NOTIFICATION_USER), List.of(USER));
+        verify(personService).create("murygina", "Murygina", "Aljona", "murygina@synyx.de", List.of(), List.of(USER));
     }
 
     @Test
@@ -136,7 +135,7 @@ class LdapPersonContextMapperTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(Role.USER));
-        when(personService.create("mgroehning", null, null, null, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(person);
+        when(personService.create("mgroehning", null, null, null, List.of(), List.of(USER))).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(any())).then(returnsFirstArg());
 
         final UserDetails userDetails = sut.mapUserFromContext(context, userNameSignedInWith, emptyList());
@@ -205,7 +204,7 @@ class LdapPersonContextMapperTest {
 
         when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("username", null, null, null, List.of()));
         when(personService.getPersonByUsername("username")).thenReturn(Optional.empty());
-        when(personService.create("username", null, null, null, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(person);
+        when(personService.create("username", null, null, null, List.of(), List.of(USER))).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(person)).thenReturn(person);
 
         sut.mapUserFromContext(context, "username", null);

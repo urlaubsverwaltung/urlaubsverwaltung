@@ -34,7 +34,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_B
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -115,8 +114,6 @@ class PersonDataProvider {
     private List<MailNotification> getNotificationsForRoles(List<Role> roles) {
 
         final List<MailNotification> notifications = new ArrayList<>();
-        notifications.add(NOTIFICATION_USER);
-
         if (roles.contains(DEPARTMENT_HEAD)) {
             notifications.add(NOTIFICATION_DEPARTMENT_HEAD);
         }

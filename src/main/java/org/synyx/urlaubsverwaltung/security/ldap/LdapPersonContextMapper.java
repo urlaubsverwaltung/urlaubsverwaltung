@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -70,7 +69,7 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
                 ldapLastName,
                 ldapFirstName,
                 ldapEmail,
-                List.of(NOTIFICATION_USER),
+                List.of(),
                 List.of(USER)
             );
 

@@ -14,9 +14,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.HOLIDAY_REPLACEMENT;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
@@ -158,7 +156,6 @@ class AbsenceTest {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);
         person.setPermissions(List.of(USER));
-        person.setNotifications(List.of(NOTIFICATION_USER));
         // Date where daylight saving time is relevant
         LocalDate start = LocalDate.of(2015, 10, 23);
         LocalDate end = LocalDate.of(2015, 10, 25);

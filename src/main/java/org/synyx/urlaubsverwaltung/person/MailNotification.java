@@ -5,11 +5,6 @@ package org.synyx.urlaubsverwaltung.person;
  *
  * <ul>
  *     <li>
- *         {@link #NOTIFICATION_USER}: Default notifications, every user get these notifications. It's not possible to
- *         disable them.
- *         Not used for filtering recipients at the moment
- *     </li>
- *     <li>
  *         {@link #NOTIFICATION_DEPARTMENT_HEAD}: Notify {@link Role#DEPARTMENT_HEAD} users about actions of member of a
  *         department they are responsible for.
  *     </li>
@@ -35,7 +30,6 @@ package org.synyx.urlaubsverwaltung.person;
  */
 public enum MailNotification {
 
-    NOTIFICATION_USER,
     NOTIFICATION_DEPARTMENT_HEAD,
     NOTIFICATION_SECOND_STAGE_AUTHORITY,
     NOTIFICATION_BOSS_ALL,

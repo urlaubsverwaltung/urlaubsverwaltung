@@ -11,7 +11,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_DEPARTMENTS;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -67,7 +67,7 @@ class PersonTest {
     void ensureReturnsTrueIfPersonHasTheGivenNotificationType() {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setNotifications(Arrays.asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
+        person.setNotifications(Arrays.asList(NOTIFICATION_BOSS_ALL));
         assertThat(person.hasNotificationType(NOTIFICATION_BOSS_ALL)).isTrue();
     }
 
@@ -75,7 +75,7 @@ class PersonTest {
     void ensureReturnsFalseIfPersonHasNotTheGivenNotificationType() {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setNotifications(singletonList(NOTIFICATION_USER));
+        person.setNotifications(singletonList(NOTIFICATION_BOSS_DEPARTMENTS));
         assertThat(person.hasNotificationType(NOTIFICATION_BOSS_ALL)).isFalse();
     }
 
@@ -113,7 +113,7 @@ class PersonTest {
     void ensureNotificationsAreUnmodifiable() {
 
         List<MailNotification> modifiableList = new ArrayList<>();
-        modifiableList.add(NOTIFICATION_USER);
+        modifiableList.add(NOTIFICATION_BOSS_DEPARTMENTS);
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setNotifications(modifiableList);
@@ -159,12 +159,12 @@ class PersonTest {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);
         person.setPermissions(List.of(USER));
-        person.setNotifications(List.of(NOTIFICATION_USER));
+        person.setNotifications(List.of(NOTIFICATION_BOSS_ALL));
 
         final String personToString = person.toString();
         assertThat(personToString)
             .isEqualTo("Person{id='10'}")
-            .doesNotContain("Theo", "USER", "NOTIFICATION_USER");
+            .doesNotContain("Theo", "USER", "NOTIFICATION_BOSS_ALL");
     }
 
     @Test

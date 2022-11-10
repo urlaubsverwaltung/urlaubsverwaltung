@@ -40,7 +40,6 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -107,7 +106,7 @@ class PersonServiceImplTest {
 
         final Person person = new Person("rick", "Grimes", "Rick", "rick@grimes.de");
         person.setPermissions(asList(USER, BOSS));
-        person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
+        person.setNotifications(asList(NOTIFICATION_BOSS_ALL));
 
         when(personRepository.save(person)).thenReturn(person);
 
@@ -118,8 +117,8 @@ class PersonServiceImplTest {
         assertThat(createdPerson.getEmail()).isEqualTo("rick@grimes.de");
 
         assertThat(createdPerson.getNotifications())
-            .hasSize(2)
-            .contains(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL);
+            .hasSize(1)
+            .contains(NOTIFICATION_BOSS_ALL);
 
         assertThat(createdPerson.getPermissions())
             .hasSize(2)
@@ -282,11 +281,11 @@ class PersonServiceImplTest {
 
         final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(USER, BOSS));
-        boss.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
+        boss.setNotifications(asList(NOTIFICATION_BOSS_ALL));
 
         final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(USER, BOSS, OFFICE));
-        office.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL, NOTIFICATION_OFFICE));
+        office.setNotifications(asList(NOTIFICATION_BOSS_ALL, NOTIFICATION_OFFICE));
 
         when(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_BOSS_ALL)).thenReturn(List.of(boss, office));
 

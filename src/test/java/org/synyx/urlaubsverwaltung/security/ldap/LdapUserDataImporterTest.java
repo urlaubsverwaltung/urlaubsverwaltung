@@ -14,7 +14,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +40,7 @@ class LdapUserDataImporterTest {
     }
 
     @Test
-    void ensurecreatePersonIfLdapUserNotYetExists() {
+    void ensureCreatePersonIfLdapUserNotYetExists() {
 
         final LdapUser ldapUser = new LdapUser("muster", null, null, null, List.of());
         when(personService.getPersonByUsername(ldapUser.getUsername())).thenReturn(Optional.empty());
@@ -49,7 +48,7 @@ class LdapUserDataImporterTest {
 
         sut.sync();
 
-        verify(personService).create("muster", null, null, null, List.of(NOTIFICATION_USER), List.of(USER));
+        verify(personService).create("muster", null, null, null, List.of(), List.of(USER));
     }
 
     @Test

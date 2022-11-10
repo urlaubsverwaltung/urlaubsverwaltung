@@ -62,7 +62,7 @@ class PersonServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER));
-        person.setNotifications(List.of(MailNotification.NOTIFICATION_USER));
+        person.setNotifications(List.of());
         final Person personWithId = personService.create(person);
         final Integer personId = personWithId.getId();
 
@@ -115,8 +115,8 @@ class PersonServiceIT extends TestContainersBase {
         assertThat(personRepository.existsById(personId)).isTrue();
         assertThat(personRepository.findByUsername("user").get().getPermissions()).containsExactly(USER);
         assertThat(personBasedataService.getBasedataByPersonId(personId).get().getPersonId().getValue()).isEqualTo(personId);
-        assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_USER)).hasSize(1);
-        assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId+1))).isOne();
+        assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_OFFICE)).hasSize(1);
+        assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId + 1))).isOne();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).hasValue(applicationWithId);
         assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPerson)).hasSize(1);
         assertThat(applicationService.getApplicationById(applicationWithHolidayReplacementOfPersonWithId.getId()).get().getHolidayReplacements()).hasSize(1);
@@ -133,8 +133,8 @@ class PersonServiceIT extends TestContainersBase {
         personService.delete(personWithId, new Person());
 
         assertThat(personRepository.existsById(personId)).isFalse();
-        assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId+1))).isZero();
-        assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_USER)).isEmpty();
+        assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId + 1))).isZero();
+        assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_OFFICE)).isEmpty();
         assertThat(personBasedataService.getBasedataByPersonId(personId)).isEmpty();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).isEmpty();
         assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPerson).get(0).getPerson()).isNull();

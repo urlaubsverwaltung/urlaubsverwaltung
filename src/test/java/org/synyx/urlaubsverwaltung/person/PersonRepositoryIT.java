@@ -12,7 +12,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -199,7 +198,6 @@ class PersonRepositoryIT extends TestContainersBase {
 
         final Person bettina = new Person("bettina", "Muster", "bettina", "bettina@example.org");
         bettina.setPermissions(List.of(USER));
-        bettina.setNotifications(List.of(NOTIFICATION_USER));
         personService.create(bettina);
 
         final List<Person> personsWithOfficeRole = sut.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_OFFICE);

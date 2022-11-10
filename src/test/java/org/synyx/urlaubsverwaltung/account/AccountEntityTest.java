@@ -11,7 +11,6 @@ import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 class AccountEntityTest {
@@ -21,7 +20,6 @@ class AccountEntityTest {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);
         person.setPermissions(List.of(USER));
-        person.setNotifications(List.of(NOTIFICATION_USER));
 
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);

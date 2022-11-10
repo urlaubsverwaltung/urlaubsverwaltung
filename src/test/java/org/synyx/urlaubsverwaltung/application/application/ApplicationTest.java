@@ -17,7 +17,6 @@ import java.util.List;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
@@ -163,7 +162,6 @@ class ApplicationTest {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);
         person.setPermissions(List.of(USER));
-        person.setNotifications(List.of(NOTIFICATION_USER));
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(person);
