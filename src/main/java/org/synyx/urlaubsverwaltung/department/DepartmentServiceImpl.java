@@ -190,7 +190,7 @@ class DepartmentServiceImpl implements DepartmentService {
 
         getAssignedDepartmentsOfMember(event.getPerson()).forEach(department -> {
             department.setMembers(department.getMembers().stream()
-                .filter(person -> !person.equals(event.getPerson()))
+                .filter(not(isEqual(event.getPerson())))
                 .collect(toList()));
             update(department);
         });
