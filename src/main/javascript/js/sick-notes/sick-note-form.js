@@ -1,29 +1,17 @@
 import $ from "jquery";
 import { createDatepicker } from "../../components/datepicker";
 
-$(document).ready(async function () {
-  const person = window.uv.params.person;
-  if (person) {
-    const employeeElement = document.querySelector("#employee");
-    if (employeeElement) {
-      employeeElement.value = person;
-    }
-  }
+function getPersonId() {
+  return document.querySelector("[name='person']").value;
+}
 
+$(document).ready(async function () {
   const urlPrefix = window.uv.apiPrefix;
-  const sickNotePersonId = window.uv.sickNote.person.id;
 
   let fromDateElement;
   let toDateElement;
   let aubFromDateElement;
   let aubToDateElement;
-
-  function getPersonId() {
-    if (!sickNotePersonId) {
-      return $("#employee option:selected").val();
-    }
-    return sickNotePersonId;
-  }
 
   function handleFromSelect() {
     if (!toDateElement.value) {
