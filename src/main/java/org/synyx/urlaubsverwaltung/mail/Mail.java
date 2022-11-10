@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.mail;
 
 import org.springframework.core.io.ByteArrayResource;
+import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.ArrayList;
@@ -87,13 +88,24 @@ public class Mail {
             return this;
         }
 
-        public Mail.Builder withRecipient(Person recipient) {
+        public Mail.Builder withRecipient(final Person recipient) {
             withRecipient(List.of(recipient));
             return this;
         }
 
-        public Mail.Builder withRecipient(List<Person> recipients) {
-            this.mailAddressRecipients.addAll(recipients);
+        public Mail.Builder withRecipient(final Person recipient, final MailNotification mailNotification) {
+            withRecipient(List.of(recipient), mailNotification);
+            return this;
+        }
+
+        public Mail.Builder withRecipient(final List<Person> recipients) {
+            return withRecipient(recipients, null);
+        }
+
+        public Mail.Builder withRecipient(final List<Person> recipients, final MailNotification mailNotification) {
+            recipients.stream()
+                .filter(person -> mailNotification == null || person.hasNotificationType(mailNotification))
+                .forEachOrdered(mailAddressRecipients::add);
             return this;
         }
 
