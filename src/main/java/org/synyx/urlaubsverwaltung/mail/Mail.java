@@ -71,7 +71,7 @@ public class Mail {
      */
     public static class Builder {
 
-        private List<Person> mailAddressRecipients = new ArrayList<>();
+        private final List<Person> mailAddressRecipients = new ArrayList<>();
         private boolean sendToTechnicalMail;
 
         private String templateName;
@@ -93,10 +93,6 @@ public class Mail {
         }
 
         public Mail.Builder withRecipient(List<Person> recipients) {
-            if (mailAddressRecipients == null) {
-                mailAddressRecipients = new ArrayList<>();
-            }
-
             this.mailAddressRecipients.addAll(recipients);
             return this;
         }
