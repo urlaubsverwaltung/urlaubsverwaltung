@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL;
 
 @Service
 class OvertimeMailService {
@@ -30,7 +30,7 @@ class OvertimeMailService {
         model.put("comment", overtimeComment);
 
         final Mail toOffice = Mail.builder()
-            .withRecipient(personService.getActivePersonsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE))
+            .withRecipient(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL))
             .withSubject("subject.overtime.created")
             .withTemplate("overtime_office", model)
             .build();

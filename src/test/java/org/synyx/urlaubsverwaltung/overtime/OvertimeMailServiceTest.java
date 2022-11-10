@@ -20,7 +20,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL;
 
 @ExtendWith(MockitoExtension.class)
 class OvertimeMailServiceTest {
@@ -44,7 +44,7 @@ class OvertimeMailServiceTest {
         final OvertimeComment overtimeComment = new OvertimeComment(Clock.systemUTC());
 
         final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getActivePersonsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(List.of(office));
+        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL)).thenReturn(List.of(office));
 
         final Map<String, Object> model = new HashMap<>();
         model.put("overtime", overtime);

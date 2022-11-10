@@ -26,7 +26,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createHolidaysAccount;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @ExtendWith(MockitoExtension.class)
 class TurnOfTheYearAccountUpdaterServiceTest {
@@ -78,7 +78,7 @@ class TurnOfTheYearAccountUpdaterServiceTest {
             .thenReturn(newAccount);
 
         final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_OFFICE)).thenReturn(List.of(office));
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(office));
 
         sut.updateAccountsForNextPeriod();
 

@@ -18,7 +18,9 @@ import java.util.Map;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Service
 class SickNoteMailService {
@@ -70,14 +72,14 @@ class SickNoteMailService {
             model.put("sickNote", sickNote);
 
             final Mail toSickNotePerson = Mail.builder()
-                .withRecipient(sickNote.getPerson())
+                .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY)
                 .withSubject("subject.sicknote.endOfSickPay")
                 .withTemplate("sicknote_end_of_sick_pay", model)
                 .build();
             mailService.send(toSickNotePerson);
 
             final Mail toOffice = Mail.builder()
-                .withRecipient(personService.getActivePersonsWithNotificationType(NOTIFICATION_OFFICE))
+                .withRecipient(personService.getActivePersonsByRole(OFFICE), NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY_MANAGEMENT_ALL)
                 .withSubject("subject.sicknote.endOfSickPay.office", sickNote.getPerson().getNiceName())
                 .withTemplate("sicknote_end_of_sick_pay_office", model)
                 .build();

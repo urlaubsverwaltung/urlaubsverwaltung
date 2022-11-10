@@ -14,10 +14,10 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
@@ -39,8 +39,8 @@ class PersonMailServiceIT extends TestContainersBase {
         createdPerson.setId(1);
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(singletonList(OFFICE));
-        office.setNotifications(singletonList(NOTIFICATION_OFFICE));
+        office.setPermissions(List.of(OFFICE));
+        office.setNotifications(List.of(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL));
         personService.create(office);
 
         sut.sendPersonCreationNotification(new PersonCreatedEvent(personService, createdPerson.getId(), createdPerson.getNiceName(), createdPerson.getUsername(), createdPerson.getEmail(), createdPerson.isActive()));

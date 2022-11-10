@@ -20,7 +20,7 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 
 /**
@@ -95,7 +95,7 @@ public class TurnOfTheYearAccountUpdaterService {
 
         // send email to office for printing statistic
         final Mail mailToOffice = Mail.builder()
-            .withRecipient(personService.getActivePersonsWithNotificationType(NOTIFICATION_OFFICE))
+            .withRecipient(personService.getActivePersonsByRole(OFFICE))
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, model)
             .build();

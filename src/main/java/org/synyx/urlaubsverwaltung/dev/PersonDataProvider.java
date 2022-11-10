@@ -30,14 +30,9 @@ import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
@@ -112,22 +107,10 @@ class PersonDataProvider {
     }
 
     private List<MailNotification> getNotificationsForRoles(List<Role> roles) {
-
         final List<MailNotification> notifications = new ArrayList<>();
-        if (roles.contains(DEPARTMENT_HEAD)) {
-            notifications.add(NOTIFICATION_DEPARTMENT_HEAD);
+        if (roles.contains(DEPARTMENT_HEAD) || roles.contains(SECOND_STAGE_AUTHORITY) || roles.contains(BOSS)) {
+            notifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT);
         }
-        if (roles.contains(SECOND_STAGE_AUTHORITY)) {
-            notifications.add(NOTIFICATION_SECOND_STAGE_AUTHORITY);
-        }
-        if (roles.contains(BOSS)) {
-            notifications.add(NOTIFICATION_BOSS_ALL);
-        }
-        if (roles.contains(OFFICE)) {
-            notifications.add(NOTIFICATION_OFFICE);
-            notifications.add(OVERTIME_NOTIFICATION_OFFICE);
-        }
-
         return notifications;
     }
 }

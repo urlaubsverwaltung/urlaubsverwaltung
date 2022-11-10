@@ -12,11 +12,12 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_DEPARTMENTS;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @Service
 class ApplicationRecipientService {
@@ -42,43 +43,38 @@ class ApplicationRecipientService {
 
     /**
      * Depending on application issuer role the recipients for allowed/remind/rejected/revoked/cancelled mail are generated.
-     * <ul>
-     * <li>
-     * without DEPARTMENTS:
-     *      <p>
-     *      USER -> BOSS with NOTIFICATION_BOSS_ALL
-     *      </p>
-     * </li>
-     * <li>
-     * with DEPARTMENTS (no SECOND_STAGE_AUTHORITY):
-     *      <p>
-     *      USER -> DEPARTMENT_HEAD and (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
-     *      DEPARTMENT_HEAD -> OTHER DEPARTMENT_HEADs and (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
-     *      </p>
-     * </li>
-     * <li>
-     * with DEPARTMENTS (with SECOND_STAGE_AUTHORITY):
-     *     <p>
-     *     USER -> DEPARTMENT_HEAD and (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
-     *     DEPARTMENT_HEAD -> OTHER DEPARTMENT_HEADs and SECOND_STAGE_AUTHORITY and (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
-     *     SECOND_STAGE_AUTHORITY -> (BOSS with NOTIFICATION_BOSS_ALL or NOTIFICATION_BOSS_DEPARTMENTS)
-     *     </p>
-     * </li>
-     * </ul>
+     * If the person has the office role they will get a notification if they have
+     * NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL
+     * configured.
+     * <p>
+     * If the person has the boss role they will get a notification if they have
+     * NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL or
+     * NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT and is in the same department
+     * configured.
+     * <p>
+     * If the person has the department head role they will get a notification if they have
+     * NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT and does manage the application person
+     * configured.
+     * <p>
+     * If the person has the second stage authority role they will get a notification if they have
+     * NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT and does manage the application person
+     * configured.
      *
      * @param application to find out recipients for
      * @return list of recipients for the given application allow/remind request
      */
     List<Person> getRecipientsOfInterest(Application application) {
 
-        final List<Person> recipientsOfInterest = new ArrayList<>(personService.getActivePersonsWithNotificationType(NOTIFICATION_BOSS_ALL));
+        final List<Person> recipientsOfInterest = new ArrayList<>();
+        recipientsOfInterest.addAll(getOfficesWithApplicationManagementAllNotification());
+        recipientsOfInterest.addAll(getBossWithApplicationManagementAllNotification());
 
         final long numberOfDepartments = departmentService.getNumberOfDepartments();
         if (numberOfDepartments > 0) {
             final Person applicationPerson = application.getPerson();
-            recipientsOfInterest.addAll(getBossesWithDepartmentNotification(applicationPerson));
             recipientsOfInterest.addAll(getResponsibleSecondStageAuthorities(applicationPerson));
             recipientsOfInterest.addAll(getResponsibleDepartmentHeads(applicationPerson));
+            recipientsOfInterest.addAll(getBossesWithDepartmentApplicationManagementNotification(applicationPerson));
         }
 
         return recipientsOfInterest.stream()
@@ -86,18 +82,10 @@ class ApplicationRecipientService {
             .collect(toList());
     }
 
-    /**
-     * Get all persons with the office notification enabled.
-     *
-     * @return list of recipients with NOTIFICATION_OFFICE
-     */
-    List<Person> getRecipientsWithOfficeNotifications() {
-        return personService.getActivePersonsWithNotificationType(NOTIFICATION_OFFICE);
-    }
-
     private List<Person> getResponsibleSecondStageAuthorities(Person applicationPerson) {
-        return personService.getActivePersonsWithNotificationType(NOTIFICATION_SECOND_STAGE_AUTHORITY)
+        return personService.getActivePersonsByRole(SECOND_STAGE_AUTHORITY)
             .stream()
+            .filter(secondStageAuthority -> secondStageAuthority.getNotifications().contains(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT))
             .filter(secondStageAuthority -> departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, applicationPerson))
             .filter(without(applicationPerson))
             .collect(toList());
@@ -108,21 +96,35 @@ class ApplicationRecipientService {
     }
 
     private List<Person> getResponsibleDepartmentHeads(Person applicationPerson) {
-        return personService.getActivePersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)
+        return personService.getActivePersonsByRole(DEPARTMENT_HEAD)
             .stream()
+            .filter(departmentHead -> departmentHead.getNotifications().contains(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT))
             .filter(departmentHead -> departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, applicationPerson))
             .filter(without(applicationPerson))
             .collect(toList());
     }
 
-    private List<Person> getBossesWithDepartmentNotification(Person applicationPerson) {
+    private List<Person> getBossesWithDepartmentApplicationManagementNotification(Person applicationPerson) {
         final List<Department> applicationPersonDepartments = departmentService.getAssignedDepartmentsOfMember(applicationPerson);
 
-        return personService.getActivePersonsWithNotificationType(NOTIFICATION_BOSS_DEPARTMENTS).stream()
+        return personService.getActivePersonsByRole(BOSS).stream()
+            .filter(boss -> boss.getNotifications().contains(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT))
             .filter(boss -> {
                 final List<Department> bossDepartments = departmentService.getAssignedDepartmentsOfMember(boss);
                 return applicationPersonDepartments.stream().anyMatch(bossDepartments::contains);
             })
+            .collect(toList());
+    }
+
+    private List<Person> getBossWithApplicationManagementAllNotification() {
+        return personService.getActivePersonsByRole(BOSS).stream()
+            .filter(office -> office.getNotifications().contains(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL))
+            .collect(toList());
+    }
+
+    private List<Person> getOfficesWithApplicationManagementAllNotification() {
+        return personService.getActivePersonsByRole(OFFICE).stream()
+            .filter(office -> office.getNotifications().contains(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL))
             .collect(toList());
     }
 }

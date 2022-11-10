@@ -29,7 +29,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteMailServiceTest {
@@ -56,8 +58,12 @@ class SickNoteMailServiceTest {
 
         final Person person = new Person();
         person.setUsername("Hulk");
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY));
 
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_OFFICE)).thenReturn(List.of(person));
+        final Person office = new Person();
+        office.setUsername("office");
+        office.setNotifications(List.of(NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY_MANAGEMENT_ALL));
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(office));
 
         final SickNote sickNoteA = SickNote.builder()
             .id(1)
@@ -102,7 +108,7 @@ class SickNoteMailServiceTest {
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(modelA);
-        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(office));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay.office");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay_office");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelA);
@@ -110,7 +116,7 @@ class SickNoteMailServiceTest {
         assertThat(mails.get(2).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay");
         assertThat(mails.get(2).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay");
         assertThat(mails.get(2).getTemplateModel()).isEqualTo(modelB);
-        assertThat(mails.get(3).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(3).getMailAddressRecipients()).hasValue(List.of(office));
         assertThat(mails.get(3).getSubjectMessageKey()).isEqualTo("subject.sicknote.endOfSickPay.office");
         assertThat(mails.get(3).getTemplateName()).isEqualTo("sicknote_end_of_sick_pay_office");
         assertThat(mails.get(3).getTemplateModel()).isEqualTo(modelB);
