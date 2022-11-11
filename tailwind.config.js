@@ -8,8 +8,6 @@ function withOpacity(variable) {
 
 module.exports = {
   content: [
-    "./src/main/webapp/**/*.jsp",
-    "./src/main/webapp/**/*.tag",
     "./src/main/javascript/**/*.js",
     "./src/main/resources/templates/**/*.html",
     "./src/main/resources/templates/**/*.svg",

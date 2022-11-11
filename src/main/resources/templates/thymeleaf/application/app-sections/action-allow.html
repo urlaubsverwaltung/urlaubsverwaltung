@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>app action allow</title>
+  </head>
+  <body>
+    <th:block th:fragment="button">
+      <button
+        th:if="${isAllowedToAllowTemporaryAllowedApplication}"
+        class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-emerald-500"
+        th:data-title="#{action.allow}"
+        onclick="document.querySelector('#reject')?.classList.add('tw-hidden'); document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.remove('tw-hidden');"
+      >
+        <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+        <span class="tw-sr-only" th:text="#{action.allow}"></span>
+      </button>
+
+      <button
+        th:if="${isAllowedToAllowWaitingApplication}"
+        th:with="messageKey=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval ? 'action.temporary_allow' : 'action.allow'}"
+        class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-emerald-500"
+        th:data-title="#{__${messageKey}__}"
+        onclick="document.querySelector('#reject')?.classList.add('tw-hidden'); document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.remove('tw-hidden');"
+      >
+        <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+        <span class="tw-sr-only" th:text="#{__${messageKey}__}"></span>
+      </button>
+    </th:block>
+
+    <th:block th:fragment="form">
+      <form
+        id="allow"
+        class="form confirm alert alert-success"
+        th:classappend="${action eq 'allow' ? '' : 'tw-hidden'}"
+        method="post"
+        th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/application/__${app.id}__/allow?redirect=/web/application/' : '/web/application/__${app.id}__/allow'},temporary=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval && app.status.name == 'WAITING'}"
+        th:action="@{__${actionUrl}__}"
+        th:object="${comment}"
+      >
+        <div class="form-group">
+          <th:block th:if="${temporary == true}">
+            <strong class="tw-font-medium" th:text="#{action.temporary_allow.confirm}"></strong>
+          </th:block>
+          <th:block th:if="${temporary == false}">
+            <strong class="tw-font-medium" th:text="#{action.allow.confirm}"></strong>
+          </th:block>
+        </div>
+
+        <div class="form-group">
+          <label th:text="|#{action.comment.optional}:|" for="text-confirm"></label>
+          <textarea
+            id="text-confirm"
+            rows="2"
+            class="form-control"
+            th:errorclass="error"
+            name="text"
+            onkeyup="count(this.value, 'text-confirm-counter');"
+            onkeydown="maxChars(this,200); count(this.value, 'text-confirm-counter');"
+          ></textarea>
+          <small> <span id="text-confirm-counter"></span><th:block th:text="#{action.comment.maxChars}" /> </small>
+        </div>
+
+        <div class="form-group is-sticky row">
+          <button type="submit" class="button-main-green col-xs-12 col-sm-5">
+            <th:block th:if="${temporary == true}" th:text="#{action.temporary_allow}"></th:block>
+            <th:block th:if="${temporary == false}" th:text="#{action.allow}"></th:block>
+          </button>
+          <button
+            type="button"
+            th:text="#{action.cancel}"
+            class="button col-xs-12 col-sm-5 pull-right"
+            onclick="document.querySelector('#allow')?.classList.add('tw-hidden');"
+          ></button>
+        </div>
+      </form>
+    </th:block>
+  </body>
+</html>

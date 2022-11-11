@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <th:block th:fragment="section">
+      <div th:replace="fragments/section-heading::section-heading(~{::app-workingtime-heading-body}, ~{})">
+        <th:block th:ref="app-workingtime-heading-body">
+          <h2 id="vacation" th:text="#{application.data.workingTime}">Arbeitszeiten</h2>
+        </th:block>
+      </div>
+
+      <div class="tw-px-3">
+        <table class="tw-w-full tw-text-sm tw-mb-8">
+          <caption th:text="#{person.account.workingTime.title}" class="tw-sr-only"></caption>
+          <thead>
+            <tr>
+              <th
+                th:text="#{person.account.workingTime.validity}"
+                class="tw-pb-1 tw-w-5 tw-font-medium"
+                scope="col"
+              ></th>
+              <th th:text="#{MONDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{TUESDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{WEDNESDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{THURSDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{FRIDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{SATURDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
+              <th th:text="#{SUNDAY.short}" class="tw-pb-1 text-center tw-w-4 tw-font-medium" scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="dateRangeWorkingTime : ${dateRangeWorkingTimes}">
+              <th class="tw-font-normal" scope="row">
+                <th:block th:replace="fragments/date::date(${dateRangeWorkingTime.key.startDate})"></th:block>
+              </th>
+              <td class="tw-py-0.5 text-center">
+                <th:block th:if="${dateRangeWorkingTime.value.monday.duration > 0}">
+                  <svg th:replace="icon/check-circle::svg"></svg>
+                </th:block>
+                <span
+                  th:with="messageKey=${dateRangeWorkingTime.value.monday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
+                  th:text="#{__${messageKey}__}"
+                  class="tw-sr-only"
+                >
+                </span>
+              </td>
+              <td class="tw-py-0.5 text-center">
+                <th:block th:if="${dateRangeWorkingTime.value.tuesday.duration > 0}">
+                  <svg th:replace="icon/check-circle::svg"></svg>
+                </th:block>
+                <span
+                  th:with="messageKey=${dateRangeWorkingTime.value.tuesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
+                  th:text="#{__${messageKey}__}"
+                  class="tw-sr-only"
+                >
+                </span>
+              </td>
+              <td class="tw-py-0.5 text-center">
+                <th:block th:if="${dateRangeWorkingTime.value.wednesday.duration > 0}">
+                  <svg th:replace="icon/check-circle::svg"></svg>
+                </th:block>
+                <span
+                  th:with="messageKey=${dateRangeWorkingTime.value.wednesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
+                  th:text="#{__${messageKey}__}"
+                  class="tw-sr-only"
+                >
+                </span>
+              </td>
+              <td class="tw-py-0.5 text-center">
+                <th:block th:if="${dateRangeWorkingTime.value.thursday.duration > 0}">
+                  <svg th:replace="icon/check-circle::svg"></svg>
+                </th:block>
+                <span
+                  th:with="messageKey=${dateRangeWorkingTime.value.thursday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
+                  th:text="#{__${messageKey}__}"
+                  class="tw-sr-only"
+                >
+                </span>
+              </td>
+              <td class="tw-py-0.5 text-center">
+                <th:block th:if="${dateRangeWorkingTime.value.friday.duration > 0}">
+                  <svg th:replace="icon/check-circle::svg"></svg>
+                </th:block>
+                <span
+                  th:with="messageKey=${dateRangeWorkingTime.value.friday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
+                  th:text="#{__${messageKey}__}"
+                  class="tw-sr-only"
+                >
+                </span>
+              </td>
+              <td class="tw-py-0.5 text-center">
+                <th:block th:if="${dateRangeWorkingTime.value.saturday.duration > 0}">
+                  <svg th:replace="icon/check-circle::svg"></svg>
+                </th:block>
+                <span
+                  th:with="messageKey=${dateRangeWorkingTime.value.saturday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
+                  th:text="#{__${messageKey}__}"
+                  class="tw-sr-only"
+                >
+                </span>
+              </td>
+              <td class="tw-py-0.5 text-center">
+                <th:block th:if="${dateRangeWorkingTime.value.sunday.duration > 0}">
+                  <svg th:replace="icon/check-circle::svg"></svg>
+                </th:block>
+                <span
+                  th:with="messageKey=${dateRangeWorkingTime.value.sunday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
+                  th:text="#{__${messageKey}__}"
+                  class="tw-sr-only"
+                >
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </th:block>
+  </body>
+</html>

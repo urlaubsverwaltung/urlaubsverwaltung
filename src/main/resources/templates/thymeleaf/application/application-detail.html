@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+    <title th:text="#{application.data.header.title(${app.person.niceName})}"></title>
+    <th:block th:fragment="scripts">
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.uv = window.uv || {};
+        window.uv.personId = /*[[${app.person.id}]]*/ "personId";
+        window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
+        window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
+        window.uv.dayLength = /*[[${app.dayLength}]]*/ "dayLength";
+        window.uv.startDate = /*[[${#temporals.format(app.startDate, 'yyyy/MM/dd')}]]*/ "startDate";
+        window.uv.endDate = /*[[${#temporals.format(app.endDate, 'yyyy/MM/dd')}]]*/ "endDate";
+        /*]]>*/
+      </script>
+      <script defer asset:src="npm.date-fns.js"></script>
+      <script defer asset:src="app_detail~app_form~person_overview.js"></script>
+      <script
+        defer
+        asset:src="account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js"
+      ></script>
+      <script defer asset:src="app_detail.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main
+      th:fragment="main"
+      class="tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 lg:tw-grid lg:tw-grid-cols-2 lg:tw-gap-8"
+    >
+      <div>
+        <div
+          th:replace="fragments/section-heading::section-heading(~{::applications-details-heading-body}, ~{::applications-details-heading-actions})"
+        >
+          <th:block th:ref="applications-details-heading-actions">
+            <th:block th:include="thymeleaf/application/app-sections/action-allow::button"></th:block>
+            <th:block th:include="thymeleaf/application/app-sections/action-reject::button"></th:block>
+            <th:block th:include="thymeleaf/application/app-sections/action-edit::button"></th:block>
+            <th:block th:include="thymeleaf/application/app-sections/action-cancel::button"></th:block>
+            <th:block
+              th:include="thymeleaf/application/app-sections/action-decline-cancellation-request::button"
+            ></th:block>
+            <th:block th:include="thymeleaf/application/app-sections/action-remind::button"></th:block>
+            <th:block th:include="thymeleaf/application/app-sections/action-refer::button"></th:block>
+            <button th:replace="fragments/print::button"></button>
+          </th:block>
+          <th:block th:ref="applications-details-heading-body">
+            <h1 th:text="#{application.data.title}"></h1>
+          </th:block>
+        </div>
+
+        <div class="feedback">
+          <div th:if="${editSuccess}" class="alert alert-success" th:text="#{application.action.apply.edit}"></div>
+          <div th:if="${editError}" class="alert alert-danger" th:text="#{application.error.notEditable}"></div>
+          <div th:if="${applySuccess}" class="alert alert-success" th:text="#{application.action.apply.success}"></div>
+          <div
+            th:if="${remindAlreadySent}"
+            class="alert alert-danger"
+            th:text="#{application.action.remind.error.alreadySent}"
+          ></div>
+          <div
+            th:if="${remindNoWay}"
+            class="alert alert-danger"
+            th:text="#{application.action.remind.error.impatient}"
+          ></div>
+          <div th:if="${remindIsSent}" class="alert alert-success" th:text="#{application.action.remind.success}"></div>
+          <div th:if="${errors != null}" class="alert alert-danger" th:text="#{application.action.reason.error}"></div>
+          <div
+            th:if="${notPrivilegedToApprove}"
+            class="alert alert-danger"
+            th:text="#{application.action.remind.error.notPrivilegedToApprove}"
+          ></div>
+          <div th:if="${allowSuccess}" class="alert alert-success" th:text="#{application.action.allow.success}"></div>
+          <div
+            th:if="${rejectSuccess}"
+            class="alert alert-success"
+            th:text="#{application.action.reject.success}"
+          ></div>
+          <div th:if="${referSuccess}" class="alert alert-success" th:text="#{application.action.refer.success}"></div>
+          <div
+            th:if="${cancelSuccess}"
+            class="alert alert-success"
+            th:text="#{application.action.cancel.success}"
+          ></div>
+        </div>
+
+        <div class="actions">
+          <th:block
+            th:if="${isAllowedToRemindApplication}"
+            th:include="thymeleaf/application/app-sections/action-remind::form"
+          ></th:block>
+
+          <th:block
+            th:if="${isAllowedToAllowWaitingApplication || isAllowedToAllowTemporaryAllowedApplication}"
+            th:include="thymeleaf/application/app-sections/action-allow::form"
+          ></th:block>
+
+          <th:block
+            th:if="${isAllowedToRejectApplication}"
+            th:include="thymeleaf/application/app-sections/action-reject::form"
+          ></th:block>
+
+          <th:block
+            th:if="${isAllowedToReferApplication}"
+            th:include="thymeleaf/application/app-sections/action-refer::form"
+          ></th:block>
+
+          <th:block
+            th:if="${isAllowedToRevokeApplication || isAllowedToCancelApplication || isAllowedToCancelDirectlyApplication || isAllowedToStartCancellationRequest}"
+            th:include="thymeleaf/application/app-sections/action-cancel::form"
+          ></th:block>
+
+          <th:block
+            th:if="${isAllowedToDeclineCancellationRequest}"
+            th:include="thymeleaf/application/app-sections/action-decline-cancellation-request::form"
+          ></th:block>
+        </div>
+
+        <th:block th:include="thymeleaf/application/app-sections/section-info::section"></th:block>
+        <th:block th:include="thymeleaf/application/app-sections/section-workingtime::section"></th:block>
+      </div>
+      <div class="print:tw-hidden">
+        <div
+          th:replace="fragments/section-heading::section-heading(~{::applications-details-account-heading-body}, ~{})"
+        >
+          <th:block th:ref="applications-details-account-heading-body">
+            <h2 th:text="#{person.account.vacation.title}"></h2>
+            <div
+              th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/application/${app.id}?year=|, selectedYear=${selectedYear})"
+            ></div>
+          </th:block>
+        </div>
+
+        <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
+          <div class="tw-w-full">
+            <div class="box tw-mb-5 tw-p-5">
+              <div
+                th:replace="thymeleaf/person/box::person-box-with-departments(person=${app.person}, departments=${departmentsOfPerson})"
+              ></div>
+            </div>
+            <div class="box tw-mb-5 tw-p-5">
+              <div
+                th:replace="fragments/box::box-with-icon(~{::application-detail-entitlement-box-icon}, ~{::application-detail-entitlement-box-body})"
+              >
+                <th:block th:ref="application-detail-entitlement-box-icon">
+                  <div
+                    th:replace="fragments/rounded::block(content=~{::account-entitlement-box-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')"
+                  >
+                    <th:block th:ref="account-entitlement-box-icon-rounded">
+                      <svg th:replace="icon/calendar::svg(className='tw-w-8 tw-h-8')" />
+                    </th:block>
+                  </div>
+                </th:block>
+                <th:block th:ref="application-detail-entitlement-box-body">
+                  <th:block th:if="${account != null}">
+                    <span
+                      class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                      th:text="#{person.account.vacation.entitlement.1}"
+                    >
+                      Anspruch auf
+                    </span>
+                    <span
+                      class="tw-my-1 tw-text-lg tw-font-medium"
+                      th:text="#{person.account.vacation.entitlement.2(${account.actualVacationDays + account.remainingVacationDays})}"
+                    >
+                      32,5 Urlaubstage
+                    </span>
+                    <span
+                      class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                      th:text="#{person.account.vacation.entitlement.remaining(${account.remainingVacationDays})}"
+                    >
+                      davon 5 Tage Resturlaub
+                    </span>
+                  </th:block>
+                  <th:block th:if="${account == null}">
+                    <span class="tw-text-sm" th:text="#{person.account.vacation.noInformation}"></span>
+                  </th:block>
+                </th:block>
+              </div>
+            </div>
+            <div class="box tw-mb-5 tw-p-5">
+              <div
+                th:replace="fragments/box::box-with-icon(~{::application-detail-remaining-box-icon}, ~{::application-detail-remaining-box-body})"
+              >
+                <th:block th:ref="application-detail-remaining-box-icon">
+                  <div
+                    th:replace="fragments/rounded::block(content=~{::account-remaining-box-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')"
+                  >
+                    <th:block th:ref="account-remaining-box-icon-rounded">
+                      <svg th:replace="icon/presentation-chart-bar::svg(className='tw-w-8 tw-h-8')" />
+                    </th:block>
+                  </div>
+                </th:block>
+                <th:block th:ref="application-detail-remaining-box-body">
+                  <th:block
+                    th:if="${account != null}"
+                    th:with="remainingVacationDays=${!doRemainingVacationDaysExpire || isBeforeExpiryDate ? vacationDaysLeft.remainingVacationDays : vacationDaysLeft.remainingVacationDaysNotExpiring}"
+                  >
+                    <span
+                      class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                      th:text="#{person.account.vacation.left.1}"
+                    >
+                      Es verbleiben
+                    </span>
+                    <span
+                      class="tw-my-1 tw-text-lg tw-font-medium"
+                      th:text="#{person.account.vacation.left.2(${vacationDaysLeft.vacationDays + remainingVacationDays})}"
+                    >
+                      14 Urlaubstage
+                    </span>
+                    <span
+                      class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                      th:text="#{person.account.vacation.left.remaining(${remainingVacationDays})}"
+                    >
+                      davon 0 Tage Resturlaub
+                    </span>
+                    <span
+                      th:if="${doRemainingVacationDaysExpire && not isBeforeExpiryDate && expiredRemainingVacationDays > 0}"
+                      th:text="#{person.account.vacation.left.remainingExpired(${expiredRemainingVacationDays})}"
+                      class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                    ></span>
+                    <span
+                      th:if="${vacationDaysLeft.vacationDaysUsedNextYear.unscaledValue() != 0}"
+                      th:text="#{person.account.vacation.left.alreadyUsedNextYear(${vacationDaysLeft.vacationDaysUsedNextYear})}"
+                      class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                    >
+                    </span>
+                  </th:block>
+                  <th:block th:if="${account == null}">
+                    <span class="tw-text-sm" th:text="#{person.account.vacation.noInformation}"></span>
+                  </th:block>
+                </th:block>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div th:replace="thymeleaf/application/app-sections/section-progress::section"></div>
+      <div class="print:tw-hidden">
+        <div
+          th:replace="fragments/section-heading::section-heading(~{::applications-details-department-heading-body}, ~{})"
+        >
+          <th:block th:ref="applications-details-department-heading-body">
+            <h2 th:text="#{application.department.title}"></h2>
+          </th:block>
+        </div>
+
+        <table class="list-table striped-table bordered-table tw-text-sm">
+          <tbody>
+            <th:block
+              th:if="${#lists.isEmpty(departmentApplications)}"
+              th:text="#{application.department.none}"
+            ></th:block>
+            <tr
+              th:if="${not #lists.isEmpty(departmentApplications)}"
+              th:each="departmentApplication : ${departmentApplications}"
+            >
+              <td class="tw-text-blue-50 dark:tw-text-sky-800">
+                <img
+                  th:replace="fragments/avatar::avatar-bordered(url=${departmentApplication.person.gravatarURL + '?d=404&s=40'},niceName=${departmentApplication.person.niceName},width='40px',height='40px')"
+                  alt=""
+                />
+              </td>
+              <td th:text="${departmentApplication.person.niceName}"></td>
+              <td>
+                <span class="tw-flex tw-items-center">
+                  <th:block th:if="${departmentApplication.startDate == departmentApplication.endDate}">
+                    <th:block
+                      th:text="|${#messages.msg(departmentApplication.startDate.dayOfWeek + '.short')}|"
+                    ></th:block
+                    >,
+                    <th:block th:replace="fragments/date::date(${departmentApplication.startDate})"></th:block>,&nbsp;
+                    <th:block th:text="${#messages.msg(departmentApplication.dayLength)}"></th:block>
+                  </th:block>
+                  <th:block th:if="${departmentApplication.startDate != departmentApplication.endDate}">
+                    <span
+                      th:replace="fragments/date-range::date-range(from=${departmentApplication.startDate}, to=${departmentApplication.endDate}, pattern='E, dd.MM.yyyy')"
+                    ></span>
+                  </th:block>
+                  <span th:if="${departmentApplication.status.name == 'ALLOWED'}" class="tw-text-emerald-500">
+                    <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')" />
+                  </span>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

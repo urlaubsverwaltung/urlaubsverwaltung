@@ -55,12 +55,6 @@
             class="form-horizontal"
           >
             <input type="hidden" th:field="*{id}" />
-            <input
-              th:if="${not canAddOvertimeForAnotherUser || overtime.id != null}"
-              type="hidden"
-              name="person.id"
-              th:value="${person.id}"
-            />
             <div class="form-section">
               <div class="col-xs-12">
                 <p class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}"></p>
@@ -78,7 +72,7 @@
                   </th:block>
                   <th:block th:ref="overtime-form-actions">
                     <a
-                      th:href="@{/web/overtime?person=__${overtime.person.id}__}"
+                      th:href="@{/web/overtime?person=__${person.id}__}"
                       class="icon-link tw-px-1"
                       aria-hidden="true"
                       th:data-title="#{action.overtime.list}"
@@ -106,7 +100,7 @@
                     </label>
                     <div class="col-md-9">
                       <select
-                        th:replace="fragments/select::one(id='person-select', name='person.id', options=~{::person-select-options})"
+                        th:replace="fragments/select::one(id='person-select', name='person', options=~{::person-select-options})"
                         id="person-select"
                       >
                         <th:block th:fragment="person-select-options">
@@ -125,9 +119,15 @@
                     <label th:text="|#{overtime.data.person}:|" class="control-label col-md-3"></label>
                     <div class="col-md-9">
                       <p th:text="${overtime.person.niceName}" class="form-control-static"></p>
+                      <input type="hidden" name="person" th:value="${person.id}" />
                     </div>
                   </div>
                 </th:block>
+
+                <th:block th:if="${not canAddOvertimeForAnotherUser}">
+                  <input type="hidden" name="person" th:value="${person.id}" />
+                </th:block>
+
                 <div class="form-group is-required">
                   <label th:text="|#{overtime.data.startDate}:|" class="control-label col-md-3" for="startDate"></label>
                   <div class="col-md-9">

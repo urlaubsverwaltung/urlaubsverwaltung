@@ -8,14 +8,13 @@
     <span
       th:fragment="one(id, name, options)"
       class="tw-inline-block tw-relative tw-w-full"
-      th:classappend="${class}"
       th:with="autosubmit=${autosubmit ?: ''}, testId=${testId ?: ''}"
     >
       <select
         th:id="${id}"
         th:name="${name}"
         class="form-control tw-appearance-none tw-pr-8"
-        th:attrappend="data-auto-submit=${autosubmit}, data-test-id=${testId}"
+        th:attrappend="data-auto-submit=${autosubmit}, data-test-id=${testId}, is=${is}"
       >
         <option th:replace="${options}"></option>
       </select>
@@ -35,9 +34,16 @@
     </span>
 
     <span
+      class="select-with-addon tw-w-full tw-flex tw-items-center"
+      th:fragment="one-with-addon(id, name, options, addon)"
+    >
+      <span th:replace="::one(${id}, ${name}, ${options})"></span>
+      <span class="tw-h-full tw-flex select-addon" th:insert="${addon}"></span>
+    </span>
+
+    <span
       th:fragment="multi(id, name, options)"
       class="tw-inline-block tw-relative tw-w-full"
-      th:classappend="${class}"
       th:with="testId=${testId ?: ''}"
     >
       <select

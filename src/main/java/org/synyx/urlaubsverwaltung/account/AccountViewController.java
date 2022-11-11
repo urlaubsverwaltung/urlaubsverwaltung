@@ -127,7 +127,7 @@ public class AccountViewController {
                 actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
         } else {
             accountInteractionService.updateOrCreateHolidaysAccount(person, validFrom, validTo, doRemainingVacationDaysExpireLocally,
-                expiryDate, annualVacationDays,actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
+                expiryDate, annualVacationDays, actualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
         }
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);

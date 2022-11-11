@@ -102,4 +102,16 @@ class SickNoteServiceImpl implements SickNoteService {
         sickNote.setEndOfSickPayNotificationSend(LocalDate.now(clock));
         sickNoteRepository.save(sickNote);
     }
+
+    @Override
+    public List<SickNote> deleteAllByPerson(Person person) {
+        return sickNoteRepository.deleteByPerson(person);
+    }
+
+    @Override
+    public void deleteSickNoteApplier(Person applier) {
+        final List<SickNote> sickNotes = sickNoteRepository.findByApplier(applier);
+        sickNotes.forEach(sickNote -> sickNote.setApplier(null));
+        sickNoteRepository.saveAll(sickNotes);
+    }
 }

@@ -7,8 +7,8 @@ leave and sick days of employees.
 ## TL;DR;
 
 ```console
-$ helm repo add synyx https://synyx.github.io/urlaubsverwaltung/chart_repo
-$ helm install urlaubsverwaltung synyx/urlaubsverwaltung
+$ helm repo add urlaubsverwaltung https://urlaubsverwaltung.github.io/urlaubsverwaltung/chart_repo
+$ helm install urlaubsverwaltung urlaubsverwaltung/urlaubsverwaltung
 ```
 
 
@@ -16,7 +16,7 @@ $ helm install urlaubsverwaltung synyx/urlaubsverwaltung
 
 This chart bootstraps a [Urlaubsverwaltung](https://urlaubsverwaltung.cloud/) deployment on a [Kubernetes](https://kubernetes.io) cluster
 using the [Helm](https://helm.sh) package manager. It provisions a fully featured Urlaubsverwaltung installation.
-For more information on Urlaubsverwaltung and its capabilities, see its [wiki](https://github.com/synyx/urlaubsverwaltung/wiki).
+For more information on Urlaubsverwaltung and its capabilities, see its [wiki](https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki).
 
 
 ## Prerequisites Details
@@ -30,7 +30,7 @@ By default, the MariaDB chart requires PVC (persistent volume claim) support on 
 To install the chart with the release name `urlaubsverwaltung`:
 
 ```console
-$ helm install urlaubsverwaltung synyx/urlaubsverwaltung
+$ helm install urlaubsverwaltung urlaubsverwaltung/urlaubsverwaltung
 ```
 
 
@@ -48,7 +48,7 @@ $ helm uninstall urlaubsverwaltung
 The following table lists the configurable parameters of the Urlaubsverwaltung chart and their default values.
 
 ```console
-$ helm chart values synyx/urlaubsverwaltung
+$ helm chart values urlaubsverwaltung/urlaubsverwaltung
 ```
 
 
@@ -158,12 +158,12 @@ secrets:
 
 #### Active Directory
 
-T.B.D - see [Konfiguration](https://github.com/synyx/urlaubsverwaltung/tree/master#security-provider-konfigurieren)
+T.B.D - see [Konfiguration](https://github.com/urlaubsverwaltung/urlaubsverwaltung/tree/master#security-provider-konfigurieren)
 
 
 #### OpenID Connect
 
-T.B.D - see [Konfiguration](https://github.com/synyx/urlaubsverwaltung/tree/master#security-provider-konfigurieren)
+T.B.D - see [Konfiguration](https://github.com/urlaubsverwaltung/urlaubsverwaltung/tree/master#security-provider-konfigurieren)
 
 
 ### Mailserver

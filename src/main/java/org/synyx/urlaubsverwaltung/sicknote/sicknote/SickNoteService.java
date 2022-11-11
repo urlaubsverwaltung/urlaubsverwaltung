@@ -91,4 +91,19 @@ public interface SickNoteService {
      * @param sickNote to set sick pay notification send date
      */
     void setEndOfSickPayNotificationSend(SickNote sickNote);
+
+    /**
+     * Deletes all {@link SickNote} in the database person.
+     *
+     * @param person the person whose sick notes should be deleted
+     * @return list of deleted sick notes
+     */
+    List<SickNote> deleteAllByPerson(Person person);
+
+    /**
+     * Deletes the given applier from all sicknotes as applier
+     *
+     * @param applier to delete
+     */
+    void deleteSickNoteApplier(Person applier);
 }

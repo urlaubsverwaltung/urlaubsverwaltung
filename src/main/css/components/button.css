@@ -160,12 +160,3 @@
   @apply dark:tw-bg-sky-600;
   @apply dark:tw-border-sky-600;
 }
-
-[class*="button-as-addon"] {
-  @apply tw-py-0;
-}
-
-.button-as-addon--right {
-  @apply tw-rounded-l-none;
-  @apply tw-border-l-0;
-}

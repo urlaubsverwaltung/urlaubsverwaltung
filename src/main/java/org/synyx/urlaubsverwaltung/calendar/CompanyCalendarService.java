@@ -3,12 +3,14 @@ package org.synyx.urlaubsverwaltung.calendar;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
@@ -88,6 +90,12 @@ class CompanyCalendarService {
         final Person person = getPersonOrThrow(personId);
 
         companyCalendarRepository.deleteByPerson(person);
+    }
+
+    @EventListener
+    void deleteCalendarForPerson(PersonDeletedEvent event) {
+
+        companyCalendarRepository.deleteByPerson(event.getPerson());
     }
 
     /**

@@ -14,13 +14,13 @@
 @import "./components/loading.css";
 @import "./components/form.css";
 @import "./components/icon-link.css";
-@import "./components/jquery-ui-datepicker.css";
 @import "./components/link.css";
 @import "./components/list.css";
 @import "./components/navigation.css";
 @import "./components/multi-select.css";
 @import "./components/modal.css";
 @import "./components/nav-tabs.css";
+@import "./components/select.css";
 @import "./components/table.css";
 @import "./components/tabs.css";
 @import "./components/states.css";

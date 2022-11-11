@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -77,4 +78,15 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
     BigDecimal calculateTotalOvertimeReductionOfPersonBefore(@Param("person") Person person, @Param("date") LocalDate before);
 
     List<Application> findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(Person person, LocalDate date, List<ApplicationStatus> status);
+
+    List<Application> findByBoss(Person person);
+
+    List<Application> findByCanceller(Person person);
+
+    List<Application> findByApplier(Person person);
+
+    @Modifying
+    List<Application> deleteByPerson(Person person);
+
+    List<Application> findAllByHolidayReplacements_Person(Person person);
 }

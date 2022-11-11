@@ -57,7 +57,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 @RequestMapping("/web")
 public class OvertimeViewController {
 
-    private static final String PERSON_ATTRIBUTE = "person";
     private static final String SIGNED_IN_USER = "signedInUser";
     private static final String OVERTIME_OVERTIME_FORM = "thymeleaf/overtime/overtime_form";
 
@@ -97,9 +96,9 @@ public class OvertimeViewController {
         return "redirect:/web/overtime?person=" + signedInUser.getId();
     }
 
-    @GetMapping(value = "/overtime", params = PERSON_ATTRIBUTE)
+    @GetMapping(value = "/overtime", params = "person")
     public String showOvertime(
-        @RequestParam(value = PERSON_ATTRIBUTE) Integer personId,
+        @RequestParam(value = "person") Integer personId,
         @RequestParam(value = "year", required = false) Integer requestedYear, Model model)
         throws UnknownPersonException {
 
@@ -117,7 +116,7 @@ public class OvertimeViewController {
         model.addAttribute("currentYear", Year.now(clock).getValue());
         model.addAttribute("selectedYear", selectedYear);
 
-        model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute("person", person);
         model.addAttribute(SIGNED_IN_USER, signedInUser);
 
         final boolean userIsAllowedToWriteOvertime = overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person);
@@ -172,7 +171,7 @@ public class OvertimeViewController {
 
     @GetMapping("/overtime/new")
     public String recordOvertime(
-        @RequestParam(value = PERSON_ATTRIBUTE, required = false) Integer personId, Model model)
+        @RequestParam(value = "person", required = false) Integer personId, Model model)
         throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -190,7 +189,7 @@ public class OvertimeViewController {
                 signedInUser.getId(), person.getId()));
         }
 
-        final OvertimeForm overtimeForm = new OvertimeForm(person);
+        final OvertimeForm overtimeForm = new OvertimeForm();
         prepareModelForCreation(model, signedInUser, person, overtimeForm);
 
         return OVERTIME_OVERTIME_FORM;
@@ -280,7 +279,7 @@ public class OvertimeViewController {
 
     private void prepareModelForEdit(Model model, Person signedInUser, Person person, OvertimeForm overtimeForm) {
         model.addAttribute("overtime", overtimeForm);
-        model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute("person", person);
         model.addAttribute(SIGNED_IN_USER, signedInUser);
         model.addAttribute("canAddOvertimeForAnotherUser", signedInUser.hasRole(OFFICE));
 

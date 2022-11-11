@@ -63,11 +63,11 @@ public class PublicHolidayApiController {
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate startDate,
+        LocalDate startDate,
         @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate endDate) {
+        LocalDate endDate) {
 
         checkValidPeriod(startDate, endDate);
 
@@ -89,15 +89,15 @@ public class PublicHolidayApiController {
     public PublicHolidaysDto personsPublicHolidays(
         @Parameter(description = "ID of the person to get the public holidays for.")
         @PathVariable("personId")
-            Integer personId,
+        Integer personId,
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate startDate,
+        LocalDate startDate,
         @Parameter(description = "End date with pattern yyyy-MM-dd")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate endDate) {
+        LocalDate endDate) {
 
         checkValidPeriod(startDate, endDate);
 

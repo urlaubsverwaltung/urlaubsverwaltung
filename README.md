@@ -1,4 +1,4 @@
-# Urlaubsverwaltung [![Build Status](https://github.com/synyx/urlaubsverwaltung/workflows/Build/badge.svg)](https://github.com/synyx/urlaubsverwaltung/actions?query=workflow%3A%22Build) [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung) [![Docker Pulls](https://badgen.net/docker/pulls/synyx/urlaubsverwaltung?icon=docker&label=pulls)](https://hub.docker.com/r/synyx/urlaubsverwaltung/) [![Crowdin](https://badges.crowdin.net/urlaubsverwaltung/localized.svg)](https://crowdin.com/project/urlaubsverwaltung)
+# Urlaubsverwaltung [![Build Status](https://github.com/urlaubsverwaltung/urlaubsverwaltung/workflows/Build/badge.svg)](https://github.com/synyx/urlaubsverwaltung/actions?query=workflow%3A%22Build) [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung) [![Docker Pulls](https://badgen.net/docker/pulls/synyx/urlaubsverwaltung?icon=docker&label=pulls)](https://hub.docker.com/r/synyx/urlaubsverwaltung/) [![Crowdin](https://badges.crowdin.net/urlaubsverwaltung/localized.svg)](https://crowdin.com/project/urlaubsverwaltung)
 
 Die Urlaubsverwaltung ist eine Web-Anwendung, um *Abwesenheiten* elektronisch verwalten zu können.
 
@@ -164,9 +164,6 @@ uv.security.oidc.client-secret
 uv.security.oidc.issuer-uri
 uv.security.oidc.logout-uri
 uv.security.oidc.scopes=openid,profile,email
-
-# jsp template engine
-uv.template-engine.jsp.use-precompiled=false
 
 # sick-note
 uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
@@ -362,13 +359,13 @@ vom Typ "Question" erstellen.
 Ohne GitHub Account
 
 ```bash
-https://github.com/synyx/urlaubsverwaltung.git
+https://github.com/urlaubsverwaltung/urlaubsverwaltung.git
 ```
 
 mit GitHub Account
 
 ```bash
-git clone git@github.com:synyx/urlaubsverwaltung.git
+git clone git@github.com:urlaubsverwaltung/urlaubsverwaltung.git
 ```
 
 ### git hooks (optional)
@@ -377,15 +374,10 @@ Zum Automatisieren verschiedener Dinge bietet dir das Projekt [git hooks](https:
 an. Diese kannst du mit folgendem Befehl installieren:
 
 ```bash
-./scripts/install-git-hooks.sh
+git config core.hooksPath '.githooks'
 ```
 
-Folgende git hooks werden installiert:
-
-* **post-merge**
-  * schaut nach einen `pull` ob sich die `package.lock` geändert hat und installiert ggfs. npm dependencies
-* **pre-commit**
-  * formatiert geänderte Dateien mit [prettier](https://prettier.io/) 
+Die Githooks sind im [.githooks](./.githooks/) Verzeichnis zu finden.
 
 ### Anwendung starten
 
@@ -425,7 +417,7 @@ Die User Experience einiger Seiten wird zur Laufzeit mit JavaScript weiter verbe
 
 Assets sind in `<root>/src/main/javascript` zu finden
 
-* `bundles` sind in den JSPs zu integrieren
+* `bundles` sind in den HTML-Seiten zu integrieren
 * `components` sind einzelne Komponenten zur Wiederverwendung wie z. B. der _datepicker_
 * `js` beinhaltet seitenspezifische Dinge
 * `lib` sind third-party Bibliotheken
@@ -444,13 +436,11 @@ Der Frontend Build ist in Maven integriert. Isoliert können die Assets aber auc
 
 Startet man den Maven Build oder baut man die Assets mit dem NPM Task `npm run build` wird eine JSON Datei `assets-manifest.json` angelegt.
 Das Manifest beschreibt ein Mapping der bundles zum generierten Dateinamen inklusive Hash. Dieser gemappte Dateiname muss
-in den JSPs integriert werden. Damit das nicht bei jeder Änderung manuell gemacht werden muss, kann der Dateiname mit Hilfe der
-Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit der JSP automatisiert werden.
+in den Html-Seiten integriert werden. Damit das nicht bei jeder Änderung manuell gemacht werden muss, kann der Dateiname mit Hilfe der
+Taglib `AssetsHashResolverTag.java` zur Kompilierungszeit automatisiert werden.
 
-```jsp
-<%@taglib prefix="asset" uri = "/WEB-INF/asset.tld"%>
-
-<script defer src="<asset:url value='npm.jquery.js' />"></script>
+```html
+<script defer asset:src="npm.jquery.js"></script>
 ```
 
 Während der Weiterentwicklung ist es sinnvoll das Caching zu deaktivieren. Wird das `demodata` Profil verwendet muss

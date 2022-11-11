@@ -9,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.MapSession;
 import org.springframework.session.Session;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.util.Map;
 
@@ -29,6 +31,18 @@ class SessionServiceImplTest {
     @BeforeEach
     void setUp() {
         sut = new SessionServiceImpl<>(sessionRepository);
+    }
+
+    @Test
+    void ensureToDeleteSessionByEvent() {
+
+        when(sessionRepository.findByPrincipalName("username"))
+            .thenReturn(Map.of("65266d07-2ab0-400b-86b5-4b609e552399", new MapSession("someId")));
+
+        final Person person = new Person("username", "username", "username", "username@example.org");
+        sut.deleteSessionByEvent(new PersonDeletedEvent(person));
+
+        verify(sessionRepository).deleteById("someId");
     }
 
     @Test

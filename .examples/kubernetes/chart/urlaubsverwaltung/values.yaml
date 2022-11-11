@@ -104,7 +104,7 @@ affinity: {}
 
 secrets: {}
 
-# see https://github.com/synyx/urlaubsverwaltung/blob/master/src/main/resources/application.properties
+# see https://github.com/urlaubsverwaltung/urlaubsverwaltung/blob/master/src/main/resources/application.properties
 # for configuration options
 extraEnv: |
   - name: JAVA_OPTS

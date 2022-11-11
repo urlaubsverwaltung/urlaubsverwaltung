@@ -15,7 +15,7 @@ class AssetAttributeTagProcessor extends AbstractAttributeTagProcessor {
     private final AssetFilenameHashMapper assetFilenameHashMapper;
 
     AssetAttributeTagProcessor(String dialectPrefix, String attributeName, AssetFilenameHashMapper assetFilenameHashMapper) {
-        super(TemplateMode.HTML, dialectPrefix, null, false, attributeName, true, PRECEDENCE,true);
+        super(TemplateMode.HTML, dialectPrefix, null, false, attributeName, true, PRECEDENCE, true);
         this.attributeName = attributeName;
         this.assetFilenameHashMapper = assetFilenameHashMapper;
     }

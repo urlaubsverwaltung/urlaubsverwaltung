@@ -12,4 +12,6 @@ public interface WorkingTimeWriteService {
     void touch(List<Integer> workingDays, LocalDate validFrom, Person person, FederalState federalState);
 
     void createDefaultWorkingTime(Person person);
+
+    void deleteAllByPerson(Person person);
 }

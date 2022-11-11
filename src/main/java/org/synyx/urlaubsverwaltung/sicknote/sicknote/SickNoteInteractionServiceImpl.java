@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.Absence;
@@ -13,12 +14,14 @@ import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingService;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -143,6 +146,27 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         }
 
         return savedSickNote;
+    }
+
+    /**
+     * Deletes all {@link SickNote} and {@link org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity}
+     * in the database of person.
+     *
+     * @param event the person which is deleted and whose sicknotes should be deleted
+     */
+    @EventListener
+    void deleteAll(PersonDeletedEvent event) {
+        final Person personToBeDeleted = event.getPerson();
+        commentService.deleteAllBySickNotePerson(personToBeDeleted);
+        commentService.deleteCommentAuthor(personToBeDeleted);
+        final List<SickNote> deletedSickNotes = sickNoteService.deleteAllByPerson(personToBeDeleted);
+        deletedSickNotes.forEach(sickNote -> absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE)
+            .ifPresent(absenceMapping -> {
+                calendarSyncService.deleteAbsence(absenceMapping.getEventId());
+                absenceMappingService.delete(absenceMapping);
+            })
+        );
+        sickNoteService.deleteSickNoteApplier(personToBeDeleted);
     }
 
     private void updateAbsence(SickNote sickNote) {

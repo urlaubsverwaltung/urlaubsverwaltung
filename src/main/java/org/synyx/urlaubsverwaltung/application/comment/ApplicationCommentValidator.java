@@ -24,7 +24,7 @@ public class ApplicationCommentValidator implements Validator {
     }
 
     @Override
-    public void validate(@NonNull Object target,@NonNull Errors errors) {
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
         final ApplicationCommentForm comment = (ApplicationCommentForm) target;
 
         final String text = comment.getText();

@@ -25,11 +25,16 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Build with Maven
+      - name: Build jar with Maven
         run: >
           ./mvnw $MAVEN_CLI_OPTS
           -Pcoverage
           clean verify
+      - name: Build war with Maven
+        run: >
+          ./mvnw $MAVEN_CLI_OPTS
+          -DskipTests -Dpackaging.layout=war
+          package
       - name: Extract release tag
         id: vars
         run: echo ::set-output name=version::${GITHUB_REF#refs/*/urlaubsverwaltung-}
@@ -40,7 +45,9 @@ jobs:
         with:
           name: Release Urlaubsverwaltung ${{ steps.vars.outputs.version }}
           body_path: .chglog/${{ steps.vars.outputs.version }}.md
-          files: ./target/urlaubsverwaltung-*.war
+          files: |
+            ./target/urlaubsverwaltung-*.war
+            ./target/urlaubsverwaltung-*.jar
       - name: Publish docker image to Docker Hub
         run: >
           ./mvnw $MAVEN_CLI_OPTS
@@ -55,7 +62,7 @@ jobs:
           ./mvnw $MAVEN_CLI_OPTS
           docker:build
           docker:push
-          -Ddocker.name=synyx/urlaubsverwaltung
+          -Ddocker.name=urlaubsverwaltung/urlaubsverwaltung
           -Ddocker.push.registry=ghcr.io
           -Ddocker.push.username=${{ github.actor }}
           -Ddocker.push.password=${{ secrets.CR_PAT }}

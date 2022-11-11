@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
@@ -19,6 +20,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -41,6 +43,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -1423,6 +1426,40 @@ class ApplicationInteractionServiceImplTest {
         verifyNoInteractions(commentService);
     }
 
+    @Test
+    void ensureDeletionOfApplicationAndCommentsOnPersonDeletedEvent() {
+        final Person person = new Person();
+        final int personId = 42;
+        person.setId(personId);
+
+        sut.deleteAllByPerson(new PersonDeletedEvent(person));
+
+        InOrder inOrder = inOrder(commentService, applicationService);
+        inOrder.verify(commentService).deleteByApplicationPerson(person);
+        inOrder.verify(commentService).deleteCommentAuthor(person);
+        inOrder.verify(applicationService).deleteApplicationsByPerson(person);
+        inOrder.verify(applicationService).deleteInteractionWithApplications(person);
+    }
+
+    @Test
+    void ensureDeletionOfAbsenceMappingOnPersonDeletedEvent() {
+        final Person person = new Person();
+        final int personId = 42;
+        person.setId(personId);
+
+        final Application application = new Application();
+        application.setId(42);
+        when(applicationService.deleteApplicationsByPerson(person)).thenReturn(List.of(application));
+
+        final AbsenceMapping absenceMapping = new AbsenceMapping(42, VACATION, "eventId");
+        when(absenceMappingService.getAbsenceByIdAndType(42, VACATION)).thenReturn(Optional.of(absenceMapping));
+
+        sut.deleteAllByPerson(new PersonDeletedEvent(person));
+
+        verify(absenceMappingService).getAbsenceByIdAndType(42, VACATION);
+        verify(absenceMappingService).delete(absenceMapping);
+        verify(calendarSyncService).deleteAbsence("eventId");
+    }
 
     private void assertApplicationForLeaveHasChangedStatus(Application applicationForLeave, ApplicationStatus status,
                                                            Person person, Person privilegedUser) {

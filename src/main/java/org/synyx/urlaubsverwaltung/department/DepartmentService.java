@@ -2,10 +2,10 @@ package org.synyx.urlaubsverwaltung.department;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.synyx.urlaubsverwaltung.person.PersonId;
-import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -102,7 +102,7 @@ public interface DepartmentService {
 
     /**
      * Get all active (waiting or allowed) applications for leave of the members of the departments of the given person
-     * for the provided period.
+     * for the provided period. Sorted by the start date of the application.
      *
      * @param member    to get the departments of
      * @param startDate of the period
@@ -145,7 +145,7 @@ public interface DepartmentService {
      * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
      *
-     * @param person person to get managed members for
+     * @param person                    person to get managed members for
      * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
      * @return all managed and active members for the person
      */
@@ -156,7 +156,7 @@ public interface DepartmentService {
      * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
      *
-     * @param person person to get managed members for
+     * @param person                    person to get managed members for
      * @param personPageableSearchQuery search query containing pageable and an optional query for firstname/lastname
      * @return all managed and inactive members for the person
      */
@@ -167,8 +167,8 @@ public interface DepartmentService {
      * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
      *
-     * @param person person to get managed members for
-     * @param departmentId departmentId to get managed members for
+     * @param person              person to get managed members for
+     * @param departmentId        departmentId to get managed members for
      * @param pageableSearchQuery searchQuery to restrict the result set
      * @return all managed and active members for the person
      */
@@ -179,8 +179,8 @@ public interface DepartmentService {
      * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
      *
-     * @param person person to get managed members for
-     * @param departmentId departmentId to get managed members for
+     * @param person              person to get managed members for
+     * @param departmentId        departmentId to get managed members for
      * @param pageableSearchQuery search query containing pageable and an optional query for firstname/lastname
      * @return all managed and inactive members for the person
      */
@@ -229,8 +229,8 @@ public interface DepartmentService {
     /**
      * Check if the given {@link Person} is allowed to access the data of the {@link Department}.
      *
-     * @param person to check the permissions
-     * @param department   which data should be accessed
+     * @param person     to check the permissions
+     * @param department which data should be accessed
      * @return {@code true} if the given user may access the data of the given person, else {@code false}
      */
     boolean isPersonAllowedToManageDepartment(Person person, Department department);

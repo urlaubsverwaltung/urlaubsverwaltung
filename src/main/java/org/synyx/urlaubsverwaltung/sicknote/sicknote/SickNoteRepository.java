@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -54,4 +55,9 @@ interface SickNoteRepository extends CrudRepository<SickNote, Integer> {
     List<SickNote> findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List<SickNoteStatus> sickNoteStatus, List<Person> persons, LocalDate startDate, LocalDate endDate);
 
     List<SickNote> findByStatusInAndPersonInAndPersonPermissionsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List<SickNoteStatus> sickNoteStatus, List<Person> persons, List<Role> roles, LocalDate startDate, LocalDate endDate);
+
+    @Modifying
+    List<SickNote> deleteByPerson(Person person);
+
+    List<SickNote> findByApplier(Person applier);
 }

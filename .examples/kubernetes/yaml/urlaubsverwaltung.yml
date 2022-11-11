@@ -40,7 +40,7 @@ data:
 
     # Deactivate mail health check to prevent k8s to crashLoop,
     # because mail will be configured after the first mail was sent.
-    # see https://github.com/synyx/urlaubsverwaltung/issues/507
+    # see https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/507
     management.health.mail.enabled=false
 ---
 kind: Service

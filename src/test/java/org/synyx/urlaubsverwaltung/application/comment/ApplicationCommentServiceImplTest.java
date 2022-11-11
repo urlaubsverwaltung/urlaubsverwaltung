@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.comment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
@@ -11,6 +12,9 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -89,4 +93,34 @@ class ApplicationCommentServiceImplTest {
 
         verify(commentRepository).save(savedComment);
     }
+
+    @Test
+    void ensureDeletionOfCommentAuthor() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final ApplicationComment applicationComment = new ApplicationComment(person, Clock.fixed(Instant.ofEpochSecond(0), ZoneId.systemDefault()));
+        applicationComment.setId(1);
+        final List<ApplicationComment> applicationCommentsOfAuthor = List.of(applicationComment);
+        when(commentRepository.findByPerson(person)).thenReturn(applicationCommentsOfAuthor);
+
+        commentService.deleteCommentAuthor(person);
+
+        verify(commentRepository).findByPerson(person);
+
+        final ArgumentCaptor<List<ApplicationComment>> argument = ArgumentCaptor.forClass(List.class);
+        verify(commentRepository).saveAll(argument.capture());
+        assertThat(argument.getValue().get(0).getPerson()).isNull();
+    }
+
+    @Test
+    void ensureDeletionByApplicationPerson() {
+        final Person applicationPerson = new Person();
+        applicationPerson.setId(1);
+
+        commentService.deleteByApplicationPerson(applicationPerson);
+
+        verify(commentRepository).deleteByApplicationPerson(applicationPerson);
+    }
+
+
 }

@@ -5,7 +5,7 @@ something, or simply want to hack on the code this document should help you get 
 
 ## Ideal for contribution
 
-We would be more than pleased if the community would help us build a awesome piece of software for all. To find issues and pull requests that are good for contributions you can use the ['ideal for contribution'](https://github.com/synyx/urlaubsverwaltung/issues?q=is%3Aissue+is%3Aopen+label%3A%22status%3A+ideal-for-contribution%22) label.
+We would be more than pleased if the community would help us build a awesome piece of software for all. To find issues and pull requests that are good for contributions you can use the ['ideal for contribution'](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues?q=is%3Aissue+is%3Aopen+label%3A%22status%3A+ideal-for-contribution%22) label.
 
 ## Using GitHub Issues
 
@@ -16,14 +16,14 @@ information as possible.
 
 Please look for other issues or pull requests which already work on this topic. Is somebody already on it? Do you need to synchronize?
 
-Have you already checked the [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki)?
+Have you already checked the [FAQ](https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki)?
 
 
 ## Reporting Security Vulnerabilities
 
 If you think you have found a security vulnerability in the Urlaubsverwaltung please *DO NOT*
 disclose it publicly until we've had a chance to fix it. Please *don't report security
-vulnerabilities using GitHub issues*, instead head over to urlaubsverwaltung@synyx.de and
+vulnerabilities using GitHub issues*, instead head over to info@urlaubsverwaltung.cloud and
 learn how to disclose them responsibly.
 
 

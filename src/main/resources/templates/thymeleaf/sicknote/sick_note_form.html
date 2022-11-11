@@ -23,12 +23,6 @@
         window.uv.personId = /*[[${sickNote.person == null ? userId : sickNote.person.id}]]*/ "personId";
         window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
         window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
-        window.uv.sickNote = {};
-        window.uv.sickNote.id = /*[[${sickNote.id}]]*/ "sickNoteId";
-        window.uv.sickNote.person = {};
-        window.uv.sickNote.person.id = /*[[${sickNote.person != null ? sickNote.person.id : ''}]]*/ "sickNotePersonId";
-        window.uv.params = {};
-        window.uv.params.person = /*[[${param.person}]]*/ "paramPerson";
         /*]]>*/
       </script>
       <script defer asset:src="npm.duetds.js"></script>
@@ -54,7 +48,8 @@
     <main th:fragment="main">
       <form
         method="post"
-        th:action="${sickNote.id == null ? '/web/sicknote' : '/web/sicknote/__${sickNote.id}__/edit/'}"
+        th:with="actionUrl=${sickNote.id == null ? '/web/sicknote' : '/web/sicknote/__${sickNote.id}__/edit/'}"
+        th:action="@{__${actionUrl}__}"
         th:object="${sickNote}"
         class="form-horizontal tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0"
       >
@@ -94,10 +89,10 @@
                     >
                       <th:block th:fragment="sicknote-person-select-options">
                         <option
-                          th:each="person: ${persons}"
-                          th:text="${person.niceName}"
-                          th:value="${person.id}"
-                          th:selected="${sickNote.person != null && sickNote.person.id == person.id}"
+                          th:each="p: ${persons}"
+                          th:text="${p.niceName}"
+                          th:value="${p.id}"
+                          th:selected="${person.id == p.id}"
                         ></option>
                       </th:block>
                     </select>

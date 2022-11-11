@@ -162,6 +162,11 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         this.touch(defaultWorkingDays, today.with(firstDayOfYear()), person);
     }
 
+    @Override
+    public void deleteAllByPerson(Person person) {
+        workingTimeRepository.deleteByPerson(person);
+    }
+
     private List<WorkingTime> toWorkingTimes(List<WorkingTimeEntity> workingTimeEntities) {
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
         return workingTimeEntities.stream()

@@ -8,6 +8,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -78,5 +80,13 @@ class PersonBasedataServiceImplTest {
         assertThat(basedataByPersonIds).containsKeys(new PersonId(1), new PersonId(2));
         assertThat(basedataByPersonIds.get(new PersonId(1)).getPersonnelNumber()).isEqualTo("1337");
         assertThat(basedataByPersonIds.get(new PersonId(2)).getPersonnelNumber()).isEqualTo("1887");
+    }
+
+    @Test
+    void delete() {
+        final Person person = new Person();
+        sut.delete(new PersonDeletedEvent(person));
+
+        verify(personBasedataRepository).deleteByPerson(person);
     }
 }

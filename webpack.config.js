@@ -1,4 +1,4 @@
-const path = require("path");
+const path = require("node:path");
 const webpack = require("webpack");
 const WebpackAssetsManifest = require("webpack-assets-manifest");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -30,7 +30,8 @@ module.exports = {
     sick_note: `${paths.src}/bundles/sick-note.js`,
     sick_note_convert: `${paths.src}/bundles/sick-note-convert.js`,
     sick_notes: `${paths.src}/bundles/sick-notes.js`,
-    person_view: `${paths.src}/bundles/person-view.js`,
+    person: `${paths.src}/bundles/person.js`,
+    persons: `${paths.src}/bundles/persons.js`,
     absences_overview: `${paths.src}/bundles/absences-overview.js`,
     department_form: `${paths.src}/bundles/department-form.js`,
     department_list: `${paths.src}/bundles/department-list.js`,
@@ -90,7 +91,7 @@ module.exports = {
     // This file is read by the taglib AssetsHashResolverTag.java to ease asset handling in templates
     new WebpackAssetsManifest({
       // output path is relative to webpack.output.path
-      output: path.resolve(__dirname, "src/main/webapp/WEB-INF/assets-manifest.json"),
+      output: path.resolve(__dirname, "src/main/resources/assets-manifest.json"),
       publicPath: true,
     }),
     new webpack.ProvidePlugin({

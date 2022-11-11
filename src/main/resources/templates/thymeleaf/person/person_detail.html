@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{})">
+  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
     <title th:text="#{person.account.header.title(${person.niceName})}"></title>
+    <th:block th:ref="scripts">
+      <script defer asset:src="npm.hotwired.js"></script>
+      <script defer asset:src="person.js"></script>
+    </th:block>
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
     <main th:fragment="main">
@@ -432,7 +436,6 @@
                 </a>
               </th:block>
             </div>
-
             <div
               th:replace="fragments/box::box-with-icon(~{::person-details-federalstate-box-icon}, ~{::person-details-federalstate-box-body})"
             >
@@ -463,6 +466,10 @@
                 </p>
               </th:block>
             </div>
+          </div>
+
+          <div th:if="${canDeletePerson}" class="md:tw-col-start-2 md:tw-row-start-4">
+            <th:block th:include="thymeleaf/person/detail-section/action-delete-person::section"></th:block>
           </div>
         </div>
       </div>

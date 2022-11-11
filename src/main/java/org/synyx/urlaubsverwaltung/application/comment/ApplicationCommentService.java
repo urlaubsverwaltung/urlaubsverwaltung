@@ -30,4 +30,20 @@ public interface ApplicationCommentService {
      * @return all {@link ApplicationComment}s for the given {@link Application}
      */
     List<ApplicationComment> getCommentsByApplication(Application application);
+
+    /**
+     * Deletes all {@link ApplicationComment} in the database for given person.
+     * This does not delete comments of this person on other persons applications.
+     *
+     * @param applicationPerson is the person whose applications should be deleted
+     */
+    void deleteByApplicationPerson(Person applicationPerson);
+
+    /**
+     * Removes the author of a {@link ApplicationComment}. This is used to delete a user.
+     * The author remains empty (null). Which must be displayed as 'unknown author'.
+     *
+     * @param author is the person who is deleted from {@link ApplicationComment}
+     */
+    void deleteCommentAuthor(Person author);
 }

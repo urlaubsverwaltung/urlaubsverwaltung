@@ -77,21 +77,21 @@ public class AbsenceApiController {
     public DayAbsencesDto personsAbsences(
         @Parameter(description = "ID of the person")
         @PathVariable("personId")
-            Integer personId,
+        Integer personId,
         @Parameter(description = "start of interval to get absences from (inclusive)")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate startDate,
+        LocalDate startDate,
         @Parameter(description = "end of interval to get absences from (inclusive)")
         @RequestParam("to")
         @DateTimeFormat(iso = ISO.DATE)
-            LocalDate endDate,
+        LocalDate endDate,
         @Parameter(description = "Type of absences, vacation or sick notes")
         @RequestParam(value = "type", required = false)
-            String type,
+        String type,
         @Parameter(description = "Whether to include no-workdays or not. Default is 'false' which will ignore no-workdays.")
         @RequestParam(value = "noWorkdaysInclusive", required = false, defaultValue = "false")
-            boolean noWorkdaysInclusive) {
+        boolean noWorkdaysInclusive) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Start date " + startDate + " must not be after end date " + endDate);
@@ -151,6 +151,7 @@ public class AbsenceApiController {
             .map(w -> w.isWorkingDay(date.getDayOfWeek()))
             .orElse(false);
     }
+
     private List<DayAbsenceDto> dayAbsenceDtoForDate(String formattedDate, List<DayAbsenceDto> absences) {
         return absences.stream().filter(dayAbsenceDto -> dayAbsenceDto.getDate().equals(formattedDate)).collect(toList());
     }

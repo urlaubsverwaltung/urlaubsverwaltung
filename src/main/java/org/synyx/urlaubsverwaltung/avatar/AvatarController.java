@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 @Controller
 public class AvatarController {
 
+    private static final String UNKNOWN_PERSON = "?";
     private final SvgService svgService;
 
     AvatarController(final SvgService svgService) {
@@ -23,7 +24,7 @@ public class AvatarController {
 
     @GetMapping(value = "/web/avatar", produces = "image/svg+xml")
     @ResponseBody
-    public ResponseEntity<String> avatar(@RequestParam("name") String name, Locale locale) {
+    public ResponseEntity<String> avatar(@RequestParam(value = "name", defaultValue = UNKNOWN_PERSON) String name, Locale locale) {
 
         final Map<String, Object> model = Map.of("initials", getInitials(name));
         final String svg = svgService.createSvg("thymeleaf/svg/avatar", locale, model);
@@ -35,6 +36,7 @@ public class AvatarController {
     }
 
     private static String getInitials(String niceName) {
+
         final int idxLastWhitespace = niceName.lastIndexOf(' ');
         if (idxLastWhitespace == -1) {
             return niceName.substring(0, 1).toUpperCase();

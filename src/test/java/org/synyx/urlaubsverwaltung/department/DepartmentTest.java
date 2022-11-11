@@ -5,13 +5,10 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 
 class DepartmentTest {
 
@@ -33,35 +30,6 @@ class DepartmentTest {
         department.setLastModification(lastModification);
 
         assertThat(department.getLastModification()).isEqualTo(lastModification);
-    }
-
-    @Test
-    void ensureMembersListIsUnmodifiable() {
-
-        List<Person> modifiableList = new ArrayList<>();
-        modifiableList.add(new Person("muster", "Muster", "Marlene", "muster@example.org"));
-
-        Department department = new Department();
-        department.setMembers(modifiableList);
-
-        final Person nextPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final List<Person> departmentMembers = department.getMembers();
-
-        assertThatThrownBy(() -> departmentMembers.add(nextPerson)).isInstanceOf(UnsupportedOperationException.class);
-    }
-
-    @Test
-    void ensureDepartmentHeadsListIsUnmodifiable() {
-
-        List<Person> modifiableList = new ArrayList<>();
-        modifiableList.add(new Person("muster", "Muster", "Marlene", "muster@example.org"));
-
-        Department department = new Department();
-        department.setDepartmentHeads(modifiableList);
-
-        final Person nextPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final List<Person> departmentHeads = department.getDepartmentHeads();
-        assertThatThrownBy(() -> departmentHeads.add(nextPerson)).isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test

@@ -3,12 +3,17 @@ package org.synyx.urlaubsverwaltung.sicknote.comment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
 import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -74,5 +79,32 @@ class SickNoteCommentServiceImplTest {
         assertThat(sickNoteCommentEntity.getText()).isEqualTo(givenComment);
 
         verify(sickNoteCommentEntityRepository).save(sickNoteCommentEntity);
+    }
+
+    @Test
+    void ensureDelegationOnDeletionBySickNotePerson() {
+        final Person person = new Person();
+        sut.deleteAllBySickNotePerson(person);
+
+        verify(sickNoteCommentEntityRepository).deleteBySickNotePerson(person);
+    }
+
+    @Test
+    void ensureDeletionOfCommentAuthor() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final SickNoteCommentEntity sickNoteComment = new SickNoteCommentEntity(Clock.fixed(Instant.ofEpochSecond(0), ZoneId.systemDefault()));
+        sickNoteComment.setId(1);
+        sickNoteComment.setPerson(person);
+        final List<SickNoteCommentEntity> commentsOfAuthor = List.of(sickNoteComment);
+        when(sickNoteCommentEntityRepository.findByPerson(person)).thenReturn(commentsOfAuthor);
+
+        sut.deleteCommentAuthor(person);
+
+        verify(sickNoteCommentEntityRepository).findByPerson(person);
+
+        final ArgumentCaptor<List<SickNoteCommentEntity>> argument = ArgumentCaptor.forClass(List.class);
+        verify(sickNoteCommentEntityRepository).saveAll(argument.capture());
+        assertThat(argument.getValue().get(0).getPerson()).isNull();
     }
 }

@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.department;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
@@ -29,6 +31,7 @@ import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
+import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -177,6 +180,55 @@ class DepartmentServiceImpl implements DepartmentService {
         return updatedDepartment;
     }
 
+    /**
+     * Deletes all department head assignments of the given person.
+     *
+     * @param event the person who is deleted
+     */
+    @EventListener
+    void deleteAssignedDepartmentsOfMember(PersonDeletedEvent event) {
+
+        getAssignedDepartmentsOfMember(event.getPerson()).forEach(department -> {
+            department.setMembers(department.getMembers().stream()
+                .filter(not(isEqual(event.getPerson())))
+                .collect(toList()));
+            update(department);
+        });
+    }
+
+    /**
+     * Deletes all department head assignments of the given person.
+     *
+     * @param event the person who is deleted
+     */
+    @EventListener
+    void deleteDepartmentHead(PersonDeletedEvent event) {
+
+        getManagedDepartmentsOfDepartmentHead(event.getPerson()).forEach(department -> {
+            department.setDepartmentHeads(department.getDepartmentHeads().stream()
+                .filter(person -> !person.equals(event.getPerson()))
+                .collect(toList()));
+            update(department);
+        });
+    }
+
+
+    /**
+     * Deletes all second stage authorities assignments of the given person.
+     *
+     * @param event the person who is deleted
+     */
+    @EventListener
+    void deleteSecondStageAuthority(PersonDeletedEvent event) {
+
+        getManagedDepartmentsOfSecondStageAuthority(event.getPerson()).forEach(department -> {
+            department.setSecondStageAuthorities(department.getSecondStageAuthorities().stream()
+                .filter(person -> !person.equals(event.getPerson()))
+                .collect(toList()));
+            update(department);
+        });
+    }
+
     @Override
     public void delete(Integer departmentId) {
 
@@ -242,23 +294,18 @@ class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<Application> getApplicationsForLeaveOfMembersInDepartmentsOfPerson(Person member, LocalDate startDate, LocalDate endDate) {
+        final Predicate<Application> allowed = application -> application.hasStatus(ALLOWED);
+        final Predicate<Application> temporaryAllowed = application -> application.hasStatus(TEMPORARY_ALLOWED);
+        final Predicate<Application> waiting = application -> application.hasStatus(WAITING);
+        final Predicate<Application> allowedCancellationRequested = application -> application.hasStatus(ALLOWED_CANCELLATION_REQUESTED);
 
-        final List<Person> departmentMembers = getMembersOfAssignedDepartments(member);
-        final List<Application> departmentApplications = new ArrayList<>();
-
-        departmentMembers.stream()
-            .filter(departmentMember -> !departmentMember.equals(member))
-            .forEach(departmentMember ->
-                departmentApplications.addAll(
-                    applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, departmentMember)
-                        .stream()
-                        .filter(application -> application.hasStatus(ALLOWED)
-                            || application.hasStatus(TEMPORARY_ALLOWED)
-                            || application.hasStatus(WAITING)
-                            || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
-                        .collect(toList())));
-
-        return departmentApplications;
+        return getMembersOfAssignedDepartments(member).stream()
+            .filter(not(isEqual(member)))
+            .map(departmentMember -> applicationService.getApplicationsForACertainPeriodAndPerson(startDate, endDate, departmentMember))
+            .flatMap(Collection::stream)
+            .filter(allowed.or(temporaryAllowed).or(waiting).or(allowedCancellationRequested))
+            .sorted(comparing(Application::getStartDate))
+            .collect(toList());
     }
 
     @Override

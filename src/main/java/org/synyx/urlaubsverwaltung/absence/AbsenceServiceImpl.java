@@ -126,7 +126,7 @@ public class AbsenceServiceImpl implements AbsenceService {
                                                                    List<WorkingTime> workingTimeList,
                                                                    FederalState systemDefaultFederalState) {
         return sickNotes.stream()
-            .map(sickNote ->  toAbsencePeriod(sickNote, askedDateRange, workingTimeList, systemDefaultFederalState))
+            .map(sickNote -> toAbsencePeriod(sickNote, askedDateRange, workingTimeList, systemDefaultFederalState))
             .collect(toList());
     }
 
@@ -212,12 +212,10 @@ public class AbsenceServiceImpl implements AbsenceService {
         if (DayLength.MORNING.equals(application.getDayLength())) {
             morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
             noon = null;
-        }
-        else if (DayLength.NOON.equals(application.getDayLength())) {
+        } else if (DayLength.NOON.equals(application.getDayLength())) {
             morning = null;
             noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
-        }
-        else {
+        } else {
             morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
             noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
         }
@@ -272,12 +270,10 @@ public class AbsenceServiceImpl implements AbsenceService {
         if (DayLength.MORNING.equals(sickNote.getDayLength())) {
             morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
             noon = null;
-        }
-        else if (DayLength.NOON.equals(sickNote.getDayLength())) {
+        } else if (DayLength.NOON.equals(sickNote.getDayLength())) {
             morning = null;
             noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
-        }
-        else {
+        } else {
             morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
             noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
         }
