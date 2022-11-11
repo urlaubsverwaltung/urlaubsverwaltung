@@ -15,7 +15,7 @@ if [ -z "$REV" ]; then
     exit 1
 fi
 
-git clone -b "$REV" https://github.com/synyx/urlaubsverwaltung "$temp_repo"
+git clone -b "$REV" https://github.com/urlaubsverwaltung/urlaubsverwaltung "$temp_repo"
 helm package -d chart_repo -u "$temp_repo/.examples/kubernetes/chart/urlaubsverwaltung/"
-helm repo index chart_repo --url https://synyx.github.io/urlaubsverwaltung/chart_repo/ --merge chart_repo/index.yaml
+helm repo index chart_repo --url https://urlaubsverwaltung.github.io/urlaubsverwaltung/chart_repo/ --merge chart_repo/index.yaml
 
