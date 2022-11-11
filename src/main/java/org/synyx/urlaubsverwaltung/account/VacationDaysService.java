@@ -186,7 +186,7 @@ public class VacationDaysService {
             if (applicationsByPerson.containsKey(person)) {
                 final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(person);
                 return applicationsByPerson.get(person).stream()
-                    .map(application -> usedVacationDays(holidayAccount, application, dateRange, workingTimeCalendar))
+                    .map(application -> usedVacationDaysForApplication(holidayAccount, application, dateRange, workingTimeCalendar))
                     .map(usedVacationDays -> Map.entry(holidayAccount, usedVacationDays));
             }
 
@@ -200,15 +200,17 @@ public class VacationDaysService {
         ));
     }
 
-    private UsedVacationDaysTuple usedVacationDays(Account holidayAccount, Application application, DateRange dateRange, WorkingTimeCalendar workingTimeCalendar) {
+    private UsedVacationDaysTuple usedVacationDaysForApplication(Account holidayAccount,
+                                                                 Application application,
+                                                                 DateRange dateRange,
+                                                                 WorkingTimeCalendar workingTimeCalendar) {
 
+        final LocalDate holidayAccountValidFrom = holidayAccount.getValidFrom();
         final LocalDate holidayAccountExpiryDate = holidayAccount.getExpiryDate();
         final LocalDate lastDayBeforeExpiryDate = holidayAccountExpiryDate.minusDays(1);
 
-        // assumed that applicationForLeave does not start in previous year and ends in next year :x
-        // which would be an applicationForLeave for over a year. TODO could this be a valid case?
-        final LocalDate applicationStartOrFirstDayOfYear = max(application.getStartDate(), application.getEndDate().with(firstDayOfYear()));
-        final LocalDate applicationEndOrLastDayOfYear = min(application.getEndDate(), application.getStartDate().with(lastDayOfYear()));
+        final LocalDate applicationStartOrFirstDayOfYear = max(application.getStartDate(), holidayAccountValidFrom.with(firstDayOfYear()));
+        final LocalDate applicationEndOrLastDayOfYear = min(application.getEndDate(), holidayAccountValidFrom.with(lastDayOfYear()));
 
         final LocalDate applicationStartOrFirstDayOfYearOrFrom = max(applicationStartOrFirstDayOfYear, dateRange.getStartDate());
         final LocalDate applicationEndOrLastDayOfYearOrTo = min(applicationEndOrLastDayOfYear, dateRange.getEndDate());
@@ -240,10 +242,8 @@ public class VacationDaysService {
         final BigDecimal yearWorkDaysCountBeforeExpiry;
         final BigDecimal yearWorkDaysCountAfterExpiry;
         if (applicationStartOrFirstDayOfYear.isBefore(lastDayBeforeExpiryDate)) {
-            final LocalDate yearEndBeforeExpiryDate = min(applicationEndOrLastDayOfYear, lastDayBeforeExpiryDate);
-            final LocalDate yearStartAfterExpiryDate = max(applicationStartOrFirstDayOfYear, holidayAccountExpiryDate);
-            yearWorkDaysCountBeforeExpiry = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, yearStartAfterExpiryDate);
-            yearWorkDaysCountAfterExpiry = workingTimeCalendar.workingTime(yearEndBeforeExpiryDate, applicationEndOrLastDayOfYear);
+            yearWorkDaysCountBeforeExpiry = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, min(application.getEndDate(), lastDayBeforeExpiryDate));
+            yearWorkDaysCountAfterExpiry = workingTimeCalendar.workingTime(max(application.getStartDate(), holidayAccountExpiryDate), applicationEndOrLastDayOfYear);
         } else {
             yearWorkDaysCountBeforeExpiry = ZERO;
             yearWorkDaysCountAfterExpiry = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, applicationEndOrLastDayOfYear);

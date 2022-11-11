@@ -69,12 +69,17 @@ public class WorkingTimeCalendar {
      * @return the dayLength workingTime for the given date range. (e.g. 1.5 days)
      */
     public BigDecimal workingTime(LocalDate from, LocalDate to) {
+
+        if (from.isAfter(to)) {
+            return BigDecimal.ZERO;
+        }
+
         BigDecimal sum = BigDecimal.ZERO;
 
         for (Map.Entry<LocalDate, DayLength> entry : workingTimeByDate.entrySet()) {
             final LocalDate localDate = entry.getKey();
-            final DayLength dayLength = entry.getValue();
             if (!localDate.isBefore(from) && !localDate.isAfter(to)) {
+                final DayLength dayLength = entry.getValue();
                 sum = sum.add(dayLength.getDuration());
             }
         }

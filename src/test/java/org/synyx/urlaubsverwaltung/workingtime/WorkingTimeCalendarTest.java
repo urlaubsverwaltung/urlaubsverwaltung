@@ -111,9 +111,20 @@ class WorkingTimeCalendarTest {
         assertThat(sut.workingTime(from.plusDays(10), to)).isEqualTo(BigDecimal.valueOf(21));
     }
 
+    @Test
+    void ensureWorkingTimeForDateRangeForFalsyDateRangeWhenWorkingFull() {
+        final LocalDate from = LocalDate.of(2022, 8, 1);
+        final LocalDate to = LocalDate.of(2022, 8, 31);
+
+        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> DayLength.FULL);
+        final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+
+        assertThat(sut.workingTime(to, from)).isEqualTo(BigDecimal.ZERO);
+    }
+
     @ParameterizedTest
     @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
-    void ensureWorkingTimeForDateRangeWhenWorkingFull(DayLength workingDayLength) {
+    void ensureWorkingTimeForDateRangeWhenWorkingNotFull(DayLength workingDayLength) {
         final LocalDate from = LocalDate.of(2022, 8, 1);
         final LocalDate to = LocalDate.of(2022, 8, 31);
 
@@ -122,6 +133,18 @@ class WorkingTimeCalendarTest {
 
         assertThat(sut.workingTime(from, to)).isEqualTo(BigDecimal.valueOf(15.5));
         assertThat(sut.workingTime(from.plusDays(10), to)).isEqualTo(BigDecimal.valueOf(10.5));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = DayLength.class, names = {"MORNING", "NOON"})
+    void ensureWorkingTimeForDateRangeForFalsyDateRangeWhenWorkingNotFull(DayLength workingDayLength) {
+        final LocalDate from = LocalDate.of(2022, 8, 1);
+        final LocalDate to = LocalDate.of(2022, 8, 31);
+
+        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(from, to, date -> workingDayLength);
+        final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+
+        assertThat(sut.workingTime(to, from)).isEqualTo(BigDecimal.ZERO);
     }
 
     private Map<LocalDate, DayLength> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, DayLength> dayLengthProvider) {

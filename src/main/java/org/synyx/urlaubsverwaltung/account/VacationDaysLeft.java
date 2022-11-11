@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.account;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import static java.math.BigDecimal.ZERO;
 import static org.synyx.urlaubsverwaltung.util.CalcUtil.isNegative;
@@ -184,6 +185,22 @@ public final class VacationDaysLeft {
             return new VacationDaysLeft(leftVacationDays, leftRemainingVacationDays,
                 leftRemainingVacationDaysNotExpiring, vacationDaysUsedNextYear);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VacationDaysLeft that = (VacationDaysLeft) o;
+        return Objects.equals(vacationDays, that.vacationDays)
+            && Objects.equals(remainingVacationDays, that.remainingVacationDays)
+            && Objects.equals(remainingVacationDaysNotExpiring, that.remainingVacationDaysNotExpiring)
+            && Objects.equals(vacationDaysUsedNextYear, that.vacationDaysUsedNextYear);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(vacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, vacationDaysUsedNextYear);
     }
 
     @Override
