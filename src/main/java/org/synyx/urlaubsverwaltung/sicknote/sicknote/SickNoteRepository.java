@@ -57,7 +57,7 @@ interface SickNoteRepository extends CrudRepository<SickNote, Integer> {
     List<SickNote> findByStatusInAndPersonInAndPersonPermissionsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List<SickNoteStatus> sickNoteStatus, List<Person> persons, List<Role> roles, LocalDate startDate, LocalDate endDate);
 
     @Modifying
-    void deleteByPerson(Person person);
+    List<SickNote> deleteByPerson(Person person);
 
     List<SickNote> findByApplier(Person applier);
 }

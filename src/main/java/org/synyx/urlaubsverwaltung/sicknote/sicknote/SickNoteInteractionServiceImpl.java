@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -158,7 +159,13 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         final Person personToBeDeleted = event.getPerson();
         commentService.deleteAllBySickNotePerson(personToBeDeleted);
         commentService.deleteCommentAuthor(personToBeDeleted);
-        sickNoteService.deleteAllByPerson(personToBeDeleted);
+        final List<SickNote> deletedSickNotes = sickNoteService.deleteAllByPerson(personToBeDeleted);
+        deletedSickNotes.forEach(sickNote -> absenceMappingService.getAbsenceByIdAndType(sickNote.getId(), SICKNOTE)
+            .ifPresent(absenceMapping -> {
+                calendarSyncService.deleteAbsence(absenceMapping.getEventId());
+                absenceMappingService.delete(absenceMapping);
+            })
+        );
         sickNoteService.deleteSickNoteApplier(personToBeDeleted);
     }
 

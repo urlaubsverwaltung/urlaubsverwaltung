@@ -24,6 +24,7 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.ZoneOffset.UTC;
@@ -293,6 +294,25 @@ class SickNoteInteractionServiceImplTest {
         inOrder.verify(commentService).deleteCommentAuthor(person);
         inOrder.verify(sickNoteService).deleteAllByPerson(person);
         inOrder.verify(sickNoteService).deleteSickNoteApplier(person);
+    }
+
+    @Test
+    void ensureDeletionOfAbsenceMappingOnPersonDeletedEvent() {
+        final Person person = new Person();
+        person.setId(42);
+
+        final SickNote sickNote = new SickNote();
+        sickNote.setId(42);
+        when(sickNoteService.deleteAllByPerson(person)).thenReturn(List.of(sickNote));
+
+        final AbsenceMapping absenceMapping = new AbsenceMapping(42, SICKNOTE, "eventId");
+        when(absenceMappingService.getAbsenceByIdAndType(42, SICKNOTE)).thenReturn(Optional.of(absenceMapping));
+
+        sut.deleteAll(new PersonDeletedEvent(person));
+
+        verify(absenceMappingService).getAbsenceByIdAndType(42, SICKNOTE);
+        verify(absenceMappingService).delete(absenceMapping);
+        verify(calendarSyncService).deleteAbsence("eventId");
     }
 
     private SickNote getSickNote() {

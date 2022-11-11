@@ -104,8 +104,8 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
-    public void deleteAllByPerson(Person person) {
-        sickNoteRepository.deleteByPerson(person);
+    public List<SickNote> deleteAllByPerson(Person person) {
+        return sickNoteRepository.deleteByPerson(person);
     }
 
     @Override

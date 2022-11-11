@@ -96,8 +96,9 @@ public interface SickNoteService {
      * Deletes all {@link SickNote} in the database person.
      *
      * @param person the person whose sick notes should be deleted
+     * @return list of deleted sick notes
      */
-    void deleteAllByPerson(Person person);
+    List<SickNote> deleteAllByPerson(Person person);
 
     /**
      * Deletes the given applier from all sicknotes as applier
