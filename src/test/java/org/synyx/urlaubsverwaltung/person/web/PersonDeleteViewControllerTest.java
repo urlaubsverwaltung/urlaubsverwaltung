@@ -18,7 +18,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -50,6 +52,25 @@ class PersonDeleteViewControllerTest {
     }
 
     @Test
+    void deletePersonAjax() throws Exception {
+
+        final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(
+            post("/web/person/1/delete")
+                .param("delete", "true")
+                .header("Turbo-Frame", "frame-delete-person")
+        )
+            .andExpect(model().attribute("person", person))
+            .andExpect(model().attribute("lastOfficeUserCannotBeDeleted", false))
+            .andExpect(model().attribute("firstDeleteActionConfirmed", true))
+            .andExpect(view().name("thymeleaf/person/detail-section/action-delete-person :: #frame-delete-person"));
+
+        verifyNoMoreInteractions(personService);
+    }
+
+    @Test
     void deletePersonLastOfficeUser() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
@@ -66,6 +87,28 @@ class PersonDeleteViewControllerTest {
     }
 
     @Test
+    void deletePersonLastOfficeUserAjax() throws Exception {
+
+        final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+        person.setPermissions(List.of(OFFICE));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(
+            post("/web/person/1/delete")
+                .param("delete", "true")
+                .header("Turbo-Frame", "frame-delete-person")
+        )
+            .andExpect(model().attribute("person", person))
+            .andExpect(model().attribute("lastOfficeUserCannotBeDeleted", true))
+            .andExpect(model().attribute("firstDeleteActionConfirmed", false))
+            .andExpect(view().name("thymeleaf/person/detail-section/action-delete-person :: #frame-delete-person"));
+
+        verify(personService).numberOfPersonsWithOfficeRoleExcludingPerson(1);
+        verifyNoMoreInteractions(personService);
+    }
+
+    @Test
     void deletePersonConfirmed() throws Exception {
 
         final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
@@ -74,6 +117,26 @@ class PersonDeleteViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/1/delete").param("niceNameConfirmation", "Marlene Muster"))
+            .andExpect(redirectedUrl("/web/person/?active=true"))
+            .andExpect(flash().attribute("personDeletionSuccess", "Marlene Muster"));
+
+        verify(personService).delete(person, signedInUser);
+    }
+
+    @Test
+    void deletePersonConfirmedAjax() throws Exception {
+
+        final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(
+            post("/web/person/1/delete")
+                .param("niceNameConfirmation", "Marlene Muster")
+                .header("Turbo-Frame", "frame-delete-person")
+        )
             .andExpect(redirectedUrl("/web/person/?active=true"))
             .andExpect(flash().attribute("personDeletionSuccess", "Marlene Muster"));
 
@@ -112,6 +175,27 @@ class PersonDeleteViewControllerTest {
     }
 
     @Test
+    void deletePersonConfirmedWithoutConfirmationDoesNotDeletePersonAjax() throws Exception {
+
+        final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(
+            post("/web/person/1/delete")
+                .param("niceNameConfirmation", "")
+                .header("Turbo-Frame", "frame-delete-person")
+        )
+            .andExpect(model().attribute("person", person))
+            .andExpect(model().attribute("firstDeleteActionConfirmed", true))
+            .andExpect(model().attribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.mismatch"))
+            .andExpect(view().name("thymeleaf/person/detail-section/action-delete-person :: #frame-delete-person"));
+
+        verify(personService).getPersonByID(1);
+        verifyNoMoreInteractions(personService);
+    }
+
+    @Test
     void deletePersonConfirmedIsLastOfficeIsNotAllowed() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
@@ -122,6 +206,29 @@ class PersonDeleteViewControllerTest {
         perform(post("/web/person/1/delete").param("niceNameConfirmation", "Marlene Muster"))
             .andExpect(redirectedUrl("/web/person/1#person-delete-form"))
             .andExpect(flash().attribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.office"));
+
+        verify(personService).getPersonByID(1);
+        verify(personService).numberOfPersonsWithOfficeRoleExcludingPerson(1);
+        verifyNoMoreInteractions(personService);
+    }
+
+    @Test
+    void deletePersonConfirmedIsLastOfficeIsNotAllowedAjax() throws Exception {
+
+        final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+        person.setPermissions(List.of(OFFICE));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(
+            post("/web/person/1/delete")
+                .param("niceNameConfirmation", "Marlene Muster")
+                .header("Turbo-Frame", "frame-delete-person")
+        )
+            .andExpect(model().attribute("person", person))
+            .andExpect(model().attribute("firstDeleteActionConfirmed", true))
+            .andExpect(model().attribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.office"))
+            .andExpect(view().name("thymeleaf/person/detail-section/action-delete-person :: #frame-delete-person"));
 
         verify(personService).getPersonByID(1);
         verify(personService).numberOfPersonsWithOfficeRoleExcludingPerson(1);
