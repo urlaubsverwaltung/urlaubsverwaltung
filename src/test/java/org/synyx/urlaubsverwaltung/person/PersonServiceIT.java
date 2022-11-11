@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementEntity;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
@@ -80,6 +81,24 @@ class PersonServiceIT extends TestContainersBase {
         final Application applicationWithCommentOfPersonWithId = applicationService.save(applicationWithCommentOfPerson);
         applicationCommentService.create(applicationWithCommentOfPersonWithId, ApplicationCommentAction.EDITED, Optional.of("Test"), personWithId);
 
+        final Application applicationWithHolidayReplacementOfPerson = new Application();
+        final HolidayReplacementEntity replacement = new HolidayReplacementEntity();
+        replacement.setPerson(personWithId);
+        applicationWithHolidayReplacementOfPerson.setHolidayReplacements(new ArrayList<>(List.of(replacement)));
+        final Application applicationWithHolidayReplacementOfPersonWithId = applicationService.save(applicationWithHolidayReplacementOfPerson);
+
+        final Application applicationWithCanceller = new Application();
+        applicationWithCanceller.setCanceller(personWithId);
+        final Application applicationWithCancellerWithId = applicationService.save(applicationWithCanceller);
+
+        final Application applicationWithBoss = new Application();
+        applicationWithBoss.setBoss(personWithId);
+        final Application applicationWithBossWithId = applicationService.save(applicationWithBoss);
+
+        final Application applicationWithApplier = new Application();
+        applicationWithApplier.setApplier(personWithId);
+        final Application applicationWithApplierWithId = applicationService.save(applicationWithApplier);
+
         final SickNote sickNote = new SickNote();
         sickNote.setPerson(personWithId);
         final SickNote sickNoteWithId = sickNoteService.save(sickNote);
@@ -102,8 +121,12 @@ class PersonServiceIT extends TestContainersBase {
         assertThat(personBasedataService.getBasedataByPersonId(personId).get().getPersonId().getValue()).isEqualTo(personId);
         assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_USER)).hasSize(1);
         assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId+1))).isOne();
-        assertThat(applicationService.getApplicationById(applicationWithId.getId())).isEqualTo(Optional.of(applicationWithId));
+        assertThat(applicationService.getApplicationById(applicationWithId.getId())).hasValue(applicationWithId);
         assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPerson)).hasSize(1);
+        assertThat(applicationService.getApplicationById(applicationWithHolidayReplacementOfPersonWithId.getId()).get().getHolidayReplacements()).hasSize(1);
+        assertThat(applicationService.getApplicationById(applicationWithCancellerWithId.getId()).get().getCanceller()).isEqualTo(personWithId);
+        assertThat(applicationService.getApplicationById(applicationWithBossWithId.getId()).get().getBoss()).isEqualTo(personWithId);
+        assertThat(applicationService.getApplicationById(applicationWithApplierWithId.getId()).get().getApplier()).isEqualTo(personWithId);
         assertThat(sickNoteService.getById(sickNoteWithId.getId())).hasValue(sickNoteWithId);
         assertThat(sickNoteCommentService.getCommentsBySickNote(sickNoteWithCommentWithId)).hasSize(1);
         assertThat(overtimeService.getOvertimeById(overtimeRecord.getId())).hasValue(overtimeRecord);
@@ -119,6 +142,10 @@ class PersonServiceIT extends TestContainersBase {
         assertThat(personBasedataService.getBasedataByPersonId(personId)).isEmpty();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).isEmpty();
         assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPerson).get(0).getPerson()).isNull();
+        assertThat(applicationService.getApplicationById(applicationWithHolidayReplacementOfPersonWithId.getId()).get().getHolidayReplacements()).isEmpty();
+        assertThat(applicationService.getApplicationById(applicationWithCancellerWithId.getId()).get().getCanceller()).isNull();
+        assertThat(applicationService.getApplicationById(applicationWithBossWithId.getId()).get().getBoss()).isNull();
+        assertThat(applicationService.getApplicationById(applicationWithApplierWithId.getId()).get().getApplier()).isNull();
         assertThat(sickNoteService.getById(sickNoteWithId.getId())).isEmpty();
         assertThat(sickNoteCommentService.getCommentsBySickNote(sickNoteWithCommentWithId).get(0).getPerson()).isNull();
         assertThat(overtimeService.getOvertimeById(overtimeRecord.getId())).isEmpty();
