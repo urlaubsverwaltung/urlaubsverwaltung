@@ -121,7 +121,7 @@ class PersonServiceImpl implements PersonService {
         workingTimeWriteService.deleteAllByPerson(person);
         personRepository.delete(person);
 
-        LOG.info("Deleted person with id {} deleted by {}", person.getId(), signedInUser.getId());
+        LOG.info("Deleted person with id {} deleted by signed in user with id {}", person.getId(), signedInUser.getId());
     }
 
     @Override
