@@ -4,7 +4,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -78,11 +77,7 @@ public class Department {
     }
 
     public List<Person> getMembers() {
-        if (members == null) {
-            members = Collections.emptyList();
-        }
-
-        return Collections.unmodifiableList(members);
+        return members;
     }
 
     public void setMembers(List<Person> members) {
@@ -90,11 +85,7 @@ public class Department {
     }
 
     public List<Person> getDepartmentHeads() {
-        if (departmentHeads == null) {
-            departmentHeads = Collections.emptyList();
-        }
-
-        return Collections.unmodifiableList(departmentHeads);
+        return departmentHeads;
     }
 
     public void setDepartmentHeads(List<Person> departmentHeads) {
@@ -102,11 +93,7 @@ public class Department {
     }
 
     public List<Person> getSecondStageAuthorities() {
-        if (secondStageAuthorities == null) {
-            secondStageAuthorities = Collections.emptyList();
-        }
-
-        return Collections.unmodifiableList(secondStageAuthorities);
+        return secondStageAuthorities;
     }
 
     public void setSecondStageAuthorities(List<Person> secondStageAuthorities) {
