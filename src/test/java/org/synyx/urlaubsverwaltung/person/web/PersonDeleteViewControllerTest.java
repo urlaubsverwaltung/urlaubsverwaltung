@@ -39,6 +39,35 @@ class PersonDeleteViewControllerTest {
     @Test
     void deletePerson() throws Exception {
 
+        final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/person/1/delete").param("delete", "true"))
+            .andExpect(redirectedUrl("/web/person/1#person-delete-form"))
+            .andExpect(flash().attribute("firstDeleteActionConfirmed", true));
+
+        verifyNoMoreInteractions(personService);
+    }
+
+    @Test
+    void deletePersonLastOfficeUser() throws Exception {
+
+        final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+        person.setPermissions(List.of(OFFICE));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        perform(post("/web/person/1/delete").param("delete", "true"))
+            .andExpect(redirectedUrl("/web/person/1#person-delete-form"))
+            .andExpect(flash().attribute("lastOfficeUserCannotBeDeleted", true));
+
+        verify(personService).numberOfPersonsWithOfficeRoleExcludingPerson(1);
+        verifyNoMoreInteractions(personService);
+    }
+
+    @Test
+    void deletePersonConfirmed() throws Exception {
+
         final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
@@ -68,7 +97,7 @@ class PersonDeleteViewControllerTest {
     }
 
     @Test
-    void deletePersonWithoutConfirmationDoesNotDeletePerson() throws Exception {
+    void deletePersonConfirmedWithoutConfirmationDoesNotDeletePerson() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
@@ -83,7 +112,7 @@ class PersonDeleteViewControllerTest {
     }
 
     @Test
-    void deletePersonIsLastOfficeIsNotAllowed() throws Exception {
+    void deletePersonConfirmedIsLastOfficeIsNotAllowed() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
         person.setId(1);

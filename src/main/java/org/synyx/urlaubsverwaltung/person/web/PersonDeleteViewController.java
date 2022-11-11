@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.person.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,8 +27,26 @@ public class PersonDeleteViewController {
     }
 
     @PreAuthorize(IS_OFFICE)
+    @PostMapping(value = "/person/{personId}/delete", params = {"delete"})
+    public String deletePerson(
+        @PathVariable("personId") Integer personId,
+        @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm,
+        RedirectAttributes redirectAttributes) throws UnknownPersonException {
+
+        final Person personToDelete = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+
+        if (personToDelete.getPermissions().contains(OFFICE) && personService.numberOfPersonsWithOfficeRoleExcludingPerson(personToDelete.getId()) == 0) {
+            redirectAttributes.addFlashAttribute("lastOfficeUserCannotBeDeleted", true);
+            return "redirect:/web/person/{personId}#person-delete-form";
+        }
+
+        redirectAttributes.addFlashAttribute("firstDeleteActionConfirmed", true);
+        return "redirect:/web/person/{personId}#person-delete-form";
+    }
+
+    @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/delete")
-    public String deletePerson(@PathVariable("personId") Integer personId, @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm, RedirectAttributes redirectAttributes) throws UnknownPersonException {
+    public String deletePersonConfirmed(@PathVariable("personId") Integer personId, @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         final Person personToDelete = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         if (personToDelete.getPermissions().contains(OFFICE) &&
@@ -39,6 +56,7 @@ public class PersonDeleteViewController {
         }
 
         if (!personToDelete.getNiceName().equals(personDeleteForm.getNiceNameConfirmation())) {
+            redirectAttributes.addFlashAttribute("firstDeleteActionConfirmed", true);
             redirectAttributes.addFlashAttribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.mismatch");
             return "redirect:/web/person/{personId}#person-delete-form";
         }

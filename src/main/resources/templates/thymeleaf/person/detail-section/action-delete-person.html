@@ -26,25 +26,33 @@
           </div>
         </th:block>
         <th:block th:ref="person-details-dangerzone-box-body">
-          <div
-            id="person-delete-description"
-            th:classappend="${#strings.isEmpty(personDeletionConfirmationValidationError) ? '' : 'tw-hidden'}"
+          <form
+            id="person-delete-form"
+            method="post"
+            th:action="@{/web/person/__${person.id}__/delete}"
+            th:object="${personDeleteForm}"
           >
-            <p th:text="#{person.account.dangerzone.description}"></p>
+            <p id="person-delete-description" th:text="#{person.account.dangerzone.description}">
+              Die Aktion kann nicht rückgängig gemacht werden.
+            </p>
             <button
+              th:if="${firstDeleteActionConfirmed == null || not firstDeleteActionConfirmed}"
+              type="submit"
+              name="delete"
+              value="true"
               class="button-danger"
               th:text="#{person.account.dangerzone.delete-button(${person.niceName})}"
-              onclick="document.querySelector('#person-delete-form')?.classList.remove('tw-hidden');document.querySelector('#person-delete-description')?.classList.add('tw-hidden');"
             >
               Benutzende löschen
             </button>
-          </div>
-          <form method="post" th:action="@{/web/person/__${person.id}__/delete}" th:object="${personDeleteForm}">
-            <div
-              id="person-delete-form"
-              th:classappend="${#strings.isEmpty(personDeletionConfirmationValidationError) ? 'tw-hidden' : ''}"
+            <p
+              th:if="${lastOfficeUserCannotBeDeleted != null and lastOfficeUserCannotBeDeleted}"
+              th:text="#{person.account.dangerzone.delete.confirmation.validation.error.office}"
+              class="tw-mt-4 error"
             >
-              <p th:text="#{person.account.dangerzone.description(${person.niceName})}"></p>
+              Letzter Office User kann nicht gelöscht werden.
+            </p>
+            <div th:if="${firstDeleteActionConfirmed != null && firstDeleteActionConfirmed}">
               <p th:text="#{person.account.dangerzone.description.extension}"></p>
 
               <label class="tw-w-full">
@@ -69,10 +77,11 @@
                 </button>
                 <button
                   id="person-delete-cancel"
-                  type="button"
+                  type="submit"
+                  th:formaction="@{/web/person/__${person.id}__}"
+                  formmethod="get"
                   th:text="#{action.cancel}"
                   class="button tw-w-24"
-                  onclick="document.querySelector('#person-delete-form-error')?.classList.add('tw-hidden');document.querySelector('#person-delete-form')?.classList.add('tw-hidden');document.querySelector('#person-delete-description')?.classList.remove('tw-hidden');"
                 ></button>
               </div>
             </div>
