@@ -6,9 +6,9 @@ version: 2.1.1
 appVersion: 4.51.0
 keywords:
   - urlaub
-home: https://github.com/synyx/urlaubsverwaltung
+home: https://github.com/urlaubsverwaltung/urlaubsverwaltung
 sources:
-  - https://github.com/synyx/urlaubsverwaltung
+  - https://github.com/urlaubsverwaltung/urlaubsverwaltung
 maintainers:
   - name: Johannes Graf
     email: graf@synyx.de

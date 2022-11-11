@@ -1,6 +1,6 @@
 # Beispieldeployments auf Basis von Docker
 
-Seit Version [2.30.0](https://github.com/synyx/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.30.0) der Urlaubsverwaltung
+Seit Version [2.30.0](https://github.com/urlaubsverwaltung/urlaubsverwaltung/releases/tag/urlaubsverwaltung-2.30.0) der Urlaubsverwaltung
 gibt es auch ein Container Image für Docker.
 
 ## Docker

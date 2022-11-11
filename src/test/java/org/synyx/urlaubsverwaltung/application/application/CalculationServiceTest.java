@@ -687,7 +687,7 @@ class CalculationServiceTest {
     }
 
     /**
-     * https://github.com/synyx/urlaubsverwaltung/issues/447
+     * https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/447
      */
     @Test
     void testCheckApplicationNextYearUsingRemainingAlready() {

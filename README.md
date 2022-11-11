@@ -1,4 +1,4 @@
-# Urlaubsverwaltung [![Build Status](https://github.com/synyx/urlaubsverwaltung/workflows/Build/badge.svg)](https://github.com/synyx/urlaubsverwaltung/actions?query=workflow%3A%22Build) [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung) [![Docker Pulls](https://badgen.net/docker/pulls/synyx/urlaubsverwaltung?icon=docker&label=pulls)](https://hub.docker.com/r/synyx/urlaubsverwaltung/) [![Crowdin](https://badges.crowdin.net/urlaubsverwaltung/localized.svg)](https://crowdin.com/project/urlaubsverwaltung)
+# Urlaubsverwaltung [![Build Status](https://github.com/urlaubsverwaltung/urlaubsverwaltung/workflows/Build/badge.svg)](https://github.com/synyx/urlaubsverwaltung/actions?query=workflow%3A%22Build) [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung) [![Docker Pulls](https://badgen.net/docker/pulls/synyx/urlaubsverwaltung?icon=docker&label=pulls)](https://hub.docker.com/r/synyx/urlaubsverwaltung/) [![Crowdin](https://badges.crowdin.net/urlaubsverwaltung/localized.svg)](https://crowdin.com/project/urlaubsverwaltung)
 
 Die Urlaubsverwaltung ist eine Web-Anwendung, um *Abwesenheiten* elektronisch verwalten zu können.
 
@@ -359,13 +359,13 @@ vom Typ "Question" erstellen.
 Ohne GitHub Account
 
 ```bash
-https://github.com/synyx/urlaubsverwaltung.git
+https://github.com/urlaubsverwaltung/urlaubsverwaltung.git
 ```
 
 mit GitHub Account
 
 ```bash
-git clone git@github.com:synyx/urlaubsverwaltung.git
+git clone git@github.com:urlaubsverwaltung/urlaubsverwaltung.git
 ```
 
 ### git hooks (optional)

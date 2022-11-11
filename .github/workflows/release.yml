@@ -62,7 +62,7 @@ jobs:
           ./mvnw $MAVEN_CLI_OPTS
           docker:build
           docker:push
-          -Ddocker.name=synyx/urlaubsverwaltung
+          -Ddocker.name=urlaubsverwaltung/urlaubsverwaltung
           -Ddocker.push.registry=ghcr.io
           -Ddocker.push.username=${{ github.actor }}
           -Ddocker.push.password=${{ secrets.CR_PAT }}
