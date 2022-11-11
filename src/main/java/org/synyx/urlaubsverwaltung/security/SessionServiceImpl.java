@@ -1,9 +1,11 @@
 package org.synyx.urlaubsverwaltung.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.stereotype.Service;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.util.Map;
 
@@ -33,5 +35,11 @@ public class SessionServiceImpl<S extends Session> implements SessionService {
         final S session = sessionRepository.findById(sessionId);
         session.removeAttribute(RELOAD_AUTHORITIES);
         sessionRepository.save(session);
+    }
+
+    @EventListener
+    void deleteSessionByEvent(PersonDeletedEvent event) {
+        sessionRepository.findByPrincipalName(event.getPerson().getUsername())
+            .forEach((s, session) -> sessionRepository.deleteById(session.getId()));
     }
 }

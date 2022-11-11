@@ -392,4 +392,13 @@ class AccountInteractionServiceImplTest {
         assertThat(expectedAccount.getRemainingVacationDays()).isSameAs(ONE);
         assertThat(expectedAccount.getRemainingVacationDaysNotExpiring()).isEqualTo(ONE);
     }
+
+    @Test
+    void deleteAllDelegatesToService() {
+        final Person person = new Person();
+
+        sut.deleteAllByPerson(person);
+
+        verify(accountService).deleteAllByPerson(person);
+    }
 }

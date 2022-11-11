@@ -148,4 +148,13 @@ class SickNoteServiceImplTest {
         verify(sickNoteRepository).save(argument.capture());
         assertThat(argument.getValue().getEndOfSickPayNotificationSend()).isEqualTo(LocalDate.now(fixedClock));
     }
+
+    @Test
+    void deleteAll() {
+        final Person person = new Person();
+
+        sut.deleteAllByPerson(person);
+
+        verify(sickNoteRepository).deleteByPerson(person);
+    }
 }

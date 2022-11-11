@@ -72,4 +72,9 @@ public class AccountServiceImpl implements AccountService {
         accountEntity.setActualVacationDays(account.getActualVacationDays());
         return accountEntity;
     }
+
+    @Override
+    public void deleteAllByPerson(Person person) {
+        accountRepository.deleteByPerson(person);
+    }
 }

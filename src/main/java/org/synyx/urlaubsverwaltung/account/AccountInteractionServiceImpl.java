@@ -169,6 +169,11 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
+    public void deleteAllByPerson(Person person) {
+        accountService.deleteAllByPerson(person);
+    }
+
+    @Override
     public Account autoCreateOrUpdateNextYearsHolidaysAccount(Account referenceAccount) {
 
         final int nextYear = referenceAccount.getYear() + 1;

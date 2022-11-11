@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Clock;
@@ -296,6 +297,15 @@ class PersonCalendarServiceTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         sut.deletePersonalCalendarForPerson(1);
+
+        verify(personCalendarRepository).deleteByPerson(person);
+    }
+
+    @Test
+    void deleteOnPersonDeletionEvent() {
+        final Person person = new Person();
+
+        sut.deletePersonalCalendar(new PersonDeletedEvent(person));
 
         verify(personCalendarRepository).deleteByPerson(person);
     }

@@ -4,11 +4,18 @@
     <title th:text="#{person.overview.header.title}"></title>
     <th:block th:ref="scripts">
       <script defer asset:src="npm.hotwired.js"></script>
-      <script defer asset:src="person_view.js"></script>
+      <script defer asset:src="persons.js"></script>
     </th:block>
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0" data-turbo="true">
+      <div class="feedback">
+        <p
+          th:if="${personDeletionSuccess}"
+          th:text="#{person.account.action.deletion.success(${personDeletionSuccess})}"
+          class="alert alert-success"
+        ></p>
+      </div>
       <div
         th:replace="fragments/section-heading::section-heading(~{::persons-overview-heading-body}, ~{::persons-overview-heading-actions})"
       >

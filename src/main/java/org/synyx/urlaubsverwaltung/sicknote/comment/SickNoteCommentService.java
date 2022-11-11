@@ -40,4 +40,20 @@ public interface SickNoteCommentService {
      * @return all comments for the given sick note.
      */
     List<SickNoteCommentEntity> getCommentsBySickNote(SickNote sickNote);
+
+    /**
+     * Deletes all {@link SickNoteCommentEntity} in the database for given person.
+     * This does not delete comments of this person on other persons sicknotes
+     *
+     * @param sickNotePerson is the person whose sicknotes should be deleted
+     */
+    void deleteAllBySickNotePerson(Person sickNotePerson);
+
+    /**
+     * Removes the author of a {@link SickNoteCommentEntity}. This is used to delete a user.
+     * The author remains empty (null). Which must be displayed as 'unknown author'.
+     *
+     * @param author is the person who is deleted from {@link SickNoteCommentEntity}
+     */
+    void deleteCommentAuthor(Person author);
 }

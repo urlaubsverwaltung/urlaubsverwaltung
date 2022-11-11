@@ -581,4 +581,13 @@ class WorkingTimeServiceImplTest {
                 LocalDate.of(2021, 11, 1),
                 LocalDate.of(2021, 11, 30)))).isEmpty();
     }
+
+    @Test
+    void deleteAllDelegatesToRepo() {
+        final Person person = new Person();
+
+        sut.deleteAllByPerson(person);
+
+        verify(workingTimeRepository).deleteByPerson(person);
+    }
 }

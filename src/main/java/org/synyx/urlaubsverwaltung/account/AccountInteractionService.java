@@ -76,4 +76,12 @@ public interface AccountInteractionService {
      * @param person to update the remaining vacation days for
      */
     void updateRemainingVacationDays(int year, Person person);
+
+
+    /**
+     * Deletes all {@link Account}s in the database of person.
+     *
+     * @param person the person which accounts will be deleted
+     */
+    void deleteAllByPerson(Person person);
 }

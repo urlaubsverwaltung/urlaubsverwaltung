@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.department;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
@@ -176,6 +178,55 @@ class DepartmentServiceImpl implements DepartmentService {
         LOG.info("Updated department: {}", updatedDepartment);
 
         return updatedDepartment;
+    }
+
+    /**
+     * Deletes all department head assignments of the given person.
+     *
+     * @param event the person who is deleted
+     */
+    @EventListener
+    void deleteAssignedDepartmentsOfMember(PersonDeletedEvent event) {
+
+        getAssignedDepartmentsOfMember(event.getPerson()).forEach(department -> {
+            department.setMembers(department.getMembers().stream()
+                .filter(not(isEqual(event.getPerson())))
+                .collect(toList()));
+            update(department);
+        });
+    }
+
+    /**
+     * Deletes all department head assignments of the given person.
+     *
+     * @param event the person who is deleted
+     */
+    @EventListener
+    void deleteDepartmentHead(PersonDeletedEvent event) {
+
+        getManagedDepartmentsOfDepartmentHead(event.getPerson()).forEach(department -> {
+            department.setDepartmentHeads(department.getDepartmentHeads().stream()
+                .filter(person -> !person.equals(event.getPerson()))
+                .collect(toList()));
+            update(department);
+        });
+    }
+
+
+    /**
+     * Deletes all second stage authorities assignments of the given person.
+     *
+     * @param event the person who is deleted
+     */
+    @EventListener
+    void deleteSecondStageAuthority(PersonDeletedEvent event) {
+
+        getManagedDepartmentsOfSecondStageAuthority(event.getPerson()).forEach(department -> {
+            department.setSecondStageAuthorities(department.getSecondStageAuthorities().stream()
+                .filter(person -> !person.equals(event.getPerson()))
+                .collect(toList()));
+            update(department);
+        });
     }
 
     @Override

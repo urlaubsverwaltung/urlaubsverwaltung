@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
@@ -297,5 +299,93 @@ class ApplicationServiceImplTest {
 
         final List<Application> holidayReplacementApplications = sut.getApplicationsForACertainPeriodAndPersonAndVacationCategory(from, to, person, statuses, HOLIDAY);
         assertThat(holidayReplacementApplications).hasSize(1).contains(application);
+    }
+
+    @Test
+    void deleteOnPersonDeletionEventReturnsDeletedApplication() {
+        final Person person = new Person();
+        final Application application = new Application();
+
+        when(applicationRepository.deleteByPerson(person)).thenReturn(List.of(application));
+
+        final List<Application> applications = sut.deleteApplicationsByPerson(person);
+        assertThat(applications).containsExactly(application);
+
+        verify(applicationRepository).deleteByPerson(person);
+    }
+
+    @Test
+    void deleteBossInteractionOnPersonDeletionEvent() {
+        final Person boss = new Person();
+        boss.setId(1);
+        final Application application = new Application();
+        application.setId(1);
+        application.setCanceller(boss);
+        final List<Application> applicationsOfBoss = List.of(application);
+        when(applicationRepository.findByBoss(boss)).thenReturn(applicationsOfBoss);
+
+        sut.deleteInteractionWithApplications(boss);
+
+        verify(applicationRepository, atLeastOnce()).saveAll(applicationsOfBoss);
+        assertThat(applicationsOfBoss).extracting("boss").containsOnlyNulls();
+    }
+
+    @Test
+    void deleteCancellerInteractionOnPersonDeletionEvent() {
+        final Person canceller = new Person();
+        canceller.setId(1);
+        final Application application = new Application();
+        application.setId(1);
+        application.setCanceller(canceller);
+        final List<Application> applicationsOfCanceller = List.of(application);
+        when(applicationRepository.findByCanceller(canceller)).thenReturn(applicationsOfCanceller);
+
+        sut.deleteInteractionWithApplications(canceller);
+
+        verify(applicationRepository, atLeastOnce()).saveAll(applicationsOfCanceller);
+        assertThat(applicationsOfCanceller).extracting("canceller").containsOnlyNulls();
+    }
+
+    @Test
+    void deleteApplierInteractionOnPersonDeletionEvent() {
+        final Person applier = new Person();
+        applier.setId(1);
+        final Application application = new Application();
+        application.setId(1);
+        application.setApplier(applier);
+        final List<Application> applicationsOfApplier = List.of(application);
+        when(applicationRepository.findByApplier(applier)).thenReturn(applicationsOfApplier);
+
+        sut.deleteInteractionWithApplications(applier);
+
+        verify(applicationRepository, atLeastOnce()).saveAll(applicationsOfApplier);
+        assertThat(applicationsOfApplier).extracting("applier").containsOnlyNulls();
+    }
+
+    @Test
+    void deleteApplicationReplacement() {
+
+        Application application = new Application();
+
+        final Person person = new Person();
+        person.setId(42);
+        final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
+        holidayReplacement.setPerson(person);
+
+
+        final HolidayReplacementEntity otherHolidayReplacement = new HolidayReplacementEntity();
+        final Person other = new Person();
+        other.setId(21);
+        otherHolidayReplacement.setPerson(other);
+
+        application.setHolidayReplacements(List.of(holidayReplacement, otherHolidayReplacement));
+        final List<Application> applicationsOfHolidayReplacement = List.of(application);
+        when(applicationRepository.findAllByHolidayReplacements_Person(person)).thenReturn(applicationsOfHolidayReplacement);
+
+        sut.deleteHolidayReplacements(new PersonDeletedEvent(person));
+
+        verify(applicationRepository).saveAll(applicationsOfHolidayReplacement);
+        assertThat(applicationsOfHolidayReplacement.get(0).getHolidayReplacements()).containsExactly(otherHolidayReplacement);
+
     }
 }

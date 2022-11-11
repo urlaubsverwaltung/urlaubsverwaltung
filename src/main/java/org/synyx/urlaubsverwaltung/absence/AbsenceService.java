@@ -12,8 +12,8 @@ public interface AbsenceService {
      * "Open" means it has one of the status ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED
      *
      * @param person {@link Person} to get the absences for
-     * @param start start of the date range (inclusive)
-     * @param end end of the date range (inclusive)
+     * @param start  start of the date range (inclusive)
+     * @param end    end of the date range (inclusive)
      * @return list of all matching absences
      */
     List<AbsencePeriod> getOpenAbsences(Person person, LocalDate start, LocalDate end);
@@ -23,8 +23,8 @@ public interface AbsenceService {
      * "Open" means it has one of the status ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED
      *
      * @param persons list of {@link Person}s to get the absences for
-     * @param start start of the date range (inclusive)
-     * @param end end of the date range (inclusive)
+     * @param start   start of the date range (inclusive)
+     * @param end     end of the date range (inclusive)
      * @return list of all matching absences
      */
     List<AbsencePeriod> getOpenAbsences(List<Person> persons, LocalDate start, LocalDate end);

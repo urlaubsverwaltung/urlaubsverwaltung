@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,12 +28,15 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
@@ -63,6 +67,7 @@ class PersonServiceImplTest {
     private ArgumentCaptor<PersonDisabledEvent> personDisabledEventArgumentCaptor;
     @Captor
     private ArgumentCaptor<PersonCreatedEvent> personCreatedEventArgumentCaptor;
+    private final ArgumentCaptor<PersonDeletedEvent> personDeletedEventArgumentCaptor = ArgumentCaptor.forClass(PersonDeletedEvent.class);
 
     @BeforeEach
     void setUp() {
@@ -434,6 +439,42 @@ class PersonServiceImplTest {
 
         final int numberOfActivePersons = sut.numberOfActivePersons();
         assertThat(numberOfActivePersons).isEqualTo(2);
+    }
+
+    @Test
+    void deletesExistingPersonDelegatesAndSendsEvent() {
+
+        final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
+
+        final Person person = new Person();
+        final int personId = 42;
+        person.setId(personId);
+        when(personRepository.existsById(personId)).thenReturn(true);
+
+        sut.delete(person, signedInUser);
+
+        final InOrder inOrder = inOrder(applicationEventPublisher, accountInteractionService, workingTimeWriteService, personRepository);
+
+        inOrder.verify(personRepository).existsById(42);
+        inOrder.verify(applicationEventPublisher).publishEvent(personDeletedEventArgumentCaptor.capture());
+        assertThat(personDeletedEventArgumentCaptor.getValue().getPerson())
+            .isEqualTo(person);
+
+        inOrder.verify(accountInteractionService).deleteAllByPerson(person);
+        inOrder.verify(workingTimeWriteService).deleteAllByPerson(person);
+        inOrder.verify(personRepository).delete(person);
+    }
+
+    @Test
+    void deletingNotExistingPersonThrowsException() {
+        final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
+
+        final Person person = new Person();
+        person.setId(1);
+        assertThatThrownBy(() -> sut.delete(person, signedInUser)).isInstanceOf(IllegalArgumentException.class);
+
+        verify(personRepository).existsById(1);
+        verifyNoMoreInteractions(applicationEventPublisher, workingTimeWriteService, accountInteractionService, personRepository);
     }
 
     @Test

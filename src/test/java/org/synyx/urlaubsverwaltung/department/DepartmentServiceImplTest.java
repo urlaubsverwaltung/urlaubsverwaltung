@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 
@@ -1959,6 +1960,80 @@ class DepartmentServiceImplTest {
             .containsEntry(new PersonId(1), List.of("Department A", "Department B"))
             .containsEntry(new PersonId(2), List.of("Department C", "Department A", "Department B"))
             .containsEntry(new PersonId(3), List.of("Department C"));
+    }
+
+    @Test
+    void ensureDeletionOfMembershipOnPersonDeletionEvent() {
+        final Person person = new Person();
+        person.setId(42);
+        final Person other = new Person();
+        other.setId(21);
+
+        final DepartmentEntity department = new DepartmentEntity();
+        department.setId(1);
+        final DepartmentMemberEmbeddable personEmbeddable = new DepartmentMemberEmbeddable();
+        personEmbeddable.setPerson(person);
+        final DepartmentMemberEmbeddable otherEmbeddable = new DepartmentMemberEmbeddable();
+        otherEmbeddable.setPerson(other);
+
+        department.setMembers(List.of(personEmbeddable, otherEmbeddable));
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(department));
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(department));
+        when(departmentRepository.save(department)).thenReturn(department);
+
+        sut.deleteAssignedDepartmentsOfMember(new PersonDeletedEvent(person));
+
+        verify(departmentRepository).findByMembersPerson(person);
+
+        ArgumentCaptor<DepartmentEntity> argument = ArgumentCaptor.forClass(DepartmentEntity.class);
+        verify(departmentRepository).save(argument.capture());
+        assertThat(argument.getValue().getMembers()).containsExactly(otherEmbeddable);
+    }
+
+    @Test
+    void ensureDeletionOfDepartmentHeadAssignmentOnPersonDeletionEvent() {
+        final Person departmentHead = new Person();
+        departmentHead.setId(42);
+        final Person other = new Person();
+        other.setId(21);
+
+        final DepartmentEntity department = new DepartmentEntity();
+        department.setId(1);
+        department.setDepartmentHeads(List.of(departmentHead, other));
+        when(departmentRepository.findByDepartmentHeads(departmentHead)).thenReturn(List.of(department));
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(department));
+        when(departmentRepository.save(department)).thenReturn(department);
+
+        sut.deleteDepartmentHead(new PersonDeletedEvent(departmentHead));
+
+        verify(departmentRepository).findByDepartmentHeads(departmentHead);
+
+        ArgumentCaptor<DepartmentEntity> argument = ArgumentCaptor.forClass(DepartmentEntity.class);
+        verify(departmentRepository).save(argument.capture());
+        assertThat(argument.getValue().getDepartmentHeads()).containsExactly(other);
+    }
+
+    @Test
+    void ensureDeletionOfSecondStageAuthorityAssignmentOnPersonDeletionEvent() {
+        final Person secondStageAuthority = new Person();
+        secondStageAuthority.setId(42);
+        final Person other = new Person();
+        other.setId(21);
+
+        final DepartmentEntity department = new DepartmentEntity();
+        department.setId(1);
+        department.setSecondStageAuthorities(List.of(secondStageAuthority, other));
+        when(departmentRepository.findBySecondStageAuthorities(secondStageAuthority)).thenReturn(List.of(department));
+        when(departmentRepository.findById(1)).thenReturn(Optional.of(department));
+        when(departmentRepository.save(department)).thenReturn(department);
+
+        sut.deleteSecondStageAuthority(new PersonDeletedEvent(secondStageAuthority));
+
+        verify(departmentRepository).findBySecondStageAuthorities(secondStageAuthority);
+
+        ArgumentCaptor<DepartmentEntity> argument = ArgumentCaptor.forClass(DepartmentEntity.class);
+        verify(departmentRepository).save(argument.capture());
+        assertThat(argument.getValue().getSecondStageAuthorities()).containsExactly(other);
     }
 
     private static PageableSearchQuery defaultPersonSearchQuery() {

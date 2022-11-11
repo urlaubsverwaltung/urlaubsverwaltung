@@ -91,8 +91,8 @@ public interface OvertimeService {
      * overtime reduction of period between start and end
      *
      * @param person to get the left overtime for
-     * @param start of period
-     * @param end of period
+     * @param start  of period
+     * @param end    of period
      * @return the left overtime, never {@code null}
      */
     Duration getLeftOvertimeForPerson(Person person, LocalDate start, LocalDate end);
