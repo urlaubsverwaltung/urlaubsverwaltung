@@ -37,34 +37,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
-@SpringBootTest()
+@SpringBootTest
 @Transactional
 class PersonServiceIT extends TestContainersBase {
 
     @Autowired
     private PersonService personService;
-
     @Autowired
     private PersonRepository personRepository;
-
     @Autowired
     private PersonBasedataService personBasedataService;
-
     @Autowired
     private ApplicationService applicationService;
-
     @Autowired
     private ApplicationCommentService applicationCommentService;
-
     @Autowired
     private SickNoteService sickNoteService;
-
     @Autowired
     private SickNoteCommentService sickNoteCommentService;
-
     @Autowired
     private OvertimeService overtimeService;
-
     @Autowired
     private DepartmentService departmentService;
 
@@ -100,9 +92,9 @@ class PersonServiceIT extends TestContainersBase {
 
         final Department department = new Department();
         department.setName("department");
-        department.setMembers(new ArrayList<>(Arrays.asList(personWithId)));
-        department.setDepartmentHeads(new ArrayList<>(Arrays.asList(personWithId)));
-        department.setSecondStageAuthorities(new ArrayList<>(Arrays.asList(personWithId)));
+        department.setMembers(new ArrayList<>(List.of(personWithId)));
+        department.setDepartmentHeads(new ArrayList<>(List.of(personWithId)));
+        department.setSecondStageAuthorities(new ArrayList<>(List.of(personWithId)));
         final Department departmentWithId = departmentService.create(department);
 
         assertThat(personRepository.existsById(personId)).isTrue();
@@ -123,15 +115,15 @@ class PersonServiceIT extends TestContainersBase {
 
         assertThat(personRepository.existsById(personId)).isFalse();
         assertThat(personRepository.countByPermissionsContainingAndIdNotIn(USER, List.of(personId+1))).isZero();
-        assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_USER)).hasSize(0);
+        assertThat(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(OFFICE, MailNotification.NOTIFICATION_USER)).isEmpty();
         assertThat(personBasedataService.getBasedataByPersonId(personId)).isEmpty();
         assertThat(applicationService.getApplicationById(applicationWithId.getId())).isEmpty();
         assertThat(applicationCommentService.getCommentsByApplication(applicationWithCommentOfPerson).get(0).getPerson()).isNull();
         assertThat(sickNoteService.getById(sickNoteWithId.getId())).isEmpty();
         assertThat(sickNoteCommentService.getCommentsBySickNote(sickNoteWithCommentWithId).get(0).getPerson()).isNull();
         assertThat(overtimeService.getOvertimeById(overtimeRecord.getId())).isEmpty();
-        assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getMembers()).hasSize(0);
-        assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getDepartmentHeads()).hasSize(0);
-        assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getSecondStageAuthorities()).hasSize(0);
+        assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getMembers()).isEmpty();
+        assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getDepartmentHeads()).isEmpty();
+        assertThat(departmentService.getDepartmentById(departmentWithId.getId()).get().getSecondStageAuthorities()).isEmpty();
     }
 }
