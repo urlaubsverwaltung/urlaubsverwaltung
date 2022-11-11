@@ -6,15 +6,6 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <th:block th:if="${personDeletionConfirmationValidationError}">
-        <script type="text/javascript">
-          document.addEventListener("DOMContentLoaded", function () {
-            document.querySelector("#person-delete-form")?.classList.remove("tw-hidden");
-            document.querySelector("#person-delete-description")?.classList.add("tw-hidden");
-          });
-        </script>
-      </th:block>
-
       <div
         th:replace="fragments/section-heading::section-heading(~{::person-details-dangerzone-body}, ~{::person-details-dangerzone-actions})"
       >
@@ -35,7 +26,10 @@
           </div>
         </th:block>
         <th:block th:ref="person-details-dangerzone-box-body">
-          <div id="person-delete-description">
+          <div
+            id="person-delete-description"
+            th:classappend="${#strings.isEmpty(personDeletionConfirmationValidationError) ? '' : 'tw-hidden'}"
+          >
             <p th:text="#{person.account.dangerzone.description}"></p>
             <button
               class="button-danger"
@@ -50,7 +44,7 @@
             method="post"
             th:action="@{/web/person/__${person.id}__/delete}"
             th:object="${personDeleteForm}"
-            class="tw-hidden"
+            th:classappend="${#strings.isEmpty(personDeletionConfirmationValidationError) ? 'tw-hidden' : ''}"
           >
             <p th:text="#{person.account.dangerzone.description(${person.niceName})}"></p>
             <p th:text="#{person.account.dangerzone.description.extension}"></p>
