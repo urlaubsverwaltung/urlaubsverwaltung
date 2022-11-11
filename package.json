@@ -41,8 +41,6 @@
     "datalist-polyfill": "1.25.0",
     "font-awesome": "4.7.0",
     "jquery": "3.6.1",
-    "jquery-ui": "1.13.1",
-    "jquery-ui-themes": "1.12.0",
     "lint-staged": "13.0.3",
     "postcss-loader": "4.3.0",
     "tablesorter": "2.31.3",
