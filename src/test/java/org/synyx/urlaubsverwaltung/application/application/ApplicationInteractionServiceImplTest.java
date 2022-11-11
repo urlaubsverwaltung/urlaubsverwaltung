@@ -1437,8 +1437,28 @@ class ApplicationInteractionServiceImplTest {
         InOrder inOrder = inOrder(commentService, applicationService);
         inOrder.verify(commentService).deleteByApplicationPerson(person);
         inOrder.verify(commentService).deleteCommentAuthor(person);
-        inOrder.verify(applicationService).deleteInteractionWithApplications(person);
         inOrder.verify(applicationService).deleteApplicationsByPerson(person);
+        inOrder.verify(applicationService).deleteInteractionWithApplications(person);
+    }
+
+    @Test
+    void ensureDeletionOfAbsenceMappingOnPersonDeletedEvent() {
+        final Person person = new Person();
+        final int personId = 42;
+        person.setId(personId);
+
+        final Application application = new Application();
+        application.setId(42);
+        when(applicationService.deleteApplicationsByPerson(person)).thenReturn(List.of(application));
+
+        final AbsenceMapping absenceMapping = new AbsenceMapping(42, VACATION, "eventId");
+        when(absenceMappingService.getAbsenceByIdAndType(42, VACATION)).thenReturn(Optional.of(absenceMapping));
+
+        sut.deleteAllByPerson(new PersonDeletedEvent(person));
+
+        verify(absenceMappingService).getAbsenceByIdAndType(42, VACATION);
+        verify(absenceMappingService).delete(absenceMapping);
+        verify(calendarSyncService).deleteAbsence("eventId");
     }
 
     private void assertApplicationForLeaveHasChangedStatus(Application applicationForLeave, ApplicationStatus status,

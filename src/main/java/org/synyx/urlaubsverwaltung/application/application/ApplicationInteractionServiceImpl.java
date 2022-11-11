@@ -538,8 +538,17 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         final Person personToBeDeleted = event.getPerson();
         commentService.deleteByApplicationPerson(personToBeDeleted);
         commentService.deleteCommentAuthor(personToBeDeleted);
+
+        final List<Application> deletedApplications = applicationService.deleteApplicationsByPerson(personToBeDeleted);
+
+        deletedApplications.forEach(application -> absenceMappingService.getAbsenceByIdAndType(application.getId(), VACATION)
+            .ifPresent(absenceMapping -> {
+                calendarSyncService.deleteAbsence(absenceMapping.getEventId());
+                absenceMappingService.delete(absenceMapping);
+            })
+        );
+
         applicationService.deleteInteractionWithApplications(personToBeDeleted);
-        applicationService.deleteApplicationsByPerson(personToBeDeleted);
     }
 
     private List<HolidayReplacementEntity> replacementAdded(Application oldApplication, Application savedEditedApplication) {

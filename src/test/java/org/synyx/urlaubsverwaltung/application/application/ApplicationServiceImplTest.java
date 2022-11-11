@@ -302,9 +302,15 @@ class ApplicationServiceImplTest {
     }
 
     @Test
-    void deleteOnPersonDeletionEvent() {
+    void deleteOnPersonDeletionEventReturnsDeletedApplication() {
         final Person person = new Person();
-        sut.deleteApplicationsByPerson(person);
+        final Application application = new Application();
+
+        when(applicationRepository.deleteByPerson(person)).thenReturn(List.of(application));
+
+        final List<Application> applications = sut.deleteApplicationsByPerson(person);
+        assertThat(applications).containsExactly(application);
+
         verify(applicationRepository).deleteByPerson(person);
     }
 
