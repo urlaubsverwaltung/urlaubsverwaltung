@@ -23,15 +23,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/synyx/urlaubsverwaltung.git"
+    "url": "git+https://github.com/urlaubsverwaltung/urlaubsverwaltung.git"
   },
   "keywords": [],
   "author": "",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/synyx/urlaubsverwaltung/issues"
+    "url": "https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues"
   },
-  "homepage": "https://github.com/synyx/urlaubsverwaltung#readme",
+  "homepage": "https://github.com/urlaubsverwaltung/urlaubsverwaltung#readme",
   "dependencies": {
     "@babel/polyfill": "7.12.1",
     "@duetds/date-picker": "1.4.0",

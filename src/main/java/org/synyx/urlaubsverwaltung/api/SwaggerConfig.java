@@ -41,7 +41,7 @@ public class SwaggerConfig {
                     .license(
                         new License()
                             .name("Apache 2.0")
-                            .url("https://github.com/synyx/urlaubsverwaltung/blob/main/LICENSE.txt")
+                            .url("https://github.com/urlaubsverwaltung/urlaubsverwaltung/blob/main/LICENSE.txt")
                     )
             );
 

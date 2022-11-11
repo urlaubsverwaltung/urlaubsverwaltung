@@ -5,7 +5,7 @@ Please take the time to review the following categories as some of them do not a
 
 Please look for other issues or pull requests which already work on this topic. Is somebody already on it? Do you need to synchronize?
 
-Have you already checked the [FAQ](https://github.com/synyx/urlaubsverwaltung/wiki)?
+Have you already checked the [FAQ](https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki)?
 
 # 🙅 Issue
 - Question
