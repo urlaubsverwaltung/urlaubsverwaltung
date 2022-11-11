@@ -3,9 +3,11 @@ package org.synyx.urlaubsverwaltung.person.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -35,7 +37,7 @@ public class PersonDeleteViewController {
 
         final Person personToDelete = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
-        if (personToDelete.getPermissions().contains(OFFICE) && personService.numberOfPersonsWithOfficeRoleExcludingPerson(personToDelete.getId()) == 0) {
+        if (isLastOfficeUser(personToDelete)) {
             redirectAttributes.addFlashAttribute("lastOfficeUserCannotBeDeleted", true);
             return "redirect:/web/person/{personId}#person-delete-form";
         }
@@ -45,27 +47,101 @@ public class PersonDeleteViewController {
     }
 
     @PreAuthorize(IS_OFFICE)
+    @PostMapping(value = "/person/{personId}/delete", params = {"delete"}, headers = {"Turbo-Frame"})
+    public String deletePersonAjax(
+        @PathVariable("personId") Integer personId,
+        @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm,
+        @RequestHeader(name = "Turbo-Frame") String turboFrame,
+        Model model) throws UnknownPersonException {
+
+        final Person personToDelete = getPerson(personId);
+
+        final boolean lastOfficeUserCannotBeDeleted;
+        final boolean firstDeleteActionConfirmed;
+
+        if (isLastOfficeUser(personToDelete)) {
+            lastOfficeUserCannotBeDeleted = true;
+            firstDeleteActionConfirmed = false;
+        } else {
+            lastOfficeUserCannotBeDeleted = false;
+            firstDeleteActionConfirmed = true;
+        }
+
+        model.addAttribute("person", personToDelete);
+        model.addAttribute("lastOfficeUserCannotBeDeleted", lastOfficeUserCannotBeDeleted);
+        model.addAttribute("firstDeleteActionConfirmed", firstDeleteActionConfirmed);
+
+        return "thymeleaf/person/detail-section/action-delete-person :: #" + turboFrame;
+    }
+
+    @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/delete")
     public String deletePersonConfirmed(@PathVariable("personId") Integer personId, @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
-        final Person personToDelete = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        if (personToDelete.getPermissions().contains(OFFICE) &&
-            personService.numberOfPersonsWithOfficeRoleExcludingPerson(personToDelete.getId()) == 0) {
+        final Person personToDelete = getPerson(personId);
+
+        if (isLastOfficeUser(personToDelete)) {
             redirectAttributes.addFlashAttribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.office");
             return "redirect:/web/person/{personId}#person-delete-form";
         }
 
-        if (!personToDelete.getNiceName().equals(personDeleteForm.getNiceNameConfirmation())) {
+        if (!deleteConfirmationMatch(personToDelete, personDeleteForm)) {
             redirectAttributes.addFlashAttribute("firstDeleteActionConfirmed", true);
             redirectAttributes.addFlashAttribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.mismatch");
             return "redirect:/web/person/{personId}#person-delete-form";
         }
 
-        final boolean isActive = personToDelete.isActive();
+        return deletePerson(personToDelete, redirectAttributes);
+    }
 
-        personService.delete(personToDelete, personService.getSignedInUser());
+    @PreAuthorize(IS_OFFICE)
+    @PostMapping(value = "/person/{personId}/delete", headers = {"Turbo-Frame"})
+    public String deletePersonConfirmedAjax(
+        @PathVariable("personId") Integer personId,
+        @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm,
+        @RequestHeader("Turbo-Frame") String turboFrame,
+        RedirectAttributes redirectAttributes, Model model) throws UnknownPersonException {
 
-        redirectAttributes.addFlashAttribute("personDeletionSuccess", personToDelete.getNiceName());
+        final Person personToDelete = getPerson(personId);
+
+        if (isLastOfficeUser(personToDelete)) {
+            model.addAttribute("person", personToDelete);
+            model.addAttribute("lastOfficeUserCannotBeDeleted", true);
+            model.addAttribute("firstDeleteActionConfirmed", true);
+            model.addAttribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.office");
+            return "thymeleaf/person/detail-section/action-delete-person :: #" + turboFrame;
+        }
+
+        if (!deleteConfirmationMatch(personToDelete, personDeleteForm)) {
+            model.addAttribute("person", personToDelete);
+            model.addAttribute("firstDeleteActionConfirmed", true);
+            model.addAttribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.mismatch");
+            return "thymeleaf/person/detail-section/action-delete-person :: #" + turboFrame;
+        }
+
+        return deletePerson(personToDelete, redirectAttributes);
+    }
+
+    private Person getPerson(Integer personId) throws UnknownPersonException {
+        return personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
+    }
+
+    private boolean isLastOfficeUser(Person person) {
+        return person.getPermissions().contains(OFFICE) &&
+            personService.numberOfPersonsWithOfficeRoleExcludingPerson(person.getId()) == 0;
+    }
+
+    private boolean deleteConfirmationMatch(Person person, PersonDeleteForm personDeleteForm) {
+        return person.getNiceName().equals(personDeleteForm.getNiceNameConfirmation());
+    }
+
+    private String deletePerson(Person person, RedirectAttributes redirectAttributes) {
+        final boolean isActive = person.isActive();
+
+        personService.delete(person, personService.getSignedInUser());
+
+        redirectAttributes.addFlashAttribute("personDeletionSuccess", person.getNiceName());
+
         return "redirect:/web/person/?active=" + isActive;
     }
 }

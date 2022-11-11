@@ -26,66 +26,68 @@
           </div>
         </th:block>
         <th:block th:ref="person-details-dangerzone-box-body">
-          <form
-            id="person-delete-form"
-            method="post"
-            th:action="@{/web/person/__${person.id}__/delete}"
-            th:object="${personDeleteForm}"
-          >
-            <p id="person-delete-description" th:text="#{person.account.dangerzone.description}">
-              Die Aktion kann nicht rückgängig gemacht werden.
-            </p>
-            <button
-              th:if="${firstDeleteActionConfirmed == null || not firstDeleteActionConfirmed}"
-              type="submit"
-              name="delete"
-              value="true"
-              class="button-danger"
-              th:text="#{person.account.dangerzone.delete-button(${person.niceName})}"
+          <turbo-frame id="frame-delete-person">
+            <form
+              id="person-delete-form"
+              method="post"
+              th:action="@{/web/person/__${person.id}__/delete}"
+              th:object="${personDeleteForm}"
             >
-              Benutzende löschen
-            </button>
-            <p
-              th:if="${lastOfficeUserCannotBeDeleted != null and lastOfficeUserCannotBeDeleted}"
-              th:text="#{person.account.dangerzone.delete.confirmation.validation.error.office}"
-              class="tw-mt-4 error"
-            >
-              Letzter Office User kann nicht gelöscht werden.
-            </p>
-            <div th:if="${firstDeleteActionConfirmed != null && firstDeleteActionConfirmed}">
-              <p th:text="#{person.account.dangerzone.description.extension}"></p>
-
-              <label class="tw-w-full">
-                <span th:text="#{person.account.dangerzone.delete.confirmation(${person.niceName})}"></span>
-                <input th:field="*{niceNameConfirmation}" class="form-control tw-mt-1" />
-              </label>
-
+              <p id="person-delete-description" th:text="#{person.account.dangerzone.description}">
+                Die Aktion kann nicht rückgängig gemacht werden.
+              </p>
+              <button
+                th:if="${firstDeleteActionConfirmed == null || not firstDeleteActionConfirmed}"
+                type="submit"
+                name="delete"
+                value="true"
+                class="button-danger"
+                th:text="#{person.account.dangerzone.delete-button(${person.niceName})}"
+              >
+                Benutzende löschen
+              </button>
               <p
-                id="person-delete-form-error"
-                th:if="${personDeletionConfirmationValidationError}"
-                th:text="#{${personDeletionConfirmationValidationError}(${person.niceName})}"
-                class="error tw-text-sm"
-              ></p>
+                th:if="${lastOfficeUserCannotBeDeleted != null and lastOfficeUserCannotBeDeleted}"
+                th:text="#{person.account.dangerzone.delete.confirmation.validation.error.office}"
+                class="tw-mt-4 error"
+              >
+                Letzter Office User kann nicht gelöscht werden.
+              </p>
+              <div th:if="${firstDeleteActionConfirmed != null && firstDeleteActionConfirmed}">
+                <p th:text="#{person.account.dangerzone.description.extension}"></p>
 
-              <div class="tw-flex tw-justify-between tw-mt-4">
-                <button
-                  th:text="#{person.account.dangerzone.delete-button.finally(${person.niceName})}"
-                  class="button-danger"
-                  type="submit"
-                >
-                  Benutzer endgültig löschen
-                </button>
-                <button
-                  id="person-delete-cancel"
-                  type="submit"
-                  th:formaction="@{/web/person/__${person.id}__}"
-                  formmethod="get"
-                  th:text="#{action.cancel}"
-                  class="button tw-w-24"
-                ></button>
+                <label class="tw-w-full">
+                  <span th:text="#{person.account.dangerzone.delete.confirmation(${person.niceName})}"></span>
+                  <input th:field="*{niceNameConfirmation}" class="form-control tw-mt-1" />
+                </label>
+
+                <p
+                  id="person-delete-form-error"
+                  th:if="${personDeletionConfirmationValidationError}"
+                  th:text="#{${personDeletionConfirmationValidationError}(${person.niceName})}"
+                  class="error tw-text-sm"
+                ></p>
+
+                <div class="tw-flex tw-justify-between tw-mt-4">
+                  <button
+                    th:text="#{person.account.dangerzone.delete-button.finally(${person.niceName})}"
+                    class="button-danger"
+                    type="submit"
+                  >
+                    Benutzer endgültig löschen
+                  </button>
+                  <button
+                    id="person-delete-cancel"
+                    type="submit"
+                    th:formaction="@{/web/person/__${person.id}__}"
+                    formmethod="get"
+                    th:text="#{action.cancel}"
+                    class="button tw-w-24"
+                  ></button>
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
+          </turbo-frame>
         </th:block>
       </div>
     </th:block>
