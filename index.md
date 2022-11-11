@@ -7,9 +7,9 @@ Urlaubsverwaltung Helm chart version: 0.1.0
 Add the urlaubsverwaltung repo
 
 ```
-helm repo add urlaubsverwaltung https://synyx.github.io/urlaubsverwaltung/chart_repo
+helm repo add urlaubsverwaltung https://urlaubsverwaltung.github.io/urlaubsverwaltung/chart_repo
 ```
 
 
-Usage instructions can be found at [README.md](https://github.com/synyx/urlaubsverwaltung/blob/master/.examples/README.md)
+Usage instructions can be found at [README.md](https://github.com/urlaubsverwaltung/urlaubsverwaltung/blob/master/.examples/README.md)
 
