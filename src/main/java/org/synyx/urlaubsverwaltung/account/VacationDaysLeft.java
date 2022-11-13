@@ -30,7 +30,7 @@ public final class VacationDaysLeft {
     private final BigDecimal remainingVacationDaysNotExpiring;
 
     /**
-     * Vacaction days for this year that have already been used NEXT year
+     * Vacation days for this year that have already been used NEXT year
      */
     private final BigDecimal vacationDaysUsedNextYear;
 
