@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import static java.time.Duration.ZERO;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
@@ -65,9 +67,10 @@ class ApplicationForLeaveStatisticsBuilder {
 
         final LocalDate today = LocalDate.now(clock);
         final DateRange dateRange = new DateRange(from, to);
+        final DateRange workingTimeDateRange = new DateRange(from.with(firstDayOfYear()), from.with(lastDayOfYear()));
 
         final List<Account> holidayAccounts = accountService.getHolidaysAccount(from.getYear(), persons);
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeService.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeService.getWorkingTimesByPersonsAndDateRange(persons, workingTimeDateRange);
         final List<Application> applications = applicationService.getApplicationsForACertainPeriod(from, to, persons);
         final Map<Person, LeftOvertime> leftOvertimeForPersons = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
         final Map<Account, HolidayAccountVacationDays> holidayAccountVacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, workingTimeCalendarsByPerson, dateRange);

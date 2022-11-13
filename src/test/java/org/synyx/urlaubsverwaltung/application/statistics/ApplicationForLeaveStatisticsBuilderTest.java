@@ -38,6 +38,9 @@ import static java.time.LocalDate.of;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
+import static java.time.Month.OCTOBER;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
@@ -104,6 +107,68 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
         when(workingTimeService.getWorkingTimesByPersonsAndDateRange(List.of(person), dateRange)).thenReturn(workingTimeCalendarByPerson);
+
+        final Application applicationForLeave = new Application();
+        applicationForLeave.setPerson(person);
+        applicationForLeave.setDayLength(FULL);
+        applicationForLeave.setVacationType(vacationTypes.get(0));
+        applicationForLeave.setStartDate(of(2014, 10, 13));
+        applicationForLeave.setEndDate(of(2014, 10, 13));
+        applicationForLeave.setStatus(ALLOWED);
+
+        final List<Application> applications = List.of(applicationForLeave);
+
+        when(applicationService.getApplicationsForACertainPeriod(from, to, List.of(person))).thenReturn(applications);
+
+        when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
+            .thenReturn(Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ZERO)));
+
+        final VacationDaysLeft personVacationDaysLeftYear = VacationDaysLeft.builder().withAnnualVacation(BigDecimal.valueOf(10)).build();
+        final VacationDaysLeft personVacationDaysLeftPeriod = VacationDaysLeft.builder().withAnnualVacation(BigDecimal.valueOf(5)).build();
+        final HolidayAccountVacationDays personVacationDays = new HolidayAccountVacationDays(account, personVacationDaysLeftYear, personVacationDaysLeftPeriod);
+
+        when(vacationDaysService.getVacationDaysLeft(List.of(account), workingTimeCalendarByPerson, dateRange)).thenReturn(Map.of(account, personVacationDays));
+
+        final VacationType type = new VacationType(1, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
+
+
+        final Map<Person, ApplicationForLeaveStatistics> actual = sut.build(List.of(person), from, to, List.of(type));
+        assertThat(actual)
+            .hasSize(1)
+            .containsKey(person);
+
+        final ApplicationForLeaveStatistics statistics = actual.get(person);
+        assertThat(statistics.getPerson()).isEqualTo(person);
+        assertThat(statistics.getLeftVacationDaysForYear()).isEqualTo(BigDecimal.valueOf(10));
+        assertThat(statistics.getLeftVacationDaysForPeriod()).isEqualTo(BigDecimal.valueOf(5));
+    }
+
+    @Test
+    void ensureLeftVacationDaysForDateRange() {
+        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, workingTimeService,
+            vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
+
+        final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
+
+        final Person person = new Person();
+
+        final LocalDate from = of(2014, OCTOBER, 1);
+        final LocalDate to = of(2014, OCTOBER, 31);
+        final LocalDate firstDayOfYear = from.with(firstDayOfYear());
+        final LocalDate lastDayOfYear = from.with(lastDayOfYear());
+        final DateRange dateRange = new DateRange(from, to);
+        final DateRange dateRangeFullYear = new DateRange(firstDayOfYear, lastDayOfYear);
+
+        final LocalDate expiryDate = of(2014, APRIL, 1);
+        final Account account = new Account(person, from, to, false, expiryDate, TEN, TEN, TEN, null);
+
+        when(accountService.getHolidaysAccount(2014, List.of(person))).thenReturn(List.of(account));
+
+        final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(firstDayOfYear, lastDayOfYear, date -> FULL);
+        final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
+
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
+        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(List.of(person), dateRangeFullYear)).thenReturn(workingTimeCalendarByPerson);
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
