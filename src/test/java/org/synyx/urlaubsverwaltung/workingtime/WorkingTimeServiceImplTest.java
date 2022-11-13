@@ -20,14 +20,15 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static java.time.Month.AUGUST;
+import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
-import static java.time.Month.SEPTEMBER;
 import static java.time.ZoneOffset.UTC;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.util.Collections.emptyList;
@@ -592,7 +593,7 @@ class WorkingTimeServiceImplTest {
     }
 
     @Test
-    void ensureGetWorkingTimesByPersonsAndDateRange() {
+    void ensureGetWorkingTimesByPersonsAndYear() {
         final Person person = new Person();
         person.setId(1);
 
@@ -600,7 +601,7 @@ class WorkingTimeServiceImplTest {
         person2.setId(2);
 
         final List<Person> persons = List.of(person, person2);
-        final DateRange dateRange = new DateRange(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31));
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
         workingTimeEntity.setValidFrom(LocalDate.of(2022, JANUARY, 1));
@@ -629,7 +630,7 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons))
             .thenReturn(List.of(workingTimeEntity, workingTimeEntity2));
 
-        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
         assertThat(actual)
             .hasSize(2)
             .containsKeys(person, person2);
@@ -646,12 +647,11 @@ class WorkingTimeServiceImplTest {
     }
 
     @Test
-    void ensureGetWorkingTimesByPersonsAndDateRangeUsesDefaultFederalStateWhenWorkingTimeDoesNotDefineIt() {
+    void ensureGetWorkingTimesByPersonsAndYearUsesDefaultFederalStateWhenWorkingTimeDoesNotDefineIt() {
         final Person person = new Person();
         person.setId(1);
 
         final List<Person> persons = List.of(person);
-        final DateRange dateRange = new DateRange(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
         workingTimeEntity.setValidFrom(LocalDate.of(2022, JANUARY, 1));
@@ -668,13 +668,13 @@ class WorkingTimeServiceImplTest {
 
         when(settingsService.getSettings()).thenReturn(settings);
 
-        sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
+        sut.getWorkingTimesByPersons(persons, Year.of(2022));
 
-        verify(publicHolidaysService, times(31)).isPublicHoliday(any(LocalDate.class), eq(GERMANY_BERLIN));
+        verify(publicHolidaysService, times(365)).isPublicHoliday(any(LocalDate.class), eq(GERMANY_BERLIN));
     }
 
     @Test
-    void ensureGetWorkingTimesByPersonsAndDateRangeIgnoresPublicHolidays() {
+    void ensureGetWorkingTimesByPersonsAndYearIgnoresPublicHolidays() {
         final Person person = new Person();
         person.setId(1);
 
@@ -682,7 +682,6 @@ class WorkingTimeServiceImplTest {
         person2.setId(2);
 
         final List<Person> persons = List.of(person, person2);
-        final DateRange dateRange = new DateRange(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
         workingTimeEntity.setValidFrom(LocalDate.of(2022, JANUARY, 1));
@@ -714,7 +713,7 @@ class WorkingTimeServiceImplTest {
         when(publicHolidaysService.isPublicHoliday(LocalDate.of(2022, AUGUST, 5), GERMANY_BADEN_WUERTTEMBERG)).thenReturn(true);
         when(publicHolidaysService.isPublicHoliday(LocalDate.of(2022, AUGUST, 10), GERMANY_BERLIN)).thenReturn(true);
 
-        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
         assertThat(actual)
             .hasSize(2)
             .containsKeys(person, person2);
@@ -726,12 +725,12 @@ class WorkingTimeServiceImplTest {
     }
 
     @Test
-    void ensureGetWorkingTimesByPersonsAndDateRangeIgnoresWorkingTimesNotInDateRange() {
+    void ensureGetWorkingTimesByPersonsAndYearIgnoresWorkingTimesNotInDateRange() {
         final Person person = new Person();
         person.setId(1);
 
         final List<Person> persons = List.of(person);
-        final DateRange dateRange = new DateRange(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31));
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
         workingTimeEntity.setValidFrom(LocalDate.of(2022, JANUARY, 1));
@@ -745,22 +744,34 @@ class WorkingTimeServiceImplTest {
         workingTimeEntity.setSunday(DayLength.FULL);
         workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
 
-        final WorkingTimeEntity outOfDateRange = new WorkingTimeEntity();
-        outOfDateRange.setValidFrom(LocalDate.of(2022, SEPTEMBER, 1));
-        outOfDateRange.setPerson(person);
-        outOfDateRange.setMonday(DayLength.NOON);
-        outOfDateRange.setTuesday(DayLength.NOON);
-        outOfDateRange.setWednesday(DayLength.NOON);
-        outOfDateRange.setThursday(DayLength.NOON);
-        outOfDateRange.setFriday(DayLength.NOON);
-        outOfDateRange.setSaturday(DayLength.NOON);
-        outOfDateRange.setSunday(DayLength.NOON);
-        outOfDateRange.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+        final WorkingTimeEntity workingTimePreviousYear = new WorkingTimeEntity();
+        workingTimePreviousYear.setValidFrom(LocalDate.of(2021, JANUARY, 1));
+        workingTimePreviousYear.setPerson(person);
+        workingTimePreviousYear.setMonday(DayLength.MORNING);
+        workingTimePreviousYear.setTuesday(DayLength.MORNING);
+        workingTimePreviousYear.setWednesday(DayLength.MORNING);
+        workingTimePreviousYear.setThursday(DayLength.MORNING);
+        workingTimePreviousYear.setFriday(DayLength.MORNING);
+        workingTimePreviousYear.setSaturday(DayLength.MORNING);
+        workingTimePreviousYear.setSunday(DayLength.MORNING);
+        workingTimePreviousYear.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity workingTimeNextYear = new WorkingTimeEntity();
+        workingTimeNextYear.setValidFrom(LocalDate.of(2023, JANUARY, 1));
+        workingTimeNextYear.setPerson(person);
+        workingTimeNextYear.setMonday(DayLength.NOON);
+        workingTimeNextYear.setTuesday(DayLength.NOON);
+        workingTimeNextYear.setWednesday(DayLength.NOON);
+        workingTimeNextYear.setThursday(DayLength.NOON);
+        workingTimeNextYear.setFriday(DayLength.NOON);
+        workingTimeNextYear.setSaturday(DayLength.NOON);
+        workingTimeNextYear.setSunday(DayLength.NOON);
+        workingTimeNextYear.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
 
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons))
-            .thenReturn(List.of(workingTimeEntity, outOfDateRange));
+            .thenReturn(List.of(workingTimeEntity, workingTimeNextYear));
 
-        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
         assertThat(actual)
             .hasSize(1)
             .containsKey(person);
@@ -770,7 +781,8 @@ class WorkingTimeServiceImplTest {
             assertThat(workingTimeCalendar.workingTime(date)).hasValue(BigDecimal.ONE);
         }
 
-        assertThat(workingTimeCalendar.workingTime(LocalDate.of(2022, SEPTEMBER, 1))).isEmpty();
+        assertThat(workingTimeCalendar.workingTime(LocalDate.of(2021, DECEMBER, 31))).isEmpty();
+        assertThat(workingTimeCalendar.workingTime(LocalDate.of(2023, JANUARY, 1))).isEmpty();
     }
 
     @Test
@@ -783,16 +795,16 @@ class WorkingTimeServiceImplTest {
     }
 
     @Test
-    void ensureGetWorkingTimesByPersonsAndDateRangeReturnsEmptyWorkingTimeCalendarForPersonWithoutWorkingTime() {
+    void ensureGetWorkingTimesByPersonsAndYearReturnsEmptyWorkingTimeCalendarForPersonWithoutWorkingTime() {
         final Person person = new Person();
         person.setId(1);
 
         final List<Person> persons = List.of(person);
-        final DateRange dateRange = new DateRange(LocalDate.of(2022, AUGUST, 1), LocalDate.of(2022, AUGUST, 31));
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31));
 
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of());
 
-        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersonsAndDateRange(persons, dateRange);
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
         assertThat(actual)
             .hasSize(1)
             .containsKey(person);

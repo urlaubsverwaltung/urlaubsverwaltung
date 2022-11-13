@@ -27,6 +27,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
@@ -106,7 +107,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(List.of(person), dateRange)).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -157,7 +158,6 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final LocalDate firstDayOfYear = from.with(firstDayOfYear());
         final LocalDate lastDayOfYear = from.with(lastDayOfYear());
         final DateRange dateRange = new DateRange(from, to);
-        final DateRange dateRangeFullYear = new DateRange(firstDayOfYear, lastDayOfYear);
 
         final LocalDate expiryDate = of(2014, APRIL, 1);
         final Account account = new Account(person, from, to, false, expiryDate, TEN, TEN, TEN, null);
@@ -168,7 +168,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(List.of(person), dateRangeFullYear)).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -227,7 +227,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(List.of(person), dateRange)).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -296,7 +296,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(List.of(person), dateRange)).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -364,7 +364,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(List.of(person), dateRange)).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final Application holidayWaiting = new Application();
         holidayWaiting.setPerson(person);
@@ -486,7 +486,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeService.getWorkingTimesByPersonsAndDateRange(persons, dateRange)).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeService.getWorkingTimesByPersons(persons, Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final List<Application> applications = List.of();
         when(applicationService.getApplicationsForACertainPeriod(from, to, persons)).thenReturn(applications);

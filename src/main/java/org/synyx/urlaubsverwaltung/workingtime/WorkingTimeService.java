@@ -4,6 +4,7 @@ import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -58,17 +59,13 @@ public interface WorkingTimeService {
     Map<DateRange, WorkingTime> getWorkingTimesByPersonAndDateRange(Person person, DateRange dateRange);
 
     /**
-     * Returns a map of date ranges and the associated working time.
-     * <p>
-     * Note: The federal state of the working time is either
-     * the default federate state based on the settings
-     * or the user specific. But never empty.
+     * Returns a map of persons and the associated {@link WorkingTimeCalendar}.
      *
-     * @param persons   to get the working times
-     * @param dateRange to specify the
-     * @return map of date ranges and the associated working times of a person
+     * @param persons to get the WorkingTimeCalendar
+     * @param year to get the WorkingTimeCalendar
+     * @return map of persons and the associated {@link WorkingTimeCalendar}.
      */
-    Map<Person, WorkingTimeCalendar> getWorkingTimesByPersonsAndDateRange(Collection<Person> persons, DateRange dateRange);
+    Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, Year year);
 
     /**
      * Returns a map of date ranges and the associated federal state.
