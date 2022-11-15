@@ -331,11 +331,11 @@ auf `false` gesetzt werden.
 
 Folgende Systeme sind erreichbar unter `localhost`
 
-| Service                   | Port    |
-| ------------------------- | ------- |
-| [Urlaubsverwaltung](http://localhost:8080)         | 8080    |
-| [Mailhog](http://localhost:8025)                   | 8025    |
-| Mailhog SMTP              | 1025    |
+| Service                                    | Port |
+|--------------------------------------------|------|
+| [Urlaubsverwaltung](http://localhost:8080) | 8080 |
+| [Mailhog](http://localhost:8025)           | 8025 |
+| Mailhog SMTP                               | 1025 |
   
 ---
   
