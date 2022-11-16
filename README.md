@@ -51,7 +51,7 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
 ### Voraussetzungen
 
-* [JDK 11](https://openjdk.java.net/install/)
+* [JDK 11](https://adoptium.net)
 * [MariaDB Datenbank (v10.5)](https://mariadb.org/)
 * [Security Provider](#security-provider-konfigurieren)
 
@@ -246,7 +246,7 @@ spring.mail.username=$USERNAME
 spring.mail.password=$PASSWORT
 ```
 
-Alle weiteren `spring.mail.*` Konfigurationen können in der [Spring Dokumentation](https://docs.spring.io/spring-boot/docs/2.1.x/reference/html/boot-features-email.html)
+Alle weiteren `spring.mail.*` Konfigurationen können in der [Spring Dokumentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#io.email)
 eingesehen werden.
 
 #### Benutzer-Synchronisation konfigurieren
@@ -349,8 +349,8 @@ vom Typ "Question" erstellen.
 
 ### Voraussetzungen
 
-* [JDK 11](https://openjdk.java.net/install/)
-* [Docker 17.12.0+](https://docs.docker.com/get-docker/)
+* [JDK 11](https://adoptium.net)
+* [Docker 20.10.+](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 
 
