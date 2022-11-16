@@ -64,11 +64,11 @@ Die Anwendung steht als
 zur Verfügung.
 
 
-#### Installation .war Variante
+#### Installation .jar Variante
 
 * [Konfiguration Datenbank](#datenbank-konfigurieren)
 * [Konfiguration Security Provider](#security-provider-konfigurieren)
-* Lege ein Verzeichnis für die Urlaubsverwaltung an (z.B. `/opt/urlaubsverwaltung`). Kopiere die .war-Datei dorthin.
+* Lege ein Verzeichnis für die Urlaubsverwaltung an (z.B. `/opt/urlaubsverwaltung`). Kopiere die .jar-Datei dorthin.
 * Erstelle in dem Verzeichnis eine Konfigurationsdatei namens `application.properties`, welche die Konfiguration für
 die Urlaubsverwaltung enthält und die Standardwerte überschreibt.
  Die vollständigen Konfigurationsoptionen sind unter [Konfiguration](#konfiguration) dokumentiert.
@@ -76,7 +76,7 @@ die Urlaubsverwaltung enthält und die Standardwerte überschreibt.
 Nach der [Konfiguration](#konfiguration) lässt sich die Urlaubsverwaltung starten.
 
 ```bash
-java -jar urlaubsverwaltung.war
+java -jar urlaubsverwaltung.jar
 ``` 
 
 Falls es Probleme beim Starten der Anwendung gibt, ist es hilfreich das [Logging der Anwendung](#logging-konfigurieren)
@@ -302,7 +302,7 @@ docker-compose up
 und die Anwendung mit dem Profil `demodata` zu starten:
 
 ```bash
-java -jar -Dspring.profiles.active=demodata urlaubsverwaltung.war
+java -jar -Dspring.profiles.active=demodata urlaubsverwaltung.jar
 ```
 
 Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbankmanagementsystem gestartet und Demodaten generiert.
