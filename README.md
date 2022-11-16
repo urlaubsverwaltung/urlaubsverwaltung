@@ -58,7 +58,7 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 ### Download
 
 Die Anwendung steht als
-* [Web Application Archive (.war)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
+* [Java Archive (.jar)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
 * [Docker Image](https://hub.docker.com/r/synyx/urlaubsverwaltung)
 
 zur Verfügung.
