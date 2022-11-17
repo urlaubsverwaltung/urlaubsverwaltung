@@ -5,7 +5,7 @@ import org.testcontainers.containers.MariaDBContainer;
 
 class TestMariaDBContainer extends MariaDBContainer<TestMariaDBContainer> {
 
-    private static final String VERSION = "10.5";
+    private static final String VERSION = "10.6.11";
 
     TestMariaDBContainer() {
         super(MariaDBContainer.NAME + ":" + VERSION);
