@@ -1,15 +1,15 @@
-package org.synyx.urlaubsverwaltung.ui;
+package org.synyx.urlaubsverwaltung;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.testcontainers.containers.MariaDBContainer;
 
-class TestMariaDBContainer extends MariaDBContainer<TestMariaDBContainer> {
+public class TestMariaDBContainer extends MariaDBContainer<TestMariaDBContainer> {
 
-    private static final String VERSION = "10.5";
+    private static final String VERSION = "10.6.11";
 
-    TestMariaDBContainer() {
+    public TestMariaDBContainer() {
         super(MariaDBContainer.NAME + ":" + VERSION);
-        withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci");
+        withCommand("--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci", "--max-connections=300");
     }
 
     /**
@@ -27,7 +27,7 @@ class TestMariaDBContainer extends MariaDBContainer<TestMariaDBContainer> {
      *
      * @param registry
      */
-    void configureSpringDataSource(DynamicPropertyRegistry registry) {
+    public void configureSpringDataSource(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", this::getJdbcUrl);
         registry.add("spring.datasource.username", this::getUsername);
         registry.add("spring.datasource.password", this::getPassword);
