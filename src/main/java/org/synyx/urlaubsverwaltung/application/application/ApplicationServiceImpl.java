@@ -57,8 +57,8 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<Application> getApplicationsForACertainPeriod(LocalDate startDate, LocalDate endDate, List<Person> persons) {
-        return applicationRepository.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, startDate, endDate);
+    public List<Application> getApplicationsForACertainPeriodAndStatus(LocalDate startDate, LocalDate endDate, List<Person> persons, List<ApplicationStatus> statuses) {
+        return applicationRepository.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(persons, startDate, endDate, statuses);
     }
 
     @Override
@@ -148,7 +148,8 @@ class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Map<Person, Duration> getTotalOvertimeReductionOfPersonsBefore(Collection<Person> persons, LocalDate date) {
-        final Map<Person, Duration> durationByPerson = applicationRepository.calculateTotalOvertimeReductionOfPersonsBefore(persons, date).stream()
+        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        final Map<Person, Duration> durationByPerson = applicationRepository.calculateTotalOvertimeReductionOfPersonsBefore(persons, date, statuses).stream()
             .map(sum -> {
                 final BigDecimal minutes = BigDecimal.valueOf(sum.getDurationDouble()).multiply(BigDecimal.valueOf(60));
                 final Duration duration = Duration.ofMinutes(minutes.longValue());

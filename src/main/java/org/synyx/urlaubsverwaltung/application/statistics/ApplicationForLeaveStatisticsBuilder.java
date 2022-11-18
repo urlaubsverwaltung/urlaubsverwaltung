@@ -69,7 +69,7 @@ class ApplicationForLeaveStatisticsBuilder {
 
         final List<Account> holidayAccounts = accountService.getHolidaysAccount(from.getYear(), persons);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
-        final List<Application> applications = applicationService.getApplicationsForACertainPeriod(from, to, persons);
+        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED));
         final Map<Person, LeftOvertime> leftOvertimeForPersons = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
         final Map<Account, HolidayAccountVacationDays> holidayAccountVacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, workingTimeCalendarsByPerson, dateRange);
 

@@ -771,7 +771,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
         final Application invalidApplication = createApplication(max, getVacationType(HOLIDAY), askedStartDate.plusDays(2), askedEndDate.minusDays(2), FULL);
         sut.save(invalidApplication);
 
-        final List<Application> actual = sut.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(marlene), askedStartDate, askedEndDate);
+        final List<Application> actual = sut.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(List.of(marlene), askedStartDate, askedEndDate, List.of(WAITING));
 
         assertThat(actual).containsExactlyInAnyOrder(validHolidayStartingBefore, validOvertimeEndingAfter, validSpecialLeaveInBetween);
     }
@@ -826,7 +826,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
         overtimeMarlene.setHours(Duration.ofHours(4));
         sut.save(overtimeMarlene);
 
-        final List<ApplicationOvertimeDurationSum> actual = sut.calculateTotalOvertimeReductionOfPersonsBefore(List.of(max, john), date);
+        final List<ApplicationOvertimeDurationSum> actual = sut.calculateTotalOvertimeReductionOfPersonsBefore(List.of(max, john), date, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED));
         assertThat(actual).hasSize(2);
         assertThat(actual.get(0).getPerson()).isEqualTo(max);
         assertThat(actual.get(0).getDurationDouble()).isEqualTo(2.5);

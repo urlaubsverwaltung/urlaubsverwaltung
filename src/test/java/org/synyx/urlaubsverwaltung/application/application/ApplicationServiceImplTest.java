@@ -315,10 +315,10 @@ class ApplicationServiceImplTest {
         final Application application = new Application();
         application.setId(1);
 
-        when(applicationRepository.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, startDate, endDate))
+        when(applicationRepository.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(persons, startDate, endDate, List.of(WAITING)))
             .thenReturn(List.of(application));
 
-        final List<Application> actual = sut.getApplicationsForACertainPeriod(startDate, endDate, persons);
+        final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, persons, List.of(WAITING));
 
         assertThat(actual).containsExactly(application);
     }
@@ -426,7 +426,7 @@ class ApplicationServiceImplTest {
         final List<Person> persons = List.of(batman, robin, alfred);
         final LocalDate date = LocalDate.of(2022, 8, 30);
 
-        when(applicationRepository.calculateTotalOvertimeReductionOfPersonsBefore(persons, date))
+        when(applicationRepository.calculateTotalOvertimeReductionOfPersonsBefore(persons, date, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED)))
             .thenReturn(List.of(
                 applicationOvertimeDurationSum(batman, 12d),
                 applicationOvertimeDurationSum(robin, 1.5d),
@@ -456,7 +456,7 @@ class ApplicationServiceImplTest {
         final List<Person> persons = List.of(batman, robin, alfred);
         final LocalDate date = LocalDate.of(2022, 8, 30);
 
-        when(applicationRepository.calculateTotalOvertimeReductionOfPersonsBefore(persons, date))
+        when(applicationRepository.calculateTotalOvertimeReductionOfPersonsBefore(persons, date, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED)))
             .thenReturn(List.of());
 
         final Map<Person, Duration> actual = sut.getTotalOvertimeReductionOfPersonsBefore(persons, date);
