@@ -119,9 +119,8 @@
                   Department
                 </label>
                 <select
-                  th:replace="fragments/select::multi(id='departmentSelect', name='department', options=~{::department-select-options}, class='tw-row-start-3')"
+                  th:replace="fragments/select::multi(id='departmentSelect', name='department', options=~{::department-select-options}, className='tw-row-start-3')"
                   id="departmentSelect"
-                  multiple
                 >
                   <th:block th:fragment="department-select-options">
                     <option
