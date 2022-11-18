@@ -176,7 +176,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
                     dayLengthByDate.put(date, dayLengthForWeekDay);
                 }
 
-                if (!workingTime.getValidFrom().isAfter(workingTimeDateRange.getStartDate())) {
+                if (workingTimeDateRange.getStartDate().equals(firstDayOfYear)) {
                     break;
                 }
 
