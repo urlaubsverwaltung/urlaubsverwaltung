@@ -21,6 +21,7 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.ExtendedSickNote;
@@ -42,6 +43,8 @@ import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 /**
@@ -137,7 +140,8 @@ public class OverviewViewController {
         model.addAttribute("canAccessAbsenceOverview", person.equals(signedInUser));
         model.addAttribute("canAccessCalendarShare", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS));
         model.addAttribute("canAddApplicationForLeaveForAnotherUser", signedInUser.hasRole(OFFICE));
-        model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(SICK_NOTE_ADD) && (signedInUser.hasRole(BOSS) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person)));
+        model.addAttribute("canViewSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person));
+        model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, person));
 
         return "thymeleaf/person/person-overview";
     }
@@ -213,5 +217,12 @@ public class OverviewViewController {
 
     private void prepareSettings(Model model) {
         model.addAttribute("settings", settingsService.getSettings());
+    }
+
+    private boolean isPersonAllowedToExecuteRoleOn(Person person, Role role, Person personToShowDetails) {
+        final boolean isBossOrDepartmentHeadOrSecondStageAuthority = person.hasRole(BOSS)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(person, personToShowDetails)
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(person, personToShowDetails);
+        return person.hasRole(role) && isBossOrDepartmentHeadOrSecondStageAuthority;
     }
 }

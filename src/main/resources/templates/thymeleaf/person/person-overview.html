@@ -57,7 +57,7 @@
         <div th:replace="thymeleaf/person/overview/section-absences::section"></div>
       </div>
 
-      <th:block th:if="${person.id == signedInUser.id || canAddSickNoteAnotherUser}">
+      <th:block th:if="${person.id == signedInUser.id || canViewSickNoteAnotherUser}">
         <div th:replace="thymeleaf/person/overview/section-sick-note::section"></div>
       </th:block>
     </main>

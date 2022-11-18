@@ -125,7 +125,11 @@ class SickNoteViewController {
 
         final boolean isSamePerson = sickNote.getPerson().equals(signedInUser);
 
-        if (isSamePerson || signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNote)) {
+        if (isSamePerson
+            || signedInUser.hasRole(OFFICE)
+            || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNote)
+            || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson())
+            || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNote.getPerson())) {
             model.addAttribute(SICK_NOTE, new ExtendedSickNote(sickNote, workDaysCountService));
             model.addAttribute("comment", new SickNoteCommentForm());
 

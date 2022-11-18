@@ -69,6 +69,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
+import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -331,6 +332,113 @@ class OverviewViewControllerTest {
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
             .andExpect(model().attribute("canAddSickNoteAnotherUser", true));
+    }
+
+    @Test
+    void ensureOverviewCanViewSickNoteForAnotherUserIfOffice() throws Exception {
+        final Person personWithRole = new Person();
+        personWithRole.setId(1);
+        personWithRole.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(personWithRole);
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+    }
+
+    @Test
+    void ensureOverviewCanViewSickNoteForAnotherUserIfBossAndSickNoteView() throws Exception {
+        final Person personWithRole = new Person();
+        personWithRole.setId(1);
+        personWithRole.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
+        when(personService.getSignedInUser()).thenReturn(personWithRole);
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+    }
+
+    @Test
+    void ensureOverviewCanNotViewSickNoteForAnotherUserIfBossAndSickNoteView() throws Exception {
+        final Person personWithRole = new Person();
+        personWithRole.setId(1);
+        personWithRole.setPermissions(List.of(USER, BOSS));
+        when(personService.getSignedInUser()).thenReturn(personWithRole);
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(new Person()));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canViewSickNoteAnotherUser", false));
+    }
+
+    @Test
+    void ensureOverviewCanViewSickNoteForAnotherUserIfDepartmentRoleAndSickNoteAddRoleAndDepartmentMember() throws Exception {
+        final Person departmentHead = new Person();
+        departmentHead.setId(1);
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_ADD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person person = new Person();
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+    }
+
+    @Test
+    void ensureOverviewCanViewSickNoteForAnotherUserIfDepartmentRoleAndDepartmentMember() throws Exception {
+        final Person departmentHead = new Person();
+        departmentHead.setId(1);
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person person = new Person();
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+    }
+
+
+    @Test
+    void ensureOverviewCanViewSickNoteForAnotherUserIfSAARoleAndSickNoteAddRoleDepartmentMember() throws Exception {
+        final Person ssa = new Person();
+        ssa.setId(1);
+        ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD));
+        when(personService.getSignedInUser()).thenReturn(ssa);
+
+        final Person person = new Person();
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
+    }
+
+    @Test
+    void ensureOverviewCanViewSickNoteForAnotherUserIfSAARoleAndDepartmentMember() throws Exception {
+        final Person ssa = new Person();
+        ssa.setId(1);
+        ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+        when(personService.getSignedInUser()).thenReturn(ssa);
+
+        final Person person = new Person();
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canViewSickNoteAnotherUser", true));
     }
 
     @Test
