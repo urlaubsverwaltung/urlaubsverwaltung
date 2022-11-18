@@ -8,6 +8,7 @@
     <span
       th:fragment="one(id, name, options)"
       class="tw-inline-block tw-relative tw-w-full"
+      th:classappend="${className}"
       th:with="autosubmit=${autosubmit ?: ''}, testId=${testId ?: ''}"
     >
       <select
@@ -44,6 +45,7 @@
     <span
       th:fragment="multi(id, name, options)"
       class="tw-inline-block tw-relative tw-w-full"
+      th:classappend="${className}"
       th:with="testId=${testId ?: ''}"
     >
       <select
