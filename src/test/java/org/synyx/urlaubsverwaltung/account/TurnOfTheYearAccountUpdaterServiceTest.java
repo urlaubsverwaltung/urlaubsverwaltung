@@ -98,11 +98,15 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService, times(2)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
-        assertThat(mails.get(0).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
-        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
-        assertThat(mails.get(0).getTemplateName()).isEqualTo("updated_accounts");
-        assertThat(mails.get(1).isSendToTechnicalMail()).isTrue();
-        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
-        assertThat(mails.get(1).getTemplateName()).isEqualTo("updated_accounts");
+        final Mail mail0 = mails.get(0);
+        assertThat(mail0.getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
+        assertThat(mail0.getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
+        assertThat(mail0.getTemplateName()).isEqualTo("updated_accounts");
+        assertThat(mail0.getTemplateModel()).containsEntry("totalRemainingVacationDays", BigDecimal.valueOf(30));
+        final Mail mail1 = mails.get(1);
+        assertThat(mail1.isSendToTechnicalMail()).isTrue();
+        assertThat(mail1.getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
+        assertThat(mail1.getTemplateName()).isEqualTo("updated_accounts");
+        assertThat(mail1.getTemplateModel()).containsEntry("totalRemainingVacationDays", BigDecimal.valueOf(30));
     }
 }

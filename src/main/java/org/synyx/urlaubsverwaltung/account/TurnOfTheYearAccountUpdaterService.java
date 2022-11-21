@@ -8,6 +8,7 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
@@ -86,6 +87,7 @@ public class TurnOfTheYearAccountUpdaterService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("accounts", updatedAccounts);
+        model.put("totalRemainingVacationDays", updatedAccounts.stream().map(Account::getRemainingVacationDays).reduce(BigDecimal::add).orElse(BigDecimal.ZERO));
         model.put("today", LocalDate.now(clock));
 
         final String subjectMessageKey = "subject.account.updatedRemainingDays";
