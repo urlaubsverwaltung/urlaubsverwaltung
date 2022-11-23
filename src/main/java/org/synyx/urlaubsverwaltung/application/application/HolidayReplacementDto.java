@@ -37,8 +37,8 @@ public class HolidayReplacementDto {
     @Override
     public String toString() {
         return "HolidayReplacementDto{" +
-            ", person=" + person +
-            ", departments='" + departments + '\'' +
+            "person=" + person +
+            ", departments=" + departments +
             '}';
     }
 }
