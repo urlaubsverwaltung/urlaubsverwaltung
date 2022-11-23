@@ -461,14 +461,16 @@ Die Urlaubsverwaltung verfügt über eine API, die unter [http://localhost:8080/
 
 ### Release
 
-Für ein Release wird das [maven-release-plugin](http://maven.apache.org/maven-release/maven-release-plugin/) verwendet. 
-Zum sorgenfreien Erstellen eines Release kann folgendes Skript verwendet werden.
+### GitHub action
 
-```bash
-export RELEASE_VERSION=0.10.0
-export NEW_VERSION=0.11.0-SNAPSHOT
-./release.sh
-git fetch
-```
+Go to the GitHub action with the name [release trigger][github-action-release-trigger].
+* Click on "Run workflow"
+* Add the "Milestone ID" (see in the uri of a milestone)
+* Add "Release version"
+* Add "Next version"
+* Run the workflow
+
 
 [Landingpage]: https://urlaubsverwaltung.cloud
+[github-action-release-trigger]: https://github.com/urlaubsverwaltung/urlaubsverwaltung/actions/workflows/release-trigger.yml "Release Trigger"
+
