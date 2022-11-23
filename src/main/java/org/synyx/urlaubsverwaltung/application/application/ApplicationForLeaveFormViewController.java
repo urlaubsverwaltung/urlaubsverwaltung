@@ -291,7 +291,7 @@ class ApplicationForLeaveFormViewController {
                 model.addAttribute("errors", errors);
             }
 
-            LOG.debug("new application ({}) has errors: {}", appForm, errors);
+            LOG.info("new application ({}) has errors: {}", appForm, errors);
             return "thymeleaf/application/application_form";
         }
 
@@ -303,7 +303,7 @@ class ApplicationForLeaveFormViewController {
         } else {
             savedApplicationForLeave = applicationInteractionService.directAllow(app, applier, ofNullable(appForm.getComment()));
         }
-        LOG.debug("new application has been saved {}", savedApplicationForLeave);
+        LOG.info("new application has been saved {}", savedApplicationForLeave);
 
         redirectAttributes.addFlashAttribute("applySuccess", true);
 
