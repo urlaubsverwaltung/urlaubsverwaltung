@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.time.Duration.ZERO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
@@ -74,7 +75,7 @@ class ApplicationServiceImplTest {
 
         verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
 
-        assertThat(totalHours).isEqualTo(Duration.ZERO);
+        assertThat(totalHours).isEqualTo(ZERO);
     }
 
     @Test
@@ -88,7 +89,7 @@ class ApplicationServiceImplTest {
 
         verify(applicationRepository).calculateTotalOvertimeReductionOfPersonBefore(person, date);
 
-        assertThat(totalHours).isEqualTo(Duration.ZERO);
+        assertThat(totalHours).isEqualTo(ZERO);
     }
 
     @Test
@@ -435,10 +436,11 @@ class ApplicationServiceImplTest {
 
         final Map<Person, Duration> actual = sut.getTotalOvertimeReductionOfPersonsBefore(persons, date);
 
-        assertThat(actual).containsKeys(batman, robin);
-        assertThat(actual.get(batman)).isEqualTo(Duration.ofHours(12));
-        assertThat(actual.get(robin)).isEqualTo(Duration.ofMinutes(90));
-        assertThat(actual.get(alfred)).isEqualTo(Duration.ofMinutes(0));
+        assertThat(actual)
+            .containsKeys(batman, robin)
+            .containsEntry(batman, Duration.ofHours(12))
+            .containsEntry(robin, Duration.ofMinutes(90))
+            .containsEntry(alfred, Duration.ofMinutes(0));
     }
 
     @Test
@@ -461,10 +463,11 @@ class ApplicationServiceImplTest {
 
         final Map<Person, Duration> actual = sut.getTotalOvertimeReductionOfPersonsBefore(persons, date);
 
-        assertThat(actual).containsKeys(batman, robin);
-        assertThat(actual.get(batman)).isEqualTo(Duration.ZERO);
-        assertThat(actual.get(robin)).isEqualTo(Duration.ZERO);
-        assertThat(actual.get(alfred)).isEqualTo(Duration.ZERO);
+        assertThat(actual)
+            .containsKeys(batman, robin)
+            .containsEntry(batman, ZERO)
+            .containsEntry(robin, ZERO)
+            .containsEntry(alfred, ZERO);
     }
 
     private static ApplicationOvertimeDurationSum applicationOvertimeDurationSum(Person person, Double durationDouble) {
