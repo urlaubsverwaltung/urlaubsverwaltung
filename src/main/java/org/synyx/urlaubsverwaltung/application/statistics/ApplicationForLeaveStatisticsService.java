@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -50,8 +51,8 @@ class ApplicationForLeaveStatisticsService {
      * Get {@link ApplicationForLeaveStatistics} the given person is allowed to see.
      * A person with {@link org.synyx.urlaubsverwaltung.person.Role} BOSS or OFFICE is allowed to see statistics of everyone for instance.
      *
-     * @param person   person to restrict the returned page content
-     * @param period   filter result set for a given period of time
+     * @param person              person to restrict the returned page content
+     * @param period              filter result set for a given period of time
      * @param pageableSearchQuery the page request
      * @return filtered page of {@link ApplicationForLeaveStatistics}
      */
@@ -62,13 +63,14 @@ class ApplicationForLeaveStatisticsService {
         final List<Integer> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).collect(toList());
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
 
-        Stream<ApplicationForLeaveStatistics> statisticsStream = applicationForLeaveStatisticsBuilder
-            .build(relevantPersonsPage.getContent(), period.getStartDate(), period.getEndDate(), activeVacationTypes)
-            .values()
-            .stream()
-            .peek(statistics -> statistics.setPersonBasedata(basedataByPersonId.getOrDefault(new PersonId(statistics.getPerson().getId()), null)))
-            .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()));
+        final Collection<ApplicationForLeaveStatistics> statisticsCollection = applicationForLeaveStatisticsBuilder
+            .build(relevantPersonsPage.getContent(), period.getStartDate(), period.getEndDate(), activeVacationTypes).values();
+        statisticsCollection.forEach(statistics -> {
+            final PersonId personId = new PersonId(statistics.getPerson().getId());
+            statistics.setPersonBasedata(basedataByPersonId.getOrDefault(personId, null));
+        });
 
+        Stream<ApplicationForLeaveStatistics> statisticsStream = statisticsCollection.stream();
         if (relevantPersonsPage.getPageable().isUnpaged()) {
             // we don't have to restrict the statistics if persons page is paged and or sorted already.
             // otherwise we have fetched ALL persons -> therefore skip and limit statistics content.
@@ -77,7 +79,9 @@ class ApplicationForLeaveStatisticsService {
                 .limit(pageable.getPageSize());
         }
 
-        final List<ApplicationForLeaveStatistics> content = statisticsStream.collect(toList());
+        final List<ApplicationForLeaveStatistics> content = statisticsStream
+            .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()))
+            .collect(toList());
 
         return new PageImpl<>(content, pageable, relevantPersonsPage.getTotalElements());
     }

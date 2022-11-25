@@ -121,8 +121,6 @@ class ApplicationForLeaveStatisticsServiceTest {
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person, vacationTypes);
-        applicationForLeaveStatistics.setPersonBasedata(personBasedata);
-
         when(applicationForLeaveStatisticsBuilder.build(List.of(person), startDate, endDate, vacationTypes)).thenReturn(Map.of(person, applicationForLeaveStatistics));
 
         final PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "person.firstName");
