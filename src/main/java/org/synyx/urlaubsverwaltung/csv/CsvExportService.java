@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.csv;
 
-import liquibase.util.csv.CSVWriter;
+
+import com.opencsv.CSVWriter;
 import net.fortuna.ical4j.validate.ValidationException;
 import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -10,9 +11,10 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
+import static com.opencsv.ICSVWriter.DEFAULT_LINE_END;
+import static com.opencsv.ICSVWriter.DEFAULT_QUOTE_CHARACTER;
+import static com.opencsv.ICSVWriter.NO_QUOTE_CHARACTER;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static liquibase.util.csv.CSVReader.DEFAULT_QUOTE_CHARACTER;
-import static liquibase.util.csv.opencsv.CSVWriter.NO_QUOTE_CHARACTER;
 
 public interface CsvExportService<T> {
 
@@ -77,7 +79,7 @@ public interface CsvExportService<T> {
             byteArrayOutputStream.write(bom());
 
             try (final OutputStreamWriter outputStreamWriter = new OutputStreamWriter(byteArrayOutputStream, UTF_8)) {
-                try (final CSVWriter csvWriter = new CSVWriter(outputStreamWriter, separator(), NO_QUOTE_CHARACTER, DEFAULT_QUOTE_CHARACTER)) {
+                try (final CSVWriter csvWriter = new CSVWriter(outputStreamWriter, separator(), NO_QUOTE_CHARACTER, DEFAULT_QUOTE_CHARACTER, DEFAULT_LINE_END)) {
                     write(period, data, csvWriter);
                 }
             }

@@ -123,6 +123,13 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- csv file export -->
+    <dependency>
+      <groupId>com.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+      <version>5.6</version>
+    </dependency>
+
     <!-- Shedlock -->
     <dependency>
       <groupId>net.javacrumbs.shedlock</groupId>
