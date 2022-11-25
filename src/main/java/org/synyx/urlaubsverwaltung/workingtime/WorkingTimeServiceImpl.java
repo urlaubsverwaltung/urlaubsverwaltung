@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -26,8 +25,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static java.lang.invoke.MethodHandles.lookup;
-import static java.math.BigDecimal.ONE;
-import static java.math.BigDecimal.ZERO;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.util.stream.Collectors.groupingBy;
