@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
-import liquibase.util.csv.CSVWriter;
+
+import com.opencsv.CSVWriter;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.csv.CsvExportService;

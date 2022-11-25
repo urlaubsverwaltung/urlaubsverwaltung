@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.csv;
 
-import liquibase.util.csv.CSVWriter;
+import com.opencsv.CSVWriter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Spy;
