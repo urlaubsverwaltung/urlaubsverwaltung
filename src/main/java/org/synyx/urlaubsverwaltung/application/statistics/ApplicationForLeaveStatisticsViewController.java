@@ -78,16 +78,15 @@ class ApplicationForLeaveStatisticsViewController {
 
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping
-    public String applicationForLeaveStatistics(@SortDefault.SortDefaults({
-                                                    @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)
-                                                })
-                                                Pageable pageable,
-                                                @RequestParam(value = "from", defaultValue = "") String from,
-                                                @RequestParam(value = "to", defaultValue = "") String to,
-                                                @RequestParam(value = "query", required = false, defaultValue = "") String query,
-                                                @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
-                                                Model model, Locale locale) {
-
+    public String applicationForLeaveStatistics(
+        @SortDefault.SortDefaults({@SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)})
+        Pageable pageable,
+        @RequestParam(value = "from", defaultValue = "") String from,
+        @RequestParam(value = "to", defaultValue = "") String to,
+        @RequestParam(value = "query", required = false, defaultValue = "") String query,
+        @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
+        Model model, Locale locale
+    ) {
         final FilterPeriod period = toFilterPeriod(from, to);
         final String pageLinkPrefix = buildPageLinkPrefix(pageable, Map.of("from", period.getStartDateIsoValue(), "to", period.getEndDateIsoValue()));
 
@@ -138,15 +137,14 @@ class ApplicationForLeaveStatisticsViewController {
 
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping(value = "/download")
-    public ResponseEntity<ByteArrayResource> downloadCSV(@SortDefault.SortDefaults({
-                                @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)
-                            })
-                            Pageable pageable,
-                            @RequestParam(value = "from", defaultValue = "") String from,
-                            @RequestParam(value = "to", defaultValue = "") String to,
-                            @RequestParam(value = "query", required = false, defaultValue = "") String query,
-                            HttpServletResponse response) throws IOException {
-
+    public ResponseEntity<ByteArrayResource> downloadCSV(
+        @SortDefault.SortDefaults({@SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)})
+        Pageable pageable,
+        @RequestParam(value = "from", defaultValue = "") String from,
+        @RequestParam(value = "to", defaultValue = "") String to,
+        @RequestParam(value = "query", required = false, defaultValue = "") String query,
+        HttpServletResponse response
+    ) {
         final FilterPeriod period = toFilterPeriod(from, to);
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageable, query);
 
