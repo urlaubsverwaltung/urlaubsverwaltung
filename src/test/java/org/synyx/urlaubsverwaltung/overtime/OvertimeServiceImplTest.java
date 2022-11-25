@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -488,8 +489,8 @@ class OvertimeServiceImplTest {
         overtimeThree.setEndDate(to.plusDays(4));
         overtimeThree.setDuration(Duration.ofHours(10));
 
-        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from.with(firstDayOfYear()), to.with(lastDayOfYear()))).thenReturn(List.of(overtimeOne, overtimeOneOne, overtimeTwo, overtimeThree));
-        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to)).thenReturn(List.of(overtimeOne,overtimeTwo));
+        when(overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, from.with(firstDayOfYear()), to.with(lastDayOfYear()))).thenReturn(List.of(overtimeOne, overtimeOneOne, overtimeTwo, overtimeThree));
+        when(overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, from, to)).thenReturn(List.of(overtimeOne,overtimeTwo));
 
         final List<Application> applications = List.of();
 
@@ -545,8 +546,8 @@ class OvertimeServiceImplTest {
         overtimeTwoTwo.setEndDate(to.plusDays(4));
         overtimeTwoTwo.setDuration(Duration.ofHours(10));
 
-        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from.with(firstDayOfYear()), to.with(lastDayOfYear()))).thenReturn(List.of(overtimeOne, overtimeOneOne, overtimeTwo, overtimeTwoTwo));
-        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to)).thenReturn(List.of(overtimeOne, overtimeTwo));
+        when(overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, from.with(firstDayOfYear()), to.with(lastDayOfYear()))).thenReturn(List.of(overtimeOne, overtimeOneOne, overtimeTwo, overtimeTwoTwo));
+        when(overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, from, to)).thenReturn(List.of(overtimeOne, overtimeTwo));
 
         final VacationTypeEntity overtimeVacationTypeEntity = new VacationTypeEntity();
         overtimeVacationTypeEntity.setId(1);
@@ -555,6 +556,7 @@ class OvertimeServiceImplTest {
         final Application personOvertimeReduction = new Application();
         personOvertimeReduction.setId(1);
         personOvertimeReduction.setPerson(person);
+        personOvertimeReduction.setStatus(ApplicationStatus.ALLOWED);
         personOvertimeReduction.setVacationType(overtimeVacationTypeEntity);
         personOvertimeReduction.setHours(Duration.ofMinutes(90));
         // overtime reduction should result in `overall`. NOT in `date range`.
@@ -570,7 +572,7 @@ class OvertimeServiceImplTest {
             .containsKey(person2);
 
         final LeftOvertime leftOvertime = actual.get(person);
-        assertThat(leftOvertime.getLeftOvertimeOverall()).isEqualTo(Duration.ofMinutes(30));
+        assertThat(leftOvertime.getLeftOvertimeOverall()).isEqualTo(Duration.ofHours(2));
         assertThat(leftOvertime.getLeftOvertimeDateRange()).isEqualTo(Duration.ofHours(1));
 
         final LeftOvertime leftOvertime2 = actual.get(person2);
@@ -588,8 +590,8 @@ class OvertimeServiceImplTest {
 
         final List<Person> persons = List.of(personWithoutOvertime);
 
-        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from.with(firstDayOfYear()), to.with(lastDayOfYear()))).thenReturn(List.of());
-        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to)).thenReturn(List.of());
+        when(overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, from.with(firstDayOfYear()), to.with(lastDayOfYear()))).thenReturn(List.of());
+        when(overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, from, to)).thenReturn(List.of());
 
         final List<Application> applications = List.of();
 

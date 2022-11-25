@@ -7,9 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -24,6 +26,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.ZERO;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.util.stream.Collectors.groupingBy;
@@ -138,6 +142,8 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
     public Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, Year year) {
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
 
+        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
+
         final Map<Person, List<WorkingTime>> workingTimesByPerson = workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)
             .stream()
             .map(entity -> toWorkingTime(entity, federalStateCachedSupplier))
@@ -167,11 +173,27 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
                 }
 
                 for (LocalDate date : workingTimeDateRange) {
-                    final DayLength dayLengthForWeekDay;
-                    if (publicHolidaysService.isPublicHoliday(date, federalState)) {
-                        dayLengthForWeekDay = DayLength.ZERO;
-                    } else {
-                        dayLengthForWeekDay = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
+                    DayLength dayLengthForWeekDay = workingTime.getDayLengthForWeekDay(date.getDayOfWeek());
+                    if (dayLengthForWeekDay.getDuration().signum() > 0) {
+                        final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState, workingTimeSettings);
+
+                        if (maybePublicHoliday.isPresent()) {
+                            final PublicHoliday publicHoliday = maybePublicHoliday.get();
+                            if (dayLengthForWeekDay.equals(DayLength.FULL)) {
+                                dayLengthForWeekDay = publicHoliday.getDayLength().getInverse();
+                            } else {
+                                if (dayLengthForWeekDay.equals(DayLength.MORNING)) {
+                                    if (publicHoliday.isFull() || publicHoliday.isMorning()) {
+                                        dayLengthForWeekDay = DayLength.ZERO;
+                                    }
+                                } else {
+                                    if (publicHoliday.isFull() || publicHoliday.isNoon()) {
+                                        dayLengthForWeekDay = DayLength.ZERO;
+                                    }
+                                }
+                            }
+                        }
+
                     }
                     dayLengthByDate.put(date, dayLengthForWeekDay);
                 }

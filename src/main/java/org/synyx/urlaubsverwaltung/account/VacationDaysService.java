@@ -241,7 +241,7 @@ public class VacationDaysService {
         // use vacation days considering full year
         final BigDecimal yearWorkDaysCountBeforeExpiry;
         final BigDecimal yearWorkDaysCountAfterExpiry;
-        if (applicationStartOrFirstDayOfYear.isBefore(lastDayBeforeExpiryDate)) {
+        if (applicationStartOrFirstDayOfYear.isBefore(holidayAccountExpiryDate)) {
             yearWorkDaysCountBeforeExpiry = workingTimeCalendar.workingTime(applicationStartOrFirstDayOfYear, min(application.getEndDate(), lastDayBeforeExpiryDate));
             yearWorkDaysCountAfterExpiry = workingTimeCalendar.workingTime(max(application.getStartDate(), holidayAccountExpiryDate), applicationEndOrLastDayOfYear);
         } else {

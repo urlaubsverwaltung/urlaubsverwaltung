@@ -34,6 +34,10 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.reducing;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.EDITED;
@@ -135,7 +139,8 @@ class OvertimeServiceImpl implements OvertimeService {
 
         final Map<Person, List<Application>> overtimeApplicationsByPerson = applications.stream()
             .filter(application -> application.getVacationType().getCategory().equals(OVERTIME))
-            // TODO check statuses
+            .filter(application -> List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED).contains(application.getStatus()))
+            .filter(application -> application.getStartDate().isAfter(start))
             .collect(groupingBy(Application::getPerson));
 
         final Map<Person, OvertimeReduction> reductionByPerson = getTotalOvertimeReduction(overtimeApplicationsByPerson, start, end);
@@ -187,19 +192,15 @@ class OvertimeServiceImpl implements OvertimeService {
 
     private Map<Person, Duration> overtimeDurationProRata(Collection<Person> persons, LocalDate start, LocalDate end) {
         final DateRange dateRange = new DateRange(start, end);
-        return overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, start, end)
+        return overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, start, end)
             .stream()
             .map(overtime -> {
                 final DateRange overtimeDateRange = new DateRange(overtime.getStartDate(), overtime.getEndDate());
-
                 final Duration durationOfOverlap = dateRange.overlap(overtimeDateRange).map(DateRange::duration).orElse(ZERO);
-
                 final BigDecimal secondsProRata = toFormattedDecimal(overtime.getDuration())
                     .divide(toFormattedDecimal(overtimeDateRange.duration()), HALF_EVEN)
                     .multiply(toFormattedDecimal(durationOfOverlap)).setScale(0, HALF_EVEN);
-
                 final Duration overtimeDurationProRata = secondsToDuration(secondsProRata);
-
                 return Map.entry(overtime.getPerson(), overtimeDurationProRata);
             })
             .collect(groupingBy(Map.Entry::getKey, reducing(ZERO, Map.Entry::getValue, Duration::plus)));

@@ -31,6 +31,8 @@ interface OvertimeRepository extends CrudRepository<Overtime, Integer> {
 
     List<Overtime> findByPersonAndStartDateBetweenOrderByStartDateDesc(Person person, LocalDate start, LocalDate end);
 
+    List<Overtime> findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(Collection<Person> person, LocalDate start, LocalDate end);
+
     List<Overtime> findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Person person, LocalDate start, LocalDate end);
 
     List<Overtime> findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(Collection<Person> persons, LocalDate start, LocalDate end);

@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
@@ -636,6 +637,8 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons))
             .thenReturn(List.of(workingTimeEntity, workingTimeEntity2));
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
         assertThat(actual)
             .hasSize(2)
@@ -662,21 +665,26 @@ class WorkingTimeServiceImplTest {
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
         workingTimeEntity.setValidFrom(LocalDate.of(2022, JANUARY, 1));
         workingTimeEntity.setPerson(person);
+        workingTimeEntity.setMonday(FULL);
+        workingTimeEntity.setTuesday(FULL);
+        workingTimeEntity.setWednesday(FULL);
+        workingTimeEntity.setThursday(FULL);
+        workingTimeEntity.setFriday(FULL);
+        workingTimeEntity.setSaturday(FULL);
+        workingTimeEntity.setSunday(FULL);
         workingTimeEntity.setFederalStateOverride(null);
 
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(workingTimeEntity));
 
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         workingTimeSettings.setFederalState(GERMANY_BERLIN);
-
         final Settings settings = new Settings();
         settings.setWorkingTimeSettings(workingTimeSettings);
-
         when(settingsService.getSettings()).thenReturn(settings);
 
         sut.getWorkingTimesByPersons(persons, Year.of(2022));
 
-        verify(publicHolidaysService, times(365)).isPublicHoliday(any(LocalDate.class), eq(GERMANY_BERLIN));
+        verify(publicHolidaysService, times(365)).getPublicHoliday(any(LocalDate.class), eq(GERMANY_BERLIN), eq(workingTimeSettings));
     }
 
     @Test
@@ -715,9 +723,15 @@ class WorkingTimeServiceImplTest {
 
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of(workingTimeEntity, workingTimeEntity2));
 
-        when(publicHolidaysService.isPublicHoliday(any(LocalDate.class), any(FederalState.class))).thenReturn(false);
-        when(publicHolidaysService.isPublicHoliday(LocalDate.of(2022, AUGUST, 5), GERMANY_BADEN_WUERTTEMBERG)).thenReturn(true);
-        when(publicHolidaysService.isPublicHoliday(LocalDate.of(2022, AUGUST, 10), GERMANY_BERLIN)).thenReturn(true);
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        when(publicHolidaysService.getPublicHoliday(any(LocalDate.class), any(FederalState.class), eq(workingTimeSettings))).thenReturn(Optional.empty());
+        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2022, AUGUST, 5), GERMANY_BADEN_WUERTTEMBERG, workingTimeSettings))
+            .thenReturn(Optional.of(new PublicHoliday(LocalDate.of(2022, AUGUST, 5), FULL, "")));
+        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2022, AUGUST, 10), GERMANY_BERLIN, workingTimeSettings))
+            .thenReturn(Optional.of(new PublicHoliday(LocalDate.of(2022, AUGUST, 10), FULL, "")));
 
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
         assertThat(actual)
@@ -777,6 +791,8 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons))
             .thenReturn(List.of(workingTimeEntity, workingTimeNextYear));
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, Year.of(2022));
         assertThat(actual)
             .hasSize(1)
@@ -824,6 +840,8 @@ class WorkingTimeServiceImplTest {
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(List.of(person)))
             .thenReturn(List.of(workingTimeLaterInYear, workingTimeEntity));
 
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
         final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(List.of(person), Year.of(2022));
         assertThat(actual)
             .hasSize(1)
@@ -854,6 +872,8 @@ class WorkingTimeServiceImplTest {
 
         final List<Person> persons = List.of(person);
         final DateRange dateRange = new DateRange(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31));
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons)).thenReturn(List.of());
 

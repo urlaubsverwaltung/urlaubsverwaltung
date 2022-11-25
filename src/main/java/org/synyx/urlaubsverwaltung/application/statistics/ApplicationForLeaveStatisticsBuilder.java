@@ -82,8 +82,7 @@ class ApplicationForLeaveStatisticsBuilder {
                     final HolidayAccountVacationDays holidayAccountVacationDays = holidayAccountVacationDaysByAccount.get(account);
 
                     final VacationDaysLeft vacationDaysLeftYear = holidayAccountVacationDays.getVacationDaysYear();
-                    final BigDecimal leftVacationDays = vacationDaysLeftYear.getLeftVacationDays(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate());
-                    statistics.setLeftVacationDaysForYear(leftVacationDays);
+                    statistics.setLeftVacationDaysForYear(vacationDaysLeftYear.getLeftVacationDays(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
                     statistics.setLeftRemainingVacationDaysForYear(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
 
                     final VacationDaysLeft vacationDaysLeftPeriod = holidayAccountVacationDays.getVacationDaysDateRange();
@@ -104,7 +103,6 @@ class ApplicationForLeaveStatisticsBuilder {
             }).collect(toMap(ApplicationForLeaveStatistics::getPerson, identity()));
 
         final Map<Person, List<Application>> applicationsByPerson = applications.stream().collect(groupingBy(Application::getPerson));
-
         for (Person person : persons) {
             final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(person);
             final List<Application> personApplications = applicationsByPerson.getOrDefault(person, List.of());
