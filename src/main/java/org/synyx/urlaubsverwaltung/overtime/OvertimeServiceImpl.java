@@ -229,11 +229,6 @@ class OvertimeServiceImpl implements OvertimeService {
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private static Duration hoursToDuration(BigDecimal hours) {
-        final long minutes = hours.multiply(BigDecimal.valueOf(60)).setScale(0, HALF_EVEN).longValue();
-        return Duration.ofMinutes(minutes);
-    }
-
     private static Duration secondsToDuration(BigDecimal seconds) {
         return Duration.ofSeconds(seconds.longValue());
     }
