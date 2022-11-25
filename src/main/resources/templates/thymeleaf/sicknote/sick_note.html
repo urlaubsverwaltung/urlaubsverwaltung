@@ -212,7 +212,7 @@
               <tr th:each="comment, loopStatus : ${comments}">
                 <td class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                   <img
-                    th:replace="fragments/avatar::avatar-bordered(url=${comment.person != null ? comment.person.gravatarURL + '?d=404&s=40' : null},niceName=${comment.person != null ? comment.person.niceName : null},width='40px',height='40px')"
+                    th:replace="fragments/avatar::avatar-bordered(url=${comment.person != null ? comment.person.gravatarURL + '?d=404&s=40' : null},niceName=${comment.person != null ? comment.person.niceName : null},width='40px',height='40px',personId=${comment.person != null ? comment.person.id : null})"
                     alt=""
                   />
                 </td>

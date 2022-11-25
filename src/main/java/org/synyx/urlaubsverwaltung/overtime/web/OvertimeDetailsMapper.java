@@ -28,7 +28,7 @@ class OvertimeDetailsMapper {
     }
 
     private static OvertimeCommentDto mapComment(OvertimeComment comment) {
-        final OvertimeCommentPersonDto personDto = new OvertimeCommentPersonDto(comment.getPerson().getNiceName(), comment.getPerson().getGravatarURL());
+        final OvertimeCommentPersonDto personDto = new OvertimeCommentPersonDto(comment.getPerson().getId(), comment.getPerson().getNiceName(), comment.getPerson().getGravatarURL());
         return new OvertimeCommentDto(personDto, comment.getAction().toString(), comment.getDate(), comment.getText());
     }
 }

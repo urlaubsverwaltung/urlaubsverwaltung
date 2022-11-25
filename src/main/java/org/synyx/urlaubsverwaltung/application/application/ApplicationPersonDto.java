@@ -5,9 +5,12 @@ public class ApplicationPersonDto {
     private final String name;
     private final String avatarUrl;
 
-    ApplicationPersonDto(String name, String avatarUrl) {
+    private final Integer id;
+
+    ApplicationPersonDto(String name, String avatarUrl, Integer id) {
         this.name = name;
         this.avatarUrl = avatarUrl;
+        this.id = id;
     }
 
     public String getName() {
@@ -16,5 +19,9 @@ public class ApplicationPersonDto {
 
     public String getAvatarUrl() {
         return avatarUrl;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }

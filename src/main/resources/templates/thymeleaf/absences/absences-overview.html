@@ -196,7 +196,7 @@
                 >
                   <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                     <img
-                      th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=32'},niceName=${person.firstName + ' ' + person.lastName},width='32',height='32')"
+                      th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=32'},niceName=${person.firstName + ' ' + person.lastName},width='32',height='32',personId=${person.id})"
                       alt=""
                     />
                   </div>

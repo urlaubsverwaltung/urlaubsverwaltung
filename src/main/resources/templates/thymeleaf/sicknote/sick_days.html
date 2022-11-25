@@ -299,7 +299,7 @@
             >
               <td class="is-centered print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                 <img
-                  th:replace="fragments/avatar::avatar-bordered(url=${sickDaysStatistic.personAvatarUrl + '?d=404&s=40'},niceName=${sickDaysStatistic.personNiceName},width='40px',height='40px')"
+                  th:replace="fragments/avatar::avatar-bordered(url=${sickDaysStatistic.personAvatarUrl + '?d=404&s=40'},niceName=${sickDaysStatistic.personNiceName},width='40px',height='40px',personId=${person.id})"
                   alt=""
                 />
               </td>
