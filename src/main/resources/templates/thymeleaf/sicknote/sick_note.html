@@ -170,96 +170,8 @@
           </tbody>
         </table>
       </div>
+
       <div>
-        <div
-          th:replace="fragments/section-heading::section-heading(~{::sicknote-progress-heading-body}, ~{::sicknote-progress-heading-actions})"
-        >
-          <th:block th:ref="sicknote-progress-heading-body">
-            <h2 th:text="#{sicknote.progress.title}">Verlauf</h2>
-          </th:block>
-          <th:block th:ref="sicknote-progress-heading-actions">
-            <th:block th:if="${canCommentSickNote}">
-              <button
-                class="icon-link tw-bg-transparent tw-px-1 tw-py-0"
-                onclick="document.getElementById('comment-form').classList.remove('tw-hidden');"
-                th:data-title="#{action.comment.new}"
-              >
-                <svg th:replace="icon/annotation::svg(className='tw-w-5 tw-h-5')"></svg>
-                <span class="tw-sr-only" th:text="#{action.comment.new}"></span>
-              </button>
-            </th:block>
-          </th:block>
-        </div>
-
-        <table class="list-table striped-table bordered-table tw-text-sm">
-          <tbody>
-            <tr th:each="comment, loopStatus : ${comments}">
-              <td class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
-                <img
-                  th:replace="fragments/avatar::avatar-bordered(url=${comment.person != null ? comment.person.gravatarURL + '?d=404&s=40' : null},niceName=${comment.person != null ? comment.person.niceName : null},width='40px',height='40px')"
-                  alt=""
-                />
-              </td>
-
-              <td th:if="${comment.person != null}" th:text="${comment.person.niceName}"></td>
-              <td th:if="${comment.person == null}" th:text="#{sicknote.progress.deleted-author}"></td>
-
-              <td>
-                <th:block th:if="${#strings.isEmpty(comment.text)}">
-                  <th:block th:text="#{'sicknote.progress.' + ${comment.action}}"></th:block>
-                  <th:block th:replace="fragments/date::date(${comment.date})"></th:block>
-                </th:block>
-                <th:block th:if="${not #strings.isEmpty(comment.text)}">
-                  <th:block th:text="#{'sicknote.progress.' + ${comment.action}}"></th:block>
-                  <th:block th:replace="fragments/date::date(${comment.date})"></th:block>
-
-                  <th:block th:if="${comment.action == 'COMMENTED'}"> : </th:block>
-                  <th:block th:if="${comment.action != 'COMMENTED'}">
-                    <th:block th:text="#{sicknote.progress.comment}"></th:block>
-                  </th:block>
-                  <br />
-                  <em th:text="${comment.text}"></em>
-                </th:block>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <form
-          id="comment-form"
-          th:if="${canCommentSickNote}"
-          method="post"
-          th:action="@{/web/sicknote/__${sickNote.id}__/comment}"
-          th:object="${comment}"
-          class="tw-hidden"
-        >
-          <div th:if="${#fields.hasGlobalErrors()}" class="feedback">
-            <div th:text="#{application.action.reason.error}" class="alert alert-danger"></div>
-          </div>
-
-          <small>
-            <span id="text-comment"></span>
-            <th:block th:text="#{action.comment.maxChars}"></th:block>
-          </small>
-          <textarea
-            th:field="*{text}"
-            class="form-control"
-            th:errorclass="error"
-            rows="2"
-            onkeyup="count(this.value, 'text-comment');"
-            onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
-          ></textarea>
-          <div class="tw-flex tw-justify-between tw-mt-2 tw-mb-6">
-            <button th:text="#{action.save}" class="button-main-green" type="submit"></button>
-            <button
-              th:text="#{action.cancel}"
-              class="button"
-              type="button"
-              onclick="document.getElementById('comment-form').classList.add('tw-hidden');"
-            ></button>
-          </div>
-        </form>
-
         <div class="print:tw-hidden">
           <div th:replace="fragments/section-heading::section-heading(~{::sicknote-data-person-heading-body}, ~{})">
             <th:block th:ref="sicknote-data-person-heading-body">
@@ -269,6 +181,97 @@
           <div
             th:replace="thymeleaf/person/box::person-box-with-departments(person=${sickNote.person}, departments=${departmentsOfPerson})"
           ></div>
+        </div>
+
+        <div class="tw-mt-8">
+          <div
+            th:replace="fragments/section-heading::section-heading(~{::sicknote-progress-heading-body}, ~{::sicknote-progress-heading-actions})"
+          >
+            <th:block th:ref="sicknote-progress-heading-body">
+              <h2 th:text="#{sicknote.progress.title}">Verlauf</h2>
+            </th:block>
+            <th:block th:ref="sicknote-progress-heading-actions">
+              <th:block th:if="${canCommentSickNote}">
+                <button
+                  class="icon-link tw-bg-transparent tw-px-1 tw-py-0"
+                  onclick="document.getElementById('comment-form').classList.remove('tw-hidden');"
+                  th:data-title="#{action.comment.new}"
+                >
+                  <svg th:replace="icon/annotation::svg(className='tw-w-5 tw-h-5')"></svg>
+                  <span class="tw-sr-only" th:text="#{action.comment.new}"></span>
+                </button>
+              </th:block>
+            </th:block>
+          </div>
+
+          <table class="list-table striped-table bordered-table tw-text-sm">
+            <tbody>
+              <tr th:each="comment, loopStatus : ${comments}">
+                <td class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
+                  <img
+                    th:replace="fragments/avatar::avatar-bordered(url=${comment.person != null ? comment.person.gravatarURL + '?d=404&s=40' : null},niceName=${comment.person != null ? comment.person.niceName : null},width='40px',height='40px')"
+                    alt=""
+                  />
+                </td>
+
+                <td th:if="${comment.person != null}" th:text="${comment.person.niceName}"></td>
+                <td th:if="${comment.person == null}" th:text="#{sicknote.progress.deleted-author}"></td>
+
+                <td>
+                  <th:block th:if="${#strings.isEmpty(comment.text)}">
+                    <th:block th:text="#{'sicknote.progress.' + ${comment.action}}"></th:block>
+                    <th:block th:replace="fragments/date::date(${comment.date})"></th:block>
+                  </th:block>
+                  <th:block th:if="${not #strings.isEmpty(comment.text)}">
+                    <th:block th:text="#{'sicknote.progress.' + ${comment.action}}"></th:block>
+                    <th:block th:replace="fragments/date::date(${comment.date})"></th:block>
+
+                    <th:block th:if="${comment.action == 'COMMENTED'}"> : </th:block>
+                    <th:block th:if="${comment.action != 'COMMENTED'}">
+                      <th:block th:text="#{sicknote.progress.comment}"></th:block>
+                    </th:block>
+                    <br />
+                    <em th:text="${comment.text}"></em>
+                  </th:block>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <form
+            id="comment-form"
+            th:if="${canCommentSickNote}"
+            method="post"
+            th:action="@{/web/sicknote/__${sickNote.id}__/comment}"
+            th:object="${comment}"
+            class="tw-hidden"
+          >
+            <div th:if="${#fields.hasGlobalErrors()}" class="feedback">
+              <div th:text="#{application.action.reason.error}" class="alert alert-danger"></div>
+            </div>
+
+            <small>
+              <span id="text-comment"></span>
+              <th:block th:text="#{action.comment.maxChars}"></th:block>
+            </small>
+            <textarea
+              th:field="*{text}"
+              class="form-control"
+              th:errorclass="error"
+              rows="2"
+              onkeyup="count(this.value, 'text-comment');"
+              onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
+            ></textarea>
+            <div class="tw-flex tw-justify-between tw-mt-2 tw-mb-6">
+              <button th:text="#{action.save}" class="button-main-green" type="submit"></button>
+              <button
+                th:text="#{action.cancel}"
+                class="button"
+                type="button"
+                onclick="document.getElementById('comment-form').classList.add('tw-hidden');"
+              ></button>
+            </div>
+          </form>
         </div>
       </div>
     </main>
