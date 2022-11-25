@@ -24,6 +24,7 @@
     <opentelemetry-agent.version>1.14.0</opentelemetry-agent.version>
     <docker.name>synyx/urlaubsverwaltung</docker.name>
     <shedlock.version>4.42.0</shedlock.version>
+    <opencsv.version>5.6</opencsv.version>
     <packaging.layout>jar</packaging.layout>
   </properties>
 
@@ -33,6 +34,16 @@
     <connection>scm:git:git@github.com:urlaubsverwaltung/urlaubsverwaltung.git</connection>
     <tag>HEAD</tag>
   </scm>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.opencsv</groupId>
+        <artifactId>opencsv</artifactId>
+        <version>${opencsv.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
 
@@ -127,7 +138,6 @@
     <dependency>
       <groupId>com.opencsv</groupId>
       <artifactId>opencsv</artifactId>
-      <version>5.6</version>
     </dependency>
 
     <!-- Shedlock -->
