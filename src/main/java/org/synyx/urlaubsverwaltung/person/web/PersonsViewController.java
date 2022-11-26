@@ -148,12 +148,10 @@ public class PersonsViewController {
         final String pageLinkPrefix = buildPageLinkPrefix(personPage.getPageable(), paginationLinkParameters);
         final PaginationDto<PersonDto> personsPagination = new PaginationDto<>(personDtoPage, pageLinkPrefix);
         model.addAttribute("personsPagination", personsPagination);
+        model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().collect(toList()));
 
         final HtmlSelectDto htmlSelectDto = htmlSelectDto(personSort, accountSort);
         model.addAttribute("sortSelect", htmlSelectDto);
-
-        final List<Integer> pageNumbers = IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().collect(toList());
-        model.addAttribute("personPageNumbers", pageNumbers);
 
         model.addAttribute("showPersonnelNumberColumn", showPersonnelNumberColumn);
         model.addAttribute("now", now);
