@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
     <title th:text="#{applications.header.title}"></title>
     <th:block th:fragment="scripts">
       <script defer asset:src="app_list.js"></script>
     </th:block>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
       <h1 class="tw-sr-only" th:text="#{applications.title}"></h1>
 
@@ -23,7 +23,7 @@
       </div>
 
       <div
-        th:replace="fragments/section-heading::section-heading-paddingless(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})"
+        th:replace="~{fragments/section-heading::section-heading-paddingless(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})}"
       >
         <th:block th:ref="user-applications-heading-actions">
           <a
@@ -33,7 +33,7 @@
             th:data-title="#{action.apply.vacation}"
             th:if="${canAddApplicationForAnotherUser}"
           >
-            <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
+            <svg th:replace="~{icon/plus-circle::svg(className='tw-w-5 tw-h-5')}"></svg>
             <span class="tw-sr-only" th:text="#{action.apply.vacation}"></span>
           </a>
           <a
@@ -42,7 +42,7 @@
             class="icon-link tw-px-1"
             th:data-title="#{action.applications.absences_overview}"
           >
-            <svg th:replace="icon/calendar::svg(className='tw-w-5 tw-h-5')"></svg>
+            <svg th:replace="~{icon/calendar::svg(className='tw-w-5 tw-h-5')}"></svg>
             <span class="tw-sr-only" th:text="#{action.applications.absences_overview}"></span>
           </a>
           <a
@@ -52,7 +52,7 @@
             th:data-title="#{action.applications.statistics}"
             th:if="${canAccessApplicationStatistics}"
           >
-            <svg th:replace="icon/presentation-chart-bar::svg(className='tw-w-5 tw-h-5')"></svg>
+            <svg th:replace="~{icon/presentation-chart-bar::svg(className='tw-w-5 tw-h-5')}"></svg>
             <span class="tw-sr-only" th:text="#{action.applications.statistics}"></span>
           </a>
           <button th:replace="fragments/print::button"></button>
@@ -115,7 +115,7 @@
             <div class="tw-flex tw-space-x-5 lg:tw-space-x-6">
               <span class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                 <img
-                  th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=404&s=104'},niceName=${signedInUser.niceName},width='52px',height='52px')"
+                  th:replace="~{fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=404&s=104'},niceName=${signedInUser.niceName},width='52px',height='52px')}"
                   alt=""
                 />
               </span>
@@ -164,7 +164,7 @@
                   th:href="@{/web/application/{applicationId}/edit (applicationId=${userRequestForLeave.id})}"
                   th:if="${userRequestForLeave.editAllowed}"
                 >
-                  <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
+                  <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')}"></svg>
                   <span class="sr-only xs:tw-not-sr-only">
                     <th:block th:text="#{action.edit}"></th:block>
                   </span>
@@ -174,7 +174,7 @@
                   th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='allow', shortcut=true)}"
                   th:if="${userRequestForLeave.approveAllowed}"
                 >
-                  <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
+                  <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')}"></svg>
                   <span class="sr-only xs:tw-not-sr-only">
                     <th:block
                       th:text="${userRequestForLeave.temporaryApproveAllowed ? #messages.msg('action.temporary_allow') : #messages.msg('action.allow')}"
@@ -186,7 +186,7 @@
                   th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='reject', shortcut=true)}"
                   th:if="${userRequestForLeave.rejectAllowed}"
                 >
-                  <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
+                  <svg th:replace="~{icon/ban::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')}"></svg>
                   <span class="sr-only xs:tw-not-sr-only">
                     <th:block th:text="#{action.reject}"></th:block>
                   </span>
@@ -196,7 +196,7 @@
                   th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id}, action='cancel', shortcut=true)}"
                   th:if="${userRequestForLeave.cancelAllowed}"
                 >
-                  <svg th:replace="icon/trash::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
+                  <svg th:replace="~{icon/trash::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')}"></svg>
                   <span class="sr-only xs:tw-not-sr-only">
                     <th:block th:text="#{action.delete}"></th:block>
                   </span>
@@ -224,7 +224,7 @@
             <div class="tw-flex tw-space-x-5 md:tw-space-x-6">
               <span class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                 <img
-                  th:replace="fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=404&s=104'},niceName=${signedInUser.niceName},width='52px',height='52px')"
+                  th:replace="~{fragments/avatar::avatar-bordered(url=${signedInUser.gravatarURL + '?d=404&s=104'},niceName=${signedInUser.niceName},width='52px',height='52px')}"
                   alt=""
                 />
               </span>
@@ -244,7 +244,7 @@
               <div class="tw-flex tw-flex-row-reverse tw-gap-4">
                 <div class="tw-self-center print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                   <img
-                    th:replace="fragments/avatar::avatar-bordered(url=${replacementInfo.person.avatarUrl + '?d=404&s=104'},niceName=${replacementInfo.person.name},width='52px',height='52px')"
+                    th:replace="~{fragments/avatar::avatar-bordered(url=${replacementInfo.person.avatarUrl + '?d=404&s=104'},niceName=${replacementInfo.person.name},width='52px',height='52px')}"
                     alt=""
                   />
                 </div>
@@ -284,7 +284,7 @@
       </div>
 
       <div
-        th:replace="fragments/section-heading::section-heading(~{::other-applications-heading-body}, ~{::other-applications-heading-actions})"
+        th:replace="~{fragments/section-heading::section-heading(~{::other-applications-heading-body}, ~{::other-applications-heading-actions})}"
       >
         <th:block th:ref="other-applications-heading-body">
           <h2 class="tw-text-xl tw-font-medium" th:text="#{applications.other.waiting}"></h2>
@@ -306,7 +306,7 @@
                 class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800"
               >
                 <img
-                  th:replace="fragments/avatar::avatar-bordered(url=${otherRequestForLeave.person.avatarUrl + '?d=404&s=104'},niceName=${otherRequestForLeave.person.name},width='52px',height='52px')"
+                  th:replace="~{fragments/avatar::avatar-bordered(url=${otherRequestForLeave.person.avatarUrl + '?d=404&s=104'},niceName=${otherRequestForLeave.person.name},width='52px',height='52px')}"
                   alt=""
                 />
               </span>
@@ -349,7 +349,7 @@
                     href="#"
                     th:href="@{/web/application/{applicationId}/edit (applicationId=${otherRequestForLeave.id})}"
                   >
-                    <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')"></svg>
+                    <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"></svg>
                     <span class="tw-sr-only xs:tw-not-sr-only">
                       <th:block th:text="#{action.edit}" />
                     </span>
@@ -360,7 +360,7 @@
                     href="#"
                     th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='allow', shortcut=true)}"
                   >
-                    <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')"></svg>
+                    <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"></svg>
                     <span class="tw-sr-only xs:tw-not-sr-only">
                       <th:block
                         th:text="${otherRequestForLeave.temporaryApproveAllowed ? #messages.msg('action.temporary_allow') : #messages.msg('action.allow')}"
@@ -373,7 +373,7 @@
                     href="#"
                     th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='reject', shortcut=true)}"
                   >
-                    <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')"></svg>
+                    <svg th:replace="~{icon/ban::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')}"></svg>
                     <span class="tw-sr-only xs:tw-not-sr-only">
                       <th:block th:text="#{action.reject}" />
                     </span>
@@ -383,7 +383,9 @@
                     th:href="@{/web/application/{applicationId} (applicationId=${otherRequestForLeave.id}, action='cancel', shortcut=true)}"
                     th:if="${otherRequestForLeave.cancelAllowed}"
                   >
-                    <svg th:replace="icon/trash::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')"></svg>
+                    <svg
+                      th:replace="~{icon/trash::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 xs:tw-mr-1')}"
+                    ></svg>
                     <span class="sr-only xs:tw-not-sr-only">
                       <th:block th:text="#{action.delete}"></th:block>
                     </span>
@@ -397,7 +399,7 @@
 
       <th:block th:if="${applications_cancellation_request != null}">
         <div
-          th:replace="fragments/section-heading::section-heading(~{::cancellation-requests-heading-body}, ~{::cancellation-requests-heading-actions})"
+          th:replace="~{fragments/section-heading::section-heading(~{::cancellation-requests-heading-body}, ~{::cancellation-requests-heading-actions})}"
         >
           <th:block th:ref="cancellation-requests-heading-body">
             <h2
@@ -426,7 +428,7 @@
                   class="tw-absolute tw-left-0 tw-top-0 md:tw-static print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800"
                 >
                   <img
-                    th:replace="fragments/avatar::avatar-bordered(url=${cancellationRequest.person.avatarUrl + '?d=404&s=104'},niceName=${cancellationRequest.person.name},width='52px',height='52px')"
+                    th:replace="~{fragments/avatar::avatar-bordered(url=${cancellationRequest.person.avatarUrl + '?d=404&s=104'},niceName=${cancellationRequest.person.name},width='52px',height='52px')}"
                     alt=""
                   />
                 </span>
@@ -472,7 +474,7 @@
                       href="#"
                       th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='cancel', shortcut=true)}"
                     >
-                      <svg th:replace="icon/trash::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')" />
+                      <svg th:replace="~{icon/trash::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')}" />
                       <span class="tw-sr-only xs:tw-not-sr-only">
                         <th:block th:text="#{action.delete}" />
                       </span>
@@ -482,7 +484,7 @@
                       href="#"
                       th:href="@{/web/application/{applicationId} (applicationId=${cancellationRequest.id}, action='decline-cancellation-request', shortcut=true)}"
                     >
-                      <svg th:replace="icon/ban::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')" />
+                      <svg th:replace="~{icon/ban::svg(className='tw-w-5 tw-h-5 lg:tw-w-4 lg:tw-h-4 tw-mr-1')}" />
                       <span class="tw-sr-only xs:tw-not-sr-only">
                         <th:block th:text="#{action.cancellationRequest}" />
                       </span>

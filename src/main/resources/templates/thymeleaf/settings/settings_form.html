@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
     <title th:text="#{settings.header.title}"></title>
     <th:block th:ref="scripts">
       <script defer asset:src="settings_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="_layout::body(~{::content}, ~{})">
+  <body th:replace="~{_layout::body(~{::content}, ~{})}">
     <th:block th:ref="content">
       <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
         <h1 th:text="#{settings.header.title}" class="tw-sr-only"></h1>

@@ -6,7 +6,7 @@
   <body>
     <th:block th:fragment="section">
       <div
-        th:replace="fragments/section-heading::section-heading(~{::reminder-upcoming-application-heading-body}, ~{})"
+        th:replace="~{fragments/section-heading::section-heading(~{::reminder-upcoming-application-heading-body}, ~{})}"
       >
         <th:block th:fragment="reminder-upcoming-application-heading-body">
           <h2 th:text="#{settings.vacation.remindForUpcomingApplications.title}"></h2>
@@ -16,7 +16,7 @@
       <div class="row">
         <aside class="col-md-4 col-md-push-8">
           <p class="help-block tw-text-sm">
-            <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+            <svg th:replace="~{icon/information-circle::svg(className='tw-w-4 tw-h-4')}"></svg>
             <th:block th:text="#{settings.vacation.remindForUpcomingApplications.description}" />
           </p>
         </aside>
