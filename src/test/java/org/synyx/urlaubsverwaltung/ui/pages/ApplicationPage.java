@@ -18,6 +18,9 @@ public class ApplicationPage implements Page {
     private static final By FROM_INPUT_SELECTOR = By.id("from");
     private static final By SUBMIT_SELECTOR = By.cssSelector("button#apply-application");
     private static final By VACATION_TYPE_SELECT_SELECTOR = By.cssSelector("[data-test-id=vacation-type-select]");
+    private static final By DAY_LENGTH_FULL_SELECTOR = By.cssSelector("[data-test-id=day-length-full]");
+    private static final By DAY_LENGTH_MORNING_SELECTOR = By.cssSelector("[data-test-id=day-length-morning]");
+    private static final By DAY_LENGTH_NOON_SELECTOR = By.cssSelector("[data-test-id=day-length-noon]");
 
     private final WebDriver driver;
 
@@ -65,9 +68,21 @@ public class ApplicationPage implements Page {
     }
 
     /**
+     * DayLength can be enabled/disabled in the settings. This method checks if the input elements are available in the application page.
+     *
+     * @return {@code true} when inputs are visible, {@code false} otherwise.
+     */
+    public boolean showsDayLengthInputs() {
+        final List<WebElement> fullDay = driver.findElements(DAY_LENGTH_FULL_SELECTOR);
+        final List<WebElement> morning = driver.findElements(DAY_LENGTH_MORNING_SELECTOR);
+        final List<WebElement> noon = driver.findElements(DAY_LENGTH_NOON_SELECTOR);
+        return !fullDay.isEmpty() || !morning.isEmpty() || !noon.isEmpty();
+    }
+
+    /**
      * Checks if the given person is visible at the given position of added replacements.
      *
-     * @param person person that should be visible
+     * @param person   person that should be visible
      * @param position the position to check against. starts with 1.
      * @return <code>true</code> if the person is visible at the given position, <code>false</code> otherwise.
      */
@@ -78,9 +93,9 @@ public class ApplicationPage implements Page {
     /**
      * Checks if the given person is visible at the given position of added replacements and if it has the given comment.
      *
-     * @param person person that should be visible
+     * @param person   person that should be visible
      * @param position the position to check against. starts with 1.
-     * @param comment the comment for the replacement
+     * @param comment  the comment for the replacement
      * @return <code>true</code> if the person is visible at the given position, <code>false</code> otherwise.
      */
     public boolean showsAddedReplacementAtPosition(Person person, int position, String comment) {

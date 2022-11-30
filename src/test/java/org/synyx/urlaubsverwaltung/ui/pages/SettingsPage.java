@@ -9,6 +9,7 @@ public class SettingsPage implements Page {
     private static final By WORKING_TIME_TAB_SELECTOR = By.cssSelector("[data-test-id=settings-tab-working-time]");
     private static final By OVERTIME_ENABLED_SELECTOR = By.cssSelector("[data-test-id=setting-overtime-enabled]");
     private static final By SAVE_BUTTON_SELECTOR = By.cssSelector("[data-test-id=settings-save-button]");
+    private static final By HALF_DAY_DISABLE_SELECTOR = By.cssSelector("[data-test-id=vacation-half-day-disable]");
 
     private final WebDriver driver;
 
@@ -39,5 +40,9 @@ public class SettingsPage implements Page {
      */
     public void saveSettings() {
         driver.findElement(SAVE_BUTTON_SELECTOR).click();
+    }
+
+    public void clickDisableHalfDayAbsence() {
+        driver.findElement(HALF_DAY_DISABLE_SELECTOR).click();
     }
 }

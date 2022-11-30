@@ -255,7 +255,7 @@
                 <div class="form-group is-required">
                   <label th:text="|#{absence.period}:|" class="control-label col-md-3"> </label>
                   <div class="col-md-9 radio">
-                    <label class="thirds">
+                    <label class="thirds" data-test-id="day-length-full">
                       <input
                         type="radio"
                         id="fullDay"
@@ -266,11 +266,11 @@
                       />
                       <th:block th:text="#{FULL}" />
                     </label>
-                    <label class="thirds">
+                    <label class="thirds" data-test-id="day-length-morning">
                       <input type="radio" id="morning" class="dayLength-half" name="dayLength" value="MORNING" />
                       <th:block th:text="#{MORNING}" />
                     </label>
-                    <label class="thirds">
+                    <label class="thirds" data-test-id="day-length-noon">
                       <input type="radio" id="noon" class="dayLength-half" name="dayLength" value="NOON" />
                       <th:block th:text="#{NOON}" />
                     </label>
