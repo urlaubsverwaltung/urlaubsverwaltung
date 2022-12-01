@@ -468,6 +468,7 @@
             <exclude>mvnw.cmd</exclude>
             <exclude>src/main/resources/static/lib/**</exclude>
             <exclude>src/main/resources/static/fonts/**</exclude>
+            <exclude>.examples/docker-compose/with-keycloak/keycloak/import/**</exclude>
           </excludes>
         </configuration>
       </plugin>
