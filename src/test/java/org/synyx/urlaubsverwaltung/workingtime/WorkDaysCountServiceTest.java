@@ -56,16 +56,6 @@ class WorkDaysCountServiceTest {
     }
 
     @Test
-    void getWeekDays() {
-
-        final LocalDate startDate = LocalDate.of(2011, 11, 16);
-        final LocalDate endDate = LocalDate.of(2011, 11, 28);
-
-        final double weekDaysCount = sut.getWeekDaysCount(startDate, endDate);
-        assertThat(weekDaysCount).isEqualTo(9.0);
-    }
-
-    @Test
     void getWorkDaysWithPublicHolidaysAndBothOnWeekend() {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
