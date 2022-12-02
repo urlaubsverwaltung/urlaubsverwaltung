@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -54,15 +55,18 @@ class PublicHolidayApiControllerTest {
     @Test
     void getPublicHolidays() throws Exception {
 
-        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = anyWorkingTimeSettings();
+
+        final Settings settings = settingsWithWorkingTimeSettings(workingTimeSettings);
         settings.getWorkingTimeSettings().setFederalState(GERMANY_BADEN_WUERTTEMBERG);
+
         when(settingsService.getSettings()).thenReturn(settings);
 
         final LocalDate from = LocalDate.of(2016, 5, 19);
         final LocalDate to = LocalDate.of(2016, 5, 20);
         final PublicHoliday fromHoliday = new PublicHoliday(from, MORNING, "");
         final PublicHoliday toHoliday = new PublicHoliday(to, NOON, "");
-        when(publicHolidaysService.getPublicHolidays(from, to, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(fromHoliday, toHoliday));
+        when(publicHolidaysService.getPublicHolidays(from, to, GERMANY_BADEN_WUERTTEMBERG, workingTimeSettings)).thenReturn(List.of(fromHoliday, toHoliday));
 
         perform(get("/api/public-holidays")
             .param("from", "2016-05-19")
@@ -121,7 +125,12 @@ class PublicHolidayApiControllerTest {
     void personsPublicHolidays() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final WorkingTimeSettings workingTimeSettings = anyWorkingTimeSettings();
+        when(settingsService.getSettings()).thenReturn(settingsWithWorkingTimeSettings(workingTimeSettings));
 
         final LocalDate from = LocalDate.of(2016, 5, 19);
         final LocalDate to = LocalDate.of(2016, 5, 20);
@@ -131,8 +140,8 @@ class PublicHolidayApiControllerTest {
                 new DateRange(from, from), GERMANY_BADEN_WUERTTEMBERG,
                 new DateRange(to, to), GERMANY_BADEN_WUERTTEMBERG
             ));
-        when(publicHolidaysService.getPublicHolidays(from, from, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(from, MORNING, "")));
-        when(publicHolidaysService.getPublicHolidays(to, to, GERMANY_BADEN_WUERTTEMBERG)).thenReturn(List.of(new PublicHoliday(to, NOON, "")));
+        when(publicHolidaysService.getPublicHolidays(from, from, GERMANY_BADEN_WUERTTEMBERG, workingTimeSettings)).thenReturn(List.of(new PublicHoliday(from, MORNING, "")));
+        when(publicHolidaysService.getPublicHolidays(to, to, GERMANY_BADEN_WUERTTEMBERG, workingTimeSettings)).thenReturn(List.of(new PublicHoliday(to, NOON, "")));
 
         perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-05-19")
@@ -195,6 +204,17 @@ class PublicHolidayApiControllerTest {
         perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01"))
             .andExpect(status().isBadRequest());
+    }
+
+    private static WorkingTimeSettings anyWorkingTimeSettings() {
+        return new WorkingTimeSettings();
+    }
+
+    private static Settings settingsWithWorkingTimeSettings(WorkingTimeSettings workingTimeSettings) {
+        final Settings settings = new Settings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+
+        return settings;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

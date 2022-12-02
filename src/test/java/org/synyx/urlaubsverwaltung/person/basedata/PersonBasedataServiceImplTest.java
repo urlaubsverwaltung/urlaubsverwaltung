@@ -69,17 +69,31 @@ class PersonBasedataServiceImplTest {
         final PersonBasedataEntity personBasedataEntity = new PersonBasedataEntity();
         personBasedataEntity.setPersonId(1);
         personBasedataEntity.setPersonnelNumber("1337");
+        personBasedataEntity.setAdditionalInformation("Some additional Information");
 
         final PersonBasedataEntity personBasedataEntity2 = new PersonBasedataEntity();
         personBasedataEntity2.setPersonId(2);
         personBasedataEntity2.setPersonnelNumber("1887");
 
-        when(personBasedataRepository.findAllByPersonIdIn(List.of(1,2))).thenReturn(List.of(personBasedataEntity, personBasedataEntity2));
+        when(personBasedataRepository.findAllByPersonIdIsIn(List.of(1,2))).thenReturn(List.of(personBasedataEntity, personBasedataEntity2));
 
-        final Map<PersonId, PersonBasedata> basedataByPersonIds = sut.getBasedataByPersonId(List.of(1,2));
-        assertThat(basedataByPersonIds).containsKeys(new PersonId(1), new PersonId(2));
-        assertThat(basedataByPersonIds.get(new PersonId(1)).getPersonnelNumber()).isEqualTo("1337");
-        assertThat(basedataByPersonIds.get(new PersonId(2)).getPersonnelNumber()).isEqualTo("1887");
+        final Map<PersonId, PersonBasedata> actual = sut.getBasedataByPersonId(List.of(1, 2));
+
+        assertThat(actual)
+            .hasSize(2)
+            .containsKeys(new PersonId(1), new PersonId(2));
+
+        assertThat(actual.get(new PersonId(1))).satisfies(basedata -> {
+            assertThat(basedata.getPersonId()).isEqualTo(new PersonId(1));
+            assertThat(basedata.getPersonnelNumber()).isEqualTo("1337");
+            assertThat(basedata.getAdditionalInformation()).isEqualTo("Some additional Information");
+        });
+
+        assertThat(actual.get(new PersonId(2))).satisfies(basedata -> {
+            assertThat(basedata.getPersonId()).isEqualTo(new PersonId(2));
+            assertThat(basedata.getPersonnelNumber()).isEqualTo("1887");
+            assertThat(basedata.getAdditionalInformation()).isNull();
+        });
     }
 
     @Test
@@ -88,5 +102,14 @@ class PersonBasedataServiceImplTest {
         sut.delete(new PersonDeletedEvent(person));
 
         verify(personBasedataRepository).deleteByPerson(person);
+    }
+
+    @Test
+    void ensureGetBasedataForPersonIdsDoesNotIncludeEntriesWhenThereIsNoBasedata() {
+
+        when(personBasedataRepository.findAllByPersonIdIsIn(List.of(1, 2))).thenReturn(List.of());
+
+        final Map<PersonId, PersonBasedata> actual = sut.getBasedataByPersonId(List.of(1, 2));
+        assertThat(actual).isEmpty();
     }
 }

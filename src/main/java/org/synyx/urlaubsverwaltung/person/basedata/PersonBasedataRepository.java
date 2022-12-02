@@ -8,7 +8,7 @@ import java.util.List;
 
 interface PersonBasedataRepository extends CrudRepository<PersonBasedataEntity, Integer> {
 
-    List<PersonBasedataEntity> findAllByPersonIdIn(List<Integer> personId);
+    List<PersonBasedataEntity> findAllByPersonIdIsIn(List<Integer> personIds);
 
     @Modifying
     void deleteByPerson(Person person);

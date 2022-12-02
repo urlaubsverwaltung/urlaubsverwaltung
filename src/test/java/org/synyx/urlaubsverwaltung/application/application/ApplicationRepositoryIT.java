@@ -10,7 +10,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeServiceImpl;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.math.BigDecimal;
@@ -752,6 +751,32 @@ class ApplicationRepositoryIT extends TestContainersBase {
     }
 
     @Test
+    void ensureFindByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual() {
+
+        final Person max = personService.create(new Person("muster", "Mustermann", "Max", "mustermann@example.org"));
+        final Person marlene = personService.create(new Person("person2", "Musterfrau", "Marlene", "musterfrau@example.org"));
+
+        final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
+        final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
+
+        final Application validHolidayStartingBefore = createApplication(marlene, getVacationType(HOLIDAY), askedStartDate.minusDays(1), askedStartDate.plusDays(1), FULL);
+        sut.save(validHolidayStartingBefore);
+
+        final Application validOvertimeEndingAfter = createApplication(marlene, getVacationType(OVERTIME), askedEndDate.minusDays(1), askedEndDate.plusDays(1), FULL);
+        sut.save(validOvertimeEndingAfter);
+
+        final Application validSpecialLeaveInBetween = createApplication(marlene, getVacationType(SPECIALLEAVE), askedStartDate.plusDays(2), askedEndDate.minusDays(2), FULL);
+        sut.save(validSpecialLeaveInBetween);
+
+        final Application invalidApplication = createApplication(max, getVacationType(HOLIDAY), askedStartDate.plusDays(2), askedEndDate.minusDays(2), FULL);
+        sut.save(invalidApplication);
+
+        final List<Application> actual = sut.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(List.of(marlene), askedStartDate, askedEndDate, List.of(WAITING));
+
+        assertThat(actual).containsExactlyInAnyOrder(validHolidayStartingBefore, validOvertimeEndingAfter, validSpecialLeaveInBetween);
+    }
+
+    @Test
     void findAllByReplacements_Person() {
 
         final Person person = personService.create(new Person("muster", "Mustermann", "Max", "mustermann@example.org"));
@@ -764,6 +789,49 @@ class ApplicationRepositoryIT extends TestContainersBase {
 
         final List<Application> applicationsByHolidayReplacement = sut.findAllByHolidayReplacements_Person(person);
         assertThat(applicationsByHolidayReplacement).contains(application);
+    }
+
+    @Test
+    void ensureCalculateTotalOvertimeReductionOfPersonsBefore() {
+
+        final LocalDate date = LocalDate.of(2022, 8, 19);
+
+        final Person max = personService.create(new Person("max", "Mustermann", "Max", "mustermann@example.org"));
+        final Person marlene = personService.create(new Person("marlene", "Musterfrau", "Marlene", "musterfrau@example.org"));
+        final Person john = personService.create(new Person("john", "doe", "john", "john@example.org"));
+
+        // should be found
+        final Application overtimeMax = createApplication(max, getVacationType(OVERTIME), LocalDate.of(2021, 1, 1), LocalDate.of(2021, 1, 1), FULL);
+        overtimeMax.setHours(Duration.ofHours(2));
+        sut.save(overtimeMax);
+
+        final Application overtimeMax2 = createApplication(max, getVacationType(OVERTIME), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 1, 1), FULL);
+        overtimeMax2.setHours(Duration.ofMinutes(30));
+        sut.save(overtimeMax2);
+
+        final Application overtimeJohn = createApplication(john, getVacationType(OVERTIME), LocalDate.of(2022, 1, 1), LocalDate.of(2022, 1, 1), FULL);
+        overtimeJohn.setHours(Duration.ofHours(4));
+        sut.save(overtimeJohn);
+
+        // should not be found
+        final Application notOvertimeMax = createApplication(max, getVacationType(HOLIDAY), date.minusDays(1), date.plusDays(1), FULL);
+        notOvertimeMax.setHours(Duration.ofHours(100)); // makes no sense for HOLIDAY, but this should not be summed by the database query since not OVERTIME
+        sut.save(notOvertimeMax);
+
+        final Application overtimeMaxOutOfRange = createApplication(max, getVacationType(OVERTIME), LocalDate.of(2022, 12, 1), LocalDate.of(2022, 12, 2), FULL);
+        overtimeMaxOutOfRange.setHours(Duration.ofHours(16));
+        sut.save(overtimeMaxOutOfRange);
+
+        final Application overtimeMarlene = createApplication(marlene, getVacationType(OVERTIME), date.minusDays(1), date.plusDays(1), FULL);
+        overtimeMarlene.setHours(Duration.ofHours(4));
+        sut.save(overtimeMarlene);
+
+        final List<ApplicationOvertimeDurationSum> actual = sut.calculateTotalOvertimeReductionOfPersonsBefore(List.of(max, john), date, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED));
+        assertThat(actual).hasSize(2);
+        assertThat(actual.get(0).getPerson()).isEqualTo(max);
+        assertThat(actual.get(0).getDurationDouble()).isEqualTo(2.5);
+        assertThat(actual.get(1).getPerson()).isEqualTo(john);
+        assertThat(actual.get(1).getDurationDouble()).isEqualTo(4);
     }
 
     private VacationTypeEntity getVacationType(VacationCategory category) {

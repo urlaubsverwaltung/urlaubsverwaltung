@@ -9,6 +9,10 @@ public class PageableSearchQuery {
     private final Pageable pageable;
     private final String query;
 
+    public PageableSearchQuery(Pageable pageable) {
+        this(pageable, "");
+    }
+
     public PageableSearchQuery(Pageable pageable, String query) {
         this.pageable = pageable;
         this.query = query;

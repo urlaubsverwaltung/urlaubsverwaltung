@@ -4,6 +4,7 @@
     <title th:text="#{person.overview.header.title}"></title>
     <th:block th:ref="scripts">
       <script defer asset:src="npm.hotwired.js"></script>
+      <script defer asset:src="app_statistics~persons.js"></script>
       <script defer asset:src="persons.js"></script>
     </th:block>
   </head>
@@ -72,7 +73,7 @@
             </ul>
           </div>
           <th:block
-            th:with="hrefPrefix=${department == null ? '/web/person?active=' + active + '&size=' + personPage.size + '&sort=' + sortQuery + '&query=' + query + '&year=' : '/web/person?active=' + active + '&department=' + department.id + '&sort=' + sortQuery + '&query=' + query + '&year='}"
+            th:with="hrefPrefix=${department == null ? '/web/person?active=' + active + '&size=' + personsPagination.page.size + '&sort=' + sortQuery + '&query=' + query + '&year=' : '/web/person?active=' + active + '&department=' + department.id + '&sort=' + sortQuery + '&query=' + query + '&year='}"
           >
             <div
               th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=${hrefPrefix}, selectedYear=${selectedYear})"
@@ -96,7 +97,7 @@
             <input type="hidden" name="active" th:value="${active}" />
             <input th:if="${selectedYear != null}" type="hidden" name="year" th:value="${selectedYear}" />
             <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
-            <input type="hidden" name="size" th:value="${personPage.size}" />
+            <input type="hidden" name="size" th:value="${personsPagination.page.size}" />
             <input th:if="${not #strings.isEmpty(sortQuery)}" type="hidden" name="sort" th:value="${sortQuery}" />
           </div>
           <div class="tw-flex tw-flex-col md:tw-flex-row">
@@ -135,7 +136,7 @@
               <input type="hidden" name="active" th:value="${active}" />
               <input th:if="${selectedYear != null}" type="hidden" name="year" th:value="${selectedYear}" />
               <input th:if="${department != null}" type="hidden" name="department" th:value="${department.id}" />
-              <input type="hidden" name="size" th:value="${personPage.size}" />
+              <input type="hidden" name="size" th:value="${personsPagination.page.size}" />
               <input th:if="${not #strings.isEmpty(query)}" type="hidden" name="query" th:value="${query}" />
             </div>
             <div class="tw-flex tw-flex-col md:tw-flex-row md:tw-items-center">
@@ -194,8 +195,8 @@
         <turbo-stream target="pagination-size-hint" action="replace">
           <template th:insert="::#pagination-size-hint"></template>
         </turbo-stream>
-        <p th:if="${#lists.isEmpty(personPage.content)}" class="tw-mt-16" th:text="#{persons.none}"></p>
-        <th:block th:if="${not #lists.isEmpty(personPage.content)}">
+        <p th:if="${#lists.isEmpty(personsPagination.page.content)}" class="tw-mt-16" th:text="#{persons.none}"></p>
+        <th:block th:if="${not #lists.isEmpty(personsPagination.page.content)}">
           <p class="text-right visible-print">
             <th:block th:text="#{filter.validity}"></th:block>&nbsp;<span
               th:replace="fragments/date::date(${now})"
@@ -228,7 +229,7 @@
               </thead>
               <tbody>
                 <tr
-                  th:each="person,loopStatus : ${personPage.content}"
+                  th:each="person,loopStatus : ${personsPagination.page.content}"
                   th:onclick="|navigate('/web/person/${person.id}/overview');|"
                 >
                   <td class="is-centered">
@@ -307,99 +308,9 @@
             </table>
             <div class="tw-mt-8 md:tw-mt-16 tw-flex tw-flex-col md:tw-flex-row md:tw-items-center tw-gap-8">
               <div id="persons-pagination">
-                <nav th:aria-label="#{persons.pagination.navigation.aria-label}">
-                  <ul class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-row tw-gap-x-2 tw-gap-y-4 tw-flex-wrap">
-                    <li th:if="${not personPage.first && personPage.totalPages > 7}">
-                      <a
-                        href="#"
-                        th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=${personPage.number}, sort=${sortQuery}, query=${query})}"
-                        class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
-                        data-turbo-frame="frame-persons"
-                        data-turbo-action="advance"
-                      >
-                        <svg th:replace="icon/chevron-left::svg(className='tw-w-6 tw-h-6')"></svg>
-                        <span class="tw-sr-only" th:text="#{pagination.page.previous}"></span>
-                      </a>
-                    </li>
-                    <li th:with="isSelected=${personPage.first}">
-                      <a
-                        href="#"
-                        th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=1, sort=${sortQuery}, query=${query})}"
-                        class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
-                        th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
-                        th:attr="aria-current=${isSelected ? 'page' : ''}"
-                        th:aria-label="#{pagination.page('1')}"
-                        data-turbo-frame="frame-persons"
-                        data-turbo-action="advance"
-                      >
-                        1
-                      </a>
-                    </li>
-                    <li
-                      th:if="${personPage.totalPages > 7 && personPage.number > 2}"
-                      role="presentation"
-                      class="tw-px-4 tw-py-1"
-                    >
-                      …
-                    </li>
-                    <th:block
-                      th:each="pageNumber : ${personPageNumbers}"
-                      th:with="isSelected=${pageNumber == personPage.number + 1}"
-                    >
-                      <li
-                        th:if="${not pageNumberStat.first && not pageNumberStat.last && (personPage.totalPages <= 7 || pageNumber == personPage.number || pageNumber == personPage.number + 1 || pageNumber == personPage.number + 2)}"
-                      >
-                        <a
-                          href="#"
-                          th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=${pageNumber}, sort=${sortQuery}, query=${query})}"
-                          class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
-                          th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
-                          th:text="${pageNumber}"
-                          th:attr="aria-current=${isSelected ? 'page' : ''}"
-                          th:aria-label="${pageNumberStat.last ? #messages.msg('pagination.page.last', pageNumber) : #messages.msg('pagination.page', pageNumber)}"
-                          data-turbo-frame="frame-persons"
-                          data-turbo-action="advance"
-                        >
-                          2
-                        </a>
-                      </li>
-                    </th:block>
-                    <li
-                      th:if="${personPage.totalPages > 7 && personPage.number < personPage.totalPages - 3}"
-                      role="presentation"
-                      class="tw-px-4 tw-py-1"
-                    >
-                      …
-                    </li>
-                    <li th:if="${personPage.totalPages > 1}" th:with="isSelected=${personPage.last}">
-                      <a
-                        href="#"
-                        th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=${personPage.totalPages}, sort=${sortQuery}, query=${query})}"
-                        class="tw-block tw-px-4 tw-py-1 tw-no-underline tw-text-inherit dark:tw-text-zinc-50 tw-rounded-md tw-border-2 tw-transition-colors"
-                        th:classappend="${isSelected ? 'tw-border-neutral-600 dark:tw-border-zinc-300' : 'tw-border-neutral-300 dark:tw-border-zinc-700 hover:tw-border-neutral-400 focus:tw-border-neutral-400 hover:dark:tw-border-zinc-500 focus:dark:tw-border-zinc-500'}"
-                        th:text="${personPage.totalPages}"
-                        th:attr="aria-current=${isSelected ? 'page' : ''}"
-                        th:aria-label="#{pagination.page.last(${personPage.totalPages})}"
-                        data-turbo-frame="frame-persons"
-                        data-turbo-action="advance"
-                      >
-                        3
-                      </a>
-                    </li>
-                    <li th:if="${personPage.totalPages > 7 && not personPage.last}">
-                      <a
-                        href="#"
-                        th:href="@{/web/person (active=${active}, year=${selectedYear}, department=${department != null ? department.id : '' }, size=${personPage.size}, page=${personPage.number + 2}, sort=${sortQuery}, query=${query})}"
-                        class="tw-block tw-py-1 tw-text-current tw-no-underline tw-flex tw-items-center"
-                        data-turbo-frame="frame-persons"
-                        data-turbo-action="advance"
-                      >
-                        <span class="tw-sr-only" th:text="#{pagination.page.next}"></span>
-                        <svg th:replace="icon/chevron-right::svg(className='tw-w-6 tw-h-6')"></svg>
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
+                <nav
+                  th:replace="fragments/pagination::pagination(${personsPagination}, #{persons.pagination.navigation.aria-label}, 'frame-persons')"
+                ></nav>
               </div>
               <form
                 action="#"
@@ -425,7 +336,7 @@
                       id="pagination-size-select"
                       th:replace="fragments/select::one(id='pagination-size-select', name='size', options=~{::pagination-size-options}, autosubmit='size-submit')"
                     >
-                      <th:block th:ref="pagination-size-options" th:with="size=${personPage.size}">
+                      <th:block th:ref="pagination-size-options" th:with="size=${personsPagination.page.size}">
                         <option th:if="${size < 10}" th:value="${size}" selected th:text="${size}">4</option>
                         <option value="10" th:selected="${size == 10}">10</option>
                         <option th:if="${size > 10 && size < 20}" th:value="${size}" selected th:text="${size}">
@@ -443,7 +354,7 @@
                   <span
                     class="tw-whitespace-nowrap"
                     id="pagination-size-hint"
-                    th:text="#{pagination.page.size.total.text(${personPage.totalElements}, ${#messages.msg('persons.pagination.total.text')})}"
+                    th:text="#{pagination.page.size.total.text(${personsPagination.page.totalElements}, ${#messages.msg('persons.pagination.total.text')})}"
                   >
                     von 42 Personen
                   </span>

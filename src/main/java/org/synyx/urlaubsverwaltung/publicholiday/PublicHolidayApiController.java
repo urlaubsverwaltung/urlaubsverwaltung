@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -71,9 +72,10 @@ public class PublicHolidayApiController {
 
         checkValidPeriod(startDate, endDate);
 
-        final FederalState federalState = settingsService.getSettings().getWorkingTimeSettings().getFederalState();
+        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
+        final FederalState federalState = workingTimeSettings.getFederalState();
 
-        final List<PublicHolidayDto> publicHolidays = getPublicHolidays(startDate, endDate, federalState);
+        final List<PublicHolidayDto> publicHolidays = getPublicHolidays(startDate, endDate, federalState, workingTimeSettings);
         return new PublicHolidaysDto(publicHolidays);
     }
 
@@ -109,9 +111,11 @@ public class PublicHolidayApiController {
         final Person person = optionalPerson.get();
         final DateRange dateRange = new DateRange(startDate, endDate);
 
+        final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
+
         final List<PublicHolidayDto> publicHolidays = workingTimeService.getFederalStatesByPersonAndDateRange(person, dateRange)
             .entrySet().stream()
-            .map(entry -> getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
+            .map(entry -> getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue(), workingTimeSettings))
             .flatMap(List::stream)
             .sorted(Comparator.comparing(PublicHolidayDto::getDate))
             .collect(toList());
@@ -119,8 +123,8 @@ public class PublicHolidayApiController {
         return new PublicHolidaysDto(publicHolidays);
     }
 
-    private List<PublicHolidayDto> getPublicHolidays(LocalDate startDate, LocalDate endDate, FederalState federalState) {
-        return publicHolidaysService.getPublicHolidays(startDate, endDate, federalState).stream()
+    private List<PublicHolidayDto> getPublicHolidays(LocalDate startDate, LocalDate endDate, FederalState federalState, WorkingTimeSettings workingTimeSettings) {
+        return publicHolidaysService.getPublicHolidays(startDate, endDate, federalState, workingTimeSettings).stream()
             .map(this::mapPublicHolidayToDto)
             .collect(toList());
     }

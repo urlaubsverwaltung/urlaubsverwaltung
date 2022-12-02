@@ -49,7 +49,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -154,7 +153,7 @@ class OverviewViewControllerTest {
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"));
 
-        verify(accountService).getHolidaysAccount(eq(currentYear), any());
+        verify(accountService).getHolidaysAccount(currentYear, person);
     }
 
     @Test
@@ -172,7 +171,7 @@ class OverviewViewControllerTest {
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview")
             .param("year", Integer.toString(expectedYear)));
 
-        verify(accountService).getHolidaysAccount(eq(expectedYear), any());
+        verify(accountService).getHolidaysAccount(expectedYear, person);
     }
 
     @Test
@@ -182,16 +181,18 @@ class OverviewViewControllerTest {
         person.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         final Account account = someAccount();
-        when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(account));
+        final Account nextYearAccount = someAccount();
+        when(accountService.getHolidaysAccount(Year.now(clock).getValue(), person)).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(Year.now(clock).getValue() + 1, person)).thenReturn(Optional.of(nextYearAccount));
 
         final VacationDaysLeft vacationDaysLeft = someVacationDaysLeft();
-        when(vacationDaysService.getVacationDaysLeft(account, Optional.of(account))).thenReturn(vacationDaysLeft);
+        when(vacationDaysService.getVacationDaysLeft(account, Optional.of(nextYearAccount))).thenReturn(vacationDaysLeft);
 
-        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+        perform(get("/web/person/1/overview"))
             .andExpect(model().attribute("vacationDaysLeft", vacationDaysLeft))
             .andExpect(model().attribute("account", account));
     }

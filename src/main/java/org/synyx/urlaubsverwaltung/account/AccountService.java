@@ -2,12 +2,9 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import java.util.List;
 import java.util.Optional;
 
-
-/**
- * Provides access to {@link Account} entities.
- */
 public interface AccountService {
 
     /**
@@ -19,6 +16,15 @@ public interface AccountService {
      * parameters
      */
     Optional<Account> getHolidaysAccount(int year, Person person);
+
+    /**
+     * Get existing {@link Account}s for the given year and persons.
+     *
+     * @param year   to get the holidays account for
+     * @param persons to get the holidays account for
+     * @return {@link Account}s that matches the given parameters.
+     */
+    List<Account> getHolidaysAccount(int year, List<Person> persons);
 
     /**
      * Saves the given {@link Account}.

@@ -12,12 +12,15 @@ import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -51,6 +54,11 @@ class ApplicationServiceImpl implements ApplicationService {
     @Override
     public List<Application> getApplicationsForACertainPeriodAndPerson(LocalDate startDate, LocalDate endDate, Person person) {
         return applicationRepository.getApplicationsForACertainTimeAndPerson(startDate, endDate, person);
+    }
+
+    @Override
+    public List<Application> getApplicationsForACertainPeriodAndStatus(LocalDate startDate, LocalDate endDate, List<Person> persons, List<ApplicationStatus> statuses) {
+        return applicationRepository.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(persons, startDate, endDate, statuses);
     }
 
     @Override
@@ -136,6 +144,23 @@ class ApplicationServiceImpl implements ApplicationService {
     public Duration getTotalOvertimeReductionOfPersonBefore(Person person, LocalDate date) {
         final BigDecimal overtimeReduction = Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPersonBefore(person, date)).orElse(BigDecimal.ZERO);
         return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
+    }
+
+    @Override
+    public Map<Person, Duration> getTotalOvertimeReductionOfPersonsBefore(Collection<Person> persons, LocalDate date) {
+        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        final Map<Person, Duration> durationByPerson = applicationRepository.calculateTotalOvertimeReductionOfPersonsBefore(persons, date, statuses).stream()
+            .map(sum -> {
+                final BigDecimal minutes = BigDecimal.valueOf(sum.getDurationDouble()).multiply(BigDecimal.valueOf(60));
+                final Duration duration = Duration.ofMinutes(minutes.longValue());
+                return Map.entry(sum.getPerson(), duration);
+            })
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        // iterate over given persons to create Duration.ZERO entries for persons without overtime reduction applications.
+        return persons.stream()
+            .map(person -> Map.entry(person, durationByPerson.getOrDefault(person, Duration.ZERO)))
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override

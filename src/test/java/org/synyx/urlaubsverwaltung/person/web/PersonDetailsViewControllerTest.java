@@ -39,8 +39,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -168,7 +166,7 @@ class PersonDetailsViewControllerTest {
             .andExpect(model().attribute("account", nullValue()));
 
         final Account account = accountForPerson(person);
-        when(accountService.getHolidaysAccount(anyInt(), any())).thenReturn(Optional.of(account));
+        when(accountService.getHolidaysAccount(Year.now(clock).getValue(), person)).thenReturn(Optional.of(account));
 
         perform(get("/web/person/1"))
             .andExpect(model().attribute("account", account));

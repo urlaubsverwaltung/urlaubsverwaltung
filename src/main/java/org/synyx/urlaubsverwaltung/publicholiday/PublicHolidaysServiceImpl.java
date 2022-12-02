@@ -36,6 +36,13 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
     }
 
     @Override
+    public boolean isPublicHoliday(LocalDate date, FederalState federalState) {
+        return getHolidayManager(federalState)
+            .map(holidayManager -> holidayManager.isHoliday(date, federalState.getCodes()))
+            .orElse(false);
+    }
+
+    @Override
     public Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState) {
         return getPublicHolidays(date, date, federalState).stream().findFirst();
     }
@@ -43,6 +50,16 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
     @Override
     public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState) {
         final WorkingTimeSettings workingTimeSettings = getWorkingTimeSettings();
+        return getPublicHolidays(from, to, federalState, workingTimeSettings);
+    }
+
+    @Override
+    public Optional<PublicHoliday> getPublicHoliday(LocalDate date, FederalState federalState, WorkingTimeSettings workingTimeSettings) {
+        return getPublicHolidays(date, date, federalState, workingTimeSettings).stream().findFirst();
+    }
+
+    @Override
+    public List<PublicHoliday> getPublicHolidays(LocalDate from, LocalDate to, FederalState federalState, WorkingTimeSettings workingTimeSettings) {
         final Locale locale = LocaleContextHolder.getLocale();
 
         return getHolidays(from, to, federalState).stream()
@@ -69,12 +86,6 @@ public class PublicHolidaysServiceImpl implements PublicHolidaysService {
         return getHolidayManager(federalState)
             .map(holidayManager -> holidayManager.getHolidays(from, to, federalState.getCodes()))
             .orElseGet(Set::of);
-    }
-
-    private boolean isPublicHoliday(LocalDate date, FederalState federalState) {
-        return getHolidayManager(federalState)
-            .map(holidayManager -> holidayManager.isHoliday(date, federalState.getCodes()))
-            .orElse(false);
     }
 
     private Optional<HolidayManager> getHolidayManager(FederalState federalState) {
