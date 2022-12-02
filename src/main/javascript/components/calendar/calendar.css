@@ -333,7 +333,9 @@ td.datepicker-day {
   @apply tw-shadow-sky-400;
 }
 
-.datepicker-day:not(.datepicker-day-today):not(.datepicker-day-past):not(.datepicker-day-weekend):not(.datepicker-day-public-holiday-full):hover,
+.datepicker-day:not(.datepicker-day-today):not(.datepicker-day-past):not(.datepicker-day-weekend):not(
+    .datepicker-day-public-holiday-full
+  ):hover,
 .datepicker-day-today.datepicker-day-selected,
 .datepicker-day-selected,
 .datepicker-day-selected[class*="-morning"],
@@ -343,7 +345,9 @@ td.datepicker-day {
 }
 
 .tw-dark
-  .datepicker-day:not(.datepicker-day-today):not(.datepicker-day-past):not(.datepicker-day-weekend):not(.datepicker-day-public-holiday-full):hover,
+  .datepicker-day:not(.datepicker-day-today):not(.datepicker-day-past):not(.datepicker-day-weekend):not(
+    .datepicker-day-public-holiday-full
+  ):hover,
 .tw-dark .datepicker-day-today.datepicker-day-selected,
 .tw-dark .datepicker-day-selected,
 .tw-dark .datepicker-day-selected[class*="-morning"],
