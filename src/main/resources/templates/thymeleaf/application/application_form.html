@@ -94,7 +94,8 @@
             <div class="row">
               <div class="col-md-8">
                 <div th:if="${canAddApplicationForLeaveForAnotherUser}" class="form-group is-required">
-                  <label th:text="#{application.data.person}" class="control-label col-md-3"> </label>
+                  <label for="person-select" th:text="#{application.data.person}" class="control-label col-md-3">
+                  </label>
                   <div class="col-md-9">
                     <th:block th:if="${applicationForLeaveForm.id == null}">
                       <select
@@ -392,7 +393,12 @@
 
                 <!-- replacement-->
                 <div th:if="${not #lists.isEmpty(selectableHolidayReplacements)}" class="form-group">
-                  <label th:text="#{application.data.holidayReplacement}" class="control-label col-md-3"> </label>
+                  <label
+                    for="holiday-replacement-select"
+                    th:text="#{application.data.holidayReplacement}"
+                    class="control-label col-md-3"
+                  >
+                  </label>
                   <div class="col-md-9">
                     <div class="tw-flex">
                       <select

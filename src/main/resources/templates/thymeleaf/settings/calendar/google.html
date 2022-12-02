@@ -112,9 +112,15 @@
           </div>
 
           <div class="form-group">
-            <label th:text="|#{settings.calendar.google.redirecturl}:|" class="control-label col-md-4"> </label>
+            <label
+              for="redirecturl-input"
+              th:text="|#{settings.calendar.google.redirecturl}:|"
+              class="control-label col-md-4"
+            >
+            </label>
             <div class="col-md-8">
               <input
+                id="redirecturl-input"
                 class="form-control"
                 type="text"
                 name="calendarSettings.googleCalendarSettings.authorizedRedirectUrl"
