@@ -73,6 +73,7 @@ public class OidcSecurityConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(value = "uv.security.oidc.group-claim.enabled", havingValue = "true")
     public UrlaubsverwaltungOAuth2UserService urlaubsverwaltungOAuth2UserService(OidcSecurityProperties oidcSecurityProperties) {
         OidcSecurityProperties.GroupClaim groupClaim = oidcSecurityProperties.getGroupClaim();
 
