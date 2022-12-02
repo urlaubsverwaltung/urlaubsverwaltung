@@ -24,7 +24,7 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/urlaubsverwaltung access" ]
   }, {
     "id" : "244d5644-246c-4e2e-a0bf-ef4fabc95acd",
     "createdTimestamp" : 1608289897631,
@@ -49,7 +49,7 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/urlaubsverwaltung access" ]
   }, {
     "id" : "9e7f6ab0-7075-4a17-853b-9a76fd063381",
     "createdTimestamp" : 1608290049557,
@@ -74,7 +74,7 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/urlaubsverwaltung access" ]
   }, {
     "id" : "893e54e2-a8ad-45bf-ae40-c14e7392dda6",
     "createdTimestamp" : 1608289918785,
@@ -99,7 +99,7 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/urlaubsverwaltung access" ]
   }, {
     "id" : "65c9e89f-7c92-45e8-b39f-2cfedf1883bc",
     "createdTimestamp" : 1608290144220,
@@ -124,7 +124,7 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/urlaubsverwaltung access" ]
   }, {
     "id" : "4cffef90-1068-42be-b5fa-ba0b8edbac81",
     "createdTimestamp" : 1608289815022,
@@ -149,7 +149,7 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/urlaubsverwaltung access" ]
   }, {
     "id" : "9a11eb12-2b0f-4ba1-9943-3aaf3dde3de6",
     "createdTimestamp" : 1608289946800,
@@ -173,6 +173,29 @@
     "clientRoles" : {
       "account" : [ "view-profile", "manage-account" ]
     },
+    "notBefore" : 0,
+    "groups" : [ "/urlaubsverwaltung access" ]
+  }, {
+    "id" : "d8d61467-1f6e-4c7d-8e4a-fc42293d780b",
+    "createdTimestamp" : 1669996481619,
+    "username" : "fee",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "firstName" : "Fabienne",
+    "lastName" : "Fee",
+    "email" : "fabienne.fee@urlaubsverwaltung.cloud",
+    "credentials" : [ {
+      "id" : "86944bad-47ab-4f24-b487-8681639d3585",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1669996497324,
+      "secretData" : "{\"value\":\"vTo+4Qh0mc+ZYCxoj56IWP6TNZzkCN9A2THoZRyf2evUM3/PfX9LIwFcYE4znxFOH+5UeATBGfgkf65LHwFemA==\",\"salt\":\"bAgzTLlMqx64aQ9lKO2kag==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-urlaubsverwaltung" ],
     "notBefore" : 0,
     "groups" : [ ]
   }, {
@@ -199,7 +222,7 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/urlaubsverwaltung access" ]
   }, {
     "id" : "8682331e-5555-48dd-989c-0bc589d9da0d",
     "createdTimestamp" : 1608290077734,
@@ -224,7 +247,7 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/urlaubsverwaltung access" ]
   }, {
     "id" : "b50b27cc-5768-4ba9-a4c6-bbdba9796342",
     "createdTimestamp" : 1608289863522,
@@ -249,7 +272,7 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/urlaubsverwaltung access" ]
   }, {
     "id" : "f45e3262-d738-4f1e-8a9a-e142c1633731",
     "createdTimestamp" : 1608290099219,
@@ -274,7 +297,7 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ ]
+    "groups" : [ "/urlaubsverwaltung access" ]
   }, {
     "id" : "3d07ae0d-90a1-4dfd-9393-172c0c9e7c10",
     "createdTimestamp" : 1608289984833,

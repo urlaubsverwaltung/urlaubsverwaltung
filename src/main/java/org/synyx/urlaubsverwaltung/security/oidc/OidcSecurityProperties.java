@@ -128,7 +128,7 @@ public class OidcSecurityProperties {
         private String claimName = "groups";
 
         @NotEmpty
-        private String permittedGroup = "urlaubsverwaltung-user";
+        private String permittedGroup = "urlaubsverwaltung_user";
 
         public boolean isEnabled() {
             return enabled;
