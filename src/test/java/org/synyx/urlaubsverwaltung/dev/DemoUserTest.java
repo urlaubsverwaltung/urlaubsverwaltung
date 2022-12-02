@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Unit test for {@link DemoUser}.
  */
-class TestUserDemo {
+class DemoUserTest {
 
     @Test
     void ensureReturnsCorrectRolesForTestUser() {
