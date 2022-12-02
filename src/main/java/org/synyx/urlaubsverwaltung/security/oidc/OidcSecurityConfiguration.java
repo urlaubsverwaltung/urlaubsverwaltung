@@ -74,7 +74,9 @@ public class OidcSecurityConfiguration {
 
     @Bean
     public UrlaubsverwaltungOAuth2UserService urlaubsverwaltungOAuth2UserService(OidcSecurityProperties oidcSecurityProperties) {
-        return new UrlaubsverwaltungOAuth2UserService(new OidcUserService(), oidcSecurityProperties.getGroupClaim().getClaimName());
+        OidcSecurityProperties.GroupClaim groupClaim = oidcSecurityProperties.getGroupClaim();
+
+        return new UrlaubsverwaltungOAuth2UserService(new OidcUserService(), groupClaim.getClaimName(), groupClaim.getPermittedGroup());
     }
 
     @Bean
