@@ -20,6 +20,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
+import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -51,6 +52,8 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -125,18 +128,27 @@ class OverviewViewControllerTest {
     }
 
     @Test
-    void showOverviewForPersonTheSignedInUserIsNotAllowedForThrowsAccessDeniedException() {
+    void showOverviewForPersonTheSignedInUserIsNotAllowedForShowsReducedOverview() throws Exception {
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
         final Person signedInUser = somePerson();
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
+        final Department department = new Department();
+        department.setName("Buchhaltung");
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(false);
 
-        assertThatThrownBy(() ->
-            perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-        ).hasCauseInstanceOf(AccessDeniedException.class);
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+                .andExpect(view().name("thymeleaf/person/person-overview-reduced"))
+                .andExpect(model().attribute("departmentsOfPerson", List.of(department)));
+
+        verify(personService).getSignedInUser();
+        verify(personService).getPersonByID(SOME_PERSON_ID);
+        verify(departmentService).isSignedInUserAllowedToAccessPersonData(signedInUser, person);
+        verify(departmentService).getAssignedDepartmentsOfMember(person);
+        verifyNoMoreInteractions(personService, accountService, vacationDaysService, applicationService, workDaysCountService, sickNoteService, overtimeService, settingsService, departmentService, vacationTypeViewModelService);
     }
 
     @Test

@@ -162,7 +162,7 @@ public class AbsenceOverviewViewController {
         final Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor = recordInfo -> this.recordInfoToColor(recordInfo, vacationTypesById::get);
 
         final DateRange dateRange = new DateRange(startDate, endDate);
-        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(signedInUser, dateRange, overviewPersons, locale, shouldAnonymizeAbsenceType, recordInfoToColor);
+        final List<AbsenceOverviewMonthDto> months = getAbsenceOverViewMonthModels(dateRange, overviewPersons, locale, shouldAnonymizeAbsenceType, recordInfoToColor);
         final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
         model.addAttribute("absenceOverview", absenceOverview);
 
@@ -194,7 +194,7 @@ public class AbsenceOverviewViewController {
         return preparedSelectedDepartments.isEmpty() ? List.of(departments.get(0).getName()) : preparedSelectedDepartments;
     }
 
-    private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(Person signedInUser, DateRange dateRange, List<Person> personList, Locale locale, Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType, Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
+    private List<AbsenceOverviewMonthDto> getAbsenceOverViewMonthModels(DateRange dateRange, List<Person> personList, Locale locale, Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType, Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
 
         final LocalDate today = LocalDate.now(clock);
         final List<WorkingTime> workingTimeList = workingTimeService.getByPersons(personList);
@@ -215,7 +215,7 @@ public class AbsenceOverviewViewController {
 
         for (LocalDate date : dateRange) {
             final AbsenceOverviewMonthDto monthView = monthsByNr.computeIfAbsent(date.getMonthValue(),
-                monthValue -> this.initializeAbsenceOverviewMonthDto(signedInUser, date, personList, locale));
+                monthValue -> this.initializeAbsenceOverviewMonthDto(date, personList, locale));
 
             final AbsenceOverviewMonthDayDto tableHeadDay = tableHeadDay(date, defaultFederalState, today, locale);
             monthView.getDays().add(tableHeadDay);
@@ -278,25 +278,22 @@ public class AbsenceOverviewViewController {
             .collect(toMap(PublicHoliday::getDate, Function.identity()));
     }
 
-    private AbsenceOverviewMonthDto initializeAbsenceOverviewMonthDto(Person signedInUser, LocalDate date, List<Person> personList, Locale locale) {
+    private AbsenceOverviewMonthDto initializeAbsenceOverviewMonthDto(LocalDate date, List<Person> personList, Locale locale) {
 
         final List<AbsenceOverviewMonthPersonDto> monthViewPersons = personList.stream()
-            .map((Person person) -> {
-                final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person);
-                return initializeAbsenceOverviewMonthPersonDto(person, allowedToAccessPersonData);
-            })
+            .map((Person person) -> initializeAbsenceOverviewMonthPersonDto(person))
             .collect(toList());
 
         return new AbsenceOverviewMonthDto(getMonthText(date, locale), new ArrayList<>(), monthViewPersons);
     }
 
-    private static AbsenceOverviewMonthPersonDto initializeAbsenceOverviewMonthPersonDto(Person person, boolean allowedToAccessPersonData) {
+    private static AbsenceOverviewMonthPersonDto initializeAbsenceOverviewMonthPersonDto(Person person) {
 
         final String firstName = person.getFirstName();
         final String lastName = person.getLastName();
         final String email = person.getEmail();
         final String gravatarUrl = person.getGravatarURL();
-        final Integer id = allowedToAccessPersonData ? person.getId() : null;
+        final Integer id = person.getId();
 
         return new AbsenceOverviewMonthPersonDto(firstName, lastName, email, gravatarUrl, new ArrayList<>(), id);
     }

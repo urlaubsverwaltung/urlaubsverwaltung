@@ -110,12 +110,15 @@ public class OverviewViewController {
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Person signedInUser = personService.getSignedInUser();
 
-        if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
-            throw new AccessDeniedException(format("User '%s' has not the correct permissions to access the overview page of user '%s'",
-                signedInUser.getId(), person.getId()));
-        }
-
         model.addAttribute(PERSON_ATTRIBUTE, person);
+        model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
+
+        if (!departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)) {
+            model.addAttribute("canAccessAbsenceOverview", "false");
+            model.addAttribute("canAccessCalendarShare", "false");
+
+            return "thymeleaf/person/person-overview-reduced";
+        }
 
         final LocalDate now = LocalDate.now(clock);
         final int yearToShow = year == null ? now.getYear() : year;
@@ -133,7 +136,6 @@ public class OverviewViewController {
         model.addAttribute("currentMonth", now.getMonthValue());
         model.addAttribute("signedInUser", signedInUser);
         model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
-        model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 
         model.addAttribute("canAccessAbsenceOverview", person.equals(signedInUser));
         model.addAttribute("canAccessCalendarShare", person.equals(signedInUser) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS));
