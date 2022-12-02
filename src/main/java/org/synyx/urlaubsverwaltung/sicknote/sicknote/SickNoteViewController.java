@@ -180,7 +180,7 @@ class SickNoteViewController {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_ADD')")
     @PostMapping("/sicknote")
-    public String newSickNote(@ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) {
+    public String addNewSickNote(@ModelAttribute(SICK_NOTE) SickNoteForm sickNoteForm, Errors errors, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
@@ -192,6 +192,7 @@ class SickNoteViewController {
         if (errors.hasErrors()) {
             model.addAttribute(ATTRIBUTE_ERRORS, errors);
             model.addAttribute(SICK_NOTE, sickNoteForm);
+            model.addAttribute("person", sickNoteForm.getPerson());
             model.addAttribute(PERSONS_ATTRIBUTE, getManagedPersons(signedInUser));
             model.addAttribute(SICK_NOTE_TYPES, sickNoteTypeService.getSickNoteTypes());
 

@@ -806,7 +806,9 @@ class SickNoteViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
-        when(personService.getActivePersons()).thenReturn(List.of(new Person()));
+        final Person sickNotePerson = new Person();
+        when(personService.getActivePersons()).thenReturn(List.of(sickNotePerson));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(sickNotePerson));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -814,8 +816,9 @@ class SickNoteViewControllerTest {
             return null;
         }).when(sickNoteValidator).validate(any(), any());
 
-        perform(post("/web/sicknote"))
+        perform(post("/web/sicknote").param("person", "1"))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("person", sickNotePerson))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
 
