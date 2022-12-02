@@ -59,11 +59,6 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public List<Overtime> getOvertimeRecordsForPerson(Person person) {
-        return overtimeRepository.findByPerson(person);
-    }
-
-    @Override
     public List<Overtime> getOvertimeRecordsForPersonAndYear(Person person, int year) {
         return overtimeRepository.findByPersonAndStartDateBetweenOrderByStartDateDesc(person, Year.of(year).atDay(1), DateUtil.getLastDayOfYear(year));
     }

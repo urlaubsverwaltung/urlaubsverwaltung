@@ -15,14 +15,6 @@ import java.util.Optional;
 public interface OvertimeService {
 
     /**
-     * Fetch all the overtime records for a certain person.
-     *
-     * @param person to fetch the overtime records for
-     * @return list of overtime records the person has
-     */
-    List<Overtime> getOvertimeRecordsForPerson(Person person);
-
-    /**
      * Fetch all the overtime records for a certain person and year.
      *
      * @param person to fetch the overtime records for

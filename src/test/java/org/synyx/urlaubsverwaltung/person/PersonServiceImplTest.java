@@ -31,7 +31,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -158,34 +157,6 @@ class PersonServiceImplTest {
     }
 
     @Test
-    void ensureUpdatedPersonHasCorrectAttributes() {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(42);
-
-        when(personRepository.findById(anyInt())).thenReturn(Optional.of(person));
-        when(personRepository.save(person)).thenReturn(person);
-
-        final Person updatedPerson = sut.update(42, "rick", "Grimes", "Rick", "rick@grimes.de",
-            asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL),
-            asList(USER, BOSS));
-        assertThat(updatedPerson.getUsername()).isEqualTo("rick");
-        assertThat(updatedPerson.getFirstName()).isEqualTo("Rick");
-        assertThat(updatedPerson.getLastName()).isEqualTo("Grimes");
-        assertThat(updatedPerson.getEmail()).isEqualTo("rick@grimes.de");
-
-        assertThat(updatedPerson.getNotifications())
-            .hasSize(2)
-            .contains(NOTIFICATION_USER)
-            .contains(NOTIFICATION_BOSS_ALL);
-
-        assertThat(updatedPerson.getPermissions())
-            .hasSize(2)
-            .contains(USER)
-            .contains(BOSS);
-    }
-
-    @Test
     void ensureUpdatedPersonIsPersisted() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
@@ -271,20 +242,6 @@ class PersonServiceImplTest {
 
         final Page<Person> actual = sut.getActivePersons(personPageableSearchQuery);
         assertThat(actual).isSameAs(expected);
-    }
-
-    @Test
-    void ensureGetInactivePersonsReturnsOnlyPersonsThatHaveInactiveRole() {
-
-        final Person inactive = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        inactive.setPermissions(List.of(INACTIVE));
-
-        when(personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE)).thenReturn(List.of(inactive));
-
-        List<Person> inactivePersons = sut.getInactivePersons();
-        assertThat(inactivePersons)
-            .hasSize(1)
-            .contains(inactive);
     }
 
     @Test
