@@ -490,7 +490,7 @@ class OvertimeServiceImplTest {
         overtimeThree.setDuration(Duration.ofHours(10));
 
         when(overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, from.with(firstDayOfYear()), to.with(lastDayOfYear()))).thenReturn(List.of(overtimeOne, overtimeOneOne, overtimeTwo, overtimeThree));
-        when(overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, from, to)).thenReturn(List.of(overtimeOne,overtimeTwo));
+        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to)).thenReturn(List.of(overtimeOne,overtimeTwo));
 
         final List<Application> applications = List.of();
 
@@ -547,7 +547,7 @@ class OvertimeServiceImplTest {
         overtimeTwoTwo.setDuration(Duration.ofHours(10));
 
         when(overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, from.with(firstDayOfYear()), to.with(lastDayOfYear()))).thenReturn(List.of(overtimeOne, overtimeOneOne, overtimeTwo, overtimeTwoTwo));
-        when(overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, from, to)).thenReturn(List.of(overtimeOne, overtimeTwo));
+        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to)).thenReturn(List.of(overtimeOne, overtimeTwo));
 
         final VacationTypeEntity overtimeVacationTypeEntity = new VacationTypeEntity();
         overtimeVacationTypeEntity.setId(1);
@@ -572,7 +572,7 @@ class OvertimeServiceImplTest {
             .containsKey(person2);
 
         final LeftOvertime leftOvertime = actual.get(person);
-        assertThat(leftOvertime.getLeftOvertimeOverall()).isEqualTo(Duration.ofHours(2));
+        assertThat(leftOvertime.getLeftOvertimeOverall()).isEqualTo(Duration.ofMinutes(30));
         assertThat(leftOvertime.getLeftOvertimeDateRange()).isEqualTo(Duration.ofHours(1));
 
         final LeftOvertime leftOvertime2 = actual.get(person2);
@@ -591,7 +591,7 @@ class OvertimeServiceImplTest {
         final List<Person> persons = List.of(personWithoutOvertime);
 
         when(overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, from.with(firstDayOfYear()), to.with(lastDayOfYear()))).thenReturn(List.of());
-        when(overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, from, to)).thenReturn(List.of());
+        when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to)).thenReturn(List.of());
 
         final List<Application> applications = List.of();
 
