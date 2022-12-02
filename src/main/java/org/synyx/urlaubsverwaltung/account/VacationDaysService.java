@@ -83,7 +83,10 @@ public class VacationDaysService {
      * @param account  the account for the year to calculate the vacation days for
      * @param nextYear the account for following year, if available
      * @return information about the vacation days left for that year
+     *
+     * @deprecated in favor of {@link VacationDaysService#getVacationDaysLeft(List, Map, DateRange)} (less database calls)
      */
+    @Deprecated(since = "4.53.0")
     public VacationDaysLeft getVacationDaysLeft(Account account, Optional<Account> nextYear) {
         final LocalDate firstDayOfYear = Year.of(account.getYear()).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
