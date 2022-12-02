@@ -28,15 +28,6 @@ public interface SickNoteInteractionService {
     SickNote create(SickNote sickNote, Person creator, String comment);
 
     /**
-     * Update an existent sick note.
-     *
-     * @param sickNote to be updated
-     * @param editor   the person who updates the sick note
-     * @return the updated sick note
-     */
-    SickNote update(SickNote sickNote, Person editor);
-
-    /**
      * Update an existent sick note with comment.
      *
      * @param sickNote to be updated

@@ -49,11 +49,6 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
-    public List<SickNote> getActiveByPeriodAndPersonHasRole(LocalDate from, LocalDate to, List<Role> roles) {
-        return sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(roles, List.of(ACTIVE), from, to);
-    }
-
-    @Override
     public List<SickNote> getSickNotesReachingEndOfSickPay() {
 
         final Settings settings = settingsService.getSettings();
@@ -69,11 +64,6 @@ class SickNoteServiceImpl implements SickNoteService {
     @Override
     public List<SickNote> getAllActiveByPeriod(LocalDate from, LocalDate to) {
         return sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List.of(USER), List.of(ACTIVE), from, to);
-    }
-
-    @Override
-    public Long getNumberOfPersonsWithMinimumOneSickNote(int year) {
-        return sickNoteRepository.findNumberOfPersonsWithMinimumOneSickNote(year);
     }
 
     @Override

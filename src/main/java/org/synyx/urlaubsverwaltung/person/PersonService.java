@@ -35,21 +35,6 @@ public interface PersonService {
     Person create(Person person);
 
     /**
-     * Updates a person using the given attributes.
-     *
-     * @param id            identifies the person to be updated
-     * @param username      with that the person can sign in
-     * @param lastName      of the person
-     * @param firstName     of the person
-     * @param email         address to get mail notifications
-     * @param notifications contains types of mail notifications the person will get
-     * @param permissions   contains the roles of the person
-     * @return updated person
-     */
-    Person update(Integer id, String username, String lastName, String firstName, String email,
-                  List<MailNotification> notifications, List<Role> permissions);
-
-    /**
      * Updates the given person.
      *
      * @param person to be saved
@@ -119,13 +104,6 @@ public interface PersonService {
      * @return list of persons with the given notification type
      */
     List<Person> getActivePersonsWithNotificationType(MailNotification notification);
-
-    /**
-     * returns all inactive persons ordered by first name.
-     *
-     * @return returns all inactive persons
-     */
-    List<Person> getInactivePersons();
 
     /**
      * Find all inactive persons matching the given query.

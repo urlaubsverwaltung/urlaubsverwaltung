@@ -22,17 +22,6 @@ interface SickNoteRepository extends CrudRepository<SickNote, Integer> {
     )
     List<SickNote> findByPersonAndPeriod(Person person, LocalDate startDate, LocalDate endDate);
 
-    @Query(
-        "SELECT x FROM SickNote x WHERE ((x.startDate BETWEEN ?1 AND ?2) OR (x.endDate BETWEEN ?1 AND ?2) "
-            + "OR (x.startDate < ?1 and x.endDate > ?2)) "
-            + "ORDER BY x.startDate"
-    )
-    List<SickNote> findByPeriod(LocalDate startDate, LocalDate endDate);
-
-    // NOTE: Following methods are to create statistic
-    @Query("SELECT x FROM SickNote x WHERE (YEAR(x.startDate) = ?1 OR YEAR(x.endDate) = ?1) AND x.status = 'ACTIVE'")
-    List<SickNote> findAllActiveByYear(int year);
-
     @Query("SELECT COUNT(DISTINCT x.person) FROM SickNote x WHERE YEAR(x.startDate) = ?1 OR YEAR(x.endDate) = ?1 AND x.status = 'ACTIVE'")
     Long findNumberOfPersonsWithMinimumOneSickNote(int year);
 

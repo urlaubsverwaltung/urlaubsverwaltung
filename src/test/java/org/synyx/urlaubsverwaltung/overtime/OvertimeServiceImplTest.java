@@ -167,17 +167,6 @@ class OvertimeServiceImplTest {
         assertThat(comment.getText()).isEqualTo("Foo");
     }
 
-    // Get overtime records for person ---------------------------------------------------------------------------------
-    @Test
-    void ensureGetForPersonCallsCorrectDAOMethod() {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-
-        sut.getOvertimeRecordsForPerson(person);
-
-        verify(overtimeRepository).findByPerson(person);
-    }
-
     // Get overtime record by ID ---------------------------------------------------------------------------------------
     @Test
     void ensureGetByIDCallsCorrectDAOMethod() {

@@ -7,7 +7,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
@@ -59,18 +58,6 @@ class SickNoteServiceImplTest {
     }
 
     @Test
-    void findByPeriod() {
-        final LocalDate from = LocalDate.of(2015, 1, 1);
-        final LocalDate to = LocalDate.of(2016, 1, 1);
-        final SickNote sickNote = new SickNote();
-        final List<Role> roles = List.of(USER);
-        when(sickNoteRepository.findByPersonPermissionsIsInAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(roles, List.of(ACTIVE), from, to)).thenReturn(List.of(sickNote));
-
-        final List<SickNote> sickNotes = sut.getActiveByPeriodAndPersonHasRole(from, to, roles);
-        assertThat(sickNotes).contains(sickNote);
-    }
-
-    @Test
     void getAllActiveByYear() {
         final SickNote sickNote = new SickNote();
         final LocalDate from = LocalDate.of(2017, 1, 1);
@@ -79,14 +66,6 @@ class SickNoteServiceImplTest {
 
         final List<SickNote> sickNotes = sut.getAllActiveByPeriod(from, to);
         assertThat(sickNotes).contains(sickNote);
-    }
-
-    @Test
-    void getNumberOfPersonsWithMinimumOneSickNote() {
-        when(sickNoteRepository.findNumberOfPersonsWithMinimumOneSickNote(2017)).thenReturn(5L);
-
-        final Long numberOfPersonsWithMinimumOneSickNote = sut.getNumberOfPersonsWithMinimumOneSickNote(2017);
-        assertThat(numberOfPersonsWithMinimumOneSickNote).isSameAs(5L);
     }
 
     @Test

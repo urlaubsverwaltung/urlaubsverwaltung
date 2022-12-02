@@ -39,15 +39,6 @@ public interface SickNoteService {
     List<SickNote> getByPersonAndPeriod(Person person, LocalDate from, LocalDate to);
 
     /**
-     * Get all the sick notes that are in the given period.
-     *
-     * @param from defines the start of the period
-     * @param to   defines the end of the period
-     * @return all the sick notes matching the given parameters
-     */
-    List<SickNote> getActiveByPeriodAndPersonHasRole(LocalDate from, LocalDate to, List<Role> roles);
-
-    /**
      * Get all the sick notes that are reaching the end of sick pay.
      *
      * @return sick notes that are reaching the end of sick pay
@@ -55,8 +46,6 @@ public interface SickNoteService {
     List<SickNote> getSickNotesReachingEndOfSickPay();
 
     List<SickNote> getAllActiveByPeriod(LocalDate from, LocalDate to);
-
-    Long getNumberOfPersonsWithMinimumOneSickNote(int year);
 
     /**
      * Get all {@link SickNote} with specific states since
