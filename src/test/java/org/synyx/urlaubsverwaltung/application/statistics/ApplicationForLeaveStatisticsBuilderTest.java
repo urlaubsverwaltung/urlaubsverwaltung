@@ -178,7 +178,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
         final List<Application> applications = List.of(applicationForLeave);
 
-        when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, List.of(person), List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED))).thenReturn(applications);
+        when(applicationService.getApplicationsForACertainPeriodAndStatus(firstDayOfYear, lastDayOfYear, List.of(person), List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED))).thenReturn(applications);
 
         when(overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(List.of(person), applications, from, to))
             .thenReturn(Map.of(person, new LeftOvertime(Duration.ofHours(9), Duration.ZERO)));

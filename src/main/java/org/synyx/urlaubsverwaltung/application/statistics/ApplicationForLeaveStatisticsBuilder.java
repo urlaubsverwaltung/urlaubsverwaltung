@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import static java.time.Duration.ZERO;
+import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
@@ -69,7 +71,8 @@ class ApplicationForLeaveStatisticsBuilder {
 
         final List<Account> holidayAccounts = accountService.getHolidaysAccount(from.getYear(), persons);
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
-        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED));
+
+        final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndStatus(from.with(firstDayOfYear()), from.with(lastDayOfYear()), persons, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED));
         final Map<Person, LeftOvertime> leftOvertimeForPersons = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);
         final Map<Account, HolidayAccountVacationDays> holidayAccountVacationDaysByAccount = vacationDaysService.getVacationDaysLeft(holidayAccounts, workingTimeCalendarsByPerson, dateRange);
 
@@ -102,7 +105,10 @@ class ApplicationForLeaveStatisticsBuilder {
                 return statistics;
             }).collect(toMap(ApplicationForLeaveStatistics::getPerson, identity()));
 
-        final Map<Person, List<Application>> applicationsByPerson = applications.stream().collect(groupingBy(Application::getPerson));
+        final Map<Person, List<Application>> applicationsByPerson =
+            applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED))
+                .stream()
+                .collect(groupingBy(Application::getPerson));
         for (Person person : persons) {
             final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarsByPerson.get(person);
             final List<Application> personApplications = applicationsByPerson.getOrDefault(person, List.of());
