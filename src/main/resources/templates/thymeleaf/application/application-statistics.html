@@ -63,7 +63,13 @@
           <div
             class="tw-flex tw-flex-col md:tw-grid md:tw-grid-rows-2 lg:tw-flex lg:tw-flex-row tw-gap-4 md:tw-gap-2 print:tw-hidden"
           >
-            <form method="get" action="#" th:action="@{/web/application/statistics}">
+            <form
+              method="get"
+              action="#"
+              th:action="@{/web/application/statistics}"
+              data-turbo-frame="frame-statistics"
+              data-turbo-action="advance"
+            >
               <div id="statistics-filter-inputs">
                 <input type="hidden" name="sort" th:value="${sortQuery}" />
                 <input type="hidden" name="query" th:value="${query}" />
