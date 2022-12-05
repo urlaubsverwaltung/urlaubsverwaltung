@@ -108,7 +108,7 @@
                     onkeyup="count(this.value, 'text-additional-info');"
                     onkeydown="maxChars(this,500); count(this.value, 'text-additional-info');"
                     th:field="*{additionalInfo}"
-                  />
+                  ></textarea>
                   <small class="tw-self-end">
                     <span id="text-additional-info"></span
                     ><th:block th:text="#{person.form.basedata.additionalInformation.maxChars}"></th:block>
