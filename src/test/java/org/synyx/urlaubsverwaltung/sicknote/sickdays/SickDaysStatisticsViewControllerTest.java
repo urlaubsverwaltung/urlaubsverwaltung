@@ -56,7 +56,7 @@ class SickDaysStatisticsViewControllerTest {
         final String endString = "01.08.2018";
         when(dateFormatAware.parse(endString)).thenReturn(Optional.of(endDate));
 
-        perform(get("/web/sicknote/statistics/download")
+        perform(get("/web/sickdays/statistics/download")
             .param("from", fromString)
             .param("to", endString))
             .andExpect(status().isBadRequest());
@@ -80,7 +80,7 @@ class SickDaysStatisticsViewControllerTest {
         when(sickDaysStatisticsService.getAll(signedInUser, date, date)).thenReturn(statistics);
         when(sickDaysDetailedStatisticsCsvExportService.generateCSV(filterPeriod, statistics)).thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
-        perform(get("/web/sicknote/statistics/download")
+        perform(get("/web/sickdays/statistics/download")
             .param("from", dateString)
             .param("to", dateString))
             .andExpect(header().string("Content-disposition", "attachment; filename=\"filename.csv\""))
@@ -107,7 +107,7 @@ class SickDaysStatisticsViewControllerTest {
         when(sickDaysStatisticsService.getAll(signedInUser, startDate, endDate)).thenReturn(statistics);
         when(sickDaysDetailedStatisticsCsvExportService.generateCSV(filterPeriod, statistics)).thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
-        perform(get("/web/sicknote/statistics/download")
+        perform(get("/web/sickdays/statistics/download")
             .param("from", fromString)
             .param("to", endString)).andExpect(status().isOk());
     }
