@@ -5,7 +5,7 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <div th:replace="fragments/section-heading::section-heading(~{::time-heading-body}, ~{})">
+      <div th:replace="~{fragments/section-heading::section-heading(~{::time-heading-body}, ~{})}">
         <th:block th:fragment="time-heading-body">
           <h2 th:text="#{settings.time.title}"></h2>
         </th:block>
@@ -21,7 +21,7 @@
             </label>
             <div class="col-md-8">
               <select
-                th:replace="fragments/select::one(id='timeSettings.timeZoneId', name='timeSettings.timeZoneId', options=~{::settings-time-timezoneid})"
+                th:replace="~{fragments/select::one(id='timeSettings.timeZoneId', name='timeSettings.timeZoneId', options=~{::settings-time-timezoneid})}"
                 id="yearSelect"
               >
                 <th:block th:fragment="settings-time-timezoneid">

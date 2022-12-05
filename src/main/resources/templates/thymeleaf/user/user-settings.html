@@ -6,7 +6,7 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
     <title th:text="#{user-settings.header.title}"></title>
     <th:block th:fragment="scripts">
       <script
@@ -16,10 +16,10 @@
       <script defer asset:src="user_settings.js"></script>
     </th:block>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
       <div
-        th:replace="fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})"
+        th:replace="~{fragments/section-heading::section-heading(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})}"
       >
         <th:block th:ref="user-applications-heading-body">
           <h1 th:text="#{user-settings.title}">Account settings</h1>
@@ -65,7 +65,7 @@
                     class="tw-flex md:tw-flex-col tw-items-center tw-gap-4 tw-m-0 tw-cursor-pointer md:tw-text-center"
                   >
                     <svg
-                      th:replace="icon/globe::svg(className='tw-w-9 tw-h-9 md:tw-w-16 md:tw-h-16 tw-stroke-1')"
+                      th:replace="~{icon/globe::svg(className='tw-w-9 tw-h-9 md:tw-w-16 md:tw-h-16 tw-stroke-1')}"
                     ></svg>
                     <span
                       th:text="#{user-settings.language.locale.system}"

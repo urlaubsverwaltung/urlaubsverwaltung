@@ -5,7 +5,7 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <div th:replace="fragments/section-heading::section-heading(~{::special-leave-heading-body}, ~{})">
+      <div th:replace="~{fragments/section-heading::section-heading(~{::special-leave-heading-body}, ~{})}">
         <th:block th:fragment="special-leave-heading-body">
           <h2 th:text="#{settings.specialleave.title}"></h2>
         </th:block>
@@ -14,7 +14,7 @@
       <div>
         <aside class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start tw-pt-2 tw-text-sm">
           <div>
-            <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+            <svg th:replace="~{icon/information-circle::svg(className='tw-w-4 tw-h-4')}"></svg>
           </div>
           <div class="tw-flex tw-flex-col">
             <p th:text="#{settings.specialleave.help}"></p>
@@ -24,7 +24,7 @@
                 class="tw-flex tw-items-center"
                 href="mailto:info@urlaubsverwaltung.cloud?subject=Missing%20special%20leaves"
               >
-                <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                <svg th:replace="~{icon/mail::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
                 <th:block th:text="#{settings.specialleave.description.2}" />
               </a>
             </p>

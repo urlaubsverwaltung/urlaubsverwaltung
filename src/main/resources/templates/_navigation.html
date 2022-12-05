@@ -35,37 +35,37 @@
               <ul class="navigation-list tw-list-none tw-m-0 tw-px-0 tw-py-8 lg:tw-py-3 lg:tw-px-2 xl:tw-px-0">
                 <li>
                   <a
-                    th:replace="::navigation-item(id='home-link', href=@{/web/overview}, text=#{nav.home.title}, icon=~{icon/home::svg})"
+                    th:replace="~{::navigation-item(id='home-link', href=@{/web/overview}, text=#{nav.home.title}, icon=~{icon/home::svg})}"
                   ></a>
                 </li>
                 <li>
                   <a
-                    th:replace="::navigation-item(id='application-new-link', href=@{/web/application/new}, text=#{nav.apply.title}, icon=~{icon/plus-circle::svg})"
+                    th:replace="~{::navigation-item(id='application-new-link', href=@{/web/application/new}, text=#{nav.apply.title}, icon=~{icon/plus-circle::svg})}"
                   ></a>
                 </li>
                 <li>
                   <a
-                    th:replace="::navigation-item(id='application-link', href=@{/web/application}, text=#{nav.vacation.title}, icon=~{icon/calendar::svg})"
+                    th:replace="~{::navigation-item(id='application-link', href=@{/web/application}, text=#{nav.vacation.title}, icon=~{icon/calendar::svg})}"
                   ></a>
                 </li>
                 <li th:if="${navigationSickNoteStatisticsAccess}">
                   <a
-                    th:replace="::navigation-item(id='sicknote-link', href=@{/web/sicknote}, text=#{nav.sicknote.title}, icon=~{icon/medkit::svg}, dataTestId='navigation-sick-notes-link')"
+                    th:replace="~{::navigation-item(id='sicknote-link', href=@{/web/sicknote}, text=#{nav.sicknote.title}, icon=~{icon/medkit::svg}, dataTestId='navigation-sick-notes-link')}"
                   ></a>
                 </li>
                 <li th:if="${navigationPersonListAccess}">
                   <a
-                    th:replace="::navigation-item(id='person-link', href=@{/web/person(active=true)}, text=#{nav.person.title}, icon=~{icon/user::svg})"
+                    th:replace="~{::navigation-item(id='person-link', href=@{/web/person(active=true)}, text=#{nav.person.title}, icon=~{icon/user::svg})}"
                   ></a>
                 </li>
                 <li th:if="${navigationDepartmentAccess}">
                   <a
-                    th:replace="::navigation-item(id='department-link', href=@{/web/department}, text=#{nav.department.title}, icon=~{icon/user-group::svg})"
+                    th:replace="~{::navigation-item(id='department-link', href=@{/web/department}, text=#{nav.department.title}, icon=~{icon/user-group::svg})}"
                   ></a>
                 </li>
                 <li th:if="${navigationSettingsAccess}">
                   <a
-                    th:replace="::navigation-item(id='settings-link', href=@{/web/settings}, text=#{nav.settings.title}, icon=~{icon/cog::svg}, dataTestId='navigation-settings-link')"
+                    th:replace="~{::navigation-item(id='settings-link', href=@{/web/settings}, text=#{nav.settings.title}, icon=~{icon/cog::svg}, dataTestId='navigation-settings-link')}"
                   ></a>
                 </li>
               </ul>
@@ -81,7 +81,7 @@
                     tabindex="-1"
                   >
                     <svg
-                      th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9')"
+                      th:replace="~{icon/plus::svg(className='nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9')}"
                     ></svg>
                     <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
                     <span class="dropdown-caret"></span>
@@ -92,33 +92,33 @@
                         <li>
                           <a
                             href="#"
-                            th:replace="::nav-popup-menu-link(href=@{/web/application/new}, icon=~{::menu-add-application-icon}, text=#{nav.add.vacation}, dataTestId='quick-add-new-application')"
+                            th:replace="~{::nav-popup-menu-link(href=@{/web/application/new}, icon=~{::menu-add-application-icon}, text=#{nav.add.vacation}, dataTestId='quick-add-new-application')}"
                           >
                             <svg
                               th:ref="menu-add-application-icon"
-                              th:replace="icon/document-text::svg(className='tw-w-6 tw-h-6')"
+                              th:replace="~{icon/document-text::svg(className='tw-w-6 tw-h-6')}"
                             ></svg>
                           </a>
                         </li>
                         <li th:if="${navigationSickNoteAddAccess}">
                           <a
                             href="#"
-                            th:replace="::nav-popup-menu-link(href=@{/web/sicknote/new}, icon=~{::menu-add-sicknote-icon}, text=#{nav.add.sicknote}, dataTestId='quick-add-new-sicknote')"
+                            th:replace="~{::nav-popup-menu-link(href=@{/web/sicknote/new}, icon=~{::menu-add-sicknote-icon}, text=#{nav.add.sicknote}, dataTestId='quick-add-new-sicknote')}"
                           >
                             <svg
                               th:ref="menu-add-sicknote-icon"
-                              th:replace="icon/medkit::svg(className='tw-w-6 tw-h-6')"
+                              th:replace="~{icon/medkit::svg(className='tw-w-6 tw-h-6')}"
                             ></svg>
                           </a>
                         </li>
                         <li th:if="${navigationOvertimeItemEnabled}">
                           <a
                             href="#"
-                            th:replace="::nav-popup-menu-link(href=@{/web/overtime/new}, icon=~{::menu-add-overtime-icon}, text=#{nav.add.overtime}, dataTestId='quick-add-new-overtime')"
+                            th:replace="~{::nav-popup-menu-link(href=@{/web/overtime/new}, icon=~{::menu-add-overtime-icon}, text=#{nav.add.overtime}, dataTestId='quick-add-new-overtime')}"
                           >
                             <svg
                               th:ref="menu-add-overtime-icon"
-                              th:replace="icon/clock::svg(className='tw-w-6 tw-h-6')"
+                              th:replace="~{icon/clock::svg(className='tw-w-6 tw-h-6')}"
                             ></svg>
                           </a>
                         </li>
@@ -134,7 +134,7 @@
                   th:if="${not navigationRequestPopupEnabled}"
                 >
                   <svg
-                    th:replace="icon/plus::svg(className='nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9')"
+                    th:replace="~{icon/plus::svg(className='nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9')}"
                   ></svg>
                   <span class="tw-sr-only" th:text="#{nav.add.vacation}"></span>
                 </a>
@@ -149,7 +149,7 @@
                   >
                     <span class="tw-inline-flex tw-text-blue-200 dark:tw-text-sky-800">
                       <img
-                        th:replace="fragments/avatar::avatar(className='tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9',url=${menuGravatarUrl + '?d=404'},niceName=${userFirstName + ' ' + userLastName},width='40px',height='40px')"
+                        th:replace="~{fragments/avatar::avatar(className='tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9',url=${menuGravatarUrl + '?d=404'},niceName=${userFirstName + ' ' + userLastName},width='40px',height='40px')}"
                         alt=""
                       />
                     </span>
@@ -166,7 +166,7 @@
                           >
                             <span class="tw-text-blue-200 dark:tw-text-sky-800">
                               <img
-                                th:replace="fragments/avatar::avatar(url=${menuGravatarUrl + '?d=404&s=128'},niceName=${userFirstName + ' ' + userLastName},width='64px',height='64px')"
+                                th:replace="~{fragments/avatar::avatar(url=${menuGravatarUrl + '?d=404&s=128'},niceName=${userFirstName + ' ' + userLastName},width='64px',height='64px')}"
                                 alt=""
                               />
                             </span>
@@ -187,33 +187,33 @@
                         <li class="tw-mb-1">
                           <a
                             href="#"
-                            th:replace="::nav-popup-menu-link-external(href=${menuHelpUrl}, icon=~{::menu-help-icon}, text=#{nav.help.title})"
+                            th:replace="~{::nav-popup-menu-link-external(href=${menuHelpUrl}, icon=~{::menu-help-icon}, text=#{nav.help.title})}"
                           >
                             <svg
                               th:ref="menu-help-icon"
-                              th:replace="icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')"
+                              th:replace="~{icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')}"
                             ></svg>
                           </a>
                         </li>
                         <li class="tw-mb-1">
                           <a
                             href="#"
-                            th:replace="::nav-popup-menu-link(href=@{/web/person/{userId}(userId=${userId})}, icon=~{::menu-person-icon}, text=#{nav.account.title})"
+                            th:replace="~{::nav-popup-menu-link(href=@{/web/person/{userId}(userId=${userId})}, icon=~{::menu-person-icon}, text=#{nav.account.title})}"
                           >
                             <svg
                               th:ref="menu-person-icon"
-                              th:replace="icon/user-circle::svg(className='tw-w-6 tw-h-6')"
+                              th:replace="~{icon/user-circle::svg(className='tw-w-6 tw-h-6')}"
                             ></svg>
                           </a>
                         </li>
                         <li class="tw-mb-1">
                           <a
                             href="#"
-                            th:replace="::nav-popup-menu-link(href=@{/web/person/{userId}/settings(userId=${userId})}, icon=~{::menu-user-settings-icon}, text=#{nav.user-settings.title})"
+                            th:replace="~{::nav-popup-menu-link(href=@{/web/person/{userId}/settings(userId=${userId})}, icon=~{::menu-user-settings-icon}, text=#{nav.user-settings.title})}"
                           >
                             <svg
                               th:ref="menu-user-settings-icon"
-                              th:replace="icon/adjustments::svg(className='tw-w-6 tw-h-6')"
+                              th:replace="~{icon/adjustments::svg(className='tw-w-6 tw-h-6')}"
                             ></svg>
                           </a>
                         </li>
@@ -223,7 +223,7 @@
                             <button type="submit" class="nav-popup-menu_link tw-rounded-b-2xl" data-test-id="logout">
                               <span class="tw-flex tw-items-center">
                                 <span class="tw-px-2 tw-py-1 tw-rounded tw-flex tw-items-center tw-ml-2.5">
-                                  <svg th:replace="icon/logout::svg(className='tw-w-6 tw-h-6')"></svg>
+                                  <svg th:replace="~{icon/logout::svg(className='tw-w-6 tw-h-6')}"></svg>
                                 </span>
                                 <span class="tw-ml-4" th:text="#{nav.signout.title}"></span>
                               </span>
@@ -300,7 +300,7 @@
         style="min-width: 0"
         th:text="${text}"
       ></span>
-      <svg th:replace="icon/external-link::svg(className='tw-ml-1.5 tw-h-4 tw-w-4')"></svg>
+      <svg th:replace="~{icon/external-link::svg(className='tw-ml-1.5 tw-h-4 tw-w-4')}"></svg>
     </a>
   </body>
 </html>

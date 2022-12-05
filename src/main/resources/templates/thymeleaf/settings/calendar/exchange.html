@@ -5,7 +5,7 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <div th:replace="fragments/section-heading::section-heading(~{::exchange-heading-body}, ~{})">
+      <div th:replace="~{fragments/section-heading::section-heading(~{::exchange-heading-body}, ~{})}">
         <th:block th:fragment="exchange-heading-body">
           <h2 th:text="#{settings.calendar.ews.title}"></h2>
         </th:block>
@@ -14,7 +14,7 @@
       <div class="row">
         <aside class="col-md-4 col-md-push-8">
           <p class="help-block tw-text-sm">
-            <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+            <svg th:replace="~{icon/information-circle::svg(className='tw-w-4 tw-h-4')}"></svg>
             <th:block th:utext="#{settings.calendar.ews.description}" />
           </p>
         </aside>

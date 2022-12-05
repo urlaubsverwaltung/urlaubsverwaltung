@@ -43,7 +43,7 @@
     </th:block>
 
     <th:block th:fragment="person-box-with-departments(person, departments)">
-      <th:block th:replace="::person-box(person=${person}, departments=${departments})"></th:block>
+      <th:block th:replace="~{::person-box(person=${person}, departments=${departments})}"></th:block>
     </th:block>
   </body>
 </html>
