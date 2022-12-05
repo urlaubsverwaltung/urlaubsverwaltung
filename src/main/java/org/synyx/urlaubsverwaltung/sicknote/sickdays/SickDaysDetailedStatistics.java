@@ -4,7 +4,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
 import java.util.List;
 
-public class SickDaysDetailedStatistics {
+class SickDaysDetailedStatistics {
 
     private final String personalNumber;
     private final String firstName;
