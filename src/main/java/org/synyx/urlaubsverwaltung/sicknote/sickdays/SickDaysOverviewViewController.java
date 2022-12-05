@@ -106,7 +106,7 @@ public class SickDaysOverviewViewController {
 
         fillModel(model, sickNotes, period, persons);
 
-        return "thymeleaf/sicknote/sick_notes";
+        return "thymeleaf/sicknote/sick_days";
     }
 
     private void fillModel(Model model, List<SickNote> sickNotes, FilterPeriod period, List<Person> persons) {

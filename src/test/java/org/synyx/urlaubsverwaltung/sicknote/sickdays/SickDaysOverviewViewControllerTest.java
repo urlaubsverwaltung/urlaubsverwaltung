@@ -201,7 +201,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
             .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
-            .andExpect(view().name("thymeleaf/sicknote/sick_notes"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
 
     @Test
@@ -263,7 +263,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
             .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
-            .andExpect(view().name("thymeleaf/sicknote/sick_notes"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
 
     @Test
@@ -325,7 +325,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
             .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
-            .andExpect(view().name("thymeleaf/sicknote/sick_notes"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
 
     @Test
@@ -396,7 +396,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
             .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
-            .andExpect(view().name("thymeleaf/sicknote/sick_notes"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
 
     @Test
@@ -419,7 +419,7 @@ class SickDaysOverviewViewControllerTest {
         resultActions.andExpect(model().attribute("to", endDate));
         resultActions.andExpect(model().attribute("period", hasProperty("startDate", is(startDate))));
         resultActions.andExpect(model().attribute("period", hasProperty("endDate", is(endDate))));
-        resultActions.andExpect(view().name("thymeleaf/sicknote/sick_notes"));
+        resultActions.andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
 
     @Test
@@ -437,7 +437,7 @@ class SickDaysOverviewViewControllerTest {
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
-            .andExpect(view().name("thymeleaf/sicknote/sick_notes"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
 
     @Test
@@ -463,7 +463,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("persons", persons))
             .andExpect(model().attribute("personnelNumberOfPersons", Map.of(1, "42")))
             .andExpect(model().attribute("showPersonnelNumberColumn", true))
-            .andExpect(view().name("thymeleaf/sicknote/sick_notes"));
+            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
