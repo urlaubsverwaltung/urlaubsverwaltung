@@ -11,6 +11,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDaysDetailedStatistics;
+import org.synyx.urlaubsverwaltung.sicknote.sickdays.SickNoteDetailedStatisticsCsvExportService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -22,7 +24,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -128,7 +129,7 @@ class SickNoteStatisticsViewControllerTest {
         when(dateFormatAware.parse(dateString)).thenReturn(Optional.of(date));
         when(dateFormatAware.parse(dateString)).thenReturn(Optional.of(date));
 
-        final List<SickNoteDetailedStatistics> statistics = emptyList();
+        final List<SickDaysDetailedStatistics> statistics = emptyList();
         when(statisticsService.getAll(signedInUser, date, date)).thenReturn(statistics);
         when(sickNoteDetailedStatisticsCsvExportService.generateCSV(filterPeriod, statistics)).thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
@@ -155,7 +156,7 @@ class SickNoteStatisticsViewControllerTest {
         final String endString = "01.08.2019";
         when(dateFormatAware.parse(endString)).thenReturn(Optional.of(endDate));
 
-        final List<SickNoteDetailedStatistics> statistics = emptyList();
+        final List<SickDaysDetailedStatistics> statistics = emptyList();
         when(statisticsService.getAll(signedInUser, startDate, endDate)).thenReturn(statistics);
         when(sickNoteDetailedStatisticsCsvExportService.generateCSV(filterPeriod, statistics)).thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 

@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.sicknote.statistics;
+package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import com.opencsv.CSVWriter;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,16 +30,16 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SIC
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
 @ExtendWith(MockitoExtension.class)
-class SickNoteDetailedStatisticsCsvExportServiceTest {
+class SickDaysDetailedStatisticsCsvExportServiceTest {
 
     @Mock
     private MessageSource messageSource;
 
-    private SickNoteDetailedStatisticsCsvExportService sut;
+    private SickDaysDetailedStatisticsCsvExportService sut;
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteDetailedStatisticsCsvExportService(messageSource, new DateFormatAware());
+        sut = new SickDaysDetailedStatisticsCsvExportService(messageSource, new DateFormatAware());
     }
 
     @Test
@@ -112,10 +112,10 @@ class SickNoteDetailedStatisticsCsvExportServiceTest {
 
         final List<SickNote> sickNotes = List.of(sickNote, sickNoteWithAub, sickNoteHalfDayMorning, sickNoteHalfDayNoon);
         final List<String> departments = List.of("Here", "There");
-        final SickNoteDetailedStatistics sickNoteDetailedStatistics = new
-            SickNoteDetailedStatistics("42", person.getFirstName(), person.getLastName(), sickNotes, departments);
+        final SickDaysDetailedStatistics sickDaysDetailedStatistics = new
+            SickDaysDetailedStatistics("42", person.getFirstName(), person.getLastName(), sickNotes, departments);
 
-        final List<SickNoteDetailedStatistics> statistics = List.of(sickNoteDetailedStatistics);
+        final List<SickDaysDetailedStatistics> statistics = List.of(sickDaysDetailedStatistics);
 
         addMessageSource("absence.period");
         addMessageSource("person.account.basedata.personnelNumber");

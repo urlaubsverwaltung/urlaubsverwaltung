@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.sicknote.statistics;
+package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 
 import com.opencsv.CSVWriter;
@@ -18,7 +18,7 @@ import static java.lang.String.format;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 @Service
-public class SickNoteDetailedStatisticsCsvExportService implements CsvExportService<SickNoteDetailedStatistics> {
+class SickDaysDetailedStatisticsCsvExportService implements CsvExportService<SickDaysDetailedStatistics> {
 
     private static final Locale LOCALE = Locale.GERMAN;
     private static final String DATE_FORMAT = "ddMMyyyy";
@@ -26,7 +26,7 @@ public class SickNoteDetailedStatisticsCsvExportService implements CsvExportServ
     private final MessageSource messageSource;
     private final DateFormatAware dateFormatAware;
 
-    public SickNoteDetailedStatisticsCsvExportService(MessageSource messageSource, DateFormatAware dateFormatAware) {
+    SickDaysDetailedStatisticsCsvExportService(MessageSource messageSource, DateFormatAware dateFormatAware) {
         this.messageSource = messageSource;
         this.dateFormatAware = dateFormatAware;
     }
@@ -39,7 +39,7 @@ public class SickNoteDetailedStatisticsCsvExportService implements CsvExportServ
     }
 
     @Override
-    public void write(FilterPeriod period, List<SickNoteDetailedStatistics> allDetailedSickNotes, CSVWriter csvWriter) {
+    public void write(FilterPeriod period, List<SickDaysDetailedStatistics> allDetailedSickNotes, CSVWriter csvWriter) {
         final String[] csvHeader = {
             getTranslation("person.account.basedata.personnelNumber"),
             getTranslation("person.data.firstName"),

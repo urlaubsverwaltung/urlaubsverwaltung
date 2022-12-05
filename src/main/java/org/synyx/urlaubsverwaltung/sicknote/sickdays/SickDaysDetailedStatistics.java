@@ -1,10 +1,10 @@
-package org.synyx.urlaubsverwaltung.sicknote.statistics;
+package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
 import java.util.List;
 
-public class SickNoteDetailedStatistics {
+public class SickDaysDetailedStatistics {
 
     private final String personalNumber;
     private final String firstName;
@@ -12,7 +12,7 @@ public class SickNoteDetailedStatistics {
     private final List<SickNote> sickNotes;
     private final List<String> departments;
 
-    SickNoteDetailedStatistics(String personalNumber, String firstName, String lastName, List<SickNote> sickNotes, List<String> departments) {
+    SickDaysDetailedStatistics(String personalNumber, String firstName, String lastName, List<SickNote> sickNotes, List<String> departments) {
         this.personalNumber = personalNumber;
         this.firstName = firstName;
         this.lastName = lastName;

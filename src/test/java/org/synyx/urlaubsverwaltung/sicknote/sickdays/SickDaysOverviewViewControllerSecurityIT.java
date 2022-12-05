@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.sickdays.web;
+package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

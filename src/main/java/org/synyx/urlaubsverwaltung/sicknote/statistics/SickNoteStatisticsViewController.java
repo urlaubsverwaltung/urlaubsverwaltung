@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDaysDetailedStatistics;
+import org.synyx.urlaubsverwaltung.sicknote.sickdays.SickNoteDetailedStatisticsCsvExportService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
@@ -77,7 +79,7 @@ class SickNoteStatisticsViewController {
         }
 
         final Person signedInUser = personService.getSignedInUser();
-        final List<SickNoteDetailedStatistics> allDetailedSickNotes = sickNoteStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate());
+        final List<SickDaysDetailedStatistics> allDetailedSickNotes = sickNoteStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate());
         final CSVFile csvFile = sickNoteDetailedStatisticsCsvExportService.generateCSV(period, allDetailedSickNotes);
 
         final HttpHeaders headers = new HttpHeaders();

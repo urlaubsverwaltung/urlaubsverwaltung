@@ -1,14 +1,14 @@
 package org.synyx.urlaubsverwaltung.overview;
 
-import org.synyx.urlaubsverwaltung.sickdays.web.SickDays;
+import org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
-import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
+import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.TOTAL;
+import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.WITH_AUB;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
 /**
