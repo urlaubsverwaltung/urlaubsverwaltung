@@ -37,7 +37,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "USER")
     void periodsSickNotesWithWrongRole() throws Exception {
         final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/web/sicknote")
+        final ResultActions resultActions = perform(get("/web/sickdays")
             .param("from", dtf.format(now))
             .param("to", dtf.format(now.plusDays(1))));
         resultActions.andExpect(status().isForbidden());
@@ -53,7 +53,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(
-            get("/web/sicknote")
+            get("/web/sickdays")
                 .param("from", dtf.format(now))
                 .param("to", dtf.format(now.plusDays(1))));
         resultActions.andExpect(status().isOk());
@@ -69,7 +69,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(
-            get("/web/sicknote")
+            get("/web/sickdays")
                 .param("from", dtf.format(now))
                 .param("to", dtf.format(now.plusDays(1))));
         resultActions.andExpect(status().isOk());
@@ -85,7 +85,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(
-            get("/web/sicknote")
+            get("/web/sickdays")
                 .param("from", dtf.format(now))
                 .param("to", dtf.format(now.plusDays(1))));
         resultActions.andExpect(status().isOk());
@@ -101,7 +101,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(
-            get("/web/sicknote")
+            get("/web/sickdays")
                 .param("from", dtf.format(now))
                 .param("to", dtf.format(now.plusDays(1))));
         resultActions.andExpect(status().isOk());

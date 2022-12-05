@@ -94,9 +94,9 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate endDate = LocalDate.parse(year + "-12-31");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        perform(post("/web/sicknote/filter").flashAttr("period", filterPeriod))
+        perform(post("/web/sickdays/filter").flashAttr("period", filterPeriod))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/sicknote?from=" + year + "-01-01&to=" + year + "-12-31"));
+            .andExpect(view().name("redirect:/web/sickdays?from=" + year + "-01-01&to=" + year + "-12-31"));
     }
 
     private static Stream<Arguments> dateInputAndIsoDateTuple() {
@@ -113,20 +113,20 @@ class SickDaysOverviewViewControllerTest {
     @MethodSource("dateInputAndIsoDateTuple")
     void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDate, String givenIsoDate) throws Exception {
 
-        perform(post("/web/sicknote/filter")
+        perform(post("/web/sickdays/filter")
             .param("startDate", givenDate))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/sicknote?from=" + givenIsoDate + "&to=2022-12-31"));
+            .andExpect(redirectedUrl("/web/sickdays?from=" + givenIsoDate + "&to=2022-12-31"));
     }
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
     void applicationForLeaveStatisticsRedirectsToStatisticsForEndDate(String givenDate, String givenIsoDate) throws Exception {
 
-        perform(post("/web/sicknote/filter")
+        perform(post("/web/sickdays/filter")
             .param("endDate", givenDate))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/sicknote?from=2022-01-01&to=" + givenIsoDate));
+            .andExpect(redirectedUrl("/web/sickdays?from=2022-01-01&to=" + givenIsoDate));
     }
 
     @Test
@@ -135,10 +135,10 @@ class SickDaysOverviewViewControllerTest {
         final int year = Year.now(clock).getValue();
         final FilterPeriod filterPeriod = new FilterPeriod(null, null);
 
-        perform(post("/web/sicknote/filter")
+        perform(post("/web/sickdays/filter")
             .flashAttr("period", filterPeriod))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/sicknote?from=" + year + "-01-01&to=" + year + "-12-31"));
+            .andExpect(view().name("redirect:/web/sickdays?from=" + year + "-01-01&to=" + year + "-12-31"));
     }
 
     @ParameterizedTest
@@ -188,7 +188,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
         when(sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
 
-        perform(get("/web/sicknote")
+        perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
             .andExpect(status().isOk())
@@ -250,7 +250,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
         when(sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
 
-        perform(get("/web/sicknote")
+        perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
             .andExpect(status().isOk())
@@ -312,7 +312,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
         when(sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
 
-        perform(get("/web/sicknote")
+        perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
             .andExpect(status().isOk())
@@ -383,7 +383,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
         when(sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), List.of(person, person2), List.of(USER), requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
 
-        perform(get("/web/sicknote")
+        perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
             .andExpect(status().isOk())
@@ -411,7 +411,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate startDate = ZonedDateTime.now(clock).withYear(year).with(firstDayOfYear()).toLocalDate();
         final LocalDate endDate = ZonedDateTime.now(clock).withYear(year).with(lastDayOfYear()).toLocalDate();
 
-        final ResultActions resultActions = perform(get("/web/sicknote")
+        final ResultActions resultActions = perform(get("/web/sickdays")
             .param("from", "01.01." + year)
             .param("to", "31.12." + year));
         resultActions.andExpect(status().isOk());
@@ -433,7 +433,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
 
-        perform(get("/web/sicknote")
+        perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
@@ -457,7 +457,7 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
 
-        perform(get("/web/sicknote")
+        perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
             .andExpect(model().attribute("persons", persons))

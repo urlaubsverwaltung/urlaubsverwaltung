@@ -76,7 +76,7 @@ public class SickDaysOverviewViewController {
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
-    @PostMapping("/sicknote/filter")
+    @PostMapping("/sickdays/filter")
     public String filterSickNotes(@ModelAttribute("period") FilterPeriod period, Errors errors, RedirectAttributes redirectAttributes) {
 
         if (errors.hasErrors()) {
@@ -86,11 +86,11 @@ public class SickDaysOverviewViewController {
         final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
         final String endDateISoString = dateFormatAware.formatISO(period.getEndDate());
 
-        return "redirect:/web/sicknote?from=" + startDateIsoString + "&to=" + endDateISoString;
+        return "redirect:/web/sickdays?from=" + startDateIsoString + "&to=" + endDateISoString;
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
-    @GetMapping("/sicknote")
+    @GetMapping("/sickdays")
     public String periodsSickNotes(@RequestParam(value = "from", defaultValue = "") String from,
                                    @RequestParam(value = "to", defaultValue = "") String to,
                                    Model model) {
