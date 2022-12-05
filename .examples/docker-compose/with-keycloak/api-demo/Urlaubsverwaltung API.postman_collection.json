@@ -1,0 +1,2288 @@
+{
+	"info": {
+		"_postman_id": "16dfc9a2-4625-4900-999c-09e5fb698c00",
+		"name": "Urlaubsverwaltung API",
+		"description": "This rest API provides the possibility to fetch information about absences, availabilities, persons, public holidays, sicknotes, vacations and many more...\n\nContact Support:\n Name: Urlaubsverwaltung\n Email: info@urlaubsverwaltung.cloud",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "persons",
+					"item": [
+						{
+							"name": "{person Id}",
+							"item": [
+								{
+									"name": "Calculate the work days for a certain period and person",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/persons/:personId/workdays?from=1961-04-22&to=1961-04-22&length=NOON",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"persons",
+												":personId",
+												"workdays"
+											],
+											"query": [
+												{
+													"key": "from",
+													"value": "1961-04-22",
+													"description": "(Required) Start date with pattern yyyy-MM-dd"
+												},
+												{
+													"key": "to",
+													"value": "1961-04-22",
+													"description": "(Required) End date with pattern yyyy-MM-dd"
+												},
+												{
+													"key": "length",
+													"value": "NOON",
+													"description": "Day Length"
+												}
+											],
+											"variable": [
+												{
+													"key": "personId",
+													"value": "3750657",
+													"description": "(Required) ID of the person"
+												}
+											]
+										},
+										"description": "The calculation depends on the working time of the person."
+									},
+									"response": [
+										{
+											"name": "OK",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/workdays?from=1961-04-22&to=1961-04-22&length=NOON",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"workdays"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "length",
+															"value": "NOON"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) ID of the person"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/workdays?from=1961-04-22&to=1961-04-22&length=NOON",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"workdays"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "length",
+															"value": "NOON"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) ID of the person"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Forbidden",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/workdays?from=1961-04-22&to=1961-04-22&length=NOON",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"workdays"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "length",
+															"value": "NOON"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) ID of the person"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Get all sick notes for a certain period and person",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/persons/:personId/sicknotes?from=1961-04-22&to=1961-04-22",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"persons",
+												":personId",
+												"sicknotes"
+											],
+											"query": [
+												{
+													"key": "from",
+													"value": "1961-04-22",
+													"description": "(Required) Start date with pattern yyyy-MM-dd"
+												},
+												{
+													"key": "to",
+													"value": "1961-04-22",
+													"description": "(Required) End date with pattern yyyy-MM-dd"
+												}
+											],
+											"variable": [
+												{
+													"key": "personId",
+													"value": "3750657",
+													"description": "(Required) ID of the person"
+												}
+											]
+										},
+										"description": "Get all sick notes for a certain period and person. Information only reachable for users with role office and for own sick notes."
+									},
+									"response": [
+										{
+											"name": "OK",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/sicknotes?from=1961-04-22&to=1961-04-22",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"sicknotes"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) ID of the person"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/sicknotes?from=1961-04-22&to=1961-04-22",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"sicknotes"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) ID of the person"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Forbidden",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/sicknotes?from=1961-04-22&to=1961-04-22",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"sicknotes"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) ID of the person"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Get all public holidays for a certain period",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/persons/:personId/public-holidays?from=1961-04-22&to=1961-04-22",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"persons",
+												":personId",
+												"public-holidays"
+											],
+											"query": [
+												{
+													"key": "from",
+													"value": "1961-04-22",
+													"description": "(Required) Start date with pattern yyyy-MM-dd"
+												},
+												{
+													"key": "to",
+													"value": "1961-04-22",
+													"description": "(Required) End date with pattern yyyy-MM-dd"
+												}
+											],
+											"variable": [
+												{
+													"key": "personId",
+													"value": "3750657",
+													"description": "(Required) ID of the person to get the public holidays for."
+												}
+											]
+										},
+										"description": "Get all public holidays for a certain period. Information only reachable for users with role office and for own public holidays."
+									},
+									"response": [
+										{
+											"name": "OK",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/public-holidays?from=1961-04-22&to=1961-04-22",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"public-holidays"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) ID of the person to get the public holidays for."
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/public-holidays?from=1961-04-22&to=1961-04-22",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"public-holidays"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) ID of the person to get the public holidays for."
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Forbidden",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/public-holidays?from=1961-04-22&to=1961-04-22",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"public-holidays"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) ID of the person to get the public holidays for."
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Get all availabilities for a certain period and person",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/persons/:personId/availabilities?from=1961-04-22&to=1961-04-22",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"persons",
+												":personId",
+												"availabilities"
+											],
+											"query": [
+												{
+													"key": "from",
+													"value": "1961-04-22",
+													"description": "(Required) start of interval to get availabilities from (inclusive)"
+												},
+												{
+													"key": "to",
+													"value": "1961-04-22",
+													"description": "(Required) end of interval to get availabilities from (inclusive)"
+												}
+											],
+											"variable": [
+												{
+													"key": "personId",
+													"value": "3750657",
+													"description": "(Required) id of the person"
+												}
+											]
+										},
+										"description": "Get all availabilities for a certain period and person. Maximum allowed period per request is one month."
+									},
+									"response": [
+										{
+											"name": "OK",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/availabilities?from=1961-04-22&to=1961-04-22",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"availabilities"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) id of the person"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/availabilities?from=1961-04-22&to=1961-04-22",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"availabilities"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) id of the person"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Forbidden",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/availabilities?from=1961-04-22&to=1961-04-22",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"availabilities"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) id of the person"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Get all absences for a certain period and person",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/persons/:personId/absences?from=1961-04-22&to=1961-04-22&type=id irure aliquip nulla&noWorkdaysInclusive=false",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"persons",
+												":personId",
+												"absences"
+											],
+											"query": [
+												{
+													"key": "from",
+													"value": "1961-04-22",
+													"description": "(Required) start of interval to get absences from (inclusive)"
+												},
+												{
+													"key": "to",
+													"value": "1961-04-22",
+													"description": "(Required) end of interval to get absences from (inclusive)"
+												},
+												{
+													"key": "type",
+													"value": "id irure aliquip nulla",
+													"description": "Type of absences, vacation or sick notes"
+												},
+												{
+													"key": "noWorkdaysInclusive",
+													"value": "false",
+													"description": "Whether to include no-workdays or not. Default is 'false' which will ignore no-workdays."
+												}
+											],
+											"variable": [
+												{
+													"key": "personId",
+													"value": "3750657",
+													"description": "(Required) ID of the person"
+												}
+											]
+										},
+										"description": "Get all absences for a certain period and person"
+									},
+									"response": [
+										{
+											"name": "OK",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/absences?from=1961-04-22&to=1961-04-22&type=id irure aliquip nulla&noWorkdaysInclusive=false",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"absences"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "type",
+															"value": "id irure aliquip nulla"
+														},
+														{
+															"key": "noWorkdaysInclusive",
+															"value": "false"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) ID of the person"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/absences?from=1961-04-22&to=1961-04-22&type=id irure aliquip nulla&noWorkdaysInclusive=false",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"absences"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "type",
+															"value": "id irure aliquip nulla"
+														},
+														{
+															"key": "noWorkdaysInclusive",
+															"value": "false"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) ID of the person"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Forbidden",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:personId/absences?from=1961-04-22&to=1961-04-22&type=id irure aliquip nulla&noWorkdaysInclusive=false",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":personId",
+														"absences"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "type",
+															"value": "id irure aliquip nulla"
+														},
+														{
+															"key": "noWorkdaysInclusive",
+															"value": "false"
+														}
+													],
+													"variable": [
+														{
+															"key": "personId",
+															"value": "3750657",
+															"description": "(Required) ID of the person"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "{id}",
+							"item": [
+								{
+									"name": "Get one active person by id",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/persons/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"persons",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "3750657",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Get one active person by id"
+									},
+									"response": [
+										{
+											"name": "OK",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "3750657",
+															"description": "(Required) "
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "3750657",
+															"description": "(Required) "
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Forbidden",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:id",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":id"
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "3750657",
+															"description": "(Required) "
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "Get all allowed vacations for department members for the given person and the certain period",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/api/persons/:id/vacations?from=1961-04-22&to=1961-04-22&ofDepartmentMembers=true",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"persons",
+												":id",
+												"vacations"
+											],
+											"query": [
+												{
+													"key": "from",
+													"value": "1961-04-22",
+													"description": "(Required) end of interval to get vacations from (inclusive)"
+												},
+												{
+													"key": "to",
+													"value": "1961-04-22",
+													"description": "(Required) end of interval to get vacations from (inclusive)"
+												},
+												{
+													"key": "ofDepartmentMembers",
+													"value": "true",
+													"description": "If defined returns only the vacations of the department members of the person"
+												}
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "3750657",
+													"description": "(Required) ID of the person"
+												}
+											]
+										},
+										"description": "Get all allowed vacations for department members for the given person and the certain period. All the waiting and allowed vacations of the departments the person is assigned to, are fetched. Information only reachable for users with role office and for your own data."
+									},
+									"response": [
+										{
+											"name": "OK",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:id/vacations?from=1961-04-22&to=1961-04-22&ofDepartmentMembers=true",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":id",
+														"vacations"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "ofDepartmentMembers",
+															"value": "true"
+														}
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "3750657",
+															"description": "(Required) ID of the person"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:id/vacations?from=1961-04-22&to=1961-04-22&ofDepartmentMembers=true",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":id",
+														"vacations"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "ofDepartmentMembers",
+															"value": "true"
+														}
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "3750657",
+															"description": "(Required) ID of the person"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Forbidden",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/persons/:id/vacations?from=1961-04-22&to=1961-04-22&ofDepartmentMembers=true",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"persons",
+														":id",
+														"vacations"
+													],
+													"query": [
+														{
+															"key": "from",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "to",
+															"value": "1961-04-22"
+														},
+														{
+															"key": "ofDepartmentMembers",
+															"value": "true"
+														}
+													],
+													"variable": [
+														{
+															"key": "id",
+															"value": "3750657",
+															"description": "(Required) ID of the person"
+														}
+													]
+												}
+											},
+											"status": "Forbidden",
+											"code": 403,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Get all active persons of the application",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "*/*"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/persons",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"persons"
+									]
+								},
+								"description": "Get all active persons of the application"
+							},
+							"response": [
+								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/persons",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"persons"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/persons",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"persons"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Forbidden",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/persons",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"persons"
+											]
+										}
+									},
+									"status": "Forbidden",
+									"code": 403,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Get Vacation-Overview Metadata",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/vacationoverview?selectedDepartment=id irure aliquip nulla&selectedYear=3750657&selectedMonth=3750657",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vacationoverview"
+							],
+							"query": [
+								{
+									"key": "selectedDepartment",
+									"value": "id irure aliquip nulla",
+									"description": "(Required) "
+								},
+								{
+									"key": "selectedYear",
+									"value": "3750657",
+									"description": "(Required) "
+								},
+								{
+									"key": "selectedMonth",
+									"value": "3750657",
+									"description": "(Required) "
+								}
+							]
+						},
+						"description": "Get Vacation-Overview metadata for all members of a department"
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/vacationoverview?selectedDepartment=id irure aliquip nulla&selectedYear=3750657&selectedMonth=3750657",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"vacationoverview"
+									],
+									"query": [
+										{
+											"key": "selectedDepartment",
+											"value": "id irure aliquip nulla"
+										},
+										{
+											"key": "selectedYear",
+											"value": "3750657"
+										},
+										{
+											"key": "selectedMonth",
+											"value": "3750657"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Bad Request",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/vacationoverview?selectedDepartment=id irure aliquip nulla&selectedYear=3750657&selectedMonth=3750657",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"vacationoverview"
+									],
+									"query": [
+										{
+											"key": "selectedDepartment",
+											"value": "id irure aliquip nulla"
+										},
+										{
+											"key": "selectedYear",
+											"value": "3750657"
+										},
+										{
+											"key": "selectedMonth",
+											"value": "3750657"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Forbidden",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/vacationoverview?selectedDepartment=id irure aliquip nulla&selectedYear=3750657&selectedMonth=3750657",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"vacationoverview"
+									],
+									"query": [
+										{
+											"key": "selectedDepartment",
+											"value": "id irure aliquip nulla"
+										},
+										{
+											"key": "selectedYear",
+											"value": "3750657"
+										},
+										{
+											"key": "selectedMonth",
+											"value": "3750657"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Get all sick notes for a certain period",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/sicknotes?from=1961-04-22&to=1961-04-22",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"sicknotes"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "1961-04-22",
+									"description": "(Required) Start date with pattern yyyy-MM-dd"
+								},
+								{
+									"key": "to",
+									"value": "1961-04-22",
+									"description": "(Required) End date with pattern yyyy-MM-dd"
+								}
+							]
+						},
+						"description": "Get all sick notes for a certain period. Information only reachable for users with role office or for users with the 'SICK_NOTE_VIEW' role."
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/sicknotes?from=1961-04-22&to=1961-04-22",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sicknotes"
+									],
+									"query": [
+										{
+											"key": "from",
+											"value": "1961-04-22"
+										},
+										{
+											"key": "to",
+											"value": "1961-04-22"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Bad Request",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/sicknotes?from=1961-04-22&to=1961-04-22",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sicknotes"
+									],
+									"query": [
+										{
+											"key": "from",
+											"value": "1961-04-22"
+										},
+										{
+											"key": "to",
+											"value": "1961-04-22"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Forbidden",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/sicknotes?from=1961-04-22&to=1961-04-22",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"sicknotes"
+									],
+									"query": [
+										{
+											"key": "from",
+											"value": "1961-04-22"
+										},
+										{
+											"key": "to",
+											"value": "1961-04-22"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Get all public holidays for a certain period",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/public-holidays?from=1961-04-22&to=1961-04-22",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"public-holidays"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "1961-04-22",
+									"description": "(Required) Start date with pattern yyyy-MM-dd"
+								},
+								{
+									"key": "to",
+									"value": "1961-04-22",
+									"description": "(Required) End date with pattern yyyy-MM-dd"
+								}
+							]
+						},
+						"description": "Get all public holidays for a certain period. Information only reachable for users with role office."
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/public-holidays?from=1961-04-22&to=1961-04-22",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"public-holidays"
+									],
+									"query": [
+										{
+											"key": "from",
+											"value": "1961-04-22"
+										},
+										{
+											"key": "to",
+											"value": "1961-04-22"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Bad Request",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/public-holidays?from=1961-04-22&to=1961-04-22",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"public-holidays"
+									],
+									"query": [
+										{
+											"key": "from",
+											"value": "1961-04-22"
+										},
+										{
+											"key": "to",
+											"value": "1961-04-22"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Forbidden",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/public-holidays?from=1961-04-22&to=1961-04-22",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"public-holidays"
+									],
+									"query": [
+										{
+											"key": "from",
+											"value": "1961-04-22"
+										},
+										{
+											"key": "to",
+											"value": "1961-04-22"
+										}
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Get all departments of the application",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/departments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"departments"
+							]
+						},
+						"description": "Get all departments of the application"
+					},
+					"response": [
+						{
+							"name": "OK",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/departments",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"departments"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Bad Request",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/departments",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"departments"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "*/*"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						},
+						{
+							"name": "Forbidden",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/departments",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"departments"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "text/plain"
+								}
+							],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "avatar",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "image/svg+xml"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/web/avatar?name=?",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"web",
+						"avatar"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "?"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "OK",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/web/avatar?name=?",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"web",
+								"avatar"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "?"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "image/svg+xml"
+						}
+					],
+					"cookie": [],
+					"body": "id irure aliquip nulla"
+				},
+				{
+					"name": "Bad Request",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/web/avatar?name=?",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"web",
+								"avatar"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "?"
+								}
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "*/*"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				},
+				{
+					"name": "Forbidden",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/web/avatar?name=?",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"web",
+								"avatar"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "?"
+								}
+							]
+						}
+					},
+					"status": "Forbidden",
+					"code": 403,
+					"_postman_previewlanguage": "text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "*/*"
+						}
+					],
+					"cookie": [],
+					"body": ""
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "keycloakAuthToken",
+				"type": "string"
+			},
+			{
+				"key": "challengeAlgorithm",
+				"value": "S256",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "openid",
+				"type": "string"
+			},
+			{
+				"key": "redirect_uri",
+				"value": "http://localhost:8080",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "authorization_code",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "51964fe9-8509-419d-9ee8-d2450822b7c9",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "urlaubsverwaltung",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "http://localhost:8090/auth/realms/urlaubsverwaltung/protocol/openid-connect/auth",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "http://localhost:8090/auth/realms/urlaubsverwaltung/protocol/openid-connect/token",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
