@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -15,14 +16,14 @@ class WorkingTimeValidator implements Validator {
     private static final String ERROR_WORKING_TIME_MANDATORY = "person.form.workingTime.error.mandatory";
 
     @Override
-    public boolean supports(Class<?> clazz) {
+    public boolean supports(@NonNull Class<?> clazz) {
 
         return WorkingTimeForm.class.equals(clazz);
     }
 
 
     @Override
-    public void validate(Object target, Errors errors) {
+    public void validate(@NonNull Object target, @NonNull Errors errors) {
 
         WorkingTimeForm form = (WorkingTimeForm) target;
 
