@@ -84,6 +84,21 @@ class AvatarControllerTest {
             .andExpect(content().string("<svg></svg>"));
     }
 
+    @Test
+    void ensureGeneratesAvatarWithMultipleWhitespacesInTheMiddle() throws Exception {
+
+        when(svgService.createSvg("thymeleaf/svg/avatar", Locale.GERMAN, Map.of("initials", "BM")))
+            .thenReturn("<svg></svg>");
+
+        perform(get("/web/avatar")
+            .locale(Locale.GERMAN)
+            .param("name", "Bat  man"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("image/svg+xml"))
+            .andExpect(header().string("Cache-Control", "max-age=3600"))
+            .andExpect(content().string("<svg></svg>"));
+    }
+
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
         return standaloneSetup(sut).build().perform(builder);
     }
