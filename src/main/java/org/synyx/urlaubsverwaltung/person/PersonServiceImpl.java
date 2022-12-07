@@ -104,7 +104,8 @@ class PersonServiceImpl implements PersonService {
         workingTimeWriteService.deleteAllByPerson(person);
         personRepository.delete(person);
 
-        LOG.info("Deleted person with id {} deleted by signed in user with id {}", person.getId(), signedInUser.getId());
+        final String status = person.isActive() ? "active" : "inactive";
+        LOG.info("Deleted {} person with id {} ({}) deleted by signed in user with id {}", status, person.getId(), person.getUsername(), signedInUser.getId());
     }
 
     @Override
