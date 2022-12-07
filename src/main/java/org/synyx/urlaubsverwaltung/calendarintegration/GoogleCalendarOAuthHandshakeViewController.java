@@ -10,7 +10,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import org.apache.http.HttpStatus;
@@ -40,7 +40,7 @@ public class GoogleCalendarOAuthHandshakeViewController {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
     private static final String APPLICATION_NAME = "Urlaubsverwaltung";
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
     private static HttpTransport httpTransport;
 
