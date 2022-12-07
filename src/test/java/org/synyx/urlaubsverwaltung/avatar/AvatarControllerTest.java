@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.avatar;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -46,6 +47,37 @@ class AvatarControllerTest {
         perform(get("/web/avatar")
             .locale(Locale.GERMAN)
             .param("name", name))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("image/svg+xml"))
+            .andExpect(header().string("Cache-Control", "max-age=3600"))
+            .andExpect(content().string("<svg></svg>"));
+    }
+
+    /*TODO unify these tests when we have junit 5.8 with https://github.com/junit-team/junit5/issues/1100 */
+    @Test
+    void ensureGeneratesAvatarWithWhitespacesAtStart() throws Exception {
+
+        when(svgService.createSvg("thymeleaf/svg/avatar", Locale.GERMAN, Map.of("initials", "B")))
+            .thenReturn("<svg></svg>");
+
+        perform(get("/web/avatar")
+            .locale(Locale.GERMAN)
+            .param("name", " Batman"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("image/svg+xml"))
+            .andExpect(header().string("Cache-Control", "max-age=3600"))
+            .andExpect(content().string("<svg></svg>"));
+    }
+
+    @Test
+    void ensureGeneratesAvatarWithWhitespacesAtEnd() throws Exception {
+
+        when(svgService.createSvg("thymeleaf/svg/avatar", Locale.GERMAN, Map.of("initials", "B")))
+            .thenReturn("<svg></svg>");
+
+        perform(get("/web/avatar")
+            .locale(Locale.GERMAN)
+            .param("name", "Batman "))
             .andExpect(status().isOk())
             .andExpect(content().contentType("image/svg+xml"))
             .andExpect(header().string("Cache-Control", "max-age=3600"))

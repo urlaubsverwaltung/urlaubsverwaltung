@@ -26,7 +26,7 @@ public class AvatarController {
     @ResponseBody
     public ResponseEntity<String> avatar(@RequestParam(value = "name", defaultValue = UNKNOWN_PERSON) String name, Locale locale) {
 
-        final Map<String, Object> model = Map.of("initials", getInitials(name));
+        final Map<String, Object> model = Map.of("initials", getInitials(name.trim()));
         final String svg = svgService.createSvg("thymeleaf/svg/avatar", locale, model);
 
         return ResponseEntity.ok()
