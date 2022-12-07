@@ -4,12 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -18,7 +19,7 @@ import static org.springframework.http.HttpMethod.GET;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+class WebSecurityConfig {
 
     private static final String OFFICE = "OFFICE";
     private static final String BOSS = "BOSS";
@@ -31,14 +32,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler;
 
-    public WebSecurityConfig(SecurityConfigurationProperties properties, PersonService personService, SessionService sessionService) {
+    WebSecurityConfig(SecurityConfigurationProperties properties, PersonService personService, SessionService sessionService) {
         isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
         this.personService = personService;
         this.sessionService = sessionService;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
 
         http
             .authorizeRequests()
@@ -87,10 +88,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService), BasicAuthenticationFilter.class);
+
+        return http.build();
     }
 
     @Autowired(required = false)
-    public void setOidcClientInitiatedLogoutSuccessHandler(OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler) {
+    void setOidcClientInitiatedLogoutSuccessHandler(OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler) {
         this.oidcClientInitiatedLogoutSuccessHandler = oidcClientInitiatedLogoutSuccessHandler;
     }
 }
