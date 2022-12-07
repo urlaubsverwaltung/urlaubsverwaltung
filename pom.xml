@@ -247,11 +247,6 @@
       <artifactId>google-api-services-calendar</artifactId>
       <version>v3-rev20220715-2.0.0</version>
     </dependency>
-    <dependency>
-      <groupId>com.google.http-client</groupId>
-      <artifactId>google-http-client-jackson2</artifactId>
-      <version>1.42.3</version>
-    </dependency>
 
     <!-- Security -->
     <dependency>
