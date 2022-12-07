@@ -3,11 +3,14 @@ import { parseISO } from "date-fns";
 import sendGetDaysRequest from "../send-get-days-request";
 import sendGetDepartmentVacationsRequest from "../send-get-department-vacations-request";
 
+function getPersonId() {
+  return document.querySelector("[name='person']").value;
+}
+
 $(document).ready(function () {
   // re-calculate vacation days when changing the day length
 
   const urlPrefix = window.uv.apiPrefix;
-  const personId = window.uv.personId;
 
   for (const element of document.querySelectorAll("input[name='dayLength']"))
     element.addEventListener("change", (event) => {
@@ -26,6 +29,7 @@ $(document).ready(function () {
       const startDate = parseISO(startDateString);
       const toDate = toDateString ? parseISO(toDateString) : startDate;
 
+      const personId = getPersonId();
       sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days");
       sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
     });
