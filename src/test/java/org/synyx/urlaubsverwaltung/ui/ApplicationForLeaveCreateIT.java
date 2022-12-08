@@ -33,6 +33,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -104,7 +105,7 @@ class ApplicationForLeaveCreateIT {
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
@@ -152,7 +153,7 @@ class ApplicationForLeaveCreateIT {
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
@@ -201,7 +202,7 @@ class ApplicationForLeaveCreateIT {
         final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
@@ -266,7 +267,7 @@ class ApplicationForLeaveCreateIT {
         final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
