@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInit
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import static org.springframework.http.HttpMethod.GET;
 
@@ -20,11 +21,6 @@ import static org.springframework.http.HttpMethod.GET;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class WebSecurityConfig {
-
-    private static final String OFFICE = "OFFICE";
-    private static final String BOSS = "BOSS";
-    private static final String USER = "USER";
-    private static final String ADMIN = "ADMIN";
 
     private final PersonService personService;
     private final SessionService sessionService;
@@ -55,19 +51,19 @@ class WebSecurityConfig {
             .antMatchers(GET, "/web/company/persons/*/calendar").permitAll()
             .antMatchers(GET, "/web/departments/*/persons/*/calendar").permitAll()
             .antMatchers(GET, "/web/persons/*/calendar").permitAll()
-            .antMatchers("/web/absences/**").hasAuthority(USER)
-            .antMatchers("/web/application/**").hasAuthority(USER)
-            .antMatchers("/web/department/**").hasAnyAuthority(BOSS, OFFICE)
-            .antMatchers("/web/google-api-handshake/**").hasAuthority(OFFICE)
-            .antMatchers("/web/overview").hasAuthority(USER)
-            .antMatchers("/web/overtime/**").hasAuthority(USER)
-            .antMatchers("/web/person/**").hasAuthority(USER)
-            .antMatchers("/web/sicknote/**").hasAuthority(USER)
-            .antMatchers("/web/settings/**").hasAuthority(OFFICE)
+            .antMatchers("/web/absences/**").hasAuthority(Role.USER.name())
+            .antMatchers("/web/application/**").hasAuthority(Role.USER.name())
+            .antMatchers("/web/department/**").hasAnyAuthority(Role.BOSS.name(), Role.OFFICE.name())
+            .antMatchers("/web/google-api-handshake/**").hasAuthority(Role.OFFICE.name())
+            .antMatchers("/web/overview").hasAuthority(Role.USER.name())
+            .antMatchers("/web/overtime/**").hasAuthority(Role.USER.name())
+            .antMatchers("/web/person/**").hasAuthority(Role.USER.name())
+            .antMatchers("/web/sicknote/**").hasAuthority(Role.USER.name())
+            .antMatchers("/web/settings/**").hasAuthority(Role.OFFICE.name())
             .requestMatchers(EndpointRequest.to(HealthEndpoint.class)).permitAll()
             .requestMatchers(EndpointRequest.to(PrometheusScrapeEndpoint.class)).permitAll()
             // TODO muss konfigurierbar werden!
-            .requestMatchers(EndpointRequest.toAnyEndpoint()).hasAuthority(ADMIN)
+            .requestMatchers(EndpointRequest.toAnyEndpoint()).hasAuthority("ADMIN")
             .anyRequest()
             .authenticated();
 
