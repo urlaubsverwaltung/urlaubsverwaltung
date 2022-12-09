@@ -132,81 +132,83 @@
         </thead>
         <tbody>
           <tr
-            th:each="person : ${persons}"
-            th:with="navigateLink=@{/web/person/__${person.id}__/overview#anchorSickNotes}"
+            th:each="sickDaysStatistic : ${sickDaysStatistics}"
+            th:with="navigateLink=@{/web/person/__${sickDaysStatistic.personId}__/overview#anchorSickNotes}"
             th:onclick="navigate([[${navigateLink}]])"
           >
             <td class="is-centered print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
               <img
-                th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404&s=40'},niceName=${person.niceName},width='40px',height='40px')"
+                th:replace="fragments/avatar::avatar-bordered(url=${sickDaysStatistic.personAvatarUrl + '?d=404&s=40'},niceName=${sickDaysStatistic.personNiceName},width='40px',height='40px')"
                 alt=""
               />
             </td>
             <td
               th:if="${showPersonnelNumberColumn}"
-              th:text="${personnelNumberOfPersons[person.id]}"
+              th:text="${sickDaysStatistic.personnelNumber}"
               class="tw-hidden lg:tw-table-cell print:tw-table-cell tw-text-ellipsis tw-overflow-hidden tw-max-w-xs tw-text-center"
             ></td>
-            <td th:text="${person.firstName}" class="hidden-xs"></td>
-            <td th:text="${person.lastName}" class="hidden-xs"></td>
-            <td th:text="${person.niceName}" class="visible-xs"></td>
-            <td class="hidden-xs" th:data-sortable-value="${sickDays.get(person).days['TOTAL']}">
+            <td th:text="${sickDaysStatistic.personFirstName}" class="hidden-xs"></td>
+            <td th:text="${sickDaysStatistic.personLastName}" class="hidden-xs"></td>
+            <td th:text="${sickDaysStatistic.personNiceName}" class="visible-xs"></td>
+            <td class="hidden-xs" th:data-sortable-value="${sickDaysStatistic.amountSickDays}">
               <div class="tw-flex tw-items-center">
                 <svg th:replace="icon/medkit::svg(className='tw-w-4 tw-h-4')"></svg>
-                &nbsp;<th:block th:replace="fragments/number::number(${sickDays.get(person).days['TOTAL']})"></th:block>
+                &nbsp;<th:block th:replace="fragments/number::number(${sickDaysStatistic.amountSickDays})"></th:block>
                 <th:block th:text="#{sicknotes.daysOverview.sickDays.number}"></th:block>
               </div>
               <p
-                th:if="${sickDays.get(person).days['WITH_AUB'] > 0}"
+                th:if="${sickDaysStatistic.amountSickDaysWithAUB > 0}"
                 class="list-table--second-row tw-flex tw-items-center"
               >
                 <span class="tw-text-emerald-500 tw-flex tw-items-center">
                   <svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4')"></svg>
                 </span>
                 <th:block
-                  th:text="| #{overview.sicknotes.sickdays.aub(${sickDays.get(person).days['WITH_AUB']})}|"
+                  th:text="| #{overview.sicknotes.sickdays.aub(${sickDaysStatistic.amountSickDaysWithAUB})}|"
                 ></th:block>
               </p>
             </td>
-            <td class="hidden-xs" th:data-sortable-value="${childSickDays.get(person).days['TOTAL']}">
+            <td class="hidden-xs" th:data-sortable-value="${sickDaysStatistic.amountChildSickDays}">
               <div class="tw-flex tw-items-center">
                 <svg th:replace="icon/child::svg(className='tw-w-3 tw-h-3')"></svg>
                 &nbsp;<th:block
-                  th:replace="fragments/number::number(${childSickDays.get(person).days['TOTAL']})"
+                  th:replace="fragments/number::number(${sickDaysStatistic.amountChildSickDays})"
                 ></th:block>
                 <th:block th:text="#{sicknotes.daysOverview.sickDays.child.number}"></th:block>
               </div>
               <p
-                th:if="${childSickDays.get(person).days['WITH_AUB'] > 0}"
+                th:if="${sickDaysStatistic.amountChildSickDaysWithAUB > 0}"
                 class="list-table--second-row tw-flex tw-items-center"
               >
                 <span class="tw-text-emerald-500 tw-flex tw-items-center">
                   <svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4')"></svg>
                 </span>
                 <th:block
-                  th:text="#{overview.sicknotes.sickdays.aub(${childSickDays.get(person).days['WITH_AUB']})}"
+                  th:text="#{overview.sicknotes.sickdays.aub(${sickDaysStatistic.amountChildSickDaysWithAUB})}"
                 ></th:block>
               </p>
             </td>
             <td class="visible-xs">
               <div class="tw-flex tw-items-center">
                 <svg th:replace="icon/medkit::svg(className='tw-w-3 tw-h-3')"></svg>
-                &nbsp;<th:block th:replace="fragments/number::number(${sickDays.get(person).days['TOTAL']})"></th:block>
-                <th:block th:if="${sickDays.get(person).days['WITH_AUB'] > 0}">
+                &nbsp;<th:block th:replace="fragments/number::number(${sickDaysStatistic.amountSickDays})"></th:block>
+                <th:block th:if="${sickDaysStatistic.amountSickDaysWithAUB > 0}">
                   &nbsp; (&nbsp;<svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4 tw-text-emerald-500')"></svg>
-                  <th:block th:replace="fragments/number::number(${sickDays.get(person).days['WITH_AUB']})"></th:block>
+                  <th:block
+                    th:replace="fragments/number::number(${sickDaysStatistic.amountSickDaysWithAUB})"
+                  ></th:block>
                   )
                 </th:block>
               </div>
               <div class="tw-flex tw-items-center">
                 <svg th:replace="icon/child::svg(className='tw-w-3 tw-h-3')"></svg>
                 &nbsp;<th:block
-                  th:replace="fragments/number::number(${childSickDays.get(person).days['TOTAL']})"
+                  th:replace="fragments/number::number(${sickDaysStatistic.amountChildSickDays})"
                 ></th:block>
-                <th:block th:if="${childSickDays.get(person).days['WITH_AUB'] > 0}">
+                <th:block th:if="${sickDaysStatistic.amountChildSickDaysWithAUB > 0}">
                   &nbsp; (&nbsp;<svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4 tw-text-emerald-500')"></svg>
                   <th:block
-                    th:replace="fragments/number::number(${childSickDays.get(person).days['WITH_AUB']})"
+                    th:replace="fragments/number::number(${sickDaysStatistic.amountChildSickDaysWithAUB})"
                   ></th:block>
                   )
                 </th:block>

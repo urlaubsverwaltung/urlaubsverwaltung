@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
@@ -125,18 +126,41 @@ public class SickDaysOverviewViewController {
                 calculateSickDays(period, sickDays, sickNote);
             }
         });
-        model.addAttribute("sickDays", sickDays);
-        model.addAttribute("childSickDays", childSickDays);
 
         persons.forEach(person -> {
             sickDays.putIfAbsent(person, new SickDays());
             childSickDays.putIfAbsent(person, new SickDays());
         });
-        model.addAttribute("persons", persons);
 
         final Map<Integer, String> personnelNumberOfPersons = getPersonnelNumbersOfPersons(persons);
+        final List<SickDaysOverviewDto> sickDaysOverviewDtos = persons.stream()
+            .map(person -> toSickDaysOverviewDto(person, sickDays::get, childSickDays::get, personnelNumberOfPersons::get))
+            .collect(toList());
+
+        model.addAttribute("sickDaysStatistics", sickDaysOverviewDtos);
         model.addAttribute("showPersonnelNumberColumn", !personnelNumberOfPersons.isEmpty());
-        model.addAttribute("personnelNumberOfPersons", personnelNumberOfPersons);
+    }
+
+    private static SickDaysOverviewDto toSickDaysOverviewDto(Person person,
+                                                             Function<Person, SickDays> sickDaysSupplier,
+                                                             Function<Person, SickDays> childSickDaysSupplier,
+                                                             Function<Integer, String> personnelNumberSupplier) {
+
+        final SickDays sickDays = sickDaysSupplier.apply(person);
+        final SickDays childSickDays = childSickDaysSupplier.apply(person);
+
+        return SickDaysOverviewDto.builder()
+            .personId(person.getId())
+            .personnelNumber(personnelNumberSupplier.apply(person.getId()))
+            .personFirstName(person.getFirstName())
+            .personLastName(person.getLastName())
+            .personNiceName(person.getNiceName())
+            .personAvatarUrl(person.getGravatarURL())
+            .amountSickDays(sickDays.getDays().get(TOTAL.name()))
+            .amountSickDaysWithAUB(sickDays.getDays().get(WITH_AUB.name()))
+            .amountChildSickDays(childSickDays.getDays().get(TOTAL.name()))
+            .amountChildSickNoteDaysWithAUB(childSickDays.getDays().get(WITH_AUB.name()))
+            .build();
     }
 
     private Map<Integer, String> getPersonnelNumbersOfPersons(List<Person> persons) {

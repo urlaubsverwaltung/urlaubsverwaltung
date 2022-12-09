@@ -32,19 +32,20 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
+import static java.math.BigDecimal.ZERO;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.hasValue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -192,11 +193,15 @@ class SickDaysOverviewViewControllerTest {
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("TOTAL", TEN)))))
-            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(15L))))))
-            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("TOTAL", ONE)))))
-            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(5L))))))
-            .andExpect(model().attribute("persons", persons))
+            .andExpect(model().attribute("sickDaysStatistics", contains(
+                allOf(
+                    hasProperty("personId", is(1)),
+                    hasProperty("amountSickDays", is(TEN)),
+                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(15))),
+                    hasProperty("amountChildSickDays", is(ONE)),
+                    hasProperty("amountChildSickDaysWithAUB", is(BigDecimal.valueOf(5)))
+                )
+            )))
             .andExpect(model().attribute("from", requestStartDate))
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
@@ -254,11 +259,15 @@ class SickDaysOverviewViewControllerTest {
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("TOTAL", TEN)))))
-            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(15L))))))
-            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("TOTAL", ONE)))))
-            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(5L))))))
-            .andExpect(model().attribute("persons", persons))
+            .andExpect(model().attribute("sickDaysStatistics", contains(
+                allOf(
+                    hasProperty("personId", is(1)),
+                    hasProperty("amountSickDays", is(TEN)),
+                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(15))),
+                    hasProperty("amountChildSickDays", is(ONE)),
+                    hasProperty("amountChildSickDaysWithAUB", is(BigDecimal.valueOf(5)))
+                )
+            )))
             .andExpect(model().attribute("from", requestStartDate))
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
@@ -316,11 +325,15 @@ class SickDaysOverviewViewControllerTest {
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("TOTAL", TEN)))))
-            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(15L))))))
-            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("TOTAL", ONE)))))
-            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(5L))))))
-            .andExpect(model().attribute("persons", persons))
+            .andExpect(model().attribute("sickDaysStatistics", contains(
+                allOf(
+                    hasProperty("personId", is(1)),
+                    hasProperty("amountSickDays", is(TEN)),
+                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(15))),
+                    hasProperty("amountChildSickDays", is(ONE)),
+                    hasProperty("amountChildSickDaysWithAUB", is(BigDecimal.valueOf(5)))
+                )
+            )))
             .andExpect(model().attribute("from", requestStartDate))
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
@@ -339,7 +352,7 @@ class SickDaysOverviewViewControllerTest {
         final Person person = new Person();
         person.setId(1);
         person.setFirstName("FirstName");
-        person.setLastName("Lastname");
+        person.setLastName("LastName");
         person.setPermissions(List.of(USER));
         when(departmentService.getMembersForSecondStageAuthority(dhAndSsa)).thenReturn(List.of(person));
 
@@ -361,7 +374,7 @@ class SickDaysOverviewViewControllerTest {
         final Person person2 = new Person();
         person2.setId(2);
         person2.setFirstName("FirstName two");
-        person2.setLastName("Lastname two");
+        person2.setLastName("LastName two");
         person2.setPermissions(List.of(USER));
         when(departmentService.getMembersForDepartmentHead(dhAndSsa)).thenReturn(List.of(person2));
 
@@ -387,11 +400,32 @@ class SickDaysOverviewViewControllerTest {
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("TOTAL", TEN)))))
-            .andExpect(model().attribute("sickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(15L))))))
-            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("TOTAL", ONE)))))
-            .andExpect(model().attribute("childSickDays", hasValue(hasProperty("days", hasEntry("WITH_AUB", BigDecimal.valueOf(5L))))))
-            .andExpect(model().attribute("persons", List.of(person, person2)))
+            .andExpect(model().attribute("sickDaysStatistics", contains(
+                allOf(
+                    hasProperty("personId", is(1)),
+                    hasProperty("personAvatarUrl", is("")),
+                    hasProperty("personnelNumber", nullValue()),
+                    hasProperty("personFirstName", is("FirstName")),
+                    hasProperty("personLastName", is("LastName")),
+                    hasProperty("personNiceName", is("FirstName LastName")),
+                    hasProperty("amountSickDays", is(ZERO)),
+                    hasProperty("amountSickDaysWithAUB", is(ZERO)),
+                    hasProperty("amountChildSickDays", is(ONE)),
+                    hasProperty("amountChildSickDaysWithAUB", is(BigDecimal.valueOf(5)))
+                ),
+                allOf(
+                    hasProperty("personId", is(2)),
+                    hasProperty("personAvatarUrl", is("")),
+                    hasProperty("personnelNumber", nullValue()),
+                    hasProperty("personFirstName", is("FirstName two")),
+                    hasProperty("personLastName", is("LastName two")),
+                    hasProperty("personNiceName", is("FirstName two LastName two")),
+                    hasProperty("amountSickDays", is(TEN)),
+                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(15))),
+                    hasProperty("amountChildSickDays", is(ZERO)),
+                    hasProperty("amountChildSickDaysWithAUB", is(ZERO))
+                )
+            )))
             .andExpect(model().attribute("from", requestStartDate))
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
@@ -460,8 +494,12 @@ class SickDaysOverviewViewControllerTest {
         perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())
             .param("to", requestEndDate.toString()))
-            .andExpect(model().attribute("persons", persons))
-            .andExpect(model().attribute("personnelNumberOfPersons", Map.of(1, "42")))
+            .andExpect(model().attribute("sickDaysStatistics", contains(
+                allOf(
+                    hasProperty("personId", is(1)),
+                    hasProperty("personnelNumber", is("42"))
+                )
+            )))
             .andExpect(model().attribute("showPersonnelNumberColumn", true))
             .andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
