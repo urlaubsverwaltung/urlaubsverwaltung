@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
 
 import java.math.BigDecimal;
@@ -37,6 +36,7 @@ import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.ZoneOffset.UTC;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
@@ -169,7 +169,7 @@ public final class TestDataCreator {
                                                 BigDecimal remainingVacationDays, BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
         final LocalDate firstDayOfYear = Year.of(year).atDay(1);
-        final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final LocalDate expiryDate = LocalDate.of(year, Month.APRIL, 1);
 
         return new Account(person, firstDayOfYear, lastDayOfYear, true, expiryDate,

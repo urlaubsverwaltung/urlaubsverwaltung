@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.util.Assert;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
@@ -12,7 +11,6 @@ import java.time.Year;
 import java.util.List;
 
 import static java.math.BigDecimal.ZERO;
-import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 
@@ -72,14 +70,12 @@ public class SickNoteStatistics {
 
         BigDecimal numberOfSickDays = ZERO;
         for (final SickNote sickNote : sickNotes) {
-            final LocalDate sickNoteStartDate = sickNote.getStartDate();
-            final LocalDate sickNoteEndDate = sickNote.getEndDate();
 
-            Assert.isTrue(sickNoteStartDate.getYear() == year || sickNoteEndDate.getYear() == year,
-                "Start date OR end date of the sick note must be in the year " + year);
+            final LocalDate firstDayOfYear = Year.of(year).atDay(1);
+            final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
-            final LocalDate startDate = sickNoteStartDate.getYear() == year ? sickNoteStartDate : sickNoteEndDate.with(firstDayOfYear());
-            final LocalDate endDate = sickNoteEndDate.getYear() == year ? sickNoteEndDate : sickNoteStartDate.with(lastDayOfYear());
+            final LocalDate startDate = sickNote.getStartDate().isBefore(firstDayOfYear) ? firstDayOfYear : sickNote.getStartDate();
+            final LocalDate endDate = sickNote.getEndDate().isAfter(lastDayOfYear) ? lastDayOfYear : sickNote.getEndDate();
 
             final BigDecimal workDays = workDaysCountService.getWorkDaysCount(sickNote.getDayLength(), startDate, endDate, sickNote.getPerson());
             numberOfSickDays = numberOfSickDays.add(workDays);

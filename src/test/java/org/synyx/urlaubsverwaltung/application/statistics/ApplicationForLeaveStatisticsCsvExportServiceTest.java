@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
-import liquibase.util.csv.CSVWriter;
+import com.opencsv.CSVWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,7 +63,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "holiday", true, YELLOW, false);
 
-        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person);
+        final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person, List.of(vacationType));
         applicationForLeaveStatistics.setPersonBasedata(basedata);
         applicationForLeaveStatistics.setLeftVacationDaysForPeriod(BigDecimal.valueOf(10));
         applicationForLeaveStatistics.setLeftOvertimeForPeriod(Duration.ofHours(2));
@@ -114,7 +114,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "holiday", true, YELLOW, false);
 
-        final ApplicationForLeaveStatistics personOneStatistics = new ApplicationForLeaveStatistics(personOne);
+        final ApplicationForLeaveStatistics personOneStatistics = new ApplicationForLeaveStatistics(personOne, List.of(vacationType));
         personOneStatistics.setPersonBasedata(basedataOne);
         personOneStatistics.addWaitingVacationDays(vacationType, ONE);
         personOneStatistics.setLeftVacationDaysForPeriod(BigDecimal.valueOf(10));
@@ -123,7 +123,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         personOneStatistics.setLeftOvertimeForYear(Duration.ofHours(4));
         statistics.add(personOneStatistics);
 
-        final ApplicationForLeaveStatistics personTwoStatistics = new ApplicationForLeaveStatistics(personTwo);
+        final ApplicationForLeaveStatistics personTwoStatistics = new ApplicationForLeaveStatistics(personTwo, List.of(vacationType));
         personTwoStatistics.setPersonBasedata(basedataTwo);
         personTwoStatistics.addAllowedVacationDays(vacationType, TEN);
         statistics.add(personTwoStatistics);

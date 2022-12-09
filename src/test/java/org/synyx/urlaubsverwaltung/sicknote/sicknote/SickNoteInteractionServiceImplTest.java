@@ -12,7 +12,6 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractio
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingService;
-import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSyncService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -124,28 +123,6 @@ class SickNoteInteractionServiceImplTest {
     }
 
     @Test
-    void ensureUpdatedSickNoteIsPersisted() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
-        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
-
-        final SickNote sickNote = getSickNote();
-
-        final SickNote updatedSickNote = sut.update(sickNote, creator);
-        assertThat(updatedSickNote).isNotNull();
-        assertThat(updatedSickNote.getLastEdited()).isNotNull();
-        assertThat(updatedSickNote.getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
-
-        verify(sickNoteService).save(sickNote);
-        verify(commentService).create(sickNote, SickNoteCommentAction.EDITED, creator, null);
-    }
-
-    @Test
     void ensureUpdatedSickHasComment() {
 
         when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
@@ -163,25 +140,6 @@ class SickNoteInteractionServiceImplTest {
 
         verify(sickNoteService).save(sickNote);
         verify(commentService).create(sickNote, SickNoteCommentAction.EDITED, creator, comment);
-    }
-
-    @Test
-    void ensureUpdatingSickNoteUpdatesCalendarEvent() {
-
-        when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
-
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, AbsenceMappingType.VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(AbsenceMappingType.SICKNOTE))).thenReturn(Optional.of(absenceMapping));
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
-        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
-
-        final SickNote sickNote = getSickNote();
-
-        sut.update(sickNote, creator);
-
-        verify(calendarSyncService).update(any(Absence.class), anyString());
-        verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(SICKNOTE));
     }
 
     @Test

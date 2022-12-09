@@ -14,20 +14,19 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
+import java.util.List;
 import java.util.Optional;
 
 import static java.math.BigDecimal.ZERO;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AccountServiceImplTest {
 
-    private AccountServiceImpl accountService;
+    private AccountServiceImpl sut;
 
     @Mock
     private AccountRepository accountRepository;
@@ -36,7 +35,7 @@ class AccountServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        accountService = new AccountServiceImpl(accountRepository, settingsService);
+        sut = new AccountServiceImpl(accountRepository, settingsService);
     }
 
     @Test
@@ -67,9 +66,12 @@ class AccountServiceImplTest {
         final BigDecimal actualVacationDays = new BigDecimal("29");
         accountEntity.setActualVacationDays(actualVacationDays);
 
-        when(accountRepository.getHolidaysAccountByYearAndPerson(year, person)).thenReturn(Optional.of(accountEntity));
+        when(accountRepository.findAccountByYearAndPersons(year, List.of(person))).thenReturn(List.of(accountEntity));
 
-        final Account holidaysAccount = accountService.getHolidaysAccount(year, person).get();
+        final Optional<Account> actual = sut.getHolidaysAccount(year, person);
+        assertThat(actual).isPresent();
+
+        final Account holidaysAccount = actual.get();
         assertThat(holidaysAccount.getId()).isEqualTo(id);
         assertThat(holidaysAccount.getPerson()).isEqualTo(person);
         assertThat(holidaysAccount.getValidFrom()).isEqualTo(from);
@@ -88,18 +90,91 @@ class AccountServiceImplTest {
     @Test
     void ensureReturnsAbsentOptionalIfNoHolidaysAccountExists() {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-        when(accountRepository.getHolidaysAccountByYearAndPerson(anyInt(), any(Person.class))).thenReturn(Optional.empty());
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(accountRepository.findAccountByYearAndPersons(2012, List.of(person))).thenReturn(List.of());
 
-        Optional<Account> optionalHolidaysAccount = accountService.getHolidaysAccount(2012, mock(Person.class));
+        Optional<Account> optionalHolidaysAccount = sut.getHolidaysAccount(2012, person);
         assertThat(optionalHolidaysAccount).isEmpty();
+    }
+
+    @Test
+    void ensureReturnsHolidaysAccountIfExists() {
+
+        final AccountSettings accountSettings = new AccountSettings();
+        accountSettings.setDoRemainingVacationDaysExpireGlobally(false);
+
+        final Settings settings = new Settings();
+        settings.setAccountSettings(accountSettings);
+
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+
+        final Person person2 = new Person("muster2", "Muster2", "Marlene2", "muster2@example.org");
+        person2.setId(2);
+
+        final int year = 2012;
+        final LocalDate from = Year.of(year).atDay(1);
+        final LocalDate to = LocalDate.of(year, 1, 1).with(lastDayOfYear());
+        final LocalDate expiryDate = LocalDate.of(year, Month.APRIL, 1);
+
+        final AccountEntity accountEntity1 = new AccountEntity(person, from, to, null, expiryDate,
+            new BigDecimal(30), new BigDecimal(3), ZERO, "awesome comment");
+        accountEntity1.setId(1);
+
+        final AccountEntity accountEntity2 = new AccountEntity(person2, from, to, true, expiryDate,
+            new BigDecimal(30), new BigDecimal(3), ZERO, "awesome comment nummero dueee");
+        accountEntity2.setId(2);
+
+        when(accountRepository.findAccountByYearAndPersons(2012, List.of(person, person2)))
+            .thenReturn(List.of(accountEntity1, accountEntity2));
+
+        final List<Account> actual = sut.getHolidaysAccount(2012, List.of(person, person2));
+        assertThat(actual).hasSize(2);
+
+        assertThat(actual.get(0)).satisfies(account -> {
+            assertThat(account.getId()).isEqualTo(1);
+            assertThat(account.getPerson()).isEqualTo(person);
+            assertThat(account.getValidFrom()).isEqualTo(from);
+            assertThat(account.getValidTo()).isEqualTo(to);
+            assertThat(account.isDoRemainingVacationDaysExpireGlobally()).isFalse();
+            assertThat(account.isDoRemainingVacationDaysExpireLocally()).isNull();
+            assertThat(account.getAnnualVacationDays()).isEqualTo(new BigDecimal(30));
+            assertThat(account.getRemainingVacationDays()).isEqualTo(new BigDecimal(3));
+            assertThat(account.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
+            assertThat(account.getComment()).isEqualTo("awesome comment");
+        });
+
+        assertThat(actual.get(1)).satisfies(account -> {
+            assertThat(account.getId()).isEqualTo(2);
+            assertThat(account.getPerson()).isEqualTo(person2);
+            assertThat(account.getValidFrom()).isEqualTo(from);
+            assertThat(account.getValidTo()).isEqualTo(to);
+            assertThat(account.isDoRemainingVacationDaysExpireGlobally()).isFalse();
+            assertThat(account.isDoRemainingVacationDaysExpireLocally()).isTrue();
+            assertThat(account.getAnnualVacationDays()).isEqualTo(new BigDecimal(30));
+            assertThat(account.getRemainingVacationDays()).isEqualTo(new BigDecimal(3));
+            assertThat(account.getRemainingVacationDaysNotExpiring()).isEqualTo(ZERO);
+            assertThat(account.getComment()).isEqualTo("awesome comment nummero dueee");
+        });
+    }
+
+    @Test
+    void ensureReturnsEmptyListIfNoHolidaysAccountExists() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        when(accountRepository.findAccountByYearAndPersons(2012, List.of(person))).thenReturn(List.of());
+
+        final List<Account> holidaysAccount = sut.getHolidaysAccount(2012, List.of(person));
+        assertThat(holidaysAccount).isEmpty();
     }
 
     @Test
     void deleteAllDelegatesToRepository() {
         final Person person = new Person();
 
-        accountService.deleteAllByPerson(person);
+        sut.deleteAllByPerson(person);
 
         verify(accountRepository).deleteByPerson(person);
     }

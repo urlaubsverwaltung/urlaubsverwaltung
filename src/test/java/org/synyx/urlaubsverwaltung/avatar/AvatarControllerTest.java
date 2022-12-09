@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.avatar;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -33,11 +34,14 @@ class AvatarControllerTest {
     }
 
     @ParameterizedTest
-    @CsvSource({
+    @CsvSource(value = {
         "The Batman,TB",
         "Batman,B",
         "The ultimate Batman,TB",
-    })
+        " Batman,B",
+        "Batman ,B",
+        "Bat  man,BM",
+    }, ignoreLeadingAndTrailingWhitespace = false)
     void ensureGeneratesAvatarWithInitials(String name, String expectedInitials) throws Exception {
 
         when(svgService.createSvg("thymeleaf/svg/avatar", Locale.GERMAN, Map.of("initials", expectedInitials)))

@@ -93,7 +93,7 @@ class DepartmentServiceImpl implements DepartmentService {
         final List<DepartmentEntity> departments;
 
         if (person.hasRole(DEPARTMENT_HEAD) && person.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departments = departmentRepository.findByDepartmentHeadsAndSecondStageAuthorities(person, person);
+            departments = departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person);
         } else if (person.hasRole(DEPARTMENT_HEAD)) {
             departments = departmentRepository.findByDepartmentHeads(person);
         } else if (person.hasRole(SECOND_STAGE_AUTHORITY)) {

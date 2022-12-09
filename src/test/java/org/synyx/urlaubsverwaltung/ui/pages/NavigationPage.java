@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.synyx.urlaubsverwaltung.ui.Page;
 
+import java.time.Duration;
 import java.util.Map;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
@@ -64,7 +65,7 @@ public class NavigationPage implements Page {
 
         private QuickAdd(WebDriver driver) {
             this.driver = driver;
-            this.wait = new WebDriverWait(driver, 20);
+            this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         }
 
         public boolean hasPopup() {
@@ -107,7 +108,7 @@ public class NavigationPage implements Page {
 
         AvatarMenu(WebDriver driver) {
             this.driver = driver;
-            this.wait = new WebDriverWait(driver, 20);
+            this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         }
 
         void logout() {

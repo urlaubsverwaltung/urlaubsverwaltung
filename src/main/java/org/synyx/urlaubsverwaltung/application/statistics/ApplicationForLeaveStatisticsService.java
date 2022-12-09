@@ -1,28 +1,32 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
+import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
+import java.util.Map;
+import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @Service
 class ApplicationForLeaveStatisticsService {
@@ -43,47 +47,79 @@ class ApplicationForLeaveStatisticsService {
         this.vacationTypeService = vacationTypeService;
     }
 
-    List<ApplicationForLeaveStatistics> getStatistics(FilterPeriod period) {
+    /**
+     * Get {@link ApplicationForLeaveStatistics} the given person is allowed to see.
+     * A person with {@link org.synyx.urlaubsverwaltung.person.Role} BOSS or OFFICE is allowed to see statistics of everyone for instance.
+     *
+     * @param person              person to restrict the returned page content
+     * @param period              filter result set for a given period of time
+     * @param pageableSearchQuery the page request
+     * @return filtered page of {@link ApplicationForLeaveStatistics}
+     */
+    Page<ApplicationForLeaveStatistics> getStatistics(Person person, FilterPeriod period, PageableSearchQuery pageableSearchQuery) {
+        final Pageable pageable = pageableSearchQuery.getPageable();
         final List<VacationType> activeVacationTypes = vacationTypeService.getActiveVacationTypes();
-        return getRelevantPersons().stream()
-            .map(toApplicationForLeaveStatistics(period, activeVacationTypes))
+        final Page<Person> relevantPersonsPage = getAllRelevantPersons(person, pageableSearchQuery);
+        final List<Integer> personIdValues = relevantPersonsPage.getContent().stream().map(Person::getId).collect(toList());
+        final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIdValues);
+
+        final Collection<ApplicationForLeaveStatistics> statisticsCollection = applicationForLeaveStatisticsBuilder
+            .build(relevantPersonsPage.getContent(), period.getStartDate(), period.getEndDate(), activeVacationTypes).values();
+        statisticsCollection.forEach(statistics -> {
+            final PersonId personId = new PersonId(statistics.getPerson().getId());
+            statistics.setPersonBasedata(basedataByPersonId.getOrDefault(personId, null));
+        });
+
+        Stream<ApplicationForLeaveStatistics> statisticsStream = statisticsCollection.stream();
+        if (relevantPersonsPage.getPageable().isUnpaged()) {
+            // we don't have to restrict the statistics if persons page is paged and or sorted already.
+            // otherwise we have fetched ALL persons -> therefore skip and limit statistics content.
+            statisticsStream = statisticsStream
+                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+                .limit(pageable.getPageSize());
+        }
+
+        final List<ApplicationForLeaveStatistics> content = statisticsStream
+            .sorted(new SortComparator<>(ApplicationForLeaveStatistics.class, pageable.getSort()))
             .collect(toList());
+
+        return new PageImpl<>(content, pageable, relevantPersonsPage.getTotalElements());
     }
 
-    private Function<Person, ApplicationForLeaveStatistics> toApplicationForLeaveStatistics(FilterPeriod period, List<VacationType> activeVacationTypes) {
-        return person -> {
-            final Optional<PersonBasedata> personBasedata = personBasedataService.getBasedataByPersonId(person.getId());
-            if (personBasedata.isPresent()) {
-                return applicationForLeaveStatisticsBuilder.build(person, personBasedata.get(), period.getStartDate(), period.getEndDate(), activeVacationTypes);
-            } else {
-                return applicationForLeaveStatisticsBuilder.build(person, period.getStartDate(), period.getEndDate(), activeVacationTypes);
+    private Page<Person> getAllRelevantPersons(Person person, PageableSearchQuery pageableSearchQuery) {
+        final Pageable pageable = pageableSearchQuery.getPageable();
+        final boolean sortByPerson = isSortByPersonAttribute(pageable);
+
+        if (person.hasRole(BOSS) || person.hasRole(OFFICE)) {
+            final PageableSearchQuery query = sortByPerson
+                ? new PageableSearchQuery(mapToPersonPageRequest(pageable), pageableSearchQuery.getQuery())
+                : new PageableSearchQuery(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), pageableSearchQuery.getQuery());
+
+            return personService.getActivePersons(query);
+        }
+
+        final PageableSearchQuery query = new PageableSearchQuery(sortByPerson ? mapToPersonPageRequest(pageable) : Pageable.unpaged(), pageableSearchQuery.getQuery());
+        return departmentService.getManagedMembersOfPerson(person, query);
+    }
+
+    private PageRequest mapToPersonPageRequest(Pageable statisticsPageRequest) {
+        Sort personSort = Sort.unsorted();
+
+        for (Sort.Order order : statisticsPageRequest.getSort()) {
+            if (order.getProperty().startsWith("person.")) {
+                personSort = personSort.and(Sort.by(order.getDirection(), order.getProperty().replace("person.", "")));
             }
-        };
+        }
+
+        return PageRequest.of(statisticsPageRequest.getPageNumber(), statisticsPageRequest.getPageSize(), personSort);
     }
 
-    private List<Person> getRelevantPersons() {
-
-        final Person signedInUser = personService.getSignedInUser();
-
-        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-            return personService.getActivePersons();
+    private boolean isSortByPersonAttribute(Pageable pageable) {
+        for (Sort.Order order : pageable.getSort()) {
+            if (!order.getProperty().startsWith("person.")) {
+                return false;
+            }
         }
-
-        final List<Person> relevantPersons = new ArrayList<>();
-        if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
-            departmentService.getMembersForDepartmentHead(signedInUser).stream()
-                .filter(person -> !person.hasRole(INACTIVE))
-                .collect(toCollection(() -> relevantPersons));
-        }
-
-        if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
-            departmentService.getMembersForSecondStageAuthority(signedInUser).stream()
-                .filter(person -> !person.hasRole(INACTIVE))
-                .collect(toCollection(() -> relevantPersons));
-        }
-
-        return relevantPersons.stream()
-            .distinct()
-            .collect(toList());
+        return true;
     }
 }

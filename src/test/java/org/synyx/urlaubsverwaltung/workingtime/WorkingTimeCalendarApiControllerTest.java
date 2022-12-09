@@ -34,7 +34,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 
 @ExtendWith(MockitoExtension.class)
-class WorkDaysCountApiControllerTest {
+class WorkingTimeCalendarApiControllerTest {
 
     private WorkDaysCountApiController sut;
 

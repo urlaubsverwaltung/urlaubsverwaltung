@@ -43,7 +43,7 @@ public class ViewExceptionHandlerControllerAdvice {
      */
     private static ModelAndView getErrorPage(Exception exception, HttpStatus httpStatus) {
 
-        final ModelAndView modelAndView = new ModelAndView("errors");
+        final ModelAndView modelAndView = new ModelAndView("thymeleaf/error");
         modelAndView.addObject("exception", exception);
         modelAndView.addObject("statusCode", httpStatus.value());
 

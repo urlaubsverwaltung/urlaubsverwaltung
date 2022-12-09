@@ -7,11 +7,12 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.synyx.urlaubsverwaltung.TestMariaDBContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -32,6 +33,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -103,7 +105,7 @@ class ApplicationForLeaveCreateIT {
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
@@ -151,7 +153,7 @@ class ApplicationForLeaveCreateIT {
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
@@ -200,7 +202,7 @@ class ApplicationForLeaveCreateIT {
         final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
@@ -235,6 +237,89 @@ class ApplicationForLeaveCreateIT {
 
         applicationPage.submit();
 
+        wait.until(pageIsVisible(applicationDetailPage));
+        wait.until(isTrue(applicationDetailPage::showsApplicationCreatedInfo));
+        assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();
+
+        // application created info vanishes sometime
+        wait.until(not(isTrue(applicationDetailPage::showsApplicationCreatedInfo)));
+
+        assertThat(applicationDetailPage.showsReplacement(batman)).isTrue();
+        assertThat(applicationDetailPage.showsReplacement(joker)).isTrue();
+
+        // ensure given information has been persisted successfully
+        // (currently the detail page hides some information like comments for replacements)
+        applicationDetailPage.selectEdit();
+        wait.until(pageIsVisible(applicationPage));
+
+        assertThat(applicationPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
+        assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
+
+        navigationPage.logout();
+        wait.until(pageIsVisible(loginPage));
+    }
+
+    @Test
+    @DisplayName("when USER is logged in and halfDay is disabled then application-for-leave can be created only for full days.")
+    void ensureApplicationForLeaveWithDisabledHalfDayOption() {
+        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
+        final Person batman = createPerson("Bruce", "Wayne", List.of(USER));
+        final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
+
+        final RemoteWebDriver webDriver = browserContainer.getWebDriver();
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+
+        final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(webDriver);
+        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, GERMAN);
+        final SettingsPage settingsPage = new SettingsPage(webDriver);
+        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
+        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(webDriver, messageSource, GERMAN);
+
+        webDriver.get("http://host.testcontainers.internal:" + port);
+
+        // log in as office user
+        // and disable halfDay
+
+        wait.until(pageIsVisible(loginPage));
+        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+
+        wait.until(pageIsVisible(navigationPage));
+        wait.until(pageIsVisible(overviewPage));
+
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newApplication();
+        wait.until(pageIsVisible(applicationPage));
+
+        // default is: half days enabled
+        assertThat(applicationPage.showsDayLengthInputs()).isTrue();
+
+        navigationPage.clickSettings();
+        wait.until(pageIsVisible(settingsPage));
+
+        settingsPage.clickDisableHalfDayAbsence();
+        settingsPage.saveSettings();
+        wait.until(pageIsVisible(navigationPage));
+
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newApplication();
+        wait.until(pageIsVisible(applicationPage));
+
+        // we just disabled half days in the settings
+        assertThat(applicationPage.showsDayLengthInputs()).isFalse();
+
+        applicationPage.from(getNextWorkday());
+
+        applicationPage.selectReplacement(batman);
+        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1)));
+
+        applicationPage.selectReplacement(joker);
+        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1)));
+        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2)));
+
+        applicationPage.setCommentForReplacement(batman, "please be gentle!");
+
+        applicationPage.submit();
         wait.until(pageIsVisible(applicationDetailPage));
         wait.until(isTrue(applicationDetailPage::showsApplicationCreatedInfo));
         assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();

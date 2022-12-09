@@ -28,7 +28,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest
-class WorkDaysCountApiControllerSecurityIT extends TestContainersBase {
+class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
     @Autowired
     private WebApplicationContext context;

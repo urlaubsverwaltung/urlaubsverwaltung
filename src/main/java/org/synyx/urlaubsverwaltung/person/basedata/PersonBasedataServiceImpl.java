@@ -30,7 +30,7 @@ class PersonBasedataServiceImpl implements PersonBasedataService {
 
     @Override
     public Map<PersonId, PersonBasedata> getBasedataByPersonId(List<Integer> personIds) {
-        return personBasedataRepository.findAllByPersonIdIn(personIds).stream()
+        return personBasedataRepository.findAllByPersonIdIsIn(personIds).stream()
             .map(PersonBasedataMapper::mapFromEntity)
             .collect(toMap(PersonBasedata::getPersonId, identity()));
     }

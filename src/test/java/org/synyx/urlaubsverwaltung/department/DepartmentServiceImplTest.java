@@ -105,7 +105,7 @@ class DepartmentServiceImplTest {
         developers.setName("developers");
         developers.setMembers(List.of(janeMember));
 
-        when(departmentRepository.findByDepartmentHeadsAndSecondStageAuthorities(person, person)).thenReturn(List.of(admins, developers));
+        when(departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person)).thenReturn(List.of(admins, developers));
 
         final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
 
@@ -235,7 +235,7 @@ class DepartmentServiceImplTest {
         developers.setName("developers");
         developers.setMembers(List.of(janeMember, johnMember));
 
-        when(departmentRepository.findByDepartmentHeadsAndSecondStageAuthorities(person, person)).thenReturn(List.of(admins, developers));
+        when(departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person)).thenReturn(List.of(admins, developers));
 
         final Page<Person> actual = sut.getManagedInactiveMembersOfPerson(person, defaultPersonSearchQuery());
 

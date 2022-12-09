@@ -7,6 +7,7 @@ import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,8 +32,13 @@ public class ApplicationForLeaveStatistics {
     private BigDecimal leftRemainingVacationDaysForPeriod = ZERO;
     private Duration leftOvertimeForPeriod = Duration.ZERO;
 
-    ApplicationForLeaveStatistics(Person person) {
+    ApplicationForLeaveStatistics(Person person, List<VacationType> vacationTypes) {
         this.person = person;
+
+        for (VacationType type : vacationTypes) {
+            addWaitingVacationDays(type, ZERO);
+            addAllowedVacationDays(type, ZERO);
+        }
     }
 
     public Person getPerson() {

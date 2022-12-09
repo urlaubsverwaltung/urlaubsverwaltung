@@ -17,8 +17,7 @@ class HolidayReplacementDtoTest {
         holidayReplacementDto.setNote("This is some text for the replacement note");
 
         assertThat(holidayReplacementDto)
-            .hasToString("HolidayReplacementDto{, person=Person{id='1'}, departments='null'}");
+            .hasToString("HolidayReplacementDto{person=Person{id='1'}, departments=null}");
         assertThat(holidayReplacementDto.toString()).doesNotContain("note");
     }
-
 }

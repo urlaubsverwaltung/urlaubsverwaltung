@@ -133,14 +133,14 @@
 
           <tr th:if="${#lists.isEmpty(records)}">
             <td
-              th:text="#{overtime.none(${currentYear})}"
+              th:text="#{overtime.none(${selectedYear})}"
               colspan="5"
               class="tw-border-t-0 tw-text-center tw-pb-10"
             ></td>
           </tr>
 
           <tr
-            th:with="lastYear=${currentYear - 1}, lastYearUrl=|/web/overtime?person=${person.id}&year=${lastYear}|"
+            th:with="lastYear=${selectedYear - 1}, lastYearUrl=|/web/overtime?person=${person.id}&year=${lastYear}|"
             th:onclick="|navigate('__${lastYearUrl}__');|"
           >
             <td class="tw-border-b-0">

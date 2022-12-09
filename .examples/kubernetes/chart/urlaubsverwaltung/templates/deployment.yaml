@@ -55,7 +55,7 @@ spec:
           env:
             {{- if .Values.mariadb.enabled }}
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://{{ include "urlaubsverwaltung.mariadb.fullname" . }}:{{ .Values.mariadb.primary.service.ports.mysql }}/{{ .Values.mariadb.auth.database }}
+              value: jdbc:mariadb://{{ include "urlaubsverwaltung.mariadb.fullname" . }}:{{ .Values.mariadb.primary.service.ports.mysql }}/{{ .Values.mariadb.auth.database }}
             - name: SPRING_DATASOURCE_USERNAME
               value: {{ .Values.mariadb.auth.username}}
             - name: SPRING_DATASOURCE_PASSWORD

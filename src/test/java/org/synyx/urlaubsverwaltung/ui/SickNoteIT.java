@@ -6,11 +6,12 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.synyx.urlaubsverwaltung.TestMariaDBContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -26,6 +27,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +92,7 @@ class SickNoteIT {
         final Person person = createPerson();
 
         final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(webDriver);
@@ -115,7 +117,7 @@ class SickNoteIT {
     }
 
     private void sickNote(RemoteWebDriver webDriver, Person person) {
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNotePage sickNotePage = new SickNotePage(webDriver);
@@ -143,7 +145,7 @@ class SickNoteIT {
     }
 
     private void sickNoteWithIncapacityCertificate(RemoteWebDriver webDriver, Person person) {
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNotePage sickNotePage = new SickNotePage(webDriver);
@@ -176,7 +178,7 @@ class SickNoteIT {
     }
 
     private void childSickNote(RemoteWebDriver webDriver, Person person) {
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNotePage sickNotePage = new SickNotePage(webDriver);
@@ -206,7 +208,7 @@ class SickNoteIT {
     }
 
     private void childSickNoteWithIncapacityCertificate(RemoteWebDriver webDriver, Person person) {
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNotePage sickNotePage = new SickNotePage(webDriver);
@@ -240,7 +242,7 @@ class SickNoteIT {
     }
 
     private void sickNoteStatisticListView(RemoteWebDriver webDriver, Person person) {
-        final WebDriverWait wait = new WebDriverWait(webDriver, 20);
+        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
         final NavigationPage navigationPage = new NavigationPage(webDriver);
         final SickNoteOverviewPage sickNoteOverviewPage = new SickNoteOverviewPage(webDriver, messageSource, GERMAN);

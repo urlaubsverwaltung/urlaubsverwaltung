@@ -13,8 +13,10 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import static java.time.Duration.ZERO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
@@ -73,7 +75,7 @@ class ApplicationServiceImplTest {
 
         verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
 
-        assertThat(totalHours).isEqualTo(Duration.ZERO);
+        assertThat(totalHours).isEqualTo(ZERO);
     }
 
     @Test
@@ -87,7 +89,7 @@ class ApplicationServiceImplTest {
 
         verify(applicationRepository).calculateTotalOvertimeReductionOfPersonBefore(person, date);
 
-        assertThat(totalHours).isEqualTo(Duration.ZERO);
+        assertThat(totalHours).isEqualTo(ZERO);
     }
 
     @Test
@@ -302,6 +304,27 @@ class ApplicationServiceImplTest {
     }
 
     @Test
+    void ensureGetApplicationsForACertainPeriod() {
+
+        final Person person = new Person();
+        person.setId(1);
+
+        final LocalDate startDate = LocalDate.of(2022, 8, 18);
+        final LocalDate endDate = LocalDate.of(2022, 8, 18);
+        final List<Person> persons = List.of(person);
+
+        final Application application = new Application();
+        application.setId(1);
+
+        when(applicationRepository.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(persons, startDate, endDate, List.of(WAITING)))
+            .thenReturn(List.of(application));
+
+        final List<Application> actual = sut.getApplicationsForACertainPeriodAndStatus(startDate, endDate, persons, List.of(WAITING));
+
+        assertThat(actual).containsExactly(application);
+    }
+
+    @Test
     void deleteOnPersonDeletionEventReturnsDeletedApplication() {
         final Person person = new Person();
         final Application application = new Application();
@@ -387,5 +410,77 @@ class ApplicationServiceImplTest {
         verify(applicationRepository).saveAll(applicationsOfHolidayReplacement);
         assertThat(applicationsOfHolidayReplacement.get(0).getHolidayReplacements()).containsExactly(otherHolidayReplacement);
 
+    }
+
+    @Test
+    void ensureGetTotalOvertimeReductionOfPersonsBefore() {
+
+        final Person batman = new Person();
+        batman.setId(1);
+
+        final Person robin = new Person();
+        robin.setId(2);
+
+        final Person alfred = new Person();
+        alfred.setId(3);
+
+        final List<Person> persons = List.of(batman, robin, alfred);
+        final LocalDate date = LocalDate.of(2022, 8, 30);
+
+        when(applicationRepository.calculateTotalOvertimeReductionOfPersonsBefore(persons, date, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED)))
+            .thenReturn(List.of(
+                applicationOvertimeDurationSum(batman, 12d),
+                applicationOvertimeDurationSum(robin, 1.5d),
+                applicationOvertimeDurationSum(alfred, 0d)
+            ));
+
+        final Map<Person, Duration> actual = sut.getTotalOvertimeReductionOfPersonsBefore(persons, date);
+
+        assertThat(actual)
+            .containsKeys(batman, robin)
+            .containsEntry(batman, Duration.ofHours(12))
+            .containsEntry(robin, Duration.ofMinutes(90))
+            .containsEntry(alfred, Duration.ofMinutes(0));
+    }
+
+    @Test
+    void ensureGetTotalOvertimeReductionOfPersonsBeforeReturnsDurationZeroForPersonsWithoutOvertimeReduction() {
+
+        final Person batman = new Person();
+        batman.setId(1);
+
+        final Person robin = new Person();
+        robin.setId(2);
+
+        final Person alfred = new Person();
+        alfred.setId(3);
+
+        final List<Person> persons = List.of(batman, robin, alfred);
+        final LocalDate date = LocalDate.of(2022, 8, 30);
+
+        when(applicationRepository.calculateTotalOvertimeReductionOfPersonsBefore(persons, date, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED)))
+            .thenReturn(List.of());
+
+        final Map<Person, Duration> actual = sut.getTotalOvertimeReductionOfPersonsBefore(persons, date);
+
+        assertThat(actual)
+            .containsKeys(batman, robin)
+            .containsEntry(batman, ZERO)
+            .containsEntry(robin, ZERO)
+            .containsEntry(alfred, ZERO);
+    }
+
+    private static ApplicationOvertimeDurationSum applicationOvertimeDurationSum(Person person, Double durationDouble) {
+        return new ApplicationOvertimeDurationSum() {
+            @Override
+            public Person getPerson() {
+                return person;
+            }
+
+            @Override
+            public Double getDurationDouble() {
+                return durationDouble;
+            }
+        };
     }
 }

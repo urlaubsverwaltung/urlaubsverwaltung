@@ -1,4 +1,4 @@
-# Urlaubsverwaltung [![Build Status](https://github.com/urlaubsverwaltung/urlaubsverwaltung/workflows/Build/badge.svg)](https://github.com/synyx/urlaubsverwaltung/actions?query=workflow%3A%22Build) [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=org.synyx:urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/dashboard?id=org.synyx:urlaubsverwaltung) [![Docker Pulls](https://badgen.net/docker/pulls/synyx/urlaubsverwaltung?icon=docker&label=pulls)](https://hub.docker.com/r/synyx/urlaubsverwaltung/) [![Crowdin](https://badges.crowdin.net/urlaubsverwaltung/localized.svg)](https://crowdin.com/project/urlaubsverwaltung)
+# Urlaubsverwaltung [![Build](https://github.com/urlaubsverwaltung/urlaubsverwaltung/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/urlaubsverwaltung/urlaubsverwaltung/actions/workflows/build.yml) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=urlaubsverwaltung_urlaubsverwaltung&metric=coverage)](https://sonarcloud.io/summary/new_code?id=urlaubsverwaltung_urlaubsverwaltung) [![Docker Pulls](https://badgen.net/docker/pulls/synyx/urlaubsverwaltung?icon=docker&label=pulls)](https://hub.docker.com/r/synyx/urlaubsverwaltung/) [![Crowdin](https://badges.crowdin.net/urlaubsverwaltung/localized.svg)](https://crowdin.com/project/urlaubsverwaltung)
 
 Die Urlaubsverwaltung ist eine Web-Anwendung, um *Abwesenheiten* elektronisch verwalten zu können.
 
@@ -51,24 +51,24 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
 ### Voraussetzungen
 
-* [JDK 11](https://openjdk.java.net/install/)
-* [MariaDB Datenbank (v10.5)](https://mariadb.org/)
+* [JDK 11](https://adoptium.net)
+* [MariaDB Datenbank (v10.6)](https://mariadb.org/)
 * [Security Provider](#security-provider-konfigurieren)
 
 ### Download
 
 Die Anwendung steht als
-* [Web Application Archive (.war)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
+* [Java Archive (.jar)](https://github.com/synyx/urlaubsverwaltung/releases/latest)
 * [Docker Image](https://hub.docker.com/r/synyx/urlaubsverwaltung)
 
 zur Verfügung.
 
 
-#### Installation .war Variante
+#### Installation .jar Variante
 
 * [Konfiguration Datenbank](#datenbank-konfigurieren)
 * [Konfiguration Security Provider](#security-provider-konfigurieren)
-* Lege ein Verzeichnis für die Urlaubsverwaltung an (z.B. `/opt/urlaubsverwaltung`). Kopiere die .war-Datei dorthin.
+* Lege ein Verzeichnis für die Urlaubsverwaltung an (z.B. `/opt/urlaubsverwaltung`). Kopiere die .jar-Datei dorthin.
 * Erstelle in dem Verzeichnis eine Konfigurationsdatei namens `application.properties`, welche die Konfiguration für
 die Urlaubsverwaltung enthält und die Standardwerte überschreibt.
  Die vollständigen Konfigurationsoptionen sind unter [Konfiguration](#konfiguration) dokumentiert.
@@ -76,7 +76,7 @@ die Urlaubsverwaltung enthält und die Standardwerte überschreibt.
 Nach der [Konfiguration](#konfiguration) lässt sich die Urlaubsverwaltung starten.
 
 ```bash
-java -jar urlaubsverwaltung.war
+java -jar urlaubsverwaltung.jar
 ``` 
 
 Falls es Probleme beim Starten der Anwendung gibt, ist es hilfreich das [Logging der Anwendung](#logging-konfigurieren)
@@ -246,7 +246,7 @@ spring.mail.username=$USERNAME
 spring.mail.password=$PASSWORT
 ```
 
-Alle weiteren `spring.mail.*` Konfigurationen können in der [Spring Dokumentation](https://docs.spring.io/spring-boot/docs/2.1.x/reference/html/boot-features-email.html)
+Alle weiteren `spring.mail.*` Konfigurationen können in der [Spring Dokumentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#io.email)
 eingesehen werden.
 
 #### Benutzer-Synchronisation konfigurieren
@@ -302,7 +302,7 @@ docker-compose up
 und die Anwendung mit dem Profil `demodata` zu starten:
 
 ```bash
-java -jar -Dspring.profiles.active=demodata urlaubsverwaltung.war
+java -jar -Dspring.profiles.active=demodata urlaubsverwaltung.jar
 ```
 
 Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbankmanagementsystem gestartet und Demodaten generiert.
@@ -331,11 +331,11 @@ auf `false` gesetzt werden.
 
 Folgende Systeme sind erreichbar unter `localhost`
 
-| Service                   | Port    |
-| ------------------------- | ------- |
-| [Urlaubsverwaltung](http://localhost:8080)         | 8080    |
-| [Mailhog](http://localhost:8025)                   | 8025    |
-| Mailhog SMTP              | 1025    |
+| Service                                    | Port |
+|--------------------------------------------|------|
+| [Urlaubsverwaltung](http://localhost:8080) | 8080 |
+| [Mailhog](http://localhost:8025)           | 8025 |
+| Mailhog SMTP                               | 1025 |
   
 ---
   
@@ -349,8 +349,8 @@ vom Typ "Question" erstellen.
 
 ### Voraussetzungen
 
-* [JDK 11](https://openjdk.java.net/install/)
-* [Docker 17.12.0+](https://docs.docker.com/get-docker/)
+* [JDK 11](https://adoptium.net)
+* [Docker 20.10.+](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 
 
@@ -461,14 +461,16 @@ Die Urlaubsverwaltung verfügt über eine API, die unter [http://localhost:8080/
 
 ### Release
 
-Für ein Release wird das [maven-release-plugin](http://maven.apache.org/maven-release/maven-release-plugin/) verwendet. 
-Zum sorgenfreien Erstellen eines Release kann folgendes Skript verwendet werden.
+### GitHub action
 
-```bash
-export RELEASE_VERSION=0.10.0
-export NEW_VERSION=0.11.0-SNAPSHOT
-./release.sh
-git fetch
-```
+Go to the GitHub action with the name [release trigger][github-action-release-trigger].
+* Click on "Run workflow"
+* Add the "Milestone ID" (see in the uri of a milestone)
+* Add "Release version"
+* Add "Next version"
+* Run the workflow
+
 
 [Landingpage]: https://urlaubsverwaltung.cloud
+[github-action-release-trigger]: https://github.com/urlaubsverwaltung/urlaubsverwaltung/actions/workflows/release-trigger.yml "Release Trigger"
+

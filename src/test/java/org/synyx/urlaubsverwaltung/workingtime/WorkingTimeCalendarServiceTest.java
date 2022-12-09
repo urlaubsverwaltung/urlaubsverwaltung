@@ -40,7 +40,7 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
 
 @ExtendWith(MockitoExtension.class)
-class WorkDaysCountServiceTest {
+class WorkingTimeCalendarServiceTest {
 
     private WorkDaysCountService sut;
 
@@ -53,16 +53,6 @@ class WorkDaysCountServiceTest {
     void setUp() {
         final var publicHolidaysService = new PublicHolidaysServiceImpl(settingsService, Map.of("de", getHolidayManager()));
         sut = new WorkDaysCountService(publicHolidaysService, workingTimeService);
-    }
-
-    @Test
-    void getWeekDays() {
-
-        final LocalDate startDate = LocalDate.of(2011, 11, 16);
-        final LocalDate endDate = LocalDate.of(2011, 11, 28);
-
-        final double weekDaysCount = sut.getWeekDaysCount(startDate, endDate);
-        assertThat(weekDaysCount).isEqualTo(9.0);
     }
 
     @Test

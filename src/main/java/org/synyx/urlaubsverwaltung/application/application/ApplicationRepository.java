@@ -9,6 +9,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,6 +30,8 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
     List<Application> findByStatusInAndPersonInAndEndDateIsGreaterThanEqual(List<ApplicationStatus> statuses, List<Person> persons, LocalDate sinceStartDate);
 
     List<Application> findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(List<ApplicationStatus> statuses, List<Person> persons, LocalDate start, LocalDate end);
+
+    List<Application> findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(List<Person> persons, LocalDate start, LocalDate end, List<ApplicationStatus> statuses);
 
     @Query(
         "select x from Application x "
@@ -89,4 +92,7 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
     List<Application> deleteByPerson(Person person);
 
     List<Application> findAllByHolidayReplacements_Person(Person person);
+
+    @Query("SELECT a.person as person, SUM(a.hours) as durationDouble FROM Application a WHERE a.status IN :statuses AND a.vacationType.category = 'OVERTIME' AND a.person IN :persons AND a.startDate < :date GROUP BY a.person")
+    List<ApplicationOvertimeDurationSum> calculateTotalOvertimeReductionOfPersonsBefore(@Param("persons") Collection<Person> persons, @Param("date") LocalDate date, @Param("statuses") List<ApplicationStatus> statuses);
 }

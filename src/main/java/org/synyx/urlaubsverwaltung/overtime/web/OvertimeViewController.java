@@ -113,7 +113,7 @@ public class OvertimeViewController {
 
         final int currentYear = Year.now(clock).getValue();
         final int selectedYear = requestedYear != null ? requestedYear : currentYear;
-        model.addAttribute("currentYear", Year.now(clock).getValue());
+        model.addAttribute("currentYear", currentYear);
         model.addAttribute("selectedYear", selectedYear);
 
         model.addAttribute("person", person);

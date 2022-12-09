@@ -73,23 +73,6 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Person update(Integer id, String username, String lastName, String firstName, String email,
-                         List<MailNotification> notifications, List<Role> permissions) {
-
-        final Person person = getPersonByID(id)
-            .orElseThrow(() -> new IllegalArgumentException("Can not find a person for ID = " + id));
-
-        person.setUsername(username);
-        person.setLastName(lastName);
-        person.setFirstName(firstName);
-        person.setEmail(email);
-        person.setNotifications(notifications);
-        person.setPermissions(permissions);
-
-        return update(person);
-    }
-
-    @Override
     public Person update(Person person) {
 
         if (person.getId() == null) {
@@ -121,7 +104,8 @@ class PersonServiceImpl implements PersonService {
         workingTimeWriteService.deleteAllByPerson(person);
         personRepository.delete(person);
 
-        LOG.info("Deleted person with id {} deleted by signed in user with id {}", person.getId(), signedInUser.getId());
+        final String status = person.isActive() ? "active" : "inactive";
+        LOG.info("person with id {} ({}) and status {} deleted by signed in user with id {}", person.getId(), person.getUsername(), status, signedInUser.getId());
     }
 
     @Override
@@ -161,11 +145,6 @@ class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> getActivePersonsWithNotificationType(final MailNotification notification) {
         return personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, notification);
-    }
-
-    @Override
-    public List<Person> getInactivePersons() {
-        return personRepository.findByPermissionsContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
     }
 
     @Override

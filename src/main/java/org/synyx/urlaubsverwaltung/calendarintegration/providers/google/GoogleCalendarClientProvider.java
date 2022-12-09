@@ -9,7 +9,7 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.calendar.Calendar;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
@@ -64,12 +64,12 @@ class GoogleCalendarClientProvider {
         final TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setRefreshToken(refreshToken);
 
-        final JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
+        final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
         final NetHttpTransport httpTransport = maybeHttpTransport.get();
-        final Credential credential = createCredentialWithRefreshToken(httpTransport, jacksonFactory, tokenResponse, googleCalendarSettings);
+        final Credential credential = createCredentialWithRefreshToken(httpTransport, jsonFactory, tokenResponse, googleCalendarSettings);
 
-        final Calendar calendar = new Calendar.Builder(httpTransport, jacksonFactory, credential)
+        final Calendar calendar = new Calendar.Builder(httpTransport, jsonFactory, credential)
             .setApplicationName(APPLICATION_NAME)
             .build();
 

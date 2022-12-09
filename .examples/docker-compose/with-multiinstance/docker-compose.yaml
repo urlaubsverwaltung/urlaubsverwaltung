@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   mariadb:
-    image: mariadb:10.5
+    image: mariadb:10.6.11
     volumes:
       - mariadb_data:/var/lib/mysql
     environment:
@@ -25,12 +25,10 @@ services:
       - '8025:8025'
 
   app:
-    image: synyx/urlaubsverwaltung:4.41.0-SNAPSHOT
-    expose:
-      - "8080"
+    image: synyx/urlaubsverwaltung:latest
+    ports:
+      - '8080:8080'
     environment:
-      UV_SECURITY_AUTH: 'default'
-      UV_ACCOUNT_UPDATE_CRON: "*/10 * * * * *"
       SPRING_PROFILES_ACTIVE: 'demodata'
       SPRING_DATASOURCE_URL: 'jdbc:mariadb://mariadb/urlaubsverwaltung'
       SPRING_DATASOURCE_USERNAME: 'urlaubsverwaltung'

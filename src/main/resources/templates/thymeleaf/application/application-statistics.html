@@ -17,7 +17,8 @@
     <th:block th:fragment="scripts">
       <script defer asset:src="npm.duetds.js"></script>
       <script defer asset:src="npm.date-fns.js"></script>
-      <script defer asset:src="npm.tablesorter.js"></script>
+      <script defer asset:src="npm.hotwired.js"></script>
+      <script defer asset:src="app_statistics~persons.js"></script>
       <script
         defer
         asset:src="account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.js"
@@ -35,7 +36,7 @@
     </th:block>
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
-    <main th:fragment="main">
+    <main th:fragment="main" class="tw-pb-32" data-turbo="true">
       <div class="tw-max-w-[93.75rem] tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-8">
         <div
           th:replace="fragments/section-heading::section-heading(~{::absences-statistics-heading-body}, ~{::absences-statistics-heading-actions})"
@@ -45,9 +46,11 @@
           </th:block>
           <th:block th:ref="absences-statistics-heading-actions">
             <a
-              th:href="@{/web/application/statistics/download?from={fromIso}&to={toIso}(fromIso=${from}, toIso=${to})}"
+              id="statistics-csv-download-link"
+              th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
               class="icon-link tw-px-1"
               th:data-title="#{action.download}"
+              download
             >
               <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
               <span class="tw-sr-only" th:text="#{action.download}"></span>
@@ -56,226 +59,439 @@
           </th:block>
         </div>
 
-        <p class="tw-text-sm -tw-translate-y-4">
-          <a
-            th:if="${errors}"
-            th:text="#{applications.statistics.error.period}"
-            href="#filterModal"
-            data-toggle="modal"
-          ></a>
-          <a th:unless="${errors}" href="#filterModal" data-toggle="modal">
-            <span th:text="|#{filter.period}:|"></span>
-            <span th:replace="fragments/date-range::date-range(${from}, ${to})"></span>
-          </a>
-        </p>
-
-        <div
-          th:replace="fragments/filter-modal::filter-modal('filterModal', @{'/web/application/statistics'}, ${#temporals.formatISO(from)}, ${#temporals.formatISO(to)}, ${period})"
-        ></div>
-
-        <div class="feedback" th:if="${filterPeriodIncorrect}">
-          <div th:text="#{filter.period.incorrect.warning}" class="alert alert-warning"></div>
+        <div class="tw-flex tw-flex-col md:tw-flex-row tw-gap-4">
+          <div
+            class="tw-flex tw-flex-col md:tw-grid md:tw-grid-rows-2 lg:tw-flex lg:tw-flex-row tw-gap-4 md:tw-gap-2 print:tw-hidden"
+          >
+            <form
+              method="get"
+              action="#"
+              th:action="@{/web/application/statistics}"
+              data-turbo-frame="frame-statistics"
+              data-turbo-action="advance"
+              id="form-date-from-to"
+            >
+              <div id="statistics-filter-inputs">
+                <input type="hidden" name="sort" th:value="${sortQuery}" />
+                <input type="hidden" name="query" th:value="${query}" />
+              </div>
+              <div class="tw-flex tw-flex-col tw-gap-1">
+                <fieldset>
+                  <legend class="tw-sr-only" th:text="#{applications.statistics.period.legend.text}">Zeitraum</legend>
+                  <div
+                    th:replace="fragments/details-dropdown::details-dropdown(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)"
+                  >
+                    <th:block th:ref="period-dropdown-summary">
+                      <th:block th:text="#{applications.statistics.period.legend.text}"></th:block>
+                      <span
+                        id="period-text"
+                        th:with="start=${{period.startDate}}, end=${{period.endDate}}"
+                        th:text="#{applications.statistics.period.selected(${start}, ${end})}"
+                      ></span>
+                    </th:block>
+                    <th:block th:ref="period-dropdown-content">
+                      <div class="tw-flex tw-flex-col">
+                        <label th:text="|#{filter.period.startDate}: |" for="from-date-input" class="tw-m-0" />
+                        <input
+                          id="from-date-input"
+                          name="from"
+                          th:value="${{period.startDate}}"
+                          th:data-iso-value="${period.startDateIsoValue}"
+                          th:placeholder="#{pattern.date}"
+                          class="form-control tw-mt-0.5"
+                        />
+                        <label th:text="|#{filter.period.endDate}: |" for="to-date-input" class="tw-m-0 tw-mt-4" />
+                        <input
+                          id="to-date-input"
+                          name="to"
+                          th:value="${{period.endDate}}"
+                          th:data-iso-value="${period.endDateIsoValue}"
+                          th:placeholder="#{pattern.date}"
+                          class="form-control tw-mt-0.5"
+                        />
+                      </div>
+                      <div class="tw-mt-6">
+                        <button
+                          th:text="#{action.confirm}"
+                          class="button-main tw-py-1.5 tw-px-3 tw-w-full"
+                          type="submit"
+                        />
+                      </div>
+                    </th:block>
+                  </div>
+                </fieldset>
+              </div>
+            </form>
+            <form
+              action="#"
+              th:action="@{/web/application/statistics}"
+              method="get"
+              data-turbo-frame="frame-statistics"
+              data-turbo-action="advance"
+              class="tw-flex"
+            >
+              <div id="statistics-form-query-inputs">
+                <input type="hidden" name="from" th:value="${period.startDateIsoValue}" />
+                <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
+                <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
+                <input type="hidden" name="sort" th:value="${sortQuery}" />
+              </div>
+              <div class="tw-flex-1 tw-flex tw-flex-col md:tw-flex-row">
+                <label for="search" class="md:tw-sr-only tw-m-0">
+                  <th:block th:text="#{action.search}">Suchen</th:block>:
+                </label>
+                <span
+                  class="tw-flex-1 tw-flex tw-border tw-border-neutral-300 dark:tw-border-neutral-600 tw-rounded-md focus-within:tw-ring-2 focus-within:tw-ring-blue-300"
+                >
+                  <input
+                    type="text"
+                    id="search"
+                    name="query"
+                    th:value="${query}"
+                    class="form-control md:tw-h-full tw-border-none tw-text-ellipsis focus:tw-ring-0 tw-rounded-r-none"
+                    th:placeholder="#{action.search.placeholder.firstname-lastname}"
+                    data-auto-submit="search-submit"
+                    data-auto-submit-delay="100"
+                  />
+                  <button
+                    type="submit"
+                    id="search-submit"
+                    class="dark:tw-bg-zinc-800 tw-px-2 tw-rounded-r-md tw-h-full tw-flex tw-items-center"
+                  >
+                    <svg th:replace="icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')"></svg>
+                    <span class="tw-sr-only" th:text="#{action.search}">Suche</span>
+                  </button>
+                </span>
+              </div>
+            </form>
+          </div>
+          <div class="md:tw-ml-auto">
+            <form
+              action="#"
+              th:action="@{/web/application/statistics}"
+              method="get"
+              data-turbo-frame="frame-statistics"
+              data-turbo-action="advance"
+            >
+              <div id="statistics-form-sort-inputs">
+                <input type="hidden" name="from" th:value="${period.startDateIsoValue}" />
+                <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
+                <input type="hidden" name="size" th:value="${statisticsPagination.page.size}" />
+                <input type="hidden" name="query" th:value="${query}" />
+              </div>
+              <div class="tw-flex tw-flex-col md:tw-flex-row md:tw-items-center">
+                <label for="sort-select" class="tw-m-0 tw-mr-2">
+                  <th:block th:text="#{action.sort}">Sortieren</th:block>:
+                </label>
+                <select
+                  id="sort-select"
+                  name="sort"
+                  th:replace="fragments/select::one(id='sort-select', name='sort', options=~{::sort-select-options}, autosubmit='sort-submit')"
+                >
+                  <th:block th:ref="sort-select-options">
+                    <optgroup
+                      th:each="optgroup : ${sortSelect.optgroups}"
+                      th:label="${#messages.msg(optgroup.labelMessageKey)}"
+                    >
+                      <option
+                        th:each="option : ${optgroup.options}"
+                        th:value="${option.value}"
+                        th:text="${#messages.msg(option.textMessageKey)}"
+                        th:selected="${option.selected}"
+                      ></option>
+                    </optgroup>
+                  </th:block>
+                </select>
+                <button
+                  type="submit"
+                  id="sort-submit"
+                  class="tw-ml-2 button-main"
+                  th:text="#{action.sort}"
+                  data-js-hidden
+                >
+                  Sortieren
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
 
-        <div th:if="${errors}" th:text="#{applications.statistics.error}" class="alert alert-danger"></div>
+        <div th:if="${errors}" th:text="#{applications.statistics.error}" class="tw-mt-8 alert alert-danger"></div>
 
-        <table
-          th:unless="${errors}"
-          id="application-statistic-table"
-          class="list-table sortable tablesorter tw-text-sm"
-        >
-          <thead class="tw-hidden lg:tw-table-header-group">
-            <tr>
-              <th scope="col"></th>
-              <th
-                th:if="${showPersonnelNumberColumn}"
-                scope="col"
-                class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
-                th:text="#{person.account.basedata.personnelNumber.abbreviation}"
-              ></th>
-              <th
-                scope="col"
-                class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
-                th:text="#{person.data.firstName}"
-              ></th>
-              <th
-                scope="col"
-                class="tw-hidden lg:tw-table-cell print:tw-table-cell sortable-field"
-                th:text="#{person.data.lastName}"
-              ></th>
-              <th scope="col" class="lg:tw-hidden print:tw-hidden"></th>
-              <th scope="col" class="md:tw-hidden print:tw-hidden"></th>
-              <th scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell"></th>
-              <th
-                scope="col"
-                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
-                th:text="#{applications.statistics.allowed}"
-              ></th>
-              <th
-                scope="col"
-                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
-                th:text="#{applications.statistics.waiting}"
-              ></th>
-              <th
-                scope="col"
-                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
-                th:text="#{applications.statistics.left}"
-              ></th>
-              <th
-                scope="col"
-                class="tw-hidden md:tw-table-cell print:tw-table-cell sortable-field"
-                th:text="|#{applications.statistics.left} (${from.year})|"
-              ></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="statistic : ${statistics}">
-              <td class="tw-text-center">
-                <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
-                  <img
-                    th:replace="fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=404&s=60'},niceName=${statistic.niceName},width='60px',height='60px')"
-                    alt=""
-                    src=""
-                  />
-                </div>
-              </td>
-              <td
-                th:if="${showPersonnelNumberColumn}"
-                th:text="${statistic.personnelNumber}"
-                class="tw-hidden lg:tw-table-cell print:tw-table-cell tw-text-ellipsis tw-overflow-hidden tw-max-w-xs tw-text-center"
-              ></td>
-              <td th:text="${statistic.firstName}" class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
-              <td th:text="${statistic.lastName}" class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
-              <td th:text="${statistic.niceName}" class="lg:tw-hidden print:tw-hidden"></td>
-              <td class="md:tw-hidden print:tw-hidden">
-                <div class="tw-flex tw-items-center">
-                  <span class="tw-w-6">
-                    <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
-                  </span>
-                  <span
-                    th:text="${statistic.totalAllowedVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 1)}"
-                  ></span>
-                </div>
-                <div class="tw-flex tw-items-center">
-                  <span class="tw-w-6">
-                    <svg th:replace="icon/question-mark-circle::svg(className='tw-w-4 tw-h-4')"></svg>
-                  </span>
-                  <span
-                    class="tw-font-bold"
-                    th:text="${statistic.totalWaitingVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 1)}"
-                  ></span>
-                </div>
-              </td>
+        <turbo-frame id="frame-statistics">
+          <th:block th:if="${turboFrameRequested}">
+            <turbo-stream target="statistics-csv-download-link" action="replace">
+              <template th:insert="::#statistics-csv-download-link"></template>
+            </turbo-stream>
+            <turbo-stream target="statistics-filter-inputs" action="replace">
+              <template th:insert="::#statistics-filter-inputs"></template>
+            </turbo-stream>
+            <turbo-stream target="statistics-form-query-inputs" action="replace">
+              <template th:insert="::#statistics-form-query-inputs"></template>
+            </turbo-stream>
+            <turbo-stream target="period-text" action="replace">
+              <template th:insert="::#period-text"></template>
+            </turbo-stream>
+            <turbo-stream target="statistics-form-sort-inputs" action="replace">
+              <template th:insert="::#statistics-form-sort-inputs"></template>
+            </turbo-stream>
+            <turbo-stream target="pagination" action="replace">
+              <template th:insert="::#pagination"></template>
+            </turbo-stream>
+            <turbo-stream target="pagination-form-size-inputs" action="replace">
+              <template th:insert="::#pagination-form-size-inputs"></template>
+            </turbo-stream>
+            <turbo-stream target="pagination-size-hint" action="replace">
+              <template th:insert="::#pagination-size-hint"></template>
+            </turbo-stream>
+          </th:block>
+          <table
+            th:unless="${errors}"
+            id="application-statistic-table"
+            class="tw-mt-8 md:tw-mt-16 list-table tw-text-sm"
+          >
+            <thead class="tw-hidden lg:tw-table-header-group">
+              <tr>
+                <th scope="col"></th>
+                <th
+                  th:if="${showPersonnelNumberColumn}"
+                  scope="col"
+                  class="tw-hidden lg:tw-table-cell print:tw-table-cell"
+                  th:text="#{person.account.basedata.personnelNumber.abbreviation}"
+                ></th>
+                <th
+                  scope="col"
+                  class="tw-hidden lg:tw-table-cell print:tw-table-cell"
+                  th:text="#{person.data.firstName}"
+                ></th>
+                <th
+                  scope="col"
+                  class="tw-hidden lg:tw-table-cell print:tw-table-cell"
+                  th:text="#{person.data.lastName}"
+                ></th>
+                <th scope="col" class="lg:tw-hidden print:tw-hidden"></th>
+                <th scope="col" class="md:tw-hidden print:tw-hidden"></th>
+                <th scope="col" class="tw-hidden md:tw-table-cell print:tw-table-cell"></th>
+                <th
+                  scope="col"
+                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
+                  th:text="#{applications.statistics.allowed}"
+                ></th>
+                <th
+                  scope="col"
+                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
+                  th:text="#{applications.statistics.waiting}"
+                ></th>
+                <th
+                  scope="col"
+                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
+                  th:text="#{applications.statistics.left}"
+                ></th>
+                <th
+                  scope="col"
+                  class="tw-hidden md:tw-table-cell print:tw-table-cell"
+                  th:text="|#{applications.statistics.left} (${from.year})|"
+                ></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="statistic : ${statisticsPagination.page.content}">
+                <td class="tw-text-center">
+                  <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
+                    <img
+                      th:replace="fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=404&s=60'},niceName=${statistic.niceName},width='60px',height='60px')"
+                      alt=""
+                      src=""
+                    />
+                  </div>
+                </td>
+                <td
+                  th:if="${showPersonnelNumberColumn}"
+                  th:text="${statistic.personnelNumber}"
+                  class="tw-hidden lg:tw-table-cell print:tw-table-cell tw-text-ellipsis tw-overflow-hidden tw-max-w-xs tw-text-center"
+                ></td>
+                <td th:text="${statistic.firstName}" class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
+                <td th:text="${statistic.lastName}" class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
+                <td th:text="${statistic.niceName}" class="lg:tw-hidden print:tw-hidden"></td>
+                <td class="md:tw-hidden print:tw-hidden">
+                  <div class="tw-flex tw-items-center">
+                    <span class="tw-w-6">
+                      <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+                    </span>
+                    <span
+                      th:text="${statistic.totalAllowedVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 1)}"
+                    ></span>
+                  </div>
+                  <div class="tw-flex tw-items-center">
+                    <span class="tw-w-6">
+                      <svg th:replace="icon/question-mark-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                    </span>
+                    <span
+                      class="tw-font-bold"
+                      th:text="${statistic.totalWaitingVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 1)}"
+                    ></span>
+                  </div>
+                </td>
 
-              <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
-                <span th:text="|#{applications.statistics.total}:|" class="tw-inline-block"></span>
-                <div
-                  class="tw-whitespace-nowrap"
-                  th:each="type : ${vacationTypes}"
-                  th:if="${statistic.hasVacationType(type)}"
+                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
+                  <span th:text="|#{applications.statistics.total}:|" class="tw-inline-block"></span>
+                  <div
+                    class="tw-whitespace-nowrap"
+                    th:each="type : ${vacationTypes}"
+                    th:if="${statistic.hasVacationType(type)}"
+                  >
+                    <span class="tw-text-xs" th:text="|#{${type.messageKey}}:|"></span>
+                  </div>
+                </td>
+
+                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
+                  <div class="tw-whitespace-nowrap">
+                    <span
+                      class="tw-font-bold"
+                      th:text="${statistic.totalAllowedVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 1)}"
+                    ></span>
+                    <span th:text="#{duration.days}"></span>
+                  </div>
+                  <div
+                    class="tw-whitespace-nowrap"
+                    th:if="${statistic.hasVacationType(type)}"
+                    th:each="type : ${vacationTypes}"
+                  >
+                    <span
+                      class="tw-text-xs"
+                      th:text="${statistic.getAllowedVacationDays(type)} % 1 == 0 ? ${#numbers.formatDecimal(statistic.getAllowedVacationDays(type), 1, 0)} : ${#numbers.formatDecimal(statistic.getAllowedVacationDays(type), 1, 1)}"
+                    ></span>
+                  </div>
+                </td>
+
+                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
+                  <div class="tw-whitespace-nowrap">
+                    <span
+                      class="tw-font-bold"
+                      th:text="${statistic.totalWaitingVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 1)}"
+                    ></span>
+                    <span th:text="#{duration.days}"></span>
+                  </div>
+                  <div
+                    class="tw-whitespace-nowrap"
+                    th:if="${statistic.hasVacationType(type)}"
+                    th:each="type : ${vacationTypes}"
+                  >
+                    <span
+                      class="tw-text-xs"
+                      th:text="${statistic.getWaitingVacationDays(type)} % 1 == 0 ? ${#numbers.formatDecimal(statistic.getWaitingVacationDays(type), 1, 0)} : ${#numbers.formatDecimal(statistic.getWaitingVacationDays(type), 1, 1)}"
+                    ></span>
+                  </div>
+                </td>
+
+                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
+                  <div>
+                    <span
+                      class="tw-font-bold"
+                      th:text="${statistic.leftVacationDaysForPeriod} % 1 == 0 ? ${#numbers.formatDecimal(statistic.leftVacationDaysForPeriod, 1, 0)} : ${#numbers.formatDecimal(statistic.leftVacationDaysForPeriod, 1, 1)}"
+                    ></span>
+                    <span th:text="#{duration.vacationDays}"></span>
+                  </div>
+                  <div class="tw-text-xs">
+                    <span th:text="#{duration.vacationDays.remaining.one}"></span>
+                    <span
+                      class="tw-font-bold"
+                      th:text="${statistic.remainingLeftVacationDaysForPeriod} % 1 == 0 ? ${#numbers.formatDecimal(statistic.remainingLeftVacationDaysForPeriod, 1, 0)} : ${#numbers.formatDecimal(statistic.remainingLeftVacationDaysForPeriod, 1, 1)}"
+                    ></span>
+                    <span th:text="#{duration.vacationDays.remaining.two}"></span>
+                  </div>
+                  <div th:class="tw-mt-2">
+                    <span class="tw-font-bold" th:text="${statistic.leftOvertimeForPeriod}"></span>
+                    <span th:text="#{duration.overtime}"></span>
+                  </div>
+                </td>
+
+                <td class="tw-hidden md:tw-table-cell print:tw-table-cell">
+                  <div>
+                    <span
+                      class="tw-font-bold"
+                      th:text="${statistic.leftVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.leftVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.leftVacationDays, 1, 1)}"
+                    ></span>
+                    <span th:text="#{duration.vacationDays}"></span>
+                  </div>
+                  <div class="tw-text-xs">
+                    <span th:text="#{duration.vacationDays.remaining.one}"></span>
+                    <span
+                      class="tw-font-bold"
+                      th:text="${statistic.remainingLeftVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.remainingLeftVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.remainingLeftVacationDays, 1, 1)}"
+                    ></span>
+                    <span th:text="#{duration.vacationDays.remaining.two}"></span>
+                  </div>
+                  <div th:class="tw-mt-2">
+                    <span class="tw-font-bold" th:text="${statistic.leftOvertime}"></span>
+                    <span th:text="#{duration.overtime}"></span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </turbo-frame>
+
+        <div class="tw-mt-8 md:tw-mt-16 tw-flex tw-flex-col md:tw-flex-row md:tw-items-center tw-gap-8">
+          <div id="pagination">
+            <nav
+              th:replace="fragments/pagination::pagination(${statisticsPagination}, #{applications.statistics.pagination.navigation.aria-label}, 'frame-statistics')"
+            ></nav>
+          </div>
+          <form
+            action="#"
+            th:action="@{/web/application/statistics}"
+            method="get"
+            class="md:tw-ml-auto tw-flex tw-items-center"
+            data-turbo-frame="frame-statistics"
+            data-turbo-action="advance"
+          >
+            <div id="pagination-form-size-inputs">
+              <input type="hidden" name="from" th:value="${period.startDateIsoValue}" />
+              <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
+              <input type="hidden" name="page" th:value="${statisticsPagination.page.number + 1}" />
+              <input type="hidden" name="sort" th:value="${sortQuery}" />
+              <input type="hidden" name="query" th:value="${query}" />
+            </div>
+            <div class="tw-flex tw-items-center tw-gap-2">
+              <label for="pagination-size-select" class="tw-m-0" th:text="#{pagination.page.size.label.text}">
+                Zeige
+              </label>
+              <span>
+                <select
+                  name="size"
+                  id="pagination-size-select"
+                  th:replace="fragments/select::one(id='pagination-size-select', name='size', options=~{::pagination-size-options}, autosubmit='size-submit')"
                 >
-                  <span class="tw-text-xs" th:text="|#{${type.messageKey}}:|"></span>
-                </div>
-              </td>
-
-              <td
-                class="tw-hidden md:tw-table-cell print:tw-table-cell"
-                th:data-sortable-value="${statistic.totalAllowedVacationDays}"
+                  <th:block th:ref="pagination-size-options" th:with="size=${statisticsPagination.page.size}">
+                    <option th:if="${size < 10}" th:value="${size}" selected th:text="${size}">4</option>
+                    <option value="10" th:selected="${size == 10}">10</option>
+                    <option th:if="${size > 10 && size < 20}" th:value="${size}" selected th:text="${size}">14</option>
+                    <option value="20" th:selected="${size == 20}">20</option>
+                    <option th:if="${size > 20 && size < 40}" th:value="${size}" selected th:text="${size}">24</option>
+                    <option value="40" th:selected="${size == 40}">40</option>
+                    <option th:if="${size > 40}" th:value="${size}" selected th:text="${size}">44</option>
+                  </th:block>
+                </select>
+              </span>
+              <span
+                id="pagination-size-hint"
+                class="tw-whitespace-nowrap"
+                th:text="#{pagination.page.size.total.text(${statisticsPagination.page.totalElements}, ${#messages.msg('applications.statistics.pagination.total.text')})}"
               >
-                <div class="tw-whitespace-nowrap">
-                  <span
-                    class="tw-font-bold"
-                    th:text="${statistic.totalAllowedVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 1)}"
-                  ></span>
-                  <span th:text="#{duration.days}"></span>
-                </div>
-                <div
-                  class="tw-whitespace-nowrap"
-                  th:if="${statistic.hasVacationType(type)}"
-                  th:each="type : ${vacationTypes}"
-                >
-                  <span
-                    class="tw-text-xs"
-                    th:text="${statistic.getAllowedVacationDays(type)} % 1 == 0 ? ${#numbers.formatDecimal(statistic.getAllowedVacationDays(type), 1, 0)} : ${#numbers.formatDecimal(statistic.getAllowedVacationDays(type), 1, 1)}"
-                  ></span>
-                </div>
-              </td>
-
-              <td
-                class="tw-hidden md:tw-table-cell print:tw-table-cell"
-                th:data-sortable-value="${statistic.totalWaitingVacationDays}"
-              >
-                <div class="tw-whitespace-nowrap">
-                  <span
-                    class="tw-font-bold"
-                    th:text="${statistic.totalWaitingVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 1)}"
-                  ></span>
-                  <span th:text="#{duration.days}"></span>
-                </div>
-                <div
-                  class="tw-whitespace-nowrap"
-                  th:if="${statistic.hasVacationType(type)}"
-                  th:each="type : ${vacationTypes}"
-                >
-                  <span
-                    class="tw-text-xs"
-                    th:text="${statistic.getWaitingVacationDays(type)} % 1 == 0 ? ${#numbers.formatDecimal(statistic.getWaitingVacationDays(type), 1, 0)} : ${#numbers.formatDecimal(statistic.getWaitingVacationDays(type), 1, 1)}"
-                  ></span>
-                </div>
-              </td>
-
-              <td
-                class="tw-hidden md:tw-table-cell print:tw-table-cell"
-                th:data-sortable-value="${statistic.leftVacationDaysForPeriod}"
-              >
-                <div>
-                  <span
-                    class="tw-font-bold"
-                    th:text="${statistic.leftVacationDaysForPeriod} % 1 == 0 ? ${#numbers.formatDecimal(statistic.leftVacationDaysForPeriod, 1, 0)} : ${#numbers.formatDecimal(statistic.leftVacationDaysForPeriod, 1, 1)}"
-                  ></span>
-                  <span th:text="#{duration.vacationDays}"></span>
-                </div>
-                <div class="tw-text-xs">
-                  <span th:text="#{duration.vacationDays.remaining.one}"></span>
-                  <span
-                    class="tw-font-bold"
-                    th:text="${statistic.remainingLeftVacationDaysForPeriod} % 1 == 0 ? ${#numbers.formatDecimal(statistic.remainingLeftVacationDaysForPeriod, 1, 0)} : ${#numbers.formatDecimal(statistic.remainingLeftVacationDaysForPeriod, 1, 1)}"
-                  ></span>
-                  <span th:text="#{duration.vacationDays.remaining.two}"></span>
-                </div>
-                <div th:class="tw-mt-2">
-                  <span class="tw-font-bold" th:text="${statistic.leftOvertimeForPeriod}"></span>
-                  <span th:text="#{duration.overtime}"></span>
-                </div>
-              </td>
-
-              <td
-                class="tw-hidden md:tw-table-cell print:tw-table-cell"
-                th:data-sortable-value="${statistic.leftVacationDays}"
-              >
-                <div>
-                  <span
-                    class="tw-font-bold"
-                    th:text="${statistic.leftVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.leftVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.leftVacationDays, 1, 1)}"
-                  ></span>
-                  <span th:text="#{duration.vacationDays}"></span>
-                </div>
-                <div class="tw-text-xs">
-                  <span th:text="#{duration.vacationDays.remaining.one}"></span>
-                  <span
-                    class="tw-font-bold"
-                    th:text="${statistic.remainingLeftVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.remainingLeftVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.remainingLeftVacationDays, 1, 1)}"
-                  ></span>
-                  <span th:text="#{duration.vacationDays.remaining.two}"></span>
-                </div>
-                <div th:class="tw-mt-2">
-                  <span class="tw-font-bold" th:text="${statistic.leftOvertime}"></span>
-                  <span th:text="#{duration.overtime}"></span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                von 42 Personen
+              </span>
+            </div>
+            <button
+              id="size-submit"
+              th:text="#{pagination.page.size.button.text}"
+              class="tw-ml-2 button-main"
+              data-js-hidden
+            >
+              Aktualisieren
+            </button>
+          </form>
+        </div>
       </div>
     </main>
   </body>

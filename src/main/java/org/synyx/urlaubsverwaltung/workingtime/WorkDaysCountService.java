@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,39 +28,6 @@ public class WorkDaysCountService {
     public WorkDaysCountService(PublicHolidaysService publicHolidaysService, WorkingTimeService workingTimeService) {
         this.publicHolidaysService = publicHolidaysService;
         this.workingTimeService = workingTimeService;
-    }
-
-    /**
-     * This method calculates how many weekdays are between declared start date and end date
-     * (official holidays are ignored here)
-     * <p>
-     * Note: the start date must be before or equal the end date; this is validated prior to that method
-     *
-     * @param startDate the first day of the time period to calculate workdays
-     * @param endDate   the last day of the time period to calculate workdays
-     * @return number of weekdays
-     */
-    public double getWeekDaysCount(LocalDate startDate, LocalDate endDate) {
-
-        double workDays = 0.0;
-
-        if (!startDate.equals(endDate)) {
-            LocalDate day = startDate;
-
-            while (!day.isAfter(endDate)) {
-                if (DateUtil.isWorkDay(day)) {
-                    workDays++;
-                }
-
-                day = day.plusDays(1);
-            }
-        } else {
-            if (DateUtil.isWorkDay(startDate)) {
-                workDays++;
-            }
-        }
-
-        return workDays;
     }
 
     /**

@@ -3,7 +3,8 @@ legend {
   @apply dark:tw-font-normal;
 }
 
-.tw-form-control {
+.tw-form-control,
+.details-dropdown_summary {
   @apply tw-outline-0;
   @apply tw-block;
   @apply tw-text-sm;
@@ -15,7 +16,8 @@ legend {
 }
 
 .form-control,
-.tw-form-control {
+.tw-form-control,
+.details-dropdown_summary {
   /* ring-0 is required to enable transition to ring-x of the focused form-control */
   @apply tw-ring-0;
   @apply tw-transition;
@@ -23,6 +25,35 @@ legend {
   @apply tw-ease-in-out;
   @apply tw-rounded-md;
   @apply dark:tw-border-neutral-600 !important;
+}
+
+.details-dropdown {
+  position: relative;
+}
+
+.details-dropdown_summary {
+  @apply tw-px-3;
+  @apply tw-py-2;
+  @apply tw-rounded-md;
+  @apply tw-cursor-pointer;
+}
+
+.details-dropdown_content {
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  right: 0;
+  @apply -tw-bottom-1;
+  @apply tw-translate-y-full;
+  @apply tw-bg-white;
+  @apply tw-shadow-lg;
+  @apply dark:tw-shadow-none;
+  @apply dark:tw-bg-zinc-900;
+  @apply tw-border;
+  @apply dark:tw-border-zinc-500;
+  @apply tw-px-4;
+  @apply tw-py-3;
+  @apply tw-rounded;
 }
 
 input[disabled],
@@ -46,6 +77,7 @@ fieldset[disabled] .tw-form-control {
 
 .form-control:focus,
 .tw-form-control:focus,
+.details-dropdown_summary:focus,
 .duet-date__input:focus,
 .duet-date__toggle:focus {
   @apply tw-ring-2 !important;
@@ -233,7 +265,8 @@ textarea.error {
 
 input,
 select,
-textarea {
+textarea,
+.details-dropdown_summary {
   @apply dark:tw-border-zinc-600 !important;
   @apply dark:tw-bg-zinc-700 !important;
   @apply dark:tw-text-zinc-50 !important;

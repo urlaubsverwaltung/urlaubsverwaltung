@@ -85,11 +85,6 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     }
 
     @Override
-    public SickNote update(SickNote sickNote, Person editor) {
-        return this.update(sickNote, editor, null);
-    }
-
-    @Override
     public SickNote update(SickNote sickNote, Person editor, String comment) {
 
         sickNote.setStatus(ACTIVE);

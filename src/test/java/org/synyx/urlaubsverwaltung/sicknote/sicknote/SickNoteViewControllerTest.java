@@ -516,13 +516,57 @@ class SickNoteViewControllerTest {
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
     }
 
-    @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
-    void ensureGetSickNoteDetailsAccessibleForPersonWithRole(Role role) throws Exception {
+    @Test
+    void ensureGetSickNoteDetailsAccessibleForPersonWithRoleOffice() throws Exception {
 
-        final Person officePerson = personWithRole(role);
+        final Person officePerson = personWithRole(OFFICE);
         when(personService.getSignedInUser()).thenReturn(officePerson);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(officePerson)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(new Person())));
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
+    }
+
+    @Test
+    void ensureCannotGetSickNoteDetailsAccessibleForPersonWithRoleBoss() {
+
+        final Person bossPerson = personWithRole(BOSS);
+        when(personService.getSignedInUser()).thenReturn(bossPerson);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(new Person())));
+
+        assertThatThrownBy(() ->
+            perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsAccessibleForPersonWithRoleBossAndSickNoteView() throws Exception {
+
+        final Person boss = new Person("marlene", "Muster", "Marlene", "muster@example.org");
+        boss.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
+        boss.setId(1);
+        when(personService.getSignedInUser()).thenReturn(boss);
+
+        final Person person = new Person("marlene", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        person.setId(2);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsAccessibleForPersonWithRoleDepartmentHeadAndSickNoteView() throws Exception {
+
+        final Person departmentHeadPerson = new Person("marlene", "Muster", "Marlene", "muster@example.org");
+        departmentHeadPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
+        departmentHeadPerson.setId(1);
+        when(personService.getSignedInUser()).thenReturn(departmentHeadPerson);
+
+        final Person person = new Person("marlene", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        person.setId(2);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
     }
@@ -530,9 +574,14 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsAccessibleForPersonWithRoleDepartmentHead() throws Exception {
 
-        final Person departmentHeadPerson = personWithRole(DEPARTMENT_HEAD);
+        final Person departmentHeadPerson = new Person("marlene", "Muster", "Marlene", "muster@example.org");
+        departmentHeadPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        departmentHeadPerson.setId(1);
         when(personService.getSignedInUser()).thenReturn(departmentHeadPerson);
-        final Person person = personWithRole(USER);
+
+        final Person person = new Person("marlene", "Muster", "Marlene", "muster@example.org");
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        person.setId(2);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
@@ -559,8 +608,24 @@ class SickNoteViewControllerTest {
     void ensureGetSickNoteDetailsAccessibleForPersonWithRoleSecondStageAuthority() throws Exception {
 
         final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY);
+        secondStageAuthority.setId(1);
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
         final Person person = personWithRole(USER);
+        person.setId(2);
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
+
+        perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
+    }
+
+    @Test
+    void ensureGetSickNoteDetailsAccessibleForPersonWithRoleSecondStageAuthorityAndSickNoteView() throws Exception {
+
+        final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW);
+        secondStageAuthority.setId(1);
+        when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
+        final Person person = personWithRole(USER);
+        person.setId(2);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
 
@@ -741,7 +806,9 @@ class SickNoteViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
-        when(personService.getActivePersons()).thenReturn(List.of(new Person()));
+        final Person sickNotePerson = new Person();
+        when(personService.getActivePersons()).thenReturn(List.of(sickNotePerson));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(sickNotePerson));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -749,8 +816,9 @@ class SickNoteViewControllerTest {
             return null;
         }).when(sickNoteValidator).validate(any(), any());
 
-        perform(post("/web/sicknote"))
+        perform(post("/web/sicknote").param("person", "1"))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("person", sickNotePerson))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));
     }
 
@@ -1280,7 +1348,6 @@ class SickNoteViewControllerTest {
 
     private Person personWithRole(Role... role) {
         final Person person = new Person();
-        person.setId(1);
         person.setPermissions(List.of(role));
         return person;
     }

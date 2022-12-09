@@ -21,7 +21,6 @@ import static java.time.Month.DECEMBER;
 import static java.time.Month.JANUARY;
 import static java.time.Month.OCTOBER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
@@ -106,15 +105,17 @@ class SickNoteStatisticsTest {
     }
 
     @Test
-    void testGetTotalNumberOfSickDaysInvalidDateRange() {
+    void ensuresThatAnYearOverSpanningSickNoteCalculatesOnlyTheWorkdaysOfTheRequestedYear() {
         final Clock fixedClock = Clock.fixed(Instant.parse("2015-10-17T00:00:00.00Z"), ZoneId.systemDefault());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate from = of(2022, OCTOBER, 7);
-        final LocalDate sickNote1To = of(2022, OCTOBER, 11);
-        final SickNote sickNote = createSickNote(person, from, sickNote1To, FULL);
+        final LocalDate from = of(2014, DECEMBER, 7);
+        final LocalDate to = of(2016, JANUARY, 11);
+        final SickNote sickNote = createSickNote(person, from, to, FULL);
+        final BigDecimal sickDays = new BigDecimal("9");
+        when(workDaysCountService.getWorkDaysCount(FULL, of(2015, JANUARY, 1), of(2015, DECEMBER, 31), person)).thenReturn(sickDays);
 
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> new SickNoteStatistics(fixedClock, List.of(sickNote), workDaysCountService));
+        final SickNoteStatistics sut = new SickNoteStatistics(fixedClock, List.of(sickNote), workDaysCountService);
+        assertThat(sut.getAverageDurationOfDiseasePerPerson()).isEqualByComparingTo(sickDays);
     }
 }

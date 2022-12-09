@@ -5,7 +5,11 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of {@link AccountService}.
@@ -24,8 +28,18 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Optional<Account> getHolidaysAccount(int year, Person person) {
-        final boolean doRemainingVacationDaysExpireGlobally = settingsService.getSettings().getAccountSettings().isDoRemainingVacationDaysExpireGlobally();
-        return accountRepository.getHolidaysAccountByYearAndPerson(year, person).map(account -> mapToAccount(account, doRemainingVacationDaysExpireGlobally));
+        return getHolidaysAccount(year, List.of(person)).stream().findFirst();
+    }
+
+    @Override
+    public List<Account> getHolidaysAccount(int year, List<Person> persons) {
+        final CachedSupplier<Boolean> expireGlobally =
+            new CachedSupplier<>(() -> settingsService.getSettings().getAccountSettings().isDoRemainingVacationDaysExpireGlobally());
+
+        return accountRepository.findAccountByYearAndPersons(year, persons)
+            .stream()
+            .map(accountEntity -> this.mapToAccount(accountEntity, expireGlobally.get()))
+            .collect(toList());
     }
 
     @Override
@@ -76,5 +90,22 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void deleteAllByPerson(Person person) {
         accountRepository.deleteByPerson(person);
+    }
+
+    private static class CachedSupplier<T> implements Supplier<T> {
+        private T cachedValue;
+        private final Supplier<T> supplier;
+
+        CachedSupplier(Supplier<T> supplier) {
+            this.supplier = supplier;
+        }
+
+        @Override
+        public T get() {
+            if (cachedValue == null) {
+                cachedValue = supplier.get();
+            }
+            return cachedValue;
+        }
     }
 }
