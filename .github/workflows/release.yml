@@ -37,7 +37,7 @@ jobs:
           package
       - name: Extract release tag
         id: vars
-        run: echo ::set-output name=version::${GITHUB_REF#refs/*/urlaubsverwaltung-}
+        run: echo "version=${GITHUB_REF#refs/*/urlaubsverwaltung-}" >> $GITHUB_OUTPUT
       - name: Create Release
         uses: softprops/action-gh-release@v1
         env:
