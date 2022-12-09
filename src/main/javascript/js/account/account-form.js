@@ -33,10 +33,10 @@ form.addEventListener("change", function enabledDisableVacationDaysExpireElement
 
     const radioButtons = document.querySelectorAll("[name='doRemainingVacationDaysExpireLocally']");
     for (const button of radioButtons) {
-      if (override !== "true") {
-        button.setAttribute("disabled", "");
-      } else {
+      if (override === "true") {
         button.removeAttribute("disabled");
+      } else {
+        button.setAttribute("disabled", "");
       }
     }
   }
