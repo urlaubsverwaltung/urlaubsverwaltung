@@ -265,7 +265,12 @@
                   alt=""
                 />
               </td>
-              <td th:text="${departmentApplication.person.niceName}"></td>
+              <td>
+                <a th:text="${departmentApplication.person.niceName}"
+                   th:href="@{/web/person/__${departmentApplication.person.id}__/overview}"
+                   class="icon-link"
+                ></a>
+              </td>
               <td>
                 <span class="tw-flex tw-items-center">
                   <th:block th:if="${departmentApplication.startDate == departmentApplication.endDate}">

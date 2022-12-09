@@ -217,7 +217,12 @@
                   />
                 </td>
 
-                <td th:if="${comment.person != null}" th:text="${comment.person.niceName}"></td>
+                <td th:if="${comment.person != null}">
+                  <a th:text="${comment.person.niceName}"
+                     th:href="@{/web/person/__${comment.person.id}__/overview}"
+                     class="icon-link"
+                  ></a>
+                </td>
                 <td th:if="${comment.person == null}" th:text="#{sicknote.progress.deleted-author}"></td>
 
                 <td>

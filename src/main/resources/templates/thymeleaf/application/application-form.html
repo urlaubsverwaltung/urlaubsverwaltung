@@ -26,13 +26,18 @@
           <div class="tw-flex">
             <div class="tw-mr-4 tw-mt-1 tw-text-blue-50 dark:tw-text-sky-800">
               <img
-                th:replace="~{fragments/avatar::avatar(url=${holidayReplacement.person.gravatarURL + '?d=404&s=40'},niceName=${holidayReplacement.person.niceName},width='40px',height='40px',personId=null)}"
+                th:replace="~{fragments/avatar::avatar(url=${holidayReplacement.person.gravatarURL + '?d=404&s=40'},niceName=${holidayReplacement.person.niceName},width='40px',height='40px',personId=${holidayReplacement.person.id})}"
                 alt=""
               />
             </div>
             <div>
               <div class="tw-flex tw-items-center tw-flex-wrap">
-                <span th:text="${holidayReplacement.person.niceName}"></span>
+                <span>
+                  <a th:text="${holidayReplacement.person.niceName}"
+                     th:href="@{/web/person/__${holidayReplacement.person.id}__/overview}"
+                     class="icon-link"
+                  ></a>
+                </span>
                 <ul
                   th:if="${not #lists.isEmpty(holidayReplacement.departments)}"
                   class="tw-m-0 tw-mt-1.5 tw-p-0 tw-list-none tw-flex tw-flex-wrap tw-text-xs tw-gap-1"
