@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.overview;
 
 import org.junit.jupiter.api.Test;
-import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays;
@@ -25,53 +24,73 @@ class SickDaysOverviewTest {
     @Test
     void ensureGeneratesCorrectSickDaysOverview() {
 
-        SickNoteType sickNoteType = new SickNoteType();
+        final Person person = new Person("username", "last name", "first name", "email@example.org");
+        person.setId(1);
+
+        final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
         sickNoteType.setMessageKey("Krankmeldung");
 
-        SickNoteType sickNoteTypeChild = new SickNoteType();
+        final SickNoteType sickNoteTypeChild = new SickNoteType();
         sickNoteTypeChild.setCategory(SickNoteCategory.SICK_NOTE_CHILD);
         sickNoteTypeChild.setMessageKey("Kind-Krankmeldung");
 
-        SickNote sickNoteWithoutAUB = TestDataCreator.anySickNote();
-        sickNoteWithoutAUB.setSickNoteType(sickNoteType);
-        sickNoteWithoutAUB.setStatus(SickNoteStatus.ACTIVE);
-        sickNoteWithoutAUB.setStartDate(LocalDate.of(2014, 10, 13));
-        sickNoteWithoutAUB.setEndDate(LocalDate.of(2014, 10, 13));
+        final SickNote sickNoteWithoutAUB = SickNote.builder()
+                .person(person)
+                .dayLength(DayLength.FULL)
+                .sickNoteType(sickNoteType)
+                .status(SickNoteStatus.ACTIVE)
+                .startDate(LocalDate.of(2014, 10, 13))
+                .endDate(LocalDate.of(2014, 10, 13))
+                .build();
 
-        SickNote sickNoteWithAUB = TestDataCreator.anySickNote();
-        sickNoteWithAUB.setSickNoteType(sickNoteType);
-        sickNoteWithAUB.setStatus(SickNoteStatus.ACTIVE);
-        sickNoteWithAUB.setStartDate(LocalDate.of(2014, 10, 14));
-        sickNoteWithAUB.setEndDate(LocalDate.of(2014, 10, 14));
-        sickNoteWithAUB.setAubStartDate(LocalDate.of(2014, 10, 14));
-        sickNoteWithAUB.setAubEndDate(LocalDate.of(2014, 10, 14));
+        final SickNote sickNoteWithAUB = SickNote.builder()
+                .person(person)
+                .dayLength(DayLength.FULL)
+                .sickNoteType(sickNoteType)
+                .status(SickNoteStatus.ACTIVE)
+                .startDate(LocalDate.of(2014, 10, 14))
+                .endDate(LocalDate.of(2014, 10, 14))
+                .aubStartDate(LocalDate.of(2014, 10, 14))
+                .aubEndDate(LocalDate.of(2014, 10, 14))
+                .build();
 
-        SickNote childSickNoteWithoutAUB = TestDataCreator.anySickNote();
-        childSickNoteWithoutAUB.setSickNoteType(sickNoteTypeChild);
-        childSickNoteWithoutAUB.setStatus(SickNoteStatus.ACTIVE);
-        childSickNoteWithoutAUB.setStartDate(LocalDate.of(2014, 10, 15));
-        childSickNoteWithoutAUB.setEndDate(LocalDate.of(2014, 10, 15));
+        final SickNote childSickNoteWithoutAUB = SickNote.builder()
+                .person(person)
+                .dayLength(DayLength.FULL)
+                .sickNoteType(sickNoteTypeChild)
+                .status(SickNoteStatus.ACTIVE)
+                .startDate(LocalDate.of(2014, 10, 15))
+                .endDate(LocalDate.of(2014, 10, 15))
+                .build();
 
-        SickNote childSickNoteWithAUB = TestDataCreator.anySickNote();
-        childSickNoteWithAUB.setSickNoteType(sickNoteTypeChild);
-        childSickNoteWithAUB.setStatus(SickNoteStatus.ACTIVE);
-        childSickNoteWithAUB.setStartDate(LocalDate.of(2014, 10, 16));
-        childSickNoteWithAUB.setEndDate(LocalDate.of(2014, 10, 16));
-        childSickNoteWithAUB.setAubStartDate(LocalDate.of(2014, 10, 16));
-        childSickNoteWithAUB.setAubEndDate(LocalDate.of(2014, 10, 16));
+        final SickNote childSickNoteWithAUB = SickNote.builder()
+                .person(person)
+                .dayLength(DayLength.FULL)
+                .sickNoteType(sickNoteTypeChild)
+                .status(SickNoteStatus.ACTIVE)
+                .startDate(LocalDate.of(2014, 10, 16))
+                .endDate(LocalDate.of(2014, 10, 16))
+                .aubStartDate(LocalDate.of(2014, 10, 16))
+                .aubEndDate(LocalDate.of(2014, 10, 16))
+                .build();
 
-        SickNote inactiveSickNote = TestDataCreator.anySickNote();
-        inactiveSickNote.setSickNoteType(sickNoteTypeChild);
-        inactiveSickNote.setStatus(SickNoteStatus.CANCELLED);
-        inactiveSickNote.setStartDate(LocalDate.of(2014, 10, 17));
-        inactiveSickNote.setEndDate(LocalDate.of(2014, 10, 17));
+        final SickNote inactiveSickNote = SickNote.builder()
+                .person(person)
+                .dayLength(DayLength.FULL)
+                .sickNoteType(sickNoteTypeChild)
+                .status(SickNoteStatus.CANCELLED)
+                .startDate(LocalDate.of(2014, 10, 17))
+                .endDate(LocalDate.of(2014, 10, 17))
+                .build();
 
-        SickNote inactiveChildSickNote = TestDataCreator.anySickNote();
-        inactiveChildSickNote.setSickNoteType(sickNoteTypeChild);
-        inactiveChildSickNote.setStatus(SickNoteStatus.CANCELLED);
-        inactiveChildSickNote.setStartDate(LocalDate.of(2014, 10, 18));
-        inactiveChildSickNote.setEndDate(LocalDate.of(2014, 10, 18));
+        final SickNote inactiveChildSickNote = SickNote.builder()
+                .person(person)
+                .sickNoteType(sickNoteTypeChild)
+                .status(SickNoteStatus.CANCELLED)
+                .startDate(LocalDate.of(2014, 10, 18))
+                .endDate(LocalDate.of(2014, 10, 18))
+                .build();
 
         final List<SickNote> sickNotes = List.of(sickNoteWithoutAUB, sickNoteWithAUB, childSickNoteWithoutAUB,
             childSickNoteWithAUB, inactiveSickNote, inactiveChildSickNote);
@@ -97,5 +116,4 @@ class SickDaysOverviewTest {
             .containsEntry("TOTAL", new BigDecimal("2"))
             .containsEntry("WITH_AUB", BigDecimal.ONE);
     }
-
 }

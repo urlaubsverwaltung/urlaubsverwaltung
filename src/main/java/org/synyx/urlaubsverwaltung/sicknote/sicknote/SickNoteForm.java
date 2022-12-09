@@ -136,17 +136,16 @@ public class SickNoteForm {
     }
 
     SickNote generateSickNote() {
-        SickNote sickNote = new SickNote();
-        sickNote.setId(id);
-        sickNote.setPerson(person);
-        sickNote.setSickNoteType(sickNoteType);
-        sickNote.setStartDate(startDate);
-        sickNote.setEndDate(endDate);
-        sickNote.setDayLength(dayLength);
-        sickNote.setAubStartDate(aubStartDate);
-        sickNote.setAubEndDate(aubEndDate);
-
-        return sickNote;
+        return SickNote.builder()
+                .id(id)
+                .person(person)
+                .sickNoteType(sickNoteType)
+                .startDate(startDate)
+                .endDate(endDate)
+                .dayLength(dayLength)
+                .aubStartDate(aubStartDate)
+                .aubEndDate(aubEndDate)
+                .build();
     }
 
     @Override

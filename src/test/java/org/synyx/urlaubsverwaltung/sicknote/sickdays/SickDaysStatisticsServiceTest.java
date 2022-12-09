@@ -62,10 +62,11 @@ class SickDaysStatisticsServiceTest {
         final String personnnelNumber = "Passagier1337";
         final PersonBasedata personBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), personnnelNumber, "additionalInfo");
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(departmentHead);
-        sickNote.setStartDate(startDate.plusDays(5));
-        sickNote.setEndDate(startDate.plusDays(6));
+        final SickNote sickNote = SickNote.builder()
+                .person(departmentHead)
+                .startDate(startDate.plusDays(5))
+                .endDate(startDate.plusDays(6))
+                .build();
 
         final Person member = new Person();
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(member));
@@ -115,13 +116,14 @@ class SickDaysStatisticsServiceTest {
         secondStageAuthority.setLastName("Stage");
         secondStageAuthority.setId(42);
 
-        final String personnnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(secondStageAuthority.getId()), personnnelNumber, "additionalInfo");
+        final String personnelNumber = "Passagier1337";
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(secondStageAuthority.getId()), personnelNumber, "additionalInfo");
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(secondStageAuthority);
-        sickNote.setStartDate(startDate.plusDays(5));
-        sickNote.setEndDate(startDate.plusDays(6));
+        final SickNote sickNote = SickNote.builder()
+                .person(secondStageAuthority)
+                .startDate(startDate.plusDays(5))
+                .endDate(startDate.plusDays(6))
+                .build();
 
         final Person member = new Person();
         when(departmentService.getMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(member));
@@ -171,13 +173,15 @@ class SickDaysStatisticsServiceTest {
         office.setLastName("Person");
         office.setId(42);
 
-        final String personnnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(office.getId()), personnnelNumber, "additionalInfo");
+        final String personnelNumber = "Passagier1337";
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(office.getId()), personnelNumber, "additionalInfo");
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(office);
-        sickNote.setStartDate(startDate.plusDays(5));
-        sickNote.setEndDate(startDate.plusDays(6));
+        final SickNote sickNote = SickNote.builder()
+                .person(office)
+                .startDate(startDate.plusDays(5))
+                .endDate(startDate.plusDays(6))
+                .build();
+
         when(sickNoteService.getAllActiveByPeriod(startDate, endDate)).thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(office.getId()), personBasedata);
@@ -209,13 +213,15 @@ class SickDaysStatisticsServiceTest {
         office.setLastName("Person");
         office.setId(42);
 
-        final String personnnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(office.getId()), personnnelNumber, "additionalInfo");
+        final String personnelNumber = "Passagier1337";
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(office.getId()), personnelNumber, "additionalInfo");
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(office);
-        sickNote.setStartDate(startDate.plusDays(5));
-        sickNote.setEndDate(startDate.plusDays(6));
+        final SickNote sickNote = SickNote.builder()
+                .person(office)
+                .startDate(startDate.plusDays(5))
+                .endDate(startDate.plusDays(6))
+                .build();
+
         when(sickNoteService.getAllActiveByPeriod(startDate, endDate)).thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(office.getId()), personBasedata);
@@ -246,13 +252,15 @@ class SickDaysStatisticsServiceTest {
         boss.setLastName("Person");
         boss.setId(42);
 
-        final String personnnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(boss.getId()), personnnelNumber, "additionalInfo");
+        final String personnelNumber = "Passagier1337";
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(boss.getId()), personnelNumber, "additionalInfo");
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(boss);
-        sickNote.setStartDate(startDate.plusDays(5));
-        sickNote.setEndDate(startDate.plusDays(6));
+        final SickNote sickNote = SickNote.builder()
+                .person(boss)
+                .startDate(startDate.plusDays(5))
+                .endDate(startDate.plusDays(6))
+                .build();
+
         when(sickNoteService.getAllActiveByPeriod(startDate, endDate)).thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(boss.getId()), personBasedata);
@@ -284,13 +292,15 @@ class SickDaysStatisticsServiceTest {
         boss.setLastName("Person");
         boss.setId(42);
 
-        final String personnnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(boss.getId()), personnnelNumber, "additionalInfo");
+        final String personnelNumber = "Passagier1337";
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(boss.getId()), personnelNumber, "additionalInfo");
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(boss);
-        sickNote.setStartDate(startDate.plusDays(5));
-        sickNote.setEndDate(startDate.plusDays(6));
+        final SickNote sickNote = SickNote.builder()
+                .person(boss)
+                .startDate(startDate.plusDays(5))
+                .endDate(startDate.plusDays(6))
+                .build();
+
         when(sickNoteService.getAllActiveByPeriod(startDate, endDate)).thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(boss.getId()), personBasedata);
@@ -337,13 +347,14 @@ class SickDaysStatisticsServiceTest {
         departmentHead.setLastName("Head");
         departmentHead.setId(42);
 
-        final String personnnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), personnnelNumber, "additionalInfo");
+        final String personnelNumber = "Passagier1337";
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), personnelNumber, "additionalInfo");
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(departmentHead);
-        sickNote.setStartDate(startDate.plusDays(5));
-        sickNote.setEndDate(startDate.plusDays(6));
+        final SickNote sickNote = SickNote.builder()
+                .person(departmentHead)
+                .startDate(startDate.plusDays(5))
+                .endDate(startDate.plusDays(6))
+                .build();
 
         final Person member = new Person();
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(member));
@@ -377,10 +388,11 @@ class SickDaysStatisticsServiceTest {
         departmentHead.setLastName("Head");
         departmentHead.setId(42);
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(departmentHead);
-        sickNote.setStartDate(startDate.plusDays(5));
-        sickNote.setEndDate(startDate.plusDays(6));
+        final SickNote sickNote = SickNote.builder()
+                .person(departmentHead)
+                .startDate(startDate.plusDays(5))
+                .endDate(startDate.plusDays(6))
+                .build();
 
         final Person member = new Person();
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(member));

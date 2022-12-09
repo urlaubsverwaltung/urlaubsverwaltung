@@ -5,180 +5,96 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import static java.time.ZoneOffset.UTC;
-import static javax.persistence.EnumType.STRING;
-
-/**
- * Entity representing a sick note with information about employee and period.
- */
-@Entity
 public class SickNote {
 
-    @Id
-    @GeneratedValue
-    private Integer id;
+    private final Integer id;
+    private final Person person;
+    private final Person applier;
+    private final SickNoteType sickNoteType;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
+    private final DayLength dayLength;
+    private final LocalDate aubStartDate;
+    private final LocalDate aubEndDate;
+    private final LocalDate lastEdited;
+    private final LocalDate endOfSickPayNotificationSend;
+    private final SickNoteStatus status;
 
-    /**
-     * One person may have multiple sick notes.
-     */
-    @ManyToOne
-    private Person person;
+    private SickNote(Integer id, Person person, Person applier, SickNoteType sickNoteType, LocalDate startDate,
+                     LocalDate endDate, DayLength dayLength, LocalDate aubStartDate, LocalDate aubEndDate,
+                     LocalDate lastEdited, LocalDate endOfSickPayNotificationSend, SickNoteStatus status) {
 
-    /**
-     * Person that created the sick-note.
-     */
-    @ManyToOne
-    private Person applier;
-
-    /**
-     * Type of sick note.
-     *
-     * @since 2.15.0
-     */
-    @ManyToOne
-    private SickNoteType sickNoteType;
-
-    /**
-     * Sick note period: start and end date of the period, the employee is sick.
-     */
-    private LocalDate startDate;
-    private LocalDate endDate;
-
-    /**
-     * Time of day for the sick note: morning, noon or full day
-     *
-     * @since 2.9.4
-     */
-    @Enumerated(STRING)
-    private DayLength dayLength;
-
-    /**
-     * Period of the AUB (Arbeitsunfähigkeitsbescheinigung), is optional.
-     */
-    private LocalDate aubStartDate;
-    private LocalDate aubEndDate;
-
-    private LocalDate lastEdited;
-
-    private LocalDate endOfSickPayNotificationSend;
-
-    @Enumerated(STRING)
-    private SickNoteStatus status;
-
-    public SickNote() {
-        this.lastEdited = LocalDate.now(UTC);
+        this.id = id;
+        this.person = person;
+        this.applier = applier;
+        this.sickNoteType = sickNoteType;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.dayLength = dayLength;
+        this.aubStartDate = aubStartDate;
+        this.aubEndDate = aubEndDate;
+        this.lastEdited = lastEdited;
+        this.endOfSickPayNotificationSend = endOfSickPayNotificationSend;
+        this.status = status;
     }
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public Person getPerson() {
         return person;
-    }
-
-    public void setPerson(Person person) {
-        this.person = person;
     }
 
     public Person getApplier() {
         return applier;
     }
 
-    public void setApplier(Person applier) {
-        this.applier = applier;
-    }
-
     public SickNoteType getSickNoteType() {
         return sickNoteType;
     }
 
-    public void setSickNoteType(SickNoteType sickNoteType) {
-        this.sickNoteType = sickNoteType;
-    }
-
     public LocalDate getStartDate() {
-        return this.startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
+        return startDate;
     }
 
     public LocalDate getEndDate() {
-        return this.endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+        return endDate;
     }
 
     public DayLength getDayLength() {
         return dayLength;
     }
 
-    public void setDayLength(DayLength dayLength) {
-        this.dayLength = dayLength;
-    }
-
-    public boolean isAubPresent() {
-        return getAubStartDate() != null && getAubEndDate() != null;
-    }
-
     public LocalDate getAubStartDate() {
-        return this.aubStartDate;
-    }
-
-    public void setAubStartDate(LocalDate aubStartDate) {
-        this.aubStartDate = aubStartDate;
+        return aubStartDate;
     }
 
     public LocalDate getAubEndDate() {
-        return this.aubEndDate;
-    }
-
-    public void setAubEndDate(LocalDate aubEndDate) {
-        this.aubEndDate = aubEndDate;
+        return aubEndDate;
     }
 
     public LocalDate getLastEdited() {
-        return this.lastEdited;
-    }
-
-    public void setLastEdited(LocalDate lastEdited) {
-        this.lastEdited = lastEdited;
+        return lastEdited;
     }
 
     public LocalDate getEndOfSickPayNotificationSend() {
         return endOfSickPayNotificationSend;
     }
 
-    public void setEndOfSickPayNotificationSend(LocalDate endOfSickPayNotificationSend) {
-        this.endOfSickPayNotificationSend = endOfSickPayNotificationSend;
+    public SickNoteStatus getStatus() {
+        return status;
     }
 
     public boolean isActive() {
         return SickNoteStatus.ACTIVE.equals(getStatus());
     }
 
-    public SickNoteStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(SickNoteStatus status) {
-        this.status = status;
+    public boolean isAubPresent() {
+        return getAubStartDate() != null && getAubEndDate() != null;
     }
 
     public Period getPeriod() {
@@ -188,35 +104,136 @@ public class SickNote {
     @Override
     public String toString() {
         return "SickNote{" +
-            "id=" + getId() +
-            ", person=" + person +
-            ", applier=" + applier +
-            ", sickNoteType=" + sickNoteType +
-            ", startDate=" + startDate +
-            ", endDate=" + endDate +
-            ", dayLength=" + dayLength +
-            ", aubStartDate=" + aubStartDate +
-            ", aubEndDate=" + aubEndDate +
-            ", lastEdited=" + lastEdited +
-            ", endOfSickPayNotificationSend=" + endOfSickPayNotificationSend +
-            ", status=" + status +
-            '}';
+                "id=" + id +
+                ", person=" + person +
+                ", applier=" + applier +
+                ", sickNoteType=" + sickNoteType +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", dayLength=" + dayLength +
+                ", aubStartDate=" + aubStartDate +
+                ", aubEndDate=" + aubEndDate +
+                ", lastEdited=" + lastEdited +
+                ", endOfSickPayNotificationSend=" + endOfSickPayNotificationSend +
+                ", status=" + status +
+                '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final SickNote that = (SickNote) o;
-        return null != this.getId() && Objects.equals(id, that.id);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SickNote sickNote = (SickNote) o;
+        return Objects.equals(person, sickNote.person)
+                && Objects.equals(applier, sickNote.applier)
+                && Objects.equals(sickNoteType, sickNote.sickNoteType)
+                && Objects.equals(startDate, sickNote.startDate)
+                && Objects.equals(endDate, sickNote.endDate)
+                && dayLength == sickNote.dayLength;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(person, applier, sickNoteType, startDate, endDate, dayLength);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static Builder builder(SickNote sickNote) {
+        return new Builder()
+                .id(sickNote.getId())
+                .person(sickNote.getPerson())
+                .applier(sickNote.getApplier())
+                .sickNoteType(sickNote.getSickNoteType())
+                .startDate(sickNote.getStartDate())
+                .endDate(sickNote.getEndDate())
+                .dayLength(sickNote.getDayLength())
+                .aubStartDate(sickNote.getAubStartDate())
+                .aubEndDate(sickNote.getAubEndDate())
+                .lastEdited(sickNote.getLastEdited())
+                .endOfSickPayNotificationSend(sickNote.getEndOfSickPayNotificationSend())
+                .status(sickNote.getStatus());
+    }
+
+    public static class Builder {
+        private Integer id;
+        private Person person;
+        private Person applier;
+        private SickNoteType sickNoteType;
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private DayLength dayLength;
+        private LocalDate aubStartDate;
+        private LocalDate aubEndDate;
+        private LocalDate lastEdited;
+        private LocalDate endOfSickPayNotificationSend;
+        private SickNoteStatus status;
+
+        public Builder id(Integer id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder person(Person person) {
+            this.person = person;
+            return this;
+        }
+
+        public Builder applier(Person applier) {
+            this.applier = applier;
+            return this;
+        }
+
+        public Builder sickNoteType(SickNoteType sickNoteType) {
+            this.sickNoteType = sickNoteType;
+            return this;
+        }
+
+        public Builder startDate(LocalDate startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+
+        public Builder endDate(LocalDate endDate) {
+            this.endDate = endDate;
+            return this;
+        }
+
+        public Builder dayLength(DayLength dayLength) {
+            this.dayLength = dayLength;
+            return this;
+        }
+
+        public Builder aubStartDate(LocalDate aubStartDate) {
+            this.aubStartDate = aubStartDate;
+            return this;
+        }
+
+        public Builder aubEndDate(LocalDate aubEndDate) {
+            this.aubEndDate = aubEndDate;
+            return this;
+        }
+
+        public Builder lastEdited(LocalDate lastEdited) {
+            this.lastEdited = lastEdited;
+            return this;
+        }
+
+        public Builder endOfSickPayNotificationSend(LocalDate endOfSickPayNotificationSend) {
+            this.endOfSickPayNotificationSend = endOfSickPayNotificationSend;
+            return this;
+        }
+
+        public Builder status(SickNoteStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public SickNote build() {
+            return new SickNote(id, person, applier, sickNoteType, startDate, endDate, dayLength, aubStartDate,
+                    aubEndDate, lastEdited, endOfSickPayNotificationSend, status);
+        }
     }
 }

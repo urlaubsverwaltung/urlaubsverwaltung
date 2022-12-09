@@ -185,8 +185,9 @@ class SickNoteViewController {
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
 
-        final SickNote sickNote = sickNoteForm.generateSickNote();
-        sickNote.setApplier(signedInUser);
+        final SickNote sickNote = SickNote.builder(sickNoteForm.generateSickNote())
+                .applier(signedInUser)
+                .build();
 
         sickNoteValidator.validate(sickNote, errors);
         if (errors.hasErrors()) {
@@ -201,9 +202,9 @@ class SickNoteViewController {
             return "thymeleaf/sicknote/sick_note_form";
         }
 
-        sickNoteInteractionService.create(sickNote, signedInUser, sickNoteForm.getComment());
+        final SickNote updatedSickNote = sickNoteInteractionService.create(sickNote, signedInUser, sickNoteForm.getComment());
 
-        return REDIRECT_WEB_SICKNOTE + sickNote.getId();
+        return REDIRECT_WEB_SICKNOTE + updatedSickNote.getId();
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")

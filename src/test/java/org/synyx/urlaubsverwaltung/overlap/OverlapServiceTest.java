@@ -24,9 +24,9 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.anyApplication;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.anySickNote;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
@@ -193,20 +193,22 @@ class OverlapServiceTest {
         LocalDate startDate = LocalDate.of(2012, JANUARY, 16);
         LocalDate endDate = LocalDate.of(2012, JANUARY, 18);
 
-        SickNote inactiveSickNote = new SickNote();
-        inactiveSickNote.setDayLength(FULL);
-        inactiveSickNote.setStartDate(startDate);
-        inactiveSickNote.setEndDate(endDate);
-        inactiveSickNote.setStatus(SickNoteStatus.CANCELLED);
+        final SickNote inactiveSickNote = SickNote.builder()
+                .dayLength(FULL)
+                .startDate(startDate)
+                .endDate(endDate)
+                .status(SickNoteStatus.CANCELLED)
+                .build();
 
         final Person person = new Person();
 
         // sick note to be checked: 16.01. - 18.01.
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(person);
-        sickNote.setDayLength(FULL);
-        sickNote.setStartDate(LocalDate.of(2012, JANUARY, 16));
-        sickNote.setEndDate(LocalDate.of(2012, JANUARY, 18));
+        final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .dayLength(FULL)
+                .startDate(LocalDate.of(2012, JANUARY, 16))
+                .endDate(LocalDate.of(2012, JANUARY, 18))
+                .build();
 
         when(sickNoteService.getByPersonAndPeriod(person, startDate, endDate)).thenReturn(singletonList(inactiveSickNote));
 
@@ -222,11 +224,12 @@ class OverlapServiceTest {
         final Person person = new Person();
 
         // sick note to be checked: 16.01. - 18.01.
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(person);
-        sickNote.setDayLength(FULL);
-        sickNote.setStartDate(startDate);
-        sickNote.setEndDate(endDate);
+        final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .dayLength(FULL)
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
 
         when(sickNoteService.getByPersonAndPeriod(person, startDate, endDate)).thenReturn(List.of());
 
@@ -239,11 +242,12 @@ class OverlapServiceTest {
     void ensureFullyOverlappingIfTheApplicationForLeaveToCheckIsFullyInThePeriodOfASickNote() {
 
         // sick note: 16.01. - 19.01.
-        SickNote sickNote = new SickNote();
-        sickNote.setDayLength(FULL);
-        sickNote.setStartDate(LocalDate.of(2012, JANUARY, 16));
-        sickNote.setEndDate(LocalDate.of(2012, JANUARY, 19));
-        sickNote.setStatus(ACTIVE);
+        final SickNote sickNote = SickNote.builder()
+                .dayLength(FULL)
+                .startDate(LocalDate.of(2012, JANUARY, 16))
+                .endDate(LocalDate.of(2012, JANUARY, 19))
+                .status(ACTIVE)
+                .build();
 
         when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(singletonList(sickNote));
@@ -263,11 +267,12 @@ class OverlapServiceTest {
     void ensurePartlyOverlappingIfTheApplicationForLeaveToCheckOverlapsOnlyStartOfPeriodOfASickNote() {
 
         // sick note: 16.01. - 18.01.
-        SickNote sickNote = new SickNote();
-        sickNote.setDayLength(FULL);
-        sickNote.setStartDate(LocalDate.of(2012, JANUARY, 16));
-        sickNote.setEndDate(LocalDate.of(2012, JANUARY, 18));
-        sickNote.setStatus(ACTIVE);
+        final SickNote sickNote = SickNote.builder()
+                .dayLength(FULL)
+                .startDate(LocalDate.of(2012, JANUARY, 16))
+                .endDate(LocalDate.of(2012, JANUARY, 18))
+                .status(ACTIVE)
+                .build();
 
         when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(singletonList(sickNote));
@@ -289,12 +294,13 @@ class OverlapServiceTest {
         // sick note: 16.03. - 16.03.
         final LocalDate sameDay = LocalDate.of(2015, MARCH, 16);
 
-        final SickNote existentSickNote = new SickNote();
-        existentSickNote.setId(23);
-        existentSickNote.setDayLength(FULL);
-        existentSickNote.setStartDate(sameDay);
-        existentSickNote.setEndDate(sameDay);
-        existentSickNote.setStatus(ACTIVE);
+        final SickNote existentSickNote = SickNote.builder()
+                .id(23)
+                .dayLength(FULL)
+                .startDate(sameDay)
+                .endDate(sameDay)
+                .status(ACTIVE)
+                .build();
 
         final Person person = new Person();
 
@@ -302,13 +308,14 @@ class OverlapServiceTest {
         final LocalDate startDate = LocalDate.of(2015, MARCH, 16);
         final LocalDate endDate = LocalDate.of(2015, MARCH, 17);
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setId(23);
-        sickNote.setPerson(person);
-        sickNote.setDayLength(FULL);
-        sickNote.setStartDate(startDate);
-        sickNote.setEndDate(endDate);
-        sickNote.setStatus(ACTIVE);
+        final SickNote sickNote = SickNote.builder()
+                .id(23)
+                .person(person)
+                .dayLength(FULL)
+                .startDate(startDate)
+                .endDate(endDate)
+                .status(ACTIVE)
+                .build();
 
         when(sickNoteService.getByPersonAndPeriod(person, startDate, endDate)).thenReturn(singletonList(existentSickNote));
 
@@ -418,22 +425,27 @@ class OverlapServiceTest {
     @Test
     void ensureFullyOverlappingIfCreatingSickNoteOnADayWithHalfDayVacation() {
 
-        LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
+        final LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 
-        Application morningVacation = new Application();
+        final Application morningVacation = new Application();
         morningVacation.setDayLength(MORNING);
         morningVacation.setStartDate(vacationDate);
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ALLOWED);
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        final Person person = new Person("username", "last name", "first name", "email@example.org");
+        person.setId(1);
+
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(person)))
             .thenReturn(singletonList(morningVacation));
 
-        SickNote sickNote = anySickNote();
-        sickNote.setDayLength(FULL);
-        sickNote.setStartDate(vacationDate);
-        sickNote.setEndDate(vacationDate);
-        sickNote.setStatus(ACTIVE);
+        final SickNote sickNote = SickNote.builder()
+            .person(person)
+            .dayLength(FULL)
+            .startDate(vacationDate)
+            .endDate(vacationDate)
+            .status(ACTIVE)
+            .build();
 
         final OverlapCase overlapCase = sut.checkOverlap(sickNote);
         assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
@@ -442,22 +454,27 @@ class OverlapServiceTest {
     @Test
     void ensureOverlappingForTEMPORARY_ALLOWEDApplications() {
 
-        LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
+        final LocalDate vacationDate = LocalDate.of(2012, JANUARY, 16);
 
-        Application morningVacation = new Application();
+        final Application morningVacation = new Application();
         morningVacation.setDayLength(MORNING);
         morningVacation.setStartDate(vacationDate);
         morningVacation.setEndDate(vacationDate);
         morningVacation.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        final Person person = new Person("username", "last name", "first name", "email@example.org");
+        person.setId(1);
+
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(person)))
             .thenReturn(singletonList(morningVacation));
 
-        SickNote sickNote = anySickNote();
-        sickNote.setDayLength(FULL);
-        sickNote.setStartDate(vacationDate);
-        sickNote.setEndDate(vacationDate);
-        sickNote.setStatus(ACTIVE);
+        final SickNote sickNote = SickNote.builder()
+            .person(person)
+            .dayLength(FULL)
+            .startDate(vacationDate)
+            .endDate(vacationDate)
+            .status(ACTIVE)
+            .build();
 
         final OverlapCase overlapCase = sut.checkOverlap(sickNote);
         assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);
@@ -474,14 +491,19 @@ class OverlapServiceTest {
         morningCancellationRequest.setEndDate(vacationDate);
         morningCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
-        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), any(Person.class)))
+        final Person person = new Person("username", "last name", "first name", "email@example.org");
+        person.setId(1);
+
+        when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(person)))
             .thenReturn(singletonList(morningCancellationRequest));
 
-        final SickNote sickNote = anySickNote();
-        sickNote.setDayLength(FULL);
-        sickNote.setStartDate(vacationDate);
-        sickNote.setEndDate(vacationDate);
-        sickNote.setStatus(ACTIVE);
+        final SickNote sickNote = SickNote.builder()
+            .person(person)
+            .dayLength(FULL)
+            .startDate(vacationDate)
+            .endDate(vacationDate)
+            .status(ACTIVE)
+            .build();
 
         final OverlapCase overlapCase = sut.checkOverlap(sickNote);
         assertThat(overlapCase).isEqualTo(FULLY_OVERLAPPING);

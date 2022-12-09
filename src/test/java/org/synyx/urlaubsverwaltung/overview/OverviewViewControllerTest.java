@@ -528,12 +528,16 @@ class OverviewViewControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(), any(), eq(person)))
             .thenReturn(asList(waitingApplication, revokedApplication, allowedApplication));
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setStartDate(localDate.minusDays(1L));
-        sickNote.setEndDate(localDate.plusDays(1L));
-        final SickNote sickNote2 = new SickNote();
-        sickNote2.setStartDate(localDate.minusDays(10L));
-        sickNote2.setEndDate(localDate.plusDays(10L));
+        final SickNote sickNote = SickNote.builder()
+                .startDate(localDate.minusDays(1L))
+                .endDate(localDate.plusDays(1L))
+                .build();
+
+        final SickNote sickNote2 = SickNote.builder()
+                .startDate(localDate.minusDays(10L))
+                .endDate(localDate.plusDays(10L))
+                .build();
+
         when(sickNoteService.getByPersonAndPeriod(eq(person), any(), any())).thenReturn(asList(sickNote, sickNote2));
 
         final ResultActions resultActions = perform(get("/web/person/1/overview").param("year", "2021"));

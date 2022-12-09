@@ -51,17 +51,19 @@ class SickNoteMailServiceTest {
         final Person person = new Person();
         person.setUsername("Hulk");
 
-        final SickNote sickNoteA = new SickNote();
-        sickNoteA.setId(1);
-        sickNoteA.setPerson(person);
-        sickNoteA.setStartDate(LocalDate.of(2022, 4, 1));
-        sickNoteA.setEndDate(LocalDate.of(2022, 4, 13));
+        final SickNote sickNoteA = SickNote.builder()
+                .id(1)
+                .person(person)
+                .startDate(LocalDate.of(2022, 4, 1))
+                .endDate(LocalDate.of(2022, 4, 13))
+                .build();
 
-        final SickNote sickNoteB = new SickNote();
-        sickNoteB.setId(2);
-        sickNoteB.setPerson(person);
-        sickNoteB.setStartDate(LocalDate.of(2022, 4, 10));
-        sickNoteB.setEndDate(LocalDate.of(2022, 4, 20));
+        final SickNote sickNoteB = SickNote.builder()
+                .id(2)
+                .person(person)
+                .startDate(LocalDate.of(2022, 4, 10))
+                .endDate(LocalDate.of(2022, 4, 20))
+                .build();
 
         when(sickNoteService.getSickNotesReachingEndOfSickPay()).thenReturn(asList(sickNoteA, sickNoteB));
 

@@ -37,14 +37,14 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final LocalDate startDate = LocalDate.of(2022, 2, 1);
         final LocalDate endDate = LocalDate.of(2022, 3, 30);
 
-        final SickNote activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        final SickNoteEntity activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNoteRepository.save(activeSickNote);
 
         final int maximumSickPayDays = 42;
         final int daysBeforeEndOfSickPayNotification = 7;
         final LocalDate today = LocalDate.of(2022, 3, 7);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes)
             .containsExactly(activeSickNote);
     }
@@ -59,14 +59,14 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final LocalDate startDate = LocalDate.of(2022, 2, 1);
         final LocalDate endDate = LocalDate.of(2022, 3, 30);
 
-        final SickNote activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        final SickNoteEntity activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNoteRepository.save(activeSickNote);
 
         final int maximumSickPayDays = 42;
         final int daysBeforeEndOfSickPayNotification = 7;
         final LocalDate today = LocalDate.of(2022, 3, 6);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes).isEmpty();
     }
 
@@ -80,14 +80,14 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final LocalDate startDate = LocalDate.of(2022, 2, 1);
         final LocalDate endDate = LocalDate.of(2022, 3, 30);
 
-        final SickNote activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        final SickNoteEntity activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNoteRepository.save(activeSickNote);
 
         final int maximumSickPayDays = 42;
         final int daysBeforeEndOfSickPayNotification = 7;
         final LocalDate today = LocalDate.of(2022, 3, 8);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes)
             .containsExactly(activeSickNote);
     }
@@ -102,14 +102,14 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final LocalDate startDate = LocalDate.of(2022, 2, 1);
         final LocalDate endDate = LocalDate.of(2022, 3, 14);
 
-        final SickNote activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        final SickNoteEntity activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNoteRepository.save(activeSickNote);
 
         final int maximumSickPayDays = 42;
         final int daysBeforeEndOfSickPayNotification = 7;
         final LocalDate today = LocalDate.of(2022, 3, 7);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes).isEmpty();
     }
 
@@ -123,17 +123,17 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final LocalDate startDate = LocalDate.of(2022, 2, 1);
         final LocalDate endDate = LocalDate.of(2022, 3, 15);
 
-        final SickNote activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        final SickNoteEntity activeSickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNoteRepository.save(activeSickNote);
 
-        final SickNote cancelledSickNote = createSickNote(null, startDate, endDate, CANCELLED);
+        final SickNoteEntity cancelledSickNote = createSickNote(null, startDate, endDate, CANCELLED);
         sickNoteRepository.save(cancelledSickNote);
 
         final int maximumSickPayDays = 42;
         final int daysBeforeEndOfSickPayNotification = 7;
         final LocalDate today = LocalDate.of(2022, 3, 7);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes)
             .hasSize(1)
             .contains(activeSickNote)
@@ -151,7 +151,7 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final LocalDate startDate = LocalDate.of(2022, 2, 1);
         final LocalDate endDate = LocalDate.of(2022, 3, 15);
 
-        final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        final SickNoteEntity sickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNote.setLastEdited(startDate);
         sickNote.setEndOfSickPayNotificationSend(endDate);
         sickNoteRepository.save(sickNote);
@@ -160,7 +160,7 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final int daysBeforeEndOfSickPayNotification = 7;
         final LocalDate today = LocalDate.of(2022, 3, 7);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes).isEmpty();
     }
 
@@ -174,7 +174,7 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final LocalDate startDate = LocalDate.of(2022, 2, 1);
         final LocalDate endDate = LocalDate.of(2022, 3, 15);
 
-        final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        final SickNoteEntity sickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNote.setLastEdited(startDate);
         sickNoteRepository.save(sickNote);
 
@@ -182,7 +182,7 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final int daysBeforeEndOfSickPayNotification = 7;
         final LocalDate today = LocalDate.of(2022, 3, 7);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes)
             .hasSize(1)
             .contains(sickNote);
@@ -198,7 +198,7 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final LocalDate startDate = LocalDate.of(2022, 2, 1);
         final LocalDate endDate = LocalDate.of(2022, 3, 15);
 
-        final SickNote sickNote = createSickNote(null, startDate, endDate, ACTIVE);
+        final SickNoteEntity sickNote = createSickNote(null, startDate, endDate, ACTIVE);
         sickNote.setLastEdited(endDate);
         sickNote.setEndOfSickPayNotificationSend(startDate);
         sickNoteRepository.save(sickNote);
@@ -207,7 +207,7 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final int daysBeforeEndOfSickPayNotification = 7;
         final LocalDate today = LocalDate.of(2022, 3, 7);
 
-        final List<SickNote> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
+        final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
         assertThat(sickNotes)
             .hasSize(1)
             .contains(sickNote);
@@ -223,18 +223,18 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
 
         // sick notes that should not be found
-        final SickNote noteNotInPeriodBecausePast = createSickNote(max, askedStartDate.minusDays(10), askedStartDate.minusDays(5), ACTIVE);
-        final SickNote noteNotInPeriodBecauseFuture = createSickNote(max, askedEndDate.plusDays(5), askedEndDate.plusDays(10), ACTIVE);
+        final SickNoteEntity noteNotInPeriodBecausePast = createSickNote(max, askedStartDate.minusDays(10), askedStartDate.minusDays(5), ACTIVE);
+        final SickNoteEntity noteNotInPeriodBecauseFuture = createSickNote(max, askedEndDate.plusDays(5), askedEndDate.plusDays(10), ACTIVE);
 
         sickNoteRepository.save(noteNotInPeriodBecausePast);
         sickNoteRepository.save(noteNotInPeriodBecauseFuture);
 
         // sick notes that should be found
-        final SickNote noteStartingBeforePeriod = createSickNote(max, askedStartDate.minusDays(5), askedStartDate.plusDays(1), ACTIVE);
-        final SickNote noteEndingAfterPeriod = createSickNote(max, askedEndDate.minusDays(1), askedEndDate.plusDays(1), ACTIVE);
-        final SickNote noteInBetween = createSickNote(max, askedStartDate.plusDays(10), askedStartDate.plusDays(12), ACTIVE);
-        final SickNote noteStartingAtPeriod = createSickNote(marlene, askedStartDate, askedStartDate.plusDays(2), ACTIVE);
-        final SickNote noteEndingAtPeriod = createSickNote(marlene, askedEndDate.minusDays(5), askedEndDate, ACTIVE);
+        final SickNoteEntity noteStartingBeforePeriod = createSickNote(max, askedStartDate.minusDays(5), askedStartDate.plusDays(1), ACTIVE);
+        final SickNoteEntity noteEndingAfterPeriod = createSickNote(max, askedEndDate.minusDays(1), askedEndDate.plusDays(1), ACTIVE);
+        final SickNoteEntity noteInBetween = createSickNote(max, askedStartDate.plusDays(10), askedStartDate.plusDays(12), ACTIVE);
+        final SickNoteEntity noteStartingAtPeriod = createSickNote(marlene, askedStartDate, askedStartDate.plusDays(2), ACTIVE);
+        final SickNoteEntity noteEndingAtPeriod = createSickNote(marlene, askedEndDate.minusDays(5), askedEndDate, ACTIVE);
 
         sickNoteRepository.save(noteStartingBeforePeriod);
         sickNoteRepository.save(noteEndingAfterPeriod);
@@ -245,17 +245,17 @@ class SickNoteRepositoryIT extends TestContainersBase {
         List<SickNoteStatus> statuses = List.of(ACTIVE);
         List<Person> persons = List.of(max, marlene);
 
-        final List<SickNote> actualSickNotes = sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(statuses, persons, askedStartDate, askedEndDate);
+        final List<SickNoteEntity> actualSickNotes = sickNoteRepository.findByStatusInAndPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(statuses, persons, askedStartDate, askedEndDate);
 
         assertThat(actualSickNotes).contains(noteStartingBeforePeriod, noteEndingAfterPeriod, noteInBetween, noteStartingAtPeriod, noteEndingAtPeriod);
     }
 
-    private SickNote createSickNote(Person person, LocalDate startDate, LocalDate endDate, SickNoteStatus active) {
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(person);
-        sickNote.setStartDate(startDate);
-        sickNote.setEndDate(endDate);
-        sickNote.setStatus(active);
-        return sickNote;
+    private SickNoteEntity createSickNote(Person person, LocalDate startDate, LocalDate endDate, SickNoteStatus active) {
+        final SickNoteEntity sickNoteEntity = new SickNoteEntity();
+        sickNoteEntity.setPerson(person);
+        sickNoteEntity.setStartDate(startDate);
+        sickNoteEntity.setEndDate(endDate);
+        sickNoteEntity.setStatus(active);
+        return sickNoteEntity;
     }
 }

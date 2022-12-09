@@ -428,12 +428,13 @@ class AbsenceServiceImplTest {
         final WorkingTime workingTime = new WorkingTime(batman, start.minusDays(1), GERMANY_BADEN_WUERTTEMBERG, false);
         when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setId(42);
-        sickNote.setPerson(batman);
-        sickNote.setStartDate(start.plusDays(1));
-        sickNote.setEndDate(start.plusDays(1));
-        sickNote.setDayLength(DayLength.MORNING);
+        final SickNote sickNote = SickNote.builder()
+            .id(42)
+            .person(batman)
+            .startDate(start.plusDays(1))
+            .endDate(start.plusDays(1))
+            .dayLength(DayLength.MORNING)
+            .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
         when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.empty());
@@ -461,12 +462,13 @@ class AbsenceServiceImplTest {
         final WorkingTime workingTime = new WorkingTime(batman, start.minusDays(1), GERMANY_BADEN_WUERTTEMBERG, false);
         when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setId(42);
-        sickNote.setPerson(batman);
-        sickNote.setStartDate(start.plusDays(1));
-        sickNote.setEndDate(start.plusDays(1));
-        sickNote.setDayLength(DayLength.NOON);
+        final SickNote sickNote = SickNote.builder()
+            .id(42)
+            .person(batman)
+            .startDate(start.plusDays(1))
+            .endDate(start.plusDays(1))
+            .dayLength(DayLength.NOON)
+            .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
         when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.empty());
@@ -495,12 +497,13 @@ class AbsenceServiceImplTest {
         when(workingTimeService.getSystemDefaultFederalState()).thenReturn(GERMANY_BERLIN);
         when(publicHolidaysService.getPublicHoliday(any(), eq(GERMANY_BERLIN))).thenReturn(Optional.empty());
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setId(42);
-        sickNote.setPerson(batman);
-        sickNote.setStartDate(start.plusDays(1));
-        sickNote.setEndDate(start.plusDays(1));
-        sickNote.setDayLength(DayLength.NOON);
+        final SickNote sickNote = SickNote.builder()
+            .id(42)
+            .person(batman)
+            .startDate(start.plusDays(1))
+            .endDate(start.plusDays(1))
+            .dayLength(DayLength.NOON)
+            .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
@@ -531,12 +534,13 @@ class AbsenceServiceImplTest {
 
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setId(1337);
-        sickNote.setPerson(batman);
-        sickNote.setStartDate(start.plusDays(1));
-        sickNote.setEndDate(start.plusDays(1));
-        sickNote.setDayLength(DayLength.NOON);
+        final SickNote sickNote = SickNote.builder()
+            .id(1337)
+            .person(batman)
+            .startDate(start.plusDays(1))
+            .endDate(start.plusDays(1))
+            .dayLength(DayLength.NOON)
+            .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
 
@@ -609,12 +613,13 @@ class AbsenceServiceImplTest {
         final WorkingTime workingTime = new WorkingTime(batman, start.minusDays(1), GERMANY_BADEN_WUERTTEMBERG, false);
         when(workingTimeService.getByPersons(any())).thenReturn(List.of(workingTime));
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setId(42);
-        sickNote.setPerson(batman);
-        sickNote.setStartDate(LocalDate.of(2021, MAY, 31));
-        sickNote.setEndDate(LocalDate.of(2021, JUNE, 10));
-        sickNote.setDayLength(FULL);
+        final SickNote sickNote = SickNote.builder()
+            .id(42)
+            .person(batman)
+            .startDate(LocalDate.of(2021, MAY, 31))
+            .endDate(LocalDate.of(2021, JUNE, 10))
+            .dayLength(FULL)
+            .build();
 
         when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNote));
         when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.empty());

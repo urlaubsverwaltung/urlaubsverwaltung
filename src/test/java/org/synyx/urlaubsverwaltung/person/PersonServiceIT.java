@@ -8,7 +8,6 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.HolidayReplacementEntity;
-import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.department.Department;
@@ -18,19 +17,13 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentEntity;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteInteractionService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
-import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,11 +92,10 @@ class PersonServiceIT extends TestContainersBase {
         applicationWithApplier.setApplier(personWithId);
         final Application applicationWithApplierWithId = applicationService.save(applicationWithApplier);
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(personWithId);
+        final SickNote sickNote = SickNote.builder().person(personWithId).build();
         final SickNote sickNoteWithId = sickNoteService.save(sickNote);
 
-        final SickNote sickNoteWithComment = new SickNote();
+        final SickNote sickNoteWithComment = SickNote.builder().build();
         final SickNote sickNoteWithCommentWithId = sickNoteService.save(sickNoteWithComment);
         sickNoteCommentService.create(sickNoteWithCommentWithId, SickNoteCommentAction.COMMENTED, personWithId, "Test");
 

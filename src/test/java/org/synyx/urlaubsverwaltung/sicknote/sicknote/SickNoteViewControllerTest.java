@@ -68,6 +68,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CANCELLED;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteViewControllerTest {
@@ -119,7 +120,7 @@ class SickNoteViewControllerTest {
         final Person personWithRole = personWithRole(role);
         when(personService.getSignedInUser()).thenReturn(personWithRole);
 
-        final List<Person> activePersons = of(somePerson());
+        final List<Person> activePersons = of(new Person());
         when(personService.getActivePersons()).thenReturn(activePersons);
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
@@ -144,7 +145,7 @@ class SickNoteViewControllerTest {
         final Person otherPerson = personWithId(42);
         when(personService.getPersonByID(42)).thenReturn(Optional.of(otherPerson));
 
-        final List<Person> activePersons = of(somePerson());
+        final List<Person> activePersons = of(new Person());
         when(personService.getActivePersons()).thenReturn(activePersons);
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
@@ -165,7 +166,7 @@ class SickNoteViewControllerTest {
         final Person departmentHead = personWithRole(DEPARTMENT_HEAD);
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
-        final List<Person> departmentPersons = of(somePerson());
+        final List<Person> departmentPersons = of(new Person());
         when(departmentService.getManagedMembersOfDepartmentHead(departmentHead)).thenReturn(departmentPersons);
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
@@ -185,7 +186,7 @@ class SickNoteViewControllerTest {
         final Person secondStageAuthority = personWithRole(SECOND_STAGE_AUTHORITY);
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
 
-        final List<Person> departmentPersons = of(somePerson());
+        final List<Person> departmentPersons = of(new Person());
         when(departmentService.getManagedMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(departmentPersons);
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
         when(sickNoteTypeService.getSickNoteTypes()).thenReturn(sickNoteTypes);
@@ -207,13 +208,13 @@ class SickNoteViewControllerTest {
         departmentHeadAndSsa.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSsa);
 
-        final Person person = somePerson();
+        final Person person = new Person();
         person.setId(2);
         person.setFirstName("firstname");
         person.setLastName("lastname");
         when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
 
-        final Person person2 = somePerson();
+        final Person person2 = new Person();
         person2.setId(3);
         person2.setFirstName("firstname two");
         person2.setLastName("lastname two");
@@ -239,7 +240,7 @@ class SickNoteViewControllerTest {
         departmentHeadAndSsa.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSsa);
 
-        final Person person = somePerson();
+        final Person person = new Person();
         person.setId(2);
         person.setFirstName("firstname");
         person.setLastName("lastname");
@@ -266,13 +267,13 @@ class SickNoteViewControllerTest {
         departmentHeadAndSsa.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
         when(personService.getSignedInUser()).thenReturn(departmentHeadAndSsa);
 
-        final Person person = somePerson();
+        final Person person = new Person();
         person.setId(2);
         person.setFirstName("B");
         person.setLastName("B");
         when(departmentService.getManagedMembersOfDepartmentHead(departmentHeadAndSsa)).thenReturn(of(person));
 
-        final Person person2 = somePerson();
+        final Person person2 = new Person();
         person2.setId(3);
         person2.setFirstName("A");
         person2.setLastName("A");
@@ -297,7 +298,7 @@ class SickNoteViewControllerTest {
         office.setId(1);
         when(personService.getSignedInUser()).thenReturn(office);
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
@@ -318,7 +319,7 @@ class SickNoteViewControllerTest {
         office.setId(1);
         when(personService.getSignedInUser()).thenReturn(office);
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
@@ -335,7 +336,7 @@ class SickNoteViewControllerTest {
         departmentHead.setId(1);
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
-        final SickNote sickNote = someActiveSickNote();
+        final SickNote sickNote = SickNote.builder().person(new Person()).status(ACTIVE).build();
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, sickNote.getPerson())).thenReturn(true);
 
@@ -353,7 +354,7 @@ class SickNoteViewControllerTest {
         ssa.setId(1);
         when(personService.getSignedInUser()).thenReturn(ssa);
 
-        final SickNote sickNote = someActiveSickNote();
+        final SickNote sickNote = SickNote.builder().person(new Person()).status(ACTIVE).build();
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, sickNote.getPerson())).thenReturn(true);
 
@@ -371,7 +372,7 @@ class SickNoteViewControllerTest {
         departmentHead.setId(1);
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
-        final SickNote sickNote = someActiveSickNote();
+        final SickNote sickNote = SickNote.builder().person(new Person()).status(ACTIVE).build();
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
 
         final List<SickNoteType> sickNoteTypes = of(someSickNoteType());
@@ -392,7 +393,7 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetEditSickNoteForInactiveThrowsSickNoteAlreadyInactiveException() {
 
-        when(sickNoteService.getById(UNKNOWN_SICK_NOTE_ID)).thenReturn(Optional.of(someInactiveSickNote()));
+        when(sickNoteService.getById(UNKNOWN_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(CANCELLED).build()));
 
         assertThatThrownBy(() ->
             perform(get("/web/sicknote/" + UNKNOWN_SICK_NOTE_ID + "/edit"))
@@ -409,8 +410,11 @@ class SickNoteViewControllerTest {
         final Person person = personWithRole(USER);
         person.setId(2);
 
-        final SickNote sickNote = sickNoteOfPerson(person);
-        sickNote.setStatus(ACTIVE);
+        final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .status(ACTIVE)
+                .build();
+
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person)).thenReturn(false);
 
@@ -429,8 +433,11 @@ class SickNoteViewControllerTest {
         final Person person = personWithRole(USER);
         person.setId(2);
 
-        final SickNote sickNote = sickNoteOfPerson(person);
-        sickNote.setStatus(ACTIVE);
+        final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .status(ACTIVE)
+                .build();
+
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
@@ -449,8 +456,11 @@ class SickNoteViewControllerTest {
         final Person person = personWithRole(USER);
         person.setId(2);
 
-        final SickNote sickNote = sickNoteOfPerson(person);
-        sickNote.setStatus(ACTIVE);
+        final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .status(ACTIVE)
+                .build();
+
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(false);
 
@@ -469,8 +479,11 @@ class SickNoteViewControllerTest {
         final Person person = personWithRole(USER);
         person.setId(2);
 
-        final SickNote sickNote = sickNoteOfPerson(person);
-        sickNote.setStatus(ACTIVE);
+        final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .status(ACTIVE)
+                .build();
+
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(false);
 
@@ -489,8 +502,11 @@ class SickNoteViewControllerTest {
         final Person person = personWithRole(USER);
         person.setId(2);
 
-        final SickNote sickNote = sickNoteOfPerson(person);
-        sickNote.setStatus(ACTIVE);
+        final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .status(ACTIVE)
+                .build();
+
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
@@ -510,9 +526,9 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsAccessibleForSickNoteOwner() throws Exception {
 
-        final Person somePerson = somePerson();
+        final Person somePerson = new Person();
         when(personService.getSignedInUser()).thenReturn(somePerson);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(somePerson)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(somePerson).build()));
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
     }
 
@@ -521,7 +537,7 @@ class SickNoteViewControllerTest {
 
         final Person officePerson = personWithRole(OFFICE);
         when(personService.getSignedInUser()).thenReturn(officePerson);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(new Person())));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).build()));
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
     }
@@ -531,7 +547,7 @@ class SickNoteViewControllerTest {
 
         final Person bossPerson = personWithRole(BOSS);
         when(personService.getSignedInUser()).thenReturn(bossPerson);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(new Person())));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).build()));
 
         assertThatThrownBy(() ->
             perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
@@ -549,7 +565,7 @@ class SickNoteViewControllerTest {
         final Person person = new Person("marlene", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         person.setId(2);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
     }
@@ -565,7 +581,7 @@ class SickNoteViewControllerTest {
         final Person person = new Person("marlene", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         person.setId(2);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
@@ -582,7 +598,7 @@ class SickNoteViewControllerTest {
         final Person person = new Person("marlene", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         person.setId(2);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(true);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
@@ -596,7 +612,7 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(departmentHeadPerson);
         final Person person = personWithRole(USER);
         person.setId(2);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHeadPerson, person)).thenReturn(false);
 
         assertThatThrownBy(() ->
@@ -612,7 +628,7 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
         final Person person = personWithRole(USER);
         person.setId(2);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
@@ -626,7 +642,7 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
         final Person person = personWithRole(USER);
         person.setId(2);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(true);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID)).andExpect(status().isOk());
@@ -640,7 +656,7 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(secondStageAuthority);
         final Person person = personWithRole(USER);
         person.setId(2);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, person)).thenReturn(false);
 
         assertThatThrownBy(() ->
@@ -655,8 +671,9 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(personWithId(somePersonId));
 
         final int anotherPersonId = 2;
+        Person somePerson = personWithId(anotherPersonId);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID))
-            .thenReturn(Optional.of(sickNoteOfPerson(personWithId(anotherPersonId))));
+            .thenReturn(Optional.of(SickNote.builder().person(somePerson).build()));
 
         assertThatThrownBy(() ->
             perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
@@ -669,8 +686,11 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         final Person person = new Person();
-        final SickNote sickNote = someActiveSickNote();
-        sickNote.setPerson(person);
+        final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .status(ACTIVE)
+                .build();
+
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
 
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
@@ -691,7 +711,7 @@ class SickNoteViewControllerTest {
     void ensureGetSickNoteDetailsCanEditSickNotesWithRole(Role role) throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(role, SICK_NOTE_VIEW, SICK_NOTE_EDIT));
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
@@ -706,7 +726,7 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
         final Person person = new Person();
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
@@ -718,13 +738,13 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsCanNotEditSickNotesDepartmentHeadOfDifferentDepartment() {
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         final Person departmentHead = personWithRole(DEPARTMENT_HEAD);
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
         final Person person = new Person();
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(false);
 
         assertThatThrownBy(() ->
@@ -739,7 +759,7 @@ class SickNoteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(ssa);
 
         final Person person = new Person();
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(true);
 
@@ -751,13 +771,13 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetSickNoteDetailsCanNotEditSickNotesSecondStageAuthorityOfDifferentDepartment() {
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         final Person ssa = personWithRole(SECOND_STAGE_AUTHORITY);
         when(personService.getSignedInUser()).thenReturn(ssa);
 
         final Person person = new Person();
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNoteOfPerson(person)));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(person).build()));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(ssa, person)).thenReturn(false);
 
         assertThatThrownBy(() ->
@@ -769,7 +789,7 @@ class SickNoteViewControllerTest {
     void ensureGetSickNoteDetailsCanConvertSickNotes() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
@@ -781,7 +801,7 @@ class SickNoteViewControllerTest {
     void ensureGetSickNoteDetailsCanDeleteSickNotes() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
@@ -793,7 +813,7 @@ class SickNoteViewControllerTest {
     void ensureGetSickNoteDetailsCanCommentSickNotes() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
         when(sickNoteCommentService.getCommentsBySickNote(any(SickNote.class))).thenReturn(List.of());
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
@@ -942,20 +962,28 @@ class SickNoteViewControllerTest {
     @Test
     void ensurePostNewSickNoteCreatesSickNoteIfValidationSuccessful() throws Exception {
 
-        final Person signedInPerson = somePerson();
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        perform(post("/web/sicknote/"));
+        when(sickNoteInteractionService.create(any(SickNote.class), eq(signedInPerson), eq(null)))
+            .thenReturn(SickNote.builder().id(42).build());
 
-        verify(sickNoteInteractionService).create(any(SickNote.class), eq(signedInPerson), any());
+        perform(post("/web/sicknote/"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/sicknote/42"));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
     void ensureCreateSickNoteSucceedsWithDate(String givenDate) throws Exception {
 
-        final Person signedInPerson = somePerson();
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(1);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        when(sickNoteInteractionService.create(any(SickNote.class), eq(signedInPerson), eq(null)))
+            .thenReturn(SickNote.builder().id(42).build());
 
         perform(
             post("/web/sicknote/")
@@ -963,21 +991,18 @@ class SickNoteViewControllerTest {
                 .param("endDate", givenDate)
                 .param("aubStartDate", givenDate)
                 .param("aubEndDate", givenDate)
-        );
-
-        verify(sickNoteInteractionService).create(any(SickNote.class), eq(signedInPerson), any());
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/web/sicknote/42"));
     }
 
     @Test
     void ensurePostNewSickNoteRedirectsToCreatedSickNote() throws Exception {
 
-        when(personService.getSignedInUser()).thenReturn(somePerson());
+        when(personService.getSignedInUser()).thenReturn(new Person());
 
-        doAnswer(invocation -> {
-            SickNote sickNote = invocation.getArgument(0);
-            sickNote.setId(SOME_SICK_NOTE_ID);
-            return sickNote;
-        }).when(sickNoteInteractionService).create(any(SickNote.class), any(Person.class), any());
+        doAnswer(invocation -> SickNote.builder(invocation.getArgument(0)).id(SOME_SICK_NOTE_ID).build())
+                .when(sickNoteInteractionService).create(any(SickNote.class), any(Person.class), any());
 
         perform(post("/web/sicknote/"))
             .andExpect(status().isFound())
@@ -987,7 +1012,7 @@ class SickNoteViewControllerTest {
     @Test
     void editPostSickNoteShowsFormIfValidationFails() throws Exception {
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         doAnswer(invocation -> {
@@ -1004,9 +1029,9 @@ class SickNoteViewControllerTest {
     @Test
     void editPostSickNoteUpdatesSickNoteIfValidationSuccessful() throws Exception {
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
-        final Person signedInPerson = somePerson();
+        final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"));
@@ -1017,7 +1042,7 @@ class SickNoteViewControllerTest {
     @Test
     void editPostSickNoteRedirectsToCreatedSickNote() throws Exception {
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
             .andExpect(status().isFound())
@@ -1044,9 +1069,9 @@ class SickNoteViewControllerTest {
     @Test
     void ensurePostAddCommentAddsFlashAttributeAndRedirectsToSickNoteIfValidationFails() throws Exception {
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
-        final Person signedInPerson = somePerson();
+        final Person signedInPerson = new Person();
         signedInPerson.setPermissions(List.of(USER, BOSS, SICK_NOTE_COMMENT));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
@@ -1065,11 +1090,11 @@ class SickNoteViewControllerTest {
     @Test
     void ensurePostAddCommentCreatesSickNoteCommentIfValidationSuccessful() throws Exception {
 
-        final Person signedInPerson = somePerson();
+        final Person signedInPerson = new Person();
         signedInPerson.setPermissions(List.of(USER, BOSS, SICK_NOTE_COMMENT));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"));
 
@@ -1083,8 +1108,12 @@ class SickNoteViewControllerTest {
         signedInUser.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        final SickNote sickNote = someActiveSickNote();
-        sickNote.setId(1);
+        final SickNote sickNote = SickNote.builder()
+            .id(1)
+            .status(ACTIVE)
+            .person(signedInUser)
+            .build();
+
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
 
         assertThatThrownBy(() ->
@@ -1095,7 +1124,7 @@ class SickNoteViewControllerTest {
     @Test
     void ensureRedirectToSickNoteAfterConvert() throws Exception {
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
             .andExpect(status().isFound())
@@ -1109,8 +1138,11 @@ class SickNoteViewControllerTest {
         signedInUser.setPermissions(List.of(USER, BOSS, SICK_NOTE_COMMENT));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        final SickNote sickNote = someActiveSickNote();
-        sickNote.setId(15);
+        final SickNote sickNote = SickNote.builder()
+                .id(15)
+                .status(ACTIVE)
+                .build();
+
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
@@ -1125,8 +1157,11 @@ class SickNoteViewControllerTest {
         person.setPermissions(List.of(USER, BOSS, SICK_NOTE_CANCEL));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final SickNote sickNote = someActiveSickNote();
-        sickNote.setId(15);
+        final SickNote sickNote = SickNote.builder()
+                .id(15)
+                .status(ACTIVE)
+                .build();
+
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
         when(sickNoteInteractionService.cancel(sickNote, person)).thenReturn(sickNote);
 
@@ -1146,7 +1181,7 @@ class SickNoteViewControllerTest {
     @Test
     void ensureGetConvertSickNoteToVacationThrowsSickNoteAlreadyInactiveException() {
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someInactiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(CANCELLED).build()));
 
         assertThatThrownBy(() ->
             perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
@@ -1157,7 +1192,7 @@ class SickNoteViewControllerTest {
     void ensureGetConvertSickNoteToVacationAddModel() throws Exception {
 
         overtimeActive(false);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
@@ -1172,7 +1207,7 @@ class SickNoteViewControllerTest {
     void ensureGetConvertSickNoteToVacationAddModelOvertimeTrue() throws Exception {
 
         overtimeActive(true);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
@@ -1188,7 +1223,7 @@ class SickNoteViewControllerTest {
 
         overtimeActive(false);
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_convert"));
@@ -1206,7 +1241,7 @@ class SickNoteViewControllerTest {
     void ensurePostConvertSickNoteToVacationFilledModelCorrectlyAndViewIfValidationFails() throws Exception {
 
         overtimeActive(false);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
@@ -1229,7 +1264,7 @@ class SickNoteViewControllerTest {
     void ensurePostConvertSickNoteToVacationFilledModelCorrectlyAndViewIfValidationFailsWithOvertimeActive() throws Exception {
 
         overtimeActive(true);
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
         final List<VacationType> vacationTypes = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
@@ -1251,9 +1286,9 @@ class SickNoteViewControllerTest {
     @Test
     void ensurePostConvertSickNoteToVacationConvertsSickNoteIfValidationSuccessful() throws Exception {
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(someActiveSickNote()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
-        final Person signedInPerson = somePerson();
+        final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"));
@@ -1276,8 +1311,7 @@ class SickNoteViewControllerTest {
         signedInUser.setPermissions(List.of(USER, BOSS, SICK_NOTE_CANCEL));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        final SickNote sickNote = someActiveSickNote();
-        sickNote.setId(1);
+        final SickNote sickNote = SickNote.builder().id(1).status(ACTIVE).build();
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
         when(sickNoteInteractionService.cancel(sickNote, signedInUser)).thenReturn(sickNote);
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/cancel"))
@@ -1291,8 +1325,7 @@ class SickNoteViewControllerTest {
         signedInUser.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_CANCEL));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        final SickNote sickNote = someActiveSickNote();
-        sickNote.setId(1);
+        final SickNote sickNote = SickNote.builder().id(1).status(ACTIVE).build();
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
         when(sickNoteInteractionService.cancel(sickNote, signedInUser)).thenReturn(sickNote);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson())).thenReturn(true);
@@ -1308,8 +1341,7 @@ class SickNoteViewControllerTest {
         signedInUser.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_CANCEL));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        final SickNote sickNote = someActiveSickNote();
-        sickNote.setId(1);
+        final SickNote sickNote = SickNote.builder().id(1).status(ACTIVE).build();
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
         when(sickNoteInteractionService.cancel(sickNote, signedInUser)).thenReturn(sickNote);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNote.getPerson())).thenReturn(true);
@@ -1325,8 +1357,7 @@ class SickNoteViewControllerTest {
         signedInUser.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        final SickNote sickNote = someActiveSickNote();
-        sickNote.setId(1);
+        final SickNote sickNote = SickNote.builder().person(new Person()).status(ACTIVE).id(1).build();
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
 
         assertThatThrownBy(() ->
@@ -1340,34 +1371,10 @@ class SickNoteViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
     }
 
-    private SickNote sickNoteOfPerson(Person somePerson) {
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(somePerson);
-        return sickNote;
-    }
-
     private Person personWithRole(Role... role) {
         final Person person = new Person();
         person.setPermissions(List.of(role));
         return person;
-    }
-
-    private SickNote someInactiveSickNote() {
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(new Person());
-        sickNote.setStatus(SickNoteStatus.CANCELLED);
-        return sickNote;
-    }
-
-    private SickNote someActiveSickNote() {
-        final SickNote sickNote = new SickNote();
-        sickNote.setPerson(new Person());
-        sickNote.setStatus(ACTIVE);
-        return sickNote;
-    }
-
-    private Person somePerson() {
-        return new Person();
     }
 
     private Person personWithId(int personId) {

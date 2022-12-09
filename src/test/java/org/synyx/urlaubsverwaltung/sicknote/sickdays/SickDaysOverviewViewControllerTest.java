@@ -157,29 +157,35 @@ class SickDaysOverviewViewControllerTest {
 
         final SickNoteType childSickType = new SickNoteType();
         childSickType.setCategory(SICK_NOTE_CHILD);
-        final SickNote childSickNote = new SickNote();
-        childSickNote.setStartDate(LocalDate.of(2019, 2, 1));
-        childSickNote.setEndDate(LocalDate.of(2019, 3, 1));
-        childSickNote.setDayLength(FULL);
-        childSickNote.setStatus(ACTIVE);
-        childSickNote.setSickNoteType(childSickType);
-        childSickNote.setPerson(person);
-        childSickNote.setAubStartDate(LocalDate.of(2019, 2, 10));
-        childSickNote.setAubEndDate(LocalDate.of(2019, 2, 15));
+
+        final SickNote childSickNote = SickNote.builder()
+            .startDate(LocalDate.of(2019, 2, 1))
+            .endDate(LocalDate.of(2019, 3, 1))
+            .dayLength(FULL)
+            .status(ACTIVE)
+            .sickNoteType(childSickType)
+            .person(person)
+            .aubStartDate(LocalDate.of(2019, 2, 10))
+            .aubEndDate(LocalDate.of(2019, 2, 15))
+            .build();
+
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 1), person)).thenReturn(ONE);
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 2, 15), person)).thenReturn(BigDecimal.valueOf(5L));
 
         final SickNoteType sickType = new SickNoteType();
         sickType.setCategory(SICK_NOTE);
-        final SickNote sickNote = new SickNote();
-        sickNote.setStartDate(LocalDate.of(2019, 4, 1));
-        sickNote.setEndDate(LocalDate.of(2019, 5, 1));
-        sickNote.setDayLength(FULL);
-        sickNote.setStatus(ACTIVE);
-        sickNote.setSickNoteType(sickType);
-        sickNote.setPerson(person);
-        sickNote.setAubStartDate(LocalDate.of(2019, 4, 10));
-        sickNote.setAubEndDate(LocalDate.of(2019, 4, 20));
+
+        final SickNote sickNote = SickNote.builder()
+            .startDate(LocalDate.of(2019, 4, 1))
+            .endDate(LocalDate.of(2019, 5, 1))
+            .dayLength(FULL)
+            .status(ACTIVE)
+            .sickNoteType(sickType)
+            .person(person)
+            .aubStartDate(LocalDate.of(2019, 4, 10))
+            .aubEndDate(LocalDate.of(2019, 4, 20))
+            .build();
+
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 15), person)).thenReturn(TEN);
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 10), LocalDate.of(2019, 4, 15), person)).thenReturn(BigDecimal.valueOf(15L));
 
@@ -224,29 +230,35 @@ class SickDaysOverviewViewControllerTest {
 
         final SickNoteType childSickType = new SickNoteType();
         childSickType.setCategory(SICK_NOTE_CHILD);
-        final SickNote childSickNote = new SickNote();
-        childSickNote.setStartDate(LocalDate.of(2019, 2, 1));
-        childSickNote.setEndDate(LocalDate.of(2019, 3, 1));
-        childSickNote.setDayLength(FULL);
-        childSickNote.setStatus(ACTIVE);
-        childSickNote.setSickNoteType(childSickType);
-        childSickNote.setPerson(person);
-        childSickNote.setAubStartDate(LocalDate.of(2019, 2, 10));
-        childSickNote.setAubEndDate(LocalDate.of(2019, 2, 15));
+
+        final SickNote childSickNote = SickNote.builder()
+            .startDate(LocalDate.of(2019, 2, 1))
+            .endDate(LocalDate.of(2019, 3, 1))
+            .dayLength(FULL)
+            .status(ACTIVE)
+            .sickNoteType(childSickType)
+            .person(person)
+            .aubStartDate(LocalDate.of(2019, 2, 10))
+            .aubEndDate(LocalDate.of(2019, 2, 15))
+            .build();
+
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 1), person)).thenReturn(ONE);
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 2, 15), person)).thenReturn(BigDecimal.valueOf(5L));
 
         final SickNoteType sickType = new SickNoteType();
         sickType.setCategory(SICK_NOTE);
-        final SickNote sickNote = new SickNote();
-        sickNote.setStartDate(LocalDate.of(2019, 4, 1));
-        sickNote.setEndDate(LocalDate.of(2019, 5, 1));
-        sickNote.setDayLength(FULL);
-        sickNote.setStatus(ACTIVE);
-        sickNote.setSickNoteType(sickType);
-        sickNote.setPerson(person);
-        sickNote.setAubStartDate(LocalDate.of(2019, 4, 10));
-        sickNote.setAubEndDate(LocalDate.of(2019, 4, 20));
+
+        final SickNote sickNote = SickNote.builder()
+            .startDate(LocalDate.of(2019, 4, 1))
+            .endDate(LocalDate.of(2019, 5, 1))
+            .dayLength(FULL)
+            .status(ACTIVE)
+            .sickNoteType(sickType)
+            .person(person)
+            .aubStartDate(LocalDate.of(2019, 4, 10))
+            .aubEndDate(LocalDate.of(2019, 4, 20))
+            .build();
+
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 15), person)).thenReturn(TEN);
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 10), LocalDate.of(2019, 4, 15), person)).thenReturn(BigDecimal.valueOf(15L));
 
@@ -291,29 +303,35 @@ class SickDaysOverviewViewControllerTest {
 
         final SickNoteType childSickType = new SickNoteType();
         childSickType.setCategory(SICK_NOTE_CHILD);
-        final SickNote childSickNote = new SickNote();
-        childSickNote.setStartDate(LocalDate.of(2019, 2, 1));
-        childSickNote.setEndDate(LocalDate.of(2019, 3, 1));
-        childSickNote.setDayLength(FULL);
-        childSickNote.setStatus(ACTIVE);
-        childSickNote.setSickNoteType(childSickType);
-        childSickNote.setPerson(person);
-        childSickNote.setAubStartDate(LocalDate.of(2019, 2, 10));
-        childSickNote.setAubEndDate(LocalDate.of(2019, 2, 15));
+
+        final SickNote childSickNote = SickNote.builder()
+            .startDate(LocalDate.of(2019, 2, 1))
+            .endDate(LocalDate.of(2019, 3, 1))
+            .dayLength(FULL)
+            .status(ACTIVE)
+            .sickNoteType(childSickType)
+            .person(person)
+            .aubStartDate(LocalDate.of(2019, 2, 10))
+            .aubEndDate(LocalDate.of(2019, 2, 15))
+            .build();
+
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 1), person)).thenReturn(ONE);
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 2, 15), person)).thenReturn(BigDecimal.valueOf(5L));
 
         final SickNoteType sickType = new SickNoteType();
         sickType.setCategory(SICK_NOTE);
-        final SickNote sickNote = new SickNote();
-        sickNote.setStartDate(LocalDate.of(2019, 4, 1));
-        sickNote.setEndDate(LocalDate.of(2019, 5, 1));
-        sickNote.setDayLength(FULL);
-        sickNote.setStatus(ACTIVE);
-        sickNote.setSickNoteType(sickType);
-        sickNote.setPerson(person);
-        sickNote.setAubStartDate(LocalDate.of(2019, 4, 10));
-        sickNote.setAubEndDate(LocalDate.of(2019, 4, 20));
+
+        final SickNote sickNote = SickNote.builder()
+            .startDate(LocalDate.of(2019, 4, 1))
+            .endDate(LocalDate.of(2019, 5, 1))
+            .dayLength(FULL)
+            .status(ACTIVE)
+            .sickNoteType(sickType)
+            .person(person)
+            .aubStartDate(LocalDate.of(2019, 4, 10))
+            .aubEndDate(LocalDate.of(2019, 4, 20))
+            .build();
+
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 15), person)).thenReturn(TEN);
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 10), LocalDate.of(2019, 4, 15), person)).thenReturn(BigDecimal.valueOf(15L));
 
@@ -359,15 +377,18 @@ class SickDaysOverviewViewControllerTest {
 
         final SickNoteType childSickType = new SickNoteType();
         childSickType.setCategory(SICK_NOTE_CHILD);
-        final SickNote childSickNote = new SickNote();
-        childSickNote.setStartDate(LocalDate.of(2019, 2, 1));
-        childSickNote.setEndDate(LocalDate.of(2019, 3, 1));
-        childSickNote.setDayLength(FULL);
-        childSickNote.setStatus(ACTIVE);
-        childSickNote.setSickNoteType(childSickType);
-        childSickNote.setPerson(person);
-        childSickNote.setAubStartDate(LocalDate.of(2019, 2, 10));
-        childSickNote.setAubEndDate(LocalDate.of(2019, 2, 15));
+
+        final SickNote childSickNote = SickNote.builder()
+            .startDate(LocalDate.of(2019, 2, 1))
+            .endDate(LocalDate.of(2019, 3, 1))
+            .dayLength(FULL)
+            .status(ACTIVE)
+            .sickNoteType(childSickType)
+            .person(person)
+            .aubStartDate(LocalDate.of(2019, 2, 10))
+            .aubEndDate(LocalDate.of(2019, 2, 15))
+            .build();
+
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 1), person)).thenReturn(ONE);
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 2, 15), person)).thenReturn(BigDecimal.valueOf(5L));
 
@@ -381,15 +402,18 @@ class SickDaysOverviewViewControllerTest {
 
         final SickNoteType sickType = new SickNoteType();
         sickType.setCategory(SICK_NOTE);
-        final SickNote sickNote = new SickNote();
-        sickNote.setStartDate(LocalDate.of(2019, 4, 1));
-        sickNote.setEndDate(LocalDate.of(2019, 5, 1));
-        sickNote.setDayLength(FULL);
-        sickNote.setStatus(ACTIVE);
-        sickNote.setSickNoteType(sickType);
-        sickNote.setPerson(person2);
-        sickNote.setAubStartDate(LocalDate.of(2019, 4, 10));
-        sickNote.setAubEndDate(LocalDate.of(2019, 4, 20));
+
+        final SickNote sickNote = SickNote.builder()
+            .startDate(LocalDate.of(2019, 4, 1))
+            .endDate(LocalDate.of(2019, 5, 1))
+            .dayLength(FULL)
+            .status(ACTIVE)
+            .sickNoteType(sickType)
+            .person(person2)
+            .aubStartDate(LocalDate.of(2019, 4, 10))
+            .aubEndDate(LocalDate.of(2019, 4, 20))
+            .build();
+
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 15), person2)).thenReturn(TEN);
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 10), LocalDate.of(2019, 4, 15), person2)).thenReturn(BigDecimal.valueOf(15L));
 

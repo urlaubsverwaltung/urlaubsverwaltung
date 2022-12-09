@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
@@ -19,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.TestDataCreator.createSickNote;
 import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.CONVERTED_TO_VACATION;
 import static org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction.EDITED;
 
@@ -45,15 +43,17 @@ class SickNoteCommentServiceImplTest {
         when(sickNoteCommentEntityRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final SickNote sickNote = createSickNote(author);
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1)
+            .person(author)
+            .applier(author)
+            .build();
 
         final SickNoteCommentEntity comment = sut.create(sickNote, EDITED, author);
         assertThat(comment).isNotNull();
-        assertThat(comment.getSickNote()).isNotNull();
         assertThat(comment.getDate()).isNotNull();
-        assertThat(comment.getAction()).isNotNull();
-        assertThat(comment.getPerson()).isNotNull();
-        assertThat(comment.getSickNote()).isEqualTo(sickNote);
+        assertThat(comment.getSickNoteId()).isEqualTo(1);
         assertThat(comment.getAction()).isEqualTo(EDITED);
         assertThat(comment.getPerson()).isEqualTo(author);
         assertThat(comment.getText()).isEmpty();
@@ -68,12 +68,17 @@ class SickNoteCommentServiceImplTest {
 
         final String givenComment = "Foo";
         final Person givenAuthor = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final SickNote givenSickNote = createSickNote(givenAuthor);
 
-        final SickNoteCommentEntity sickNoteCommentEntity = sut.create(givenSickNote, CONVERTED_TO_VACATION, givenAuthor, givenComment);
+        final SickNote sickNote = SickNote.builder()
+            .id(1)
+            .person(givenAuthor)
+            .applier(givenAuthor)
+            .build();
+
+        final SickNoteCommentEntity sickNoteCommentEntity = sut.create(sickNote, CONVERTED_TO_VACATION, givenAuthor, givenComment);
         assertThat(sickNoteCommentEntity).isNotNull();
         assertThat(sickNoteCommentEntity.getDate()).isNotNull();
-        assertThat(sickNoteCommentEntity.getSickNote()).isEqualTo(givenSickNote);
+        assertThat(sickNoteCommentEntity.getSickNoteId()).isEqualTo(1);
         assertThat(sickNoteCommentEntity.getAction()).isEqualTo(CONVERTED_TO_VACATION);
         assertThat(sickNoteCommentEntity.getPerson()).isEqualTo(givenAuthor);
         assertThat(sickNoteCommentEntity.getText()).isEqualTo(givenComment);

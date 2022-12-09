@@ -84,31 +84,35 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         sickNoteTypeSickChild.setCategory(SICK_NOTE_CHILD);
         sickNoteTypeSickChild.setMessageKey("application.data.sicknotetype.sicknotechild");
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setDayLength(FULL);
-        sickNote.setStartDate(startDate);
-        sickNote.setEndDate(startDate.plusDays(1));
-        sickNote.setSickNoteType(sickNoteTypeSick);
+        final SickNote sickNote = SickNote.builder()
+                .dayLength(FULL)
+                .startDate(startDate)
+                .endDate(startDate.plusDays(1))
+                .sickNoteType(sickNoteTypeSick)
+                .build();
 
-        final SickNote sickNoteHalfDayMorning = new SickNote();
-        sickNoteHalfDayMorning.setDayLength(MORNING);
-        sickNoteHalfDayMorning.setStartDate(startDate);
-        sickNoteHalfDayMorning.setEndDate(startDate);
-        sickNoteHalfDayMorning.setSickNoteType(sickNoteTypeSick);
+        final SickNote sickNoteHalfDayMorning = SickNote.builder()
+                .dayLength(MORNING)
+                .startDate(startDate)
+                .endDate(startDate)
+                .sickNoteType(sickNoteTypeSick)
+                .build();
 
-        final SickNote sickNoteHalfDayNoon = new SickNote();
-        sickNoteHalfDayNoon.setDayLength(NOON);
-        sickNoteHalfDayNoon.setStartDate(startDate);
-        sickNoteHalfDayNoon.setEndDate(startDate);
-        sickNoteHalfDayNoon.setSickNoteType(sickNoteTypeSick);
+        final SickNote sickNoteHalfDayNoon = SickNote.builder()
+                .dayLength(NOON)
+                .startDate(startDate)
+                .endDate(startDate)
+                .sickNoteType(sickNoteTypeSick)
+                .build();
 
-        final SickNote sickNoteWithAub = new SickNote();
-        sickNoteWithAub.setDayLength(FULL);
-        sickNoteWithAub.setStartDate(startDate.plusDays(3));
-        sickNoteWithAub.setEndDate(startDate.plusDays(4));
-        sickNoteWithAub.setAubStartDate(startDate.plusDays(3));
-        sickNoteWithAub.setAubEndDate(startDate.plusDays(4));
-        sickNoteWithAub.setSickNoteType(sickNoteTypeSickChild);
+        final SickNote sickNoteWithAub = SickNote.builder()
+                .dayLength(FULL)
+                .startDate(startDate.plusDays(3))
+                .endDate(startDate.plusDays(4))
+                .aubStartDate(startDate.plusDays(3))
+                .aubEndDate(startDate.plusDays(4))
+                .sickNoteType(sickNoteTypeSickChild)
+                .build();
 
         final List<SickNote> sickNotes = List.of(sickNote, sickNoteWithAub, sickNoteHalfDayMorning, sickNoteHalfDayNoon);
         final List<String> departments = List.of("Here", "There");

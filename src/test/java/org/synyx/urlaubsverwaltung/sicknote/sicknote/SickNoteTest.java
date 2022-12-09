@@ -1,13 +1,14 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 
 import java.time.LocalDate;
-import java.util.function.Consumer;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,17 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SickNoteTest {
 
     @Test
-    void ensureLastModificationDateIsSetOnInitialization() {
-        final SickNote sickNote = new SickNote();
-        assertThat(sickNote.getLastEdited()).isEqualTo(LocalDate.now(UTC));
-    }
-
-    @Test
     void ensureAUBIsPresentIfAUBStartDateAndAUBEndDateAreSet() {
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setAubStartDate(LocalDate.now(UTC));
-        sickNote.setAubEndDate(LocalDate.now(UTC));
+        final SickNote sickNote = SickNote.builder()
+                .aubStartDate(LocalDate.now(UTC))
+                .aubEndDate(LocalDate.now(UTC))
+                .build();
 
         assertThat(sickNote.isAubPresent()).isTrue();
     }
@@ -33,8 +29,9 @@ class SickNoteTest {
     @Test
     void ensureAUBIsNotPresentIfOnlyAUBStartDateIsSet() {
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setAubStartDate(LocalDate.now(UTC));
+        final SickNote sickNote = SickNote.builder()
+                .aubStartDate(LocalDate.now(UTC))
+                .build();
 
         assertThat(sickNote.isAubPresent()).isFalse();
     }
@@ -42,38 +39,29 @@ class SickNoteTest {
     @Test
     void ensureAUBIsNotPresentIfOnlyAUBEndDateIsSet() {
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setAubEndDate(LocalDate.now(UTC));
+        final SickNote sickNote = SickNote.builder()
+                .aubEndDate(LocalDate.now(UTC))
+                .build();
 
         assertThat(sickNote.isAubPresent()).isFalse();
     }
 
     @Test
     void ensureAUBIsNotPresentIfNoAUBPeriodIsSet() {
-        assertThat(new SickNote().isAubPresent()).isFalse();
+        assertThat(SickNote.builder().build().isAubPresent()).isFalse();
     }
 
-    @Test
-    void ensureIsNotActiveForInactiveStatus() {
-
-        final Consumer<SickNoteStatus> assertNotActive = (status) -> {
-            final SickNote sickNote = new SickNote();
-            sickNote.setStatus(status);
-            assertThat(sickNote.isActive()).isFalse();
-        };
-
-        assertNotActive.accept(SickNoteStatus.CANCELLED);
-        assertNotActive.accept(SickNoteStatus.CONVERTED_TO_VACATION);
+    @ParameterizedTest
+    @EnumSource(value = SickNoteStatus.class, names = {"CANCELLED", "CONVERTED_TO_VACATION"})
+    void ensureIsNotActiveForInactiveStatus(SickNoteStatus status) {
+        final SickNote sickNote = SickNote.builder().status(status).build();
+        assertThat(sickNote.isActive()).isFalse();
     }
 
     @Test
     void ensureIsActiveForActiveStatus() {
-        Consumer<SickNoteStatus> assertActive = (status) -> {
-            final SickNote sickNote = new SickNote();
-            sickNote.setStatus(status);
-            assertThat(sickNote.isActive()).isTrue();
-        };
-        assertActive.accept(SickNoteStatus.ACTIVE);
+        final SickNote sickNote = SickNote.builder().status(SickNoteStatus.ACTIVE).build();
+        assertThat(sickNote.isActive()).isTrue();
     }
 
     @Test
@@ -82,10 +70,11 @@ class SickNoteTest {
         final LocalDate startDate = LocalDate.now(UTC);
         final LocalDate endDate = startDate.plusDays(2);
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setStartDate(startDate);
-        sickNote.setEndDate(endDate);
-        sickNote.setDayLength(DayLength.FULL);
+        final SickNote sickNote = SickNote.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .dayLength(DayLength.FULL)
+                .build();
 
         final Period period = sickNote.getPeriod();
         assertThat(period).isNotNull();
@@ -96,8 +85,7 @@ class SickNoteTest {
 
     @Test
     void nullsafeToString() {
-        final SickNote sickNote = new SickNote();
-        sickNote.setLastEdited(null);
+        final SickNote sickNote = SickNote.builder().lastEdited(null).build();
         assertThat(sickNote).hasToString("SickNote{id=null, person=null, applier=null, " +
             "sickNoteType=null, startDate=null," +
             " endDate=null, dayLength=null, aubStartDate=null, aubEndDate=null, lastEdited=null," +
@@ -116,19 +104,20 @@ class SickNoteTest {
         final Person applier = new Person();
         applier.setId(2);
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setId(1);
-        sickNote.setSickNoteType(sickNoteType);
-        sickNote.setStartDate(LocalDate.MIN);
-        sickNote.setEndDate(LocalDate.MAX);
-        sickNote.setStatus(SickNoteStatus.ACTIVE);
-        sickNote.setDayLength(DayLength.FULL);
-        sickNote.setAubStartDate(LocalDate.MIN);
-        sickNote.setAubEndDate(LocalDate.MAX);
-        sickNote.setLastEdited(LocalDate.EPOCH);
-        sickNote.setEndOfSickPayNotificationSend(LocalDate.EPOCH);
-        sickNote.setPerson(person);
-        sickNote.setApplier(applier);
+        final SickNote sickNote = SickNote.builder()
+                .id(1)
+                .sickNoteType(sickNoteType)
+                .startDate(LocalDate.MIN)
+                .endDate(LocalDate.MAX)
+                .status(SickNoteStatus.ACTIVE)
+                .dayLength(DayLength.FULL)
+                .aubStartDate(LocalDate.MIN)
+                .aubEndDate(LocalDate.MAX)
+                .lastEdited(LocalDate.EPOCH)
+                .endOfSickPayNotificationSend(LocalDate.EPOCH)
+                .person(person)
+                .applier(applier)
+                .build();
 
         assertThat(sickNote).hasToString("SickNote{id=1, person=Person{id='1'}, " +
             "applier=Person{id='2'}, sickNoteType=SickNoteType{category=SICK_NOTE, messageKey='messageKey'}, startDate=-999999999-01-01, " +

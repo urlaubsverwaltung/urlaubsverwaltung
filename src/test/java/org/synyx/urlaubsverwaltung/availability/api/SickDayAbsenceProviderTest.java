@@ -92,8 +92,14 @@ class SickDayAbsenceProviderTest {
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
-        final SickNote sickNote = createSickNote(person, sickDay, sickDay, FULL);
-        sickNote.setStatus(CANCELLED);
+        final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .startDate(sickDay)
+                .endDate(sickDay)
+                .dayLength(FULL)
+                .status(CANCELLED)
+                .build();
+
         when(sickNoteService.getByPersonAndPeriod(person, sickDay, sickDay)).thenReturn(singletonList(sickNote));
 
         final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(knownAbsences, person, sickDay);
@@ -112,8 +118,14 @@ class SickDayAbsenceProviderTest {
         final TimedAbsenceSpans knownAbsences = new TimedAbsenceSpans(new ArrayList<>());
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
-        final SickNote sickNote = createSickNote(person, sickDay, sickDay, FULL);
-        sickNote.setStatus(CONVERTED_TO_VACATION);
+        final SickNote sickNote = SickNote.builder()
+                .person(person)
+                .startDate(sickDay)
+                .endDate(sickDay)
+                .dayLength(FULL)
+                .status(CONVERTED_TO_VACATION)
+                .build();
+
         when(sickNoteService.getByPersonAndPeriod(person, sickDay, sickDay)).thenReturn(singletonList(sickNote));
 
         final TimedAbsenceSpans updatedTimedAbsenceSpans = sut.checkForAbsence(knownAbsences, person, sickDay);
