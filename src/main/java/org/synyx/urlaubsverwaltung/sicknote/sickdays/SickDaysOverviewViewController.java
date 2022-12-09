@@ -18,7 +18,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -42,11 +41,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.TOTAL;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.WITH_AUB;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
-import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 
 /**
  * Controller for overview about the sick days of all users.
@@ -55,7 +52,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIV
 @RequestMapping("/web")
 public class SickDaysOverviewViewController {
 
-    private final SickNoteService sickNoteService;
+    private final SickDaysStatisticsService sickDaysStatisticsService;
     private final PersonBasedataService personBasedataService;
     private final WorkDaysCountService workDaysCountService;
     private final DepartmentService departmentService;
@@ -64,10 +61,10 @@ public class SickDaysOverviewViewController {
     private final Clock clock;
 
     @Autowired
-    public SickDaysOverviewViewController(SickNoteService sickNoteService, PersonBasedataService personBasedataService,
+    public SickDaysOverviewViewController(SickDaysStatisticsService sickDaysStatisticsService, PersonBasedataService personBasedataService,
                                           WorkDaysCountService workDaysCountService, DepartmentService departmentService,
                                           PersonService personService, DateFormatAware dateFormatAware, Clock clock) {
-        this.sickNoteService = sickNoteService;
+        this.sickDaysStatisticsService = sickDaysStatisticsService;
         this.personBasedataService = personBasedataService;
         this.workDaysCountService = workDaysCountService;
         this.departmentService = departmentService;
@@ -103,16 +100,18 @@ public class SickDaysOverviewViewController {
         final Person signedInUser = personService.getSignedInUser();
 
         final List<Person> persons = getMembersOfPersons(signedInUser);
-        final List<SickNote> sickNotes = sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), period.getStartDate(), period.getEndDate());
+        final List<SickDaysDetailedStatistics> sickDaysStatistics = sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate());
 
         final Map<Person, SickDays> sickDays = new HashMap<>();
         final Map<Person, SickDays> childSickDays = new HashMap<>();
-        sickNotes.forEach(sickNote -> {
-            if (sickNote.getSickNoteType().isOfCategory(SICK_NOTE_CHILD)) {
-                calculateSickDays(period, childSickDays, sickNote);
-            } else {
-                calculateSickDays(period, sickDays, sickNote);
-            }
+        sickDaysStatistics.forEach(statistic -> {
+            statistic.getSickNotes().forEach(sickNote -> {
+                if (sickNote.getSickNoteType().isOfCategory(SICK_NOTE_CHILD)) {
+                    calculateSickDays(period, childSickDays, sickNote);
+                } else {
+                    calculateSickDays(period, sickDays, sickNote);
+                }
+            });
         });
         persons.forEach(person -> {
             sickDays.putIfAbsent(person, new SickDays());

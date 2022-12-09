@@ -74,7 +74,7 @@ public class SickDaysStatisticsService {
             final PersonId personId = new PersonId(person.getId());
             final String personnelNumber = basedataForPersons.getOrDefault(personId, new PersonBasedata(personId, "", "")).getPersonnelNumber();
             final List<String> departments = departmentsForPersons.getOrDefault(personId, List.of());
-            return new SickDaysDetailedStatistics(personnelNumber, person.getFirstName(), person.getLastName(), personListEntry.getValue(), departments);
+            return new SickDaysDetailedStatistics(personnelNumber, person, personListEntry.getValue(), departments);
         };
     }
 

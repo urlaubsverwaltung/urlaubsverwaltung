@@ -20,7 +20,6 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -40,7 +39,6 @@ import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
-import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -69,7 +67,7 @@ class SickDaysOverviewViewControllerTest {
     private SickDaysOverviewViewController sut;
 
     @Mock
-    private SickNoteService sickNoteService;
+    private SickDaysStatisticsService sickDaysStatisticsService;
     @Mock
     private PersonBasedataService personBasedataService;
     @Mock
@@ -83,7 +81,7 @@ class SickDaysOverviewViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickDaysOverviewViewController(sickNoteService, personBasedataService, workDaysCountService,
+        sut = new SickDaysOverviewViewController(sickDaysStatisticsService, personBasedataService, workDaysCountService,
             departmentService, personService, new DateFormatAware(), clock);
     }
 
@@ -187,7 +185,8 @@ class SickDaysOverviewViewControllerTest {
 
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
-        when(sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
+        final SickDaysDetailedStatistics sickDaysDetailedStatistics = new SickDaysDetailedStatistics("", person, List.of(sickNote, childSickNote), List.of());
+        when(sickDaysStatisticsService.getAll(office, requestStartDate, requestEndDate)).thenReturn(List.of(sickDaysDetailedStatistics));
 
         perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())
@@ -253,7 +252,8 @@ class SickDaysOverviewViewControllerTest {
 
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
-        when(sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
+        final SickDaysDetailedStatistics sickDaysDetailedStatistics = new SickDaysDetailedStatistics("", person, List.of(sickNote, childSickNote), List.of());
+        when(sickDaysStatisticsService.getAll(departmentHead, requestStartDate, requestEndDate)).thenReturn(List.of(sickDaysDetailedStatistics));
 
         perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())
@@ -319,7 +319,8 @@ class SickDaysOverviewViewControllerTest {
 
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
-        when(sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
+        final SickDaysDetailedStatistics sickDaysDetailedStatistics = new SickDaysDetailedStatistics("", person, List.of(sickNote, childSickNote), List.of());
+        when(sickDaysStatisticsService.getAll(ssa, requestStartDate, requestEndDate)).thenReturn(List.of(sickDaysDetailedStatistics));
 
         perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())
@@ -394,7 +395,9 @@ class SickDaysOverviewViewControllerTest {
 
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
-        when(sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), List.of(person, person2), List.of(USER), requestStartDate, requestEndDate)).thenReturn(asList(sickNote, childSickNote));
+        final SickDaysDetailedStatistics sickDaysDetailedStatisticsPerson = new SickDaysDetailedStatistics("", person, List.of(childSickNote), List.of());
+        final SickDaysDetailedStatistics sickDaysDetailedStatisticsPerson2 = new SickDaysDetailedStatistics("", person2, List.of(sickNote), List.of());
+        when(sickDaysStatisticsService.getAll(dhAndSsa, requestStartDate, requestEndDate)).thenReturn(List.of(sickDaysDetailedStatisticsPerson, sickDaysDetailedStatisticsPerson2));
 
         perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())

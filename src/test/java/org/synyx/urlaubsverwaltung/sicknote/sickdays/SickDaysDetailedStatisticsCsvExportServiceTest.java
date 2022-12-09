@@ -113,7 +113,7 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         final List<SickNote> sickNotes = List.of(sickNote, sickNoteWithAub, sickNoteHalfDayMorning, sickNoteHalfDayNoon);
         final List<String> departments = List.of("Here", "There");
         final SickDaysDetailedStatistics sickDaysDetailedStatistics = new
-            SickDaysDetailedStatistics("42", person.getFirstName(), person.getLastName(), sickNotes, departments);
+            SickDaysDetailedStatistics("42", person, sickNotes, departments);
 
         final List<SickDaysDetailedStatistics> statistics = List.of(sickDaysDetailedStatistics);
 

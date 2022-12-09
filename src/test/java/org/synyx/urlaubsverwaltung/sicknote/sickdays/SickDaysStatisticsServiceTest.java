@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -78,14 +77,14 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead))).thenReturn(Map.of(new PersonId(departmentHead.getId()), List.of("Kitchen", "Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
-        assertThat(allSicknotes)
-            .extracting(SickDaysDetailedStatistics::getPersonalNumber,
-                SickDaysDetailedStatistics::getFirstName,
-                SickDaysDetailedStatistics::getLastName,
-                SickDaysDetailedStatistics::getDepartments,
-                SickDaysDetailedStatistics::getSickNotes
-            )
-            .contains(tuple(personnnelNumber, "Department", "Head", List.of("Kitchen", "Service"), List.of(sickNote)));
+        assertThat(allSicknotes).hasSize(1);
+        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Head");
+            assertThat(actual.getDepartments()).containsExactly("Kitchen", "Service");
+            assertThat(actual.getSickNotes()).containsExactly(sickNote);
+        });
     }
 
     @Test
@@ -134,14 +133,14 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getDepartmentNamesByMembers(List.of(secondStageAuthority))).thenReturn(Map.of(new PersonId(secondStageAuthority.getId()), List.of("Kitchen", "Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(secondStageAuthority, startDate, endDate);
-        assertThat(allSicknotes)
-            .extracting(SickDaysDetailedStatistics::getPersonalNumber,
-                SickDaysDetailedStatistics::getFirstName,
-                SickDaysDetailedStatistics::getLastName,
-                SickDaysDetailedStatistics::getDepartments,
-                SickDaysDetailedStatistics::getSickNotes
-            )
-            .contains(tuple(personnnelNumber, "Second", "Stage", List.of("Kitchen", "Service"), List.of(sickNote)));
+        assertThat(allSicknotes).hasSize(1);
+        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("Second");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Stage");
+            assertThat(actual.getDepartments()).containsExactly("Kitchen", "Service");
+            assertThat(actual.getSickNotes()).containsExactly(sickNote);
+        });
     }
 
     @Test
@@ -187,14 +186,14 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getDepartmentNamesByMembers(List.of(office))).thenReturn(Map.of(new PersonId(office.getId()), List.of("Kitchen", "Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(office, startDate, endDate);
-        assertThat(allSicknotes)
-            .extracting(SickDaysDetailedStatistics::getPersonalNumber,
-                SickDaysDetailedStatistics::getFirstName,
-                SickDaysDetailedStatistics::getLastName,
-                SickDaysDetailedStatistics::getDepartments,
-                SickDaysDetailedStatistics::getSickNotes
-            )
-            .contains(tuple(personnnelNumber, "Office", "Person", List.of("Kitchen", "Service"), List.of(sickNote)));
+        assertThat(allSicknotes).hasSize(1);
+        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("Office");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Person");
+            assertThat(actual.getDepartments()).containsExactly("Kitchen", "Service");
+            assertThat(actual.getSickNotes()).containsExactly(sickNote);
+        });
     }
 
     @ParameterizedTest
@@ -225,14 +224,14 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getDepartmentNamesByMembers(List.of(office))).thenReturn(Map.of(new PersonId(office.getId()), List.of("Kitchen", "Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(office, startDate, endDate);
-        assertThat(allSicknotes)
-            .extracting(SickDaysDetailedStatistics::getPersonalNumber,
-                SickDaysDetailedStatistics::getFirstName,
-                SickDaysDetailedStatistics::getLastName,
-                SickDaysDetailedStatistics::getDepartments,
-                SickDaysDetailedStatistics::getSickNotes
-            )
-            .contains(tuple(personnnelNumber, "Office", "Person", List.of("Kitchen", "Service"), List.of(sickNote)));
+        assertThat(allSicknotes).hasSize(1);
+        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("Office");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Person");
+            assertThat(actual.getDepartments()).containsExactly("Kitchen", "Service");
+            assertThat(actual.getSickNotes()).containsExactly(sickNote);
+        });
     }
 
     @Test
@@ -262,14 +261,14 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getDepartmentNamesByMembers(List.of(boss))).thenReturn(Map.of(new PersonId(boss.getId()), List.of("Kitchen", "Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(boss, startDate, endDate);
-        assertThat(allSicknotes)
-            .extracting(SickDaysDetailedStatistics::getPersonalNumber,
-                SickDaysDetailedStatistics::getFirstName,
-                SickDaysDetailedStatistics::getLastName,
-                SickDaysDetailedStatistics::getDepartments,
-                SickDaysDetailedStatistics::getSickNotes
-            )
-            .contains(tuple(personnnelNumber, "Boss", "Person", List.of("Kitchen", "Service"), List.of(sickNote)));
+        assertThat(allSicknotes).hasSize(1);
+        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("Boss");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Person");
+            assertThat(actual.getDepartments()).containsExactly("Kitchen", "Service");
+            assertThat(actual.getSickNotes()).containsExactly(sickNote);
+        });
     }
 
     @ParameterizedTest
@@ -300,14 +299,14 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getDepartmentNamesByMembers(List.of(boss))).thenReturn(Map.of(new PersonId(boss.getId()), List.of("Kitchen", "Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(boss, startDate, endDate);
-        assertThat(allSicknotes)
-            .extracting(SickDaysDetailedStatistics::getPersonalNumber,
-                SickDaysDetailedStatistics::getFirstName,
-                SickDaysDetailedStatistics::getLastName,
-                SickDaysDetailedStatistics::getDepartments,
-                SickDaysDetailedStatistics::getSickNotes
-            )
-            .contains(tuple(personnnelNumber, "Boss", "Person", List.of("Kitchen", "Service"), List.of(sickNote)));
+        assertThat(allSicknotes).hasSize(1);
+        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("Boss");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Person");
+            assertThat(actual.getDepartments()).containsExactly("Kitchen", "Service");
+            assertThat(actual.getSickNotes()).containsExactly(sickNote);
+        });
     }
 
     @Test
@@ -356,14 +355,14 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead))).thenReturn(Map.of());
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
-        assertThat(allSicknotes)
-            .extracting(SickDaysDetailedStatistics::getPersonalNumber,
-                SickDaysDetailedStatistics::getFirstName,
-                SickDaysDetailedStatistics::getLastName,
-                SickDaysDetailedStatistics::getDepartments,
-                SickDaysDetailedStatistics::getSickNotes
-            )
-            .contains(tuple(personnnelNumber, "Department", "Head", List.of(), List.of(sickNote)));
+        assertThat(allSicknotes).hasSize(1);
+        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Head");
+            assertThat(actual.getDepartments()).isEmpty();
+            assertThat(actual.getSickNotes()).containsExactly(sickNote);
+        });
     }
 
     @Test
@@ -393,13 +392,13 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead))).thenReturn(Map.of(new PersonId(departmentHead.getId()), List.of("Kitchen", "Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
-        assertThat(allSicknotes)
-            .extracting(SickDaysDetailedStatistics::getPersonalNumber,
-                SickDaysDetailedStatistics::getFirstName,
-                SickDaysDetailedStatistics::getLastName,
-                SickDaysDetailedStatistics::getDepartments,
-                SickDaysDetailedStatistics::getSickNotes
-            )
-            .contains(tuple("", "Department", "Head", List.of("Kitchen", "Service"), List.of(sickNote)));
+        assertThat(allSicknotes).hasSize(1);
+        assertThat(allSicknotes.get(0)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Head");
+            assertThat(actual.getDepartments()).containsExactly("Kitchen", "Service");
+            assertThat(actual.getSickNotes()).containsExactly(sickNote);
+        });
     }
 }
