@@ -22,13 +22,13 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
-public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
+class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
 
-    public OidcPersonAuthoritiesMapper(PersonService personService) {
+    OidcPersonAuthoritiesMapper(PersonService personService) {
         this.personService = personService;
     }
 
