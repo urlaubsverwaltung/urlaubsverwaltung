@@ -266,7 +266,7 @@
         </th:block>
         <table
           id="sick-note-table"
-          class="tw-mt-8 md:tw-mt-16 list-table selectable-table tw-text-sm"
+          class="tw-mt-8 md:tw-mt-16 list-table hoverable-table tw-text-sm"
           data-test-id="sick-notes-table"
         >
           <caption class="tw-sr-only" th:text="#{sicknotes.title}">
@@ -292,11 +292,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              th:each="sickDaysStatistic : ${statisticsPagination.page.content}"
-              th:with="navigateLink=@{/web/person/__${sickDaysStatistic.personId}__/overview#anchorSickNotes}"
-              th:onclick="navigate([[${navigateLink}]])"
-            >
+            <tr th:each="sickDaysStatistic : ${statisticsPagination.page.content}">
               <td class="is-centered print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                 <img
                   th:replace="fragments/avatar::avatar-bordered(url=${sickDaysStatistic.personAvatarUrl + '?d=404&s=40'},niceName=${sickDaysStatistic.personNiceName},width='40px',height='40px',personId=${person.id})"
@@ -308,15 +304,34 @@
                 th:text="${sickDaysStatistic.personnelNumber}"
                 class="tw-hidden lg:tw-table-cell print:tw-table-cell tw-text-ellipsis tw-overflow-hidden tw-max-w-xs tw-text-center"
               ></td>
-              <td th:text="${sickDaysStatistic.personFirstName}" class="hidden-xs"></td>
-              <td th:text="${sickDaysStatistic.personLastName}" class="hidden-xs"></td>
-              <td th:text="${sickDaysStatistic.personNiceName}" class="visible-xs"></td>
-              <td class="hidden-xs" th:data-sortable-value="${sickDaysStatistic.amountSickDays}">
-                <div class="tw-flex tw-items-center">
-                  <svg th:replace="icon/medkit::svg(className='tw-w-4 tw-h-4')"></svg>
-                  &nbsp;<th:block th:replace="fragments/number::number(${sickDaysStatistic.amountSickDays})"></th:block>
-                  <th:block th:text="#{sicknotes.daysOverview.sickDays.number}"></th:block>
-                </div>
+              <td class="hidden-xs">
+                <a th:text="${sickDaysStatistic.personFirstName}"
+                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
+                   class="icon-link"
+                ></a>
+              </td>
+              <td class="hidden-xs">
+                <a th:text="${sickDaysStatistic.personLastName}"
+                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
+                   class="icon-link"
+                ></a>
+              </td>
+              <td class="visible-xs">
+                <a th:text="${sickDaysStatistic.personNiceName}"
+                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
+                   class="icon-link"
+                ></a>
+              </td>
+              <td class="hidden-xs">
+                <a th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview#anchorSickNotes}"
+                   class="icon-link"
+                >
+                  <div class="tw-flex tw-items-center">
+                    <svg th:replace="icon/medkit::svg(className='tw-w-4 tw-h-4')"></svg>
+                    &nbsp;<th:block th:replace="fragments/number::number(${sickDaysStatistic.amountSickDays})"></th:block>
+                    <th:block th:text="#{sicknotes.daysOverview.sickDays.number}"></th:block>
+                  </div>
+                </a>
                 <p
                   th:if="${sickDaysStatistic.amountSickDaysWithAUB > 0}"
                   class="list-table--second-row tw-flex tw-items-center"
@@ -329,14 +344,18 @@
                   ></th:block>
                 </p>
               </td>
-              <td class="hidden-xs" th:data-sortable-value="${sickDaysStatistic.amountChildSickDays}">
-                <div class="tw-flex tw-items-center">
-                  <svg th:replace="icon/child::svg(className='tw-w-3 tw-h-3')"></svg>
-                  &nbsp;<th:block
+              <td class="hidden-xs">
+                <a th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview#anchorSickNotes}"
+                   class="icon-link"
+                >
+                  <div class="tw-flex tw-items-center">
+                    <svg th:replace="icon/child::svg(className='tw-w-3 tw-h-3')"></svg>
+                    &nbsp;<th:block
                     th:replace="fragments/number::number(${sickDaysStatistic.amountChildSickDays})"
                   ></th:block>
-                  <th:block th:text="#{sicknotes.daysOverview.sickDays.child.number}"></th:block>
-                </div>
+                    <th:block th:text="#{sicknotes.daysOverview.sickDays.child.number}"></th:block>
+                  </div>
+                </a>
                 <p
                   th:if="${sickDaysStatistic.amountChildSickDaysWithAUB > 0}"
                   class="list-table--second-row tw-flex tw-items-center"
