@@ -293,7 +293,7 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
 
             assertThatThrownBy(() -> sut.handle(event))
                 .isInstanceOf(OidcPersonMappingException.class)
-                .hasMessage("Can not retrieve the familyname for oidc person mapping");
+                .hasMessage("Can not retrieve the family name for oidc person mapping");
         }
     }
 

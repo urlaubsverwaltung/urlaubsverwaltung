@@ -114,6 +114,7 @@ class OidcPersonAuthoritiesMapperTest {
             .isInstanceOf(OidcPersonMappingException.class)
             .hasMessage("Can not retrieve the email for oidc person mapping");
     }
+
     @Test
     void ensureThrowsExceptionIfSubjectIsMissing() {
         final List<OidcUserAuthority> oidcUserAuthorities = List.of(getOidcUserAuthority(Map.of(

@@ -6,7 +6,6 @@ import org.springframework.security.authentication.event.AuthenticationSuccessEv
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.StandardClaimAccessor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -89,8 +88,8 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
         return ofNullable(oidcUser.getFamilyName())
             .or(() -> ofNullable(oidcUser.getUserInfo()).map(StandardClaimAccessor::getFamilyName))
             .orElseThrow(() -> {
-                LOG.error("Can not retrieve the familyname for oidc person mapping");
-                return new OidcPersonMappingException("Can not retrieve the familyname for oidc person mapping");
+                LOG.error("Can not retrieve the family name for oidc person mapping");
+                return new OidcPersonMappingException("Can not retrieve the family name for oidc person mapping");
             });
     }
 
