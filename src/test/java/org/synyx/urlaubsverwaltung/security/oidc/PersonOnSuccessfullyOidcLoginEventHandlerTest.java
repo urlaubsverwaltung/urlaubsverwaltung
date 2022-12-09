@@ -7,9 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2LoginAuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
@@ -18,12 +19,15 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,7 +59,7 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
             final String familyName = "family name";
             final String email = "test.me@example.com";
 
-            final AuthenticationSuccessEvent event = getOidcUserAuthority(Map.of(
+            final AuthenticationSuccessEvent event = getOidcUserAuthority(List.of(new SimpleGrantedAuthority("USER")),Map.of(
                 SUB, uniqueID,
                 GIVEN_NAME, givenName,
                 FAMILY_NAME, familyName,
@@ -353,6 +357,11 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
         return createEvent(new DefaultOidcUser(null, idToken));
     }
 
+    private AuthenticationSuccessEvent getOidcUserAuthority(List<GrantedAuthority> authorities, Map<String, Object> idTokenClaims) {
+        final OidcIdToken idToken = new OidcIdToken("tokenValue", Instant.now(), Instant.MAX, idTokenClaims);
+        return createEventWithAuthentication(authorities, new DefaultOidcUser(null, idToken));
+    }
+
     private AuthenticationSuccessEvent getOidcUserAuthority(Map<String, Object> idTokenClaims, Map<String, Object> userInfoClaims) {
         final OidcIdToken idToken = new OidcIdToken("tokenValue", Instant.now(), Instant.MAX, idTokenClaims);
         final OidcUserInfo userInfo = new OidcUserInfo(userInfoClaims);
@@ -360,8 +369,15 @@ class PersonOnSuccessfullyOidcLoginEventHandlerTest {
     }
 
     private AuthenticationSuccessEvent createEvent(DefaultOidcUser defaultOidcUser) {
-        OAuth2LoginAuthenticationToken oAuth2LoginAuthenticationToken = Mockito.mock(OAuth2LoginAuthenticationToken.class);
+        final OAuth2LoginAuthenticationToken oAuth2LoginAuthenticationToken = mock(OAuth2LoginAuthenticationToken.class);
         when(oAuth2LoginAuthenticationToken.getPrincipal()).thenReturn(defaultOidcUser);
+        return new AuthenticationSuccessEvent(oAuth2LoginAuthenticationToken);
+    }
+
+    private AuthenticationSuccessEvent createEventWithAuthentication(List<GrantedAuthority> authorities, DefaultOidcUser defaultOidcUser) {
+        final OAuth2LoginAuthenticationToken oAuth2LoginAuthenticationToken = mock(OAuth2LoginAuthenticationToken.class);
+        when(oAuth2LoginAuthenticationToken.getPrincipal()).thenReturn(defaultOidcUser);
+        when(oAuth2LoginAuthenticationToken.getAuthorities()).thenReturn(authorities);
         return new AuthenticationSuccessEvent(oAuth2LoginAuthenticationToken);
     }
 }

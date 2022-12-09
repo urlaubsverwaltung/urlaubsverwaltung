@@ -4,20 +4,22 @@ import org.slf4j.Logger;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.StandardClaimAccessor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 class PersonOnSuccessfullyOidcLoginEventHandler {
 
@@ -63,13 +65,18 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
             personService.update(existentPerson);
 
         } else {
+            final List<Role> permissions = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(Role::valueOf)
+                .collect(toList());
+
             final Person createdPerson = personService.create(
                 userUniqueID,
                 lastName,
                 firstName,
                 emailAddress,
                 List.of(NOTIFICATION_USER),
-                List.of(USER)
+                permissions
             );
             personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
