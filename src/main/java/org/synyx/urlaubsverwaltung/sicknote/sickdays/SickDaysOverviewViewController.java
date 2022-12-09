@@ -105,18 +105,6 @@ public class SickDaysOverviewViewController {
         final List<Person> persons = getMembersOfPersons(signedInUser);
         final List<SickNote> sickNotes = sickNoteService.getForStatesAndPersonAndPersonHasRoles(List.of(ACTIVE), persons, List.of(USER), period.getStartDate(), period.getEndDate());
 
-        fillModel(model, sickNotes, period, persons);
-
-        return "thymeleaf/sicknote/sick_days";
-    }
-
-    private void fillModel(Model model, List<SickNote> sickNotes, FilterPeriod period, List<Person> persons) {
-
-        model.addAttribute("today", LocalDate.now(clock));
-        model.addAttribute("from", period.getStartDate());
-        model.addAttribute("to", period.getEndDate());
-        model.addAttribute("period", period);
-
         final Map<Person, SickDays> sickDays = new HashMap<>();
         final Map<Person, SickDays> childSickDays = new HashMap<>();
         sickNotes.forEach(sickNote -> {
@@ -126,7 +114,6 @@ public class SickDaysOverviewViewController {
                 calculateSickDays(period, sickDays, sickNote);
             }
         });
-
         persons.forEach(person -> {
             sickDays.putIfAbsent(person, new SickDays());
             childSickDays.putIfAbsent(person, new SickDays());
@@ -134,11 +121,18 @@ public class SickDaysOverviewViewController {
 
         final Map<Integer, String> personnelNumberOfPersons = getPersonnelNumbersOfPersons(persons);
         final List<SickDaysOverviewDto> sickDaysOverviewDtos = persons.stream()
-            .map(person -> toSickDaysOverviewDto(person, sickDays::get, childSickDays::get, personnelNumberOfPersons::get))
-            .collect(toList());
+                .map(person -> toSickDaysOverviewDto(person, sickDays::get, childSickDays::get, personnelNumberOfPersons::get))
+                .collect(toList());
 
         model.addAttribute("sickDaysStatistics", sickDaysOverviewDtos);
         model.addAttribute("showPersonnelNumberColumn", !personnelNumberOfPersons.isEmpty());
+
+        model.addAttribute("today", LocalDate.now(clock));
+        model.addAttribute("from", period.getStartDate());
+        model.addAttribute("to", period.getEndDate());
+        model.addAttribute("period", period);
+
+        return "thymeleaf/sicknote/sick_days";
     }
 
     private static SickDaysOverviewDto toSickDaysOverviewDto(Person person,
