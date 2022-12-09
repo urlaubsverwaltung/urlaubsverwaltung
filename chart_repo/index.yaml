@@ -2,8 +2,34 @@ apiVersion: v1
 entries:
   urlaubsverwaltung:
   - apiVersion: v2
+    appVersion: 4.55.1
+    created: "2022-12-09T18:17:57.009882713+01:00"
+    dependencies:
+    - condition: mariadb.enabled
+      name: mariadb
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.4.1
+    description: Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht,
+      Urlaubsanträge von Mitarbeitern elektronisch zu verwalten.
+    digest: 10a8db82e4c614ef75f17de570fe9150950d21aa17fc7a9c77de6d114437cca5
+    home: https://github.com/urlaubsverwaltung/urlaubsverwaltung
+    keywords:
+    - urlaub
+    maintainers:
+    - email: graf@synyx.de
+      name: Johannes Graf
+    - email: schneider@synyx.de
+      name: Tobias Schneider
+    name: urlaubsverwaltung
+    sources:
+    - https://github.com/urlaubsverwaltung/urlaubsverwaltung
+    type: application
+    urls:
+    - https://urlaubsverwaltung.github.io/urlaubsverwaltung/chart_repo/urlaubsverwaltung-2.2.0.tgz
+    version: 2.2.0
+  - apiVersion: v2
     appVersion: 4.51.0
-    created: "2022-11-11T23:07:47.477139478+01:00"
+    created: "2022-12-09T18:17:57.004383691+01:00"
     dependencies:
     - condition: mariadb.enabled
       name: mariadb
@@ -11,7 +37,7 @@ entries:
       version: 11.3.3
     description: Die Urlaubsverwaltung ist eine Web-Anwendung, die es ermöglicht,
       Urlaubsanträge von Mitarbeitern elektronisch zu verwalten.
-    digest: 934acf2cec6f59ac26c0a51abdb72ad4fe09a4ebd86b370431feec7c20c3f333
+    digest: fa3589dba541bd39380aff02a5cef6ad25d23b43906626a6e153d293f3da13ff
     home: https://github.com/urlaubsverwaltung/urlaubsverwaltung
     keywords:
     - urlaub
@@ -29,7 +55,7 @@ entries:
     version: 2.1.1
   - apiVersion: v2
     appVersion: 4.51.0
-    created: "2022-11-11T23:07:47.46584239+01:00"
+    created: "2022-12-09T18:17:56.999357983+01:00"
     dependencies:
     - condition: mariadb.enabled
       name: mariadb
@@ -55,7 +81,7 @@ entries:
     version: 2.1.0
   - apiVersion: v2
     appVersion: 3.4.5
-    created: "2022-11-11T23:07:47.455499402+01:00"
+    created: "2022-12-09T18:17:56.993936624+01:00"
     dependencies:
     - condition: mariadb.enabled
       name: mariadb
@@ -81,7 +107,7 @@ entries:
     version: 2.0.0
   - apiVersion: v1
     appVersion: 3.0.1
-    created: "2022-11-11T23:07:47.447891393+01:00"
+    created: "2022-12-09T18:17:56.99085837+01:00"
     dependencies:
     - condition: urlaubsverwaltung.deployMariaDb
       name: mariadb
@@ -106,7 +132,7 @@ entries:
     version: 1.0.1
   - apiVersion: v1
     appVersion: 3.0.0
-    created: "2022-11-11T23:07:47.442408023+01:00"
+    created: "2022-12-09T18:17:56.989099347+01:00"
     dependencies:
     - condition: urlaubsverwaltung.deployMariaDb
       name: mariadb
@@ -131,7 +157,7 @@ entries:
     version: 1.0.0
   - apiVersion: v1
     appVersion: 2.35.0
-    created: "2022-11-11T23:07:47.438385451+01:00"
+    created: "2022-12-09T18:17:56.986583874+01:00"
     dependencies:
     - condition: urlaubsverwaltung.deployMariaDb
       name: mariadb
@@ -152,4 +178,4 @@ entries:
     urls:
     - https://urlaubsverwaltung.github.io/urlaubsverwaltung/chart_repo/urlaubsverwaltung-0.1.0.tgz
     version: 0.1.0
-generated: "2022-11-11T23:07:47.433778379+01:00"
+generated: "2022-12-09T18:17:56.984805785+01:00"
