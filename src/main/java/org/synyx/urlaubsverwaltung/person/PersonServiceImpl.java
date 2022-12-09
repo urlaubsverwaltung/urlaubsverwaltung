@@ -105,7 +105,7 @@ class PersonServiceImpl implements PersonService {
         personRepository.delete(person);
 
         final String status = person.isActive() ? "active" : "inactive";
-        LOG.info("Deleted {} person with id {} ({}) deleted by signed in user with id {}", status, person.getId(), person.getUsername(), signedInUser.getId());
+        LOG.info("person with id {} ({}) and status {} deleted by signed in user with id {}", person.getId(), person.getUsername(), status, signedInUser.getId());
     }
 
     @Override
