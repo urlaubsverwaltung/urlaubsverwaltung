@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -44,19 +45,19 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     }
 
     private Collection<? extends GrantedAuthority> mapAuthorities(OidcUserAuthority oidcUserAuthority) {
-
         return resolvePerson(oidcUserAuthority)
-            .map(existentPerson -> {
-                if (existentPerson.hasRole(INACTIVE)) {
-                    throw new DisabledException(String.format("User '%s' has been deactivated", existentPerson.getId()));
-                }
-                return existentPerson.getPermissions();
-            })
-            .orElse(List.of(USER))
+            .map(this::extractPermissions).orElse(List.of(USER))
             .stream()
             .map(Role::name)
             .map(SimpleGrantedAuthority::new)
             .collect(toList());
+    }
+
+    private Collection<Role> extractPermissions(Person person) {
+        if (person.hasRole(INACTIVE)) {
+            throw new DisabledException(format("User '%s' has been deactivated", person.getId()));
+        }
+        return person.getPermissions();
     }
 
     private Optional<Person> resolvePerson(OidcUserAuthority oidcUserAuthority) {
