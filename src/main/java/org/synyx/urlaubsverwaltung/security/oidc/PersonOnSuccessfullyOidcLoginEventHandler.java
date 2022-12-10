@@ -63,10 +63,7 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
             personService.update(existentPerson);
 
         } else {
-            final List<Role> permissions = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .map(Role::valueOf)
-                .collect(toList());
+            final List<Role> permissions = getRoles(authentication);
 
             final Person createdPerson = personService.create(
                 userUniqueID,
@@ -78,6 +75,14 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
             );
             personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
+    }
+
+    private List<Role> getRoles(Authentication authentication) {
+        return authentication.getAuthorities()
+            .stream()
+            .map(GrantedAuthority::getAuthority)
+            .map(Role::valueOf)
+            .collect(toList());
     }
 
     private String extractIdentifier(OidcUser oidcUser) {
