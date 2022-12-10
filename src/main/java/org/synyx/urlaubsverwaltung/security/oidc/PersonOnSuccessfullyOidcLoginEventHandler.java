@@ -7,7 +7,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.StandardClaimAccessor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -32,7 +31,6 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
     }
 
     @EventListener
-    @Transactional
     public void handle(AuthenticationSuccessEvent event) {
 
         final Authentication authentication = event.getAuthentication();
