@@ -1,11 +1,14 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -24,12 +27,12 @@ public class SickNote {
     private final LocalDate lastEdited;
     private final LocalDate endOfSickPayNotificationSend;
     private final SickNoteStatus status;
-    private final BigDecimal workDays;
+    private final WorkingTimeCalendar workingTimeCalendar;
 
     private SickNote(Integer id, Person person, Person applier, SickNoteType sickNoteType, LocalDate startDate,
                      LocalDate endDate, DayLength dayLength, LocalDate aubStartDate, LocalDate aubEndDate,
                      LocalDate lastEdited, LocalDate endOfSickPayNotificationSend, SickNoteStatus status,
-                     BigDecimal workDays) {
+                     WorkingTimeCalendar workingTimeCalendar) {
 
         this.id = id;
         this.person = person;
@@ -43,7 +46,7 @@ public class SickNote {
         this.lastEdited = lastEdited;
         this.endOfSickPayNotificationSend = endOfSickPayNotificationSend;
         this.status = status;
-        this.workDays = workDays;
+        this.workingTimeCalendar = workingTimeCalendar;
     }
 
     public Integer getId() {
@@ -95,7 +98,35 @@ public class SickNote {
     }
 
     public BigDecimal getWorkDays() {
-        return workDays;
+        return workingTime(workingTimeCalendar, new DateRange(getStartDate(), getEndDate()), getDayLength());
+    }
+
+    public BigDecimal getWorkDays(LocalDate from, LocalDate to) {
+        final LocalDate startDate = getStartDate().isBefore(from) ? from : getStartDate();
+        final LocalDate endDate = getEndDate().isAfter(to) ? to : getEndDate();
+
+        if (endDate.isBefore(startDate)) {
+            return BigDecimal.ZERO;
+        }
+
+        return workingTime(workingTimeCalendar, new DateRange(startDate, endDate), dayLength);
+    }
+
+    private static BigDecimal workingTime(WorkingTimeCalendar workingTimeCalendar, DateRange dateRange, DayLength dayLength) {
+        if (workingTimeCalendar == null) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal workingTimeSum = BigDecimal.ZERO;
+        for (LocalDate localDate : dateRange) {
+            final BigDecimal workingTime = workingTimeCalendar.workingTime(localDate).orElse(BigDecimal.ZERO);
+            if (dayLength.isHalfDay()) {
+                workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2),1, RoundingMode.CEILING));
+            } else {
+                workingTimeSum = workingTimeSum.add(workingTime);
+            }
+        }
+        return workingTimeSum;
     }
 
     public DayOfWeek getWeekDayOfStartDate() {
@@ -133,7 +164,7 @@ public class SickNote {
                 ", lastEdited=" + lastEdited +
                 ", endOfSickPayNotificationSend=" + endOfSickPayNotificationSend +
                 ", status=" + status +
-                ", workDays=" + workDays +
+                ", workDays=" + getWorkDays() +
                 '}';
     }
 
@@ -188,7 +219,7 @@ public class SickNote {
         private LocalDate lastEdited;
         private LocalDate endOfSickPayNotificationSend;
         private SickNoteStatus status;
-        private BigDecimal workDays;
+        private WorkingTimeCalendar workingTimeCalendar;
 
         public Builder id(Integer id) {
             this.id = id;
@@ -250,14 +281,14 @@ public class SickNote {
             return this;
         }
 
-        public Builder workDays(BigDecimal workDays) {
-            this.workDays = workDays;
+        public Builder workingTimeCalendar(WorkingTimeCalendar workingTimeCalendar) {
+            this.workingTimeCalendar = workingTimeCalendar;
             return this;
         }
 
         public SickNote build() {
             return new SickNote(id, person, applier, sickNoteType, startDate, endDate, dayLength, aubStartDate,
-                    aubEndDate, lastEdited, endOfSickPayNotificationSend, status, workDays);
+                    aubEndDate, lastEdited, endOfSickPayNotificationSend, status, workingTimeCalendar);
         }
     }
 }

@@ -12,15 +12,12 @@ import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -65,7 +62,7 @@ class SickNoteServiceImpl implements SickNoteService {
                 final Person person = sickNote.getPerson();
                 final DateRange dateRange = new DateRange(sickNote.getStartDate(), sickNote.getEndDate());
                 final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeService.getWorkingTimesByPersons(List.of(person), dateRange);
-                return sickNoteWithWorkDays(sickNote, workingTimesByPersons::get);
+                return SickNote.builder(sickNote).workingTimeCalendar(workingTimesByPersons.get(sickNote.getPerson())).build();
             });
     }
 
@@ -208,27 +205,7 @@ class SickNoteServiceImpl implements SickNoteService {
         return entities
             .stream()
             .map(SickNoteServiceImpl::toSickNote)
-            .map(sickNote -> sickNoteWithWorkDays(sickNote, workingTimesByPersons::get))
+            .map(sickNote -> SickNote.builder(sickNote).workingTimeCalendar(workingTimesByPersons.get(sickNote.getPerson())).build())
             .collect(toList());
-    }
-
-    private static SickNote sickNoteWithWorkDays(SickNote sickNote, Function<Person, WorkingTimeCalendar> workingTimeCalendarProvider) {
-        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarProvider.apply(sickNote.getPerson());
-        final DateRange dateRange = new DateRange(sickNote.getStartDate(), sickNote.getEndDate());
-        final BigDecimal workDays = workingTime(workingTimeCalendar, dateRange, sickNote.getDayLength());
-        return SickNote.builder(sickNote).workDays(workDays).build();
-    }
-
-    private static BigDecimal workingTime(WorkingTimeCalendar workingTimeCalendar, DateRange dateRange, DayLength dayLength) {
-        BigDecimal workingTimeSum = BigDecimal.ZERO;
-        for (LocalDate localDate : dateRange) {
-            final BigDecimal workingTime = workingTimeCalendar.workingTime(localDate).orElse(BigDecimal.ZERO);
-            if (dayLength.isHalfDay()) {
-                workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2),1, RoundingMode.CEILING));
-            } else {
-                workingTimeSum = workingTimeSum.add(workingTime);
-            }
-        }
-        return workingTimeSum;
     }
 }
