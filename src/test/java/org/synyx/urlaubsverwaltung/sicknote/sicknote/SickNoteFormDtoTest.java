@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class SickNoteFormTest {
+class SickNoteFormDtoTest {
 
     private final LocalDate day2019_04_16 = LocalDate.of(2019, 4, 16);
     private final Integer id = 1;
@@ -19,7 +19,7 @@ class SickNoteFormTest {
     @Test
     void ensureEmptyStartDateValidFromIsoValue() {
 
-        final SickNoteForm sut = new SickNoteForm();
+        final SickNoteFormDto sut = new SickNoteFormDto();
         sut.setStartDate(null);
 
         assertThat(sut.getStartDateIsoValue()).isEmpty();
@@ -28,7 +28,7 @@ class SickNoteFormTest {
     @Test
     void ensureStartDateValidFromIsoValue() {
 
-        final SickNoteForm sut = new SickNoteForm();
+        final SickNoteFormDto sut = new SickNoteFormDto();
         sut.setStartDate(LocalDate.parse("2020-10-30"));
 
         assertThat(sut.getStartDateIsoValue()).isEqualTo("2020-10-30");
@@ -37,7 +37,7 @@ class SickNoteFormTest {
     @Test
     void ensureEmptyEndDateValidFromIsoValue() {
 
-        final SickNoteForm sut = new SickNoteForm();
+        final SickNoteFormDto sut = new SickNoteFormDto();
         sut.setEndDate(null);
 
         assertThat(sut.getEndDateIsoValue()).isEmpty();
@@ -46,7 +46,7 @@ class SickNoteFormTest {
     @Test
     void ensureEndDateValidFromIsoValue() {
 
-        final SickNoteForm sut = new SickNoteForm();
+        final SickNoteFormDto sut = new SickNoteFormDto();
         sut.setEndDate(LocalDate.parse("2020-10-30"));
 
         assertThat(sut.getEndDateIsoValue()).isEqualTo("2020-10-30");
@@ -55,7 +55,7 @@ class SickNoteFormTest {
     @Test
     void ensureEmptyAubStartDateValidFromIsoValue() {
 
-        final SickNoteForm sut = new SickNoteForm();
+        final SickNoteFormDto sut = new SickNoteFormDto();
         sut.setAubStartDate(null);
 
         assertThat(sut.getAubStartDateIsoValue()).isEmpty();
@@ -64,7 +64,7 @@ class SickNoteFormTest {
     @Test
     void ensureAubStartDateValidFromIsoValue() {
 
-        final SickNoteForm sut = new SickNoteForm();
+        final SickNoteFormDto sut = new SickNoteFormDto();
         sut.setAubStartDate(LocalDate.parse("2020-10-30"));
 
         assertThat(sut.getAubStartDateIsoValue()).isEqualTo("2020-10-30");
@@ -73,7 +73,7 @@ class SickNoteFormTest {
     @Test
     void ensureEmptyAubEndDateValidFromIsoValue() {
 
-        final SickNoteForm sut = new SickNoteForm();
+        final SickNoteFormDto sut = new SickNoteFormDto();
         sut.setAubEndDate(null);
 
         assertThat(sut.getAubEndDateIsoValue()).isEmpty();
@@ -82,7 +82,7 @@ class SickNoteFormTest {
     @Test
     void ensureAubEndDateValidFromIsoValue() {
 
-        final SickNoteForm sut = new SickNoteForm();
+        final SickNoteFormDto sut = new SickNoteFormDto();
         sut.setAubEndDate(LocalDate.parse("2020-10-30"));
 
         assertThat(sut.getAubEndDateIsoValue()).isEqualTo("2020-10-30");
@@ -91,7 +91,7 @@ class SickNoteFormTest {
     @Test
     void toStringTest() {
 
-        final SickNoteForm sut = new SickNoteForm();
+        final SickNoteFormDto sut = new SickNoteFormDto();
         sut.setId(id);
         sut.setPerson(person);
         sut.setSickNoteType(type);

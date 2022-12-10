@@ -127,7 +127,7 @@ class SickNoteViewControllerTest {
 
         perform(get("/web/sicknote/new"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteFormDto.class)))
             .andExpect(model().attribute("persons", activePersons))
             .andExpect(model().attribute("person", personWithRole))
             .andExpect(model().attribute("signedInUser", personWithRole))
@@ -152,7 +152,7 @@ class SickNoteViewControllerTest {
 
         perform(get("/web/sicknote/new").param("person", "42"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteFormDto.class)))
             .andExpect(model().attribute("person", otherPerson))
             .andExpect(model().attribute("persons", activePersons))
             .andExpect(model().attribute("signedInUser", personWithRole))
@@ -173,7 +173,7 @@ class SickNoteViewControllerTest {
 
         perform(get("/web/sicknote/new"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteFormDto.class)))
             .andExpect(model().attribute("persons", departmentPersons))
             .andExpect(model().attribute("signedInUser", departmentHead))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
@@ -193,7 +193,7 @@ class SickNoteViewControllerTest {
 
         perform(get("/web/sicknote/new"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteFormDto.class)))
             .andExpect(model().attribute("persons", departmentPersons))
             .andExpect(model().attribute("signedInUser", secondStageAuthority))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
@@ -225,7 +225,7 @@ class SickNoteViewControllerTest {
 
         perform(get("/web/sicknote/new"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteFormDto.class)))
             .andExpect(model().attribute("persons", of(person, person2)))
             .andExpect(model().attribute("signedInUser", departmentHeadAndSsa))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
@@ -252,7 +252,7 @@ class SickNoteViewControllerTest {
 
         perform(get("/web/sicknote/new"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteFormDto.class)))
             .andExpect(model().attribute("persons", of(person)))
             .andExpect(model().attribute("signedInUser", departmentHeadAndSsa))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
@@ -284,7 +284,7 @@ class SickNoteViewControllerTest {
 
         perform(get("/web/sicknote/new"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteFormDto.class)))
             .andExpect(model().attribute("persons", of(person2, person)))
             .andExpect(model().attribute("signedInUser", departmentHeadAndSsa))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
@@ -306,7 +306,7 @@ class SickNoteViewControllerTest {
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/edit"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("sickNote", instanceOf(SickNoteForm.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNoteFormDto.class)))
             .andExpect(model().attribute("sickNoteTypes", sickNoteTypes))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_form"));

@@ -6,15 +6,15 @@ public class SickNoteMapper {
         // ok
     }
 
-    static SickNote merge(SickNote sickNote, SickNoteForm sickNoteForm) {
+    static SickNote merge(SickNote sickNote, SickNoteFormDto sickNoteFormDto) {
         return SickNote.builder(sickNote)
-                .person(sickNoteForm.getPerson())
-                .sickNoteType(sickNoteForm.getSickNoteType())
-                .startDate(sickNoteForm.getStartDate())
-                .endDate(sickNoteForm.getEndDate())
-                .dayLength(sickNoteForm.getDayLength())
-                .aubStartDate(sickNoteForm.getAubStartDate())
-                .aubEndDate(sickNoteForm.getAubEndDate())
+                .person(sickNoteFormDto.getPerson())
+                .sickNoteType(sickNoteFormDto.getSickNoteType())
+                .startDate(sickNoteFormDto.getStartDate())
+                .endDate(sickNoteFormDto.getEndDate())
+                .dayLength(sickNoteFormDto.getDayLength())
+                .aubStartDate(sickNoteFormDto.getAubStartDate())
+                .aubEndDate(sickNoteFormDto.getAubEndDate())
                 .build();
     }
 }

@@ -13,7 +13,7 @@ import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
 
-public class SickNoteForm {
+public class SickNoteFormDto {
 
     private Integer id;
     private Person person;
@@ -191,18 +191,18 @@ public class SickNoteForm {
             return this;
         }
 
-        public SickNoteForm build() {
-            final SickNoteForm sickNoteForm = new SickNoteForm();
-            sickNoteForm.setId(id);
-            sickNoteForm.setPerson(person);
-            sickNoteForm.setSickNoteType(sickNoteType);
-            sickNoteForm.setStartDate(startDate);
-            sickNoteForm.setEndDate(endDate);
-            sickNoteForm.setDayLength(dayLength);
-            sickNoteForm.setAubStartDate(aubStartDate);
-            sickNoteForm.setAubEndDate(aubEndDate);
-            sickNoteForm.setComment(comment);
-            return sickNoteForm;
+        public SickNoteFormDto build() {
+            final SickNoteFormDto sickNoteFormDto = new SickNoteFormDto();
+            sickNoteFormDto.setId(id);
+            sickNoteFormDto.setPerson(person);
+            sickNoteFormDto.setSickNoteType(sickNoteType);
+            sickNoteFormDto.setStartDate(startDate);
+            sickNoteFormDto.setEndDate(endDate);
+            sickNoteFormDto.setDayLength(dayLength);
+            sickNoteFormDto.setAubStartDate(aubStartDate);
+            sickNoteFormDto.setAubEndDate(aubEndDate);
+            sickNoteFormDto.setComment(comment);
+            return sickNoteFormDto;
         }
     }
 }

@@ -158,7 +158,7 @@ class SickNoteViewController {
         model.addAttribute("signedInUser", signedInUser);
         model.addAttribute("person", person);
 
-        model.addAttribute("sickNote", new SickNoteForm());
+        model.addAttribute("sickNote", new SickNoteFormDto());
 
         final List<Person> managedPersons = getManagedPersons(signedInUser);
         model.addAttribute("persons", managedPersons);
@@ -171,28 +171,28 @@ class SickNoteViewController {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_ADD')")
     @PostMapping("/sicknote")
-    public String addNewSickNote(@ModelAttribute("sickNote") SickNoteForm sickNoteForm, Errors errors, Model model) {
+    public String addNewSickNote(@ModelAttribute("sickNote") SickNoteFormDto sickNoteFormDto, Errors errors, Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
 
         final SickNote sickNote = SickNote.builder()
-                .id(sickNoteForm.getId())
-                .person(sickNoteForm.getPerson())
+                .id(sickNoteFormDto.getId())
+                .person(sickNoteFormDto.getPerson())
                 .applier(signedInUser)
-                .sickNoteType(sickNoteForm.getSickNoteType())
-                .startDate(sickNoteForm.getStartDate())
-                .endDate(sickNoteForm.getEndDate())
-                .dayLength(sickNoteForm.getDayLength())
-                .aubStartDate(sickNoteForm.getAubStartDate())
-                .aubEndDate(sickNoteForm.getAubEndDate())
+                .sickNoteType(sickNoteFormDto.getSickNoteType())
+                .startDate(sickNoteFormDto.getStartDate())
+                .endDate(sickNoteFormDto.getEndDate())
+                .dayLength(sickNoteFormDto.getDayLength())
+                .aubStartDate(sickNoteFormDto.getAubStartDate())
+                .aubEndDate(sickNoteFormDto.getAubEndDate())
                 .build();
 
         sickNoteValidator.validate(sickNote, errors);
         if (errors.hasErrors()) {
             model.addAttribute("errors", errors);
-            model.addAttribute("sickNote", sickNoteForm);
-            model.addAttribute("person", sickNoteForm.getPerson());
+            model.addAttribute("sickNote", sickNoteFormDto);
+            model.addAttribute("person", sickNoteFormDto.getPerson());
             model.addAttribute("persons", getManagedPersons(signedInUser));
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
@@ -201,7 +201,7 @@ class SickNoteViewController {
             return "thymeleaf/sicknote/sick_note_form";
         }
 
-        final SickNote updatedSickNote = sickNoteInteractionService.create(sickNote, signedInUser, sickNoteForm.getComment());
+        final SickNote updatedSickNote = sickNoteInteractionService.create(sickNote, signedInUser, sickNoteFormDto.getComment());
 
         return "redirect:/web/sicknote/" + updatedSickNote.getId();
     }
@@ -222,9 +222,9 @@ class SickNoteViewController {
                 signedInUser.getId(), sickNote.getPerson().getId()));
         }
 
-        final SickNoteForm sickNoteForm = toSickNoteForm(sickNote);
+        final SickNoteFormDto sickNoteFormDto = toSickNoteForm(sickNote);
 
-        model.addAttribute("sickNote", sickNoteForm);
+        model.addAttribute("sickNote", sickNoteFormDto);
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
         addVacationTypeColorsToModel(model);
@@ -235,7 +235,7 @@ class SickNoteViewController {
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
     @PostMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer sickNoteId,
-                               @ModelAttribute("sickNote") SickNoteForm sickNoteForm, Errors errors, Model model) throws UnknownSickNoteException {
+                               @ModelAttribute("sickNote") SickNoteFormDto sickNoteFormDto, Errors errors, Model model) throws UnknownSickNoteException {
 
         final Optional<SickNote> maybeSickNote = sickNoteService.getById(sickNoteId);
         if (maybeSickNote.isEmpty()) {
@@ -243,12 +243,12 @@ class SickNoteViewController {
         }
 
         final SickNote persistedSickNote = maybeSickNote.get();
-        final SickNote editedSickNote = merge(persistedSickNote, sickNoteForm);
+        final SickNote editedSickNote = merge(persistedSickNote, sickNoteFormDto);
         sickNoteValidator.validate(editedSickNote, errors);
 
         if (errors.hasErrors()) {
             model.addAttribute("errors", errors);
-            model.addAttribute("sickNote", sickNoteForm);
+            model.addAttribute("sickNote", sickNoteFormDto);
             model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
             addVacationTypeColorsToModel(model);
@@ -257,7 +257,7 @@ class SickNoteViewController {
         }
 
         final Person signedInUser = personService.getSignedInUser();
-        sickNoteInteractionService.update(editedSickNote, signedInUser, sickNoteForm.getComment());
+        sickNoteInteractionService.update(editedSickNote, signedInUser, sickNoteFormDto.getComment());
 
         return "redirect:/web/sicknote/" + sickNoteId;
     }
@@ -395,8 +395,8 @@ class SickNoteViewController {
         return sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
     }
 
-    private static SickNoteForm toSickNoteForm(SickNote sickNote) {
-        return SickNoteForm.builder()
+    private static SickNoteFormDto toSickNoteForm(SickNote sickNote) {
+        return SickNoteFormDto.builder()
             .id(sickNote.getId())
             .person(sickNote.getPerson())
             .sickNoteType(sickNote.getSickNoteType())
