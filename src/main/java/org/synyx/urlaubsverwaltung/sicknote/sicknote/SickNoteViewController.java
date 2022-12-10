@@ -222,7 +222,8 @@ class SickNoteViewController {
                 signedInUser.getId(), sickNote.getPerson().getId()));
         }
 
-        final SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
+        final SickNoteForm sickNoteForm = toSickNoteForm(sickNote);
+
         model.addAttribute("sickNote", sickNoteForm);
         model.addAttribute("sickNoteTypes", sickNoteTypeService.getSickNoteTypes());
 
@@ -392,5 +393,18 @@ class SickNoteViewController {
 
     private SickNote getSickNote(Integer id) throws UnknownSickNoteException {
         return sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
+    }
+
+    private static SickNoteForm toSickNoteForm(SickNote sickNote) {
+        return SickNoteForm.builder()
+            .id(sickNote.getId())
+            .person(sickNote.getPerson())
+            .sickNoteType(sickNote.getSickNoteType())
+            .startDate(sickNote.getStartDate())
+            .endDate(sickNote.getEndDate())
+            .dayLength(sickNote.getDayLength())
+            .aubStartDate(sickNote.getAubStartDate())
+            .aubEndDate(sickNote.getAubEndDate())
+            .build();
     }
 }

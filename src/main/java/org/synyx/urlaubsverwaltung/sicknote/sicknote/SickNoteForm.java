@@ -13,9 +13,6 @@ import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
 
-/**
- * View class representing an sick note.
- */
 public class SickNoteForm {
 
     private Integer id;
@@ -31,21 +28,6 @@ public class SickNoteForm {
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate aubEndDate;
     private String comment;
-
-    protected SickNoteForm() {
-        // default constructor needed for empty object
-    }
-
-    SickNoteForm(SickNote sickNote) {
-        this.id = sickNote.getId();
-        this.person = sickNote.getPerson();
-        this.sickNoteType = sickNote.getSickNoteType();
-        this.startDate = sickNote.getStartDate();
-        this.endDate = sickNote.getEndDate();
-        this.dayLength = sickNote.getDayLength();
-        this.aubStartDate = sickNote.getAubStartDate();
-        this.aubEndDate = sickNote.getAubEndDate();
-    }
 
     public Integer getId() {
         return id;
@@ -147,5 +129,80 @@ public class SickNoteForm {
             ", aubStartDate=" + aubStartDate +
             ", aubEndDate=" + aubEndDate + '\'' +
             '}';
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Integer id;
+        private Person person;
+        private SickNoteType sickNoteType;
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private DayLength dayLength = FULL;
+        private LocalDate aubStartDate;
+        private LocalDate aubEndDate;
+        private String comment;
+
+        public Builder id(Integer id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder person(Person person) {
+            this.person = person;
+            return this;
+        }
+
+        public Builder sickNoteType(SickNoteType sickNoteType) {
+            this.sickNoteType = sickNoteType;
+            return this;
+        }
+
+        public Builder startDate(LocalDate startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+
+        public Builder endDate(LocalDate endDate) {
+            this.endDate = endDate;
+            return this;
+        }
+
+        public Builder dayLength(DayLength dayLength) {
+            this.dayLength = dayLength;
+            return this;
+        }
+
+        public Builder aubStartDate(LocalDate aubStartDate) {
+            this.aubStartDate = aubStartDate;
+            return this;
+        }
+
+        public Builder aubEndDate(LocalDate aubEndDate) {
+            this.aubEndDate = aubEndDate;
+            return this;
+        }
+
+        public Builder comment(String comment) {
+            this.comment = comment;
+            return this;
+        }
+
+        public SickNoteForm build() {
+            final SickNoteForm sickNoteForm = new SickNoteForm();
+            sickNoteForm.setId(id);
+            sickNoteForm.setPerson(person);
+            sickNoteForm.setSickNoteType(sickNoteType);
+            sickNoteForm.setStartDate(startDate);
+            sickNoteForm.setEndDate(endDate);
+            sickNoteForm.setDayLength(dayLength);
+            sickNoteForm.setAubStartDate(aubStartDate);
+            sickNoteForm.setAubEndDate(aubEndDate);
+            sickNoteForm.setComment(comment);
+            return sickNoteForm;
+        }
     }
 }

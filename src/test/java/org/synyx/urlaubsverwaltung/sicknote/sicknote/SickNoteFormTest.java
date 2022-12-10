@@ -89,31 +89,6 @@ class SickNoteFormTest {
     }
 
     @Test
-    void checkCopyConstructor() {
-
-        final SickNote sickNote = SickNote.builder()
-            .id(id)
-            .person(person)
-            .sickNoteType(type)
-            .startDate(day2019_04_16)
-            .endDate(day2019_04_16)
-            .dayLength(DayLength.FULL)
-            .aubStartDate(day2019_04_16)
-            .aubEndDate(day2019_04_16)
-            .build();
-
-        final SickNoteForm sut = new SickNoteForm(sickNote);
-        assertThat(sut.getId()).isEqualTo(id);
-        assertThat(sut.getPerson()).isEqualTo(person);
-        assertThat(sut.getSickNoteType()).isEqualTo(type);
-        assertThat(sut.getStartDate()).isEqualTo(day2019_04_16);
-        assertThat(sut.getEndDate()).isEqualTo(day2019_04_16);
-        assertThat(sut.getDayLength()).isEqualTo(DayLength.FULL);
-        assertThat(sut.getAubStartDate()).isEqualTo(day2019_04_16);
-        assertThat(sut.getAubEndDate()).isEqualTo(day2019_04_16);
-    }
-
-    @Test
     void toStringTest() {
 
         final SickNoteForm sut = new SickNoteForm();
