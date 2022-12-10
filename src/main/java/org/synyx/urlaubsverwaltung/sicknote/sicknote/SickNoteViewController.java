@@ -151,12 +151,9 @@ class SickNoteViewController {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        final Person person;
-        if (personId != null) {
-            person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        } else {
-            person = signedInUser;
-        }
+        final Person person = personId == null
+            ? signedInUser
+            : personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
         model.addAttribute("signedInUser", signedInUser);
         model.addAttribute("person", person);
@@ -235,6 +232,7 @@ class SickNoteViewController {
         if (maybeSickNote.isEmpty()) {
             throw new UnknownSickNoteException(sickNoteId);
         }
+
         final SickNote persistedSickNote = maybeSickNote.get();
         final SickNote editedSickNote = merge(persistedSickNote, sickNoteForm);
         sickNoteValidator.validate(editedSickNote, errors);
@@ -301,7 +299,8 @@ class SickNoteViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/sicknote/{id}/convert")
     public String convertSickNoteToVacation(@PathVariable("id") Integer id,
-                                            @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm, Errors errors, Model model)
+                                            @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm,
+                                            Errors errors, Model model)
         throws UnknownSickNoteException {
 
         final SickNote sickNote = getSickNote(id);
