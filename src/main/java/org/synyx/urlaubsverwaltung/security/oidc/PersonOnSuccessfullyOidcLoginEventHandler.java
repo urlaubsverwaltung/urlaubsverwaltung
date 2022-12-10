@@ -7,7 +7,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.StandardClaimAccessor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -32,7 +31,6 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
     }
 
     @EventListener
-    @Transactional
     public void handle(AuthenticationSuccessEvent event) {
 
         final Authentication authentication = event.getAuthentication();
@@ -65,10 +63,7 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
             personService.update(existentPerson);
 
         } else {
-            final List<Role> permissions = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .map(Role::valueOf)
-                .collect(toList());
+            final List<Role> permissions = getRoles(authentication);
 
             final Person createdPerson = personService.create(
                 userUniqueID,
@@ -80,6 +75,14 @@ class PersonOnSuccessfullyOidcLoginEventHandler {
             );
             personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
+    }
+
+    private List<Role> getRoles(Authentication authentication) {
+        return authentication.getAuthorities()
+            .stream()
+            .map(GrantedAuthority::getAuthority)
+            .map(Role::valueOf)
+            .collect(toList());
     }
 
     private String extractIdentifier(OidcUser oidcUser) {
