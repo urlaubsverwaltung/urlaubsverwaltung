@@ -12,7 +12,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -23,19 +25,20 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static java.math.BigDecimal.ONE;
-import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
@@ -53,6 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
@@ -71,8 +75,6 @@ class SickDaysOverviewViewControllerTest {
     @Mock
     private PersonBasedataService personBasedataService;
     @Mock
-    private WorkDaysCountService workDaysCountService;
-    @Mock
     private DepartmentService departmentService;
     @Mock
     private PersonService personService;
@@ -81,8 +83,8 @@ class SickDaysOverviewViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickDaysOverviewViewController(sickDaysStatisticsService, personBasedataService, workDaysCountService,
-            departmentService, personService, new DateFormatAware(), clock);
+        sut = new SickDaysOverviewViewController(sickDaysStatisticsService, personBasedataService, departmentService,
+                personService, new DateFormatAware(), clock);
     }
 
     @Test
@@ -158,6 +160,9 @@ class SickDaysOverviewViewControllerTest {
         final SickNoteType childSickType = new SickNoteType();
         childSickType.setCategory(SICK_NOTE_CHILD);
 
+        final Map<LocalDate, DayLength> workingTimes = buildWorkingTimeByDate(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 12, 31), (date) -> FULL);
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
+
         final SickNote childSickNote = SickNote.builder()
             .startDate(LocalDate.of(2019, 2, 1))
             .endDate(LocalDate.of(2019, 3, 1))
@@ -167,10 +172,8 @@ class SickDaysOverviewViewControllerTest {
             .person(person)
             .aubStartDate(LocalDate.of(2019, 2, 10))
             .aubEndDate(LocalDate.of(2019, 2, 15))
+            .workingTimeCalendar(workingTimeCalendar)
             .build();
-
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 1), person)).thenReturn(ONE);
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 2, 15), person)).thenReturn(BigDecimal.valueOf(5L));
 
         final SickNoteType sickType = new SickNoteType();
         sickType.setCategory(SICK_NOTE);
@@ -184,10 +187,8 @@ class SickDaysOverviewViewControllerTest {
             .person(person)
             .aubStartDate(LocalDate.of(2019, 4, 10))
             .aubEndDate(LocalDate.of(2019, 4, 20))
+            .workingTimeCalendar(workingTimeCalendar)
             .build();
-
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 15), person)).thenReturn(TEN);
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 10), LocalDate.of(2019, 4, 15), person)).thenReturn(BigDecimal.valueOf(15L));
 
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
@@ -201,9 +202,9 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("sickDaysStatistics", contains(
                 allOf(
                     hasProperty("personId", is(1)),
-                    hasProperty("amountSickDays", is(TEN)),
-                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(15))),
-                    hasProperty("amountChildSickDays", is(ONE)),
+                    hasProperty("amountSickDays", is(BigDecimal.valueOf(15))),
+                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(6))),
+                    hasProperty("amountChildSickDays", is(BigDecimal.valueOf(19))),
                     hasProperty("amountChildSickDaysWithAUB", is(BigDecimal.valueOf(5)))
                 )
             )))
@@ -228,6 +229,9 @@ class SickDaysOverviewViewControllerTest {
         final List<Person> persons = List.of(person);
         when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(persons);
 
+        final Map<LocalDate, DayLength> workingTimes = buildWorkingTimeByDate(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 12, 31), (date) -> FULL);
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
+
         final SickNoteType childSickType = new SickNoteType();
         childSickType.setCategory(SICK_NOTE_CHILD);
 
@@ -240,10 +244,8 @@ class SickDaysOverviewViewControllerTest {
             .person(person)
             .aubStartDate(LocalDate.of(2019, 2, 10))
             .aubEndDate(LocalDate.of(2019, 2, 15))
+            .workingTimeCalendar(workingTimeCalendar)
             .build();
-
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 1), person)).thenReturn(ONE);
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 2, 15), person)).thenReturn(BigDecimal.valueOf(5L));
 
         final SickNoteType sickType = new SickNoteType();
         sickType.setCategory(SICK_NOTE);
@@ -257,10 +259,8 @@ class SickDaysOverviewViewControllerTest {
             .person(person)
             .aubStartDate(LocalDate.of(2019, 4, 10))
             .aubEndDate(LocalDate.of(2019, 4, 20))
+            .workingTimeCalendar(workingTimeCalendar)
             .build();
-
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 15), person)).thenReturn(TEN);
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 10), LocalDate.of(2019, 4, 15), person)).thenReturn(BigDecimal.valueOf(15L));
 
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
@@ -274,9 +274,9 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("sickDaysStatistics", contains(
                 allOf(
                     hasProperty("personId", is(1)),
-                    hasProperty("amountSickDays", is(TEN)),
-                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(15))),
-                    hasProperty("amountChildSickDays", is(ONE)),
+                    hasProperty("amountSickDays", is(BigDecimal.valueOf(15))),
+                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(6))),
+                    hasProperty("amountChildSickDays", is(BigDecimal.valueOf(19))),
                     hasProperty("amountChildSickDaysWithAUB", is(BigDecimal.valueOf(5)))
                 )
             )))
@@ -301,6 +301,9 @@ class SickDaysOverviewViewControllerTest {
         final List<Person> persons = List.of(person);
         when(departmentService.getMembersForSecondStageAuthority(ssa)).thenReturn(persons);
 
+        final Map<LocalDate, DayLength> workingTimes = buildWorkingTimeByDate(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 12, 31), (date) -> FULL);
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
+
         final SickNoteType childSickType = new SickNoteType();
         childSickType.setCategory(SICK_NOTE_CHILD);
 
@@ -313,10 +316,8 @@ class SickDaysOverviewViewControllerTest {
             .person(person)
             .aubStartDate(LocalDate.of(2019, 2, 10))
             .aubEndDate(LocalDate.of(2019, 2, 15))
+            .workingTimeCalendar(workingTimeCalendar)
             .build();
-
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 1), person)).thenReturn(ONE);
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 2, 15), person)).thenReturn(BigDecimal.valueOf(5L));
 
         final SickNoteType sickType = new SickNoteType();
         sickType.setCategory(SICK_NOTE);
@@ -330,10 +331,8 @@ class SickDaysOverviewViewControllerTest {
             .person(person)
             .aubStartDate(LocalDate.of(2019, 4, 10))
             .aubEndDate(LocalDate.of(2019, 4, 20))
+            .workingTimeCalendar(workingTimeCalendar)
             .build();
-
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 15), person)).thenReturn(TEN);
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 10), LocalDate.of(2019, 4, 15), person)).thenReturn(BigDecimal.valueOf(15L));
 
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
@@ -347,9 +346,9 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("sickDaysStatistics", contains(
                 allOf(
                     hasProperty("personId", is(1)),
-                    hasProperty("amountSickDays", is(TEN)),
-                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(15))),
-                    hasProperty("amountChildSickDays", is(ONE)),
+                    hasProperty("amountSickDays", is(BigDecimal.valueOf(15))),
+                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(6))),
+                    hasProperty("amountChildSickDays", is(BigDecimal.valueOf(19))),
                     hasProperty("amountChildSickDaysWithAUB", is(BigDecimal.valueOf(5)))
                 )
             )))
@@ -375,6 +374,9 @@ class SickDaysOverviewViewControllerTest {
         person.setPermissions(List.of(USER));
         when(departmentService.getMembersForSecondStageAuthority(dhAndSsa)).thenReturn(List.of(person));
 
+        final Map<LocalDate, DayLength> workingTimesPersonOne = buildWorkingTimeByDate(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 12, 31), (date) -> FULL);
+        final WorkingTimeCalendar workingTimeCalendarPersonOne = new WorkingTimeCalendar(workingTimesPersonOne);
+
         final SickNoteType childSickType = new SickNoteType();
         childSickType.setCategory(SICK_NOTE_CHILD);
 
@@ -387,11 +389,8 @@ class SickDaysOverviewViewControllerTest {
             .person(person)
             .aubStartDate(LocalDate.of(2019, 2, 10))
             .aubEndDate(LocalDate.of(2019, 2, 15))
+            .workingTimeCalendar(workingTimeCalendarPersonOne)
             .build();
-
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 3, 1), person)).thenReturn(ONE);
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 2, 11), LocalDate.of(2019, 2, 15), person)).thenReturn(BigDecimal.valueOf(5L));
-
 
         final Person person2 = new Person();
         person2.setId(2);
@@ -399,6 +398,9 @@ class SickDaysOverviewViewControllerTest {
         person2.setLastName("LastName two");
         person2.setPermissions(List.of(USER));
         when(departmentService.getMembersForDepartmentHead(dhAndSsa)).thenReturn(List.of(person2));
+
+        final Map<LocalDate, DayLength> workingTimesPersonTwo = buildWorkingTimeByDate(LocalDate.of(2019, 1, 1), LocalDate.of(2019, 12, 31), (date) -> MORNING);
+        final WorkingTimeCalendar workingTimeCalendarPersonTwo = new WorkingTimeCalendar(workingTimesPersonTwo);
 
         final SickNoteType sickType = new SickNoteType();
         sickType.setCategory(SICK_NOTE);
@@ -412,10 +414,8 @@ class SickDaysOverviewViewControllerTest {
             .person(person2)
             .aubStartDate(LocalDate.of(2019, 4, 10))
             .aubEndDate(LocalDate.of(2019, 4, 20))
+            .workingTimeCalendar(workingTimeCalendarPersonTwo)
             .build();
-
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 1), LocalDate.of(2019, 4, 15), person2)).thenReturn(TEN);
-        when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2019, 4, 10), LocalDate.of(2019, 4, 15), person2)).thenReturn(BigDecimal.valueOf(15L));
 
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
@@ -437,7 +437,7 @@ class SickDaysOverviewViewControllerTest {
                     hasProperty("personNiceName", is("FirstName LastName")),
                     hasProperty("amountSickDays", is(ZERO)),
                     hasProperty("amountSickDaysWithAUB", is(ZERO)),
-                    hasProperty("amountChildSickDays", is(ONE)),
+                    hasProperty("amountChildSickDays", is(BigDecimal.valueOf(19))),
                     hasProperty("amountChildSickDaysWithAUB", is(BigDecimal.valueOf(5)))
                 ),
                 allOf(
@@ -447,8 +447,8 @@ class SickDaysOverviewViewControllerTest {
                     hasProperty("personFirstName", is("FirstName two")),
                     hasProperty("personLastName", is("LastName two")),
                     hasProperty("personNiceName", is("FirstName two LastName two")),
-                    hasProperty("amountSickDays", is(TEN)),
-                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(15))),
+                    hasProperty("amountSickDays", is(BigDecimal.valueOf(7.5))),
+                    hasProperty("amountSickDaysWithAUB", is(BigDecimal.valueOf(3.0))),
                     hasProperty("amountChildSickDays", is(ZERO)),
                     hasProperty("amountChildSickDaysWithAUB", is(ZERO))
                 )
@@ -529,6 +529,14 @@ class SickDaysOverviewViewControllerTest {
             )))
             .andExpect(model().attribute("showPersonnelNumberColumn", true))
             .andExpect(view().name("thymeleaf/sicknote/sick_days"));
+    }
+
+    private Map<LocalDate, DayLength> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, DayLength> dayLengthProvider) {
+        Map<LocalDate, DayLength> map = new HashMap<>();
+        for (LocalDate date : new DateRange(from, to)) {
+            map.put(date, dayLengthProvider.apply(date));
+        }
+        return map;
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
-import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
@@ -20,7 +19,6 @@ import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -54,7 +52,6 @@ public class SickDaysOverviewViewController {
 
     private final SickDaysStatisticsService sickDaysStatisticsService;
     private final PersonBasedataService personBasedataService;
-    private final WorkDaysCountService workDaysCountService;
     private final DepartmentService departmentService;
     private final PersonService personService;
     private final DateFormatAware dateFormatAware;
@@ -62,11 +59,10 @@ public class SickDaysOverviewViewController {
 
     @Autowired
     public SickDaysOverviewViewController(SickDaysStatisticsService sickDaysStatisticsService, PersonBasedataService personBasedataService,
-                                          WorkDaysCountService workDaysCountService, DepartmentService departmentService,
-                                          PersonService personService, DateFormatAware dateFormatAware, Clock clock) {
+                                          DepartmentService departmentService, PersonService personService, DateFormatAware dateFormatAware, Clock clock) {
+
         this.sickDaysStatisticsService = sickDaysStatisticsService;
         this.personBasedataService = personBasedataService;
-        this.workDaysCountService = workDaysCountService;
         this.departmentService = departmentService;
         this.personService = personService;
         this.dateFormatAware = dateFormatAware;
@@ -167,19 +163,13 @@ public class SickDaysOverviewViewController {
 
     private void calculateSickDays(FilterPeriod period, Map<Person, SickDays> sickDays, SickNote sickNote) {
 
-        final DayLength dayLength = sickNote.getDayLength();
         final Person person = sickNote.getPerson();
 
-        final LocalDate startDate = sickNote.getStartDate().isBefore(period.getStartDate()) ? period.getStartDate() : sickNote.getStartDate();
-        final LocalDate endDate = sickNote.getEndDate().isAfter(period.getEndDate()) ? period.getEndDate() : sickNote.getEndDate();
-        final BigDecimal workDays = workDaysCountService.getWorkDaysCount(dayLength, startDate, endDate, person);
+        final BigDecimal workDays = sickNote.getWorkDays(period.getStartDate(), period.getEndDate());
         sickDays.computeIfAbsent(person, unused -> new SickDays()).addDays(TOTAL, workDays);
 
         if (sickNote.isAubPresent()) {
-            final LocalDate startDateAub = sickNote.getAubStartDate().isBefore(period.getStartDate()) ? period.getStartDate() : sickNote.getAubStartDate();
-            final LocalDate endDateAub = sickNote.getAubEndDate().isAfter(period.getEndDate()) ? period.getEndDate() : sickNote.getAubEndDate();
-
-            final BigDecimal workDaysWithAUB = workDaysCountService.getWorkDaysCount(dayLength, startDateAub, endDateAub, person);
+            final BigDecimal workDaysWithAUB = sickNote.getWorkDaysWithAub(period.getStartDate(), period.getEndDate());
             sickDays.computeIfAbsent(person, unused -> new SickDays()).addDays(WITH_AUB, workDaysWithAUB);
         }
     }
