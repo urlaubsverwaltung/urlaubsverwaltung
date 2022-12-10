@@ -24,7 +24,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentForm;
+import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormDto;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
@@ -700,7 +700,7 @@ class SickNoteViewControllerTest {
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
             .andExpect(model().attribute("sickNote", instanceOf(ExtendedSickNote.class)))
-            .andExpect(model().attribute("comment", instanceOf(SickNoteCommentForm.class)))
+            .andExpect(model().attribute("comment", instanceOf(SickNoteCommentFormDto.class)))
             .andExpect(model().attribute("comments", instanceOf(List.class)))
             .andExpect(model().attribute("departmentsOfPerson", List.of(department)))
             .andExpect(view().name("thymeleaf/sicknote/sick_note"));
@@ -1079,7 +1079,7 @@ class SickNoteViewControllerTest {
             final Errors errors = invocation.getArgument(1);
             errors.rejectValue("text", "errors");
             return null;
-        }).when(sickNoteCommentFormValidator).validate(any(SickNoteCommentForm.class), any(Errors.class));
+        }).when(sickNoteCommentFormValidator).validate(any(SickNoteCommentFormDto.class), any(Errors.class));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/comment"))
             .andExpect(flash().attribute("errors", instanceOf(Errors.class)))

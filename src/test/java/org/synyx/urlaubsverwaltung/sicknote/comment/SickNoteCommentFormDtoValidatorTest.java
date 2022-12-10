@@ -10,7 +10,7 @@ import org.springframework.validation.Errors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class SickNoteCommentFormValidatorTest {
+class SickNoteCommentFormDtoValidatorTest {
 
     private SickNoteCommentFormValidator sut;
 
@@ -21,33 +21,33 @@ class SickNoteCommentFormValidatorTest {
 
     @Test
     void ensureCommentMayNotBeNull() {
-        final SickNoteCommentForm sickNoteCommentForm = new SickNoteCommentForm();
+        final SickNoteCommentFormDto sickNoteCommentFormDto = new SickNoteCommentFormDto();
 
-        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentForm, "sickNote");
-        sut.validate(sickNoteCommentForm, errors);
+        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentFormDto, "sickNote");
+        sut.validate(sickNoteCommentFormDto, errors);
         assertThat(errors.getFieldErrors("text").get(0).getCode()).isEqualTo("error.entry.mandatory");
     }
 
     @Test
     void ensureTooLongCommentIsNotValid() {
 
-        final SickNoteCommentForm sickNoteCommentForm = new SickNoteCommentForm();
-        sickNoteCommentForm.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, "
+        final SickNoteCommentFormDto sickNoteCommentFormDto = new SickNoteCommentFormDto();
+        sickNoteCommentFormDto.setText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, "
             + "sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, "
             + "sed diam voluptua. At vero eos et accusam et justo duo dolores bla bla");
 
-        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentForm, "sickNote");
-        sut.validate(sickNoteCommentForm, errors);
+        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentFormDto, "sickNote");
+        sut.validate(sickNoteCommentFormDto, errors);
         assertThat(errors.getFieldErrors("text").get(0).getCode()).isEqualTo("error.entry.tooManyChars");
     }
 
     @Test
     void ensureValidCommentHasNoErrors() {
-        final SickNoteCommentForm sickNoteCommentForm = new SickNoteCommentForm();
-        sickNoteCommentForm.setText("I am a fluffy little comment");
+        final SickNoteCommentFormDto sickNoteCommentFormDto = new SickNoteCommentFormDto();
+        sickNoteCommentFormDto.setText("I am a fluffy little comment");
 
-        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentForm, "sickNote");
-        sut.validate(sickNoteCommentForm, errors);
+        final Errors errors = new BeanPropertyBindingResult(sickNoteCommentFormDto, "sickNote");
+        sut.validate(sickNoteCommentFormDto, errors);
         assertThat(errors.getErrorCount()).isZero();
     }
 }
