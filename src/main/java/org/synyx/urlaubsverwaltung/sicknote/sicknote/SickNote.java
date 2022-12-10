@@ -112,6 +112,25 @@ public class SickNote {
         return workingTime(workingTimeCalendar, new DateRange(startDate, endDate), dayLength);
     }
 
+    public BigDecimal getWorkDaysWithAub() {
+        return workingTime(workingTimeCalendar, new DateRange(getAubStartDate(), getAubEndDate()), getDayLength());
+    }
+
+    public BigDecimal getWorkDaysWithAub(LocalDate from, LocalDate to) {
+        if (!isAubPresent()) {
+            return BigDecimal.ZERO;
+        }
+
+        final LocalDate startDate = getAubStartDate().isBefore(from) ? from : getAubStartDate();
+        final LocalDate endDate = getAubEndDate().isAfter(to) ? to : getAubEndDate();
+
+        if (endDate.isBefore(startDate)) {
+            return BigDecimal.ZERO;
+        }
+
+        return workingTime(workingTimeCalendar, new DateRange(startDate, endDate), dayLength);
+    }
+
     private static BigDecimal workingTime(WorkingTimeCalendar workingTimeCalendar, DateRange dateRange, DayLength dayLength) {
         if (workingTimeCalendar == null) {
             return BigDecimal.ZERO;
@@ -165,6 +184,7 @@ public class SickNote {
                 ", endOfSickPayNotificationSend=" + endOfSickPayNotificationSend +
                 ", status=" + status +
                 ", workDays=" + getWorkDays() +
+                ", workDaysWithAub=" + getWorkDaysWithAub() +
                 '}';
     }
 

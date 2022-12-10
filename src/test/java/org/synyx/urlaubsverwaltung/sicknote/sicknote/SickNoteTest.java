@@ -89,6 +89,86 @@ class SickNoteTest {
     }
 
     @Test
+    void ensureGetWorkDaysWithAub() {
+
+        final Map<LocalDate, DayLength> workingTimes = buildWorkingTimeByDate(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30), (date) -> FULL);
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
+
+        final SickNote sickNote = SickNote.builder()
+                .dayLength(FULL)
+                .startDate(LocalDate.of(2022, JUNE, 13))
+                .endDate(LocalDate.of(2022, JUNE, 24))
+                .aubStartDate(LocalDate.of(2022, JUNE, 20))
+                .aubEndDate(LocalDate.of(2022, JUNE, 24))
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+        final BigDecimal actual = sickNote.getWorkDaysWithAub(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30));
+
+        assertThat(actual).isEqualTo(BigDecimal.valueOf(5));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = DayLength.class, names = { "MORNING", "NOON" })
+    void ensureGetWorkDaysWithAubHalfDay(DayLength givenDayLength) {
+
+        final Map<LocalDate, DayLength> workingTimes = buildWorkingTimeByDate(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30), (date) -> FULL);
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
+
+        final SickNote sickNote = SickNote.builder()
+                .dayLength(givenDayLength)
+                .startDate(LocalDate.of(2022, JUNE, 2))
+                .endDate(LocalDate.of(2022, JUNE, 2))
+                .aubStartDate(LocalDate.of(2022, JUNE, 2))
+                .aubEndDate(LocalDate.of(2022, JUNE, 2))
+                .workingTimeCalendar(workingTimeCalendar)
+                .build();
+
+        final BigDecimal actual = sickNote.getWorkDaysWithAub(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30));
+
+        assertThat(actual).isEqualTo(BigDecimal.valueOf(0.5));
+    }
+
+    @Test
+    void ensureGetWorkDaysWithAubWhenAubNotPresent() {
+
+        final SickNote sickNote = SickNote.builder().build();
+        final BigDecimal actual = sickNote.getWorkDaysWithAub(LocalDate.of(2022, DECEMBER, 1), LocalDate.of(2022, DECEMBER, 31));
+
+        assertThat(actual).isEqualTo(BigDecimal.ZERO);
+    }
+
+    @Test
+    void ensureGetWorkDaysWithAubWhenDateRangeIsAfterAubDate() {
+
+        final SickNote sickNote = SickNote.builder()
+                .startDate(LocalDate.of(2022, JUNE, 13))
+                .endDate(LocalDate.of(2022, JUNE, 24))
+                .aubStartDate(LocalDate.of(2022, JUNE, 20))
+                .aubEndDate(LocalDate.of(2022, JUNE, 24))
+                .build();
+
+        final BigDecimal actual = sickNote.getWorkDaysWithAub(LocalDate.of(2022, DECEMBER, 1), LocalDate.of(2022, DECEMBER, 31));
+
+        assertThat(actual).isEqualTo(BigDecimal.ZERO);
+    }
+
+    @Test
+    void ensureGetWorkDaysWithAubWhenDateRangeIsBeforeAubDate() {
+
+        final SickNote sickNote = SickNote.builder()
+                .startDate(LocalDate.of(2022, JUNE, 13))
+                .endDate(LocalDate.of(2022, JUNE, 24))
+                .aubStartDate(LocalDate.of(2022, JUNE, 20))
+                .aubEndDate(LocalDate.of(2022, JUNE, 24))
+                .build();
+
+        final BigDecimal actual = sickNote.getWorkDaysWithAub(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, JANUARY, 31));
+
+        assertThat(actual).isEqualTo(BigDecimal.ZERO);
+    }
+
+    @Test
     void ensureAUBIsPresentIfAUBStartDateAndAUBEndDateAreSet() {
 
         final SickNote sickNote = SickNote.builder()
@@ -162,7 +242,7 @@ class SickNoteTest {
         assertThat(sickNote).hasToString("SickNote{id=null, person=null, applier=null, " +
             "sickNoteType=null, startDate=null," +
             " endDate=null, dayLength=null, aubStartDate=null, aubEndDate=null, lastEdited=null," +
-            " endOfSickPayNotificationSend=null, status=null, workDays=0}");
+            " endOfSickPayNotificationSend=null, status=null, workDays=0, workDaysWithAub=0}");
     }
 
     @Test
@@ -199,7 +279,7 @@ class SickNoteTest {
         assertThat(sickNote).hasToString("SickNote{id=1, person=Person{id='1'}, " +
             "applier=Person{id='2'}, sickNoteType=SickNoteType{category=SICK_NOTE, messageKey='messageKey'}, startDate=2022-01-01, " +
             "endDate=2022-01-31, dayLength=FULL, aubStartDate=2022-01-17, aubEndDate=2022-01-21," +
-            " lastEdited=1970-01-01, endOfSickPayNotificationSend=1970-01-01, status=ACTIVE, workDays=31}");
+            " lastEdited=1970-01-01, endOfSickPayNotificationSend=1970-01-01, status=ACTIVE, workDays=31, workDaysWithAub=5}");
     }
 
     private Map<LocalDate, DayLength> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, DayLength> dayLengthProvider) {
