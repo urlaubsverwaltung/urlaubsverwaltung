@@ -124,7 +124,7 @@ class SickNoteViewController {
             || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, sickNote)
             || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, sickNote.getPerson())
             || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, sickNote.getPerson())) {
-            model.addAttribute("sickNote", new ExtendedSickNote(sickNote, workDaysCountService));
+            model.addAttribute("sickNote", sickNote);
             model.addAttribute("comment", new SickNoteCommentFormDto());
 
             final List<SickNoteCommentEntity> comments = sickNoteCommentService.getCommentsBySickNote(sickNote);
@@ -298,7 +298,7 @@ class SickNoteViewController {
             throw new SickNoteAlreadyInactiveException(id);
         }
 
-        model.addAttribute("sickNote", new ExtendedSickNote(sickNote, workDaysCountService));
+        model.addAttribute("sickNote", sickNote);
         model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote));
         model.addAttribute("vacationTypes", getActiveVacationTypes());
 
@@ -317,7 +317,7 @@ class SickNoteViewController {
 
         if (errors.hasErrors()) {
             model.addAttribute("errors", errors);
-            model.addAttribute("sickNote", new ExtendedSickNote(sickNote, workDaysCountService));
+            model.addAttribute("sickNote", sickNote);
             model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
             model.addAttribute("vacationTypes", getActiveVacationTypes());
 

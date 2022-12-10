@@ -699,7 +699,7 @@ class SickNoteViewControllerTest {
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID))
-            .andExpect(model().attribute("sickNote", instanceOf(ExtendedSickNote.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNote.class)))
             .andExpect(model().attribute("comment", instanceOf(SickNoteCommentFormDto.class)))
             .andExpect(model().attribute("comments", instanceOf(List.class)))
             .andExpect(model().attribute("departmentsOfPerson", List.of(department)))
@@ -1198,7 +1198,7 @@ class SickNoteViewControllerTest {
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
-            .andExpect(model().attribute("sickNote", instanceOf(ExtendedSickNote.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNote.class)))
             .andExpect(model().attribute("sickNoteConvertForm", instanceOf(SickNoteConvertForm.class)))
             .andExpect(model().attribute("vacationTypes", vacationTypes));
     }
@@ -1213,7 +1213,7 @@ class SickNoteViewControllerTest {
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
-            .andExpect(model().attribute("sickNote", instanceOf(ExtendedSickNote.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNote.class)))
             .andExpect(model().attribute("sickNoteConvertForm", instanceOf(SickNoteConvertForm.class)))
             .andExpect(model().attribute("vacationTypes", vacationTypes));
     }
@@ -1255,7 +1255,7 @@ class SickNoteViewControllerTest {
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_convert"))
             .andExpect(model().attribute("errors", instanceOf(Errors.class)))
-            .andExpect(model().attribute("sickNote", instanceOf(ExtendedSickNote.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNote.class)))
             .andExpect(model().attribute("sickNoteConvertForm", instanceOf(SickNoteConvertForm.class)))
             .andExpect(model().attribute("vacationTypes", vacationTypes));
     }
@@ -1278,7 +1278,7 @@ class SickNoteViewControllerTest {
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
             .andExpect(view().name("thymeleaf/sicknote/sick_note_convert"))
             .andExpect(model().attribute("errors", instanceOf(Errors.class)))
-            .andExpect(model().attribute("sickNote", instanceOf(ExtendedSickNote.class)))
+            .andExpect(model().attribute("sickNote", instanceOf(SickNote.class)))
             .andExpect(model().attribute("sickNoteConvertForm", instanceOf(SickNoteConvertForm.class)))
             .andExpect(model().attribute("vacationTypes", vacationTypes));
     }

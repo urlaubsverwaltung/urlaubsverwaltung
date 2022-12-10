@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
@@ -57,13 +58,15 @@ class PersonServiceIT extends TestContainersBase {
     @Test
     void deletePerson() {
 
+        final LocalDate now = LocalDate.now();
+
         final Person person = new Person("user", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER));
         person.setNotifications(List.of(MailNotification.NOTIFICATION_USER));
         final Person personWithId = personService.create(person);
         final Integer personId = personWithId.getId();
 
-        PersonBasedata personBasedata = new PersonBasedata(new PersonId(personId), "42", "lala");
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(personId), "42", "lala");
         personBasedataService.update(personBasedata);
 
         final Application application = new Application();
@@ -92,14 +95,15 @@ class PersonServiceIT extends TestContainersBase {
         applicationWithApplier.setApplier(personWithId);
         final Application applicationWithApplierWithId = applicationService.save(applicationWithApplier);
 
-        final SickNote sickNote = SickNote.builder().person(personWithId).build();
-        final SickNote sickNoteWithId = sickNoteService.save(sickNote);
+        final SickNote sickNoteWithId =
+            sickNoteService.save(SickNote.builder().person(personWithId).startDate(now.minusDays(5)).endDate(now.minusDays(3)).dayLength(DayLength.FULL).build());
 
-        final SickNote sickNoteWithComment = SickNote.builder().build();
-        final SickNote sickNoteWithCommentWithId = sickNoteService.save(sickNoteWithComment);
+        final SickNote sickNoteWithCommentWithId =
+            sickNoteService.save(SickNote.builder().startDate(now.minusDays(1)).endDate(now.minusDays(1)).dayLength(DayLength.FULL).build());
+
         sickNoteCommentService.create(sickNoteWithCommentWithId, SickNoteCommentAction.COMMENTED, personWithId, "Test");
 
-        final Overtime overtimeRecord = overtimeService.record(new Overtime(personWithId, LocalDate.now(), LocalDate.now(), Duration.ZERO), Optional.empty(), personWithId);
+        final Overtime overtimeRecord = overtimeService.record(new Overtime(personWithId, now, now, Duration.ZERO), Optional.empty(), personWithId);
 
         final Department department = new Department();
         department.setName("department");

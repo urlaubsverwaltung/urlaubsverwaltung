@@ -656,6 +656,62 @@ class WorkingTimeServiceImplTest {
     }
 
     @Test
+    void ensureGetWorkingTimesByPersonsAndPeriod() {
+        final Person person = new Person();
+        person.setId(1);
+
+        final Person person2 = new Person();
+        person2.setId(2);
+
+        final List<Person> persons = List.of(person, person2);
+        final DateRange dateRange = new DateRange(LocalDate.of(2022, JUNE, 1), LocalDate.of(2022, JUNE, 30));
+
+        final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
+        workingTimeEntity.setValidFrom(LocalDate.of(2022, JUNE, 1));
+        workingTimeEntity.setPerson(person);
+        workingTimeEntity.setMonday(FULL);
+        workingTimeEntity.setTuesday(FULL);
+        workingTimeEntity.setWednesday(FULL);
+        workingTimeEntity.setThursday(FULL);
+        workingTimeEntity.setFriday(FULL);
+        workingTimeEntity.setSaturday(FULL);
+        workingTimeEntity.setSunday(FULL);
+        workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        final WorkingTimeEntity workingTimeEntity2 = new WorkingTimeEntity();
+        workingTimeEntity2.setValidFrom(LocalDate.of(2022, JUNE, 1));
+        workingTimeEntity2.setPerson(person2);
+        workingTimeEntity2.setMonday(DayLength.NOON);
+        workingTimeEntity2.setTuesday(DayLength.NOON);
+        workingTimeEntity2.setWednesday(DayLength.NOON);
+        workingTimeEntity2.setThursday(DayLength.NOON);
+        workingTimeEntity2.setFriday(DayLength.NOON);
+        workingTimeEntity2.setSaturday(DayLength.NOON);
+        workingTimeEntity2.setSunday(DayLength.NOON);
+        workingTimeEntity2.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
+
+        when(workingTimeRepository.findByPersonIsInOrderByValidFromDesc(persons))
+                .thenReturn(List.of(workingTimeEntity, workingTimeEntity2));
+
+        when(settingsService.getSettings()).thenReturn(new Settings());
+
+        final Map<Person, WorkingTimeCalendar> actual = sut.getWorkingTimesByPersons(persons, dateRange);
+        assertThat(actual)
+                .hasSize(2)
+                .containsKeys(person, person2);
+
+        final WorkingTimeCalendar personWorkingTimeCalendar = actual.get(person);
+        for (LocalDate date : dateRange) {
+            assertThat(personWorkingTimeCalendar.workingTime(date)).hasValue(BigDecimal.ONE);
+        }
+
+        final WorkingTimeCalendar person2WorkingTimeCalendar = actual.get(person2);
+        for (LocalDate date : dateRange) {
+            assertThat(person2WorkingTimeCalendar.workingTime(date)).hasValue(BigDecimal.valueOf(0.5));
+        }
+    }
+
+    @Test
     void ensureGetWorkingTimesByPersonsAndYearUsesDefaultFederalStateWhenWorkingTimeDoesNotDefineIt() {
         final Person person = new Person();
         person.setId(1);

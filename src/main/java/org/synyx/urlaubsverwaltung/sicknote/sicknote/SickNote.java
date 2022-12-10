@@ -5,6 +5,8 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 
+import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -22,10 +24,12 @@ public class SickNote {
     private final LocalDate lastEdited;
     private final LocalDate endOfSickPayNotificationSend;
     private final SickNoteStatus status;
+    private final BigDecimal workDays;
 
     private SickNote(Integer id, Person person, Person applier, SickNoteType sickNoteType, LocalDate startDate,
                      LocalDate endDate, DayLength dayLength, LocalDate aubStartDate, LocalDate aubEndDate,
-                     LocalDate lastEdited, LocalDate endOfSickPayNotificationSend, SickNoteStatus status) {
+                     LocalDate lastEdited, LocalDate endOfSickPayNotificationSend, SickNoteStatus status,
+                     BigDecimal workDays) {
 
         this.id = id;
         this.person = person;
@@ -39,6 +43,7 @@ public class SickNote {
         this.lastEdited = lastEdited;
         this.endOfSickPayNotificationSend = endOfSickPayNotificationSend;
         this.status = status;
+        this.workDays = workDays;
     }
 
     public Integer getId() {
@@ -89,6 +94,18 @@ public class SickNote {
         return status;
     }
 
+    public BigDecimal getWorkDays() {
+        return workDays;
+    }
+
+    public DayOfWeek getWeekDayOfStartDate() {
+        return getStartDate().getDayOfWeek();
+    }
+
+    public DayOfWeek getWeekDayOfEndDate() {
+        return getEndDate().getDayOfWeek();
+    }
+
     public boolean isActive() {
         return SickNoteStatus.ACTIVE.equals(getStatus());
     }
@@ -116,6 +133,7 @@ public class SickNote {
                 ", lastEdited=" + lastEdited +
                 ", endOfSickPayNotificationSend=" + endOfSickPayNotificationSend +
                 ", status=" + status +
+                ", workDays=" + workDays +
                 '}';
     }
 
@@ -170,6 +188,7 @@ public class SickNote {
         private LocalDate lastEdited;
         private LocalDate endOfSickPayNotificationSend;
         private SickNoteStatus status;
+        private BigDecimal workDays;
 
         public Builder id(Integer id) {
             this.id = id;
@@ -231,9 +250,14 @@ public class SickNote {
             return this;
         }
 
+        public Builder workDays(BigDecimal workDays) {
+            this.workDays = workDays;
+            return this;
+        }
+
         public SickNote build() {
             return new SickNote(id, person, applier, sickNoteType, startDate, endDate, dayLength, aubStartDate,
-                    aubEndDate, lastEdited, endOfSickPayNotificationSend, status);
+                    aubEndDate, lastEdited, endOfSickPayNotificationSend, status, workDays);
         }
     }
 }
