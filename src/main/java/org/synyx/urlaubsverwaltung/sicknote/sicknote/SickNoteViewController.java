@@ -115,7 +115,7 @@ class SickNoteViewController {
     public String sickNoteDetails(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException {
 
         final Person signedInUser = personService.getSignedInUser();
-        final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
+        final SickNote sickNote = getSickNote(id);
 
         final boolean isSamePerson = sickNote.getPerson().equals(signedInUser);
 
@@ -205,7 +205,7 @@ class SickNoteViewController {
     @GetMapping("/sicknote/{id}/edit")
     public String editSickNote(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
-        final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
+        final SickNote sickNote = getSickNote(id);
         if (!sickNote.isActive()) {
             throw new SickNoteAlreadyInactiveException(id);
         }
@@ -261,7 +261,7 @@ class SickNoteViewController {
                              @ModelAttribute("comment") SickNoteCommentForm comment, Errors errors, RedirectAttributes redirectAttributes)
         throws UnknownSickNoteException {
 
-        final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
+        final SickNote sickNote = getSickNote(id);
         final Person signedInUser = personService.getSignedInUser();
 
         if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_COMMENT, sickNote)) {
@@ -286,7 +286,7 @@ class SickNoteViewController {
     public String convertSickNoteToVacation(@PathVariable("id") Integer id, Model model)
         throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
-        final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
+        final SickNote sickNote = getSickNote(id);
         if (!sickNote.isActive()) {
             throw new SickNoteAlreadyInactiveException(id);
         }
@@ -304,7 +304,7 @@ class SickNoteViewController {
                                             @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm, Errors errors, Model model)
         throws UnknownSickNoteException {
 
-        final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
+        final SickNote sickNote = getSickNote(id);
         sickNoteConvertFormValidator.validate(sickNoteConvertForm, errors);
 
         if (errors.hasErrors()) {
@@ -325,7 +325,7 @@ class SickNoteViewController {
     @PostMapping("/sicknote/{id}/cancel")
     public String cancelSickNote(@PathVariable("id") Integer id) throws UnknownSickNoteException {
 
-        final SickNote sickNote = sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
+        final SickNote sickNote = getSickNote(id);
         final Person signedInUser = personService.getSignedInUser();
 
         if (!signedInUser.hasRole(OFFICE) && !isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_CANCEL, sickNote)) {
@@ -381,5 +381,9 @@ class SickNoteViewController {
     private void addVacationTypeColorsToModel(Model model) {
         final List<VacationTypeDto> vacationTypeDtos = vacationTypeViewModelService.getVacationTypeColors();
         model.addAttribute("vacationTypeColors", vacationTypeDtos);
+    }
+
+    private SickNote getSickNote(Integer id) throws UnknownSickNoteException {
+        return sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
     }
 }
