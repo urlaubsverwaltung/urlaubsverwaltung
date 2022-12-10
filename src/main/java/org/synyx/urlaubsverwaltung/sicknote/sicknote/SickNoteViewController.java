@@ -176,8 +176,16 @@ class SickNoteViewController {
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
 
-        final SickNote sickNote = SickNote.builder(sickNoteForm.generateSickNote())
+        final SickNote sickNote = SickNote.builder()
+                .id(sickNoteForm.getId())
+                .person(sickNoteForm.getPerson())
                 .applier(signedInUser)
+                .sickNoteType(sickNoteForm.getSickNoteType())
+                .startDate(sickNoteForm.getStartDate())
+                .endDate(sickNoteForm.getEndDate())
+                .dayLength(sickNoteForm.getDayLength())
+                .aubStartDate(sickNoteForm.getAubStartDate())
+                .aubEndDate(sickNoteForm.getAubEndDate())
                 .build();
 
         sickNoteValidator.validate(sickNote, errors);

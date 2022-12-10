@@ -89,58 +89,28 @@ class SickNoteFormTest {
     }
 
     @Test
-    void checkGeneratedSickNote() {
+    void checkCopyConstructor() {
 
-        final SickNoteForm sut = new SickNoteForm();
-        sut.setId(id);
-        sut.setPerson(person);
-        sut.setSickNoteType(type);
-        sut.setStartDate(day2019_04_16);
-        sut.setEndDate(day2019_04_16);
-        sut.setDayLength(DayLength.FULL);
-        sut.setAubStartDate(day2019_04_16);
-        sut.setAubEndDate(day2019_04_16);
-        sut.setComment("my comment");
+        final SickNote sickNote = SickNote.builder()
+            .id(id)
+            .person(person)
+            .sickNoteType(type)
+            .startDate(day2019_04_16)
+            .endDate(day2019_04_16)
+            .dayLength(DayLength.FULL)
+            .aubStartDate(day2019_04_16)
+            .aubEndDate(day2019_04_16)
+            .build();
 
-        SickNote sickNote = sut.generateSickNote();
-
-
-        assertThat(sickNote.getId()).isEqualTo(id);
-        assertThat(sickNote.getPerson()).isEqualTo(person);
-        assertThat(sickNote.getSickNoteType()).isEqualTo(type);
-        assertThat(sickNote.getStartDate()).isEqualTo(day2019_04_16);
-        assertThat(sickNote.getEndDate()).isEqualTo(day2019_04_16);
-        assertThat(sickNote.getDayLength()).isEqualTo(DayLength.FULL);
-        assertThat(sickNote.getAubStartDate()).isEqualTo(day2019_04_16);
-        assertThat(sickNote.getAubEndDate()).isEqualTo(day2019_04_16);
-    }
-
-    @Test
-    void checkCopyConstructure() {
-
-        final SickNoteForm sut = new SickNoteForm();
-        sut.setId(id);
-        sut.setPerson(person);
-        sut.setSickNoteType(type);
-        sut.setStartDate(day2019_04_16);
-        sut.setEndDate(day2019_04_16);
-        sut.setDayLength(DayLength.FULL);
-        sut.setAubStartDate(day2019_04_16);
-        sut.setAubEndDate(day2019_04_16);
-        sut.setComment("my comment");
-
-        SickNote sickNote = sut.generateSickNote();
-
-        SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
-
-        assertThat(sickNoteForm.getId()).isEqualTo(id);
-        assertThat(sickNoteForm.getPerson()).isEqualTo(person);
-        assertThat(sickNoteForm.getSickNoteType()).isEqualTo(type);
-        assertThat(sickNoteForm.getStartDate()).isEqualTo(day2019_04_16);
-        assertThat(sickNoteForm.getEndDate()).isEqualTo(day2019_04_16);
-        assertThat(sickNoteForm.getDayLength()).isEqualTo(DayLength.FULL);
-        assertThat(sickNoteForm.getAubStartDate()).isEqualTo(day2019_04_16);
-        assertThat(sickNoteForm.getAubEndDate()).isEqualTo(day2019_04_16);
+        final SickNoteForm sut = new SickNoteForm(sickNote);
+        assertThat(sut.getId()).isEqualTo(id);
+        assertThat(sut.getPerson()).isEqualTo(person);
+        assertThat(sut.getSickNoteType()).isEqualTo(type);
+        assertThat(sut.getStartDate()).isEqualTo(day2019_04_16);
+        assertThat(sut.getEndDate()).isEqualTo(day2019_04_16);
+        assertThat(sut.getDayLength()).isEqualTo(DayLength.FULL);
+        assertThat(sut.getAubStartDate()).isEqualTo(day2019_04_16);
+        assertThat(sut.getAubEndDate()).isEqualTo(day2019_04_16);
     }
 
     @Test
@@ -157,10 +127,7 @@ class SickNoteFormTest {
         sut.setAubEndDate(day2019_04_16);
         sut.setComment("my comment");
 
-        SickNote sickNote = sut.generateSickNote();
-        SickNoteForm sickNoteForm = new SickNoteForm(sickNote);
-
-        assertThat(sickNoteForm).hasToString("SickNoteForm{id=1, person=Person{id='null'}, " +
+        assertThat(sut).hasToString("SickNoteForm{id=1, person=Person{id='null'}, " +
             "sickNoteType=SickNoteType{category=null, messageKey='null'}, " +
             "startDate=2019-04-16, endDate=2019-04-16, dayLength=FULL, aubStartDate=2019-04-16, aubEndDate=2019-04-16'}");
     }

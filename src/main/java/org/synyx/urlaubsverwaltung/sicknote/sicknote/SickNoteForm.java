@@ -135,19 +135,6 @@ public class SickNoteForm {
         this.comment = comment;
     }
 
-    SickNote generateSickNote() {
-        return SickNote.builder()
-                .id(id)
-                .person(person)
-                .sickNoteType(sickNoteType)
-                .startDate(startDate)
-                .endDate(endDate)
-                .dayLength(dayLength)
-                .aubStartDate(aubStartDate)
-                .aubEndDate(aubEndDate)
-                .build();
-    }
-
     @Override
     public String toString() {
         return "SickNoteForm{" +
