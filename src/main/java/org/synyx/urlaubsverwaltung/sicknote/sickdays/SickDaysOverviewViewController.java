@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,7 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.TOTAL;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.WITH_AUB;
 
@@ -81,7 +80,7 @@ public class SickDaysOverviewViewController {
                 .collect(toList());
 
         model.addAttribute("sickDaysStatistics", sickDaysOverviewDtos);
-        model.addAttribute("showPersonnelNumberColumn", !noPersonnelNumberAvailable(sickDaysStatistics));
+        model.addAttribute("showPersonnelNumberColumn", personnelNumberAvailable(sickDaysStatistics));
 
         model.addAttribute("today", LocalDate.now(clock));
         model.addAttribute("from", period.getStartDate());
@@ -111,13 +110,7 @@ public class SickDaysOverviewViewController {
             .build();
     }
 
-    private boolean noPersonnelNumberAvailable(List<SickDaysDetailedStatistics> sickDaysStatistics) {
-        return sickDaysStatistics
-                .stream()
-                .filter(statistics -> StringUtils.hasText(statistics.getPersonalNumber()))
-                .collect(toMap(
-                    statistics -> statistics.getPerson().getId(),
-                    SickDaysDetailedStatistics::getPersonalNumber
-                )).isEmpty();
+    private boolean personnelNumberAvailable(List<SickDaysDetailedStatistics> sickDaysStatistics) {
+        return sickDaysStatistics.stream().anyMatch(statistics -> hasText(statistics.getPersonalNumber()));
     }
 }
