@@ -16,11 +16,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
-import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -41,7 +39,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.TOTAL;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.WITH_AUB;
-import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
 /**
  * Controller for overview about the sick days of all users.
@@ -98,25 +95,21 @@ public class SickDaysOverviewViewController {
         final List<Person> persons = getMembersOfPersons(signedInUser);
         final List<SickDaysDetailedStatistics> sickDaysStatistics = sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate());
 
-        final Map<Person, SickDays> sickDays = new HashMap<>();
-        final Map<Person, SickDays> childSickDays = new HashMap<>();
+        final Map<Person, SickDays> sickDaysByPerson = new HashMap<>();
+        final Map<Person, SickDays> childSickDaysByPerson = new HashMap<>();
         sickDaysStatistics.forEach(statistic -> {
-            statistic.getSickNotes().forEach(sickNote -> {
-                if (sickNote.getSickNoteType().isOfCategory(SICK_NOTE_CHILD)) {
-                    calculateSickDays(period, childSickDays, sickNote);
-                } else {
-                    calculateSickDays(period, sickDays, sickNote);
-                }
-            });
+            final Person person = statistic.getPerson();
+            sickDaysByPerson.put(person, statistic.getSickDays(startDate, endDate));
+            childSickDaysByPerson.put(person, statistic.getChildSickDays(startDate, endDate));
         });
         persons.forEach(person -> {
-            sickDays.putIfAbsent(person, new SickDays());
-            childSickDays.putIfAbsent(person, new SickDays());
+            sickDaysByPerson.putIfAbsent(person, new SickDays());
+            childSickDaysByPerson.putIfAbsent(person, new SickDays());
         });
 
         final Map<Integer, String> personnelNumberOfPersons = getPersonnelNumbersOfPersons(persons);
         final List<SickDaysOverviewDto> sickDaysOverviewDtos = persons.stream()
-                .map(person -> toSickDaysOverviewDto(person, sickDays::get, childSickDays::get, personnelNumberOfPersons::get))
+                .map(person -> toSickDaysOverviewDto(person, sickDaysByPerson::get, childSickDaysByPerson::get, personnelNumberOfPersons::get))
                 .collect(toList());
 
         model.addAttribute("sickDaysStatistics", sickDaysOverviewDtos);
@@ -159,19 +152,6 @@ public class SickDaysOverviewViewController {
             .map(Optional::get)
             .filter(personBasedata -> hasText(personBasedata.getPersonnelNumber()))
             .collect(toMap(basedata -> basedata.getPersonId().getValue(), PersonBasedata::getPersonnelNumber));
-    }
-
-    private void calculateSickDays(FilterPeriod period, Map<Person, SickDays> sickDays, SickNote sickNote) {
-
-        final Person person = sickNote.getPerson();
-
-        final BigDecimal workDays = sickNote.getWorkDays(period.getStartDate(), period.getEndDate());
-        sickDays.computeIfAbsent(person, unused -> new SickDays()).addDays(TOTAL, workDays);
-
-        if (sickNote.isAubPresent()) {
-            final BigDecimal workDaysWithAUB = sickNote.getWorkDaysWithAub(period.getStartDate(), period.getEndDate());
-            sickDays.computeIfAbsent(person, unused -> new SickDays()).addDays(WITH_AUB, workDaysWithAUB);
-        }
     }
 
     private List<Person> getMembersOfPersons(Person signedInUser) {
