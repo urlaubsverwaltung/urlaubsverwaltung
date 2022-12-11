@@ -76,7 +76,7 @@ public class SickDaysOverviewViewController {
         final List<SickDaysDetailedStatistics> sickDaysStatistics = sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate());
 
         final List<SickDaysOverviewDto> sickDaysOverviewDtos = sickDaysStatistics.stream()
-                .map(statistic -> toSickDaysOverviewDto(statistic, startDate, endDate))
+                .map(statistic -> toSickDaysOverviewDto(statistic, period.getStartDate(), period.getEndDate()))
                 .collect(toList());
 
         model.addAttribute("sickDaysStatistics", sickDaysOverviewDtos);
