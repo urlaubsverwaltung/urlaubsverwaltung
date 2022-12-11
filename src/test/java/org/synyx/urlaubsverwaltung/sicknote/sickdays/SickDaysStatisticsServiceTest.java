@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
@@ -41,10 +42,12 @@ class SickDaysStatisticsServiceTest {
     private DepartmentService departmentService;
     @Mock
     private PersonBasedataService personBasedataService;
+    @Mock
+    private PersonService personService;
 
     @BeforeEach
     void setUp() {
-        sut = new SickDaysStatisticsService(sickNoteService, departmentService, personBasedataService);
+        sut = new SickDaysStatisticsService(sickNoteService, departmentService, personBasedataService, personService);
     }
 
     @Test
@@ -59,8 +62,10 @@ class SickDaysStatisticsServiceTest {
         departmentHead.setLastName("Head");
         departmentHead.setId(42);
 
-        final String personnnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), personnnelNumber, "additionalInfo");
+        final Person member = new Person();
+        member.setId(2);
+        member.setFirstName("John");
+        member.setLastName("Doe");
 
         final SickNote sickNote = SickNote.builder()
                 .person(departmentHead)
@@ -68,18 +73,25 @@ class SickDaysStatisticsServiceTest {
                 .endDate(startDate.plusDays(6))
                 .build();
 
-        final Person member = new Person();
-        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(member));
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(member), startDate, endDate)).thenReturn(List.of(sickNote));
+        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(departmentHead, member));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
 
-        final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(departmentHead.getId()), personBasedata);
-        when(personBasedataService.getBasedataByPersonId(List.of(departmentHead.getId()))).thenReturn(personIdBasedatamap);
+        final PersonBasedata departmentHeadBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), "Passagier1337", "additionalInfo");
+        when(personBasedataService.getBasedataByPersonId(List.of(departmentHead.getId(), member.getId()))).thenReturn(Map.of(new PersonId(departmentHead.getId()), departmentHeadBasedata));
 
-        when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead))).thenReturn(Map.of(new PersonId(departmentHead.getId()), List.of("Kitchen", "Service")));
+        when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead, member)))
+            .thenReturn(Map.of(new PersonId(departmentHead.getId()), List.of("Kitchen", "Service"), new PersonId(member.getId()), List.of("Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
-        assertThat(allSicknotes).hasSize(1);
+        assertThat(allSicknotes).hasSize(2);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
+            assertThat(actual.getDepartments()).containsExactly("Service");
+            assertThat(actual.getSickNotes()).isEmpty();
+        });
+        assertThat(allSicknotes.get(1)).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Head");
@@ -111,13 +123,15 @@ class SickDaysStatisticsServiceTest {
         final LocalDate endDate = LocalDate.parse("2022-12-31");
 
         final Person secondStageAuthority = new Person();
+        secondStageAuthority.setId(42);
         secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW));
         secondStageAuthority.setFirstName("Second");
         secondStageAuthority.setLastName("Stage");
-        secondStageAuthority.setId(42);
 
-        final String personnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(secondStageAuthority.getId()), personnelNumber, "additionalInfo");
+        final Person member = new Person();
+        member.setId(2);
+        member.setFirstName("John");
+        member.setLastName("Doe");
 
         final SickNote sickNote = SickNote.builder()
                 .person(secondStageAuthority)
@@ -125,18 +139,26 @@ class SickDaysStatisticsServiceTest {
                 .endDate(startDate.plusDays(6))
                 .build();
 
-        final Person member = new Person();
-        when(departmentService.getMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(member));
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(member), startDate, endDate)).thenReturn(List.of(sickNote));
+        when(departmentService.getMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(secondStageAuthority, member));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(member, secondStageAuthority), startDate, endDate)).thenReturn(List.of(sickNote));
 
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(secondStageAuthority.getId()), "Passagier1337", "additionalInfo");
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(secondStageAuthority.getId()), personBasedata);
-        when(personBasedataService.getBasedataByPersonId(List.of(secondStageAuthority.getId()))).thenReturn(personIdBasedatamap);
+        when(personBasedataService.getBasedataByPersonId(List.of(member.getId(), secondStageAuthority.getId()))).thenReturn(personIdBasedatamap);
 
-        when(departmentService.getDepartmentNamesByMembers(List.of(secondStageAuthority))).thenReturn(Map.of(new PersonId(secondStageAuthority.getId()), List.of("Kitchen", "Service")));
+        when(departmentService.getDepartmentNamesByMembers(List.of(member, secondStageAuthority)))
+            .thenReturn(Map.of(new PersonId(secondStageAuthority.getId()), List.of("Kitchen", "Service"), new PersonId(member.getId()), List.of("Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(secondStageAuthority, startDate, endDate);
-        assertThat(allSicknotes).hasSize(1);
+        assertThat(allSicknotes).hasSize(2);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
+            assertThat(actual.getDepartments()).containsExactly("Service");
+            assertThat(actual.getSickNotes()).isEmpty();
+        });
+        assertThat(allSicknotes.get(1)).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Second");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Stage");
@@ -168,13 +190,12 @@ class SickDaysStatisticsServiceTest {
         final LocalDate endDate = LocalDate.parse("2022-12-31");
 
         final Person office = new Person();
+        office.setId(42);
         office.setPermissions(List.of(USER, OFFICE));
         office.setFirstName("Office");
         office.setLastName("Person");
-        office.setId(42);
 
-        final String personnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(office.getId()), personnelNumber, "additionalInfo");
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(office.getId()), "Passagier1337", "additionalInfo");
 
         final SickNote sickNote = SickNote.builder()
                 .person(office)
@@ -187,6 +208,7 @@ class SickDaysStatisticsServiceTest {
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(office.getId()), personBasedata);
         when(personBasedataService.getBasedataByPersonId(List.of(office.getId()))).thenReturn(personIdBasedatamap);
 
+        when(personService.getActivePersons()).thenReturn(List.of(office));
         when(departmentService.getDepartmentNamesByMembers(List.of(office))).thenReturn(Map.of(new PersonId(office.getId()), List.of("Kitchen", "Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(office, startDate, endDate);
@@ -227,6 +249,7 @@ class SickDaysStatisticsServiceTest {
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(office.getId()), personBasedata);
         when(personBasedataService.getBasedataByPersonId(List.of(office.getId()))).thenReturn(personIdBasedatamap);
 
+        when(personService.getActivePersons()).thenReturn(List.of(office));
         when(departmentService.getDepartmentNamesByMembers(List.of(office))).thenReturn(Map.of(new PersonId(office.getId()), List.of("Kitchen", "Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(office, startDate, endDate);
@@ -247,13 +270,12 @@ class SickDaysStatisticsServiceTest {
         final LocalDate endDate = LocalDate.parse("2022-12-31");
 
         final Person boss = new Person();
+        boss.setId(42);
         boss.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
         boss.setFirstName("Boss");
         boss.setLastName("Person");
-        boss.setId(42);
 
-        final String personnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(boss.getId()), personnelNumber, "additionalInfo");
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(boss.getId()), "Passagier1337", "additionalInfo");
 
         final SickNote sickNote = SickNote.builder()
                 .person(boss)
@@ -266,6 +288,7 @@ class SickDaysStatisticsServiceTest {
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(boss.getId()), personBasedata);
         when(personBasedataService.getBasedataByPersonId(List.of(boss.getId()))).thenReturn(personIdBasedatamap);
 
+        when(personService.getActivePersons()).thenReturn(List.of(boss));
         when(departmentService.getDepartmentNamesByMembers(List.of(boss))).thenReturn(Map.of(new PersonId(boss.getId()), List.of("Kitchen", "Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(boss, startDate, endDate);
@@ -292,8 +315,7 @@ class SickDaysStatisticsServiceTest {
         boss.setLastName("Person");
         boss.setId(42);
 
-        final String personnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(boss.getId()), personnelNumber, "additionalInfo");
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(boss.getId()), "Passagier1337", "additionalInfo");
 
         final SickNote sickNote = SickNote.builder()
                 .person(boss)
@@ -306,6 +328,7 @@ class SickDaysStatisticsServiceTest {
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(boss.getId()), personBasedata);
         when(personBasedataService.getBasedataByPersonId(List.of(boss.getId()))).thenReturn(personIdBasedatamap);
 
+        when(personService.getActivePersons()).thenReturn(List.of(boss));
         when(departmentService.getDepartmentNamesByMembers(List.of(boss))).thenReturn(Map.of(new PersonId(boss.getId()), List.of("Kitchen", "Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(boss, startDate, endDate);
@@ -342,13 +365,15 @@ class SickDaysStatisticsServiceTest {
         final LocalDate endDate = LocalDate.parse("2022-12-31");
 
         final Person departmentHead = new Person();
+        departmentHead.setId(42);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
         departmentHead.setFirstName("Department");
         departmentHead.setLastName("Head");
-        departmentHead.setId(42);
 
-        final String personnelNumber = "Passagier1337";
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), personnelNumber, "additionalInfo");
+        final Person member = new Person();
+        member.setId(2);
+        member.setFirstName("John");
+        member.setLastName("Doe");
 
         final SickNote sickNote = SickNote.builder()
                 .person(departmentHead)
@@ -356,18 +381,26 @@ class SickDaysStatisticsServiceTest {
                 .endDate(startDate.plusDays(6))
                 .build();
 
-        final Person member = new Person();
-        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(member));
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(member), startDate, endDate)).thenReturn(List.of(sickNote));
+        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(departmentHead, member));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
 
-        final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(departmentHead.getId()), personBasedata);
-        when(personBasedataService.getBasedataByPersonId(List.of(departmentHead.getId()))).thenReturn(personIdBasedatamap);
+        final PersonBasedata departmentHeadBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), "Passagier1337", "additionalInfo");
+        final PersonBasedata memberBasedata = new PersonBasedata(new PersonId(2), "000042", "additionalInfo member");
+        final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(departmentHead.getId()), departmentHeadBasedata, new PersonId(2), memberBasedata);
+        when(personBasedataService.getBasedataByPersonId(List.of(42, 2))).thenReturn(personIdBasedatamap);
 
-        when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead))).thenReturn(Map.of());
+        when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead, member))).thenReturn(Map.of());
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
-        assertThat(allSicknotes).hasSize(1);
+        assertThat(allSicknotes).hasSize(2);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("000042");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
+            assertThat(actual.getDepartments()).isEmpty();
+            assertThat(actual.getSickNotes()).isEmpty();
+        });
+        assertThat(allSicknotes.get(1)).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Head");
@@ -383,10 +416,15 @@ class SickDaysStatisticsServiceTest {
         final LocalDate endDate = LocalDate.parse("2022-12-31");
 
         final Person departmentHead = new Person();
+        departmentHead.setId(42);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
         departmentHead.setFirstName("Department");
         departmentHead.setLastName("Head");
-        departmentHead.setId(42);
+
+        final Person member = new Person();
+        member.setId(2);
+        member.setFirstName("John");
+        member.setLastName("Doe");
 
         final SickNote sickNote = SickNote.builder()
                 .person(departmentHead)
@@ -394,18 +432,25 @@ class SickDaysStatisticsServiceTest {
                 .endDate(startDate.plusDays(6))
                 .build();
 
-        final Person member = new Person();
-        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(member));
-        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(member), startDate, endDate)).thenReturn(List.of(sickNote));
+        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(departmentHead, member));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBaseDataMap = Map.of();
-        when(personBasedataService.getBasedataByPersonId(List.of(departmentHead.getId()))).thenReturn(personIdBaseDataMap);
+        when(personBasedataService.getBasedataByPersonId(List.of(42, 2))).thenReturn(personIdBaseDataMap);
 
-        when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead))).thenReturn(Map.of(new PersonId(departmentHead.getId()), List.of("Kitchen", "Service")));
+        when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead, member)))
+            .thenReturn(Map.of(new PersonId(42), List.of("Kitchen", "Service"), new PersonId(2), List.of("Service")));
 
         final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
-        assertThat(allSicknotes).hasSize(1);
+        assertThat(allSicknotes).hasSize(2);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
+            assertThat(actual.getDepartments()).containsExactly("Service");
+            assertThat(actual.getSickNotes()).isEmpty();
+        });
+        assertThat(allSicknotes.get(1)).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Head");

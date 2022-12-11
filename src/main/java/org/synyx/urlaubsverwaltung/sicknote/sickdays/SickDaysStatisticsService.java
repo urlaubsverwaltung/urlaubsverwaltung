@@ -6,18 +6,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -34,12 +35,14 @@ public class SickDaysStatisticsService {
     private final SickNoteService sickNoteService;
     private final DepartmentService departmentService;
     private final PersonBasedataService personBasedataService;
+    private final PersonService personService;
 
     @Autowired
-    SickDaysStatisticsService(SickNoteService sickNoteService, DepartmentService departmentService, PersonBasedataService personBasedataService) {
+    SickDaysStatisticsService(SickNoteService sickNoteService, DepartmentService departmentService, PersonBasedataService personBasedataService, PersonService personService) {
         this.sickNoteService = sickNoteService;
         this.departmentService = departmentService;
         this.personBasedataService = personBasedataService;
+        this.personService = personService;
     }
 
     /**
@@ -52,18 +55,22 @@ public class SickDaysStatisticsService {
      */
     List<SickDaysDetailedStatistics> getAll(Person person, LocalDate from, LocalDate to) {
 
-        final List<SickNote> sickNotes = getSickNotes(person, from, to);
-        final Map<Person, List<SickNote>> sickNotesByPerson = sickNotes.stream()
-            .collect(groupingBy(SickNote::getPerson));
+        final List<Person> members = getMembersForPerson(person);
+        final List<Integer> personIds = members.stream().map(Person::getId).collect(toList());
 
-        final List<Person> personsWithSickNotes = new ArrayList<>(sickNotesByPerson.keySet());
+        final List<SickNote> sickNotes = getSickNotes(person, members, from, to);
 
-        final List<Integer> personIds = personsWithSickNotes.stream().map(Person::getId).collect(toList());
-        final Map<PersonId, PersonBasedata> basedataForPersons = personBasedataService.getBasedataByPersonId(personIds);
-        final Map<PersonId, List<String>> departmentsForPersons = departmentService.getDepartmentNamesByMembers(personsWithSickNotes);
+        // members without sickNotes should also have a statistics object. no sickNotes just means zero sick days :shrug:
+        final Map<Person, List<SickNote>> sickNotesByPerson = sickNotes.stream().collect(groupingBy(SickNote::getPerson));
+        for (Person member : members) {
+            sickNotesByPerson.putIfAbsent(member, List.of());
+        }
+
+        final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIds);
+        final Map<PersonId, List<String>> departmentsByPersonId = departmentService.getDepartmentNamesByMembers(members);
 
         return sickNotesByPerson.entrySet().stream()
-            .map(toSickNoteDetailedStatistics(basedataForPersons, departmentsForPersons))
+            .map(toSickNoteDetailedStatistics(basedataByPersonId, departmentsByPersonId))
             .collect(toList());
     }
 
@@ -78,7 +85,7 @@ public class SickDaysStatisticsService {
         };
     }
 
-    private List<SickNote> getSickNotes(Person person, LocalDate from, LocalDate to) {
+    private List<SickNote> getSickNotes(Person person, List<Person> members, LocalDate from, LocalDate to) {
 
         if (person.hasRole(OFFICE) || (person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW))) {
             return sickNoteService.getAllActiveByPeriod(from, to);
@@ -86,7 +93,6 @@ public class SickDaysStatisticsService {
 
         final List<SickNote> sickNotes;
         if ((person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && person.hasRole(SICK_NOTE_VIEW)) {
-            final List<Person> members = getMembersForPerson(person);
             sickNotes = sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, from, to);
         } else {
             sickNotes = List.of();
@@ -96,10 +102,22 @@ public class SickDaysStatisticsService {
     }
 
     private List<Person> getMembersForPerson(Person person) {
-        final List<Person> membersDH = person.hasRole(DEPARTMENT_HEAD) ? departmentService.getMembersForDepartmentHead(person) : List.of();
-        final List<Person> membersSSA = person.hasRole(SECOND_STAGE_AUTHORITY) ? departmentService.getMembersForSecondStageAuthority(person) : List.of();
-        return Stream.concat(membersDH.stream(), membersSSA.stream())
-            .distinct()
-            .collect(toList());
+
+        if (person.hasRole(OFFICE) || person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW)) {
+            return personService.getActivePersons();
+        }
+
+        final List<Person> membersForDepartmentHead = person.hasRole(DEPARTMENT_HEAD)
+                ? departmentService.getMembersForDepartmentHead(person)
+                : List.of();
+
+        final List<Person> memberForSecondStageAuthority = person.hasRole(SECOND_STAGE_AUTHORITY)
+                ? departmentService.getMembersForSecondStageAuthority(person)
+                : List.of();
+
+        return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
+                .distinct()
+                .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+                .collect(toList());
     }
 }

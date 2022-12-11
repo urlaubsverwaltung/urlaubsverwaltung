@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -11,32 +12,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
-import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.TOTAL;
 import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.WITH_AUB;
 
@@ -48,19 +34,15 @@ import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType
 public class SickDaysOverviewViewController {
 
     private final SickDaysStatisticsService sickDaysStatisticsService;
-    private final PersonBasedataService personBasedataService;
-    private final DepartmentService departmentService;
     private final PersonService personService;
     private final DateFormatAware dateFormatAware;
     private final Clock clock;
 
     @Autowired
-    public SickDaysOverviewViewController(SickDaysStatisticsService sickDaysStatisticsService, PersonBasedataService personBasedataService,
-                                          DepartmentService departmentService, PersonService personService, DateFormatAware dateFormatAware, Clock clock) {
+    public SickDaysOverviewViewController(SickDaysStatisticsService sickDaysStatisticsService,
+                                          PersonService personService, DateFormatAware dateFormatAware, Clock clock) {
 
         this.sickDaysStatisticsService = sickDaysStatisticsService;
-        this.personBasedataService = personBasedataService;
-        this.departmentService = departmentService;
         this.personService = personService;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
@@ -92,28 +74,14 @@ public class SickDaysOverviewViewController {
 
         final Person signedInUser = personService.getSignedInUser();
 
-        final List<Person> persons = getMembersOfPersons(signedInUser);
         final List<SickDaysDetailedStatistics> sickDaysStatistics = sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate());
 
-        final Map<Person, SickDays> sickDaysByPerson = new HashMap<>();
-        final Map<Person, SickDays> childSickDaysByPerson = new HashMap<>();
-        sickDaysStatistics.forEach(statistic -> {
-            final Person person = statistic.getPerson();
-            sickDaysByPerson.put(person, statistic.getSickDays(startDate, endDate));
-            childSickDaysByPerson.put(person, statistic.getChildSickDays(startDate, endDate));
-        });
-        persons.forEach(person -> {
-            sickDaysByPerson.putIfAbsent(person, new SickDays());
-            childSickDaysByPerson.putIfAbsent(person, new SickDays());
-        });
-
-        final Map<Integer, String> personnelNumberOfPersons = getPersonnelNumbersOfPersons(persons);
-        final List<SickDaysOverviewDto> sickDaysOverviewDtos = persons.stream()
-                .map(person -> toSickDaysOverviewDto(person, sickDaysByPerson::get, childSickDaysByPerson::get, personnelNumberOfPersons::get))
+        final List<SickDaysOverviewDto> sickDaysOverviewDtos = sickDaysStatistics.stream()
+                .map(statistic -> toSickDaysOverviewDto(statistic, startDate, endDate))
                 .collect(toList());
 
         model.addAttribute("sickDaysStatistics", sickDaysOverviewDtos);
-        model.addAttribute("showPersonnelNumberColumn", !personnelNumberOfPersons.isEmpty());
+        model.addAttribute("showPersonnelNumberColumn", !noPersonnelNumberAvailable(sickDaysStatistics));
 
         model.addAttribute("today", LocalDate.now(clock));
         model.addAttribute("from", period.getStartDate());
@@ -123,17 +91,15 @@ public class SickDaysOverviewViewController {
         return "thymeleaf/sicknote/sick_days";
     }
 
-    private static SickDaysOverviewDto toSickDaysOverviewDto(Person person,
-                                                             Function<Person, SickDays> sickDaysSupplier,
-                                                             Function<Person, SickDays> childSickDaysSupplier,
-                                                             Function<Integer, String> personnelNumberSupplier) {
+    private static SickDaysOverviewDto toSickDaysOverviewDto(SickDaysDetailedStatistics statistics, LocalDate from, LocalDate to) {
 
-        final SickDays sickDays = sickDaysSupplier.apply(person);
-        final SickDays childSickDays = childSickDaysSupplier.apply(person);
+        final Person person = statistics.getPerson();
+        final SickDays sickDays = statistics.getSickDays(from, to);
+        final SickDays childSickDays = statistics.getChildSickDays(from, to);
 
         return SickDaysOverviewDto.builder()
             .personId(person.getId())
-            .personnelNumber(personnelNumberSupplier.apply(person.getId()))
+            .personnelNumber(statistics.getPersonalNumber())
             .personFirstName(person.getFirstName())
             .personLastName(person.getLastName())
             .personNiceName(person.getNiceName())
@@ -145,33 +111,13 @@ public class SickDaysOverviewViewController {
             .build();
     }
 
-    private Map<Integer, String> getPersonnelNumbersOfPersons(List<Person> persons) {
-        return persons.stream()
-            .map(person -> personBasedataService.getBasedataByPersonId(person.getId()))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .filter(personBasedata -> hasText(personBasedata.getPersonnelNumber()))
-            .collect(toMap(basedata -> basedata.getPersonId().getValue(), PersonBasedata::getPersonnelNumber));
-    }
-
-    private List<Person> getMembersOfPersons(Person signedInUser) {
-
-        if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
-            return personService.getActivePersons();
-        }
-
-        final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD)
-            ? departmentService.getMembersForDepartmentHead(signedInUser)
-            : List.of();
-
-        final List<Person> memberForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY)
-            ? departmentService.getMembersForSecondStageAuthority(signedInUser)
-            : List.of();
-
-        return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
-            .filter(person -> !person.hasRole(INACTIVE))
-            .distinct()
-            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
-            .collect(toList());
+    private boolean noPersonnelNumberAvailable(List<SickDaysDetailedStatistics> sickDaysStatistics) {
+        return sickDaysStatistics
+                .stream()
+                .filter(statistics -> StringUtils.hasText(statistics.getPersonalNumber()))
+                .collect(toMap(
+                    statistics -> statistics.getPerson().getId(),
+                    SickDaysDetailedStatistics::getPersonalNumber
+                )).isEmpty();
     }
 }
