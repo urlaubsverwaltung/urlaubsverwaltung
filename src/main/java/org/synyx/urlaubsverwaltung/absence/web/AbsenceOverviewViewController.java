@@ -281,7 +281,7 @@ public class AbsenceOverviewViewController {
     private AbsenceOverviewMonthDto initializeAbsenceOverviewMonthDto(LocalDate date, List<Person> personList, Locale locale) {
 
         final List<AbsenceOverviewMonthPersonDto> monthViewPersons = personList.stream()
-            .map((Person person) -> initializeAbsenceOverviewMonthPersonDto(person))
+            .map(AbsenceOverviewViewController::initializeAbsenceOverviewMonthPersonDto)
             .collect(toList());
 
         return new AbsenceOverviewMonthDto(getMonthText(date, locale), new ArrayList<>(), monthViewPersons);
