@@ -89,9 +89,7 @@
           <td th:text="#{absence.period.duration}"></td>
           <td>
             <strong>
-              <th:block th:replace="fragments/number::number(${app.workDays})"></th:block>&nbsp;<th:block
-                th:text="#{duration.days}"
-              />
+              <th:block th:text="#{application.data.days(${app.workDays})}" />
             </strong>
             <th:block th:if="${app.startDate.year != app.endDate.year}">
               <span class="text-muted days">
