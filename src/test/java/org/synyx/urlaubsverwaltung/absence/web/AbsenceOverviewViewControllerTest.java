@@ -585,6 +585,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
+        person.setId(1);
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
@@ -623,6 +624,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
+        person.setId(1);
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
@@ -665,6 +667,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
+        person.setId(13);
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
@@ -711,8 +714,11 @@ class AbsenceOverviewViewControllerTest {
         heroDepartment.setMembers(List.of(person));
 
         final var joker = person("joker");
+        joker.setId(1);
         final var lex = person("lex");
+        lex.setId(2);
         final var harley = person("harley");
+        harley.setId(3);
         final var villainsDepartment = department("villains");
         villainsDepartment.setMembers(List.of(joker, lex, harley));
 
@@ -736,7 +742,9 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
+
         final var person = new Person();
+        person.setId(5);
         person.setFirstName("bruce");
         person.setLastName("wayne");
         person.setEmail("batman@example.org");
@@ -746,8 +754,11 @@ class AbsenceOverviewViewControllerTest {
         heroDepartment.setMembers(List.of(person));
 
         final var joker = person("joker");
+        joker.setId(1);
         final var lex = person("lex");
+        lex.setId(2);
         final var harley = person("harley");
+        harley.setId(3);
         final var villainsDepartment = department("villains");
         villainsDepartment.setMembers(List.of(joker, lex, harley, person));
 
@@ -780,6 +791,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
+        person.setId(1);
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
@@ -813,18 +825,22 @@ class AbsenceOverviewViewControllerTest {
         final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
+
         final var person = new Person();
+        person.setId(1);
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var personTwo = new Person();
+        personTwo.setId(2);
         personTwo.setFirstName("aa");
         personTwo.setLastName("aa lastname");
         personTwo.setEmail("person2@example.org");
 
         final var personThree = new Person();
+        personThree.setId(3);
         personThree.setFirstName("AA");
         personThree.setLastName("AA lastname");
         personThree.setEmail("person3@example.org");
@@ -4254,9 +4270,11 @@ class AbsenceOverviewViewControllerTest {
     void ensurePublicHolidaysBasedOnCustomPublicHolidays() throws Exception {
 
         final Person personWithCustomPublicHolidays = person("joker");
+        personWithCustomPublicHolidays.setId(1);
         when(personService.getSignedInUser()).thenReturn(personWithCustomPublicHolidays);
 
         final Person personDefaultPublicHolidays = person("lex");
+        personDefaultPublicHolidays.setId(2);
 
         when(departmentService.getNumberOfDepartments()).thenReturn(0L);
         when(personService.getActivePersons()).thenReturn(List.of(personWithCustomPublicHolidays, personDefaultPublicHolidays));
@@ -4275,6 +4293,7 @@ class AbsenceOverviewViewControllerTest {
         workingTimeSettings.setFederalState(GERMANY_RHEINLAND_PFALZ);
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
+
         perform(get("/web/absences")
             .param("year", "2022")
             .param("month", "1")
