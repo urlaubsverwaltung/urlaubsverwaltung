@@ -18,7 +18,7 @@
           <a
             th:text="${person.niceName}"
             th:href="@{/web/person/__${person.id}__/overview}"
-            class="tw-text-lg tw-mb-1 icon-link"
+            class="tw-text-lg tw-mb-1 icon-link print:no-link"
           ></a>
           <a
             th:if="${person.email != null}"
