@@ -27,7 +27,9 @@
             class="icon-link tw-inline-block tw-text-sm print:no-link"
           >
             <span class="tw-flex tw-items-center">
-              <svg th:replace="icon/mail::svg" />&nbsp;<span th:text="${person.email}"></span>
+              <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4')" />&nbsp;<span
+                th:text="${person.email}"
+              ></span>
             </span>
           </a>
           <ul
