@@ -20,7 +20,12 @@
             th:href="@{/web/person/__${person.id}__/overview}"
             class="tw-text-lg tw-mb-1 icon-link"
           ></a>
-          <a href="#" th:href="|mailto:${person.email}|" class="icon-link tw-inline-block tw-text-sm print:no-link">
+          <a
+            th:if="${person.email != null}"
+            href="#"
+            th:href="|mailto:${person.email}|"
+            class="icon-link tw-inline-block tw-text-sm print:no-link"
+          >
             <span class="tw-flex tw-items-center">
               <svg th:replace="icon/mail::svg" />&nbsp;<span th:text="${person.email}"></span>
             </span>
