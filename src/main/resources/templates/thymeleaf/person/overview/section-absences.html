@@ -212,8 +212,7 @@
                     <th:block th:text="${{app.hours}}"></th:block>
                   </th:block>
                   <th:block th:if="${app.vacationType.category.name != 'OVERTIME'}">
-                    <th:block th:replace="fragments/number::number(${app.workDays.doubleValue})"></th:block>
-                    <th:block th:text="#{duration.days}"></th:block>
+                    <th:block th:text="#{overview.vacations.days(${app.workDays})}"></th:block>
                   </th:block>
                 </span>
                 <th:block th:if="${app.startDate.year != app.endDate.year}">
