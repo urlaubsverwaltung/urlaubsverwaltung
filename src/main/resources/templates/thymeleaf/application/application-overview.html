@@ -145,8 +145,7 @@
                     <th:block th:text="#{applications.cancellationRequestPrefix}" />
                   </th:block>
                   <th:block th:if="${#strings.isEmpty(userRequestForLeave.duration)}">
-                    <th:block th:text="${userRequestForLeave.workDays}" />
-                    <th:block th:text="#{duration.days}" />
+                    <th:block th:text="#{applications.days(${userRequestForLeave.workDays})}" />
                   </th:block>
                   <th:block th:if="${not #strings.isEmpty(userRequestForLeave.duration)}">
                     <th:block th:text="${userRequestForLeave.duration}" />
@@ -261,8 +260,7 @@
                     <span class="tw-whitespace-nowrap">
                       (<th:block th:switch="${#strings.isEmpty(replacementInfo.duration)}">
                         <th:block th:case="true">
-                          <th:block th:text="${replacementInfo.workDays}" />
-                          <th:block th:text="#{duration.days}" />
+                          <th:block th:text="#{applications.days(${replacementInfo.workDays})}" />
                         </th:block>
                         <th:block th:case="false">
                           <th:block th:text="${replacementInfo.duration}" />
@@ -327,8 +325,7 @@
                     th:switch="${#strings.isEmpty(otherRequestForLeave.duration)}"
                   >
                     <th:block th:case="true">
-                      <th:block th:text="${otherRequestForLeave.workDays}" />
-                      <th:block th:text="#{duration.days}" />
+                      <th:block th:text="#{applications.days(${otherRequestForLeave.workDays})}" />
                     </th:block>
                     <th:block th:case="false">
                       <th:block th:text="${otherRequestForLeave.duration}" />
@@ -450,8 +447,7 @@
                     >
                       <th:block th:text="#{applications.cancellationRequestPrefix}" />
                       <th:block th:case="true">
-                        <th:block th:text="${cancellationRequest.workDays}" />
-                        <th:block th:text="#{duration.days}" />
+                        <th:block th:text="#{applications.days(${cancellationRequest.workDays})}" />
                       </th:block>
                       <th:block th:case="false">
                         <th:block th:text="${cancellationRequest.duration}" />
