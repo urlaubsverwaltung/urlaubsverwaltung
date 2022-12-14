@@ -38,4 +38,12 @@ public class PageableSearchQuery {
     public int hashCode() {
         return Objects.hash(pageable, query);
     }
+
+    @Override
+    public String toString() {
+        return "PageableSearchQuery{" +
+            "pageable=" + pageable +
+            ", query='" + query + '\'' +
+            '}';
+    }
 }

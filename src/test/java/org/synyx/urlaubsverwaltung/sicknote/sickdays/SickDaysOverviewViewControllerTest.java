@@ -9,12 +9,17 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
@@ -188,14 +193,22 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
 
+        final PageableSearchQuery pageableSearchQuery =
+            new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+
         final SickDaysDetailedStatistics statisticsPersonOne = new SickDaysDetailedStatistics("0000001337", person, List.of(sickNote), List.of());
         final SickDaysDetailedStatistics statisticsPersonTwo = new SickDaysDetailedStatistics("0000000042", person2, List.of(childSickNote), List.of());
         final SickDaysDetailedStatistics statisticsPersonThree = new SickDaysDetailedStatistics("0000000021", person3, List.of(), List.of());
-        when(sickDaysStatisticsService.getAll(office, requestStartDate, requestEndDate)).thenReturn(List.of(statisticsPersonOne, statisticsPersonTwo, statisticsPersonThree));
+
+        when(sickDaysStatisticsService.getAll(office, requestStartDate, requestEndDate, pageableSearchQuery))
+            .thenReturn(new PageImpl<>(List.of(statisticsPersonOne, statisticsPersonTwo, statisticsPersonThree)));
 
         perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())
-            .param("to", requestEndDate.toString()))
+            .param("to", requestEndDate.toString())
+            .param("page", "2")
+            .param("size", "50")
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickDaysStatistics", contains(
                 allOf(
@@ -255,15 +268,26 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate startDate = ZonedDateTime.now(clock).withYear(year).with(firstDayOfYear()).toLocalDate();
         final LocalDate endDate = ZonedDateTime.now(clock).withYear(year).with(lastDayOfYear()).toLocalDate();
 
+        final PageableSearchQuery pageableSearchQuery =
+            new PageableSearchQuery(PageRequest.of(1, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+
+        when(sickDaysStatisticsService.getAll(office, startDate, endDate, pageableSearchQuery))
+            .thenReturn(new PageImpl<>(List.of()));
+
         final ResultActions resultActions = perform(get("/web/sickdays")
             .param("from", "01.01." + year)
-            .param("to", "31.12." + year));
-        resultActions.andExpect(status().isOk());
-        resultActions.andExpect(model().attribute("from", startDate));
-        resultActions.andExpect(model().attribute("to", endDate));
-        resultActions.andExpect(model().attribute("period", hasProperty("startDate", is(startDate))));
-        resultActions.andExpect(model().attribute("period", hasProperty("endDate", is(endDate))));
-        resultActions.andExpect(view().name("thymeleaf/sicknote/sick_days"));
+            .param("to", "31.12." + year)
+            .param("page", "1")
+            .param("size", "50")
+        );
+
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("from", startDate))
+            .andExpect(model().attribute("to", endDate))
+            .andExpect(model().attribute("period", hasProperty("startDate", is(startDate))))
+            .andExpect(model().attribute("period", hasProperty("endDate", is(endDate))))
+            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
 
     @Test
@@ -277,12 +301,19 @@ class SickDaysOverviewViewControllerTest {
         final LocalDate requestStartDate = LocalDate.of(2019, 2, 11);
         final LocalDate requestEndDate = LocalDate.of(2019, 4, 15);
 
+        final PageableSearchQuery pageableSearchQuery =
+            new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+
         final SickDaysDetailedStatistics statistics = new SickDaysDetailedStatistics("", signedInUser, List.of(), List.of());
-        when(sickDaysStatisticsService.getAll(signedInUser, requestStartDate, requestEndDate)).thenReturn(List.of(statistics));
+        when(sickDaysStatisticsService.getAll(signedInUser, requestStartDate, requestEndDate, pageableSearchQuery))
+            .thenReturn(new PageImpl<>(List.of(statistics)));
 
         perform(get("/web/sickdays")
             .param("from", requestStartDate.toString())
-            .param("to", requestEndDate.toString()))
+            .param("to", requestEndDate.toString())
+            .param("page", "2")
+            .param("size", "50")
+        )
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
             .andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
@@ -296,6 +327,9 @@ class SickDaysOverviewViewControllerTest {
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return standaloneSetup(sut).build().perform(builder);
+        return standaloneSetup(sut)
+            .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+            .build()
+            .perform(builder);
     }
 }

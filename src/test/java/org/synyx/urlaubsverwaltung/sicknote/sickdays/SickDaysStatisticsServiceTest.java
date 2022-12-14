@@ -7,6 +7,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
@@ -14,6 +18,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
@@ -73,7 +78,9 @@ class SickDaysStatisticsServiceTest {
                 .endDate(startDate.plusDays(6))
                 .build();
 
-        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(departmentHead, member));
+        when(departmentService.getManagedMembersOfPerson(departmentHead, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
+            .thenReturn(new PageImpl<>(List.of(departmentHead, member)));
+
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
 
         final PersonBasedata departmentHeadBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), "Passagier1337", "additionalInfo");
@@ -82,21 +89,24 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead, member)))
             .thenReturn(Map.of(new PersonId(departmentHead.getId()), List.of("Kitchen", "Service"), new PersonId(member.getId()), List.of("Service")));
 
-        final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("person.firstName")), "");
+        final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(departmentHead, startDate, endDate, pageableSearchQuery);
+
+        final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(2);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
-            assertThat(actual.getPersonalNumber()).isEqualTo("");
-            assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
-            assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
-            assertThat(actual.getDepartments()).containsExactly("Service");
-            assertThat(actual.getSickNotes()).isEmpty();
-        });
-        assertThat(allSicknotes.get(1)).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Head");
             assertThat(actual.getDepartments()).containsExactly("Kitchen", "Service");
             assertThat(actual.getSickNotes()).containsExactly(sickNote);
+        });
+        assertThat(allSicknotes.get(1)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
+            assertThat(actual.getDepartments()).containsExactly("Service");
+            assertThat(actual.getSickNotes()).isEmpty();
         });
     }
 
@@ -112,8 +122,16 @@ class SickDaysStatisticsServiceTest {
         departmentHead.setLastName("Head");
         departmentHead.setId(42);
 
-        final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
-        assertThat(allSicknotes).isEmpty();
+        when(departmentService.getManagedMembersOfPerson(departmentHead, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
+            .thenReturn(new PageImpl<>(List.of(departmentHead)));
+
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("person.firstName")), "");
+        final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(departmentHead, startDate, endDate, pageableSearchQuery);
+
+        assertThat(allSicknotesPage.getContent()).hasSize(1);
+        assertThat(allSicknotesPage.getContent().get(0)).satisfies(statistics -> {
+            assertThat(statistics.getSickNotes()).isEmpty();
+        });
     }
 
     @Test
@@ -139,7 +157,9 @@ class SickDaysStatisticsServiceTest {
                 .endDate(startDate.plusDays(6))
                 .build();
 
-        when(departmentService.getMembersForSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(secondStageAuthority, member));
+        when(departmentService.getManagedMembersOfPerson(secondStageAuthority, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
+            .thenReturn(new PageImpl<>(List.of(member, secondStageAuthority)));
+
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(member, secondStageAuthority), startDate, endDate)).thenReturn(List.of(sickNote));
 
         final PersonBasedata personBasedata = new PersonBasedata(new PersonId(secondStageAuthority.getId()), "Passagier1337", "additionalInfo");
@@ -149,7 +169,10 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getDepartmentNamesByMembers(List.of(member, secondStageAuthority)))
             .thenReturn(Map.of(new PersonId(secondStageAuthority.getId()), List.of("Kitchen", "Service"), new PersonId(member.getId()), List.of("Service")));
 
-        final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(secondStageAuthority, startDate, endDate);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("person.firstName")), "");
+        final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(secondStageAuthority, startDate, endDate, pageableSearchQuery);
+
+        final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(2);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("");
@@ -179,8 +202,16 @@ class SickDaysStatisticsServiceTest {
         secondStageAuthority.setLastName("Stage");
         secondStageAuthority.setId(42);
 
-        final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(secondStageAuthority, startDate, endDate);
-        assertThat(allSicknotes).isEmpty();
+        when(departmentService.getManagedMembersOfPerson(secondStageAuthority, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
+            .thenReturn(new PageImpl<>(List.of(secondStageAuthority)));
+
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("person.firstName")), "");
+        final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(secondStageAuthority, startDate, endDate, pageableSearchQuery);
+
+        assertThat(allSicknotesPage.getContent()).hasSize(1);
+        assertThat(allSicknotesPage.getContent().get(0)).satisfies(statistics -> {
+            assertThat(statistics.getSickNotes()).isEmpty();
+        });
     }
 
     @Test
@@ -203,15 +234,21 @@ class SickDaysStatisticsServiceTest {
                 .endDate(startDate.plusDays(6))
                 .build();
 
-        when(sickNoteService.getAllActiveByPeriod(startDate, endDate)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(office), startDate, endDate))
+            .thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(office.getId()), personBasedata);
         when(personBasedataService.getBasedataByPersonId(List.of(office.getId()))).thenReturn(personIdBasedatamap);
 
-        when(personService.getActivePersons()).thenReturn(List.of(office));
+        when(personService.getActivePersons(new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
+            .thenReturn(new PageImpl<>(List.of(office)));
+
         when(departmentService.getDepartmentNamesByMembers(List.of(office))).thenReturn(Map.of(new PersonId(office.getId()), List.of("Kitchen", "Service")));
 
-        final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(office, startDate, endDate);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("person.firstName")), "");
+        final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(office, startDate, endDate, pageableSearchQuery);
+
+        final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(1);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
@@ -244,15 +281,21 @@ class SickDaysStatisticsServiceTest {
                 .endDate(startDate.plusDays(6))
                 .build();
 
-        when(sickNoteService.getAllActiveByPeriod(startDate, endDate)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(office), startDate, endDate))
+            .thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(office.getId()), personBasedata);
         when(personBasedataService.getBasedataByPersonId(List.of(office.getId()))).thenReturn(personIdBasedatamap);
 
-        when(personService.getActivePersons()).thenReturn(List.of(office));
+        when(personService.getActivePersons(new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
+            .thenReturn(new PageImpl<>(List.of(office)));
+
         when(departmentService.getDepartmentNamesByMembers(List.of(office))).thenReturn(Map.of(new PersonId(office.getId()), List.of("Kitchen", "Service")));
 
-        final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(office, startDate, endDate);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("person.firstName")), "");
+        final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(office, startDate, endDate, pageableSearchQuery);
+
+        final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(1);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
@@ -283,15 +326,22 @@ class SickDaysStatisticsServiceTest {
                 .endDate(startDate.plusDays(6))
                 .build();
 
-        when(sickNoteService.getAllActiveByPeriod(startDate, endDate)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(boss), startDate, endDate))
+            .thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(boss.getId()), personBasedata);
         when(personBasedataService.getBasedataByPersonId(List.of(boss.getId()))).thenReturn(personIdBasedatamap);
 
-        when(personService.getActivePersons()).thenReturn(List.of(boss));
-        when(departmentService.getDepartmentNamesByMembers(List.of(boss))).thenReturn(Map.of(new PersonId(boss.getId()), List.of("Kitchen", "Service")));
+        when(personService.getActivePersons(new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
+            .thenReturn(new PageImpl<>(List.of(boss)));
 
-        final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(boss, startDate, endDate);
+        when(departmentService.getDepartmentNamesByMembers(List.of(boss)))
+            .thenReturn(Map.of(new PersonId(boss.getId()), List.of("Kitchen", "Service")));
+
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("person.firstName")), "");
+        final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(boss, startDate, endDate, pageableSearchQuery);
+
+        final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(1);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
@@ -323,15 +373,22 @@ class SickDaysStatisticsServiceTest {
                 .endDate(startDate.plusDays(6))
                 .build();
 
-        when(sickNoteService.getAllActiveByPeriod(startDate, endDate)).thenReturn(List.of(sickNote));
+        when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(boss), startDate, endDate))
+            .thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(boss.getId()), personBasedata);
         when(personBasedataService.getBasedataByPersonId(List.of(boss.getId()))).thenReturn(personIdBasedatamap);
 
-        when(personService.getActivePersons()).thenReturn(List.of(boss));
-        when(departmentService.getDepartmentNamesByMembers(List.of(boss))).thenReturn(Map.of(new PersonId(boss.getId()), List.of("Kitchen", "Service")));
+        when(personService.getActivePersons(new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
+            .thenReturn(new PageImpl<>(List.of(boss)));
 
-        final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(boss, startDate, endDate);
+        when(departmentService.getDepartmentNamesByMembers(List.of(boss)))
+            .thenReturn(Map.of(new PersonId(boss.getId()), List.of("Kitchen", "Service")));
+
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("person.firstName")), "");
+        final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(boss, startDate, endDate, pageableSearchQuery);
+
+        final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(1);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
@@ -354,8 +411,16 @@ class SickDaysStatisticsServiceTest {
         boss.setLastName("Person");
         boss.setId(42);
 
-        final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(boss, startDate, endDate);
-        assertThat(allSicknotes).isEmpty();
+        when(departmentService.getManagedMembersOfPerson(boss, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
+            .thenReturn(new PageImpl<>(List.of(boss)));
+
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("person.firstName")), "");
+        final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(boss, startDate, endDate, pageableSearchQuery);
+
+        assertThat(allSicknotesPage.getContent()).hasSize(1);
+        assertThat(allSicknotesPage.getContent().get(0)).satisfies(statistics -> {
+            assertThat(statistics.getSickNotes()).isEmpty();
+        });
     }
 
     @Test
@@ -381,7 +446,9 @@ class SickDaysStatisticsServiceTest {
                 .endDate(startDate.plusDays(6))
                 .build();
 
-        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(departmentHead, member));
+        when(departmentService.getManagedMembersOfPerson(departmentHead, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
+            .thenReturn(new PageImpl<>(List.of(departmentHead, member)));
+
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
 
         final PersonBasedata departmentHeadBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), "Passagier1337", "additionalInfo");
@@ -391,21 +458,24 @@ class SickDaysStatisticsServiceTest {
 
         when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead, member))).thenReturn(Map.of());
 
-        final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("person.firstName")), "");
+        final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(departmentHead, startDate, endDate, pageableSearchQuery);
+
+        final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(2);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
-            assertThat(actual.getPersonalNumber()).isEqualTo("000042");
-            assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
-            assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
-            assertThat(actual.getDepartments()).isEmpty();
-            assertThat(actual.getSickNotes()).isEmpty();
-        });
-        assertThat(allSicknotes.get(1)).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("Passagier1337");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Head");
             assertThat(actual.getDepartments()).isEmpty();
             assertThat(actual.getSickNotes()).containsExactly(sickNote);
+        });
+        assertThat(allSicknotes.get(1)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("000042");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
+            assertThat(actual.getDepartments()).isEmpty();
+            assertThat(actual.getSickNotes()).isEmpty();
         });
     }
 
@@ -432,7 +502,9 @@ class SickDaysStatisticsServiceTest {
                 .endDate(startDate.plusDays(6))
                 .build();
 
-        when(departmentService.getMembersForDepartmentHead(departmentHead)).thenReturn(List.of(departmentHead, member));
+        when(departmentService.getManagedMembersOfPerson(departmentHead, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
+            .thenReturn(new PageImpl<>(List.of(departmentHead, member)));
+
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBaseDataMap = Map.of();
@@ -441,21 +513,24 @@ class SickDaysStatisticsServiceTest {
         when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead, member)))
             .thenReturn(Map.of(new PersonId(42), List.of("Kitchen", "Service"), new PersonId(2), List.of("Service")));
 
-        final List<SickDaysDetailedStatistics> allSicknotes = sut.getAll(departmentHead, startDate, endDate);
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("person.firstName")), "");
+        final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(departmentHead, startDate, endDate, pageableSearchQuery);
+
+        final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(2);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
-            assertThat(actual.getPersonalNumber()).isEqualTo("");
-            assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
-            assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
-            assertThat(actual.getDepartments()).containsExactly("Service");
-            assertThat(actual.getSickNotes()).isEmpty();
-        });
-        assertThat(allSicknotes.get(1)).satisfies(actual -> {
             assertThat(actual.getPersonalNumber()).isEqualTo("");
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Head");
             assertThat(actual.getDepartments()).containsExactly("Kitchen", "Service");
             assertThat(actual.getSickNotes()).containsExactly(sickNote);
+        });
+        assertThat(allSicknotes.get(1)).satisfies(actual -> {
+            assertThat(actual.getPersonalNumber()).isEqualTo("");
+            assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
+            assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
+            assertThat(actual.getDepartments()).containsExactly("Service");
+            assertThat(actual.getSickNotes()).isEmpty();
         });
     }
 }

@@ -12,7 +12,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
-class SickDaysDetailedStatistics {
+public class SickDaysDetailedStatistics {
 
     private final String personalNumber;
     private final Person person;

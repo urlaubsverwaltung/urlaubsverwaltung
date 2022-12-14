@@ -2,6 +2,10 @@ package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
 
@@ -47,7 +51,10 @@ class SickDaysStatisticsViewController {
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
     @GetMapping("/download")
     public ResponseEntity<ByteArrayResource> downloadCSV(@RequestParam(value = "from", defaultValue = "") String from,
-                                                         @RequestParam(value = "to", defaultValue = "") String to) {
+                                                         @RequestParam(value = "to", defaultValue = "") String to,
+                                                         @RequestParam(value = "query", required = false, defaultValue = "") String query,
+                                                         @SortDefault.SortDefaults({@SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)})
+                                                         Pageable pageable) {
 
         final FilterPeriod period = toFilterPeriod(from, to);
 
@@ -57,8 +64,11 @@ class SickDaysStatisticsViewController {
         }
 
         final Person signedInUser = personService.getSignedInUser();
-        final List<SickDaysDetailedStatistics> allDetailedSickNotes = sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate());
-        final CSVFile csvFile = sickDaysDetailedStatisticsCsvExportService.generateCSV(period, allDetailedSickNotes);
+
+        final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage =
+                sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate(), new PageableSearchQuery(pageable, query));
+
+        final CSVFile csvFile = sickDaysDetailedStatisticsCsvExportService.generateCSV(period, sickDaysStatisticsPage.getContent());
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("text", "csv"));

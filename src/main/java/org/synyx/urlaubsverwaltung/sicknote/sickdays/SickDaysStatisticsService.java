@@ -1,6 +1,11 @@
 package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -9,6 +14,8 @@ import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
+import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
+import org.synyx.urlaubsverwaltung.search.SortComparator;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
@@ -18,7 +25,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -53,25 +59,40 @@ public class SickDaysStatisticsService {
      * @param to     a specific date
      * @return list of all {@link SickDaysDetailedStatistics} that the person can access
      */
-    List<SickDaysDetailedStatistics> getAll(Person person, LocalDate from, LocalDate to) {
+    Page<SickDaysDetailedStatistics> getAll(Person person, LocalDate from, LocalDate to, PageableSearchQuery pageableSearchQuery) {
 
-        final List<Person> members = getMembersForPerson(person);
-        final List<Integer> personIds = members.stream().map(Person::getId).collect(toList());
+        final Pageable pageable = pageableSearchQuery.getPageable();
 
-        final List<SickNote> sickNotes = getSickNotes(person, members, from, to);
+        final Page<Person> relevantMembersPage = getMembersForPerson(person, pageableSearchQuery);
+        final List<Person> relevantMembers = relevantMembersPage.getContent();
+        final List<Integer> relevantPersonIds = relevantMembers.stream().map(Person::getId).collect(toList());
+        final List<SickNote> sickNotes = getSickNotes(person, relevantMembers, from, to);
 
-        // members without sickNotes should also have a statistics object. no sickNotes just means zero sick days :shrug:
         final Map<Person, List<SickNote>> sickNotesByPerson = sickNotes.stream().collect(groupingBy(SickNote::getPerson));
-        for (Person member : members) {
+        for (Person member : relevantMembers) {
             sickNotesByPerson.putIfAbsent(member, List.of());
         }
 
-        final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(personIds);
-        final Map<PersonId, List<String>> departmentsByPersonId = departmentService.getDepartmentNamesByMembers(members);
+        final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(relevantPersonIds);
+        final Map<PersonId, List<String>> departmentsByPersonId = departmentService.getDepartmentNamesByMembers(relevantMembers);
 
-        return sickNotesByPerson.entrySet().stream()
-            .map(toSickNoteDetailedStatistics(basedataByPersonId, departmentsByPersonId))
+        Stream<SickDaysDetailedStatistics> statisticsStream = sickNotesByPerson.entrySet()
+            .stream()
+            .map(toSickNoteDetailedStatistics(basedataByPersonId, departmentsByPersonId));
+
+        if (relevantMembersPage.getPageable().isUnpaged()) {
+            // we don't have to restrict the statistics if persons page is paged and or sorted already.
+            // otherwise we have fetched ALL persons -> therefore skip and limit statistics content.
+            statisticsStream = statisticsStream
+                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+                .limit(pageable.getPageSize());
+        }
+
+        final List<SickDaysDetailedStatistics> content = statisticsStream
+            .sorted(new SortComparator<>(SickDaysDetailedStatistics.class, pageable.getSort()))
             .collect(toList());
+
+        return new PageImpl<>(content, pageable, relevantMembersPage.getTotalElements());
     }
 
     private Function<Map.Entry<Person, List<SickNote>>, SickDaysDetailedStatistics> toSickNoteDetailedStatistics(Map<PersonId, PersonBasedata> basedataForPersons, Map<PersonId, List<String>> departmentsForPersons) {
@@ -86,38 +107,47 @@ public class SickDaysStatisticsService {
     }
 
     private List<SickNote> getSickNotes(Person person, List<Person> members, LocalDate from, LocalDate to) {
-
-        if (person.hasRole(OFFICE) || (person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW))) {
-            return sickNoteService.getAllActiveByPeriod(from, to);
+        if (person.hasRole(OFFICE) || (person.hasRole(BOSS) || person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && person.hasRole(SICK_NOTE_VIEW)) {
+            return sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, from, to);
         }
 
-        final List<SickNote> sickNotes;
-        if ((person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && person.hasRole(SICK_NOTE_VIEW)) {
-            sickNotes = sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, from, to);
-        } else {
-            sickNotes = List.of();
-        }
-
-        return sickNotes;
+        return List.of();
     }
 
-    private List<Person> getMembersForPerson(Person person) {
+    private Page<Person> getMembersForPerson(Person person, PageableSearchQuery pageableSearchQuery) {
+        final Pageable pageable = pageableSearchQuery.getPageable();
+        final boolean sortByPerson = isSortByPersonAttribute(pageable);
 
         if (person.hasRole(OFFICE) || person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW)) {
-            return personService.getActivePersons();
+            final PageableSearchQuery query = sortByPerson
+                ? new PageableSearchQuery(mapToPersonPageRequest(pageable), pageableSearchQuery.getQuery())
+                : new PageableSearchQuery(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), pageableSearchQuery.getQuery());
+
+            return personService.getActivePersons(query);
         }
 
-        final List<Person> membersForDepartmentHead = person.hasRole(DEPARTMENT_HEAD)
-                ? departmentService.getMembersForDepartmentHead(person)
-                : List.of();
+        final PageableSearchQuery query = new PageableSearchQuery(sortByPerson ? mapToPersonPageRequest(pageable) : Pageable.unpaged(), pageableSearchQuery.getQuery());
+        return departmentService.getManagedMembersOfPerson(person, query);
+    }
 
-        final List<Person> memberForSecondStageAuthority = person.hasRole(SECOND_STAGE_AUTHORITY)
-                ? departmentService.getMembersForSecondStageAuthority(person)
-                : List.of();
+    private boolean isSortByPersonAttribute(Pageable pageable) {
+        for (Sort.Order order : pageable.getSort()) {
+            if (!order.getProperty().startsWith("person.")) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-        return Stream.concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream())
-                .distinct()
-                .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
-                .collect(toList());
+    private PageRequest mapToPersonPageRequest(Pageable statisticsPageRequest) {
+        Sort personSort = Sort.unsorted();
+
+        for (Sort.Order order : statisticsPageRequest.getSort()) {
+            if (order.getProperty().startsWith("person.")) {
+                personSort = personSort.and(Sort.by(order.getDirection(), order.getProperty().replace("person.", "")));
+            }
+        }
+
+        return PageRequest.of(statisticsPageRequest.getPageNumber(), statisticsPageRequest.getPageSize(), personSort);
     }
 }
