@@ -453,9 +453,10 @@
                             </span>
                             <div>
                               <div class="tw-flex tw-items-center tw-flex-wrap">
-                                <a th:text="${holidayReplacement.person.niceName}"
-                                   th:href="@{/web/person/__${holidayReplacement.person.id}__/overview}"
-                                   class="icon-link"
+                                <a
+                                  th:text="${holidayReplacement.person.niceName}"
+                                  th:href="@{/web/person/__${holidayReplacement.person.id}__/overview}"
+                                  class="icon-link"
                                 ></a>
                                 <ul
                                   th:if="${not #lists.isEmpty(holidayReplacement.departments)}"

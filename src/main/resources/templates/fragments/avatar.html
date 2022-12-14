@@ -7,8 +7,22 @@
   <body>
     <th:block th:fragment="avatar(url,niceName,width,height,personId)">
       <a th:if="${personId != null}" th:href="@{/web/person/__${personId}__/overview}">
+        <img
+          th:if="${url != null}"
+          src="#"
+          th:src="${url}"
+          alt=""
+          class="gravatar gravatar--medium tw-rounded-full"
+          th:classappend="${className}"
+          th:width="${width == null ? '32px' : width}"
+          th:height="${height == null ? '32px' : height}"
+          th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
+          th:data-fallback="${fallbackAvatarUrl}"
+          is="uv-avatar"
+        />
+      </a>
       <img
-        th:if="${url != null}"
+        th:if="${url != null && personId == null}"
         src="#"
         th:src="${url}"
         alt=""
@@ -19,20 +33,6 @@
         th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
         th:data-fallback="${fallbackAvatarUrl}"
         is="uv-avatar"
-      />
-      </a>
-      <img
-              th:if="${url != null && personId == null}"
-              src="#"
-              th:src="${url}"
-              alt=""
-              class="gravatar gravatar--medium tw-rounded-full"
-              th:classappend="${className}"
-              th:width="${width == null ? '32px' : width}"
-              th:height="${height == null ? '32px' : height}"
-              th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
-              th:data-fallback="${fallbackAvatarUrl}"
-              is="uv-avatar"
       />
       <th:block th:if="${url == null}">
         <svg th:replace="icon/avatar-unknown::svg"></svg>

@@ -228,9 +228,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  th:each="person,loopStatus : ${personsPagination.page.content}"
-                >
+                <tr th:each="person,loopStatus : ${personsPagination.page.content}">
                   <td class="is-centered">
                     <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                       <img
@@ -245,15 +243,17 @@
                     th:text="${person.personnelNumber}"
                   ></td>
                   <td class="firstname">
-                    <a th:text="${person.firstName}"
-                       th:href="@{/web/person/__${person.id}__/overview}"
-                       class="icon-link"
+                    <a
+                      th:text="${person.firstName}"
+                      th:href="@{/web/person/__${person.id}__/overview}"
+                      class="icon-link"
                     ></a>
                   </td>
                   <td class="lastname">
-                    <a th:text="${person.lastName}"
-                       th:href="@{/web/person/__${person.id}__/overview}"
-                       class="icon-link"
+                    <a
+                      th:text="${person.lastName}"
+                      th:href="@{/web/person/__${person.id}__/overview}"
+                      class="icon-link"
                     ></a>
                   </td>
                   <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
