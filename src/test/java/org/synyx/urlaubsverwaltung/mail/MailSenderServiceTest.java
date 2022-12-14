@@ -35,25 +35,25 @@ class MailSenderServiceTest {
     void sendEmail() {
         final ArgumentCaptor<SimpleMailMessage> mailMessageArgumentCaptor = forClass(SimpleMailMessage.class);
 
-        final String[] recipients = {"hans@dampf.com"};
+        final String recipient = "hans@dampf.com";
         final String subject = "subject";
         final String body = "text";
         final String from = "from@example.org";
 
-        sut.sendEmail(from, List.of(recipients), subject, body);
+        sut.sendEmail(from, recipient, subject, body);
 
         verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
         SimpleMailMessage mailMessage = mailMessageArgumentCaptor.getValue();
         assertThat(mailMessage.getFrom()).contains(from);
-        assertThat(mailMessage.getTo()).isEqualTo(recipients);
+        assertThat(mailMessage.getTo()).containsExactly(recipient);
         assertThat(mailMessage.getSubject()).isEqualTo(subject);
         assertThat(mailMessage.getText()).isEqualTo(body);
     }
 
     @Test
-    void doesNotSendMailForZeroRecipients() {
+    void doesNotSendMailForNullRecipients() {
 
-        sut.sendEmail("from@example.org", List.of(), "subject", "text");
+        sut.sendEmail("from@example.org", null, "subject", "text");
 
         verifyNoInteractions(javaMailSender);
     }

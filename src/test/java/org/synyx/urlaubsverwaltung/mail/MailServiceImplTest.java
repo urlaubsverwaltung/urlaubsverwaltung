@@ -76,7 +76,7 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("mail@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "mail@example.org", "subject", "emailBody");
     }
 
     @Test
@@ -98,7 +98,7 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "hans@example.org", "subject", "emailBody");
     }
 
     @Test
@@ -124,8 +124,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody");
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "hans@example.org", "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "franz@example.org", "subject", "emailBody");
     }
 
     @Test
@@ -154,8 +154,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "franz@example.org", "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "hans@example.org", "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
     }
 
     @Test
@@ -184,8 +184,8 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "hans@example.org", "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "franz@example.org", "subject", "emailBody", List.of(new MailAttachment("fileName", iCal)));
     }
 
     @Test
@@ -205,7 +205,7 @@ class MailServiceImplTest {
             .build();
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of(to), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", to, "subject", "emailBody");
     }
 
     @Test
@@ -235,9 +235,9 @@ class MailServiceImplTest {
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("hans@example.org"), "subject", "emailBody");
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody");
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("admin@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "hans@example.org", "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "franz@example.org", "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "admin@example.org", "subject", "emailBody");
     }
 
     @Test
@@ -252,14 +252,14 @@ class MailServiceImplTest {
         final String templateName = "overtime_office";
 
         final Mail mail = Mail.builder()
-                .withRecipient(List.of(franz,franz))
-                .withSubject(subjectMessageKey)
-                .withTemplate(templateName, new HashMap<>())
-                .build();
+            .withRecipient(List.of(franz, franz))
+            .withSubject(subjectMessageKey)
+            .withTemplate(templateName, new HashMap<>())
+            .build();
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", List.of("franz@example.org"), "subject", "emailBody");
+        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "franz@example.org", "subject", "emailBody");
         verifyNoMoreInteractions(mailSenderService);
     }
 
