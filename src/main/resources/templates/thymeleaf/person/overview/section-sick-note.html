@@ -156,8 +156,7 @@
               </a>
             </td>
             <td class="is-centered">
-              <span th:replace="fragments/number::number(${sickNote.workDays})"></span>
-              <span th:text="#{duration.days}"></span>
+              <span th:text="#{overview.sicknotes.sickdays.days(${sickNote.workDays})}"></span>
             </td>
             <td class="print:tw-hidden is-centered hidden-xs">
               <div class="tw-flex tw-items-center">
