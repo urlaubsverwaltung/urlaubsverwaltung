@@ -120,6 +120,9 @@
 
       <div class="tw-mb-4 lg:tw-mb-12">
         <table class="list-table selectable-table tw-text-sm">
+          <caption class="tw-sr-only" th:text="#{applications.title}">
+            Abwesenheiten
+          </caption>
           <tbody>
             <tr th:if="${account != null && (doRemainingVacationDaysExpire && showExpiredVacationDays)}" class="active">
               <td></td>
