@@ -149,8 +149,8 @@
                     class="control-label col-md-3 tw-m-0 tw-text-sm tw-font-semibold tw-leading-6"
                   ></p>
                   <div class="col-md-9">
-                    <div class="department--members">
-                      <div
+                    <ul class="department--members tw-p-0 tw-m-0">
+                      <li
                         th:each="person : ${persons}"
                         class="department--member"
                         th:with="isInactive=${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).INACTIVE)}, isMember=${#lists.contains(department.members, person)}"
@@ -214,8 +214,8 @@
                             </label>
                           </div>
                         </div>
-                      </div>
-                    </div>
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </div>
