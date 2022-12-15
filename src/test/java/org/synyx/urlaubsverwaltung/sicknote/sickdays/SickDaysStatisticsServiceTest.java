@@ -102,7 +102,7 @@ class SickDaysStatisticsServiceTest {
             assertThat(actual.getSickNotes()).containsExactly(sickNote);
         });
         assertThat(allSicknotes.get(1)).satisfies(actual -> {
-            assertThat(actual.getPersonalNumber()).isEqualTo("");
+            assertThat(actual.getPersonalNumber()).isEmpty();
             assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
             assertThat(actual.getDepartments()).containsExactly("Service");
@@ -175,7 +175,7 @@ class SickDaysStatisticsServiceTest {
         final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(2);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
-            assertThat(actual.getPersonalNumber()).isEqualTo("");
+            assertThat(actual.getPersonalNumber()).isEmpty();
             assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
             assertThat(actual.getDepartments()).containsExactly("Service");
@@ -519,14 +519,14 @@ class SickDaysStatisticsServiceTest {
         final List<SickDaysDetailedStatistics> allSicknotes = allSicknotesPage.getContent();
         assertThat(allSicknotes).hasSize(2);
         assertThat(allSicknotes.get(0)).satisfies(actual -> {
-            assertThat(actual.getPersonalNumber()).isEqualTo("");
+            assertThat(actual.getPersonalNumber()).isEmpty();
             assertThat(actual.getPerson().getFirstName()).isEqualTo("Department");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Head");
             assertThat(actual.getDepartments()).containsExactly("Kitchen", "Service");
             assertThat(actual.getSickNotes()).containsExactly(sickNote);
         });
         assertThat(allSicknotes.get(1)).satisfies(actual -> {
-            assertThat(actual.getPersonalNumber()).isEqualTo("");
+            assertThat(actual.getPersonalNumber()).isEmpty();
             assertThat(actual.getPerson().getFirstName()).isEqualTo("John");
             assertThat(actual.getPerson().getLastName()).isEqualTo("Doe");
             assertThat(actual.getDepartments()).containsExactly("Service");
