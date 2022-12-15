@@ -101,7 +101,6 @@ public class SickDaysOverviewViewController {
                 .collect(toList());
 
         model.addAttribute("sickDaysStatistics", sickDaysOverviewDtos);
-        // TODO personnel number column should be visible when one random person has this number, independent of the current page.
         model.addAttribute("showPersonnelNumberColumn", personnelNumberAvailable(sickDaysStatisticsPage.getContent()));
 
         final String pageLinkPrefix = buildPageLinkPrefix(sickDaysStatisticsPage.getPageable(), Map.of("from", from, "to", to, "query", query));
