@@ -205,6 +205,9 @@
           </div>
 
           <table class="list-table striped-table bordered-table tw-text-sm">
+            <caption class="tw-sr-only" th:text="#{sicknote.progress.title}">
+              Verlauf
+            </caption>
             <tbody>
               <tr th:each="comment, loopStatus : ${comments}">
                 <td class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
