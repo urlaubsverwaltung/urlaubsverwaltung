@@ -68,8 +68,8 @@ class SickDaysDetailedStatisticsTest {
 
         final SickDays actual = sut.getSickDays(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31));
 
-        assertThat(actual.getDays().get(TOTAL.name())).isEqualTo(BigDecimal.valueOf(17)); // 3 * 5days + 2weekend
-        assertThat(actual.getDays().get(WITH_AUB.name())).isEqualTo(BigDecimal.valueOf(5));
+        assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.valueOf(17)); // 3 * 5days + 2weekend
+        assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.valueOf(5));
     }
 
     @Test
@@ -94,8 +94,8 @@ class SickDaysDetailedStatisticsTest {
 
         final SickDays actual = sut.getSickDays(LocalDate.of(2022, 12, 1), LocalDate.of(2022, 12, 31));
 
-        assertThat(actual.getDays().get(TOTAL.name())).isEqualTo(BigDecimal.ZERO);
-        assertThat(actual.getDays().get(WITH_AUB.name())).isEqualTo(BigDecimal.ZERO);
+        assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.ZERO);
+        assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.ZERO);
     }
 
     @Test
@@ -120,8 +120,8 @@ class SickDaysDetailedStatisticsTest {
 
         final SickDays actual = sut.getSickDays(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31));
 
-        assertThat(actual.getDays().get(TOTAL.name())).isEqualTo(BigDecimal.ZERO);
-        assertThat(actual.getDays().get(WITH_AUB.name())).isEqualTo(BigDecimal.ZERO);
+        assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.ZERO);
+        assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.ZERO);
     }
 
     @Test
@@ -166,8 +166,8 @@ class SickDaysDetailedStatisticsTest {
 
         final SickDays actual = sut.getChildSickDays(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31));
 
-        assertThat(actual.getDays().get(TOTAL.name())).isEqualTo(BigDecimal.valueOf(17)); // 3 * 5days + 2weekend
-        assertThat(actual.getDays().get(WITH_AUB.name())).isEqualTo(BigDecimal.valueOf(5));
+        assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.valueOf(17)); // 3 * 5days + 2weekend
+        assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.valueOf(5));
     }
 
     @Test
@@ -192,8 +192,8 @@ class SickDaysDetailedStatisticsTest {
 
         final SickDays actual = sut.getChildSickDays(LocalDate.of(2022, 12, 1), LocalDate.of(2022, 12, 31));
 
-        assertThat(actual.getDays().get(TOTAL.name())).isEqualTo(BigDecimal.ZERO);
-        assertThat(actual.getDays().get(WITH_AUB.name())).isEqualTo(BigDecimal.ZERO);
+        assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.ZERO);
+        assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.ZERO);
     }
 
     @Test
@@ -218,8 +218,8 @@ class SickDaysDetailedStatisticsTest {
 
         final SickDays actual = sut.getChildSickDays(LocalDate.of(2022, 1, 1), LocalDate.of(2022, 12, 31));
 
-        assertThat(actual.getDays().get(TOTAL.name())).isEqualTo(BigDecimal.ZERO);
-        assertThat(actual.getDays().get(WITH_AUB.name())).isEqualTo(BigDecimal.ZERO);
+        assertThat(actual.getDays()).containsEntry(TOTAL.name(), BigDecimal.ZERO);
+        assertThat(actual.getDays()).containsEntry(WITH_AUB.name(), BigDecimal.ZERO);
     }
 
     private Map<LocalDate, DayLength> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, DayLength> dayLengthProvider) {
