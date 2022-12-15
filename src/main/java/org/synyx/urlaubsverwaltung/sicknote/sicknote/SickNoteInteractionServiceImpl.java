@@ -19,7 +19,6 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 
-import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,12 +46,11 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
     private final SettingsService settingsService;
-    private final Clock clock;
 
     @Autowired
     SickNoteInteractionServiceImpl(SickNoteService sickNoteService, SickNoteCommentService commentService,
                                    ApplicationInteractionService applicationInteractionService, CalendarSyncService calendarSyncService,
-                                   AbsenceMappingService absenceMappingService, SettingsService settingsService, Clock clock) {
+                                   AbsenceMappingService absenceMappingService, SettingsService settingsService) {
 
         this.sickNoteService = sickNoteService;
         this.commentService = commentService;
@@ -60,7 +58,6 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
         this.settingsService = settingsService;
-        this.clock = clock;
     }
 
     @Override

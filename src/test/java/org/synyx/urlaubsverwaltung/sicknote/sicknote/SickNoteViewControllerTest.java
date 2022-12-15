@@ -29,7 +29,6 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
 import java.util.List;
@@ -95,8 +94,6 @@ class SickNoteViewControllerTest {
     @Mock
     private DepartmentService departmentService;
     @Mock
-    private WorkDaysCountService workDaysCountService;
-    @Mock
     private SickNoteValidator sickNoteValidator;
     @Mock
     private SickNoteCommentFormValidator sickNoteCommentFormValidator;
@@ -109,7 +106,7 @@ class SickNoteViewControllerTest {
     void setUp() {
         sut = new SickNoteViewController(sickNoteService,
             sickNoteInteractionService, sickNoteCommentService, sickNoteTypeService,
-            vacationTypeService, vacationTypeViewModelService, personService, departmentService, workDaysCountService, sickNoteValidator,
+            vacationTypeService, vacationTypeViewModelService, personService, departmentService, sickNoteValidator,
             sickNoteCommentFormValidator, sickNoteConvertFormValidator, settingsService, Clock.systemUTC());
     }
 

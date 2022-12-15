@@ -34,7 +34,6 @@ import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentFormValidator
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteTypeService;
 import org.synyx.urlaubsverwaltung.web.InstantPropertyEditor;
-import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -73,7 +72,6 @@ class SickNoteViewController {
     private final VacationTypeViewModelService vacationTypeViewModelService;
     private final PersonService personService;
     private final DepartmentService departmentService;
-    private final WorkDaysCountService workDaysCountService;
     private final SickNoteValidator sickNoteValidator;
     private final SickNoteCommentFormValidator sickNoteCommentFormValidator;
     private final SickNoteConvertFormValidator sickNoteConvertFormValidator;
@@ -84,7 +82,7 @@ class SickNoteViewController {
     SickNoteViewController(SickNoteService sickNoteService, SickNoteInteractionService sickNoteInteractionService,
                            SickNoteCommentService sickNoteCommentService, SickNoteTypeService sickNoteTypeService,
                            VacationTypeService vacationTypeService, VacationTypeViewModelService vacationTypeViewModelService, PersonService personService,
-                           DepartmentService departmentService, WorkDaysCountService workDaysCountService, SickNoteValidator sickNoteValidator,
+                           DepartmentService departmentService, SickNoteValidator sickNoteValidator,
                            SickNoteCommentFormValidator sickNoteCommentFormValidator, SickNoteConvertFormValidator sickNoteConvertFormValidator,
                            SettingsService settingsService, Clock clock) {
 
@@ -96,7 +94,6 @@ class SickNoteViewController {
         this.vacationTypeViewModelService = vacationTypeViewModelService;
         this.personService = personService;
         this.departmentService = departmentService;
-        this.workDaysCountService = workDaysCountService;
         this.sickNoteValidator = sickNoteValidator;
         this.sickNoteCommentFormValidator = sickNoteCommentFormValidator;
         this.sickNoteConvertFormValidator = sickNoteConvertFormValidator;

@@ -22,7 +22,6 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -65,7 +64,7 @@ class SickNoteInteractionServiceImplTest {
     @BeforeEach
     void setUp() {
         sut = new SickNoteInteractionServiceImpl(sickNoteService, commentService, applicationInteractionService, calendarSyncService,
-            absenceMappingService, settingsService, Clock.systemUTC());
+            absenceMappingService, settingsService);
     }
 
     @Test
