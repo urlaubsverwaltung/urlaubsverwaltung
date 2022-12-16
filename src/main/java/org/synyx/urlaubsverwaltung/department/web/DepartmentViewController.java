@@ -168,9 +168,9 @@ public class DepartmentViewController {
 
         model.addAttribute("department", departmentForm);
         model.addAttribute("persons", persons);
-        model.addAttribute("hiddenDepartmentMembers", filter(department.getMembers(), not(persons::contains)));
-        model.addAttribute("hiddenDepartmentHeads", filter(department.getDepartmentHeads(), not(persons::contains)));
-        model.addAttribute("hiddenDepartmentSecondStageAuthorities", filter(department.getSecondStageAuthorities(), not(persons::contains)));
+        model.addAttribute("hiddenDepartmentMembers", filter(departmentForm.getMembers(), not(persons::contains)));
+        model.addAttribute("hiddenDepartmentHeads", filter(departmentForm.getDepartmentHeads(), not(persons::contains)));
+        model.addAttribute("hiddenDepartmentSecondStageAuthorities", filter(departmentForm.getSecondStageAuthorities(), not(persons::contains)));
         model.addAttribute("memberQuery", memberQuery);
 
         final boolean turboFrameRequested = hasText(turboFrame);

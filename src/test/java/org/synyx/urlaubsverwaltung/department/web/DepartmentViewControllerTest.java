@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.department.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
@@ -18,13 +20,18 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -113,6 +120,259 @@ class DepartmentViewControllerTest {
 
         perform(get("/web/department/new"))
             .andExpect(view().name("thymeleaf/department/department_form"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "bru", "way" })
+    void ensureDepartmentMemberSearch(String givenQuery) throws Exception {
+
+        final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        batman.setId(1);
+
+        final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
+        robin.setId(2);
+
+        when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+
+        // departmentForm values are defined by the POST request
+        final DepartmentForm expectedDepartmentForm = new DepartmentForm();
+        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setName("fight club");
+
+        perform(post("/web/department/1/edit")
+            .param("do-member-search", "")
+            .param("memberQuery", givenQuery)
+            .param("name", "fight club")
+            .param("id", "1")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("thymeleaf/department/department_form"))
+            .andExpect(model().attribute("turboFrameRequested", is(false)))
+            .andExpect(model().attribute("memberQuery", is(givenQuery)))
+            .andExpect(model().attribute("department", is(expectedDepartmentForm)))
+            .andExpect(model().attribute("persons", hasSize(1)))
+            .andExpect(model().attribute("persons", hasItem(batman)));
+
+        verifyNoMoreInteractions(departmentService);
+    }
+
+    @Test
+    void ensureDepartmentMemberSearchKeepsMembersState() throws Exception {
+
+        final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        batman.setId(1);
+
+        final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
+        robin.setId(2);
+
+        final Person departmentHead = new Person("head", "Head", "Department", "departmentHead@example.org");
+        robin.setId(3);
+
+        final Person secondStageAuthority = new Person("secondStage", "Authority", "Second Stage", "secondstage@example.org");
+        robin.setId(4);
+
+        when(personService.getPersonByID(2)).thenReturn(Optional.of(robin));
+        when(personService.getPersonByID(3)).thenReturn(Optional.of(departmentHead));
+        when(personService.getPersonByID(4)).thenReturn(Optional.of(secondStageAuthority));
+
+        when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+
+        // departmentForm values are defined by the POST request
+        // ViewController must keep the state from the DTO, not from the `department` received from `departmentService`
+        final DepartmentForm expectedDepartmentForm = new DepartmentForm();
+        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setName("fight club");
+        expectedDepartmentForm.setMembers(List.of(robin));
+        expectedDepartmentForm.setDepartmentHeads(List.of(departmentHead));
+        expectedDepartmentForm.setSecondStageAuthorities(List.of(secondStageAuthority));
+
+        perform(post("/web/department/1/edit")
+            .param("do-member-search", "")
+            .param("memberQuery", "bruce")
+            .param("name", "fight club")
+            .param("id", "1")
+            .param("members", "2")
+            .param("departmentHeads", "3")
+            .param("secondStageAuthorities", "4")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("thymeleaf/department/department_form"))
+            .andExpect(model().attribute("turboFrameRequested", is(false)))
+            .andExpect(model().attribute("memberQuery", is("bruce")))
+            .andExpect(model().attribute("department", is(expectedDepartmentForm)))
+            .andExpect(model().attribute("persons", hasSize(1)))
+            .andExpect(model().attribute("persons", hasItem(batman)))
+            .andExpect(model().attribute("hiddenDepartmentMembers", hasSize(1)))
+            .andExpect(model().attribute("hiddenDepartmentMembers", hasItems(robin)))
+            .andExpect(model().attribute("hiddenDepartmentHeads", hasSize(1)))
+            .andExpect(model().attribute("hiddenDepartmentHeads", hasItem(departmentHead)))
+            .andExpect(model().attribute("hiddenDepartmentSecondStageAuthorities", hasSize(1)))
+            .andExpect(model().attribute("hiddenDepartmentSecondStageAuthorities", hasItems(secondStageAuthority)));
+
+        verifyNoMoreInteractions(departmentService);
+    }
+
+    @Test
+    void ensureDepartmentMemberSearchWithEmptyQuery() throws Exception {
+
+        final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        batman.setId(1);
+
+        final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
+        robin.setId(2);
+
+        when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+
+        // departmentForm values are defined by the POST request
+        final DepartmentForm expectedDepartmentForm = new DepartmentForm();
+        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setName("fight club");
+
+        perform(post("/web/department/1/edit")
+            .param("do-member-search", "")
+            .param("memberQuery", "")
+            .param("name", "fight club")
+            .param("id", "1")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("thymeleaf/department/department_form"))
+            .andExpect(model().attribute("turboFrameRequested", is(false)))
+            .andExpect(model().attribute("memberQuery", emptyString()))
+            .andExpect(model().attribute("department", is(expectedDepartmentForm)))
+            .andExpect(model().attribute("persons", hasSize(2)))
+            .andExpect(model().attribute("persons", hasItems(batman, robin)));
+
+        verifyNoMoreInteractions(departmentService);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "bru", "ayne" })
+    void ensureDepartmentMemberSearchWithJavaScript(String givenQuery) throws Exception {
+        final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        batman.setId(1);
+
+        final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
+        robin.setId(2);
+
+        when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+
+        // departmentForm values are defined by the POST request
+        final DepartmentForm expectedDepartmentForm = new DepartmentForm();
+        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setName("fight club");
+
+        perform(post("/web/department/1/edit")
+            .header("Turbo-Frame", "awesome-turbo-frame")
+            .param("do-member-search", "")
+            .param("memberQuery", givenQuery)
+            .param("name", "fight club")
+            .param("id", "1")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("thymeleaf/department/department_form::#awesome-turbo-frame"))
+            .andExpect(model().attribute("turboFrameRequested", is(true)))
+            .andExpect(model().attribute("memberQuery", is(givenQuery)))
+            .andExpect(model().attribute("department", is(expectedDepartmentForm)))
+            .andExpect(model().attribute("persons", hasSize(1)))
+            .andExpect(model().attribute("persons", hasItem(batman)));
+
+        verifyNoMoreInteractions(departmentService);
+    }
+
+    @Test
+    void ensureDepartmentMemberSearchWithJavaScriptKeepsMembersState() throws Exception {
+
+        final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        batman.setId(1);
+
+        final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
+        robin.setId(2);
+
+        final Person departmentHead = new Person("head", "Head", "Department", "departmentHead@example.org");
+        robin.setId(3);
+
+        final Person secondStageAuthority = new Person("secondStage", "Authority", "Second Stage", "secondstage@example.org");
+        robin.setId(4);
+
+        when(personService.getPersonByID(2)).thenReturn(Optional.of(robin));
+        when(personService.getPersonByID(3)).thenReturn(Optional.of(departmentHead));
+        when(personService.getPersonByID(4)).thenReturn(Optional.of(secondStageAuthority));
+
+        when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+
+        // departmentForm values are defined by the POST request
+        // ViewController must keep the state from the DTO, not from the `department` received from `departmentService`
+        final DepartmentForm expectedDepartmentForm = new DepartmentForm();
+        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setName("fight club");
+        expectedDepartmentForm.setMembers(List.of(robin));
+        expectedDepartmentForm.setDepartmentHeads(List.of(departmentHead));
+        expectedDepartmentForm.setSecondStageAuthorities(List.of(secondStageAuthority));
+
+        perform(post("/web/department/1/edit")
+            .header("Turbo-Frame", "awesome-turbo-frame")
+            .param("do-member-search", "")
+            .param("memberQuery", "bruce")
+            .param("name", "fight club")
+            .param("id", "1")
+            .param("members", "2")
+            .param("departmentHeads", "3")
+            .param("secondStageAuthorities", "4")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("thymeleaf/department/department_form::#awesome-turbo-frame"))
+            .andExpect(model().attribute("turboFrameRequested", is(true)))
+            .andExpect(model().attribute("memberQuery", is("bruce")))
+            .andExpect(model().attribute("department", is(expectedDepartmentForm)))
+            .andExpect(model().attribute("persons", hasSize(1)))
+            .andExpect(model().attribute("persons", hasItem(batman)))
+            .andExpect(model().attribute("hiddenDepartmentMembers", hasSize(1)))
+            .andExpect(model().attribute("hiddenDepartmentMembers", hasItems(robin)))
+            .andExpect(model().attribute("hiddenDepartmentHeads", hasSize(1)))
+            .andExpect(model().attribute("hiddenDepartmentHeads", hasItem(departmentHead)))
+            .andExpect(model().attribute("hiddenDepartmentSecondStageAuthorities", hasSize(1)))
+            .andExpect(model().attribute("hiddenDepartmentSecondStageAuthorities", hasItems(secondStageAuthority)));
+
+        verifyNoMoreInteractions(departmentService);
+    }
+
+    @Test
+    void ensureDepartmentMemberSearchWithJavaScriptWithEmptyQuery() throws Exception {
+        final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        batman.setId(1);
+
+        final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
+        robin.setId(2);
+
+        when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
+        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+
+        // departmentForm values are defined by the POST request
+        final DepartmentForm expectedDepartmentForm = new DepartmentForm();
+        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setName("fight club");
+
+        perform(post("/web/department/1/edit")
+            .header("Turbo-Frame", "awesome-turbo-frame")
+            .param("do-member-search", "")
+            .param("memberQuery", "")
+            .param("name", "fight club")
+            .param("id", "1")
+        )
+            .andExpect(status().isOk())
+            .andExpect(view().name("thymeleaf/department/department_form::#awesome-turbo-frame"))
+            .andExpect(model().attribute("turboFrameRequested", is(true)))
+            .andExpect(model().attribute("memberQuery", emptyString()))
+            .andExpect(model().attribute("department", is(expectedDepartmentForm)))
+            .andExpect(model().attribute("persons", hasSize(2)))
+            .andExpect(model().attribute("persons", hasItems(batman, robin)));
+
+        verifyNoMoreInteractions(departmentService);
     }
 
     @Test
