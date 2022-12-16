@@ -93,12 +93,18 @@
                 <td>
                   <span class="tw-text-blue-50 dark:tw-text-sky-800">
                     <img
-                      th:replace="fragments/avatar::avatar-bordered(url=${comment.person != null ? comment.person.gravatarUrl + '?d=404&s=40' : null},niceName=${comment.person != null ? comment.person.niceName : null},width='40px',height='40px')"
+                      th:replace="fragments/avatar::avatar-bordered(url=${comment.person != null ? comment.person.gravatarUrl + '?d=404&s=40' : null},niceName=${comment.person != null ? comment.person.niceName : null},width='40px',height='40px',personId=${comment.person != null ? comment.person.id : null})"
                       alt=""
                     />
                   </span>
                 </td>
-                <td th:if="${comment.person != null}" th:text="${comment.person.niceName}"></td>
+                <td th:if="${comment.person != null}">
+                  <a
+                    th:text="${comment.person.niceName}"
+                    th:href="@{/web/person/__${comment.person.id}__/overview}"
+                    class="icon-link"
+                  ></a>
+                </td>
                 <td th:if="${comment.person == null}" th:text="#{overtime.progress.deleted-author}"></td>
                 <td>
                   <th:block th:text="#{'overtime.progress.' + ${comment.action}}"></th:block>

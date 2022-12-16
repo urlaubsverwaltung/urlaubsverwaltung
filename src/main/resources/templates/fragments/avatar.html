@@ -6,8 +6,27 @@
   </head>
   <body>
     <th:block th:fragment="avatar(url,niceName,width,height)">
+      <a
+        th:if="${personId != null}"
+        th:href="@{/web/person/__${personId}__/overview}"
+        th:aria-label="#{nav.avatar-menu.overview.link(${niceName})}"
+      >
+        <img
+          th:if="${url != null}"
+          src="#"
+          th:src="${url}"
+          alt=""
+          class="gravatar gravatar--medium tw-rounded-full"
+          th:classappend="${className}"
+          th:width="${width == null ? '32px' : width}"
+          th:height="${height == null ? '32px' : height}"
+          th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
+          th:data-fallback="${fallbackAvatarUrl}"
+          is="uv-avatar"
+        />
+      </a>
       <img
-        th:if="${url != null}"
+        th:if="${url != null && personId == null}"
         src="#"
         th:src="${url}"
         alt=""

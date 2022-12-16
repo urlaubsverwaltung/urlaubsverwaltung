@@ -9,7 +9,7 @@
         <th:block th:ref="person-box-icon">
           <span class="tw-text-blue-50 dark:tw-text-sky-800">
             <img
-              th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404'},niceName=${person.niceName},width='60px',height='60px')"
+              th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404'},niceName=${person.niceName},width='60px',height='60px',personId=${person.id})"
               alt=""
             />
           </span>

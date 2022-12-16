@@ -115,13 +115,17 @@ class ApplicationForLeaveViewController {
 
     private List<ApplicationForLeaveDto> mapToApplicationForLeaveDtoList(List<ApplicationForLeave> applications, Person signedInUser, List<Person> membersAsDepartmentHead,
                                                                          List<Person> membersAsSecondStageAuthority, Locale locale) {
+
         return applications.stream()
-            .map(applicationForLeave -> toView(applicationForLeave, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, messageSource, locale))
+            .map(applicationForLeave -> {
+                final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, applicationForLeave.getPerson());
+                return toView(applicationForLeave, signedInUser, membersAsDepartmentHead, membersAsSecondStageAuthority, messageSource, locale, allowedToAccessPersonData);
+            })
             .collect(toList());
     }
 
     private static ApplicationForLeaveDto toView(ApplicationForLeave application, Person signedInUser, List<Person> membersAsDepartmentHead,
-                                                 List<Person> membersAsSecondStageAuthority, MessageSource messageSource, Locale locale) {
+                                                 List<Person> membersAsSecondStageAuthority, MessageSource messageSource, Locale locale, boolean allowedToAccessPersonData) {
         final Person person = application.getPerson();
 
         final boolean isWaiting = application.hasStatus(WAITING);
@@ -144,7 +148,7 @@ class ApplicationForLeaveViewController {
 
         return ApplicationForLeaveDto.builder()
             .id(application.getId())
-            .person(toViewPerson(person))
+            .person(toViewPerson(person, allowedToAccessPersonData))
             .vacationType(toViewVacationType(application.getVacationType()))
             .duration(DurationFormatter.toDurationString(application.getHours(), messageSource, locale))
             .dayLength(application.getDayLength())
@@ -189,19 +193,23 @@ class ApplicationForLeaveViewController {
         return messageSource.getMessage("absence.period.multipleDays", new Object[]{dateStartString, dateEndString}, locale);
     }
 
-    private static ApplicationPersonDto toViewPerson(Person person) {
-        return new ApplicationPersonDto(person.getNiceName(), person.getGravatarURL());
+    private static ApplicationPersonDto toViewPerson(Person person, boolean allowedToAccessPersonData) {
+        final Integer id = allowedToAccessPersonData ? person.getId() : null;
+        return new ApplicationPersonDto(person.getNiceName(), person.getGravatarURL(), id);
     }
 
     private static ApplicationForLeaveDto.VacationType toViewVacationType(VacationTypeEntity vacationType) {
         return new ApplicationForLeaveDto.VacationType(vacationType.getCategory().name(), vacationType.getMessageKey());
     }
 
-    private List<ApplicationReplacementDto> getHolidayReplacements(Person holidayReplacement, LocalDate holidayReplacementForDate, Locale locale) {
-        return applicationService.getForHolidayReplacement(holidayReplacement, holidayReplacementForDate)
+    private List<ApplicationReplacementDto> getHolidayReplacements(Person signedInUser, LocalDate holidayReplacementForDate, Locale locale) {
+        return applicationService.getForHolidayReplacement(signedInUser, holidayReplacementForDate)
             .stream()
             .sorted(comparing(Application::getStartDate))
-            .map(application -> toApplicationReplacementDto(application, holidayReplacement, locale))
+            .map(application -> {
+                final boolean allowedToAccessPersonData = departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, application.getPerson());
+                return toApplicationReplacementDto(application, signedInUser, locale, allowedToAccessPersonData);
+            })
             .collect(toList());
     }
 
@@ -304,7 +312,7 @@ class ApplicationForLeaveViewController {
         return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
-    private ApplicationReplacementDto toApplicationReplacementDto(Application application, Person holidayReplacementPerson, Locale locale) {
+    private ApplicationReplacementDto toApplicationReplacementDto(Application application, Person holidayReplacementPerson, Locale locale, boolean allowedToAccessPersonData) {
         final DayLength dayLength = application.getDayLength();
         final LocalDate startDate = application.getStartDate();
         final LocalDate endDate = application.getEndDate();
@@ -320,7 +328,7 @@ class ApplicationForLeaveViewController {
         final boolean pending = WAITING.equals(application.getStatus()) || TEMPORARY_ALLOWED.equals(application.getStatus());
 
         return ApplicationReplacementDto.builder()
-            .person(toViewPerson(applicationPerson))
+            .person(toViewPerson(applicationPerson, allowedToAccessPersonData))
             .note(note)
             .pending(pending)
             .duration(DurationFormatter.toDurationString(application.getHours(), messageSource, locale))

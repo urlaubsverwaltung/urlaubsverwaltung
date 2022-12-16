@@ -9,6 +9,7 @@ import static java.math.BigDecimal.ZERO;
 
 public final class ApplicationForLeaveStatisticsDto {
 
+    private final Integer id;
     private final String firstName;
     private final String lastName;
     private final String niceName;
@@ -31,11 +32,12 @@ public final class ApplicationForLeaveStatisticsDto {
 
     private final String leftOvertimeForPeriod;
 
-    ApplicationForLeaveStatisticsDto(String firstName, String lastName, String niceName, String gravatarURL, String personnelNumber,
+    ApplicationForLeaveStatisticsDto(Integer id, String firstName, String lastName, String niceName, String gravatarURL, String personnelNumber,
                                      BigDecimal totalAllowedVacationDays, Map<VacationType, BigDecimal> allowedVacationDays,
                                      BigDecimal totalWaitingVacationDays, Map<VacationType, BigDecimal> waitingVacationDays,
                                      BigDecimal leftVacationDaysForPeriod, BigDecimal remainingLeftVacationDaysForPeriod, BigDecimal leftVacationDays,
                                      BigDecimal remainingLeftVacationDays, String leftOvertime, String leftOvertimeForPeriod) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.niceName = niceName;
@@ -51,6 +53,10 @@ public final class ApplicationForLeaveStatisticsDto {
         this.remainingLeftVacationDays = remainingLeftVacationDays;
         this.leftOvertime = leftOvertime;
         this.leftOvertimeForPeriod = leftOvertimeForPeriod;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public String getFirstName() {

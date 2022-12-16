@@ -10,12 +10,15 @@ public class AbsenceOverviewMonthPersonDto {
     private final String gravatarUrl;
     private final List<AbsenceOverviewPersonDayDto> days;
 
-    AbsenceOverviewMonthPersonDto(String firstName, String lastName, String email, String gravatarUrl, List<AbsenceOverviewPersonDayDto> days) {
+    private final Integer id;
+
+    AbsenceOverviewMonthPersonDto(String firstName, String lastName, String email, String gravatarUrl, List<AbsenceOverviewPersonDayDto> days, Integer id) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.gravatarUrl = gravatarUrl;
         this.days = days;
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -36,5 +39,9 @@ public class AbsenceOverviewMonthPersonDto {
 
     public List<AbsenceOverviewPersonDayDto> getDays() {
         return days;
+    }
+
+    public Integer getId() {
+        return id;
     }
 }

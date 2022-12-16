@@ -14,6 +14,7 @@ final class ApplicationForLeaveStatisticsMapper {
 
     static ApplicationForLeaveStatisticsDto mapToApplicationForLeaveStatisticsDto(ApplicationForLeaveStatistics statistics, Locale locale, MessageSource messageSource) {
         return new ApplicationForLeaveStatisticsDto(
+            statistics.getPerson().getId(),
             statistics.getPerson().getFirstName(),
             statistics.getPerson().getLastName(),
             statistics.getPerson().getNiceName(),

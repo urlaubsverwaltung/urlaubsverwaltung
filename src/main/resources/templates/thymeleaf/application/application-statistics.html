@@ -300,7 +300,7 @@
                 <td class="tw-text-center">
                   <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                     <img
-                      th:replace="fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=404&s=60'},niceName=${statistic.niceName},width='60px',height='60px')"
+                      th:replace="fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=404&s=60'},niceName=${statistic.niceName},width='60px',height='60px',personId=${statistic.id})"
                       alt=""
                       src=""
                     />
@@ -311,9 +311,27 @@
                   th:text="${statistic.personnelNumber}"
                   class="tw-hidden lg:tw-table-cell print:tw-table-cell tw-text-ellipsis tw-overflow-hidden tw-max-w-xs tw-text-center"
                 ></td>
-                <td th:text="${statistic.firstName}" class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
-                <td th:text="${statistic.lastName}" class="tw-hidden lg:tw-table-cell print:tw-table-cell"></td>
-                <td th:text="${statistic.niceName}" class="lg:tw-hidden print:tw-hidden"></td>
+                <td class="tw-hidden lg:tw-table-cell print:tw-table-cell">
+                  <a
+                    th:text="${statistic.firstName}"
+                    th:href="@{/web/person/__${statistic.id}__/overview}"
+                    class="icon-link"
+                  ></a>
+                </td>
+                <td class="tw-hidden lg:tw-table-cell print:tw-table-cell">
+                  <a
+                    th:text="${statistic.lastName}"
+                    th:href="@{/web/person/__${statistic.id}__/overview}"
+                    class="icon-link"
+                  ></a>
+                </td>
+                <td class="lg:tw-hidden print:tw-hidden">
+                  <a
+                    th:text="${statistic.niceName}"
+                    th:href="@{/web/person/__${statistic.id}__/overview}"
+                    class="icon-link"
+                  ></a>
+                </td>
                 <td class="md:tw-hidden print:tw-hidden">
                   <div class="tw-flex tw-items-center">
                     <span class="tw-w-6">

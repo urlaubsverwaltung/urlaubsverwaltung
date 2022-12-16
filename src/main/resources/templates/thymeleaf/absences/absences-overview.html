@@ -196,16 +196,18 @@
                 >
                   <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                     <img
-                      th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=32'},niceName=${person.firstName + ' ' + person.lastName},width='32',height='32')"
+                      th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=32'},niceName=${person.firstName + ' ' + person.lastName},width='32',height='32',personId=${person.id})"
                       alt=""
                     />
                   </div>
                 </th>
                 <th scope="row" class="tw-py-0.5 tw-pl-2 tw-pr-4 print:tw-py-1.5">
-                  <div class="tw-flex tw-flex-col tw-justify-center tw-leading-tight">
-                    <th:block th:text="${person.firstName}" />&nbsp;
-                    <span th:text="${person.lastName}"></span>
-                  </div>
+                  <a th:href="@{/web/person/__${person.id}__/overview}" class="icon-link">
+                    <div class="tw-flex tw-flex-col tw-justify-center tw-leading-tight">
+                      <th:block th:text="${person.firstName}" />&nbsp;
+                      <span th:text="${person.lastName}"></span>
+                    </div>
+                  </a>
                 </th>
                 <td th:each="absence : ${person.days}">
                   <div

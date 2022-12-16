@@ -81,15 +81,22 @@ tr.inactive td > * {
   SELECTABLE TABLE
 **************************************************************************/
 
+.hoverable-table tr:hover td {
+  background-color: #fafafa;
+  @apply dark:tw-bg-zinc-800;
+}
+
 .selectable-table tr:hover td {
   cursor: pointer;
   background-color: #fafafa;
   @apply dark:tw-bg-zinc-800;
 }
 
+.hoverable-table tr:hover .action-link,
 .selectable-table tr:hover .action-link {
   @apply tw-text-opacity-75 !important;
 }
+.hoverable-table tr:hover .action-link:hover,
 .selectable-table tr:hover .action-link:hover {
   @apply tw-text-opacity-100 !important;
 }
