@@ -48,9 +48,11 @@ class SickDaysDetailedStatisticsCsvExportService implements CsvExportService<Sic
             getTranslation("sicknotes.statistics.from"),
             getTranslation("sicknotes.statistics.to"),
             getTranslation("sicknotes.statistics.length"),
+            getTranslation("sicknotes.statistics.days"),
             getTranslation("sicknotes.statistics.type"),
             getTranslation("sicknotes.statistics.certificate.from"),
-            getTranslation("sicknotes.statistics.certificate.to")
+            getTranslation("sicknotes.statistics.certificate.to"),
+            getTranslation("sicknotes.statistics.certificate.days")
         };
 
         final String startDateString = dateFormatAware.format(period.getStartDate());
@@ -77,10 +79,12 @@ class SickDaysDetailedStatisticsCsvExportService implements CsvExportService<Sic
                 sickNoteCsvRow[4] = dateFormatAware.format(sickNote.getStartDate());
                 sickNoteCsvRow[5] = dateFormatAware.format(sickNote.getEndDate());
                 sickNoteCsvRow[6] = getTranslation(sickNote.getDayLength().name());
-                sickNoteCsvRow[7] = getTranslation(sickNote.getSickNoteType().getMessageKey());
+                sickNoteCsvRow[7] = decimalFormat.format(sickNote.getWorkDays());
+                sickNoteCsvRow[8] = getTranslation(sickNote.getSickNoteType().getMessageKey());
                 if (sickNote.isAubPresent()) {
-                    sickNoteCsvRow[8] = dateFormatAware.format(sickNote.getAubStartDate());
-                    sickNoteCsvRow[9] = dateFormatAware.format(sickNote.getAubEndDate());
+                    sickNoteCsvRow[9] = dateFormatAware.format(sickNote.getAubStartDate());
+                    sickNoteCsvRow[10] = dateFormatAware.format(sickNote.getAubEndDate());
+                    sickNoteCsvRow[11] = decimalFormat.format(sickNote.getWorkDaysWithAub());
                 }
                 csvWriter.writeNext(sickNoteCsvRow);
             })
