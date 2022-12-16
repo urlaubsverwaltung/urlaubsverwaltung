@@ -34,20 +34,19 @@ class SickNoteDataProvider {
 
             final SickNoteType type = getSickNoteType(sickNoteCategory);
 
-            final SickNote sickNote = new SickNote();
-            sickNote.setPerson(person);
-            sickNote.setStartDate(startDate);
-            sickNote.setEndDate(endDate);
-            sickNote.setStatus(ACTIVE);
-            sickNote.setSickNoteType(type);
-            sickNote.setDayLength(dayLength);
+            SickNote.Builder builder = SickNote.builder()
+                    .person(person)
+                    .startDate(startDate)
+                    .endDate(endDate)
+                    .status(ACTIVE)
+                    .sickNoteType(type)
+                    .dayLength(dayLength);
 
             if (withAUB) {
-                sickNote.setAubStartDate(startDate);
-                sickNote.setAubEndDate(endDate);
+                builder = builder.aubStartDate(startDate).aubEndDate(endDate);
             }
 
-            sickNoteInteractionService.create(sickNote, office);
+            sickNoteInteractionService.create(builder.build(), office);
         }
     }
 

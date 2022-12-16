@@ -50,7 +50,7 @@
                 </li>
                 <li th:if="${navigationSickNoteStatisticsAccess}">
                   <a
-                    th:replace="~{::navigation-item(id='sicknote-link', href=@{/web/sicknote}, text=#{nav.sicknote.title}, icon=~{icon/medkit::svg}, dataTestId='navigation-sick-notes-link')}"
+                    th:replace="~{::navigation-item(id='sicknote-link', href=@{/web/sickdays}, text=#{nav.sicknote.title}, icon=~{icon/medkit::svg}, dataTestId='navigation-sick-notes-link')}"
                   ></a>
                 </li>
                 <li th:if="${navigationPersonListAccess}">

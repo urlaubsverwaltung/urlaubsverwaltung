@@ -118,29 +118,24 @@ public final class TestDataCreator {
     }
 
     // Sick note -------------------------------------------------------------------------------------------------------
-    public static SickNote anySickNote() {
-        return createSickNote(new Person("muster", "Muster", "Marlene", "muster@example.org"));
-    }
-
     public static SickNote createSickNote(Person person) {
         return createSickNote(person, LocalDate.now(UTC), ZonedDateTime.now(UTC).plusDays(3).toLocalDate(), FULL);
     }
 
     public static SickNote createSickNote(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
-        SickNoteType sickNoteType = new SickNoteType();
+        final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SickNoteCategory.SICK_NOTE);
         sickNoteType.setMessageKey("Krankmeldung");
 
-        SickNote sickNote = new SickNote();
-        sickNote.setPerson(person);
-        sickNote.setStartDate(startDate);
-        sickNote.setEndDate(endDate);
-        sickNote.setDayLength(dayLength);
-        sickNote.setSickNoteType(sickNoteType);
-        sickNote.setStatus(SickNoteStatus.ACTIVE);
-
-        return sickNote;
+        return SickNote.builder()
+                .person(person)
+                .startDate(startDate)
+                .endDate(endDate)
+                .dayLength(dayLength)
+                .sickNoteType(sickNoteType)
+                .status(SickNoteStatus.ACTIVE)
+                .build();
     }
 
     // Department ------------------------------------------------------------------------------------------------------

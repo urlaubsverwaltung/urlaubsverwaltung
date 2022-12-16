@@ -68,6 +68,15 @@ public interface WorkingTimeService {
     Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, Year year);
 
     /**
+     * Returns a map of persons and the associated {@link WorkingTimeCalendar}.
+     *
+     * @param persons to get the WorkingTimeCalendar
+     * @param dateRange to get the WorkingTimeCalendar
+     * @return map of persons and the associated {@link WorkingTimeCalendar}.
+     */
+    Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, DateRange dateRange);
+
+    /**
      * Returns a map of date ranges and the associated federal state.
      * <p>
      * Note: The federal state of the {@link DateRange} is either

@@ -1,9 +1,10 @@
 package org.synyx.urlaubsverwaltung.sicknote.comment;
 
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
 import java.util.List;
 
@@ -12,10 +13,11 @@ import java.util.List;
  */
 interface SickNoteCommentEntityRepository extends CrudRepository<SickNoteCommentEntity, Integer> {
 
-    List<SickNoteCommentEntity> findBySickNote(SickNote sickNote);
+    List<SickNoteCommentEntity> findBySickNoteId(Integer sickNoteId);
 
     List<SickNoteCommentEntity> findByPerson(Person author);
 
     @Modifying
-    void deleteBySickNotePerson(Person person);
+    @Query("DELETE FROM sick_note_comment c WHERE c.sickNoteId IN (SELECT s.id FROM SickNoteEntity s WHERE s.person = :person)")
+    void deleteBySickNotePerson(@Param("person") Person person);
 }

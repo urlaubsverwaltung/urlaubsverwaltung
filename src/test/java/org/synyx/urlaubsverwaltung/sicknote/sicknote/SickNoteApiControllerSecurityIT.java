@@ -156,7 +156,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
         office.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(office);
 
-        when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(new SickNote()));
+        when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(SickNote.builder().build()));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
@@ -176,7 +176,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
         office.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
         when(personService.getSignedInUser()).thenReturn(office);
 
-        when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(new SickNote()));
+        when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(SickNote.builder().build()));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
@@ -197,7 +197,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
-        when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(new SickNote()));
+        when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(SickNote.builder().build()));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
@@ -311,7 +311,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(new SickNote()));
+        when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(SickNote.builder().build()));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")

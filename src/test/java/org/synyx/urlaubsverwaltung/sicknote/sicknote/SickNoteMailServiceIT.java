@@ -52,11 +52,12 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
-        final SickNote sickNote = new SickNote();
-        sickNote.setId(1);
-        sickNote.setPerson(person);
-        sickNote.setStartDate(LocalDate.of(2022, 2, 1));
-        sickNote.setEndDate(LocalDate.of(2022, 4, 1));
+        final SickNote sickNote = SickNote.builder()
+                .id(1)
+                .person(person)
+                .startDate(LocalDate.of(2022, 2, 1))
+                .endDate(LocalDate.of(2022, 4, 1))
+                .build();
 
         final List<SickNote> sickNotes = List.of(sickNote);
         when(sickNoteService.getSickNotesReachingEndOfSickPay()).thenReturn(sickNotes);

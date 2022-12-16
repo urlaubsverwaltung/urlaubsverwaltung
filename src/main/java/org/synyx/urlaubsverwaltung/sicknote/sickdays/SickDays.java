@@ -1,12 +1,12 @@
-package org.synyx.urlaubsverwaltung.sickdays.web;
+package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.math.BigDecimal.ZERO;
-import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.TOTAL;
-import static org.synyx.urlaubsverwaltung.sickdays.web.SickDays.SickDayType.WITH_AUB;
+import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.TOTAL;
+import static org.synyx.urlaubsverwaltung.sicknote.sickdays.SickDays.SickDayType.WITH_AUB;
 
 /**
  * Represents number of days for specific sick note types.

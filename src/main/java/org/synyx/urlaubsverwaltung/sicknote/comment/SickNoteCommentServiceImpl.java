@@ -34,7 +34,7 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
     public SickNoteCommentEntity create(SickNote sickNote, SickNoteCommentAction action, Person author, String text) {
 
         final SickNoteCommentEntity comment = new SickNoteCommentEntity(clock);
-        comment.setSickNote(sickNote);
+        comment.setSickNoteId(sickNote.getId());
         comment.setAction(action);
         comment.setPerson(author);
         comment.setText(requireNonNullElse(text, ""));
@@ -44,7 +44,7 @@ class SickNoteCommentServiceImpl implements SickNoteCommentService {
 
     @Override
     public List<SickNoteCommentEntity> getCommentsBySickNote(SickNote sickNote) {
-        return sickNoteCommentEntityRepository.findBySickNote(sickNote);
+        return sickNoteCommentEntityRepository.findBySickNoteId(sickNote.getId());
     }
 
     @Override

@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.comment;
 
 import java.io.Serializable;
 
-public class SickNoteCommentForm implements Serializable {
+public class SickNoteCommentFormDto implements Serializable {
 
     private String text;
 

@@ -1,3 +1,9 @@
+import * as Turbo from "@hotwired/turbo";
+import "../components/details-dropdown";
+import "../components/form";
+import "../js/sick-notes/sick-days";
+import "../js/hotwire-turbo-progressbar";
 import "../js/navigate";
-import "../js/sick-notes/sick-note-overview";
-import "../components/filter-modal";
+
+// opt-in to turbo with `data-turbo="true"`
+Turbo.session.drive = false;

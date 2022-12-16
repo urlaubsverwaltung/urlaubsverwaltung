@@ -7,7 +7,7 @@ import org.springframework.validation.Validator;
 import static org.springframework.util.StringUtils.hasText;
 
 /**
- * Class for validating {@link SickNoteCommentForm} object.
+ * Class for validating {@link SickNoteCommentFormDto} object.
  */
 @Component
 public class SickNoteCommentFormValidator implements Validator {
@@ -20,16 +20,16 @@ public class SickNoteCommentFormValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return SickNoteCommentForm.class.equals(clazz);
+        return SickNoteCommentFormDto.class.equals(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        final SickNoteCommentForm sickNoteCommentForm = (SickNoteCommentForm) target;
-        validateComment(sickNoteCommentForm, errors);
+        final SickNoteCommentFormDto sickNoteCommentFormDto = (SickNoteCommentFormDto) target;
+        validateComment(sickNoteCommentFormDto, errors);
     }
 
-    public void validateComment(SickNoteCommentForm comment, Errors errors) {
+    public void validateComment(SickNoteCommentFormDto comment, Errors errors) {
 
         final String text = comment.getText();
 

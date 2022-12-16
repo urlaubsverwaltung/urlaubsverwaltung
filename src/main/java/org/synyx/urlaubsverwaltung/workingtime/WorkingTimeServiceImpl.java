@@ -14,8 +14,6 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.MonthDay;
 import java.time.Year;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,6 +25,7 @@ import java.util.function.Supplier;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.format.DateTimeFormatter.ofPattern;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -137,6 +136,11 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     @Override
     public Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, Year year) {
+        return getWorkingTimesByPersons(persons, new DateRange(year.atDay(1), year.atDay(1).with(lastDayOfYear())));
+    }
+
+    @Override
+    public Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, DateRange dateRange) {
         final CachedSupplier<FederalState> federalStateCachedSupplier = new CachedSupplier<>(this::getSystemDefaultFederalState);
 
         final WorkingTimeSettings workingTimeSettings = settingsService.getSettings().getWorkingTimeSettings();
@@ -146,25 +150,25 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
             .map(entity -> toWorkingTime(entity, federalStateCachedSupplier))
             .collect(groupingBy(WorkingTime::getPerson));
 
-        final LocalDate firstDayOfYear = year.atDay(1);
-        final LocalDate lastDayOfYear = year.atMonthDay(MonthDay.of(Month.DECEMBER, 31));
+        final LocalDate start = dateRange.getStartDate();
+        final LocalDate end = dateRange.getEndDate();
 
         return persons.stream().map(person -> {
             final List<WorkingTime> workingTimesInDateRange = workingTimesByPerson.getOrDefault(person, List.of())
                 .stream()
-                .filter(workingTime -> !workingTime.getValidFrom().isAfter(lastDayOfYear))
+                .filter(workingTime -> !workingTime.getValidFrom().isAfter(end))
                 .collect(toList());
 
             final Map<LocalDate, DayLength> dayLengthByDate = new HashMap<>();
 
-            LocalDate nextEnd = lastDayOfYear;
+            LocalDate nextEnd = end;
 
             for (WorkingTime workingTime : workingTimesInDateRange) {
                 final FederalState federalState = workingTime.getFederalState();
 
                 final DateRange workingTimeDateRange;
-                if (workingTime.getValidFrom().isBefore(firstDayOfYear)) {
-                    workingTimeDateRange = new DateRange(firstDayOfYear, nextEnd);
+                if (workingTime.getValidFrom().isBefore(start)) {
+                    workingTimeDateRange = new DateRange(start, nextEnd);
                 } else {
                     workingTimeDateRange = new DateRange(workingTime.getValidFrom(), nextEnd);
                 }
@@ -195,7 +199,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
                     dayLengthByDate.put(date, dayLengthForWeekDay);
                 }
 
-                if (workingTimeDateRange.getStartDate().equals(firstDayOfYear)) {
+                if (workingTimeDateRange.getStartDate().equals(start)) {
                     break;
                 }
 

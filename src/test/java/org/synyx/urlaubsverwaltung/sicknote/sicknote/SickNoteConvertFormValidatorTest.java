@@ -25,7 +25,7 @@ class SickNoteConvertFormValidatorTest {
     @Test
     void ensureNullReasonIsNotValid() {
 
-        final SickNoteConvertForm convertForm = new SickNoteConvertForm(new SickNote());
+        final SickNoteConvertForm convertForm = new SickNoteConvertForm(SickNote.builder().build());
         convertForm.setReason(null);
 
         validator.validate(convertForm, errors);
@@ -36,7 +36,7 @@ class SickNoteConvertFormValidatorTest {
     @Test
     void ensureEmptyReasonIsNotValid() {
 
-        final SickNoteConvertForm convertForm = new SickNoteConvertForm(new SickNote());
+        final SickNoteConvertForm convertForm = new SickNoteConvertForm(SickNote.builder().build());
         convertForm.setReason("");
 
         validator.validate(convertForm, errors);
@@ -47,7 +47,7 @@ class SickNoteConvertFormValidatorTest {
     @Test
     void ensureThereIsAMaximumCharLengthForReason() {
 
-        final SickNoteConvertForm convertForm = new SickNoteConvertForm(new SickNote());
+        final SickNoteConvertForm convertForm = new SickNoteConvertForm(SickNote.builder().build());
         convertForm.setReason(
             "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt"
                 + " ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud "

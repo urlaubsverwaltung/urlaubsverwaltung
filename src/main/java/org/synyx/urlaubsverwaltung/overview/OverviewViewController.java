@@ -24,7 +24,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.sicknote.sicknote.ExtendedSickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -33,17 +32,16 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_ADD;
-import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_EDIT;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
@@ -150,11 +148,10 @@ public class OverviewViewController {
 
         final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, Year.of(year).atDay(1), getLastDayOfYear(year));
 
-        final List<ExtendedSickNote> extendedSickNotes = sickNotes.stream()
-            .map(input -> new ExtendedSickNote(input, workDaysCountService))
-            .sorted(Comparator.comparing(ExtendedSickNote::getStartDate).reversed())
+        final List<SickNote> sortedSickNotes = sickNotes.stream()
+            .sorted(comparing(SickNote::getStartDate).reversed())
             .collect(toList());
-        model.addAttribute("sickNotes", extendedSickNotes);
+        model.addAttribute("sickNotes", sortedSickNotes);
 
         final SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService);
         model.addAttribute("sickDaysOverview", sickDaysOverview);
@@ -175,7 +172,7 @@ public class OverviewViewController {
         } else {
             applicationsForLeave = applications.stream()
                 .map(application -> new ApplicationForLeave(application, workDaysCountService))
-                .sorted(Comparator.comparing(ApplicationForLeave::getStartDate).reversed())
+                .sorted(comparing(ApplicationForLeave::getStartDate).reversed())
                 .collect(toList());
             usedDaysOverview = new UsedDaysOverview(applications, year, workDaysCountService);
         }
