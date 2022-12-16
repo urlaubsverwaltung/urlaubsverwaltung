@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.web;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * Util class to validate mail address.
  */
@@ -17,7 +16,6 @@ public final class MailAddressValidationUtil {
             + "[a-zäöüß0-9-]+(\\.[a-zäöüß0-9-]+)*\\.([a-z]{2,})$";
 
     private MailAddressValidationUtil() {
-
         // Hide constructor for util classes
     }
 
@@ -28,18 +26,13 @@ public final class MailAddressValidationUtil {
      * @return {@code true} if the provided mail address has a valid format, {@code false} else
      */
     public static boolean hasValidFormat(String mailAddress) {
-
-        String normalizedEmail = mailAddress.trim().toLowerCase();
-
+        final String normalizedEmail = mailAddress.trim().toLowerCase();
         return matchPattern(EMAIL_PATTERN, normalizedEmail);
     }
 
-
     private static boolean matchPattern(String nameOfPattern, String matchSequence) {
-
-        Pattern pattern = Pattern.compile(nameOfPattern);
-        Matcher matcher = pattern.matcher(matchSequence);
-
+        final Pattern pattern = Pattern.compile(nameOfPattern);
+        final Matcher matcher = pattern.matcher(matchSequence);
         return matcher.matches();
     }
 }
