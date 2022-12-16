@@ -112,7 +112,7 @@ class AccountFormValidator implements Validator {
             if (isNegative(annualVacationDays)) {
                 reject(errors, ATTRIBUTE_ANNUAL_VACATION_DAYS, ERROR_ENTRY_MIN, "0");
             } else if (isGreater(annualVacationDays, maxAnnualVacationDays)) {
-                reject(errors, ATTRIBUTE_ANNUAL_VACATION_DAYS, "error.entry.max", asIntString(maxAnnualVacationDays));
+                reject(errors, ATTRIBUTE_ANNUAL_VACATION_DAYS, "error.entry.max", maxAnnualVacationDays);
             }
         }
     }
@@ -131,7 +131,7 @@ class AccountFormValidator implements Validator {
             if (isNegative(actualVacationDays)) {
                 reject(errors, ATTRIBUTE_ACTUAL_VACATION_DAYS, ERROR_ENTRY_MIN, "0");
             } else if (isGreater(actualVacationDays, annualVacationDays)) {
-                reject(errors, ATTRIBUTE_ACTUAL_VACATION_DAYS, "error.entry.max", asIntString(annualVacationDays));
+                reject(errors, ATTRIBUTE_ACTUAL_VACATION_DAYS, "error.entry.max", annualVacationDays);
             }
         }
     }
@@ -256,10 +256,6 @@ class AccountFormValidator implements Validator {
         } else {
             errors.rejectValue(field, errorCode, messageAttributes, "");
         }
-    }
-
-    private static String asIntString(BigDecimal bigDecimal) {
-        return String.valueOf(bigDecimal.intValue());
     }
 
     private static String msg(String key) {

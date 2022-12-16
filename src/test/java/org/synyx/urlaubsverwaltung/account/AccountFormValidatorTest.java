@@ -150,7 +150,7 @@ class AccountFormValidatorTest {
         form.setAnnualVacationDays(new BigDecimal(maxDays + 1));
 
         sut.validateAnnualVacation(form, errors, BigDecimal.valueOf(maxDays));
-        verify(errors).rejectValue("annualVacationDays", "error.entry.max", new Object[]{"40"}, "");
+        verify(errors).rejectValue("annualVacationDays", "error.entry.max", new Object[]{BigDecimal.valueOf(40)}, "");
     }
 
     @Test
@@ -177,7 +177,7 @@ class AccountFormValidatorTest {
         form.setActualVacationDays(new BigDecimal("31"));
 
         sut.validateActualVacation(form, errors);
-        verify(errors).rejectValue("actualVacationDays", "error.entry.max", new Object[]{"30"}, "");
+        verify(errors).rejectValue("actualVacationDays", "error.entry.max", new Object[]{BigDecimal.valueOf(30)}, "");
     }
 
     private static Stream<Arguments> wrongAnnualAndActualVacationDays() {
