@@ -190,7 +190,7 @@ class AccountFormValidator implements Validator {
                 if (isNegative(remainingVacationDaysNotExpiring)) {
                     reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, ERROR_ENTRY_MIN, "0");
                 } else if (isGreater(remainingVacationDaysNotExpiring, remainingVacationDays)) {
-                    reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, msg("remainingVacationDaysNotExpiring.tooBig"), asIntString(remainingVacationDays));
+                    reject(errors, ATTRIBUTE_REMAINING_VACATION_DAYS_NOT_EXPIRING, msg("remainingVacationDaysNotExpiring.tooBig"), remainingVacationDays);
                 }
             }
         }

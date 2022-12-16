@@ -293,7 +293,7 @@ class AccountFormValidatorTest {
         form.setRemainingVacationDaysNotExpiring(new BigDecimal("6"));
 
         sut.validateRemainingVacationDaysNotExpiring(form, errors);
-        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "person.form.annualVacation.error.remainingVacationDaysNotExpiring.tooBig", new Object[]{"5"}, "");
+        verify(errors).rejectValue("remainingVacationDaysNotExpiring", "person.form.annualVacation.error.remainingVacationDaysNotExpiring.tooBig", new Object[]{BigDecimal.valueOf(5)}, "");
     }
 
     private static Stream<Arguments> remainingVacationDaysAndNotExpiring() {
