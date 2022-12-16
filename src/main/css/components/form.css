@@ -199,7 +199,7 @@ textarea.error {
   border: 1px solid #ddd;
   border-radius: 4px;
   overflow: auto;
-  max-height: 400px;
+  height: 400px;
   width: 100%;
   @apply dark:tw-border-zinc-600;
 }

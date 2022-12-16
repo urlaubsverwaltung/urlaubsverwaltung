@@ -6,6 +6,8 @@
       th:text="#{__${departmentTitleMessagekey}__}"
     ></title>
     <th:block th:fragment="scripts">
+      <script defer asset:src="npm.hotwired.js"></script>
+      <script defer asset:src="app_statistics~department_form~persons~sick_notes.js"></script>
       <script defer asset:src="department_form.js"></script>
     </th:block>
   </head>
@@ -18,6 +20,7 @@
           th:action="@{__${action}__}"
           th:object="${department}"
           class="form-horizontal"
+          data-turbo="true"
         >
           <input type="hidden" th:field="*{id}" />
 
@@ -149,73 +152,132 @@
                     class="control-label col-md-3 tw-m-0 tw-text-sm tw-font-semibold tw-leading-6"
                   ></p>
                   <div class="col-md-9">
-                    <ul class="department--members tw-p-0 tw-m-0">
-                      <li
-                        th:each="person : ${persons}"
-                        class="department--member"
-                        th:with="isInactive=${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).INACTIVE)}, isMember=${#lists.contains(department.members, person)}"
-                        th:classappend="${isMember ? ( isInactive ? 'is-inactive' : 'is-assigned') : ''}"
+                    <div
+                      class="tw-flex tw-items-stretch tw-border tw-border-neutral-300 dark:tw-border-neutral-600 tw-rounded-md focus-within:tw-ring-2 focus-within:tw-ring-blue-300"
+                    >
+                      <label for="member-search-input" class="tw-sr-only"> Mitarbeiter Suche </label>
+                      <input
+                        id="member-search-input"
+                        type="text"
+                        class="form-control md:tw-h-full tw-border-none tw-text-ellipsis focus:tw-ring-0 tw-rounded-r-none"
+                        name="memberQuery"
+                        th:placeholder="#{action.search.placeholder.firstname-lastname}"
+                        th:value="${memberQuery}"
+                        data-auto-submit="member-search-submit"
+                        data-auto-submit-delay="100"
+                      />
+                      <button
+                        type="submit"
+                        id="member-search-submit"
+                        class="dark:tw-bg-zinc-800 tw-px-2 tw-rounded-r-md tw-flex tw-items-center"
+                        name="do-member-search"
+                        th:formaction="${department.id == null ? '/web/department' : '/web/department/' + department.id + '/edit'}"
+                        data-turbo-frame="frame-department-members"
+                        data-turbo-action="replace"
                       >
-                        <div class="department--member-image tw-text-blue-50 dark:tw-text-sky-800">
-                          <img
-                            th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404&s=40'},niceName=${person.niceName},width='40px',height='40px',personId=${person.id})"
-                            alt=""
-                          />
-                        </div>
-                        <div class="department--member-assignment">
-                          <p class="department--member-info tw-mb-2">
-                            <a
-                              th:text="${person.niceName}"
-                              th:href="@{/web/person/__${person.id}__/overview}"
-                              class="icon-link"
-                            ></a>
-                          </p>
-                          <div th:if="${isInactive}" class="tw-flex tw-items-center">
-                            <svg
-                              th:replace="icon/information-circle::svg(className='tw-text-amber-300 tw-w-5 tw-h-5 tw-m-0 tw-mr-1')"
-                            ></svg>
-                            <th:block th:text="#{department.members.assigned.inactive}"></th:block>
+                        <svg th:replace="icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')"></svg>
+                        <span class="tw-sr-only" th:text="#{action.search}">Suche</span>
+                      </button>
+                    </div>
+                    <turbo-frame id="frame-department-members">
+                      <input
+                        th:each="member : ${hiddenDepartmentMembers}"
+                        type="hidden"
+                        name="members"
+                        value="1337"
+                        th:value="${member.id}"
+                      />
+                      <input
+                        th:each="departmentHead : ${hiddenDepartmentHeads}"
+                        type="hidden"
+                        name="departmentHeads"
+                        value="1337"
+                        th:value="${departmentHead.id}"
+                      />
+                      <input
+                        th:each="secondStageAuthority : ${hiddenDepartmentSecondStageAuthorities}"
+                        type="hidden"
+                        name="secondStageAuthorities"
+                        value="1337"
+                        th:value="${secondStageAuthority.id}"
+                      />
+                      <ul class="tw-mt-4 department--members tw-p-0 tw-m-0">
+                        <li
+                          th:each="person : ${persons}"
+                          class="department--member"
+                          th:with="isInactive=${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).INACTIVE)}, isMember=${#lists.contains(department.members, person)}"
+                          th:classappend="${isMember ? ( isInactive ? 'is-inactive' : 'is-assigned') : ''}"
+                        >
+                          <div class="department--member-image tw-text-blue-50 dark:tw-text-sky-800">
+                            <img
+                              th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404&s=40'},niceName=${person.niceName},width='40px',height='40px',personId=${person.id})"
+                              alt=""
+                            />
                           </div>
-                          <div>
-                            <label class="tw-font-normal tw-m-0 tw-flex tw-items-center">
-                              <input
-                                type="checkbox"
-                                th:field="*{members}"
-                                th:value="${person.id}"
-                                class="tw-m-0 tw-mr-2"
-                              />
-                              <th:block th:text="#{department.members.assigned}"></th:block>
-                            </label>
+                          <div class="department--member-assignment">
+                            <p class="department--member-info tw-mb-2">
+                              <a
+                                th:text="${person.niceName}"
+                                th:href="@{/web/person/__${person.id}__/overview}"
+                                class="icon-link"
+                              ></a>
+                            </p>
+                            <div th:if="${isInactive}" class="tw-flex tw-items-center">
+                              <svg
+                                th:replace="icon/information-circle::svg(className='tw-text-amber-300 tw-w-5 tw-h-5 tw-m-0 tw-mr-1')"
+                              ></svg>
+                              <th:block th:text="#{department.members.assigned.inactive}"></th:block>
+                            </div>
+                            <div>
+                              <label class="tw-font-normal tw-m-0 tw-flex tw-items-center">
+                                <input
+                                  type="checkbox"
+                                  name="members"
+                                  th:id="${'members' + (personStat.index + 1)}"
+                                  th:value="${person.id}"
+                                  th:checked="${#lists.contains(department.members, person)}"
+                                  class="tw-m-0 tw-mr-2"
+                                />
+                                <input type="hidden" name="_members" value="on" />
+                                <th:block th:text="#{department.members.assigned}"></th:block>
+                              </label>
+                            </div>
+                            <div
+                              th:if="${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).DEPARTMENT_HEAD)}"
+                            >
+                              <label class="tw-font-normal tw-m-0 tw-flex tw-items-center">
+                                <input
+                                  type="checkbox"
+                                  name="departmentHeads"
+                                  th:id="${'departmentHeads' + (personStat.index + 1)}"
+                                  th:value="${person.id}"
+                                  th:checked="${#lists.contains(department.departmentHeads, person)}"
+                                  class="tw-m-0 tw-mr-2"
+                                />
+                                <input type="hidden" name="_departmentHeads" value="on" />
+                                <th:block th:text="#{department.members.departmentHead}"></th:block>
+                              </label>
+                            </div>
+                            <div
+                              th:if="${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).SECOND_STAGE_AUTHORITY)}"
+                            >
+                              <label class="tw-font-normal tw-m-0 tw-flex tw-items-center">
+                                <input
+                                  type="checkbox"
+                                  name="secondStageAuthorities"
+                                  th:id="${'secondStageAuthorities' + (personStat.index + 1)}"
+                                  th:value="${person.id}"
+                                  th:checked="${#lists.contains(department.secondStageAuthorities, person)}"
+                                  class="tw-m-0 tw-mr-2"
+                                />
+                                <input type="hidden" name="_secondStageAuthorities" value="on" />
+                                <th:block th:text="#{department.members.secondStageAuthority}"></th:block>
+                              </label>
+                            </div>
                           </div>
-                          <div
-                            th:if="${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).DEPARTMENT_HEAD)}"
-                          >
-                            <label class="tw-font-normal tw-m-0 tw-flex tw-items-center">
-                              <input
-                                type="checkbox"
-                                th:field="*{departmentHeads}"
-                                th:value="${person.id}"
-                                class="tw-m-0 tw-mr-2"
-                              />
-                              <th:block th:text="#{department.members.departmentHead}"></th:block>
-                            </label>
-                          </div>
-                          <div
-                            th:if="${#lists.contains(person.permissions, T(org.synyx.urlaubsverwaltung.person.Role).SECOND_STAGE_AUTHORITY)}"
-                          >
-                            <label class="tw-font-normal tw-m-0 tw-flex tw-items-center">
-                              <input
-                                type="checkbox"
-                                th:field="*{secondStageAuthorities}"
-                                th:value="${person.id}"
-                                class="tw-m-0 tw-mr-2"
-                              />
-                              <th:block th:text="#{department.members.secondStageAuthority}"></th:block>
-                            </label>
-                          </div>
-                        </div>
-                      </li>
-                    </ul>
+                        </li>
+                      </ul>
+                    </turbo-frame>
                   </div>
                 </div>
               </div>
@@ -226,13 +288,15 @@
             <div class="tw-mb-16">
               <hr />
               <button
-                th:text="#{action.save}"
-                class="button-main-green col-xs-12 col-sm-5 col-md-2"
                 type="submit"
+                class="button-main-green col-xs-12 col-sm-5 col-md-2"
+                data-turbo="false"
+                th:text="#{action.save}"
               ></button>
               <a
-                th:text="#{action.cancel}"
+                data-turbo="false"
                 class="button col-xs-12 col-sm-5 col-md-2 pull-right"
+                th:text="#{action.cancel}"
                 th:href="@{/web/department}"
               >
               </a>
