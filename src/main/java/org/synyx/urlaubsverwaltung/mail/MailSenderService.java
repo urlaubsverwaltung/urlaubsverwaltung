@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.mail;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -31,21 +32,21 @@ class MailSenderService {
     /**
      * Send a mail with the given subject and text to the given recipients.
      *
-     * @param from       mail address from where the mail is sent
-     * @param recipients mail addresses where the mail should be sent to
-     * @param subject    mail subject
-     * @param text       mail body
+     * @param from      mail address from where the mail is sent
+     * @param recipient mail address where the mail should be sent to
+     * @param subject   mail subject
+     * @param text      mail body
      */
-    void sendEmail(String from, String recipients, String subject, String text) {
+    void sendEmail(String from, @Nullable String recipient, String subject, String text) {
 
-        if (recipients == null || recipients.isEmpty()) {
+        if (recipient == null || recipient.isBlank()) {
             LOG.warn("Could not send email to empty recipients!");
             return;
         }
 
         final SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(from);
-        mailMessage.setTo(recipients);
+        mailMessage.setTo(recipient);
         mailMessage.setSubject(subject);
         mailMessage.setText(text);
 
@@ -61,7 +62,12 @@ class MailSenderService {
      * @param text            mail body
      * @param mailAttachments List of attachments to add to the mail
      */
-    void sendEmail(String from, String recipient, String subject, String text, List<MailAttachment> mailAttachments) {
+    void sendEmail(String from, @Nullable String recipient, String subject, String text, List<MailAttachment> mailAttachments) {
+
+        if (recipient == null || recipient.isBlank()) {
+            LOG.warn("Could not send email to empty recipients!");
+            return;
+        }
 
         final MimeMessage mimeMessage = mailSender.createMimeMessage();
         try {

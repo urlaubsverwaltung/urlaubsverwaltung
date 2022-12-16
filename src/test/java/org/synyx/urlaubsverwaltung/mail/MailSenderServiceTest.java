@@ -1,22 +1,31 @@
 package org.synyx.urlaubsverwaltung.mail;
 
 
+import org.apache.commons.mail.util.MimeMessageParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.List;
+import java.util.Properties;
 
+import static javax.mail.Session.getInstance;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
-
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MailSenderServiceTest {
@@ -43,18 +52,52 @@ class MailSenderServiceTest {
         sut.sendEmail(from, recipient, subject, body);
 
         verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
-        SimpleMailMessage mailMessage = mailMessageArgumentCaptor.getValue();
+        final SimpleMailMessage mailMessage = mailMessageArgumentCaptor.getValue();
         assertThat(mailMessage.getFrom()).contains(from);
         assertThat(mailMessage.getTo()).containsExactly(recipient);
         assertThat(mailMessage.getSubject()).isEqualTo(subject);
         assertThat(mailMessage.getText()).isEqualTo(body);
     }
 
-    @Test
-    void doesNotSendMailForNullRecipients() {
-
-        sut.sendEmail("from@example.org", null, "subject", "text");
-
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"", " "})
+    void doesNotSendMailForNullRecipients(final String recipient) {
+        sut.sendEmail("from@example.org", recipient, "subject", "text");
         verifyNoInteractions(javaMailSender);
+    }
+
+    @Test
+    void ensuresSendMailWithAttachment() throws Exception {
+        final ArgumentCaptor<MimeMessage> mailMessageArgumentCaptor = forClass(MimeMessage.class);
+
+        final String recipient = "hans@dampf.com";
+        final String subject = "subject";
+        final String body = "text";
+        final String from = "from@example.org";
+
+        final MimeMessage msg = new MimeMessage(getInstance(new Properties(), null));
+        when(javaMailSender.createMimeMessage()).thenReturn(msg);
+
+        sut.sendEmail(from, recipient, subject, body, List.of(new MailAttachment("name", new ByteArrayResource(new byte[]{}))));
+
+        verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
+        final MimeMessage mailMessage = mailMessageArgumentCaptor.getValue();
+        assertThat(mailMessage.getFrom()).contains(new InternetAddress(from));
+        assertThat(mailMessage.getAllRecipients()).containsExactly(new InternetAddress(recipient));
+        assertThat(mailMessage.getSubject()).isEqualTo(subject);
+        assertThat(readPlainContent(mailMessage)).hasToString(body);
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"", " "})
+    void doesNotSendMailWithAttachmentToNullRecipients(final String recipient) {
+        sut.sendEmail("from@example.org", recipient, "subject", "text", List.of());
+        verifyNoInteractions(javaMailSender);
+    }
+
+    private String readPlainContent(MimeMessage message) throws Exception {
+        return new MimeMessageParser(message).parse().getPlainContent();
     }
 }
