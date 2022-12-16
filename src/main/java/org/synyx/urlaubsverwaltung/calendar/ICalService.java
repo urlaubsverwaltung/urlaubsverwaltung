@@ -131,7 +131,9 @@ public class ICalService {
         }
 
         event.getProperties().add(new Uid(generateUid(absence)));
-        event.getProperties().add(generateAttendee(absence));
+        if (absence.getPerson().getEmail() != null) {
+            event.getProperties().add(generateAttendee(absence));
+        }
 
         if (absence.isHolidayReplacement() || !isOwn) {
             event.getProperties().add(new Transp(VALUE_TRANSPARENT));
