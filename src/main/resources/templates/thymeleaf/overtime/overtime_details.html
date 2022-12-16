@@ -100,7 +100,7 @@
                 </td>
                 <td th:if="${comment.person != null}">
                   <a
-                    th:text="${ comment.person.niceName}"
+                    th:text="${comment.person.niceName}"
                     th:href="@{/web/person/__${comment.person.id}__/overview}"
                     class="icon-link"
                   ></a>
