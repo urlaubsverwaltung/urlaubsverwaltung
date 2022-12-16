@@ -319,9 +319,7 @@
                     <span class="tw-w-6">
                       <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
                     </span>
-                    <span
-                      th:text="${statistic.totalAllowedVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 1)}"
-                    ></span>
+                    <span th:text="#{applications.statistics.days(${statistic.totalAllowedVacationDays})}"></span>
                   </div>
                   <div class="tw-flex tw-items-center">
                     <span class="tw-w-6">
@@ -329,7 +327,7 @@
                     </span>
                     <span
                       class="tw-font-bold"
-                      th:text="${statistic.totalWaitingVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 1)}"
+                      th:text="#{applications.statistics.days(${statistic.totalWaitingVacationDays})}"
                     ></span>
                   </div>
                 </td>
@@ -349,9 +347,9 @@
                   <div class="tw-whitespace-nowrap">
                     <span
                       class="tw-font-bold"
-                      th:text="${statistic.totalAllowedVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalAllowedVacationDays, 1, 1)}"
+                      th:text="#{applications.statistics.days.value(${statistic.totalAllowedVacationDays})}"
                     ></span>
-                    <span th:text="#{duration.days}"></span>
+                    <span th:text="#{applications.statistics.days.unit(${statistic.totalAllowedVacationDays})}"></span>
                   </div>
                   <div
                     class="tw-whitespace-nowrap"
@@ -360,7 +358,7 @@
                   >
                     <span
                       class="tw-text-xs"
-                      th:text="${statistic.getAllowedVacationDays(type)} % 1 == 0 ? ${#numbers.formatDecimal(statistic.getAllowedVacationDays(type), 1, 0)} : ${#numbers.formatDecimal(statistic.getAllowedVacationDays(type), 1, 1)}"
+                      th:text="#{applications.statistics.days.value(${statistic.getAllowedVacationDays(type)})}"
                     ></span>
                   </div>
                 </td>
@@ -369,9 +367,9 @@
                   <div class="tw-whitespace-nowrap">
                     <span
                       class="tw-font-bold"
-                      th:text="${statistic.totalWaitingVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.totalWaitingVacationDays, 1, 1)}"
+                      th:text="#{applications.statistics.days.value(${statistic.totalWaitingVacationDays})}"
                     ></span>
-                    <span th:text="#{duration.days}"></span>
+                    <span th:text="#{applications.statistics.days.unit(${statistic.totalWaitingVacationDays})}"></span>
                   </div>
                   <div
                     class="tw-whitespace-nowrap"
@@ -380,7 +378,7 @@
                   >
                     <span
                       class="tw-text-xs"
-                      th:text="${statistic.getWaitingVacationDays(type)} % 1 == 0 ? ${#numbers.formatDecimal(statistic.getWaitingVacationDays(type), 1, 0)} : ${#numbers.formatDecimal(statistic.getWaitingVacationDays(type), 1, 1)}"
+                      th:text="#{applications.statistics.days.value(${statistic.getWaitingVacationDays(type)})}"
                     ></span>
                   </div>
                 </td>
@@ -389,21 +387,25 @@
                   <div>
                     <span
                       class="tw-font-bold"
-                      th:text="${statistic.leftVacationDaysForPeriod} % 1 == 0 ? ${#numbers.formatDecimal(statistic.leftVacationDaysForPeriod, 1, 0)} : ${#numbers.formatDecimal(statistic.leftVacationDaysForPeriod, 1, 1)}"
+                      th:text="#{applications.statistics.vacationdays.value(${statistic.leftVacationDaysForPeriod})}"
                     ></span>
-                    <span th:text="#{duration.vacationDays}"></span>
+                    <span
+                      th:text="#{applications.statistics.vacationdays.unit(${statistic.leftVacationDaysForPeriod})}"
+                    ></span>
                   </div>
                   <div class="tw-text-xs">
-                    <span th:text="#{duration.vacationDays.remaining.one}"></span>
+                    <span th:text="#{applications.statistics.remainingvacationdays.description.first}"></span>
                     <span
                       class="tw-font-bold"
-                      th:text="${statistic.remainingLeftVacationDaysForPeriod} % 1 == 0 ? ${#numbers.formatDecimal(statistic.remainingLeftVacationDaysForPeriod, 1, 0)} : ${#numbers.formatDecimal(statistic.remainingLeftVacationDaysForPeriod, 1, 1)}"
+                      th:text="#{applications.statistics.remainingvacationdays.value(${statistic.remainingLeftVacationDaysForPeriod})}"
                     ></span>
-                    <span th:text="#{duration.vacationDays.remaining.two}"></span>
+                    <span
+                      th:text="#{applications.statistics.remainingvacationdays.unit(${statistic.remainingLeftVacationDaysForPeriod})}"
+                    ></span>
                   </div>
                   <div th:class="tw-mt-2">
                     <span class="tw-font-bold" th:text="${statistic.leftOvertimeForPeriod}"></span>
-                    <span th:text="#{duration.overtime}"></span>
+                    <span th:text="#{applications.statistics.overtime.unit}"></span>
                   </div>
                 </td>
 
@@ -411,21 +413,23 @@
                   <div>
                     <span
                       class="tw-font-bold"
-                      th:text="${statistic.leftVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.leftVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.leftVacationDays, 1, 1)}"
+                      th:text="#{applications.statistics.vacationdays.value(${statistic.leftVacationDays})}"
                     ></span>
-                    <span th:text="#{duration.vacationDays}"></span>
+                    <span th:text="#{applications.statistics.vacationdays.unit(${statistic.leftVacationDays})}"></span>
                   </div>
                   <div class="tw-text-xs">
-                    <span th:text="#{duration.vacationDays.remaining.one}"></span>
+                    <span th:text="#{applications.statistics.remainingvacationdays.description.first}"></span>
                     <span
                       class="tw-font-bold"
-                      th:text="${statistic.remainingLeftVacationDays} % 1 == 0 ? ${#numbers.formatDecimal(statistic.remainingLeftVacationDays, 1, 0)} : ${#numbers.formatDecimal(statistic.remainingLeftVacationDays, 1, 1)}"
+                      th:text="#{applications.statistics.remainingvacationdays.value(${statistic.remainingLeftVacationDays})}"
                     ></span>
-                    <span th:text="#{duration.vacationDays.remaining.two}"></span>
+                    <span
+                      th:text="#{applications.statistics.remainingvacationdays.unit(${statistic.remainingLeftVacationDays})}"
+                    ></span>
                   </div>
                   <div th:class="tw-mt-2">
                     <span class="tw-font-bold" th:text="${statistic.leftOvertime}"></span>
-                    <span th:text="#{duration.overtime}"></span>
+                    <span th:text="#{applications.statistics.overtime.unit}"></span>
                   </div>
                 </td>
               </tr>

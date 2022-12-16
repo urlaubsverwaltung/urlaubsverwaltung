@@ -126,16 +126,11 @@
               <td class="tw-py-4">
                 <span class="tw-block tw-mb-1 tw-text-lg" th:text="#{overview.vacations.expired}"></span>
                 <th:block
-                  th:with="
-                    expired=${expiredRemainingVacationDays.doubleValue % 1 == 0 ? #numbers.formatDecimal(expiredRemainingVacationDays.doubleValue,1,0) : #numbers.formatDecimal(expiredRemainingVacationDays.doubleValue,1,1)},
-                    remaining=${vacationDaysLeft.remainingVacationDays.doubleValue % 1 == 0 ? #numbers.formatDecimal(vacationDaysLeft.remainingVacationDays.doubleValue,1,0) : #numbers.formatDecimal(vacationDaysLeft.remainingVacationDays.doubleValue,1,1)}
-                  "
-                  th:text="#{overview.vacations.expired.description(${expired}, ${remaining})}"
+                  th:text="#{overview.vacations.expired.description(${expiredRemainingVacationDays}, ${vacationDaysLeft.remainingVacationDays})}"
                 ></th:block>
               </td>
               <td class="is-centered">
-                <th:block th:replace="fragments/number::number(${expiredRemainingVacationDays.doubleValue})"></th:block
-                >&nbsp;<th:block th:text="#{duration.days}" />
+                <th:block th:text="#{overview.vacations.expired.days(${expiredRemainingVacationDays})}"></th:block>
               </td>
               <td class="is-centered hidden-xs print:tw-hidden">
                 <div class="tw-flex tw-items-center">
@@ -217,8 +212,7 @@
                     <th:block th:text="${{app.hours}}"></th:block>
                   </th:block>
                   <th:block th:if="${app.vacationType.category.name != 'OVERTIME'}">
-                    <th:block th:replace="fragments/number::number(${app.workDays.doubleValue})"></th:block>
-                    <th:block th:text="#{duration.days}"></th:block>
+                    <th:block th:text="#{overview.vacations.days(${app.workDays})}"></th:block>
                   </th:block>
                 </span>
                 <th:block th:if="${app.startDate.year != app.endDate.year}">

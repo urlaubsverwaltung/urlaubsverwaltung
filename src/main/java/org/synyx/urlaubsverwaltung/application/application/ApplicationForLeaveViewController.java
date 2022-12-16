@@ -15,8 +15,6 @@ import org.synyx.urlaubsverwaltung.util.DurationFormatter;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -150,7 +148,7 @@ class ApplicationForLeaveViewController {
             .vacationType(toViewVacationType(application.getVacationType()))
             .duration(DurationFormatter.toDurationString(application.getHours(), messageSource, locale))
             .dayLength(application.getDayLength())
-            .workDays(decimalToString(application.getWorkDays(), locale))
+            .workDays(application.getWorkDays())
             .statusWaiting(isWaiting)
             .editAllowed(isAllowedToEdit)
             .approveAllowed(isAllowedToApprove)
@@ -197,14 +195,6 @@ class ApplicationForLeaveViewController {
 
     private static ApplicationForLeaveDto.VacationType toViewVacationType(VacationTypeEntity vacationType) {
         return new ApplicationForLeaveDto.VacationType(vacationType.getCategory().name(), vacationType.getMessageKey());
-    }
-
-    private static String decimalToString(BigDecimal decimal, Locale locale) {
-        if (decimal == null) {
-            return "";
-        }
-        final DecimalFormatSymbols symbol = new DecimalFormatSymbols(locale);
-        return new DecimalFormat("#0.##", symbol).format(decimal);
     }
 
     private List<ApplicationReplacementDto> getHolidayReplacements(Person holidayReplacement, LocalDate holidayReplacementForDate, Locale locale) {
@@ -334,7 +324,7 @@ class ApplicationForLeaveViewController {
             .note(note)
             .pending(pending)
             .duration(DurationFormatter.toDurationString(application.getHours(), messageSource, locale))
-            .workDays(decimalToString(workDays, locale))
+            .workDays(workDays)
             .durationOfAbsenceDescription(toDurationOfAbsenceDescription(application, messageSource, locale))
             .dayLength(dayLength)
             .build();

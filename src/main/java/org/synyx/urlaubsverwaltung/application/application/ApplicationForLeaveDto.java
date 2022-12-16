@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
+import java.math.BigDecimal;
+
 public class ApplicationForLeaveDto {
 
     private final int id;
@@ -9,7 +11,7 @@ public class ApplicationForLeaveDto {
     private final VacationType vacationType;
     private final String duration;
     private final DayLength dayLength;
-    private final String workDays;
+    private final BigDecimal workDays;
     private final String durationOfAbsenceDescription;
     private final boolean statusWaiting;
     private final boolean cancelAllowed;
@@ -21,7 +23,7 @@ public class ApplicationForLeaveDto {
 
     @SuppressWarnings("java:S107") // "Methods should not have too many parameters" - Builder is used for construction
     private ApplicationForLeaveDto(int id, ApplicationPersonDto person, VacationType vacationType, String duration,
-                                   DayLength dayLength, String workDays, String durationOfAbsenceDescription,
+                                   DayLength dayLength, BigDecimal workDays, String durationOfAbsenceDescription,
                                    boolean statusWaiting, boolean cancelAllowed, boolean editAllowed, boolean approveAllowed,
                                    boolean temporaryApproveAllowed, boolean rejectAllowed, boolean cancellationRequested) {
         this.id = id;
@@ -60,7 +62,7 @@ public class ApplicationForLeaveDto {
         return dayLength;
     }
 
-    public String getWorkDays() {
+    public BigDecimal getWorkDays() {
         return workDays;
     }
 
@@ -106,7 +108,7 @@ public class ApplicationForLeaveDto {
         private VacationType vacationType;
         private String duration;
         private DayLength dayLength;
-        private String workDays;
+        private BigDecimal workDays;
         private String durationOfAbsenceDescription;
         private boolean statusWaiting;
         private boolean cancelAllowed;
@@ -141,7 +143,7 @@ public class ApplicationForLeaveDto {
             return this;
         }
 
-        Builder workDays(String workDays) {
+        Builder workDays(BigDecimal workDays) {
             this.workDays = workDays;
             return this;
         }

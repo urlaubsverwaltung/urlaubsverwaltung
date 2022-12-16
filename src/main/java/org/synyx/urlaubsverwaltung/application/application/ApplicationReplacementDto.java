@@ -2,19 +2,21 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
+import java.math.BigDecimal;
+
 public class ApplicationReplacementDto {
 
     private final ApplicationPersonDto person;
     private final String note;
     private final boolean pending;
     private final String duration;
-    private final String workDays;
+    private final BigDecimal workDays;
     private final String durationOfAbsenceDescription;
     private final DayLength dayLength;
 
     @SuppressWarnings("java:S107") // number of parameters is ok here for the DTO
     private ApplicationReplacementDto(ApplicationPersonDto person, String note, boolean pending,
-                                      String duration, String workDays, String durationOfAbsenceDescription,
+                                      String duration, BigDecimal workDays, String durationOfAbsenceDescription,
                                       DayLength dayLength) {
 
         this.person = person;
@@ -42,7 +44,7 @@ public class ApplicationReplacementDto {
         return duration;
     }
 
-    public String getWorkDays() {
+    public BigDecimal getWorkDays() {
         return workDays;
     }
 
@@ -63,7 +65,7 @@ public class ApplicationReplacementDto {
         private String note;
         private boolean pending;
         private String duration;
-        private String workDays;
+        private BigDecimal workDays;
         private String durationOfAbsenceDescription;
         private DayLength dayLength;
 
@@ -91,7 +93,7 @@ public class ApplicationReplacementDto {
             return this;
         }
 
-        public Builder workDays(String workDays) {
+        public Builder workDays(BigDecimal workDays) {
             this.workDays = workDays;
             return this;
         }
