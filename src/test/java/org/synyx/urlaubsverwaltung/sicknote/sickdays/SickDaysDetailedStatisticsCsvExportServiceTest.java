@@ -7,15 +7,23 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
+import static java.time.DayOfWeek.SATURDAY;
+import static java.time.DayOfWeek.SUNDAY;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -84,35 +92,42 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         sickNoteTypeSickChild.setCategory(SICK_NOTE_CHILD);
         sickNoteTypeSickChild.setMessageKey("application.data.sicknotetype.sicknotechild");
 
+        final Map<LocalDate, DayLength> workingTimeByDate = workingTimeMondayToFriday(period.getStartDate(), period.getEndDate());
+        final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimeByDate);
+
         final SickNote sickNote = SickNote.builder()
-                .dayLength(FULL)
-                .startDate(startDate)
-                .endDate(startDate.plusDays(1))
-                .sickNoteType(sickNoteTypeSick)
-                .build();
+            .dayLength(FULL)
+            .startDate(startDate)
+            .endDate(startDate.plusDays(1))
+            .workingTimeCalendar(workingTimeCalendar)
+            .sickNoteType(sickNoteTypeSick)
+            .build();
 
         final SickNote sickNoteHalfDayMorning = SickNote.builder()
-                .dayLength(MORNING)
-                .startDate(startDate)
-                .endDate(startDate)
-                .sickNoteType(sickNoteTypeSick)
-                .build();
+            .dayLength(MORNING)
+            .startDate(startDate)
+            .endDate(startDate)
+            .workingTimeCalendar(workingTimeCalendar)
+            .sickNoteType(sickNoteTypeSick)
+            .build();
 
         final SickNote sickNoteHalfDayNoon = SickNote.builder()
-                .dayLength(NOON)
-                .startDate(startDate)
-                .endDate(startDate)
-                .sickNoteType(sickNoteTypeSick)
-                .build();
+            .dayLength(NOON)
+            .startDate(startDate)
+            .endDate(startDate)
+            .workingTimeCalendar(workingTimeCalendar)
+            .sickNoteType(sickNoteTypeSick)
+            .build();
 
         final SickNote sickNoteWithAub = SickNote.builder()
-                .dayLength(FULL)
-                .startDate(startDate.plusDays(3))
-                .endDate(startDate.plusDays(4))
-                .aubStartDate(startDate.plusDays(3))
-                .aubEndDate(startDate.plusDays(4))
-                .sickNoteType(sickNoteTypeSickChild)
-                .build();
+            .dayLength(FULL)
+            .startDate(startDate.plusDays(3))
+            .endDate(startDate.plusDays(4))
+            .workingTimeCalendar(workingTimeCalendar)
+            .aubStartDate(startDate.plusDays(3))
+            .aubEndDate(startDate.plusDays(4))
+            .sickNoteType(sickNoteTypeSickChild)
+            .build();
 
         final List<SickNote> sickNotes = List.of(sickNote, sickNoteWithAub, sickNoteHalfDayMorning, sickNoteHalfDayNoon);
         final List<String> departments = List.of("Here", "There");
@@ -130,8 +145,10 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         addMessageSource("sicknotes.statistics.to");
         addMessageSource("sicknotes.statistics.length");
         addMessageSource("sicknotes.statistics.type");
+        addMessageSource("sicknotes.statistics.days");
         addMessageSource("sicknotes.statistics.certificate.from");
         addMessageSource("sicknotes.statistics.certificate.to");
+        addMessageSource("sicknotes.statistics.certificate.days");
         addMessageSource("FULL");
         addMessageSource("MORNING");
         addMessageSource("NOON");
@@ -142,14 +159,30 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         sut.write(period, statistics, csvWriter);
 
         verify(csvWriter).writeNext(new String[]{"{absence.period}: 01.01.2022 - 31.12.2022"});
-        verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{sicknotes.statistics.departments}", "{sicknotes.statistics.from}", "{sicknotes.statistics.to}", "{sicknotes.statistics.length}", "{sicknotes.statistics.type}", "{sicknotes.statistics.certificate.from}", "{sicknotes.statistics.certificate.to}"});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "02.01.2022", "{FULL}", "{application.data.sicknotetype.sicknote}", null, null});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "04.01.2022", "05.01.2022", "{FULL}", "{application.data.sicknotetype.sicknotechild}", "04.01.2022", "05.01.2022"});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "01.01.2022", "{MORNING}", "{application.data.sicknotetype.sicknote}", null, null});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "01.01.2022", "{NOON}", "{application.data.sicknotetype.sicknote}", null, null});
+        verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{sicknotes.statistics.departments}", "{sicknotes.statistics.from}", "{sicknotes.statistics.to}", "{sicknotes.statistics.length}", "{sicknotes.statistics.days}", "{sicknotes.statistics.type}", "{sicknotes.statistics.certificate.from}", "{sicknotes.statistics.certificate.to}", "{sicknotes.statistics.certificate.days}"});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "02.01.2022", "{FULL}", "0", "{application.data.sicknotetype.sicknote}", null, null, null});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "04.01.2022", "05.01.2022", "{FULL}", "2", "{application.data.sicknotetype.sicknotechild}", "04.01.2022", "05.01.2022", "2"});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "01.01.2022", "{MORNING}", "0", "{application.data.sicknotetype.sicknote}", null, null, null});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "01.01.2022", "{NOON}", "0", "{application.data.sicknotetype.sicknote}", null, null, null});
     }
 
     private void addMessageSource(String key) {
         when(messageSource.getMessage(eq(key), any(), any())).thenReturn(String.format("{%s}", key));
+    }
+
+    private Map<LocalDate, DayLength> workingTimeMondayToFriday(LocalDate from, LocalDate to) {
+        return buildWorkingTimeByDate(from, to, date -> weekend(date) ? DayLength.ZERO : DayLength.FULL);
+    }
+
+    private boolean weekend(LocalDate date) {
+        return date.getDayOfWeek().equals(SATURDAY) || date.getDayOfWeek().equals(SUNDAY);
+    }
+
+    private Map<LocalDate, DayLength> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, DayLength> dayLengthProvider) {
+        Map<LocalDate, DayLength> map = new HashMap<>();
+        for (LocalDate date : new DateRange(from, to)) {
+            map.put(date, dayLengthProvider.apply(date));
+        }
+        return map;
     }
 }
