@@ -6,7 +6,11 @@
   </head>
   <body>
     <th:block th:fragment="avatar(url,niceName,width,height)">
-      <a th:if="${personId != null}" th:href="@{/web/person/__${personId}__/overview}">
+      <a
+        th:if="${personId != null}"
+        th:href="@{/web/person/__${personId}__/overview}"
+        th:aria-label="#{nav.avatar-menu.overview.link(${niceName})}"
+      >
         <img
           th:if="${url != null}"
           src="#"
