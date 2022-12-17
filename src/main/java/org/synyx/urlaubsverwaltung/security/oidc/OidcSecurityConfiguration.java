@@ -35,6 +35,11 @@ class OidcSecurityConfiguration {
     }
 
     @Bean
+    PersonOnSuccessfullyOidcLoginEventHandler personOnSuccessfullyOidcLoginEventHandler(PersonService personService) {
+        return new PersonOnSuccessfullyOidcLoginEventHandler(personService, properties);
+    }
+
+    @Bean
     OidcPersonAuthoritiesMapper oidcPersonAuthoritiesMapper(PersonService personService) {
         return new OidcPersonAuthoritiesMapper(personService, properties);
     }
