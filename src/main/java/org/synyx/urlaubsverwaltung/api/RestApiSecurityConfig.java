@@ -10,7 +10,6 @@ import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
 import static org.springframework.security.config.http.SessionCreationPolicy.NEVER;
 
 @Configuration
-@Order(1)
 class RestApiSecurityConfig {
 
     private final boolean isOauth2Enabled;
@@ -20,6 +19,7 @@ class RestApiSecurityConfig {
     }
 
     @Bean
+    @Order(1)
     SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
         http
