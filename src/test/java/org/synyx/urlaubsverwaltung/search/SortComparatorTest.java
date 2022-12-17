@@ -19,7 +19,7 @@ class SortComparatorTest {
 
         final List<SomeClassToSort> list = List.of(
             new SomeClassToSort(2, "aaa"),
-            new SomeClassToSort(1, "aaa"),
+            new SomeClassToSort(1, "AAA"),
             new SomeClassToSort(3, "bbb"),
             new SomeClassToSort(3, "aaa")
         );
@@ -27,10 +27,32 @@ class SortComparatorTest {
         final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
 
         assertThat(sorted).containsExactly(
-            new SomeClassToSort(1, "aaa"),
+            new SomeClassToSort(1, "AAA"),
             new SomeClassToSort(2, "aaa"),
             new SomeClassToSort(3, "aaa"),
             new SomeClassToSort(3, "bbb")
+        );
+    }
+
+    @Test
+    void ensureSortingAscByStringIgnoresCase() {
+        final Sort sort = Sort.by("value");
+        final SortComparator<StringBox> sut = new SortComparator<>(StringBox.class, sort);
+
+        final List<StringBox> list = List.of(
+            new StringBox("Bernhard"),
+            new StringBox("anne Schneider"),
+            new StringBox("ANne Roth"),
+            new StringBox("Anne Schmidt")
+        );
+
+        final List<StringBox> actual = list.stream().sorted(sut).collect(toList());
+
+        assertThat(actual).containsExactly(
+            new StringBox("ANne Roth"),
+            new StringBox("Anne Schmidt"),
+            new StringBox("anne Schneider"),
+            new StringBox("Bernhard")
         );
     }
 
@@ -41,7 +63,7 @@ class SortComparatorTest {
 
         final List<SomeClassToSort> list = List.of(
             new SomeClassToSort(2, "aaa"),
-            new SomeClassToSort(1, "aaa"),
+            new SomeClassToSort(1, "AAA"),
             new SomeClassToSort(3, "bbb"),
             new SomeClassToSort(3, "aaa")
         );
@@ -49,7 +71,7 @@ class SortComparatorTest {
         final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
 
         assertThat(sorted).containsExactly(
-            new SomeClassToSort(1, "aaa"),
+            new SomeClassToSort(1, "AAA"),
             new SomeClassToSort(2, "aaa"),
             new SomeClassToSort(3, "bbb"),
             new SomeClassToSort(3, "aaa")
@@ -63,7 +85,7 @@ class SortComparatorTest {
 
         final List<SomeClassToSort> list = List.of(
             new SomeClassToSort(2, "aaa", new InnerClass(BigDecimal.valueOf(2))),
-            new SomeClassToSort(1, "aaa", new InnerClass(BigDecimal.valueOf(1))),
+            new SomeClassToSort(1, "AAA", new InnerClass(BigDecimal.valueOf(1))),
             new SomeClassToSort(3, "bbb", new InnerClass(BigDecimal.valueOf(1.5))),
             new SomeClassToSort(3, "aaa", new InnerClass(BigDecimal.valueOf(3)))
         );
@@ -71,7 +93,7 @@ class SortComparatorTest {
         final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
 
         assertThat(sorted).containsExactly(
-            new SomeClassToSort(1, "aaa", new InnerClass(BigDecimal.valueOf(1))),
+            new SomeClassToSort(1, "AAA", new InnerClass(BigDecimal.valueOf(1))),
             new SomeClassToSort(3, "bbb", new InnerClass(BigDecimal.valueOf(1.5))),
             new SomeClassToSort(2, "aaa", new InnerClass(BigDecimal.valueOf(2))),
             new SomeClassToSort(3, "aaa", new InnerClass(BigDecimal.valueOf(3)))
@@ -106,14 +128,16 @@ class SortComparatorTest {
 
         final List<SomeClassToSort> list = List.of(
             new SomeClassToSort(2, "aaa"),
-            new SomeClassToSort(1, "bbb")
+            new SomeClassToSort(1, "bbb"),
+            new SomeClassToSort(3, "AAA")
         );
 
         final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
 
         assertThat(sorted).containsExactly(
             new SomeClassToSort(2, "aaa"),
-            new SomeClassToSort(1, "bbb")
+            new SomeClassToSort(1, "bbb"),
+            new SomeClassToSort(3, "AAA")
         );
     }
 
@@ -121,12 +145,17 @@ class SortComparatorTest {
     void ensureRobustHandlingForUnknownSortProperty() {
         final Sort sortAscByInteger = Sort.by("unknownAttribute");
         final SortComparator<SomeClassToSort> sut = new SortComparator<>(SomeClassToSort.class, sortAscByInteger);
-        final List<SomeClassToSort> list = List.of(new SomeClassToSort(2, "aaa"), new SomeClassToSort(1, "bbb"));
+        final List<SomeClassToSort> list = List.of(
+            new SomeClassToSort(2, "aaa"),
+            new SomeClassToSort(1, "bbb"),
+            new SomeClassToSort(3, "AAA")
+        );
 
         final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
         assertThat(sorted).containsExactly(
             new SomeClassToSort(2, "aaa"),
-            new SomeClassToSort(1, "bbb")
+            new SomeClassToSort(1, "bbb"),
+            new SomeClassToSort(3, "AAA")
         );
     }
 
@@ -134,13 +163,50 @@ class SortComparatorTest {
     void ensureNullValuesAreBasedAtTheEnd() {
         final Sort sort = Sort.by(Sort.Direction.DESC, "string");
         final SortComparator<SomeClassToSort> sut = new SortComparator<>(SomeClassToSort.class, sort);
-        final List<SomeClassToSort> list = List.of(new SomeClassToSort(2, null), new SomeClassToSort(1, "bbb"));
+        final List<SomeClassToSort> list = List.of(
+            new SomeClassToSort(2, null),
+            new SomeClassToSort(1, "bbb"),
+            new SomeClassToSort(3, "BBB")
+        );
 
         final List<SomeClassToSort> sorted = list.stream().sorted(sut).collect(toList());
         assertThat(sorted).containsExactly(
             new SomeClassToSort(1, "bbb"),
+            new SomeClassToSort(3, "BBB"),
             new SomeClassToSort(2, null)
         );
+    }
+
+    static class StringBox {
+        private final String value;
+
+        StringBox(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            StringBox stringBox = (StringBox) o;
+            return Objects.equals(value, stringBox.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(value);
+        }
+
+        @Override
+        public String toString() {
+            return "StringBox{" +
+                "value='" + value + '\'' +
+                '}';
+        }
     }
 
     static class SomeClassToSort {
@@ -181,6 +247,15 @@ class SortComparatorTest {
         @Override
         public int hashCode() {
             return Objects.hash(integer, string, innerClass);
+        }
+
+        @Override
+        public String toString() {
+            return "SomeClassToSort{" +
+                "integer=" + integer +
+                ", string='" + string + '\'' +
+                ", innerClass=" + innerClass +
+                '}';
         }
     }
 
