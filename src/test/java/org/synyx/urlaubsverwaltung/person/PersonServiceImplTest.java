@@ -238,7 +238,8 @@ class PersonServiceImplTest {
         final PageRequest pageRequest = PageRequest.of(1, 100);
         final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(pageRequest, "name-query");
 
-        when(personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "name-query", pageRequest)).thenReturn(expected);
+        when(personRepository.findByPermissionsNotContainingAndFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(INACTIVE, "name-query", "name-query", pageRequest))
+            .thenReturn(expected);
 
         final Page<Person> actual = sut.getActivePersons(personPageableSearchQuery);
         assertThat(actual).isSameAs(expected);

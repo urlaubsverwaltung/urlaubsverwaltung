@@ -134,7 +134,7 @@ class PersonServiceImpl implements PersonService {
         final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
         final String query = personPageableSearchQuery.getQuery();
         final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
-        return personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, pageRequest);
+        return personRepository.findByPermissionsNotContainingAndFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(INACTIVE, query, query, pageRequest);
     }
 
     @Override
