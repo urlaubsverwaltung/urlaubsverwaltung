@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.person;
 
 import org.springframework.context.ApplicationEvent;
+import org.springframework.lang.Nullable;
 
 public class PersonDisabledEvent extends ApplicationEvent {
 
@@ -9,7 +10,7 @@ public class PersonDisabledEvent extends ApplicationEvent {
     private final String username;
     private final String email;
 
-    public PersonDisabledEvent(Object source, int personId, String personNiceName, String username, String email) {
+    public PersonDisabledEvent(Object source, int personId, String personNiceName, @Nullable String username, String email) {
         super(source);
         this.personId = personId;
         this.personNiceName = personNiceName;
@@ -29,6 +30,7 @@ public class PersonDisabledEvent extends ApplicationEvent {
         return username;
     }
 
+    @Nullable
     public String getEmail() {
         return email;
     }

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
+import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Size;
@@ -42,11 +43,12 @@ public class PersonBasedataDto {
         return this;
     }
 
+    @Nullable
     public String getEmail() {
         return email;
     }
 
-    public PersonBasedataDto setEmail(String email) {
+    public PersonBasedataDto setEmail(@Nullable String email) {
         this.email = email;
         return this;
     }

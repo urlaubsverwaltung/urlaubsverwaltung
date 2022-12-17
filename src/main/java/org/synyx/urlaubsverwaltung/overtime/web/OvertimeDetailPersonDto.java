@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
+import org.springframework.lang.Nullable;
+
 import java.util.Objects;
 
 public class OvertimeDetailPersonDto {
@@ -9,7 +11,7 @@ public class OvertimeDetailPersonDto {
     private final String niceName;
     private final String gravatarURL;
 
-    OvertimeDetailPersonDto(Integer id, String email, String niceName, String gravatarURL) {
+    OvertimeDetailPersonDto(Integer id, @Nullable String email, String niceName, String gravatarURL) {
         this.id = id;
         this.email = email;
         this.niceName = niceName;
@@ -20,6 +22,7 @@ public class OvertimeDetailPersonDto {
         return id;
     }
 
+    @Nullable
     public String getEmail() {
         return email;
     }
