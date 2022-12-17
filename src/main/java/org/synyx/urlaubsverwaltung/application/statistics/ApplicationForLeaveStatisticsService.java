@@ -65,6 +65,7 @@ class ApplicationForLeaveStatisticsService {
 
         final Collection<ApplicationForLeaveStatistics> statisticsCollection = applicationForLeaveStatisticsBuilder
             .build(relevantPersonsPage.getContent(), period.getStartDate(), period.getEndDate(), activeVacationTypes).values();
+
         statisticsCollection.forEach(statistics -> {
             final PersonId personId = new PersonId(statistics.getPerson().getId());
             statistics.setPersonBasedata(basedataByPersonId.getOrDefault(personId, null));
