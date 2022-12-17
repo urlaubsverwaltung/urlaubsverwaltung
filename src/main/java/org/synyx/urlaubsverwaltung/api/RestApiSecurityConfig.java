@@ -20,7 +20,7 @@ class RestApiSecurityConfig {
 
     @Bean
     @Order(1)
-    SecurityFilterChain configure(HttpSecurity http) throws Exception {
+    SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
 
         http
             .antMatcher("/api/**")
