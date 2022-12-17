@@ -105,8 +105,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     }
 
     private String extractFamilyName(OidcUserAuthority authority) {
-        return ofNullable(authority.getIdToken())
-            .map(StandardClaimAccessor::getFamilyName)
+        return ofNullable(authority.getIdToken()).map(StandardClaimAccessor::getFamilyName)
             .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getFamilyName))
             .orElseThrow(() -> {
                 LOG.error("Can not retrieve the lastname for oidc person mapping");
@@ -115,8 +114,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     }
 
     private String extractGivenName(OidcUserAuthority authority) {
-        return ofNullable(authority.getIdToken())
-            .map(StandardClaimAccessor::getGivenName)
+        return ofNullable(authority.getIdToken()).map(StandardClaimAccessor::getGivenName)
             .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getGivenName))
             .orElseThrow(() -> {
                 LOG.error("Can not retrieve the given name for oidc person mapping");
@@ -125,8 +123,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     }
 
     private String extractMailAddress(OidcUserAuthority authority) {
-        return ofNullable(authority.getIdToken())
-            .map(StandardClaimAccessor::getEmail)
+        return ofNullable(authority.getIdToken()).map(StandardClaimAccessor::getEmail)
             .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getEmail))
             .orElseThrow(() -> {
                 LOG.error("Can not retrieve the email for oidc person mapping");
