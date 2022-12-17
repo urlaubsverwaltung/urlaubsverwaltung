@@ -193,7 +193,13 @@
           </form>
         </div>
         <div class="md:tw-ml-auto">
-          <form action="#" th:action="@{/web/sickdays}" method="get">
+          <form
+            action="#"
+            th:action="@{/web/sickdays}"
+            method="get"
+            data-turbo-frame="frame-statistics"
+            data-turbo-action="advance"
+          >
             <div id="statistics-form-sort-inputs">
               <input type="hidden" name="from" th:value="${period.startDateIsoValue}" />
               <input type="hidden" name="to" th:value="${period.endDateIsoValue}" />
