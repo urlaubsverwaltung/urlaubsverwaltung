@@ -145,7 +145,7 @@ public class PersonsViewController {
         requestedDepartmentId.ifPresent(departmentId -> paginationLinkParameters.put("department", String.valueOf(departmentId)));
         requestedYear.ifPresent(year -> paginationLinkParameters.put("year", String.valueOf(year)));
 
-        final String pageLinkPrefix = buildPageLinkPrefix(pageable, paginationLinkParameters);
+        final String pageLinkPrefix = buildPageLinkPrefix(personPage.getPageable(), paginationLinkParameters);
         final PaginationDto<PersonDto> personsPagination = new PaginationDto<>(personDtoPage, pageLinkPrefix);
         model.addAttribute("personsPagination", personsPagination);
         model.addAttribute("paginationPageNumbers", IntStream.rangeClosed(1, personDtoPage.getTotalPages()).boxed().collect(toList()));

@@ -23,7 +23,6 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
-import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -76,21 +75,6 @@ class PersonsViewControllerTest {
     void setUp() {
         clock = Clock.systemUTC();
         sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
-    }
-
-    @Test
-    void ensurePersonPaginationDefault() throws Exception {
-
-        final Person signedInUser = personWithRole(USER, BOSS);
-        when(personService.getSignedInUser()).thenReturn(signedInUser);
-
-        final PageImpl<Person> page = new PageImpl<>(List.of());
-        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
-
-        final PaginationDto<Person> expectedPagination = new PaginationDto<>(new PageImpl<>(List.of()), "?query=&active=true&sort=person.firstName,ASC&size=20");
-
-        perform(get("/web/person"))
-            .andExpect(model().attribute("personsPagination", is(expectedPagination)));
     }
 
     @Test
