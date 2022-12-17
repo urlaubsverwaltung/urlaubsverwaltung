@@ -21,6 +21,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
@@ -46,11 +47,18 @@ class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
     private Collection<? extends GrantedAuthority> mapAuthorities(OidcUserAuthority oidcUserAuthority) {
         return resolvePerson(oidcUserAuthority)
-            .map(this::extractPermissions).orElse(List.of(USER))
+            .map(this::extractPermissions).orElse(generateListOfRoles())
             .stream()
             .map(Role::name)
             .map(SimpleGrantedAuthority::new)
             .collect(toList());
+    }
+
+    private List<Role> generateListOfRoles() {
+        if (personService.getActivePersonsByRole(OFFICE).isEmpty()) {
+            return List.of(OFFICE, USER);
+        }
+        return List.of(USER);
     }
 
     private Collection<Role> extractPermissions(Person person) {

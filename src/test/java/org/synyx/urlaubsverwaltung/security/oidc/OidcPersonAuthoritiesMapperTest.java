@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SUB;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,6 +60,22 @@ class OidcPersonAuthoritiesMapperTest {
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
+    }
+
+    @Test
+    void mapAuthoritiesFromIdTokenVeryFirstUser() {
+        final String uniqueID = "uniqueID";
+        final String email = "test.me@example.com";
+
+        final OidcUserAuthority oidcUserAuthority = getOidcUserAuthority(Map.of(
+            SUB, uniqueID,
+            EMAIL, email
+        ));
+
+        when(personService.getActivePersonsByRole(Role.OFFICE)).thenReturn(List.of());
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name(), OFFICE.name());
     }
 
     @Test
@@ -99,6 +117,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+        when(personService.getPersonByMailAddress(email)).thenReturn(Optional.of(createdPerson));
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
         assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
