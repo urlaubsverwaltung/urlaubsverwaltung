@@ -64,7 +64,7 @@ class MailServiceImpl implements MailService {
                     () -> mailSenderService.sendEmail(sender, email, subject, body)
                 );
             } else {
-                LOG.info("No valid E-Mail-Address of {} is null - no e-mail will be send.", recipient.getId());
+                LOG.info("Could not send mail to E-Mail-Address of person with id {}, because email is null.", recipient.getId());
             }
         });
     }
