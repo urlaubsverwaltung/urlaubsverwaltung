@@ -248,7 +248,7 @@ class PersonRepositoryIT extends TestContainersBase {
         personService.create(rosamund);
 
         final PageRequest pageRequest = PageRequest.of(0, 10);
-        final Page<Person> actual = sut.findByPermissionsNotContainingAndFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(INACTIVE, "mu", "mu", pageRequest);
+        final Page<Person> actual = sut.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "mu", pageRequest);
 
         assertThat(actual.getContent()).containsExactly(peter, rosamund);
     }
