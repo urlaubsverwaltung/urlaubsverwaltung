@@ -150,18 +150,21 @@
             <tr>
               <td th:text="#{sicknote.data.aub.short}"></td>
               <td>
-                <div class="tw-flex tw-items-center" data-test-id="sicknote-aub-date">
-                  <th:block th:if="${sickNote.aubPresent}">
+                <th:block th:if="${sickNote.aubPresent}">
+                  <div class="tw-flex tw-items-center" data-test-id="sicknote-aub-date">
                     <svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4')"></svg>
                     &nbsp;<th:block
                       th:replace="fragments/date-range::date-range(from=${sickNote.aubStartDate}, to=${sickNote.aubEndDate}, pattern='E, dd.MM.yyyy')"
                     ></th:block>
-                  </th:block>
-                  <th:block th:if="${not sickNote.aubPresent}">
+                  </div>
+                  <div class="tw-ml-4" th:text="#{sicknote.data.days(${sickNote.workDaysWithAub})}"></div>
+                </th:block>
+                <th:block th:if="${not sickNote.aubPresent}">
+                  <div class="tw-flex tw-items-center" data-test-id="sicknote-aub-date">
                     <svg th:replace="icon/x-circle::svg(className='tw-w-4 tw-h-4')"></svg>
                     &nbsp;<th:block th:text="#{sicknote.data.aub.notPresent}"></th:block>
-                  </th:block>
-                </div>
+                  </div>
+                </th:block>
               </td>
             </tr>
           </tbody>
