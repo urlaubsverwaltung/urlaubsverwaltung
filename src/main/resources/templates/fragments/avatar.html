@@ -5,7 +5,7 @@
     <title>avatar</title>
   </head>
   <body>
-    <th:block th:fragment="avatar(url,niceName,width,height)">
+    <th:block th:fragment="avatar(url,niceName,width,height,personId)">
       <a
         th:if="${personId != null}"
         th:href="@{/web/person/__${personId}__/overview}"
@@ -44,10 +44,10 @@
     </th:block>
 
     <span
-      th:fragment="avatar-bordered(url,niceName,width,height)"
+      th:fragment="avatar-bordered(url,niceName,width,height,personId)"
       class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-rounded-full tw-p-1 tw-inline-flex"
     >
-      <img src="#" alt="" th:replace="~{::avatar(${url},${niceName},${width},${height})}" />
+      <img src="#" alt="" th:replace="~{::avatar(${url},${niceName},${width},${height},${personId})}" />
     </span>
   </body>
 </html>

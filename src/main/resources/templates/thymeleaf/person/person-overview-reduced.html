@@ -27,7 +27,7 @@
           th:replace="thymeleaf/person/box::person-box-with-departments(person=${person}, departments=${departmentsOfPerson})"
         ></div>
       </div>
-      <p class="tw-text-sm" th:text="#{overview.reduced.info(${person.niceName})}"/>
+      <p class="tw-text-sm" th:text="#{overview.reduced.info(${person.niceName})}" />
     </main>
   </body>
 </html>
