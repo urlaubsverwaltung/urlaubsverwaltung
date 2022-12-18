@@ -14,6 +14,11 @@ public class ApplicationSettings {
     private Integer maximumMonthsToApplyForLeaveInAdvance = 12;
 
     /**
+     * Specifies how many months afterwards can a person apply for leave.
+     */
+    private Integer maximumMonthsToApplyForLeaveAfterwards = 12;
+
+    /**
      * Activates a notification after {daysBeforeWaitingApplicationsReminderNotification} days for waiting applications
      */
     private boolean remindForWaitingApplications = false;
@@ -55,6 +60,14 @@ public class ApplicationSettings {
 
     public void setMaximumMonthsToApplyForLeaveInAdvance(Integer maximumMonthsToApplyForLeaveInAdvance) {
         this.maximumMonthsToApplyForLeaveInAdvance = maximumMonthsToApplyForLeaveInAdvance;
+    }
+
+    public Integer getMaximumMonthsToApplyForLeaveAfterwards() {
+        return maximumMonthsToApplyForLeaveAfterwards;
+    }
+
+    public void setMaximumMonthsToApplyForLeaveAfterwards(Integer maximumMonthsToApplyForLeaveAfterwards) {
+        this.maximumMonthsToApplyForLeaveAfterwards = maximumMonthsToApplyForLeaveAfterwards;
     }
 
     public boolean isRemindForWaitingApplications() {

@@ -255,21 +255,21 @@ class ApplicationForLeaveFormValidator implements Validator {
 
     private void validateNotTooFarInTheFuture(LocalDate date, ApplicationSettings settings, Errors errors) {
 
-        final Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
-        final LocalDate future = ZonedDateTime.now(clock).plusMonths(maximumMonths).toLocalDate();
+        final Integer maximumMonthsInAdvance = settings.getMaximumMonthsToApplyForLeaveInAdvance();
+        final LocalDate future = ZonedDateTime.now(clock).plusMonths(maximumMonthsInAdvance).toLocalDate();
 
         if (date.isAfter(future)) {
-            errors.reject(ERROR_TOO_FAR_IN_FUTURE, new Object[]{settings.getMaximumMonthsToApplyForLeaveInAdvance()}, null);
+            errors.reject(ERROR_TOO_FAR_IN_FUTURE, new Object[]{maximumMonthsInAdvance}, null);
         }
     }
 
     private void validateNotTooFarInThePast(LocalDate date, ApplicationSettings settings, Errors errors) {
 
-        final Integer maximumMonths = settings.getMaximumMonthsToApplyForLeaveInAdvance();
-        final LocalDate past = ZonedDateTime.now(clock).minusMonths(maximumMonths).toLocalDate();
+        final Integer maximumMonthAfterwards = settings.getMaximumMonthsToApplyForLeaveAfterwards();
+        final LocalDate past = ZonedDateTime.now(clock).minusMonths(maximumMonthAfterwards).toLocalDate();
 
         if (date.isBefore(past)) {
-            errors.reject(ERROR_TOO_FAR_IN_PAST, new Object[]{settings.getMaximumMonthsToApplyForLeaveInAdvance()}, null);
+            errors.reject(ERROR_TOO_FAR_IN_PAST, new Object[]{maximumMonthAfterwards}, null);
         }
     }
 

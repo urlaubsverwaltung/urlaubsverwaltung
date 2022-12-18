@@ -144,6 +144,7 @@ class SettingsValidatorTest {
         final ApplicationSettings applicationSettings = settings.getApplicationSettings();
 
         applicationSettings.setMaximumMonthsToApplyForLeaveInAdvance(null);
+        applicationSettings.setMaximumMonthsToApplyForLeaveAfterwards(null);
         applicationSettings.setDaysBeforeRemindForWaitingApplications(null);
         applicationSettings.setDaysBeforeRemindForUpcomingHolidayReplacement(null);
         applicationSettings.setDaysBeforeRemindForUpcomingApplications(null);
@@ -151,6 +152,7 @@ class SettingsValidatorTest {
         final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.mandatory");
+        verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveAfterwards", "error.entry.mandatory");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", "error.entry.mandatory");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement", "error.entry.mandatory");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingApplications", "error.entry.mandatory");
@@ -163,6 +165,7 @@ class SettingsValidatorTest {
         final ApplicationSettings applicationSettings = settings.getApplicationSettings();
 
         applicationSettings.setMaximumMonthsToApplyForLeaveInAdvance(invalidValue);
+        applicationSettings.setMaximumMonthsToApplyForLeaveAfterwards(invalidValue);
         applicationSettings.setDaysBeforeRemindForWaitingApplications(invalidValue);
         applicationSettings.setDaysBeforeRemindForUpcomingHolidayReplacement(invalidValue);
         applicationSettings.setDaysBeforeRemindForUpcomingApplications(invalidValue);
@@ -170,6 +173,7 @@ class SettingsValidatorTest {
         final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+        verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveAfterwards", "error.entry.invalid");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", "error.entry.invalid");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement", "error.entry.invalid");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingApplications", "error.entry.invalid");
@@ -182,6 +186,7 @@ class SettingsValidatorTest {
         final ApplicationSettings applicationSettings = settings.getApplicationSettings();
 
         applicationSettings.setMaximumMonthsToApplyForLeaveInAdvance(invalidValue);
+        applicationSettings.setMaximumMonthsToApplyForLeaveAfterwards(invalidValue);
         applicationSettings.setDaysBeforeRemindForWaitingApplications(invalidValue);
         applicationSettings.setDaysBeforeRemindForUpcomingHolidayReplacement(invalidValue);
         applicationSettings.setDaysBeforeRemindForUpcomingApplications(invalidValue);
@@ -189,6 +194,7 @@ class SettingsValidatorTest {
         final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+        verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveAfterwards", "error.entry.invalid");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", "error.entry.invalid");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement", "error.entry.invalid");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingApplications", "error.entry.invalid");
@@ -200,6 +206,7 @@ class SettingsValidatorTest {
         final ApplicationSettings applicationSettings = settings.getApplicationSettings();
 
         applicationSettings.setMaximumMonthsToApplyForLeaveInAdvance(MAX_VALUE + 1);
+        applicationSettings.setMaximumMonthsToApplyForLeaveAfterwards(MAX_VALUE + 1);
         applicationSettings.setDaysBeforeRemindForWaitingApplications(MAX_VALUE + 1);
         applicationSettings.setDaysBeforeRemindForUpcomingHolidayReplacement(MAX_VALUE + 1);
         applicationSettings.setDaysBeforeRemindForUpcomingApplications(MAX_VALUE + 1);
@@ -207,6 +214,7 @@ class SettingsValidatorTest {
         final Errors mockError = mock(Errors.class);
         settingsValidator.validate(settings, mockError);
         verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", "error.entry.invalid");
+        verify(mockError).rejectValue("applicationSettings.maximumMonthsToApplyForLeaveAfterwards", "error.entry.invalid");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", "error.entry.invalid");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingHolidayReplacement", "error.entry.invalid");
         verify(mockError).rejectValue("applicationSettings.daysBeforeRemindForUpcomingApplications", "error.entry.invalid");

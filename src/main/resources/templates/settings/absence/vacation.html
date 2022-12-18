@@ -46,6 +46,7 @@
               </div>
             </div>
           </div>
+
           <div class="form-group is-required">
             <label
               th:text="|#{settings.vacation.maximumAnnualVacationDays}:|"
@@ -73,6 +74,7 @@
               </div>
             </div>
           </div>
+
           <div class="form-group is-required">
             <label
               th:text="#{settings.vacation.maximumMonthsToApplyForLeaveInAdvance}"
@@ -89,13 +91,39 @@
                 type="number"
                 step="1"
               />
-
               <div
                 class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
                 th:if="${#fields.hasErrors('applicationSettings.maximumMonthsToApplyForLeaveInAdvance')}"
               >
                 <th:block th:errors="*{applicationSettings.maximumMonthsToApplyForLeaveInAdvance}">
                   applicationSettings.maximumMonthsToApplyForLeaveInAdvance Error
+                </th:block>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group is-required">
+            <label
+              th:text="#{settings.vacation.maximumMonthsToApplyForLeaveAfterwards}"
+              class="control-label col-md-4"
+              for="applicationSettings.maximumMonthsToApplyForLeaveAfterwards"
+            >
+            </label>
+            <div class="col-md-8">
+              <input
+                id="applicationSettings.maximumMonthsToApplyForLeaveAfterwards"
+                th:field="*{applicationSettings.maximumMonthsToApplyForLeaveAfterwards}"
+                class="form-control"
+                th:errorclass="error"
+                type="number"
+                step="1"
+              />
+              <div
+                class="tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+                th:if="${#fields.hasErrors('applicationSettings.maximumMonthsToApplyForLeaveAfterwards')}"
+              >
+                <th:block th:errors="*{applicationSettings.maximumMonthsToApplyForLeaveAfterwards}">
+                  applicationSettings.maximumMonthsToApplyForLeaveAfterwards Error
                 </th:block>
               </div>
             </div>

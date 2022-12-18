@@ -20,6 +20,13 @@ public class ApplicationSettingsValidator {
             errors.rejectValue("applicationSettings.maximumMonthsToApplyForLeaveInAdvance", ERROR_INVALID_ENTRY);
         }
 
+        final Integer maximumMonthsToApplyForLeaveAfterwards = applicationSettings.getMaximumMonthsToApplyForLeaveAfterwards();
+        if (maximumMonthsToApplyForLeaveAfterwards == null) {
+            errors.rejectValue("applicationSettings.maximumMonthsToApplyForLeaveAfterwards", ERROR_MANDATORY_FIELD);
+        } else if (maximumMonthsToApplyForLeaveAfterwards <= 0) {
+            errors.rejectValue("applicationSettings.maximumMonthsToApplyForLeaveAfterwards", ERROR_INVALID_ENTRY);
+        }
+
         final Integer daysBeforeRemindForWaitingApplications = applicationSettings.getDaysBeforeRemindForWaitingApplications();
         if (daysBeforeRemindForWaitingApplications == null) {
             errors.rejectValue("applicationSettings.daysBeforeRemindForWaitingApplications", ERROR_MANDATORY_FIELD);

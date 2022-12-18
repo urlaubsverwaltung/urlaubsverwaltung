@@ -117,4 +117,5 @@
   <include file="dbchangelogs/changelog-4.62.0-drop-person-password.xml"/>
   <include file="dbchangelogs/changelog-4.62.0-drop-notification-user.xml"/>
   <include file="dbchangelogs/changelog-4.62.0-migrate-mail-notifications.xml"/>
+  <include file="dbchangelogs/changelog-4.64.0-application-settings-apply-for-leave-afterwards.xml"/>
 </databaseChangeLog>

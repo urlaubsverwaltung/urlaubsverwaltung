@@ -1,0 +1,19 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="application-settings-apply-for-leave-afterwards">
+    <preConditions>
+      <tableExists tableName="settings"/>
+      <not>
+        <columnExists tableName="settings" columnName="maximum_months_to_apply_for_leave_afterwards"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="settings">
+      <column name="maximum_months_to_apply_for_leave_afterwards" type="INT(10)" valueComputed="(SELECT maximum_months_to_apply_for_leave_in_advance FROM settings WHERE id = 1)"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>
