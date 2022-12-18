@@ -143,10 +143,7 @@
             <tr>
               <td th:text="#{absence.period.duration}"></td>
               <td>
-                =
-                <th:block th:replace="fragments/number::number(${sickNote.workDays})"></th:block>&nbsp;<th:block
-                  th:text="#{duration.workDays}"
-                />
+                <span th:text="#{sicknote.data.days(${sickNote.workDays})}"></span>
                 <span th:if="${sickNote.active == false}" th:text="#{sicknote.data.inactive}"></span>
               </td>
             </tr>
