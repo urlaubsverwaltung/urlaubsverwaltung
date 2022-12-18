@@ -73,7 +73,7 @@ public class SortComparator<T> implements Comparator<T> {
         }
 
         final Method readMethod = propertyDescriptor.getReadMethod();
-        final Object value;
+        Object value;
         try {
             value = readMethod.invoke(entity);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -81,6 +81,9 @@ public class SortComparator<T> implements Comparator<T> {
         }
 
         if (properties.size() == 1) {
+            if (value instanceof String) {
+                value = ((String) value).toLowerCase();
+            }
             return (Comparable<? super Comparable>) value;
         }
 
