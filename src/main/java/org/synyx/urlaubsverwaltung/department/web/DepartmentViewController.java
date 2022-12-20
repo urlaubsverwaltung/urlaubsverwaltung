@@ -111,7 +111,7 @@ public class DepartmentViewController {
             .orElseThrow(() -> new UnknownDepartmentException(departmentId));
         model.addAttribute("department", mapToDepartmentForm(department));
 
-        final List<Person> persons = getInactiveDepartmentMembersAndAllActivePersons(department);
+        final List<Person> persons = getDepartmentMembersAndAllActivePersons(department);
         model.addAttribute("persons", persons);
         model.addAttribute("hiddenDepartmentMembers", List.of());
         model.addAttribute("hiddenDepartmentHeads", List.of());
@@ -159,7 +159,7 @@ public class DepartmentViewController {
             allPersons = personService.getActivePersons();
         } else {
             final Department department = departmentService.getDepartmentById(departmentId).orElseThrow(() -> new UnknownDepartmentException(departmentId));
-            allPersons = getInactiveDepartmentMembersAndAllActivePersons(department);
+            allPersons = getDepartmentMembersAndAllActivePersons(department);
         }
 
         final List<Person> persons = hasText(memberQuery)
@@ -209,7 +209,7 @@ public class DepartmentViewController {
         return false;
     }
 
-    private List<Person> getInactiveDepartmentMembersAndAllActivePersons(Department department) {
+    private List<Person> getDepartmentMembersAndAllActivePersons(Department department) {
 
         final List<Person> sortedDepartmentMembers = department.getMembers()
             .stream()
