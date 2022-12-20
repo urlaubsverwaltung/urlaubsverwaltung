@@ -145,12 +145,17 @@
                       th:replace="fragments/date-range::date-range(from=${sickNote.startDate}, to=${sickNote.endDate}, pattern='E, dd.MM.yyyy')"
                     ></span>
                   </th:block>
-                  <span th:if="${sickNote.aubPresent == true}" class="tw-flex tw-items-center">
-                    <span class="tw-hidden lg:tw-inline">&nbsp;</span>
-                    (<span class="tw-text-emerald-500 tw-flex tw-items-center"
-                      ><svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4')"></svg
-                    ></span>
-                    &nbsp;<th:block th:text="#{sicknote.data.aub.short}"></th:block>)
+                </span>
+                <span
+                  th:if="${sickNote.aubPresent}"
+                  class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100"
+                >
+                  <span class="tw-flex tw-items-center">
+                    <span class="tw-text-emerald-500 tw-flex tw-items-center">
+                      <svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4')"></svg>
+                    </span>
+                    &nbsp;
+                    <span th:text="#{overview.sicknotes.sickdays.aub(${sickNote.workDaysWithAub})}"></span>
                   </span>
                 </span>
               </a>
