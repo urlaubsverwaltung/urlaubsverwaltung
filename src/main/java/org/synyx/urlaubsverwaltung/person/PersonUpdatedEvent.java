@@ -9,7 +9,7 @@ public class PersonUpdatedEvent extends ApplicationEvent {
     private final String personNiceName;
     private final String username;
     private final String email;
-    private boolean active;
+    private final boolean active;
 
     PersonUpdatedEvent(Object source, Integer personId, String personNiceName, String username, @Nullable String email, boolean active) {
         super(source);
