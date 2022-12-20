@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -19,14 +21,18 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartment;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartmentForm;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentOverviewDtoMapper.mapToDepartmentOverviewDtos;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -35,9 +41,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 @RequestMapping(value = "/web")
 public class DepartmentViewController {
 
-    private static final String PERSONS_ATTRIBUTE = "persons";
     private static final String REDIRECT_WEB_DEPARTMENT = "redirect:/web/department/";
-    private static final String DEPARTMENT = "department";
     private static final String DEPARTMENT_DEPARTMENT_FORM = "thymeleaf/department/department_form";
 
     private final DepartmentService departmentService;
@@ -75,15 +79,15 @@ public class DepartmentViewController {
 
         final List<Person> persons = personService.getActivePersons();
 
-        model.addAttribute(DEPARTMENT, new DepartmentForm());
-        model.addAttribute(PERSONS_ATTRIBUTE, persons);
+        model.addAttribute("department", new DepartmentForm());
+        model.addAttribute("persons", persons);
 
         return DEPARTMENT_DEPARTMENT_FORM;
     }
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/department")
-    public String newDepartment(@ModelAttribute(DEPARTMENT) DepartmentForm departmentForm, Errors errors,
+    public String newDepartment(@ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
                                 Model model, RedirectAttributes redirectAttributes) {
 
         validator.validate(departmentForm, errors);
@@ -105,10 +109,13 @@ public class DepartmentViewController {
 
         final Department department = departmentService.getDepartmentById(departmentId)
             .orElseThrow(() -> new UnknownDepartmentException(departmentId));
-        model.addAttribute(DEPARTMENT, mapToDepartmentForm(department));
+        model.addAttribute("department", mapToDepartmentForm(department));
 
-        final List<Person> persons = getInactiveDepartmentMembersAndAllActivePersons(department.getMembers());
-        model.addAttribute(PERSONS_ATTRIBUTE, persons);
+        final List<Person> persons = getDepartmentMembersAndAllActivePersons(department);
+        model.addAttribute("persons", persons);
+        model.addAttribute("hiddenDepartmentMembers", List.of());
+        model.addAttribute("hiddenDepartmentHeads", List.of());
+        model.addAttribute("hiddenDepartmentSecondStageAuthorities", List.of());
 
         return DEPARTMENT_DEPARTMENT_FORM;
     }
@@ -116,7 +123,7 @@ public class DepartmentViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/department/{departmentId}")
     public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
-                                   @ModelAttribute(DEPARTMENT) DepartmentForm departmentForm, Errors errors,
+                                   @ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
                                    Model model, RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
 
         final Integer persistedDepartmentId = departmentService.getDepartmentById(departmentId)
@@ -140,6 +147,43 @@ public class DepartmentViewController {
     }
 
     @PreAuthorize(IS_OFFICE)
+    @PostMapping(value = {"/department", "/department/{departmentId}/edit"}, params = "do-member-search")
+    public String updateDepartment(@PathVariable(value = "departmentId", required = false) Integer departmentId,
+                                   @RequestParam("memberQuery") String memberQuery,
+                                   @ModelAttribute("department") DepartmentForm departmentForm,
+                                   @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
+                                   Model model) throws UnknownDepartmentException {
+
+        final List<Person> allPersons;
+        if (departmentId == null) {
+            allPersons = personService.getActivePersons();
+        } else {
+            final Department department = departmentService.getDepartmentById(departmentId).orElseThrow(() -> new UnknownDepartmentException(departmentId));
+            allPersons = getDepartmentMembersAndAllActivePersons(department);
+        }
+
+        final List<Person> persons = hasText(memberQuery)
+            ? filter(allPersons, person -> person.getNiceName().toLowerCase().contains(memberQuery.toLowerCase()))
+            : allPersons;
+
+        model.addAttribute("department", departmentForm);
+        model.addAttribute("persons", persons);
+        model.addAttribute("hiddenDepartmentMembers", filter(departmentForm.getMembers(), not(persons::contains)));
+        model.addAttribute("hiddenDepartmentHeads", filter(departmentForm.getDepartmentHeads(), not(persons::contains)));
+        model.addAttribute("hiddenDepartmentSecondStageAuthorities", filter(departmentForm.getSecondStageAuthorities(), not(persons::contains)));
+        model.addAttribute("memberQuery", memberQuery);
+
+        final boolean turboFrameRequested = hasText(turboFrame);
+        model.addAttribute("turboFrameRequested", turboFrameRequested);
+
+        if (turboFrameRequested) {
+            return "thymeleaf/department/department_form::#" + turboFrame;
+        } else {
+            return "thymeleaf/department/department_form";
+        }
+    }
+
+    @PreAuthorize(IS_OFFICE)
     @PostMapping("/department/{departmentId}/delete")
     public String deleteDepartment(@PathVariable("departmentId") Integer departmentId,
                                    RedirectAttributes redirectAttributes) {
@@ -155,24 +199,31 @@ public class DepartmentViewController {
 
     private boolean returnModelErrorAttributes(DepartmentForm departmentForm, Errors errors, Model model) {
         if (errors.hasErrors()) {
-            model.addAttribute(DEPARTMENT, departmentForm);
+            model.addAttribute("department", departmentForm);
 
             final List<Person> persons = personService.getActivePersons();
-            model.addAttribute(PERSONS_ATTRIBUTE, persons);
+            model.addAttribute("persons", persons);
 
             return true;
         }
         return false;
     }
 
-    private List<Person> getInactiveDepartmentMembersAndAllActivePersons(List<Person> departmentMembers) {
+    private List<Person> getDepartmentMembersAndAllActivePersons(Department department) {
 
-        final List<Person> persons = departmentMembers.stream()
-            .filter(person -> person.getPermissions().contains(INACTIVE))
+        final List<Person> sortedDepartmentMembers = department.getMembers()
+            .stream()
+            .sorted((o1, o2) -> o1.getNiceName().compareToIgnoreCase(o2.getNiceName()))
             .collect(toList());
 
-        persons.addAll(personService.getActivePersons());
+        // sort department members to the top of the list shown in ui.
+        return Stream.of(sortedDepartmentMembers, personService.getActivePersons())
+            .flatMap(Collection::stream)
+            .distinct()
+            .collect(toList());
+    }
 
-        return persons;
+    private static <T> List<T> filter(Collection<T> collection, Predicate<T> predicate) {
+        return collection.stream().filter(predicate).collect(toList());
     }
 }

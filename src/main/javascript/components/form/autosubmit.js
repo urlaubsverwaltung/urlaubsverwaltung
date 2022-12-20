@@ -37,7 +37,7 @@ document.addEventListener("change", function (event) {
   }
 
   const { autoSubmit = "" } = event.target.dataset;
-  if (autoSubmit) {
+  if (autoSubmit && !event.target.matches("input") && !event.target.matches("textarea")) {
     const button = document.querySelector("#" + autoSubmit);
     if (button) {
       button.closest("form").requestSubmit(button);
