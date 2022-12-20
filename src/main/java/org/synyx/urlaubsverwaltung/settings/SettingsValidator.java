@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -11,7 +12,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.ExchangeCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
-import org.synyx.urlaubsverwaltung.web.MailAddressValidationUtil;
 
 import static org.synyx.urlaubsverwaltung.absence.TimeSettingsValidator.validateTimeSettings;
 import static org.synyx.urlaubsverwaltung.account.AccountSettingsValidator.validateAccountSettings;
@@ -118,7 +118,7 @@ public class SettingsValidator implements Validator {
                 errors.rejectValue(attributeName, ERROR_LENGTH);
             }
 
-            if (!MailAddressValidationUtil.hasValidFormat(mailAddress)) {
+            if (!EmailValidator.getInstance().isValid(mailAddress)) {
                 errors.rejectValue(attributeName, ERROR_INVALID_EMAIL);
             }
         }

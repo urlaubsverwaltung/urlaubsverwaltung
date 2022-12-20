@@ -53,12 +53,21 @@
                   th:href="@{/web/person/__${person.id}__/overview}"
                   class="tw-text-lg tw-mb-1 tw-mt-2 icon-link print:no-link"
                 ></a>
-                <a th:href="|mailto:${person.email}|" class="icon-link tw-inline-block tw-text-sm print:no-link">
+                <a
+                  th:if="${person.email != null}"
+                  th:href="|mailto:${person.email}|"
+                  class="icon-link tw-inline-block tw-text-sm print:no-link"
+                >
                   <span class="tw-flex tw-items-center">
                     <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4')"></svg>&nbsp;
                     <th:block th:text="${person.email}" />
                   </span>
                 </a>
+                <span
+                  th:if="${person.email == null}"
+                  class="tw-text-sm"
+                  th:text="#{person.account.basedata.email.notification(${person.niceName})}"
+                ></span>
                 <dl class="tw-m-0 tw-mt-4 tw-list-none">
                   <dt
                     th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.personnelNumber)}"

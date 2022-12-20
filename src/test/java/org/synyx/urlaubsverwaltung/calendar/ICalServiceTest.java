@@ -284,6 +284,38 @@ class ICalServiceTest {
     }
 
     @Test
+    void appointmentOfOtherPersonWoithoutEMailAddress() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", null);
+        person.setId(1);
+
+        final Person recipient = new Person();
+        recipient.setId(2);
+
+        final Absence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
+
+        final CalendarProperties calendarProperties = new CalendarProperties();
+        calendarProperties.setOrganizer("no-reply@example.org");
+        final ICalService sut = new ICalService(calendarProperties);
+
+        final ByteArrayResource calendar = sut.getSingleAppointment(absence, PUBLISHED, recipient);
+        assertThat(convertCalendar(calendar))
+            .contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
+
+            .contains("SUMMARY:Marlene Muster abwesend")
+            .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
+            .contains("DTSTART;VALUE=DATE:20190526")
+            .contains("TRANSP:TRANSPARENT")
+            .contains("UID:22D8DC26F4271C049ED5601345B58D9C")
+
+            .contains("ORGANIZER:mailto:no-reply@example.org")
+            .doesNotContain("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:null");
+    }
+
+    @Test
     void holidayReplacement() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");

@@ -42,6 +42,7 @@
               </a>
             </div>
             <a
+              th:if="${personBasedata.email != null}"
               href="mailto:john.doe@example.org"
               th:href="${'mailto:' + personBasedata.email}"
               class="icon-link tw-text-sm print:no-link"

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.security.oidc;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
@@ -53,7 +54,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
         Optional<Person> optionalPerson = personService.getPersonByUsername(userUniqueID);
         // try to fall back to uniqueness of mailAddress if userUniqueID is not found in database
-        if (optionalPerson.isEmpty()) {
+        if (optionalPerson.isEmpty() && emailAddress != null) {
             optionalPerson = personService.getPersonByMailAddress(emailAddress);
         }
 
@@ -105,8 +106,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     }
 
     private String extractFamilyName(OidcUserAuthority authority) {
-        return ofNullable(authority.getIdToken())
-            .map(StandardClaimAccessor::getFamilyName)
+        return ofNullable(authority.getIdToken()).map(StandardClaimAccessor::getFamilyName)
             .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getFamilyName))
             .orElseThrow(() -> {
                 LOG.error("Can not retrieve the lastname for oidc person mapping");
@@ -115,8 +115,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     }
 
     private String extractGivenName(OidcUserAuthority authority) {
-        return ofNullable(authority.getIdToken())
-            .map(StandardClaimAccessor::getGivenName)
+        return ofNullable(authority.getIdToken()).map(StandardClaimAccessor::getGivenName)
             .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getGivenName))
             .orElseThrow(() -> {
                 LOG.error("Can not retrieve the given name for oidc person mapping");
@@ -125,12 +124,9 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
     }
 
     private String extractMailAddress(OidcUserAuthority authority) {
-        return ofNullable(authority.getIdToken())
-            .map(StandardClaimAccessor::getEmail)
+        return ofNullable(authority.getIdToken()).map(StandardClaimAccessor::getEmail)
             .or(() -> ofNullable(authority.getUserInfo()).map(StandardClaimAccessor::getEmail))
-            .orElseThrow(() -> {
-                LOG.error("Can not retrieve the email for oidc person mapping");
-                return new OidcPersonMappingException("Can not retrieve the email for oidc person mapping");
-            });
+            .filter(email -> EmailValidator.getInstance().isValid(email))
+            .orElse(null);
     }
 }

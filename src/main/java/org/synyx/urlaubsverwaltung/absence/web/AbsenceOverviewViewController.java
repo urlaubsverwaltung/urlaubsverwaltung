@@ -223,13 +223,9 @@ public class AbsenceOverviewViewController {
             final Map<AbsenceOverviewMonthPersonDto, Person> personByView = personList.stream()
                 .collect(
                     toMap(person -> monthView.getPersons().stream()
-                        .filter(view -> view.getEmail().equals(person.getEmail()) &&
-                            view.getFirstName().equals(person.getFirstName()) &&
-                            view.getLastName().equals(person.getLastName())
-                        )
+                        .filter(view -> view.getId().equals(person.getId()))
                         .findFirst()
-                        .orElse(null), Function.identity()
-                    )
+                        .orElse(null), Function.identity())
                 );
 
             // create an absence day dto for every person of the department
@@ -289,13 +285,12 @@ public class AbsenceOverviewViewController {
 
     private static AbsenceOverviewMonthPersonDto initializeAbsenceOverviewMonthPersonDto(Person person) {
 
+        final Integer id = person.getId();
         final String firstName = person.getFirstName();
         final String lastName = person.getLastName();
-        final String email = person.getEmail();
         final String gravatarUrl = person.getGravatarURL();
-        final Integer id = person.getId();
 
-        return new AbsenceOverviewMonthPersonDto(firstName, lastName, email, gravatarUrl, new ArrayList<>(), id);
+        return new AbsenceOverviewMonthPersonDto(id, firstName, lastName, gravatarUrl, new ArrayList<>());
     }
 
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType, PublicHoliday publicHoliday, Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {

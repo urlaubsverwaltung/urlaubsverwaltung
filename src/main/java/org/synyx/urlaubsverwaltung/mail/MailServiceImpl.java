@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.mail;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
@@ -13,6 +14,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * Implementation of interface {@link MailService}.
  */
@@ -20,6 +24,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(MailProperties.class)
 class MailServiceImpl implements MailService {
 
+    private static final Logger LOG = getLogger(lookup().lookupClass());
     private static final Locale LOCALE = Locale.GERMAN;
 
     private final MessageSource messageSource;
@@ -51,11 +56,16 @@ class MailServiceImpl implements MailService {
         getRecipients(mail).forEach(recipient -> {
             model.put("recipient", recipient);
             final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+            final String email = recipient.getEmail();
 
-            mail.getMailAttachments().ifPresentOrElse(
-                mailAttachments -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body, mailAttachments),
-                () -> mailSenderService.sendEmail(sender, List.of(recipient.getEmail()), subject, body)
-            );
+            if (email != null) {
+                mail.getMailAttachments().ifPresentOrElse(
+                    mailAttachments -> mailSenderService.sendEmail(sender, email, subject, body, mailAttachments),
+                    () -> mailSenderService.sendEmail(sender, email, subject, body)
+                );
+            } else {
+                LOG.debug("Could not send mail to E-Mail-Address of person with id {}, because email is null.", recipient.getId());
+            }
         });
     }
 

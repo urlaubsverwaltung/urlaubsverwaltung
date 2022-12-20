@@ -3,6 +3,9 @@ package org.synyx.urlaubsverwaltung.security.oidc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,6 +20,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -239,15 +243,57 @@ class OidcPersonAuthoritiesMapperTest {
     }
 
     @Test
-    void ensureThrowsExceptionIfEmailIsMissing() {
-        final List<OidcUserAuthority> oidcUserAuthorities = List.of(getOidcUserAuthority(Map.of(
-            SUB, "uniqueID",
-            GIVEN_NAME, "givenName",
-            FAMILY_NAME, "family name"
-        )));
+    void ensureEmailWillBeSetNullIfMissing() {
 
-        assertThatThrownBy(() -> sut.mapAuthorities(oidcUserAuthorities))
-            .isInstanceOf(OidcPersonMappingException.class);
+        final String uniqueID = "uniqueID";
+        final String givenName = "givenName";
+        final String familyName = "family name";
+
+        final OidcUserAuthority oidcUserAuthorities = getOidcUserAuthority(Map.of(
+            SUB, uniqueID,
+            GIVEN_NAME, givenName,
+            FAMILY_NAME, familyName
+        ));
+
+        final Person createdPerson = new Person();
+        createdPerson.setPermissions(List.of(USER));
+
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+        when(personService.create(uniqueID, familyName, givenName, null, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(createdPerson);
+        when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "NotAnEmail"})
+    @NullSource
+    void ensureEmailWillBeSetNullIfNotValid(String email) {
+
+        final String uniqueID = "uniqueID";
+        final String givenName = "givenName";
+        final String familyName = "family name";
+
+        final OidcUserAuthority oidcUserAuthorities = getOidcUserAuthority(
+            Map.of(
+                SUB, uniqueID,
+                GIVEN_NAME, givenName,
+                FAMILY_NAME, familyName
+            ),
+            new HashMap<>() {{
+                put(EMAIL, email);
+            }}
+        );
+        final Person createdPerson = new Person();
+        createdPerson.setPermissions(List.of(USER));
+
+        when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
+        when(personService.create(uniqueID, familyName, givenName, null, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(createdPerson);
+        when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
+
+        final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
+        assertThat(grantedAuthorities.stream().map(GrantedAuthority::getAuthority)).containsOnly(USER.name());
     }
 
     @Test

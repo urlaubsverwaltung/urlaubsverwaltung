@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
+import org.springframework.lang.Nullable;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.DirContextOperations;
 
@@ -35,7 +37,7 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
         final String username = extractAttribute(attributes, directoryServiceSecurityProperties.getIdentifier());
         final String firstName = extractAttribute(attributes, directoryServiceSecurityProperties.getFirstName());
         final String lastName = extractAttribute(attributes, directoryServiceSecurityProperties.getLastName());
-        final String email = extractAttribute(attributes, directoryServiceSecurityProperties.getMailAddress());
+        final String email = extractEMailAddress(attributes);
 
         final List<String> groups = new ArrayList<>();
         final Attribute memberOfAttribute = attributes.get("memberOf");
@@ -54,7 +56,7 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
         final String username = extractAttribute(ctx, directoryServiceSecurityProperties.getIdentifier());
         final String firstName = extractAttribute(ctx, directoryServiceSecurityProperties.getFirstName());
         final String lastName = extractAttribute(ctx, directoryServiceSecurityProperties.getLastName());
-        final String email = extractAttribute(ctx, directoryServiceSecurityProperties.getMailAddress());
+        final String email = extractEMailAddress(ctx);
 
         List<String> memberOf = new ArrayList<>();
         final String memberOfProperty = directoryServiceSecurityProperties.getFilter().getMemberOf();
@@ -86,6 +88,17 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
         return attributeValue;
     }
 
+    @Nullable
+    private String extractEMailAddress(Attributes attributes) throws NamingException {
+        final Attribute attribute = attributes.get(directoryServiceSecurityProperties.getMailAddress());
+        if (attribute == null) {
+            return null;
+        }
+
+        final String email = (String) attribute.get();
+        return EmailValidator.getInstance().isValid(email) ? email : null;
+    }
+
     private String extractAttribute(DirContextOperations dirContextOperations, String identifier) {
         final String attribute = dirContextOperations.getStringAttribute(identifier);
         if (attribute == null || attribute.isBlank()) {
@@ -93,5 +106,11 @@ public class LdapUserMapper implements AttributesMapper<LdapUser> {
             throw new InvalidSecurityConfigurationException("The attribute using the identifier '" + identifier + "' is blank or null");
         }
         return attribute;
+    }
+
+    @Nullable
+    private String extractEMailAddress(DirContextOperations dirContextOperations) {
+        final String email = dirContextOperations.getStringAttribute(directoryServiceSecurityProperties.getMailAddress());
+        return EmailValidator.getInstance().isValid(email) ? email : null;
     }
 }
