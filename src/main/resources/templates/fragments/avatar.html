@@ -10,13 +10,14 @@
         th:if="${personId != null}"
         th:href="@{/web/person/__${personId}__/overview}"
         th:aria-label="#{nav.avatar-menu.overview.link(${niceName})}"
+        class="tw-text-inherit"
       >
         <img
           th:if="${url != null}"
           src="#"
           th:src="${url}"
           alt=""
-          class="gravatar gravatar--medium tw-rounded-full"
+          class="gravatar gravatar--medium tw-rounded-full tw-block"
           th:classappend="${className}"
           th:width="${width == null ? '32px' : width}"
           th:height="${height == null ? '32px' : height}"
