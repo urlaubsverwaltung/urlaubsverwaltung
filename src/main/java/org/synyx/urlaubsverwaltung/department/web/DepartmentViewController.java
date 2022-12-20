@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
@@ -32,7 +33,6 @@ import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartment;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentFormMapper.mapToDepartmentForm;
 import static org.synyx.urlaubsverwaltung.department.web.DepartmentDepartmentOverviewDtoMapper.mapToDepartmentOverviewDtos;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFICE;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -111,7 +111,7 @@ public class DepartmentViewController {
             .orElseThrow(() -> new UnknownDepartmentException(departmentId));
         model.addAttribute("department", mapToDepartmentForm(department));
 
-        final List<Person> persons = getInactiveDepartmentMembersAndAllActivePersons(department.getMembers());
+        final List<Person> persons = getInactiveDepartmentMembersAndAllActivePersons(department);
         model.addAttribute("persons", persons);
         model.addAttribute("hiddenDepartmentMembers", List.of());
         model.addAttribute("hiddenDepartmentHeads", List.of());
@@ -159,7 +159,7 @@ public class DepartmentViewController {
             allPersons = personService.getActivePersons();
         } else {
             final Department department = departmentService.getDepartmentById(departmentId).orElseThrow(() -> new UnknownDepartmentException(departmentId));
-            allPersons = getInactiveDepartmentMembersAndAllActivePersons(department.getMembers());
+            allPersons = getInactiveDepartmentMembersAndAllActivePersons(department);
         }
 
         final List<Person> persons = hasText(memberQuery)
@@ -209,15 +209,18 @@ public class DepartmentViewController {
         return false;
     }
 
-    private List<Person> getInactiveDepartmentMembersAndAllActivePersons(List<Person> departmentMembers) {
+    private List<Person> getInactiveDepartmentMembersAndAllActivePersons(Department department) {
 
-        final List<Person> persons = departmentMembers.stream()
-            .filter(person -> person.getPermissions().contains(INACTIVE))
+        final List<Person> sortedDepartmentMembers = department.getMembers()
+            .stream()
+            .sorted((o1, o2) -> o1.getNiceName().compareToIgnoreCase(o2.getNiceName()))
             .collect(toList());
 
-        persons.addAll(personService.getActivePersons());
-
-        return persons;
+        // sort department members to the top of the list shown in ui.
+        return Stream.of(sortedDepartmentMembers, personService.getActivePersons())
+            .flatMap(Collection::stream)
+            .distinct()
+            .collect(toList());
     }
 
     private static <T> List<T> filter(Collection<T> collection, Predicate<T> predicate) {

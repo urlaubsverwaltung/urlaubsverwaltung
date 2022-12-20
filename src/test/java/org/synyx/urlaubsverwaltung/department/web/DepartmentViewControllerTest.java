@@ -603,29 +603,28 @@ class DepartmentViewControllerTest {
     }
 
     @Test
-    void editDepartmentAddsDepartmentAndActivePersonsToModel() throws Exception {
+    void editDepartmentAddsDepartmentAndActivePersonsToModelGroupedByDepartmentMember() throws Exception {
 
-        final Person activePerson = new Person();
-        final Person inactivePerson = inactivePerson();
+        final Person activePerson = new Person("username-1", "Quak", "Alfred", "alfred.quak@example.org");
+        activePerson.setId(1);
 
-        List<Person> departmentMembers = List.of(activePerson, inactivePerson);
+        final Person inactivePerson = new Person("username-2", "Inaktiv", "Brigitte", "brigitte.inaktiv@example.org");
+        inactivePerson.setId(2);
+        inactivePerson.setPermissions(List.of(Role.INACTIVE));
+
+        final Person otherPerson = new Person("username-3", "Roth", "Anne", "anne.roth@example.org");
+        otherPerson.setId(3);
+
         final Department department = new Department();
-        department.setMembers(departmentMembers);
+        department.setId(1);
+        department.setMembers(List.of(activePerson, inactivePerson));
         when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
 
-        List<Person> activePersons = List.of(activePerson);
-        when(personService.getActivePersons()).thenReturn(activePersons);
+        when(personService.getActivePersons()).thenReturn(List.of(activePerson, otherPerson));
 
         perform(get("/web/department/1/edit"))
             .andExpect(model().attribute("department", mapToDepartmentForm(department)))
-            .andExpect(model().attribute("persons", List.of(inactivePerson, activePerson)));
-    }
-
-    private Person inactivePerson() {
-        final Person inactivePerson = new Person();
-        inactivePerson.setPermissions(List.of(Role.INACTIVE));
-
-        return inactivePerson;
+            .andExpect(model().attribute("persons", List.of(activePerson, inactivePerson, otherPerson)));
     }
 
     @Test
