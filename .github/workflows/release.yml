@@ -30,11 +30,6 @@ jobs:
           ./mvnw $MAVEN_CLI_OPTS
           -Pcoverage
           clean verify
-      - name: Build war with Maven
-        run: >
-          ./mvnw $MAVEN_CLI_OPTS
-          -DskipTests -Dpackaging.layout=war
-          package
       - name: Extract release tag
         id: vars
         run: echo "version=${GITHUB_REF#refs/*/urlaubsverwaltung-}" >> $GITHUB_OUTPUT
@@ -46,7 +41,6 @@ jobs:
           name: Release Urlaubsverwaltung ${{ steps.vars.outputs.version }}
           body_path: .chglog/${{ steps.vars.outputs.version }}.md
           files: |
-            ./target/urlaubsverwaltung-*.war
             ./target/urlaubsverwaltung-*.jar
           prerelease: true
       - name: Publish docker image to Docker Hub
