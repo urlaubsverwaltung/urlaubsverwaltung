@@ -6,7 +6,6 @@
   <groupId>org.synyx</groupId>
   <artifactId>urlaubsverwaltung</artifactId>
   <version>5.0.0-M1-SNAPSHOT</version>
-  <packaging>${packaging.layout}</packaging>
 
   <name>Urlaubsverwaltung</name>
 
@@ -23,7 +22,6 @@
     <testcontainers.version>1.17.6</testcontainers.version>
     <opentelemetry-agent.version>1.14.0</opentelemetry-agent.version>
     <shedlock.version>4.43.0</shedlock.version>
-    <packaging.layout>jar</packaging.layout>
 
     <docker-publish-registry>registry.example.com</docker-publish-registry>
     <docker-publish-registry-path>path/example</docker-publish-registry-path>
@@ -39,13 +37,6 @@
   </scm>
 
   <dependencies>
-
-    <!-- war -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-tomcat</artifactId>
-      <scope>provided</scope>
-    </dependency>
 
     <!-- Logging -->
     <dependency>
