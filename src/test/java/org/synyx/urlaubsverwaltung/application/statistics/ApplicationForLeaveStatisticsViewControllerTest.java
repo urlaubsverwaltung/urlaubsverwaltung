@@ -71,7 +71,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Mock
     private MessageSource messageSource;
 
-    private static Clock clock = Clock.systemUTC();
+    private static final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
