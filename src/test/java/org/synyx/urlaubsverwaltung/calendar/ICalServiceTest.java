@@ -11,7 +11,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -58,7 +57,7 @@ class ICalServiceTest {
     void getCalendarForPersonForOneFullDay() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Absence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
 
@@ -84,7 +83,7 @@ class ICalServiceTest {
     void getCalendarForPersonForHalfDayMorning() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Absence morningAbsence = absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
 
@@ -110,7 +109,7 @@ class ICalServiceTest {
     void getCalendarForPersonForMultipleFullDays() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Absence manyFullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
 
@@ -138,7 +137,7 @@ class ICalServiceTest {
     void getCalendarForPersonForHalfDayNoon() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
@@ -164,7 +163,7 @@ class ICalServiceTest {
     void getCalendarPublishEvent() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
@@ -194,7 +193,7 @@ class ICalServiceTest {
     void cancelSingleAppointment() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
@@ -226,7 +225,7 @@ class ICalServiceTest {
     void singleAppointment() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final CalendarProperties calendarProperties = new CalendarProperties();
@@ -255,10 +254,10 @@ class ICalServiceTest {
     void appointmentOfOtherPerson() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Person recipient = new Person();
-        recipient.setId(2);
+        recipient.setId(2L);
 
         final Absence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
 
@@ -287,10 +286,10 @@ class ICalServiceTest {
     void appointmentOfOtherPersonWoithoutEMailAddress() {
 
         final Person person = new Person("muster", "Muster", "Marlene", null);
-        person.setId(1);
+        person.setId(1L);
 
         final Person recipient = new Person();
-        recipient.setId(2);
+        recipient.setId(2L);
 
         final Absence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
 
@@ -328,19 +327,19 @@ class ICalServiceTest {
 
         final ByteArrayResource calendar = sut.getSingleAppointment(holidayReplacement, PUBLISHED, person);
         assertThat(convertCalendar(calendar))
-                .contains("VERSION:2.0")
-                .contains("CALSCALE:GREGORIAN")
-                .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
-                .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
+            .contains("VERSION:2.0")
+            .contains("CALSCALE:GREGORIAN")
+            .contains("PRODID:-//Urlaubsverwaltung//iCal4j 1.0//DE")
+            .contains("X-MICROSOFT-CALSCALE:GREGORIAN")
 
-                .contains("SUMMARY:Vertretung für Marlene Muster")
-                .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
-                .contains("DTSTART;VALUE=DATE:20190526")
-                .contains("TRANSP:TRANSPARENT")
-                .contains("UID:D2A4772AEB3FD20D5F6997FCD8F28719")
+            .contains("SUMMARY:Vertretung für Marlene Muster")
+            .contains("X-MICROSOFT-CDO-ALLDAYEVENT:TRUE")
+            .contains("DTSTART;VALUE=DATE:20190526")
+            .contains("TRANSP:TRANSPARENT")
+            .contains("UID:D2A4772AEB3FD20D5F6997FCD8F28719")
 
-                .contains("ORGANIZER:mailto:no-reply@example.org")
-                .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
+            .contains("ORGANIZER:mailto:no-reply@example.org")
+            .contains("ATTENDEE;ROLE=REQ-PARTICIPANT;CN=Marlene Muster:mailto:muster@example.org");
     }
 
     private Absence absence(Person person, LocalDate start, LocalDate end, DayLength length) {

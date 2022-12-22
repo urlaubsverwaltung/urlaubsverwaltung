@@ -21,9 +21,9 @@ class UserPaginationSettingsSupplierImplTest {
         final UserPaginationSettingsSupplierImpl sut = new UserPaginationSettingsSupplierImpl(userPaginationSettingsService);
 
         final UserPaginationSettings expectedUserPaginationSettings = new UserPaginationSettings(42);
-        when(userPaginationSettingsService.getUserPaginationSettings(new PersonId(1))).thenReturn(expectedUserPaginationSettings);
+        when(userPaginationSettingsService.getUserPaginationSettings(new PersonId(1L))).thenReturn(expectedUserPaginationSettings);
 
-        final UserPaginationSettings actual = sut.getUserPaginationSettings(new PersonId(1));
+        final UserPaginationSettings actual = sut.getUserPaginationSettings(new PersonId(1L));
 
         assertThat(actual).isSameAs(expectedUserPaginationSettings);
     }

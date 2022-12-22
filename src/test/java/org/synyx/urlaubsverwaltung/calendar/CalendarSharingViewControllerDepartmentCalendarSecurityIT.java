@@ -63,7 +63,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(get("/web/calendars/share/persons/1/departments/2"))
             .andExpect(status().isForbidden());
@@ -106,14 +106,14 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     void indexAsOfficeUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Department department = new Department();
-        department.setId(2);
+        department.setId(2L);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
 
         final Person boss = createPerson("boss", BOSS);
-        boss.setId(1337);
+        boss.setId(1337L);
         when(personService.getSignedInUser()).thenReturn(boss);
         when(companyCalendarService.getCompanyCalendar(1337)).thenReturn(Optional.empty());
 
@@ -126,14 +126,14 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     void indexAsBossUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Department department = new Department();
-        department.setId(2);
+        department.setId(2L);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
 
         final Person boss = createPerson("boss", BOSS);
-        boss.setId(1337);
+        boss.setId(1337L);
         when(personService.getSignedInUser()).thenReturn(boss);
         when(companyCalendarService.getCompanyCalendar(1337)).thenReturn(Optional.empty());
 
@@ -146,13 +146,13 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     void indexForSameUserIsForbidden() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
         final Department department = new Department();
-        department.setId(2);
+        department.setId(2L);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
 
         perform(get("/web/calendars/share/persons/1/departments/2"))
@@ -168,9 +168,9 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(2L)).thenReturn(Optional.of(new Department()));
 
         final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/departments/2")
             .with(csrf())
@@ -187,9 +187,9 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(2L)).thenReturn(Optional.of(new Department()));
 
         final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/departments/2")
             .with(csrf())
@@ -206,9 +206,9 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(2L)).thenReturn(Optional.of(new Department()));
 
         final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/departments/2")
             .with(csrf())
@@ -257,7 +257,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
             .andExpect(status().isForbidden());
@@ -272,9 +272,9 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(2L)).thenReturn(Optional.of(new Department()));
 
         perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
@@ -287,9 +287,9 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(2L)).thenReturn(Optional.of(new Department()));
 
         perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
@@ -302,9 +302,9 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        when(departmentService.getDepartmentById(2)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(2L)).thenReturn(Optional.of(new Department()));
 
         perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
@@ -349,7 +349,7 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());

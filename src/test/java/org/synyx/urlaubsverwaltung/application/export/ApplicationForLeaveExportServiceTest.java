@@ -65,11 +65,11 @@ class ApplicationForLeaveExportServiceTest {
     void getAllForOfficeOrBoss(Role role) {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(role));
 
         final Person user = new Person();
-        user.setId(2);
+        user.setId(2L);
         user.setPermissions(List.of(USER));
         user.setFirstName("Marlene");
         user.setLastName("Muster");
@@ -84,7 +84,7 @@ class ApplicationForLeaveExportServiceTest {
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
         final ApplicationForLeave app = new ApplicationForLeave(new Application(), workDaysCountService);
-        app.setId(1);
+        app.setId(1L);
         app.setPerson(user);
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
 
@@ -110,11 +110,11 @@ class ApplicationForLeaveExportServiceTest {
     void getAllForDepartmentHeadOrSecondStageAuthority(Role role) {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(role));
 
         final Person departmentMember = new Person();
-        departmentMember.setId(2);
+        departmentMember.setId(2L);
         departmentMember.setPermissions(List.of(USER));
         departmentMember.setFirstName("Marlene");
         departmentMember.setLastName("Muster");
@@ -129,7 +129,7 @@ class ApplicationForLeaveExportServiceTest {
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
         final ApplicationForLeave app = new ApplicationForLeave(new Application(), workDaysCountService);
-        app.setId(1);
+        app.setId(1L);
         app.setPerson(departmentMember);
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
 
@@ -152,7 +152,7 @@ class ApplicationForLeaveExportServiceTest {
     void getAllNotAllowed() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
 
         final PageRequest personPageRequest = PageRequest.of(0, 10, Sort.unsorted());
@@ -172,11 +172,11 @@ class ApplicationForLeaveExportServiceTest {
     void getAllSortByPerson() {
 
         final Person office = new Person();
-        office.setId(1);
+        office.setId(1L);
         office.setPermissions(List.of(OFFICE));
 
         final Person user = new Person();
-        user.setId(2);
+        user.setId(2L);
         user.setPermissions(List.of(USER));
         user.setFirstName("Marlene");
         user.setLastName("Muster");
@@ -194,7 +194,7 @@ class ApplicationForLeaveExportServiceTest {
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
         final ApplicationForLeave app = new ApplicationForLeave(new Application(), workDaysCountService);
-        app.setId(1);
+        app.setId(1L);
         app.setPerson(user);
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
 
@@ -219,11 +219,11 @@ class ApplicationForLeaveExportServiceTest {
     void getAllSortByNonPersonQuery() {
 
         final Person office = new Person();
-        office.setId(1);
+        office.setId(1L);
         office.setPermissions(List.of(OFFICE));
 
         final Person user = new Person();
-        user.setId(2);
+        user.setId(2L);
         user.setPermissions(List.of(USER));
         user.setFirstName("Marlene");
         user.setLastName("Muster");
@@ -241,7 +241,7 @@ class ApplicationForLeaveExportServiceTest {
         final LocalDate from = LocalDate.of(2023, 1, 1);
         final LocalDate to = LocalDate.of(2023, 1, 31);
         final ApplicationForLeave app = new ApplicationForLeave(new Application(), workDaysCountService);
-        app.setId(1);
+        app.setId(1L);
         app.setPerson(user);
         when(applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), personsForExport, from, to)).thenReturn(List.of(app));
 

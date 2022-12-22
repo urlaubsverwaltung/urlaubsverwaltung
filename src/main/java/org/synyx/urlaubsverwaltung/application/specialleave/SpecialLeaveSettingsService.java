@@ -20,7 +20,7 @@ public class SpecialLeaveSettingsService {
 
     public void saveAll(List<SpecialLeaveSettingsItem> specialLeaveSettingsItems) {
 
-        final Map<Integer, SpecialLeaveSettingsItem> itemsById = specialLeaveSettingsItems.stream()
+        final Map<Long, SpecialLeaveSettingsItem> itemsById = specialLeaveSettingsItems.stream()
             .collect(toMap(SpecialLeaveSettingsItem::getId, identity()));
 
         final List<SpecialLeaveSettingsEntity> entities = specialLeaveSettingsRepository.findAllById(itemsById.keySet()).stream()
@@ -36,7 +36,7 @@ public class SpecialLeaveSettingsService {
             .collect(toList());
     }
 
-    private SpecialLeaveSettingsEntity mergeUpdates(Map<Integer, SpecialLeaveSettingsItem> itemsById, SpecialLeaveSettingsEntity entity) {
+    private SpecialLeaveSettingsEntity mergeUpdates(Map<Long, SpecialLeaveSettingsItem> itemsById, SpecialLeaveSettingsEntity entity) {
         final SpecialLeaveSettingsItem specialLeaveSettingsItem = itemsById.get(entity.getId());
         entity.setActive(specialLeaveSettingsItem.isActive());
         entity.setDays(specialLeaveSettingsItem.getDays());

@@ -80,7 +80,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
     @GetMapping("/persons/{personId}/departments/{activeDepartmentId}")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String indexDepartment(@PathVariable int personId, @PathVariable int activeDepartmentId, Model model) {
+    public String indexDepartment(@PathVariable long personId, @PathVariable long activeDepartmentId, Model model) {
 
         final PersonCalendarDto dto = getPersonCalendarDto(personId);
         model.addAttribute("privateCalendarShare", dto);
@@ -96,7 +96,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         return "calendarsharing/index";
     }
 
-    private void prepareModelForOtherCalendarSharePerson(int personId, Model model, Person signedInUser) {
+    private void prepareModelForOtherCalendarSharePerson(long personId, Model model, Person signedInUser) {
         final boolean isSignedInUser = personId == signedInUser.getId();
         model.addAttribute("isSignedInUser", isSignedInUser);
 
@@ -108,7 +108,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
     @PostMapping(value = "/persons/{personId}/me")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String linkPrivateCalendar(@PathVariable int personId, @Valid @ModelAttribute PersonCalendarDto personCalendarDto) {
+    public String linkPrivateCalendar(@PathVariable long personId, @Valid @ModelAttribute PersonCalendarDto personCalendarDto) {
 
         final Period calendarPeriod = personCalendarDto.getCalendarPeriod().getPeriod();
         personCalendarService.createCalendarForPerson(personId, calendarPeriod);
@@ -177,7 +177,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personId);
     }
 
-    private void prepareModelForCompanyCalendar(Model model, int personId, Person signedInUser) {
+    private void prepareModelForCompanyCalendar(Model model, long personId, Person signedInUser) {
 
         final boolean isBossOrOffice = signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS);
         final boolean companyCalendarAccessible = calendarAccessibleService.isCompanyCalendarAccessible();
@@ -196,7 +196,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         }
     }
 
-    private PersonCalendarDto getPersonCalendarDto(int personId) {
+    private PersonCalendarDto getPersonCalendarDto(long personId) {
         final PersonCalendarDto dto = new PersonCalendarDto();
         dto.setPersonId(personId);
 
@@ -205,7 +205,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
             final PersonCalendar personCalendar = maybePersonCalendar.get();
             final var path = format("web/persons/%d/calendar?secret=%s", personId, personCalendar.getSecret());
             final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .replacePath(path).build().toString();
+                    .replacePath(path).build().toString();
 
             dto.setCalendarUrl(url);
             dto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(personCalendar.getCalendarPeriod()));
@@ -218,7 +218,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         return getDepartmentCalendarDtos(personId, null);
     }
 
-    private List<DepartmentCalendarDto> getDepartmentCalendarDtos(int personId, @Nullable Integer activeDepartmentId) {
+    private List<DepartmentCalendarDto> getDepartmentCalendarDtos(long personId, @Nullable Long activeDepartmentId) {
 
         final Person person = getPersonOrThrow(personId);
         final List<Department> departments = departmentService.getAssignedDepartmentsOfMember(person);
@@ -226,7 +226,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
         if (activeDepartmentId != null && departments.stream().noneMatch(department -> department.getId().equals(activeDepartmentId))) {
             throw new ResponseStatusException(BAD_REQUEST, String.format(
-                "person=%s is not a member of department=%s", personId, activeDepartmentId));
+                    "person=%s is not a member of department=%s", personId, activeDepartmentId));
         }
 
         for (Department department : departments) {
@@ -243,7 +243,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
                 final var departmentCalendar = maybeDepartmentCalendar.get();
                 final var path = format("web/departments/%s/persons/%s/calendar?secret=%s", departmentId, personId, departmentCalendar.getSecret());
                 final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                    .replacePath(path).build().toString();
+                        .replacePath(path).build().toString();
 
                 departmentCalendarDto.setCalendarUrl(url);
                 departmentCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(departmentCalendar.getCalendarPeriod()));
@@ -259,7 +259,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         return departmentCalendarDtos;
     }
 
-    private CompanyCalendarDto getCompanyCalendarDto(int personId) {
+    private CompanyCalendarDto getCompanyCalendarDto(long personId) {
 
         final CompanyCalendarDto companyCalendarDto = new CompanyCalendarDto();
         companyCalendarDto.setPersonId(personId);
@@ -270,7 +270,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
             final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
             final var path = format("web/company/persons/%d/calendar?secret=%s", personId, companyCalendar.getSecret());
             final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .replacePath(path).build().toString();
+                    .replacePath(path).build().toString();
 
             companyCalendarDto.setCalendarUrl(url);
             companyCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(companyCalendar.getCalendarPeriod()));
@@ -279,7 +279,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         return companyCalendarDto;
     }
 
-    private Person getPersonOrThrow(int personId) {
+    private Person getPersonOrThrow(long personId) {
 
         final Optional<Person> maybePerson = personService.getPersonByID(personId);
         if (maybePerson.isEmpty()) {

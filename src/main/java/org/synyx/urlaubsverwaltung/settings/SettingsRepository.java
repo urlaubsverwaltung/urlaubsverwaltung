@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 /**
  * Repository for {@link Settings} entities.
  */
-public interface SettingsRepository extends CrudRepository<Settings, Integer> {
+public interface SettingsRepository extends CrudRepository<Settings, Long> {
 }

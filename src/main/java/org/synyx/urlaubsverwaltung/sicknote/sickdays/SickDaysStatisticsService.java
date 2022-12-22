@@ -65,7 +65,7 @@ public class SickDaysStatisticsService {
 
         final Page<Person> relevantMembersPage = getMembersForPerson(person, pageableSearchQuery);
         final List<Person> relevantMembers = relevantMembersPage.getContent();
-        final List<Integer> relevantPersonIds = relevantMembers.stream().map(Person::getId).collect(toList());
+        final List<Long> relevantPersonIds = relevantMembers.stream().map(Person::getId).collect(toList());
         final List<SickNote> sickNotes = getSickNotes(person, relevantMembers, from, to);
 
         final Map<Person, List<SickNote>> sickNotesByPerson = sickNotes.stream().collect(groupingBy(SickNote::getPerson));

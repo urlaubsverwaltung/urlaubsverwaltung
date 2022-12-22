@@ -4,7 +4,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-interface UserPaginationSettingsRepository extends CrudRepository<UserPaginationSettingsEntity, Integer> {
+interface UserPaginationSettingsRepository extends CrudRepository<UserPaginationSettingsEntity, Long> {
 
-    Optional<UserPaginationSettingsEntity> findByPersonId(Integer id);
+    Optional<UserPaginationSettingsEntity> findByPersonId(Long id);
 }

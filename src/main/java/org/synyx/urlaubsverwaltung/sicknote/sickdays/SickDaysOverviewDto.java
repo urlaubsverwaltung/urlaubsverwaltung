@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class SickDaysOverviewDto {
 
-    private final int personId;
+    private final long personId;
     private final String personAvatarUrl;
     private final String personnelNumber;
     private final String personFirstName;
@@ -15,7 +15,7 @@ public class SickDaysOverviewDto {
     private final BigDecimal amountChildSickDays;
     private final BigDecimal amountChildSickDaysWithAUB;
 
-    private SickDaysOverviewDto(int personId, String personAvatarUrl, String personnelNumber, String personFirstName,
+    private SickDaysOverviewDto(long personId, String personAvatarUrl, String personnelNumber, String personFirstName,
                                 String personLastName, String personNiceName, BigDecimal amountSickDays,
                                 BigDecimal amountSickDaysWithAUB, BigDecimal amountChildSickDays, BigDecimal amountChildSickDaysWithAUB) {
 
@@ -31,7 +31,7 @@ public class SickDaysOverviewDto {
         this.amountChildSickDaysWithAUB = amountChildSickDaysWithAUB;
     }
 
-    public int getPersonId() {
+    public long getPersonId() {
         return personId;
     }
 
@@ -92,7 +92,7 @@ public class SickDaysOverviewDto {
     }
 
     static class Builder {
-        private int personId;
+        private long personId;
         private String personAvatarUrl;
         private String personnelNumber;
         private String personFirstName;
@@ -103,7 +103,7 @@ public class SickDaysOverviewDto {
         private BigDecimal amountChildSickDays;
         private BigDecimal amountChildSickDaysWithAU;
 
-        public Builder personId(int personId) {
+        public Builder personId(long personId) {
             this.personId = personId;
             return this;
         }
@@ -132,6 +132,7 @@ public class SickDaysOverviewDto {
             this.personNiceName = personNiceName;
             return this;
         }
+
         public Builder amountSickDays(BigDecimal amountSickDays) {
             this.amountSickDays = amountSickDays;
             return this;

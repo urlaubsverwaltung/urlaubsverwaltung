@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 @ExtendWith(MockitoExtension.class)
 class AvailabilityApiControllerTest {
 
-    private static final Integer PERSON_ID = 1;
+    private static final Long PERSON_ID = 1L;
 
     private AvailabilityApiController sut;
 
@@ -42,7 +42,7 @@ class AvailabilityApiControllerTest {
 
     @Test
     void ensurePersonsAvailabilitiesForUnknownPersonResultsInBadRequest() throws Exception {
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.empty());
 
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2016-01-01")
@@ -53,7 +53,7 @@ class AvailabilityApiControllerTest {
     @Test
     void ensureFetchesAvailabilitiesForGivenPersonIfProvided() throws Exception {
         final Person testPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(testPerson));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(testPerson));
 
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")
             .param("from", "2016-01-01")
@@ -61,14 +61,14 @@ class AvailabilityApiControllerTest {
             .andExpect(status().isOk());
 
         verify(availabilityService)
-            .getPersonsAvailabilities(LocalDate.of(2016, 1, 1),LocalDate.of(2016, 1, 31), testPerson);
+            .getPersonsAvailabilities(LocalDate.of(2016, 1, 1), LocalDate.of(2016, 1, 31), testPerson);
     }
 
     @Test
     void ensureNoContentAvailabilitiesForGivenPersonWithoutConfiguredWorkingTime() throws Exception {
 
         final Person testPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(testPerson));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(testPerson));
 
         when(availabilityService.getPersonsAvailabilities(any(LocalDate.class), any(LocalDate.class), any(Person.class))).thenThrow(FreeTimeAbsenceException.class);
         perform(get("/api/persons/" + PERSON_ID + "/availabilities")

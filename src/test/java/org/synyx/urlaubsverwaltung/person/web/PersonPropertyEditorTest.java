@@ -15,7 +15,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -51,7 +51,7 @@ class PersonPropertyEditorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "", " " })
+    @ValueSource(strings = {"", " "})
     @NullSource
     void ensureSetAsTextDoesNotThrowWhenGivenTextIsEmpty(String givenText) {
 
@@ -63,11 +63,11 @@ class PersonPropertyEditorTest {
     @Test
     void ensureSetAsTextSetsValueToPersonForExistingPersonId() {
 
-        final int personId = 5;
+        final long personId = 5;
         final Person person = personWithId(personId);
         when(personService.getPersonByID(personId)).thenReturn(Optional.of(person));
 
-        sut.setAsText(Integer.toString(personId));
+        sut.setAsText(Long.toString(personId));
 
         assertThat(sut.getValue()).isEqualTo(person);
     }
@@ -75,14 +75,14 @@ class PersonPropertyEditorTest {
     @Test
     void ensureSetAsTextSetsValueToNullForNotExistingPersonId() {
 
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.empty());
 
         sut.setAsText("453");
 
         assertThat(sut.getValue()).isNull();
     }
 
-    private static Person personWithId(int id) {
+    private static Person personWithId(long id) {
 
         Person person = new Person();
         person.setId(id);

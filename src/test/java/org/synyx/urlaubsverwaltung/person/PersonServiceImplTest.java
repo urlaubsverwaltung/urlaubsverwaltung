@@ -39,7 +39,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -149,7 +148,7 @@ class PersonServiceImplTest {
     void ensureUpdatedPersonIsPersisted() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         when(personRepository.save(person)).thenReturn(person);
 
         sut.update(person);
@@ -180,8 +179,8 @@ class PersonServiceImplTest {
     @Test
     void ensureGetPersonByIDCallsCorrectDaoMethod() {
 
-        sut.getPersonByID(123);
-        verify(personRepository).findById(123);
+        sut.getPersonByID(123L);
+        verify(personRepository).findById(123L);
     }
 
     @Test
@@ -351,7 +350,7 @@ class PersonServiceImplTest {
     void ensurePersonUpdatedEventIsFiredAfterUpdate() {
 
         final Person activePerson = createPerson("active person", USER);
-        activePerson.setId(1);
+        activePerson.setId(1L);
         when(personRepository.save(activePerson)).thenReturn(activePerson);
 
         sut.update(activePerson);
@@ -362,7 +361,7 @@ class PersonServiceImplTest {
     void ensurePersonDisabledEventIsFiredAfterPersonUpdate() {
 
         final Person inactivePerson = createPerson("inactive person", INACTIVE);
-        inactivePerson.setId(1);
+        inactivePerson.setId(1L);
         when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
 
         sut.update(inactivePerson);
@@ -373,7 +372,7 @@ class PersonServiceImplTest {
     void ensurePersonDisabledEventIsNotFiredAfterPersonUpdateAndRoleNotInactive() {
 
         final Person inactivePerson = createPerson("inactive person", USER);
-        inactivePerson.setId(1);
+        inactivePerson.setId(1L);
         when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
 
         sut.update(inactivePerson);
@@ -395,7 +394,7 @@ class PersonServiceImplTest {
         final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
 
         final Person person = new Person();
-        final int personId = 42;
+        final long personId = 42;
         person.setId(personId);
         when(personRepository.existsById(personId)).thenReturn(true);
 
@@ -403,7 +402,7 @@ class PersonServiceImplTest {
 
         final InOrder inOrder = inOrder(applicationEventPublisher, accountInteractionService, workingTimeWriteService, personRepository);
 
-        inOrder.verify(personRepository).existsById(42);
+        inOrder.verify(personRepository).existsById(42L);
         inOrder.verify(applicationEventPublisher).publishEvent(personDeletedEventArgumentCaptor.capture());
         assertThat(personDeletedEventArgumentCaptor.getValue().getPerson())
             .isEqualTo(person);
@@ -418,17 +417,17 @@ class PersonServiceImplTest {
         final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         assertThatThrownBy(() -> sut.delete(person, signedInUser)).isInstanceOf(IllegalArgumentException.class);
 
-        verify(personRepository).existsById(1);
+        verify(personRepository).existsById(1L);
         verifyNoMoreInteractions(applicationEventPublisher, workingTimeWriteService, accountInteractionService, personRepository);
     }
 
     @Test
     void numberOfPersonsWithRoleWithoutId() {
 
-        when(personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(1))).thenReturn(2);
+        when(personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(1L))).thenReturn(2);
 
         final int numberOfOfficeExceptId = sut.numberOfPersonsWithOfficeRoleExcludingPerson(1);
         assertThat(numberOfOfficeExceptId).isEqualTo(2);

@@ -23,7 +23,7 @@ class WorkingTimeEntity {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     @OneToOne
     private Person person;
@@ -57,11 +57,11 @@ class WorkingTimeEntity {
     @Enumerated(STRING)
     private FederalState federalStateOverride;
 
-    Integer getId() {
+    Long getId() {
         return id;
     }
 
-    void setId(Integer id) {
+    void setId(Long id) {
         this.id = id;
     }
 

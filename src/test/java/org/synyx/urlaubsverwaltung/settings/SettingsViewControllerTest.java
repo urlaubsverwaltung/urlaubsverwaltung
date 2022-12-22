@@ -78,7 +78,7 @@ class SettingsViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock,  specialLeaveService);
+        sut = new SettingsViewController(settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock, specialLeaveService);
     }
 
     @Test
@@ -92,7 +92,7 @@ class SettingsViewControllerTest {
     void ensureSettingsDetailsFillsModelCorrectly() throws Exception {
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setActive(true);
         vacationType.setRequiresApprovalToApply(true);
         vacationType.setCategory(VacationCategory.HOLIDAY);
@@ -334,7 +334,7 @@ class SettingsViewControllerTest {
 
     private static Settings someSettings() {
         final Settings settings = new Settings();
-        settings.setId(1);
+        settings.setId(1L);
         settings.setApplicationSettings(new ApplicationSettings());
         settings.setAccountSettings(new AccountSettings());
         settings.setWorkingTimeSettings(new WorkingTimeSettings());

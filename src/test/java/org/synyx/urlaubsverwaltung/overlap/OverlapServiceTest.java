@@ -194,21 +194,21 @@ class OverlapServiceTest {
         LocalDate endDate = LocalDate.of(2012, JANUARY, 18);
 
         final SickNote inactiveSickNote = SickNote.builder()
-                .dayLength(FULL)
-                .startDate(startDate)
-                .endDate(endDate)
-                .status(SickNoteStatus.CANCELLED)
-                .build();
+            .dayLength(FULL)
+            .startDate(startDate)
+            .endDate(endDate)
+            .status(SickNoteStatus.CANCELLED)
+            .build();
 
         final Person person = new Person();
 
         // sick note to be checked: 16.01. - 18.01.
         final SickNote sickNote = SickNote.builder()
-                .person(person)
-                .dayLength(FULL)
-                .startDate(LocalDate.of(2012, JANUARY, 16))
-                .endDate(LocalDate.of(2012, JANUARY, 18))
-                .build();
+            .person(person)
+            .dayLength(FULL)
+            .startDate(LocalDate.of(2012, JANUARY, 16))
+            .endDate(LocalDate.of(2012, JANUARY, 18))
+            .build();
 
         when(sickNoteService.getByPersonAndPeriod(person, startDate, endDate)).thenReturn(singletonList(inactiveSickNote));
 
@@ -225,11 +225,11 @@ class OverlapServiceTest {
 
         // sick note to be checked: 16.01. - 18.01.
         final SickNote sickNote = SickNote.builder()
-                .person(person)
-                .dayLength(FULL)
-                .startDate(startDate)
-                .endDate(endDate)
-                .build();
+            .person(person)
+            .dayLength(FULL)
+            .startDate(startDate)
+            .endDate(endDate)
+            .build();
 
         when(sickNoteService.getByPersonAndPeriod(person, startDate, endDate)).thenReturn(List.of());
 
@@ -243,11 +243,11 @@ class OverlapServiceTest {
 
         // sick note: 16.01. - 19.01.
         final SickNote sickNote = SickNote.builder()
-                .dayLength(FULL)
-                .startDate(LocalDate.of(2012, JANUARY, 16))
-                .endDate(LocalDate.of(2012, JANUARY, 19))
-                .status(ACTIVE)
-                .build();
+            .dayLength(FULL)
+            .startDate(LocalDate.of(2012, JANUARY, 16))
+            .endDate(LocalDate.of(2012, JANUARY, 19))
+            .status(ACTIVE)
+            .build();
 
         when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(singletonList(sickNote));
@@ -268,11 +268,11 @@ class OverlapServiceTest {
 
         // sick note: 16.01. - 18.01.
         final SickNote sickNote = SickNote.builder()
-                .dayLength(FULL)
-                .startDate(LocalDate.of(2012, JANUARY, 16))
-                .endDate(LocalDate.of(2012, JANUARY, 18))
-                .status(ACTIVE)
-                .build();
+            .dayLength(FULL)
+            .startDate(LocalDate.of(2012, JANUARY, 16))
+            .endDate(LocalDate.of(2012, JANUARY, 18))
+            .status(ACTIVE)
+            .build();
 
         when(sickNoteService.getByPersonAndPeriod(any(Person.class), any(LocalDate.class), any(LocalDate.class)))
             .thenReturn(singletonList(sickNote));
@@ -295,12 +295,12 @@ class OverlapServiceTest {
         final LocalDate sameDay = LocalDate.of(2015, MARCH, 16);
 
         final SickNote existentSickNote = SickNote.builder()
-                .id(23)
-                .dayLength(FULL)
-                .startDate(sameDay)
-                .endDate(sameDay)
-                .status(ACTIVE)
-                .build();
+            .id(23L)
+            .dayLength(FULL)
+            .startDate(sameDay)
+            .endDate(sameDay)
+            .status(ACTIVE)
+            .build();
 
         final Person person = new Person();
 
@@ -309,13 +309,13 @@ class OverlapServiceTest {
         final LocalDate endDate = LocalDate.of(2015, MARCH, 17);
 
         final SickNote sickNote = SickNote.builder()
-                .id(23)
-                .person(person)
-                .dayLength(FULL)
-                .startDate(startDate)
-                .endDate(endDate)
-                .status(ACTIVE)
-                .build();
+            .id(23L)
+            .person(person)
+            .dayLength(FULL)
+            .startDate(startDate)
+            .endDate(endDate)
+            .status(ACTIVE)
+            .build();
 
         when(sickNoteService.getByPersonAndPeriod(person, startDate, endDate)).thenReturn(singletonList(existentSickNote));
 
@@ -434,7 +434,7 @@ class OverlapServiceTest {
         morningVacation.setStatus(ALLOWED);
 
         final Person person = new Person("username", "last name", "first name", "email@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(person)))
             .thenReturn(singletonList(morningVacation));
@@ -463,7 +463,7 @@ class OverlapServiceTest {
         morningVacation.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
 
         final Person person = new Person("username", "last name", "first name", "email@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(person)))
             .thenReturn(singletonList(morningVacation));
@@ -492,7 +492,7 @@ class OverlapServiceTest {
         morningCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
         final Person person = new Person("username", "last name", "first name", "email@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(person)))
             .thenReturn(singletonList(morningCancellationRequest));

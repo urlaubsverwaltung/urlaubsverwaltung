@@ -61,7 +61,7 @@ class AccountServiceImplTest {
         final AccountEntity accountEntity = new AccountEntity(person, from, to, doRemainingVacationDaysExpire, expiryDate,
             annualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
 
-        final int id = 1;
+        final long id = 1;
         accountEntity.setId(id);
 
         final LocalDate expiryNotificationSentDate = LocalDate.of(year, APRIL, 1);
@@ -113,10 +113,10 @@ class AccountServiceImplTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Person person2 = new Person("muster2", "Muster2", "Marlene2", "muster2@example.org");
-        person2.setId(2);
+        person2.setId(2L);
 
         final int year = 2012;
         final LocalDate from = Year.of(year).atDay(1);
@@ -125,11 +125,11 @@ class AccountServiceImplTest {
 
         final AccountEntity accountEntity1 = new AccountEntity(person, from, to, null, expiryDate,
             new BigDecimal(30), new BigDecimal(3), ZERO, "awesome comment");
-        accountEntity1.setId(1);
+        accountEntity1.setId(1L);
 
         final AccountEntity accountEntity2 = new AccountEntity(person2, from, to, true, expiryDate,
             new BigDecimal(30), new BigDecimal(3), ZERO, "awesome comment nummero dueee");
-        accountEntity2.setId(2);
+        accountEntity2.setId(2L);
 
         when(accountRepository.findAccountByYearAndPersons(2012, List.of(person, person2)))
             .thenReturn(List.of(accountEntity1, accountEntity2));
@@ -178,7 +178,7 @@ class AccountServiceImplTest {
     void ensureCreateHolidaysAccountDraftWithGloballyDisabledExpiration() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final AccountSettings accountSettings = new AccountSettings();
         accountSettings.setDoRemainingVacationDaysExpireGlobally(false);
@@ -203,7 +203,7 @@ class AccountServiceImplTest {
     void ensureCreateHolidaysAccountDraftWithGloballyEnabledExpiration() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final AccountSettings accountSettings = new AccountSettings();
         accountSettings.setDoRemainingVacationDaysExpireGlobally(true);
@@ -229,7 +229,7 @@ class AccountServiceImplTest {
     void ensureCreateHolidaysAccountDraftWithGloballyDisabledExpirationButLocallyEnabled() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final AccountSettings accountSettings = new AccountSettings();
         accountSettings.setDoRemainingVacationDaysExpireGlobally(false);
@@ -255,7 +255,7 @@ class AccountServiceImplTest {
     void ensureCreateHolidaysAccountDraftWithoutPreviousYearAccount() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final AccountSettings accountSettings = new AccountSettings();
         accountSettings.setDoRemainingVacationDaysExpireGlobally(false);
@@ -334,7 +334,7 @@ class AccountServiceImplTest {
     void ensureSaveAddsExpiryDateOfPreviousYearAccountWhenNotSetAndExpirationIsDisabled() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final Account account = new Account();
         account.setPerson(person);
@@ -349,7 +349,7 @@ class AccountServiceImplTest {
         previousYearAccountEntity.setExpiryDate(LocalDate.of(2021, JUNE, 1));
 
         when(accountRepository.findAccountByYearAndPersons(2021, List.of(person))).thenReturn(List.of(previousYearAccountEntity));
-                when(accountRepository.save(any(AccountEntity.class))).thenAnswer(returnsFirstArg());
+        when(accountRepository.save(any(AccountEntity.class))).thenAnswer(returnsFirstArg());
 
         final Settings settings = new Settings();
         when(settingsService.getSettings()).thenReturn(settings);
@@ -370,7 +370,7 @@ class AccountServiceImplTest {
     void ensureSaveAddsDefaultExpiryDateWhenNotSetAndExpirationIsDisabled() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final Account account = new Account();
         account.setPerson(person);

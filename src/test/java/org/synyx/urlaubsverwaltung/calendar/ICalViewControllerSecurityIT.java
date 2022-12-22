@@ -34,7 +34,7 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     void getPersonCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(personCalendarService.getCalendarForPerson(1, secret, GERMAN)).thenReturn(new ByteArrayResource("calendar".getBytes()));
+        when(personCalendarService.getCalendarForPerson(1L, secret, GERMAN)).thenReturn(new ByteArrayResource("calendar".getBytes()));
 
         perform(get("/web/persons/1/calendar")
             .locale(GERMAN).param("secret", secret))
@@ -45,7 +45,7 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     void getDepartmentCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, secret, GERMAN)).thenReturn(new ByteArrayResource("calendar".getBytes()));
+        when(departmentCalendarService.getCalendarForDepartment(1L, 2L, secret, GERMAN)).thenReturn(new ByteArrayResource("calendar".getBytes()));
 
         perform(get("/web/departments/1/persons/2/calendar")
             .locale(GERMAN).param("secret", secret))
@@ -56,7 +56,7 @@ class ICalViewControllerSecurityIT extends TestContainersBase {
     void getCompanyCalendarUnauthorized() throws Exception {
 
         final String secret = "eid5ae0zooKu";
-        when(companyCalendarService.getCalendarForAll(1, secret, GERMAN)).thenReturn(new ByteArrayResource("calendar".getBytes()));
+        when(companyCalendarService.getCalendarForAll(1L, secret, GERMAN)).thenReturn(new ByteArrayResource("calendar".getBytes()));
 
         perform(get("/web/company/persons/1/calendar")
             .locale(GERMAN).param("secret", secret))

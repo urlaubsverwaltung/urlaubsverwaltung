@@ -22,7 +22,7 @@ class UserSettingsEntity {
 
     @Id
     @Column(name = "person_id")
-    private Integer personId;
+    private Long personId;
 
     @OneToOne(fetch = LAZY)
     @PrimaryKeyJoinColumn(name = "person_id", referencedColumnName = "id")
@@ -36,11 +36,11 @@ class UserSettingsEntity {
 
     private Locale localeBrowserSpecific;
 
-    public Integer getPersonId() {
+    public Long getPersonId() {
         return personId;
     }
 
-    public void setPersonId(Integer personId) {
+    public void setPersonId(Long personId) {
         this.personId = personId;
     }
 

@@ -19,11 +19,11 @@ class VacationTypeViewModelServiceTest {
         final VacationTypeViewModelService sut = new VacationTypeViewModelService(vacationTypeService);
 
         final VacationType personalHoliday = new VacationType();
-        personalHoliday.setId(1);
+        personalHoliday.setId(1L);
         personalHoliday.setColor(YELLOW);
 
         final VacationType companyHoliday = new VacationType();
-        companyHoliday.setId(2);
+        companyHoliday.setId(2L);
         companyHoliday.setColor(ORANGE);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(personalHoliday, companyHoliday));
@@ -31,8 +31,8 @@ class VacationTypeViewModelServiceTest {
         final List<VacationTypeDto> actual = sut.getVacationTypeColors();
 
         assertThat(actual).containsExactly(
-            new VacationTypeDto(1, YELLOW),
-            new VacationTypeDto(2, ORANGE)
+            new VacationTypeDto(1L, YELLOW),
+            new VacationTypeDto(2L, ORANGE)
         );
     }
 }

@@ -61,7 +61,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(1)
+            .id(1L)
             .person(person)
             .startDate(LocalDate.of(2022, 2, 1))
             .endDate(LocalDate.of(2022, 4, 1))
@@ -141,7 +141,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
 
         final SickNote sickNote = SickNote.builder()
-            .id(1)
+            .id(1L)
             .person(person)
             .applier(management)
             .startDate(LocalDate.of(2022, 2, 1))
@@ -185,7 +185,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
 
         final SickNote sickNote = SickNote.builder()
-            .id(1)
+            .id(1L)
             .person(person)
             .applier(management)
             .startDate(LocalDate.of(2022, 2, 1))
@@ -225,7 +225,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(1)
+            .id(1L)
             .person(person)
             .startDate(LocalDate.of(2022, 2, 1))
             .endDate(LocalDate.of(2022, 4, 1))
@@ -267,7 +267,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
 
         final SickNote sickNote = SickNote.builder()
-            .id(1)
+            .id(1L)
             .person(person)
             .applier(management)
             .startDate(LocalDate.of(2022, 2, 1))
@@ -307,7 +307,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(1)
+            .id(1L)
             .person(person)
             .startDate(LocalDate.of(2022, 2, 1))
             .endDate(LocalDate.of(2022, 4, 1))

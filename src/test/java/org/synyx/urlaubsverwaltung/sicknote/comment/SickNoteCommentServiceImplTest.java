@@ -45,7 +45,7 @@ class SickNoteCommentServiceImplTest {
         final Person author = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(1)
+            .id(1L)
             .person(author)
             .applier(author)
             .build();
@@ -70,7 +70,7 @@ class SickNoteCommentServiceImplTest {
         final Person givenAuthor = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(1)
+            .id(1L)
             .person(givenAuthor)
             .applier(givenAuthor)
             .build();
@@ -99,7 +99,7 @@ class SickNoteCommentServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final SickNoteCommentEntity sickNoteComment = new SickNoteCommentEntity(Clock.fixed(Instant.ofEpochSecond(0), ZoneId.systemDefault()));
-        sickNoteComment.setId(1);
+        sickNoteComment.setId(1L);
         sickNoteComment.setPerson(person);
         final List<SickNoteCommentEntity> commentsOfAuthor = List.of(sickNoteComment);
         when(sickNoteCommentEntityRepository.findByPerson(person)).thenReturn(commentsOfAuthor);

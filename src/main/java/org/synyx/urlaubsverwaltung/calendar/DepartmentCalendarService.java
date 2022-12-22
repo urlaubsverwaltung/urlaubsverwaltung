@@ -48,14 +48,14 @@ class DepartmentCalendarService {
     }
 
     @Transactional
-    public void deleteCalendarForDepartmentAndPerson(int departmentId, int personId) {
+    public void deleteCalendarForDepartmentAndPerson(long departmentId, long personId) {
 
         final Person person = getPersonOrThrow(personId);
 
         departmentCalendarRepository.deleteByDepartmentIdAndPerson(departmentId, person);
     }
 
-    DepartmentCalendar createCalendarForDepartmentAndPerson(int departmentId, int personId, Period calendarPeriod) {
+    DepartmentCalendar createCalendarForDepartmentAndPerson(long departmentId, long personId, Period calendarPeriod) {
 
         final Person person = getPersonOrThrow(personId);
 
@@ -73,14 +73,14 @@ class DepartmentCalendarService {
         return departmentCalendarRepository.save(departmentCalendar);
     }
 
-    Optional<DepartmentCalendar> getCalendarForDepartment(Integer departmentId, Integer personId) {
+    Optional<DepartmentCalendar> getCalendarForDepartment(Long departmentId, Long personId) {
 
         final Person person = getPersonOrThrow(personId);
 
         return departmentCalendarRepository.findByDepartmentIdAndPerson(departmentId, person);
     }
 
-    ByteArrayResource getCalendarForDepartment(Integer departmentId, Integer personId, String secret, Locale locale) {
+    ByteArrayResource getCalendarForDepartment(Long departmentId, Long personId, String secret, Locale locale) {
 
         if (StringUtils.isBlank(secret)) {
             throw new IllegalArgumentException("secret must not be empty.");
@@ -110,7 +110,7 @@ class DepartmentCalendarService {
     }
 
     @Transactional
-    public void deleteDepartmentsCalendarsForPerson(int personId) {
+    public void deleteDepartmentsCalendarsForPerson(long personId) {
 
         final Person person = getPersonOrThrow(personId);
 
@@ -123,7 +123,7 @@ class DepartmentCalendarService {
         departmentCalendarRepository.deleteByPerson(event.getPerson());
     }
 
-    private Department getDepartmentOrThrow(Integer departmentId) {
+    private Department getDepartmentOrThrow(Long departmentId) {
 
         final Optional<Department> maybeDepartment = departmentService.getDepartmentById(departmentId);
         if (maybeDepartment.isEmpty()) {
@@ -133,7 +133,7 @@ class DepartmentCalendarService {
         return maybeDepartment.get();
     }
 
-    private Person getPersonOrThrow(Integer personId) {
+    private Person getPersonOrThrow(Long personId) {
 
         final Optional<Person> maybePerson = personService.getPersonByID(personId);
         if (maybePerson.isEmpty()) {

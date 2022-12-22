@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.toMap;
 
 public class OvertimeDetailRecordDto {
 
-    private final Integer id;
+    private final Long id;
     private final OvertimeDetailPersonDto person;
     private final LocalDate startDate;
     private final LocalDate endDate;
@@ -18,7 +18,7 @@ public class OvertimeDetailRecordDto {
     private final Map<Integer, Duration> durationByYear;
     private final LocalDate lastModificationDate;
 
-    OvertimeDetailRecordDto(Integer id, OvertimeDetailPersonDto person, LocalDate startDate, LocalDate endDate, Duration duration, Map<Integer, Duration> durationByYear, LocalDate lastModificationDate) {
+    OvertimeDetailRecordDto(Long id, OvertimeDetailPersonDto person, LocalDate startDate, LocalDate endDate, Duration duration, Map<Integer, Duration> durationByYear, LocalDate lastModificationDate) {
         this.id = id;
         this.person = person;
         this.startDate = startDate;
@@ -28,7 +28,7 @@ public class OvertimeDetailRecordDto {
         this.lastModificationDate = lastModificationDate;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -59,8 +59,8 @@ public class OvertimeDetailRecordDto {
 
     public Map<Integer, Duration> getDurationByYear(int withoutYear) {
         return durationByYear.entrySet().stream()
-                .filter(e -> e.getKey() != withoutYear)
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .filter(e -> e.getKey() != withoutYear)
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override

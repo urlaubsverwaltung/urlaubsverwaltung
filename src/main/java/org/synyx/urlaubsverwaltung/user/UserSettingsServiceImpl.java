@@ -123,7 +123,7 @@ class UserSettingsServiceImpl implements UserSettingsService {
 
     @Override
     public Map<Person, Locale> getEffectiveLocale(List<Person> persons) {
-        final List<Integer> personIds = persons.stream().map(Person::getId).collect(toList());
+        final List<Long> personIds = persons.stream().map(Person::getId).collect(toList());
         final Map<Person, Locale> personLocale = userSettingsRepository.findByPersonIdIn(personIds).stream()
             .collect(toMap(
                 UserSettingsEntity::getPerson,

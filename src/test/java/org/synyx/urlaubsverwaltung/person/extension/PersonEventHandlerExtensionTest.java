@@ -51,7 +51,7 @@ class PersonEventHandlerExtensionTest {
 
     private static Person anyPerson() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(Set.of(USER));
 
         return person;
@@ -91,7 +91,7 @@ class PersonEventHandlerExtensionTest {
             assertThat(result.getId()).isNotNull();
             assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
             assertThat(result.getTenantId()).isEqualTo("default");
-            assertThat(result.getPersonId()).isEqualTo(person.getId());
+            assertThat(result.getPersonId()).isEqualTo(person.getId().intValue());
             assertThat(result.getUsername()).isEqualTo(person.getUsername());
             assertThat(result.getLastName()).isEqualTo(person.getLastName());
             assertThat(result.getFirstName()).isEqualTo(person.getFirstName());
@@ -102,7 +102,7 @@ class PersonEventHandlerExtensionTest {
         @Test
         void ensureNoEventPublishedForUnknownPerson() {
 
-            final PersonCreatedEvent event = new PersonCreatedEvent("source?", 1, "Marlene Muster", "muster", "muster@example.org", true);
+            final PersonCreatedEvent event = new PersonCreatedEvent("source?", 1L, "Marlene Muster", "muster", "muster@example.org", true);
 
             sut.on(event);
 
@@ -139,7 +139,7 @@ class PersonEventHandlerExtensionTest {
             assertThat(result.getId()).isNotNull();
             assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
             assertThat(result.getTenantId()).isEqualTo("default");
-            assertThat(result.getPersonId()).isEqualTo(person.getId());
+            assertThat(result.getPersonId()).isEqualTo(person.getId().intValue());
             assertThat(result.getUsername()).isEqualTo(person.getUsername());
             assertThat(result.getLastName()).isEqualTo(person.getLastName());
             assertThat(result.getFirstName()).isEqualTo(person.getFirstName());
@@ -150,7 +150,7 @@ class PersonEventHandlerExtensionTest {
         @Test
         void ensureNoEventPublishedForUnknownPerson() {
 
-            final PersonUpdatedEvent event = new PersonUpdatedEvent("source?", 1, "Marlene Muster", "muster", "muster@example.org", true);
+            final PersonUpdatedEvent event = new PersonUpdatedEvent("source?", 1L, "Marlene Muster", "muster", "muster@example.org", true);
 
             sut.on(event);
 
@@ -187,7 +187,7 @@ class PersonEventHandlerExtensionTest {
             assertThat(result.getId()).isNotNull();
             assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
             assertThat(result.getTenantId()).isEqualTo("default");
-            assertThat(result.getPersonId()).isEqualTo(person.getId());
+            assertThat(result.getPersonId()).isEqualTo(person.getId().intValue());
             assertThat(result.getUsername()).isEqualTo(person.getUsername());
             assertThat(result.getLastName()).isEqualTo(person.getLastName());
             assertThat(result.getFirstName()).isEqualTo(person.getFirstName());
@@ -198,7 +198,7 @@ class PersonEventHandlerExtensionTest {
         @Test
         void ensureNoEventPublishedForUnknownPerson() {
 
-            final PersonDisabledEvent event = new PersonDisabledEvent("source?", 1, "Marlene Muster", "muster", "muster@example.org");
+            final PersonDisabledEvent event = new PersonDisabledEvent("source?", 1L, "Marlene Muster", "muster", "muster@example.org");
 
             sut.on(event);
 
@@ -234,7 +234,7 @@ class PersonEventHandlerExtensionTest {
             assertThat(result.getId()).isNotNull();
             assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
             assertThat(result.getTenantId()).isEqualTo("default");
-            assertThat(result.getPersonId()).isEqualTo(person.getId());
+            assertThat(result.getPersonId()).isEqualTo(person.getId().intValue());
             assertThat(result.getUsername()).isEqualTo(person.getUsername());
             assertThat(result.getLastName()).isEqualTo(person.getLastName());
             assertThat(result.getFirstName()).isEqualTo(person.getFirstName());

@@ -25,7 +25,7 @@ public class UserApiMethodSecurity {
         this.departmentService = departmentService;
     }
 
-    public boolean isInDepartmentOfSecondStageAuthority(Authentication authentication, Integer userId) {
+    public boolean isInDepartmentOfSecondStageAuthority(Authentication authentication, Long userId) {
         final Optional<Person> loggedInUser = personService.getPersonByUsername(userName(authentication));
 
         if (loggedInUser.isEmpty() || !loggedInUser.get().hasRole(SECOND_STAGE_AUTHORITY)) {
@@ -40,7 +40,7 @@ public class UserApiMethodSecurity {
         return departmentService.isSecondStageAuthorityAllowedToManagePerson(loggedInUser.get(), person.get());
     }
 
-    public boolean isInDepartmentOfDepartmentHead(Authentication authentication, Integer userId) {
+    public boolean isInDepartmentOfDepartmentHead(Authentication authentication, Long userId) {
         final Optional<Person> loggedInUser = personService.getPersonByUsername(userName(authentication));
 
         if (loggedInUser.isEmpty() || !loggedInUser.get().hasRole(DEPARTMENT_HEAD)) {
@@ -55,7 +55,7 @@ public class UserApiMethodSecurity {
         return departmentService.isDepartmentHeadAllowedToManagePerson(loggedInUser.get(), person.get());
     }
 
-    public boolean isSamePersonId(Authentication authentication, Integer userId) {
+    public boolean isSamePersonId(Authentication authentication, Long userId) {
 
         final Optional<Person> person = personService.getPersonByID(userId);
         if (person.isEmpty()) {

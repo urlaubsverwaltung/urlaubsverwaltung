@@ -22,7 +22,7 @@ class PersonDTOMapperTest {
         void enabledPersonDTO() {
 
             final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-            person.setId(1);
+            person.setId(1L);
             person.setPermissions(Set.of(USER));
 
             final PersonDTO dto = PersonDTOMapper.toPersonDTO(person);
@@ -41,7 +41,7 @@ class PersonDTOMapperTest {
         void disabledPersonDTO() {
 
             final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-            person.setId(1);
+            person.setId(1L);
             person.setPermissions(Set.of(INACTIVE));
 
             final PersonDTO dto = PersonDTOMapper.toPersonDTO(person);
@@ -63,7 +63,7 @@ class PersonDTOMapperTest {
         void activePerson() {
 
             final PersonDTO personDTO = PersonDTO.builder()
-                .id(1)
+                .id(1L)
                 .username("muster")
                 .lastName("Muster")
                 .firstName("Marlene")
@@ -88,7 +88,7 @@ class PersonDTOMapperTest {
         void disabledPerson() {
 
             final PersonDTO personDTO = PersonDTO.builder()
-                .id(1)
+                .id(1L)
                 .username("muster")
                 .lastName("Muster")
                 .firstName("Marlene")

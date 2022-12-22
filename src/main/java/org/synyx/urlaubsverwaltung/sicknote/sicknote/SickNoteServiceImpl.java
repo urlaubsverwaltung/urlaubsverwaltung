@@ -55,7 +55,7 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
-    public Optional<SickNote> getById(Integer id) {
+    public Optional<SickNote> getById(Long id) {
         return sickNoteRepository.findById(id)
             .map(SickNoteServiceImpl::toSickNote)
             .map(sickNote -> {
@@ -83,9 +83,9 @@ class SickNoteServiceImpl implements SickNoteService {
         final Integer daysBeforeEndOfSickPayNotification = sickNoteSettings.getDaysBeforeEndOfSickPayNotification();
 
         return sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today)
-                .stream()
-                .map(SickNoteServiceImpl::toSickNote)
-                .collect(toList());
+            .stream()
+            .map(SickNoteServiceImpl::toSickNote)
+            .collect(toList());
     }
 
     @Override
@@ -122,8 +122,8 @@ class SickNoteServiceImpl implements SickNoteService {
     public void setEndOfSickPayNotificationSend(SickNote sickNote) {
 
         final SickNote sickNoteWithNewNotificationSendDate = SickNote.builder(sickNote)
-                .endOfSickPayNotificationSend(LocalDate.now(clock))
-                .build();
+            .endOfSickPayNotificationSend(LocalDate.now(clock))
+            .build();
 
         sickNoteRepository.save(toSickNoteEntity(sickNoteWithNewNotificationSendDate));
     }
@@ -131,28 +131,28 @@ class SickNoteServiceImpl implements SickNoteService {
     @Override
     public List<SickNote> deleteAllByPerson(Person person) {
         return sickNoteRepository.deleteByPerson(person)
-                .stream()
-                .map(SickNoteServiceImpl::toSickNote)
-                .collect(toList());
+            .stream()
+            .map(SickNoteServiceImpl::toSickNote)
+            .collect(toList());
     }
 
     @Override
     public void deleteSickNoteApplier(Person applier) {
 
         final List<SickNoteEntity> sickNoteEntities = sickNoteRepository.findByApplier(applier)
-                .stream()
-                .map(SickNoteServiceImpl::toSickNote)
-                .map(SickNoteServiceImpl::sickNoteWithoutApplier)
-                .map(SickNoteServiceImpl::toSickNoteEntity)
-                .collect(toList());
+            .stream()
+            .map(SickNoteServiceImpl::toSickNote)
+            .map(SickNoteServiceImpl::sickNoteWithoutApplier)
+            .map(SickNoteServiceImpl::toSickNoteEntity)
+            .collect(toList());
 
         sickNoteRepository.saveAll(sickNoteEntities);
     }
 
     private static SickNote sickNoteWithoutApplier(SickNote sickNote) {
         return SickNote.builder(sickNote)
-                .applier(null)
-                .build();
+            .applier(null)
+            .build();
     }
 
     private static SickNoteEntity toSickNoteEntity(SickNote sickNote) {

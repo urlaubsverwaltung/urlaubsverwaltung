@@ -66,8 +66,8 @@ class PersonCalendarServiceTest {
     void getCalendarForPersonForOneFullDay() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
@@ -81,7 +81,7 @@ class PersonCalendarServiceTest {
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
         when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", fullDayAbsences, person)).thenReturn(iCal);
 
-        final ByteArrayResource calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
+        final ByteArrayResource calendar = sut.getCalendarForPerson(1L, "secret", GERMAN);
         assertThat(calendar).isEqualTo(iCal);
     }
 
@@ -89,8 +89,8 @@ class PersonCalendarServiceTest {
     void getCalendarForPersonForHalfDayMorning() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
@@ -104,7 +104,7 @@ class PersonCalendarServiceTest {
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
         when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", morningAbsences, person)).thenReturn(iCal);
 
-        final ByteArrayResource calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
+        final ByteArrayResource calendar = sut.getCalendarForPerson(1L, "secret", GERMAN);
         assertThat(calendar).isEqualTo(iCal);
     }
 
@@ -112,8 +112,8 @@ class PersonCalendarServiceTest {
     void getCalendarForPersonForMultipleFullDays() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
@@ -127,7 +127,7 @@ class PersonCalendarServiceTest {
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
         when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", manyFullDayAbsences, person)).thenReturn(iCal);
 
-        final ByteArrayResource calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
+        final ByteArrayResource calendar = sut.getCalendarForPerson(1L, "secret", GERMAN);
         assertThat(calendar).isEqualTo(iCal);
     }
 
@@ -135,8 +135,8 @@ class PersonCalendarServiceTest {
     void getCalendarForPersonForHalfDayNoon() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(person);
@@ -150,97 +150,97 @@ class PersonCalendarServiceTest {
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
         when(iCalService.getCalendar("Abwesenheitskalender von Marlene Muster", noonAbsences, person)).thenReturn(iCal);
 
-        final ByteArrayResource calendar = sut.getCalendarForPerson(1, "secret", GERMAN);
+        final ByteArrayResource calendar = sut.getCalendarForPerson(1L, "secret", GERMAN);
         assertThat(calendar).isEqualTo(iCal);
     }
 
     @Test
     void getCalendarForPersonButPersonNotFound() {
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.ofNullable(null));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.ofNullable(null));
 
         final PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(new Person("muster", "Muster", "Marlene", "muster@example.org"));
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.getCalendarForPerson(1, "secret", GERMAN));
+            .isThrownBy(() -> sut.getCalendarForPerson(1L, "secret", GERMAN));
     }
 
     @Test
     void getCalendarForPersonButSecretIsNull() {
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.getCalendarForPerson(1, null, GERMAN));
+            .isThrownBy(() -> sut.getCalendarForPerson(1L, null, GERMAN));
     }
 
     @Test
     void getCalendarForPersonButSecretIsEmpty() {
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.getCalendarForPerson(1, "", GERMAN));
+            .isThrownBy(() -> sut.getCalendarForPerson(1L, "", GERMAN));
     }
 
     @Test
     void getCalendarForPersonButSecretIsEmptyWithWhitespace() {
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.getCalendarForPerson(1, "  ", GERMAN));
+            .isThrownBy(() -> sut.getCalendarForPerson(1L, "  ", GERMAN));
     }
 
     @Test
     void getCalendarForPersonButSecretDoesNotExist() {
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.empty());
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.getCalendarForPerson(1, "secret", GERMAN));
+            .isThrownBy(() -> sut.getCalendarForPerson(1L, "secret", GERMAN));
     }
 
     @Test
     void getCalendarForPersonButSecretDoesNotMatchTheGivenPerson() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person notMatchingPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        notMatchingPerson.setId(1337);
+        notMatchingPerson.setId(1337L);
         PersonCalendar personCalendar = new PersonCalendar();
         personCalendar.setPerson(notMatchingPerson);
         when(personCalendarRepository.findBySecret("secret")).thenReturn(Optional.of(personCalendar));
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.getCalendarForPerson(1, "secret", GERMAN));
+            .isThrownBy(() -> sut.getCalendarForPerson(1L, "secret", GERMAN));
     }
 
     @Test
     void getPersonCalendar() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final PersonCalendar receivedPersonCalendar = new PersonCalendar(person);
         when(personCalendarRepository.findByPerson(person)).thenReturn(Optional.of(receivedPersonCalendar));
 
-        final Optional<PersonCalendar> personCalendar = sut.getPersonCalendar(1);
+        final Optional<PersonCalendar> personCalendar = sut.getPersonCalendar(1L);
         assertThat(personCalendar).contains(receivedPersonCalendar);
     }
 
     @Test
     void getPersonCalendarNoPerson() {
-        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+        when(personService.getPersonByID(1L)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.getPersonCalendar(1));
+            .isThrownBy(() -> sut.getPersonCalendar(1L));
     }
 
     @Test
     void getPersonCalendarNoPersonCalendarFound() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         when(personCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
 
-        final Optional<PersonCalendar> personCalendar = sut.getPersonCalendar(1);
+        final Optional<PersonCalendar> personCalendar = sut.getPersonCalendar(1L);
         assertThat(personCalendar).isEmpty();
     }
 
@@ -248,15 +248,15 @@ class PersonCalendarServiceTest {
     void createCalendarForPerson() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final PersonCalendar receivedPersonCalendar = new PersonCalendar(person);
         when(personCalendarRepository.findByPerson(person)).thenReturn(Optional.of(receivedPersonCalendar));
 
         when(personCalendarRepository.save(receivedPersonCalendar)).thenReturn(receivedPersonCalendar);
 
-        final PersonCalendar calendarForPerson = sut.createCalendarForPerson(1, java.time.Period.parse("P12M"));
+        final PersonCalendar calendarForPerson = sut.createCalendarForPerson(1L, java.time.Period.parse("P12M"));
         assertThat(calendarForPerson.getPerson()).isEqualTo(person);
         assertThat(calendarForPerson.getSecret()).isNotBlank();
         assertThat(calendarForPerson.getCalendarPeriod()).isEqualTo(java.time.Period.parse("P12M"));
@@ -265,23 +265,23 @@ class PersonCalendarServiceTest {
 
     @Test
     void createCalendarForPersonNoPersonFound() {
-        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+        when(personService.getPersonByID(1L)).thenReturn(Optional.empty());
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.createCalendarForPerson(1, java.time.Period.parse("P12M")));
+            .isThrownBy(() -> sut.createCalendarForPerson(1L, java.time.Period.parse("P12M")));
     }
 
     @Test
     void createCalendarForPersonNoPersonCalendarFound() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         when(personCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
 
         when(personCalendarRepository.save(any(PersonCalendar.class))).thenAnswer(returnsFirstArg());
 
-        final PersonCalendar calendarForPerson = sut.createCalendarForPerson(1, java.time.Period.parse("P12M"));
+        final PersonCalendar calendarForPerson = sut.createCalendarForPerson(1L, java.time.Period.parse("P12M"));
         assertThat(calendarForPerson.getPerson()).isEqualTo(person);
         assertThat(calendarForPerson.getSecret()).isNotBlank();
         assertThat(calendarForPerson.getCalendarPeriod()).isEqualTo(java.time.Period.parse("P12M"));
@@ -293,8 +293,8 @@ class PersonCalendarServiceTest {
     void deletePersonalCalendarForPerson() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         sut.deletePersonalCalendarForPerson(1);
 

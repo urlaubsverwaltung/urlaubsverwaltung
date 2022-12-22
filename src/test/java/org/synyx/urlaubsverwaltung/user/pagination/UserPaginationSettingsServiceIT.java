@@ -24,9 +24,9 @@ class UserPaginationSettingsServiceIT {
     @Test
     void ensureDefaultPageSize() {
 
-        when(repository.findByPersonId(1)).thenReturn(Optional.empty());
+        when(repository.findByPersonId(1L)).thenReturn(Optional.empty());
 
-        final UserPaginationSettings actual = sut.getUserPaginationSettings(new PersonId(1));
+        final UserPaginationSettings actual = sut.getUserPaginationSettings(new PersonId(1L));
 
         assertThat(actual.getDefaultPageSize()).isEqualTo(20);
     }

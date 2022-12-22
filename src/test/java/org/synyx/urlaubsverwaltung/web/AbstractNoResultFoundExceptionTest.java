@@ -10,7 +10,7 @@ class AbstractNoResultFoundExceptionTest {
     @Test
     void ensureCorrectExceptionMessage() {
 
-        TestException exception = new TestException(42, "person");
+        TestException exception = new TestException(42L, "person");
 
         assertThat(exception.getMessage()).isEqualTo("No person found for ID = 42");
     }
@@ -27,14 +27,11 @@ class AbstractNoResultFoundExceptionTest {
 
     private class TestException extends AbstractNoResultFoundException {
 
-        public TestException(Integer id, String type) {
-
+        public TestException(Long id, String type) {
             super(id, type);
         }
 
-
         public TestException(String id, String type) {
-
             super(id, type);
         }
     }

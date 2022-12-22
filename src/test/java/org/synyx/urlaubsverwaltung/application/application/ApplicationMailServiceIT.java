@@ -109,13 +109,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutAllowedApplicationIsSentToApplicantManagementAndColleague() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
-        person.setId(3);
+        person.setId(3L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED), List.of(OFFICE));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setId(2);
+        boss.setId(2L);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED));
 
@@ -131,7 +131,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(boss, office));
 
         final Person colleague = new Person("colleague", "Dampf", "Hans", "dampf@example.org");
-        colleague.setId(42);
+        colleague.setId(42L);
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
         sut.sendAllowedNotification(application, comment);
@@ -263,7 +263,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePersonWithOneReplacement() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
@@ -358,7 +358,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePersonWithMultipleReplacements() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
@@ -457,11 +457,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutRejectedApplicationIsSentToApplierAndRelevantPersons() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REJECTED));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setId(2);
+        boss.setId(2L);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED));
 
@@ -475,7 +475,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setBoss(boss);
 
         final Person departmentHead = new Person("departmentHead", "Head", "Department", "dh@example.org");
-        departmentHead.setId(3);
+        departmentHead.setId(3L);
         departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED)).thenReturn(List.of(boss, departmentHead));
 
@@ -542,7 +542,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureCorrectReferMail() throws MessagingException, IOException {
 
         final Person recipient = new Person("recipient", "Muster", "Max", "mustermann@example.org");
-        recipient.setId(1);
+        recipient.setId(1L);
         final Person sender = new Person("sender", "Grimes", "Rick", "rick@grimes.com");
 
         final Application application = createApplication(recipient);
@@ -589,7 +589,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void sendDeclinedCancellationRequestApplicationNotification() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(10);
+        person.setId(10L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED), List.of(OFFICE));
@@ -604,7 +604,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2020, 5, 29));
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
-        relevantPerson.setId(2);
+        relevantPerson.setId(2L);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
 
@@ -669,7 +669,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureApplicantAndOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED), List.of(OFFICE));
@@ -732,7 +732,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsMailIfApplicationForLeaveHasBeenConvertedToSickNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CONVERTED));
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
@@ -744,7 +744,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2023, FEBRUARY, 4));
 
         final Person relevantPerson = new Person("relevantPerson", "Relevant", "Person", "relevantPerson@example.org");
-        relevantPerson.setId(2);
+        relevantPerson.setId(2L);
         relevantPerson.setPermissions(List.of(BOSS));
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED)).thenReturn(List.of(relevantPerson));
@@ -786,7 +786,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutConfirmationAllowedDirectlySent() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final Application application = createApplication(person);
@@ -798,7 +798,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("OK, Urlaub kann genommen werden");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
-        colleague.setId(2);
+        colleague.setId(2L);
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
@@ -855,7 +855,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureConfirmationAllowedDirectlyByOfficeSent() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION), List.of(OFFICE));
@@ -870,7 +870,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("OK, Urlaub kann genommen werden");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
-        colleague.setId(2);
+        colleague.setId(2L);
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
@@ -936,7 +936,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2021, APRIL, 16));
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
-        relevantPerson.setId(1);
+        relevantPerson.setId(1L);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(relevantPerson));
 
@@ -985,7 +985,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2020, 12, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
-        holidayReplacement.setId(1);
+        holidayReplacement.setId(1L);
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacement);
@@ -1226,7 +1226,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPersonWithOneReplacement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
@@ -1278,7 +1278,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPersonWithMultipleReplacements() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
@@ -1369,7 +1369,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPersonWithOneReplacement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
@@ -1425,7 +1425,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPersonWithMultipleReplacements() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
@@ -1598,7 +1598,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Cancelled");
 
         final Person recipientOfInterest = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
-        recipientOfInterest.setId(1);
+        recipientOfInterest.setId(1L);
         recipientOfInterest.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(recipientOfInterest));
 
@@ -1637,7 +1637,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureApplicantReceivesNotificationsIfApplicantCancel() throws Exception {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final Application application = createApplication(person);
@@ -1650,7 +1650,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Wrong information - cancelled");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
-        colleague.setId(2);
+        colleague.setId(2L);
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
@@ -1714,7 +1714,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final Application application = createApplication(person);
@@ -1729,7 +1729,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Wrong information - cancelled");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
-        colleague.setId(2);
+        colleague.setId(2L);
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
@@ -1787,7 +1787,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws Exception {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
@@ -1804,12 +1804,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Geht leider nicht");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
-        relevantPerson.setId(2);
+        relevantPerson.setId(2L);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(relevantPerson, office));
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
-        colleague.setId(42);
+        colleague.setId(42L);
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
         sut.sendCancelledConfirmationByManagement(application, comment);
@@ -1887,12 +1887,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutNewApplicationIsSentToBossesAndDepartmentHeads() throws MessagingException, IOException {
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setId(1);
+        boss.setId(1L);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@example.org");
-        departmentHead.setId(2);
+        departmentHead.setId(2L);
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
         departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -1981,7 +1981,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutNewApplicationOfSecondStageAuthorityIsSentToBosses() throws MessagingException, IOException {
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setId(1);
+        boss.setId(1L);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -1989,7 +1989,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
 
         final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@example.org");
-        departmentHead.setId(2);
+        departmentHead.setId(2L);
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
         departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -2078,12 +2078,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutNewApplicationOfDepartmentHeadIsSentToSecondaryStageAuthority() throws MessagingException, IOException {
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setId(1);
+        boss.setId(1L);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
-        secondStage.setId(2);
+        secondStage.setId(2L);
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -2172,7 +2172,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setId(1);
+        boss.setId(1L);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -2229,7 +2229,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setId(1);
+        boss.setId(1L);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -2293,7 +2293,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setId(1);
+        boss.setId(1L);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -2351,7 +2351,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setId(1);
+        boss.setId(1L);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -2410,11 +2410,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
-        secondStage.setId(2);
+        secondStage.setId(2L);
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
@@ -2503,7 +2503,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
-        secondStage.setId(1);
+        secondStage.setId(1L);
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
@@ -2585,7 +2585,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
-        secondStage.setId(1);
+        secondStage.setId(1L);
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
@@ -2667,7 +2667,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
-        secondStage.setId(1);
+        secondStage.setId(1L);
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
@@ -2745,7 +2745,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
-        secondStage.setId(1);
+        secondStage.setId(1L);
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
@@ -2853,46 +2853,46 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // PERSONs
         final Person personA = new Person("personA", "Mahler", "Max", "mahler@example.org");
-        personA.setId(1);
+        personA.setId(1L);
         final Person personB = new Person("personB", "Förster", "Frederik", "förster@example.org");
-        personB.setId(2);
+        personB.setId(2L);
         final Person personC = new Person("personC", "Schuster", "Peter", "schuster@example.org");
-        personC.setId(3);
+        personC.setId(3L);
 
         // APPLICATIONs
         final Application applicationA = createApplication(personA);
-        applicationA.setId(1);
+        applicationA.setId(1L);
         applicationA.setApplicationDate(LocalDate.of(2022, APRIL, 17));
         applicationA.setStartDate(LocalDate.of(2022, APRIL, 20));
         applicationA.setEndDate(LocalDate.of(2022, APRIL, 21));
 
         final Application applicationAA = createApplication(personA);
-        applicationAA.setId(4);
+        applicationAA.setId(4L);
         applicationAA.setApplicationDate(LocalDate.of(2021, MAY, 12));
         applicationAA.setStartDate(LocalDate.of(2021, MAY, 16));
         applicationAA.setEndDate(LocalDate.of(2021, MAY, 16));
 
         final Application applicationB = createApplication(personB);
-        applicationB.setId(2);
+        applicationB.setId(2L);
         applicationB.setApplicationDate(LocalDate.of(2023, DECEMBER, 12));
         applicationB.setStartDate(LocalDate.of(2023, DECEMBER, 24));
         applicationB.setEndDate(LocalDate.of(2023, DECEMBER, 31));
 
         final Application applicationC = createApplication(personC);
-        applicationC.setId(3);
+        applicationC.setId(3L);
         applicationC.setApplicationDate(LocalDate.of(2021, NOVEMBER, 13));
         applicationC.setStartDate(LocalDate.of(2021, NOVEMBER, 30));
         applicationC.setEndDate(LocalDate.of(2021, NOVEMBER, 30));
 
         // DEPARTMENT HEADs
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setId(1);
+        boss.setId(1L);
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
         final Person departmentHeadA = new Person("headAC", "Wurst", "Heinz", "headAC@example.org");
-        departmentHeadA.setId(2);
+        departmentHeadA.setId(2L);
         departmentHeadA.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
         final Person departmentHeadB = new Person("headB", "Mustermann", "Michel", "headB@example.org");
-        departmentHeadB.setId(3);
+        departmentHeadB.setId(3L);
         departmentHeadB.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
 
         when(mailRecipientService.getRecipientsOfInterest(personA, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadA));
@@ -2987,14 +2987,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void sendEditedApplicationNotification() throws Exception {
 
         final Person editor = new Person("editor", "Muster", "Max", "mustermann@example.org");
-        editor.setId(1);
+        editor.setId(1L);
         editor.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
 
         final Application application = createApplication(editor);
         application.setPerson(editor);
 
         final Person relevantPerson = new Person("relevantPerson", "Relevant", "Person", "relevantPerson@example.org");
-        relevantPerson.setId(2);
+        relevantPerson.setId(2L);
         relevantPerson.setPermissions(List.of(BOSS));
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
@@ -3038,7 +3038,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationToday() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
@@ -3086,7 +3086,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplication() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
@@ -3134,7 +3134,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationMoreThanOneDay() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
@@ -3181,7 +3181,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacementToday() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.now(clock));
@@ -3219,7 +3219,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacementTomorrow() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.now(clock).plusDays(1));
@@ -3257,7 +3257,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, Month.JANUARY, 31));
@@ -3295,7 +3295,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacementWithMoreThanOneDay() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, Month.JANUARY, 31));
@@ -3333,7 +3333,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithOneReplacementWithoutNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
@@ -3380,7 +3380,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithOneReplacementWithNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
@@ -3429,7 +3429,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithMultipleReplacementsWithoutNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
@@ -3484,7 +3484,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithMultipleReplacementsWithNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
@@ -3538,7 +3538,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithReplacementWithoutNoteWithMoreThanOneDay() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
@@ -3729,7 +3729,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final LocalDate now = LocalDate.now(UTC);
 
         final Application application = new Application();
-        application.setId(1234);
+        application.setId(1234L);
         application.setPerson(person);
         application.setVacationType(createVacationTypeEntity(HOLIDAY, "application.data.vacationType.holiday"));
         application.setDayLength(FULL);

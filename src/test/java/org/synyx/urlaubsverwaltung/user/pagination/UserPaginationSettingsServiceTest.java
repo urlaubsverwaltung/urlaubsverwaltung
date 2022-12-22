@@ -36,9 +36,9 @@ class UserPaginationSettingsServiceTest {
     @Test
     void ensureGetUserPaginationSettingsWithDefaults() {
 
-        when(repository.findByPersonId(42)).thenReturn(Optional.empty());
+        when(repository.findByPersonId(42L)).thenReturn(Optional.empty());
 
-        final UserPaginationSettings actual = sut.getUserPaginationSettings(new PersonId(42));
+        final UserPaginationSettings actual = sut.getUserPaginationSettings(new PersonId(42L));
 
         assertThat(actual.getDefaultPageSize()).isEqualTo(DEFAULT_PAGE_SIZE);
     }
@@ -48,12 +48,12 @@ class UserPaginationSettingsServiceTest {
 
         final UserPaginationSettingsEntity entity = new UserPaginationSettingsEntity();
         entity.setPerson(null);
-        entity.setPersonId(42);
+        entity.setPersonId(42L);
         entity.setDefaultPageSize(100);
 
-        when(repository.findByPersonId(42)).thenReturn(Optional.of(entity));
+        when(repository.findByPersonId(42L)).thenReturn(Optional.of(entity));
 
-        final UserPaginationSettings actual = sut.getUserPaginationSettings(new PersonId(42));
+        final UserPaginationSettings actual = sut.getUserPaginationSettings(new PersonId(42L));
 
         assertThat(actual.getDefaultPageSize()).isEqualTo(100);
     }
@@ -61,7 +61,7 @@ class UserPaginationSettingsServiceTest {
     @Test
     void ensureUpdateUserPaginationSettings() {
 
-        sut.updatePageableDefaultSize(new PersonId(42), 12);
+        sut.updatePageableDefaultSize(new PersonId(42L), 12);
 
         final ArgumentCaptor<UserPaginationSettingsEntity> captor = ArgumentCaptor.forClass(UserPaginationSettingsEntity.class);
 
@@ -69,7 +69,7 @@ class UserPaginationSettingsServiceTest {
 
         assertThat(captor.getValue()).satisfies(actualEntity -> {
             assertThat(actualEntity.getPerson()).isNull();
-            assertThat(actualEntity.getPersonId()).isEqualTo(42);
+            assertThat(actualEntity.getPersonId()).isEqualTo(42L);
             assertThat(actualEntity.getDefaultPageSize()).isEqualTo(12);
         });
     }

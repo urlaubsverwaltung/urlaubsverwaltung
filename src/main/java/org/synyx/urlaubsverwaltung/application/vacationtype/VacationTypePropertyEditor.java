@@ -34,7 +34,7 @@ public class VacationTypePropertyEditor extends PropertyEditorSupport {
             return;
         }
 
-        vacationTypeService.getById(Integer.valueOf(text))
+        vacationTypeService.getById(Long.valueOf(text))
             .ifPresentOrElse(this::setValue, () -> setValue(null));
     }
 }

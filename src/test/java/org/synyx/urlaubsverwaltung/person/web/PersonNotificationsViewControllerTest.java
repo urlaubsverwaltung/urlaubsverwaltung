@@ -84,10 +84,10 @@ class PersonNotificationsViewControllerTest {
         final Person person = personWithId(1);
         person.setFirstName("Hans");
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
+        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1L), true);
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L))).thenReturn(userNotificationSettings);
 
         when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
@@ -111,10 +111,10 @@ class PersonNotificationsViewControllerTest {
         final Person person = personWithId(1);
         person.setFirstName("Hans");
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
+        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1L), true);
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L))).thenReturn(userNotificationSettings);
 
         when(departmentService.getNumberOfDepartments()).thenReturn(4L);
         when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(new Department()));
@@ -139,10 +139,10 @@ class PersonNotificationsViewControllerTest {
         final Person person = personWithId(1);
         person.setFirstName("Hans");
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
+        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1L), true);
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L))).thenReturn(userNotificationSettings);
 
         when(departmentService.getNumberOfDepartments()).thenReturn(4L);
         when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of());
@@ -160,14 +160,14 @@ class PersonNotificationsViewControllerTest {
         person.setFirstName("Hans");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
+        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1L), true);
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L))).thenReturn(userNotificationSettings);
 
         perform(get("/web/person/{personId}/notifications", 1))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
                 hasProperty("restrictToDepartments", allOf(
                     hasProperty("visible", is(false)),
@@ -214,14 +214,14 @@ class PersonNotificationsViewControllerTest {
         person.setFirstName("Hans");
         person.setNotifications(List.of());
         person.setPermissions(List.of(USER, role));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
-            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
         perform(get("/web/person/{personId}/notifications", 1))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
                 hasProperty("restrictToDepartments", allOf(
                     hasProperty("visible", is(false)),
@@ -268,14 +268,14 @@ class PersonNotificationsViewControllerTest {
         person.setFirstName("Hans");
         person.setNotifications(List.of());
         person.setPermissions(List.of(USER, role, APPLICATION_CANCELLATION_REQUESTED));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
-            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
         perform(get("/web/person/{personId}/notifications", 1))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
                 hasProperty("restrictToDepartments", allOf(
                     hasProperty("visible", is(false)),
@@ -322,14 +322,14 @@ class PersonNotificationsViewControllerTest {
         person.setFirstName("Hans");
         person.setNotifications(List.of());
         person.setPermissions(List.of(USER, role));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
-            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
         perform(get("/web/person/{personId}/notifications", 1))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
                 hasProperty("restrictToDepartments", allOf(
                     hasProperty("visible", is(true)),
@@ -376,14 +376,14 @@ class PersonNotificationsViewControllerTest {
         person.setFirstName("Hans");
         person.setNotifications(List.of());
         person.setPermissions(List.of(USER, role));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
-            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
         perform(get("/web/person/{personId}/notifications", 1))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
                 hasProperty("restrictToDepartments", allOf(
                     hasProperty("visible", is(true)),
@@ -400,14 +400,14 @@ class PersonNotificationsViewControllerTest {
         person.setFirstName("Hans");
         person.setNotifications(List.of());
         person.setPermissions(List.of(USER, role));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
-            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
         perform(get("/web/person/{personId}/notifications", 1))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
                 hasProperty("restrictToDepartments", allOf(
                     hasProperty("visible", is(false)),
@@ -423,14 +423,14 @@ class PersonNotificationsViewControllerTest {
         person.setFirstName("Hans");
         person.setNotifications(List.of());
         person.setPermissions(List.of(USER, BOSS, APPLICATION_CANCELLATION_REQUESTED));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
-            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
         perform(get("/web/person/{personId}/notifications", 1))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
                 hasProperty("restrictToDepartments", allOf(
                     hasProperty("visible", is(true)),
@@ -476,14 +476,14 @@ class PersonNotificationsViewControllerTest {
         person.setFirstName("Hans");
         person.setNotifications(List.of());
         person.setPermissions(List.of(USER, OFFICE));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
-            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
         perform(get("/web/person/{personId}/notifications", 1))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personNotificationsDto",
                 hasProperty("restrictToDepartments", allOf(
                     hasProperty("visible", is(true)),
@@ -540,10 +540,10 @@ class PersonNotificationsViewControllerTest {
     void ensuresWhenEditingPersonNotificationsThatItWillBeSavedAndRedirected() throws Exception {
 
         final Person personWithoutNotifications = new Person();
-        personWithoutNotifications.setId(1);
+        personWithoutNotifications.setId(1L);
         personWithoutNotifications.setFirstName("Hans");
         personWithoutNotifications.setNotifications(List.of());
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(personWithoutNotifications));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(personWithoutNotifications));
 
         perform(
             post("/web/person/{personId}/notifications", 1)
@@ -560,17 +560,17 @@ class PersonNotificationsViewControllerTest {
         final Person savedPerson = personArgumentCaptor.getValue();
         assertThat(savedPerson.getNotifications()).contains(NOTIFICATION_EMAIL_APPLICATION_APPLIED);
 
-        verify(userNotificationSettingsService).updateNotificationSettings(new PersonId(1), false);
+        verify(userNotificationSettingsService).updateNotificationSettings(new PersonId(1L), false);
     }
 
     @Test
     void ensuresWhenEditingPersonNotificationsThatItWillUpdateNotificationSettings() throws Exception {
 
         final Person personWithoutNotifications = new Person();
-        personWithoutNotifications.setId(1);
+        personWithoutNotifications.setId(1L);
         personWithoutNotifications.setFirstName("Hans");
         personWithoutNotifications.setNotifications(List.of());
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(personWithoutNotifications));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(personWithoutNotifications));
 
         perform(
             post("/web/person/{personId}/notifications", 1)
@@ -582,15 +582,15 @@ class PersonNotificationsViewControllerTest {
             .andExpect(redirectedUrl("/web/person/1/notifications"))
             .andExpect(flash().attribute("success", true));
 
-        verify(userNotificationSettingsService).updateNotificationSettings(new PersonId(1), true);
+        verify(userNotificationSettingsService).updateNotificationSettings(new PersonId(1L), true);
     }
 
     @Test
     void ensuresWhenEditingPersonNotificationsWithMismatchingIdReturnsNotFoundStatus() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/{personId}/notifications", 1)
             .param("personId", "2"))
@@ -601,10 +601,10 @@ class PersonNotificationsViewControllerTest {
     void ensuresWhenEditingPersonNotificationsHasValidationError() throws Exception {
 
         final Person personWithoutNotifications = new Person();
-        personWithoutNotifications.setId(1);
+        personWithoutNotifications.setId(1L);
         personWithoutNotifications.setFirstName("Hans");
         personWithoutNotifications.setNotifications(List.of());
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(personWithoutNotifications));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(personWithoutNotifications));
 
         doAnswer(invocation -> {
             final Errors errors = invocation.getArgument(1);
@@ -623,7 +623,7 @@ class PersonNotificationsViewControllerTest {
         verify(personService, never()).update(personWithoutNotifications);
     }
 
-    private static Person personWithId(int personId) {
+    private static Person personWithId(long personId) {
         final Person person = new Person();
         person.setId(personId);
         return person;

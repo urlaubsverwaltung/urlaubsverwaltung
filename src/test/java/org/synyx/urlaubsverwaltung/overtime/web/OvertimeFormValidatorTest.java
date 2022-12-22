@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -395,12 +395,12 @@ class OvertimeFormValidatorTest {
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
         overtimeForm.setHours(new BigDecimal(2));
         overtimeForm.setMinutes(0);
-        overtimeForm.setId(42);
+        overtimeForm.setId(42L);
 
         Overtime originalOvertimeRecord = createOvertimeRecord();
         originalOvertimeRecord.setDuration(Duration.ofHours(3));
 
-        when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(originalOvertimeRecord));
+        when(overtimeService.getOvertimeById(anyLong())).thenReturn(Optional.of(originalOvertimeRecord));
 
         sut.validate(overtimeForm, errors);
         verifyNoInteractions(errors);
@@ -422,12 +422,12 @@ class OvertimeFormValidatorTest {
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
         overtimeForm.setHours(new BigDecimal(3));
         overtimeForm.setMinutes(0);
-        overtimeForm.setId(42);
+        overtimeForm.setId(42L);
 
         Overtime originalOvertimeRecord = createOvertimeRecord();
         originalOvertimeRecord.setDuration(Duration.ofMinutes(150));
 
-        when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(originalOvertimeRecord));
+        when(overtimeService.getOvertimeById(anyLong())).thenReturn(Optional.of(originalOvertimeRecord));
 
         sut.validate(overtimeForm, errors);
         verifyNoInteractions(errors);
@@ -449,12 +449,12 @@ class OvertimeFormValidatorTest {
         final OvertimeForm overtimeForm = new OvertimeForm(createOvertimeRecord());
         overtimeForm.setReduce(true);
         overtimeForm.setHours(new BigDecimal(3));
-        overtimeForm.setId(42);
+        overtimeForm.setId(42L);
 
         Overtime originalOvertimeRecord = createOvertimeRecord();
         originalOvertimeRecord.setDuration(Duration.ofMinutes(-150));
 
-        when(overtimeService.getOvertimeById(anyInt())).thenReturn(Optional.of(originalOvertimeRecord));
+        when(overtimeService.getOvertimeById(anyLong())).thenReturn(Optional.of(originalOvertimeRecord));
 
         sut.validate(overtimeForm, errors);
         verifyNoInteractions(errors);

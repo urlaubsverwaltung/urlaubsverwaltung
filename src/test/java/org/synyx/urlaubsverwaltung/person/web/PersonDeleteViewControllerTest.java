@@ -42,7 +42,7 @@ class PersonDeleteViewControllerTest {
     void deletePerson() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/1/delete").param("delete", "true"))
             .andExpect(redirectedUrl("/web/person/1#person-delete-form"))
@@ -55,7 +55,7 @@ class PersonDeleteViewControllerTest {
     void deletePersonAjax() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(
             post("/web/person/1/delete")
@@ -74,9 +74,9 @@ class PersonDeleteViewControllerTest {
     void deletePersonLastOfficeUser() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(OFFICE));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/1/delete").param("delete", "true"))
             .andExpect(redirectedUrl("/web/person/1#person-delete-form"))
@@ -90,9 +90,9 @@ class PersonDeleteViewControllerTest {
     void deletePersonLastOfficeUserAjax() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(OFFICE));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(
             post("/web/person/1/delete")
@@ -114,7 +114,7 @@ class PersonDeleteViewControllerTest {
         final Person signedInUser = new Person("signedInUser", "signed", "in", "user@example.org");
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/1/delete").param("niceNameConfirmation", "Marlene Muster"))
             .andExpect(redirectedUrl("/web/person/?active=true"))
@@ -130,7 +130,7 @@ class PersonDeleteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(
             post("/web/person/1/delete")
@@ -150,7 +150,7 @@ class PersonDeleteViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(INACTIVE));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/1/delete").param("niceNameConfirmation", "Marlene Muster"))
             .andExpect(redirectedUrl("/web/person/?active=false"))
@@ -163,14 +163,14 @@ class PersonDeleteViewControllerTest {
     void deletePersonConfirmedWithoutConfirmationDoesNotDeletePerson() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/1/delete").param("niceNameConfirmation", ""))
             .andExpect(redirectedUrl("/web/person/1#person-delete-form"))
             .andExpect(flash().attribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.mismatch"));
 
-        verify(personService).getPersonByID(1);
+        verify(personService).getPersonByID(1L);
         verifyNoMoreInteractions(personService);
     }
 
@@ -178,8 +178,8 @@ class PersonDeleteViewControllerTest {
     void deletePersonConfirmedWithoutConfirmationDoesNotDeletePersonAjax() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(
             post("/web/person/1/delete")
@@ -191,7 +191,7 @@ class PersonDeleteViewControllerTest {
             .andExpect(model().attribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.mismatch"))
             .andExpect(view().name("person/detail-section/action-delete-person :: #frame-delete-person"));
 
-        verify(personService).getPersonByID(1);
+        verify(personService).getPersonByID(1L);
         verifyNoMoreInteractions(personService);
     }
 
@@ -199,15 +199,15 @@ class PersonDeleteViewControllerTest {
     void deletePersonConfirmedIsLastOfficeIsNotAllowed() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(OFFICE));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/1/delete").param("niceNameConfirmation", "Marlene Muster"))
             .andExpect(redirectedUrl("/web/person/1#person-delete-form"))
             .andExpect(flash().attribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.office"));
 
-        verify(personService).getPersonByID(1);
+        verify(personService).getPersonByID(1L);
         verify(personService).numberOfPersonsWithOfficeRoleExcludingPerson(1);
         verifyNoMoreInteractions(personService);
     }
@@ -216,9 +216,9 @@ class PersonDeleteViewControllerTest {
     void deletePersonConfirmedIsLastOfficeIsNotAllowedAjax() throws Exception {
 
         final Person person = new Person("username", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(OFFICE));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(
             post("/web/person/1/delete")
@@ -230,11 +230,10 @@ class PersonDeleteViewControllerTest {
             .andExpect(model().attribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.office"))
             .andExpect(view().name("person/detail-section/action-delete-person :: #frame-delete-person"));
 
-        verify(personService).getPersonByID(1);
+        verify(personService).getPersonByID(1L);
         verify(personService).numberOfPersonsWithOfficeRoleExcludingPerson(1);
         verifyNoMoreInteractions(personService);
     }
-
 
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

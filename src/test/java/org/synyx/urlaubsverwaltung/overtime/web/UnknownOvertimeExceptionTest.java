@@ -9,9 +9,7 @@ class UnknownOvertimeExceptionTest {
 
     @Test
     void ensureCorrectExceptionMessage() {
-
-        UnknownOvertimeException exception = new UnknownOvertimeException(42);
-
+        UnknownOvertimeException exception = new UnknownOvertimeException(42L);
         assertThat(exception.getMessage()).isEqualTo("No overtime found for ID = 42");
     }
 }

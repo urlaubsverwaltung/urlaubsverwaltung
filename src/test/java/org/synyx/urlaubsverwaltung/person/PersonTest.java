@@ -161,7 +161,7 @@ class PersonTest {
     @Test
     void toStringTest() {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -174,13 +174,13 @@ class PersonTest {
     @Test
     void equals() {
         final Person personOne = new Person();
-        personOne.setId(1);
+        personOne.setId(1L);
 
         final Person personOneOne = new Person();
-        personOneOne.setId(1);
+        personOneOne.setId(1L);
 
         final Person personTwo = new Person();
-        personTwo.setId(2);
+        personTwo.setId(2L);
 
         assertThat(personOne)
             .isEqualTo(personOne)
@@ -194,7 +194,7 @@ class PersonTest {
     void ensureHasAnyRoleIsTrue() {
         final Person personOne = new Person();
         personOne.setPermissions(List.of(DEPARTMENT_HEAD, BOSS));
-        personOne.setId(1);
+        personOne.setId(1L);
 
         assertThat(personOne.hasAnyRole(DEPARTMENT_HEAD)).isTrue();
     }
@@ -203,7 +203,7 @@ class PersonTest {
     void ensureHasAnyRoleFalse() {
         final Person personOne = new Person();
         personOne.setPermissions(List.of(SECOND_STAGE_AUTHORITY, OFFICE));
-        personOne.setId(1);
+        personOne.setId(1L);
 
         assertThat(personOne.hasAnyRole(DEPARTMENT_HEAD)).isFalse();
     }
@@ -211,7 +211,7 @@ class PersonTest {
     @Test
     void hashCodeTest() {
         final Person personOne = new Person();
-        personOne.setId(1);
+        personOne.setId(1L);
 
         assertThat(personOne.hashCode()).isEqualTo(32);
     }

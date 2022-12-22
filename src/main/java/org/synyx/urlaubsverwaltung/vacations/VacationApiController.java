@@ -64,7 +64,7 @@ public class VacationApiController {
     public VacationsDto getVacations(
         @Parameter(description = "ID of the person")
         @PathVariable("id")
-        Integer personId,
+        Long personId,
         @Parameter(description = "end of interval to get vacations from (inclusive)")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
@@ -100,7 +100,7 @@ public class VacationApiController {
     public VacationsDto getVacationsOfOthersOrDepartmentColleagues(
         @Parameter(description = "ID of the person")
         @PathVariable("id")
-        Integer personId,
+        Long personId,
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)
@@ -132,7 +132,7 @@ public class VacationApiController {
         return mapToVacationResponse(applications);
     }
 
-    private Person getPerson(Integer personId) {
+    private Person getPerson(Long personId) {
         return personService.getPersonByID(personId)
             .orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "No person found for id = " + personId));
     }

@@ -93,7 +93,7 @@ class WorkingTimeServiceImplTest {
         final LocalDate date = LocalDate.now(UTC);
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
         workingTimeEntity.setFederalStateOverride(GERMANY_BAYERN);
@@ -111,7 +111,7 @@ class WorkingTimeServiceImplTest {
         final LocalDate date = LocalDate.now(UTC);
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
         when(workingTimeRepository.findByPersonAndValidityDateEqualsOrMinorDate(person, date)).thenReturn(workingTimeEntity);
@@ -180,7 +180,7 @@ class WorkingTimeServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
-        workingTimeEntity.setId(1);
+        workingTimeEntity.setId(1L);
         workingTimeEntity.setPerson(person);
         workingTimeEntity.setValidFrom(LocalDate.of(2021, JUNE, 11));
         workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
@@ -213,13 +213,13 @@ class WorkingTimeServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final WorkingTimeEntity workingTimeEntityOne = new WorkingTimeEntity();
-        workingTimeEntityOne.setId(1);
+        workingTimeEntityOne.setId(1L);
         workingTimeEntityOne.setPerson(person);
         workingTimeEntityOne.setValidFrom(LocalDate.of(2021, JUNE, 11));
         workingTimeEntityOne.setFederalStateOverride(null);
 
         final WorkingTimeEntity workingTimeEntityTwo = new WorkingTimeEntity();
-        workingTimeEntityTwo.setId(2);
+        workingTimeEntityTwo.setId(2L);
         workingTimeEntityTwo.setPerson(person);
         workingTimeEntityTwo.setValidFrom(LocalDate.of(2022, JUNE, 11));
         workingTimeEntityTwo.setFederalStateOverride(null);
@@ -244,12 +244,12 @@ class WorkingTimeServiceImplTest {
     @Test
     void ensureGetByPersonAndValidityDateEqualsOrMinorDate() {
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final LocalDate date = LocalDate.now();
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
-        workingTimeEntity.setId(1);
+        workingTimeEntity.setId(1L);
         workingTimeEntity.setPerson(batman);
         workingTimeEntity.setValidFrom(date);
         workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
@@ -268,12 +268,12 @@ class WorkingTimeServiceImplTest {
     @Test
     void ensureGetByPersonAndValidityDateEqualsOrMinorDateUsesSystemDefaultFederalStateWhenEntityHasNullValue() {
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final LocalDate date = LocalDate.now();
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
-        workingTimeEntity.setId(1);
+        workingTimeEntity.setId(1L);
         workingTimeEntity.setPerson(batman);
         workingTimeEntity.setValidFrom(date);
 
@@ -326,19 +326,19 @@ class WorkingTimeServiceImplTest {
         final Person person = new Person();
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
-        workingTimeEntity.setId(1);
+        workingTimeEntity.setId(1L);
         workingTimeEntity.setPerson(person);
         workingTimeEntity.setValidFrom(LocalDate.of(2020, 9, 1));
         workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
 
         final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
-        workingTimeEntityChanged.setId(2);
+        workingTimeEntityChanged.setId(2L);
         workingTimeEntityChanged.setPerson(person);
         workingTimeEntityChanged.setValidFrom(LocalDate.of(2021, 11, 15));
         workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
 
         final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
-        workingTimeEntityFuture.setId(3);
+        workingTimeEntityFuture.setId(3L);
         workingTimeEntityFuture.setPerson(person);
         workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
         workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
@@ -362,19 +362,19 @@ class WorkingTimeServiceImplTest {
         final Person person = new Person();
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
-        workingTimeEntity.setId(1);
+        workingTimeEntity.setId(1L);
         workingTimeEntity.setPerson(person);
         workingTimeEntity.setValidFrom(LocalDate.of(2020, 1, 1));
         workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
 
         final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
-        workingTimeEntityChanged.setId(2);
+        workingTimeEntityChanged.setId(2L);
         workingTimeEntityChanged.setPerson(person);
         workingTimeEntityChanged.setValidFrom(LocalDate.of(2020, 9, 1));
         workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
 
         final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
-        workingTimeEntityFuture.setId(3);
+        workingTimeEntityFuture.setId(3L);
         workingTimeEntityFuture.setPerson(person);
         workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
         workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
@@ -395,19 +395,19 @@ class WorkingTimeServiceImplTest {
         final Person person = new Person();
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
-        workingTimeEntity.setId(1);
+        workingTimeEntity.setId(1L);
         workingTimeEntity.setPerson(person);
         workingTimeEntity.setValidFrom(LocalDate.of(2020, 1, 1));
         workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
 
         final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
-        workingTimeEntityChanged.setId(2);
+        workingTimeEntityChanged.setId(2L);
         workingTimeEntityChanged.setPerson(person);
         workingTimeEntityChanged.setValidFrom(LocalDate.of(2020, 9, 1));
         workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
 
         final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
-        workingTimeEntityFuture.setId(3);
+        workingTimeEntityFuture.setId(3L);
         workingTimeEntityFuture.setPerson(person);
         workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
         workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
@@ -444,19 +444,19 @@ class WorkingTimeServiceImplTest {
         final Person person = new Person();
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
-        workingTimeEntity.setId(1);
+        workingTimeEntity.setId(1L);
         workingTimeEntity.setPerson(person);
         workingTimeEntity.setValidFrom(LocalDate.of(2020, 9, 1));
         workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
 
         final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
-        workingTimeEntityChanged.setId(2);
+        workingTimeEntityChanged.setId(2L);
         workingTimeEntityChanged.setPerson(person);
         workingTimeEntityChanged.setValidFrom(LocalDate.of(2021, 11, 15));
         workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
 
         final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
-        workingTimeEntityFuture.setId(3);
+        workingTimeEntityFuture.setId(3L);
         workingTimeEntityFuture.setPerson(person);
         workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
         workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
@@ -480,19 +480,19 @@ class WorkingTimeServiceImplTest {
         final Person person = new Person();
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
-        workingTimeEntity.setId(1);
+        workingTimeEntity.setId(1L);
         workingTimeEntity.setPerson(person);
         workingTimeEntity.setValidFrom(LocalDate.of(2020, 1, 1));
         workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
 
         final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
-        workingTimeEntityChanged.setId(2);
+        workingTimeEntityChanged.setId(2L);
         workingTimeEntityChanged.setPerson(person);
         workingTimeEntityChanged.setValidFrom(LocalDate.of(2020, 9, 1));
         workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
 
         final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
-        workingTimeEntityFuture.setId(3);
+        workingTimeEntityFuture.setId(3L);
         workingTimeEntityFuture.setPerson(person);
         workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
         workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
@@ -513,19 +513,19 @@ class WorkingTimeServiceImplTest {
         final Person person = new Person();
 
         final WorkingTimeEntity workingTimeEntity = new WorkingTimeEntity();
-        workingTimeEntity.setId(1);
+        workingTimeEntity.setId(1L);
         workingTimeEntity.setPerson(person);
         workingTimeEntity.setValidFrom(LocalDate.of(2020, 1, 1));
         workingTimeEntity.setFederalStateOverride(GERMANY_BADEN_WUERTTEMBERG);
 
         final WorkingTimeEntity workingTimeEntityChanged = new WorkingTimeEntity();
-        workingTimeEntityChanged.setId(2);
+        workingTimeEntityChanged.setId(2L);
         workingTimeEntityChanged.setPerson(person);
         workingTimeEntityChanged.setValidFrom(LocalDate.of(2020, 9, 1));
         workingTimeEntityChanged.setFederalStateOverride(GERMANY_RHEINLAND_PFALZ);
 
         final WorkingTimeEntity workingTimeEntityFuture = new WorkingTimeEntity();
-        workingTimeEntityFuture.setId(3);
+        workingTimeEntityFuture.setId(3L);
         workingTimeEntityFuture.setPerson(person);
         workingTimeEntityFuture.setValidFrom(LocalDate.of(2022, 1, 1));
         workingTimeEntityFuture.setFederalStateOverride(GERMANY_BERLIN);
@@ -554,6 +554,7 @@ class WorkingTimeServiceImplTest {
                 LocalDate.of(2021, 11, 1),
                 LocalDate.of(2021, 11, 30)))).isEmpty();
     }
+
     @Test
     void deleteAllDelegatesToRepo() {
         final Person person = new Person();

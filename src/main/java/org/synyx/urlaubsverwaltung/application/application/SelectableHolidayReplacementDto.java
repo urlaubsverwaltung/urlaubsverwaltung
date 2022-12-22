@@ -2,14 +2,14 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 public class SelectableHolidayReplacementDto {
 
-    private Integer personId;
+    private Long personId;
     private String displayName;
 
-    public Integer getPersonId() {
+    public Long getPersonId() {
         return personId;
     }
 
-    public void setPersonId(Integer personId) {
+    public void setPersonId(Long personId) {
         this.personId = personId;
     }
 

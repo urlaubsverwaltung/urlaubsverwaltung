@@ -48,14 +48,14 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
     void personNotificationAsSameUserIsOk() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setUsername("user");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
-            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
         perform(get("/web/person/1/notifications"))
             .andExpect(status().isOk());
@@ -66,14 +66,14 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
     void personNotificationAsOfficeUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setUsername("user");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
-            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
         perform(get("/web/person/1/notifications"))
             .andExpect(status().isOk());
@@ -118,10 +118,10 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
     void personChangeNotificationAsSameUserIsOk() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setUsername("user");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
         when(personService.update(any())).thenReturn(person);
@@ -157,14 +157,14 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
     void personChangeNotificationAsOfficeUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setUsername("user");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person office = new Person();
-        office.setId(2);
+        office.setId(2L);
         office.setUsername("office");
         office.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(office);

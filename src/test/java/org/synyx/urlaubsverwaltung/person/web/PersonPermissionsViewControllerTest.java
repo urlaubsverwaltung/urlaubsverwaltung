@@ -68,11 +68,11 @@ class PersonPermissionsViewControllerTest {
     void showPersonPermissionsFormUsesPersonsWithGivenId() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(get("/web/person/1/permissions"))
-            .andExpect(model().attribute("person", hasProperty("id", is(1))));
+            .andExpect(model().attribute("person", hasProperty("id", is(1L))));
     }
 
     @Test
@@ -86,8 +86,8 @@ class PersonPermissionsViewControllerTest {
     void showPersonPermissionsAddsDepartmentsToModel() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final List<Department> departments = List.of(new Department());
         final List<Department> secondStageDepartments = List.of(new Department());
@@ -104,8 +104,8 @@ class PersonPermissionsViewControllerTest {
     void showPersonPermissionsUsesNewPersonUsesCorrectView() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         perform(get("/web/person/1/permissions"))
             .andExpect(view().name("person/person_permissions"));
     }
@@ -115,7 +115,7 @@ class PersonPermissionsViewControllerTest {
 
         final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.update(any(Person.class))).thenReturn(person);
 
         perform(post("/web/person/1/permissions")
@@ -132,7 +132,7 @@ class PersonPermissionsViewControllerTest {
 
         final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.update(any(Person.class))).thenReturn(person);
 
         perform(post("/web/person/1/permissions")
@@ -149,10 +149,10 @@ class PersonPermissionsViewControllerTest {
     void ensureToSendNotificationOnGainedNewPermissions() throws Exception {
 
         final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, OFFICE));
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.update(any(Person.class))).thenReturn(person);
 
         perform(post("/web/person/1/permissions")
@@ -179,10 +179,10 @@ class PersonPermissionsViewControllerTest {
     void ensureNotToSendNotificationOnRemovedPermissions() throws Exception {
 
         final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, OFFICE, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.update(any(Person.class))).thenReturn(person);
 
         perform(post("/web/person/1/permissions")
@@ -212,9 +212,9 @@ class PersonPermissionsViewControllerTest {
     void editPersonPermissionsAddsFlashAttribute() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.update(any(Person.class))).thenReturn(person);
 
         perform(post("/web/person/1/permissions"))
@@ -225,9 +225,9 @@ class PersonPermissionsViewControllerTest {
     void editPersonPermissionsRedirectsToUpdatedPerson() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.update(any(Person.class))).thenReturn(person);
 
         perform(post("/web/person/1/permissions"))
@@ -238,7 +238,7 @@ class PersonPermissionsViewControllerTest {
     @Test
     void editPersonPermissionsThrowsUnknownPersonException() {
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+        when(personService.getPersonByID(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() ->
             perform(post("/web/person/1/permissions"))

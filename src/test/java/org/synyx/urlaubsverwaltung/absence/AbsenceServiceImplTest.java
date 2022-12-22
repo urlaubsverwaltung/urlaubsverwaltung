@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
-import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
@@ -138,10 +137,10 @@ class AbsenceServiceImplTest {
     void ensureOpenAbsencesCallsApplicationServiceForPersonsAndDateInterval() {
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person superman = new Person();
-        superman.setId(2);
+        superman.setId(2L);
 
         final LocalDate start = LocalDate.of(2021, MAY, 1);
         final LocalDate end = LocalDate.of(2021, MAY, 31);
@@ -155,10 +154,10 @@ class AbsenceServiceImplTest {
     void ensureOpenAbsencesCallsSickNotServiceForPersonsAndDateInterval() {
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person superman = new Person();
-        superman.setId(2);
+        superman.setId(2L);
 
         final LocalDate start = LocalDate.of(2021, MAY, 1);
         final LocalDate end = LocalDate.of(2021, MAY, 31);
@@ -175,18 +174,18 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setId(1L);
         vacationTypeEntity.setVisibleToEveryone(true);
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(start.plusDays(1));
         application.setEndDate(start.plusDays(1));
@@ -201,10 +200,10 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ALLOWED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1L));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(true);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isEmpty();
     }
@@ -216,18 +215,18 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setId(1L);
         vacationTypeEntity.setVisibleToEveryone(false);
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(start.plusDays(1));
         application.setEndDate(start.plusDays(1));
@@ -243,10 +242,10 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isEmpty();
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ALLOWED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1L));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
     }
 
@@ -257,18 +256,18 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setId(1L);
         vacationTypeEntity.setVisibleToEveryone(false);
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(start.plusDays(1));
         application.setEndDate(start.plusDays(1));
@@ -283,16 +282,16 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ALLOWED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1L));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ALLOWED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1L));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
     }
 
@@ -303,14 +302,14 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> ZERO);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .person(batman)
             .status(ACTIVE)
             .startDate(start.plusDays(1))
@@ -325,7 +324,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ACTIVE);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.SICK);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isEmpty();
@@ -338,14 +337,14 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> ZERO);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .person(batman)
             .status(ACTIVE)
             .startDate(start.plusDays(1))
@@ -361,7 +360,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isEmpty();
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.ACTIVE);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.SICK);
     }
@@ -372,14 +371,14 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(start.plusDays(1));
         application.setEndDate(start.plusDays(1));
@@ -390,7 +389,7 @@ class AbsenceServiceImplTest {
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
         final SickNote sickNote = SickNote.builder()
-            .id(1337)
+            .id(1337L)
             .person(batman)
             .status(SickNoteStatus.CANCELLED)
             .startDate(start.plusDays(1))
@@ -407,7 +406,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isEmpty();
 
@@ -416,7 +415,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getMorning()).isEmpty();
         assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getNoon()).isNotEmpty();
-        assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(1337);
+        assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(1337L);
         assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.SICK);
     }
 
@@ -426,14 +425,14 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(LocalDate.of(2021, MAY, 31));
         application.setEndDate(LocalDate.of(2021, JUNE, 10));
@@ -461,14 +460,14 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> ZERO);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .person(batman)
             .status(SickNoteStatus.CANCELLED)
             .startDate(LocalDate.of(2021, MAY, 31))
@@ -496,7 +495,7 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
             if (date.equals(LocalDate.of(2021, MAY, 20))) {
@@ -510,7 +509,7 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(LocalDate.of(2021, MAY, 1));
         application.setEndDate(LocalDate.of(2021, MAY, 31));
@@ -553,7 +552,7 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, DECEMBER, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
             if (date.equals(LocalDate.of(2021, DECEMBER, 24))) {
@@ -567,7 +566,7 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(LocalDate.of(2021, DECEMBER, 1));
         application.setEndDate(LocalDate.of(2021, DECEMBER, 31));
@@ -613,7 +612,7 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, DECEMBER, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
             if (date.equals(LocalDate.of(2021, DECEMBER, 24))) {
@@ -627,7 +626,7 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(LocalDate.of(2021, DECEMBER, 1));
         application.setEndDate(LocalDate.of(2021, DECEMBER, 31));
@@ -671,10 +670,10 @@ class AbsenceServiceImplTest {
     void ensureClosedAbsencesCallsApplicationServiceForPersonsAndDateInterval() {
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person superman = new Person();
-        superman.setId(2);
+        superman.setId(2L);
 
         final LocalDate start = LocalDate.of(2021, MAY, 1);
         final LocalDate end = LocalDate.of(2021, MAY, 31);
@@ -688,10 +687,10 @@ class AbsenceServiceImplTest {
     void ensureClosedAbsencesCallsSickNotServiceForPersonsAndDateInterval() {
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person superman = new Person();
-        superman.setId(2);
+        superman.setId(2L);
 
         final LocalDate start = LocalDate.of(2021, MAY, 1);
         final LocalDate end = LocalDate.of(2021, MAY, 31);
@@ -708,18 +707,18 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setId(1L);
         vacationTypeEntity.setVisibleToEveryone(true);
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(start.plusDays(1));
         application.setEndDate(start.plusDays(1));
@@ -734,10 +733,10 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.CANCELLED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1L));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(true);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isEmpty();
     }
@@ -749,18 +748,18 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setId(1L);
         vacationTypeEntity.setVisibleToEveryone(false);
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(start.plusDays(1));
         application.setEndDate(start.plusDays(1));
@@ -776,10 +775,10 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isEmpty();
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.CANCELLED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1L));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
     }
 
@@ -790,18 +789,18 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setId(1L);
         vacationTypeEntity.setVisibleToEveryone(false);
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(start.plusDays(1));
         application.setEndDate(start.plusDays(1));
@@ -816,16 +815,16 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.CANCELLED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1L));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.CANCELLED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1));
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1L));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
     }
 
@@ -836,14 +835,14 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> ZERO);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .person(batman)
             .status(SickNoteStatus.CANCELLED)
             .startDate(start.plusDays(1))
@@ -858,7 +857,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.CANCELLED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.SICK);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isEmpty();
@@ -871,14 +870,14 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> ZERO);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .person(batman)
             .status(SickNoteStatus.CANCELLED)
             .startDate(start.plusDays(1))
@@ -894,7 +893,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isEmpty();
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getStatus)).hasValue(AbsencePeriod.AbsenceStatus.CANCELLED);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.SICK);
     }
@@ -905,14 +904,14 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(start.plusDays(1));
         application.setEndDate(start.plusDays(1));
@@ -923,7 +922,7 @@ class AbsenceServiceImplTest {
         when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(application));
 
         final SickNote sickNote = SickNote.builder()
-            .id(1337)
+            .id(1337L)
             .person(batman)
             .status(SickNoteStatus.CANCELLED)
             .startDate(start.plusDays(1))
@@ -940,7 +939,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords()).hasSize(1);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning()).isNotEmpty();
-        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42);
+        assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getId)).hasValue(42L);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getMorning().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon()).isEmpty();
 
@@ -949,7 +948,7 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getPerson()).isSameAs(batman);
         assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getMorning()).isEmpty();
         assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getNoon()).isNotEmpty();
-        assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(1337);
+        assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getId)).hasValue(1337L);
         assertThat(actualAbsences.get(1).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.SICK);
     }
 
@@ -959,14 +958,14 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(LocalDate.of(2021, MAY, 31));
         application.setEndDate(LocalDate.of(2021, JUNE, 10));
@@ -994,14 +993,14 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> ZERO);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .person(batman)
             .status(SickNoteStatus.CANCELLED)
             .startDate(LocalDate.of(2021, MAY, 31))
@@ -1029,7 +1028,7 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, MAY, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
             if (date.equals(LocalDate.of(2021, MAY, 20))) {
@@ -1043,7 +1042,7 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(LocalDate.of(2021, MAY, 1));
         application.setEndDate(LocalDate.of(2021, MAY, 31));
@@ -1086,7 +1085,7 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, DECEMBER, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
             if (date.equals(LocalDate.of(2021, DECEMBER, 24))) {
@@ -1100,7 +1099,7 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(LocalDate.of(2021, DECEMBER, 1));
         application.setEndDate(LocalDate.of(2021, DECEMBER, 31));
@@ -1146,7 +1145,7 @@ class AbsenceServiceImplTest {
         final LocalDate end = LocalDate.of(2021, DECEMBER, 31);
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> {
             if (date.equals(LocalDate.of(2021, DECEMBER, 24))) {
@@ -1160,7 +1159,7 @@ class AbsenceServiceImplTest {
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(batman);
         application.setStartDate(LocalDate.of(2021, DECEMBER, 1));
         application.setEndDate(LocalDate.of(2021, DECEMBER, 31));
@@ -1203,7 +1202,7 @@ class AbsenceServiceImplTest {
     private static VacationTypeEntity anyVacationTypeEntity() {
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setId(1L);
 
         return vacationTypeEntity;
     }

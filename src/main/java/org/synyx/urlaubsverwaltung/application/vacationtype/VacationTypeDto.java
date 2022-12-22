@@ -3,15 +3,15 @@ package org.synyx.urlaubsverwaltung.application.vacationtype;
 import java.util.Objects;
 
 public class VacationTypeDto {
-    private final Integer id;
+    private final Long id;
     private final VacationTypeColor color;
 
-    public VacationTypeDto(Integer id, VacationTypeColor color) {
+    public VacationTypeDto(Long id, VacationTypeColor color) {
         this.id = id;
         this.color = color;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

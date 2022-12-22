@@ -13,17 +13,17 @@ public class PersonBasedataDto {
     @Size(max = 500, message = "{person.basedata.additionalInformation.error}")
     private String additionalInfo;
 
-    private int personId;
+    private long personId;
     private String niceName;
     private String gravatarURL;
     private String email;
     private Boolean isInactive;
 
-    public int getPersonId() {
+    public long getPersonId() {
         return personId;
     }
 
-    public void setPersonId(int personId) {
+    public void setPersonId(long personId) {
         this.personId = personId;
     }
 

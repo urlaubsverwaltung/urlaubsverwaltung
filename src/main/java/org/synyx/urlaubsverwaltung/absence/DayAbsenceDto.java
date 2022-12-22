@@ -23,13 +23,13 @@ public class DayAbsenceDto {
     private final String type;
     private final String status;
     private final String href;
-    private final Integer vacationTypeId;
+    private final Long vacationTypeId;
 
-    DayAbsenceDto(LocalDate date, BigDecimal dayLength, String absencePeriodName, String type, String status, Integer id) {
+    DayAbsenceDto(LocalDate date, BigDecimal dayLength, String absencePeriodName, String type, String status, Long id) {
         this(date, dayLength, absencePeriodName, type, status, id, null);
     }
 
-    DayAbsenceDto(LocalDate date, BigDecimal dayLength, String absencePeriodName, String type, String status, Integer id, Integer vacationTypeId) {
+    DayAbsenceDto(LocalDate date, BigDecimal dayLength, String absencePeriodName, String type, String status, Long id, Long vacationTypeId) {
         this.date = date.format(DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN));
         this.dayLength = dayLength;
         this.absencePeriodName = absencePeriodName;
@@ -63,7 +63,7 @@ public class DayAbsenceDto {
         return href;
     }
 
-    public Integer getVacationTypeId() {
+    public Long getVacationTypeId() {
         return vacationTypeId;
     }
 }

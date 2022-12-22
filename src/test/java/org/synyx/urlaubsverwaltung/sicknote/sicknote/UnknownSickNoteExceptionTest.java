@@ -10,7 +10,7 @@ class UnknownSickNoteExceptionTest {
     @Test
     void ensureCorrectExceptionMessage() {
 
-        UnknownSickNoteException exception = new UnknownSickNoteException(42);
+        UnknownSickNoteException exception = new UnknownSickNoteException(42L);
 
         assertThat(exception.getMessage()).isEqualTo("No sick note found for ID = 42");
     }

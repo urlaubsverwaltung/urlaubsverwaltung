@@ -10,7 +10,6 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-
 import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
@@ -21,7 +20,7 @@ class UserPaginationSettingsEntity {
 
     @Id
     @Column(name = "person_id")
-    private Integer personId;
+    private Long personId;
 
     @OneToOne(fetch = LAZY)
     @PrimaryKeyJoinColumn(name = "person_id", referencedColumnName = "id")
@@ -31,11 +30,11 @@ class UserPaginationSettingsEntity {
     @Positive
     private int defaultPageSize;
 
-    public Integer getPersonId() {
+    public Long getPersonId() {
         return personId;
     }
 
-    public void setPersonId(Integer personId) {
+    public void setPersonId(Long personId) {
         this.personId = personId;
     }
 

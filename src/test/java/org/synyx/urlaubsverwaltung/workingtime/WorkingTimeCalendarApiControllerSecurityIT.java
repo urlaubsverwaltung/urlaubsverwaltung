@@ -68,7 +68,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByUsername("department head")).thenReturn(Optional.of(requester));
 
         final Person requestedPerson = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
 
         when(departmentService.isDepartmentHeadAllowedToManagePerson(requester, requestedPerson)).thenReturn(false);
 
@@ -89,7 +89,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByUsername("second stage authority")).thenReturn(Optional.of(requester));
 
         final Person requestedPerson = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
 
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(requester, requestedPerson)).thenReturn(false);
 
@@ -134,7 +134,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByUsername("department head")).thenReturn(Optional.of(requester));
 
         final Person requestedPerson = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
 
         when(departmentService.isDepartmentHeadAllowedToManagePerson(requester, requestedPerson)).thenReturn(true);
 
@@ -155,7 +155,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByUsername("second stage authority")).thenReturn(Optional.of(requester));
 
         final Person requestedPerson = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
 
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(requester, requestedPerson)).thenReturn(true);
 
@@ -170,7 +170,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "BOSS")
     void getWorkdaysAsBossUserForOtherUserIsForbidden() throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
 
         final ResultActions resultActions = perform(get("/api/persons/1/workdays")
             .param("from", "2016-01-04")
@@ -183,7 +183,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "OFFICE")
     void getWorkdaysWithOfficeRoleIsOk() throws Exception {
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
         final ResultActions resultActions = perform(get("/api/persons/1/workdays")
@@ -199,7 +199,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
         final ResultActions resultActions = perform(get("/api/persons/1/workdays")
@@ -215,7 +215,7 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final ResultActions resultActions = perform(get("/api/persons/1/workdays")
             .param("from", "2016-01-04")
