@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.comment;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Column;
@@ -9,12 +7,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.SequenceGenerator;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Objects;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Optional.ofNullable;
+import static javax.persistence.GenerationType.SEQUENCE;
 
 
 /**
@@ -25,16 +25,8 @@ public abstract class AbstractComment {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
-    @GenericGenerator(
-        name = "comment_id_seq",
-        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = {
-            @Parameter(name = "sequence_name", value = "comment_id_seq"),
-            @Parameter(name = "initial_value", value = "1"),
-            @Parameter(name = "increment_size", value = "1")
-        }
-    )
-    @GeneratedValue(generator = "comment_id_seq")
+    @GeneratedValue(strategy = SEQUENCE, generator = "comment_generator")
+    @SequenceGenerator(name = "comment_generator", sequenceName = "comment_id_seq")
     private Long id;
 
     // Who has written the comment?

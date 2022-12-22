@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
@@ -12,11 +10,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.SEQUENCE;
 
 /**
  * Entity representing a sick note with information about employee and period.
@@ -27,16 +27,8 @@ class SickNoteEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
-    @GenericGenerator(
-        name = "sick_note_id_seq",
-        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = {
-            @Parameter(name = "sequence_name", value = "sick_note_id_seq"),
-            @Parameter(name = "initial_value", value = "1"),
-            @Parameter(name = "increment_size", value = "1")
-        }
-    )
-    @GeneratedValue(generator = "sick_note_id_seq")
+    @GeneratedValue(strategy = SEQUENCE, generator = "sick_note_generator")
+    @SequenceGenerator(name = "sick_note_generator", sequenceName = "sick_note_id_seq")
     private Long id;
 
     /**

@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.validator.constraints.Length;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -12,8 +10,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import java.time.Period;
+
+import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
 class PersonCalendar {
@@ -22,16 +23,8 @@ class PersonCalendar {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
-    @GenericGenerator(
-        name = "person_calendar_id_seq",
-        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = {
-            @Parameter(name = "sequence_name", value = "person_calendar_id_seq"),
-            @Parameter(name = "initial_value", value = "1"),
-            @Parameter(name = "increment_size", value = "1")
-        }
-    )
-    @GeneratedValue(generator = "person_calendar_id_seq")
+    @GeneratedValue(strategy = SEQUENCE, generator = "person_calendar_generator")
+    @SequenceGenerator(name = "person_calendar_generator", sequenceName = "person_calendar_id_seq")
     private Long id;
 
     @NotNull

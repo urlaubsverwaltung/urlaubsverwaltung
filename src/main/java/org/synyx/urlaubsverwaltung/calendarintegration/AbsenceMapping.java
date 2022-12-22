@@ -5,9 +5,11 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.SEQUENCE;
 
 /**
  * Mapping object between absence (application for leave or sick note) and sync calendar event.
@@ -17,7 +19,9 @@ import static javax.persistence.EnumType.STRING;
 public class AbsenceMapping {
 
     @Id
-    @GeneratedValue
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = SEQUENCE, generator = "absence_mapping_generator")
+    @SequenceGenerator(name = "absence_mapping_generator", sequenceName = "absence_mapping_id_seq")
     private Long id;
 
     @Column(nullable = false)

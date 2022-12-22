@@ -1,18 +1,20 @@
 package org.synyx.urlaubsverwaltung.application.specialleave;
 
-import com.sun.xml.bind.v2.TODO;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+
+import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "special_leave_settings")
 class SpecialLeaveSettingsEntity {
 
     @Id
-    // TODO
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = SEQUENCE, generator = "special_leaves_settings_generator")
+    @SequenceGenerator(name = "special_leaves_settings_generator", sequenceName = "special_leaves_settings_id_seq")
     private Long id;
 
     private boolean active;

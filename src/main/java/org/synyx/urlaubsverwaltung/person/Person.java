@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -10,12 +8,14 @@ import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import java.util.Collection;
 import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableCollection;
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.SEQUENCE;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -29,16 +29,8 @@ public class Person {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
-    @GenericGenerator(
-        name = "person_id_seq",
-        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = {
-            @Parameter(name = "sequence_name", value = "person_id_seq"),
-            @Parameter(name = "initial_value", value = "1"),
-            @Parameter(name = "increment_size", value = "1")
-        }
-    )
-    @GeneratedValue(generator = "person_id_seq")
+    @GeneratedValue(strategy = SEQUENCE, generator = "person_generator")
+    @SequenceGenerator(name = "person_generator", sequenceName = "person_id_seq")
     private Long id;
 
     private String username;

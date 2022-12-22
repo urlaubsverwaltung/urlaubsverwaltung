@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -11,10 +9,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import java.time.LocalDate;
 import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.SEQUENCE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
 
@@ -26,16 +26,8 @@ class WorkingTimeEntity {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
-    @GenericGenerator(
-        name = "working_time_id_seq",
-        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = {
-            @Parameter(name = "sequence_name", value = "working_time_id_seq"),
-            @Parameter(name = "initial_value", value = "1"),
-            @Parameter(name = "increment_size", value = "1")
-        }
-    )
-    @GeneratedValue(generator = "working_time_id_seq")
+    @GeneratedValue(strategy = SEQUENCE, generator = "working_time_generator")
+    @SequenceGenerator(name = "working_time_generator", sequenceName = "working_time_id_seq")
     private Long id;
 
     @OneToOne

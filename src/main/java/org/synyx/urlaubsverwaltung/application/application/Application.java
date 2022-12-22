@@ -1,8 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.Parameter;
 import org.synyx.urlaubsverwaltung.DurationConverter;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -19,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -29,6 +28,7 @@ import java.util.Objects;
 
 import static java.time.ZoneOffset.UTC;
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.SEQUENCE;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
 
@@ -40,16 +40,8 @@ public class Application {
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
-    @GenericGenerator(
-        name = "application_id_seq",
-        strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
-        parameters = {
-            @Parameter(name = "sequence_name", value = "application_id_seq"),
-            @Parameter(name = "initial_value", value = "1"),
-            @Parameter(name = "increment_size", value = "1")
-        }
-    )
-    @GeneratedValue(generator = "application_id_seq")
+    @GeneratedValue(strategy = SEQUENCE, generator = "application_generator")
+    @SequenceGenerator(name = "application_generator", sequenceName = "application_id_seq")
     private Long id;
 
     /**
