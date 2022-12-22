@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.web.AbstractNoResultFoundException;
  */
 public class UnknownPersonException extends AbstractNoResultFoundException {
 
-    public UnknownPersonException(Integer id) {
+    public UnknownPersonException(Long id) {
 
         super(id, "person");
     }

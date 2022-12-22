@@ -42,7 +42,7 @@ public interface OvertimeService {
      * @param id to get the overtime record by
      * @return overtime record with the given ID or an empty optional if no entry found for the given ID
      */
-    Optional<Overtime> getOvertimeById(Integer id);
+    Optional<Overtime> getOvertimeById(Long id);
 
     /**
      * Fetch the comments for a certain overtime record.

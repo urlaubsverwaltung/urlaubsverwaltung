@@ -4,20 +4,20 @@ import org.springframework.context.ApplicationEvent;
 
 public class PersonLeftDepartmentEvent extends ApplicationEvent {
 
-    private final int personId;
-    private final int departmentId;
+    private final long personId;
+    private final long departmentId;
 
-    public PersonLeftDepartmentEvent(Object source, int personId, int departmentId) {
+    public PersonLeftDepartmentEvent(Object source, long personId, long departmentId) {
         super(source);
         this.personId = personId;
         this.departmentId = departmentId;
     }
 
-    public int getPersonId() {
+    public long getPersonId() {
         return personId;
     }
 
-    public int getDepartmentId() {
+    public long getDepartmentId() {
         return departmentId;
     }
 }

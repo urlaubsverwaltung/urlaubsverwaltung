@@ -53,10 +53,10 @@ public interface PersonService {
     /**
      * finds a {@link Person} in the database by its primary key.
      *
-     * @param id Integer the id of the person
+     * @param id Long the id of the person
      * @return optional {@link Person} for the given id
      */
-    Optional<Person> getPersonByID(Integer id);
+    Optional<Person> getPersonByID(Long id);
 
     /**
      * finds a {@link Person} in the database by username.
@@ -144,5 +144,5 @@ public interface PersonService {
      * @param excludingId without the user with this id
      * @return number of persons with {@link Role#OFFICE} excluding the person with the id
      */
-    int numberOfPersonsWithOfficeRoleExcludingPerson(int excludingId);
+    int numberOfPersonsWithOfficeRoleExcludingPerson(long excludingId);
 }

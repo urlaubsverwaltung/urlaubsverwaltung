@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -79,7 +80,7 @@ class SickNoteInteractionServiceImplTest {
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .startDate(LocalDate.now(UTC))
             .endDate(LocalDate.now(UTC))
             .dayLength(DayLength.FULL)
@@ -111,7 +112,7 @@ class SickNoteInteractionServiceImplTest {
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .startDate(LocalDate.now(UTC))
             .endDate(LocalDate.now(UTC))
             .dayLength(DayLength.FULL)
@@ -140,7 +141,7 @@ class SickNoteInteractionServiceImplTest {
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .startDate(LocalDate.now(UTC))
             .endDate(LocalDate.now(UTC))
             .dayLength(DayLength.FULL)
@@ -164,15 +165,15 @@ class SickNoteInteractionServiceImplTest {
 
         when(sickNoteService.save(any())).then(returnsFirstArg());
 
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
+        final AbsenceMapping absenceMapping = new AbsenceMapping(1L, VACATION, "42");
+        when(absenceMappingService.getAbsenceByIdAndType(anyLong(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final String comment = "test comment";
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .startDate(LocalDate.now(UTC))
             .endDate(LocalDate.now(UTC))
             .dayLength(DayLength.FULL)
@@ -191,15 +192,15 @@ class SickNoteInteractionServiceImplTest {
 
     @Test
     void ensureCancelledSickNoteIsPersisted() {
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
+        final AbsenceMapping absenceMapping = new AbsenceMapping(1L, VACATION, "42");
+        when(absenceMappingService.getAbsenceByIdAndType(anyLong(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
 
         when(sickNoteService.save(any())).then(returnsFirstArg());
 
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .startDate(LocalDate.now(UTC))
             .endDate(LocalDate.now(UTC))
             .dayLength(DayLength.FULL)
@@ -222,13 +223,13 @@ class SickNoteInteractionServiceImplTest {
 
     @Test
     void ensureCancellingSickNoteDeletesCalendarEvent() {
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
+        final AbsenceMapping absenceMapping = new AbsenceMapping(1L, VACATION, "42");
+        when(absenceMappingService.getAbsenceByIdAndType(anyLong(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
 
         final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .startDate(LocalDate.now(UTC))
             .endDate(LocalDate.now(UTC))
             .dayLength(DayLength.FULL)
@@ -239,7 +240,7 @@ class SickNoteInteractionServiceImplTest {
 
         sut.cancel(sickNote, creator);
 
-        verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(SICKNOTE));
+        verify(absenceMappingService).getAbsenceByIdAndType(anyLong(), eq(SICKNOTE));
         verify(calendarSyncService).deleteAbsence(anyString());
         verify(absenceMappingService).delete(any(AbsenceMapping.class));
     }
@@ -249,8 +250,8 @@ class SickNoteInteractionServiceImplTest {
 
         when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
 
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
+        final AbsenceMapping absenceMapping = new AbsenceMapping(1L, VACATION, "42");
+        when(absenceMappingService.getAbsenceByIdAndType(anyLong(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         when(sickNoteService.save(any())).then(returnsFirstArg());
@@ -265,7 +266,7 @@ class SickNoteInteractionServiceImplTest {
         applicationForLeave.setPerson(new Person("muster", "Muster", "Marlene", "muster@example.org"));
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .startDate(LocalDate.now(UTC))
             .endDate(LocalDate.now(UTC))
             .dayLength(DayLength.FULL)
@@ -293,8 +294,8 @@ class SickNoteInteractionServiceImplTest {
 
         when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
 
-        final AbsenceMapping absenceMapping = new AbsenceMapping(1, VACATION, "42");
-        when(absenceMappingService.getAbsenceByIdAndType(anyInt(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
+        final AbsenceMapping absenceMapping = new AbsenceMapping(1L, VACATION, "42");
+        when(absenceMappingService.getAbsenceByIdAndType(anyLong(), eq(SICKNOTE))).thenReturn(Optional.of(absenceMapping));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         when(sickNoteService.save(any())).then(returnsFirstArg());
@@ -309,7 +310,7 @@ class SickNoteInteractionServiceImplTest {
         applicationForLeave.setPerson(creator);
 
         final SickNote sickNote = SickNote.builder()
-            .id(42)
+            .id(42L)
             .startDate(LocalDate.now(UTC))
             .endDate(LocalDate.now(UTC))
             .dayLength(DayLength.FULL)
@@ -318,7 +319,7 @@ class SickNoteInteractionServiceImplTest {
 
         sut.convert(sickNote, applicationForLeave, creator);
 
-        verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(SICKNOTE));
+        verify(absenceMappingService).getAbsenceByIdAndType(anyLong(), eq(SICKNOTE));
         verify(calendarSyncService).update(any(Absence.class), anyString());
         verify(absenceMappingService).delete(absenceMapping);
         verify(absenceMappingService).create(isNull(), eq(VACATION), anyString());
@@ -331,7 +332,7 @@ class SickNoteInteractionServiceImplTest {
     @Test
     void ensureDeletionOfAllSickNotesAndAllCommentsOnPersonDeletedEvent() {
         final Person person = new Person();
-        final int personId = 1;
+        final long personId = 1;
         person.setId(personId);
 
         sut.deleteAll(new PersonDeletedEvent(person));
@@ -346,17 +347,17 @@ class SickNoteInteractionServiceImplTest {
     @Test
     void ensureDeletionOfAbsenceMappingOnPersonDeletedEvent() {
         final Person person = new Person();
-        person.setId(42);
+        person.setId(42L);
 
-        final SickNote sickNote = SickNote.builder().id(42).build();
+        final SickNote sickNote = SickNote.builder().id(42L).build();
         when(sickNoteService.deleteAllByPerson(person)).thenReturn(List.of(sickNote));
 
-        final AbsenceMapping absenceMapping = new AbsenceMapping(42, SICKNOTE, "eventId");
-        when(absenceMappingService.getAbsenceByIdAndType(42, SICKNOTE)).thenReturn(Optional.of(absenceMapping));
+        final AbsenceMapping absenceMapping = new AbsenceMapping(42L, SICKNOTE, "eventId");
+        when(absenceMappingService.getAbsenceByIdAndType(42L, SICKNOTE)).thenReturn(Optional.of(absenceMapping));
 
         sut.deleteAll(new PersonDeletedEvent(person));
 
-        verify(absenceMappingService).getAbsenceByIdAndType(42, SICKNOTE);
+        verify(absenceMappingService).getAbsenceByIdAndType(42L, SICKNOTE);
         verify(absenceMappingService).delete(absenceMapping);
         verify(calendarSyncService).deleteAbsence("eventId");
     }

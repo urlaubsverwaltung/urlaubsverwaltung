@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class AbsenceTypeSettingsItemDto {
 
-    private Integer id;
+    private Long id;
     private boolean active;
     private String messageKey;
     private VacationCategory category;
@@ -15,11 +15,11 @@ public class AbsenceTypeSettingsItemDto {
     private VacationTypeColor color;
     private boolean visibleToEveryone;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -109,7 +109,7 @@ public class AbsenceTypeSettingsItemDto {
     }
 
     static class Builder {
-        private Integer id;
+        private Long id;
         private boolean active;
         private String messageKey;
         private VacationCategory category;
@@ -117,7 +117,7 @@ public class AbsenceTypeSettingsItemDto {
         private VacationTypeColor color;
         private boolean visibleToEveryone;
 
-        Builder setId(Integer id) {
+        Builder setId(Long id) {
             this.id = id;
             return this;
         }

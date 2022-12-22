@@ -91,7 +91,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     void applicationForLeaveStatisticsSetsModelAndViewWithoutStatistics() throws Exception {
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
@@ -101,7 +101,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery()))
             .thenReturn(new PageImpl<>(List.of()));
 
-        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
+        final List<VacationType> vacationType = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, YELLOW, false));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -122,12 +122,12 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     void applicationForLeaveStatisticsSetsModelAndViewWithStatistics() throws Exception {
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         when(messageSource.getMessage("hours.abbr", new Object[]{}, ENGLISH)).thenReturn("Std.");
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
@@ -135,13 +135,13 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final Person person = new Person();
-        person.setId(2);
+        person.setId(2L);
         person.setFirstName("Firstname");
         person.setLastName("Lastname");
         person.setEmail("firstname.lastname@example.org");
 
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of(vacationType));
-        statistic.setPersonBasedata(new PersonBasedata(new PersonId(1), "42", "some additional information"));
+        statistic.setPersonBasedata(new PersonBasedata(new PersonId(1L), "42", "some additional information"));
         statistic.setLeftOvertimeForYear(Duration.ofHours(10));
         statistic.setLeftVacationDaysForYear(BigDecimal.valueOf(2));
         statistic.addWaitingVacationDays(vacationType, BigDecimal.valueOf(3));
@@ -184,11 +184,11 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     void applicationForLeaveStatisticsWithSearchQuery() throws Exception {
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person();
-        person.setId(2);
+        person.setId(2L);
         person.setFirstName("Max");
 
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
@@ -222,11 +222,11 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     void applicationForLeaveStatisticsSetsModelAndViewWithStatisticsSortedAscendingBy(String sortQuery, String expectedSortProperty) throws Exception {
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person();
-        person.setId(2);
+        person.setId(2L);
         person.setFirstName("John");
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
@@ -259,11 +259,11 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     void applicationForLeaveStatisticsSetsModelAndViewWithStatisticsSortedDescendingBy(String sortQuery, String expectedSortProperty) throws Exception {
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person();
-        person.setId(2);
+        person.setId(2L);
         person.setFirstName("John");
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
@@ -288,11 +288,11 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     void applicationForLeaveStatisticsSetsModelAndViewSortQuery() throws Exception {
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person();
-        person.setId(2);
+        person.setId(2L);
         person.setFirstName("John");
         final ApplicationForLeaveStatistics statistic = new ApplicationForLeaveStatistics(person, List.of());
 
@@ -322,7 +322,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(any(FilterPeriod.class), any())).thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(defaultPersonSearchQuery())))
@@ -339,14 +339,14 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     void downloadCSVWritesCSV() throws Exception {
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(defaultPersonSearchQuery())))

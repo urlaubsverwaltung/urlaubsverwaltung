@@ -35,13 +35,13 @@ class SpecialLeaveSettingsServiceTest {
     void saveAll() {
 
         final SpecialLeaveSettingsEntity specialLeaveSettingsEntity = new SpecialLeaveSettingsEntity();
-        specialLeaveSettingsEntity.setId(1);
+        specialLeaveSettingsEntity.setId(1L);
         specialLeaveSettingsEntity.setActive(false);
         specialLeaveSettingsEntity.setMessageKey("messageKey");
         specialLeaveSettingsEntity.setDays(2);
-        when(specialLeaveSettingsRepository.findAllById(Set.of(1))).thenReturn(List.of(specialLeaveSettingsEntity));
+        when(specialLeaveSettingsRepository.findAllById(Set.of(1L))).thenReturn(List.of(specialLeaveSettingsEntity));
 
-        final SpecialLeaveSettingsItem specialLeaveSettingsItem = new SpecialLeaveSettingsItem(1, false, "messageKey", 2);
+        final SpecialLeaveSettingsItem specialLeaveSettingsItem = new SpecialLeaveSettingsItem(1L, false, "messageKey", 2);
         sut.saveAll(List.of(specialLeaveSettingsItem));
 
         verify(specialLeaveSettingsRepository).saveAll(specialLeaveSettingsListArgument.capture());
@@ -49,13 +49,13 @@ class SpecialLeaveSettingsServiceTest {
         assertThat(specialLeaveSettingsEntities)
             .hasSize(1)
             .extracting("id", "active", "messageKey", "days")
-            .contains(tuple(1, false, "messageKey", 2));
+            .contains(tuple(1L, false, "messageKey", 2));
     }
 
     @Test
     void getSpecialLeaveSettings() {
         final SpecialLeaveSettingsEntity specialLeaveSettingsEntity = new SpecialLeaveSettingsEntity();
-        specialLeaveSettingsEntity.setId(1);
+        specialLeaveSettingsEntity.setId(1L);
         specialLeaveSettingsEntity.setActive(false);
         specialLeaveSettingsEntity.setMessageKey("messageKey");
         specialLeaveSettingsEntity.setDays(2);
@@ -64,6 +64,6 @@ class SpecialLeaveSettingsServiceTest {
         final List<SpecialLeaveSettingsItem> specialLeaveSettings = sut.getSpecialLeaveSettings();
         assertThat(specialLeaveSettings)
             .extracting("id", "active", "messageKey", "days")
-            .contains(tuple(1, false, "messageKey", 2));
+            .contains(tuple(1L, false, "messageKey", 2));
     }
 }

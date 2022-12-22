@@ -8,7 +8,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import java.util.Optional;
 
 @Repository
-interface UserSettingsRepository extends CrudRepository<UserSettingsEntity, Integer> {
+interface UserSettingsRepository extends CrudRepository<UserSettingsEntity, Long> {
     Optional<UserSettingsEntity> findByPersonUsername(String username);
 
     @Modifying

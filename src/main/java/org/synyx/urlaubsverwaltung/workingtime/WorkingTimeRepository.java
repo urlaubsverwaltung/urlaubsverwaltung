@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Repository for accessing {@link WorkingTime} entities.
  */
-interface WorkingTimeRepository extends CrudRepository<WorkingTimeEntity, Integer> {
+interface WorkingTimeRepository extends CrudRepository<WorkingTimeEntity, Long> {
 
     List<WorkingTimeEntity> findByPersonOrderByValidFromDesc(Person person);
 

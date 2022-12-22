@@ -78,13 +78,13 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery) {
+    public Page<Person> getManagedMembersOfPersonAndDepartment(Person person, Long departmentId, PageableSearchQuery pageableSearchQuery) {
         final Predicate<Person> filter = nameContains(pageableSearchQuery.getQuery()).and(not(Person::isInactive));
         return managedMembersOfPersonAndDepartment(person, departmentId, pageableSearchQuery, filter);
     }
 
     @Override
-    public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery) {
+    public Page<Person> getManagedInactiveMembersOfPersonAndDepartment(Person person, Long departmentId, PageableSearchQuery pageableSearchQuery) {
         final Predicate<Person> filter = nameContains(pageableSearchQuery.getQuery()).and(Person::isInactive);
         return managedMembersOfPersonAndDepartment(person, departmentId, pageableSearchQuery, filter);
     }
@@ -122,12 +122,12 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public boolean departmentExists(Integer departmentId) {
+    public boolean departmentExists(Long departmentId) {
         return departmentRepository.existsById(departmentId);
     }
 
     @Override
-    public Optional<Department> getDepartmentById(Integer departmentId) {
+    public Optional<Department> getDepartmentById(Long departmentId) {
         return departmentRepository.findById(departmentId).map(this::mapToDepartment);
     }
 
@@ -230,7 +230,7 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public void delete(Integer departmentId) {
+    public void delete(Long departmentId) {
 
         if (this.departmentExists(departmentId)) {
             departmentRepository.deleteById(departmentId);
@@ -477,7 +477,7 @@ class DepartmentServiceImpl implements DepartmentService {
         return list;
     }
 
-    private Page<Person> managedMembersOfPersonAndDepartment(Person person, Integer departmentId, PageableSearchQuery pageableSearchQuery, Predicate<Person> filter) {
+    private Page<Person> managedMembersOfPersonAndDepartment(Person person, Long departmentId, PageableSearchQuery pageableSearchQuery, Predicate<Person> filter) {
         final Pageable pageable = pageableSearchQuery.getPageable();
 
         final DepartmentEntity departmentEntity = departmentRepository.findById(departmentId)

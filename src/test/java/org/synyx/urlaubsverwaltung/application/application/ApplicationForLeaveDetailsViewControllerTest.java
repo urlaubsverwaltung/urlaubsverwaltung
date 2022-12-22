@@ -63,7 +63,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
     private ApplicationForLeaveDetailsViewController sut;
 
-    private static final int APPLICATION_ID = 57;
+    private static final long APPLICATION_ID = 57;
     private static final String ERRORS_ATTRIBUTE = "errors";
 
     @Mock
@@ -140,7 +140,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         final Application application = someApplication();
         application.setPerson(person);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
@@ -1239,7 +1239,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
     private static Person personWithRole(Role... role) {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(role));
         return person;
     }

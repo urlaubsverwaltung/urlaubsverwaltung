@@ -79,7 +79,7 @@ public class CalendarSharingViewController {
 
     @GetMapping("/persons/{personId}/departments/{activeDepartmentId}")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String indexDepartment(@PathVariable int personId, @PathVariable int activeDepartmentId, Model model) {
+    public String indexDepartment(@PathVariable long personId, @PathVariable long activeDepartmentId, Model model) {
 
         final PersonCalendarDto dto = getPersonCalendarDto(personId);
         model.addAttribute("privateCalendarShare", dto);
@@ -95,7 +95,7 @@ public class CalendarSharingViewController {
         return "thymeleaf/calendarsharing/index";
     }
 
-    private void prepareModelForOtherCalendarSharePerson(int personId, Model model, Person signedInUser) {
+    private void prepareModelForOtherCalendarSharePerson(long personId, Model model, Person signedInUser) {
         final boolean isSignedInUser = personId == signedInUser.getId();
         model.addAttribute("isSignedInUser", isSignedInUser);
 
@@ -107,7 +107,7 @@ public class CalendarSharingViewController {
 
     @PostMapping(value = "/persons/{personId}/me")
     @PreAuthorize(IS_BOSS_OR_OFFICE + " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String linkPrivateCalendar(@PathVariable int personId, @Valid @ModelAttribute PersonCalendarDto personCalendarDto) {
+    public String linkPrivateCalendar(@PathVariable long personId, @Valid @ModelAttribute PersonCalendarDto personCalendarDto) {
 
         final Period calendarPeriod = personCalendarDto.getCalendarPeriod().getPeriod();
         personCalendarService.createCalendarForPerson(personId, calendarPeriod);
@@ -176,7 +176,7 @@ public class CalendarSharingViewController {
         return format(REDIRECT_WEB_CALENDARS_SHARE_PERSONS, personId);
     }
 
-    private void prepareModelForCompanyCalendar(Model model, int personId, Person signedInUser) {
+    private void prepareModelForCompanyCalendar(Model model, long personId, Person signedInUser) {
 
         final boolean isBossOrOffice = signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS);
         final boolean companyCalendarAccessible = calendarAccessibleService.isCompanyCalendarAccessible();
@@ -195,7 +195,7 @@ public class CalendarSharingViewController {
         }
     }
 
-    private PersonCalendarDto getPersonCalendarDto(int personId) {
+    private PersonCalendarDto getPersonCalendarDto(long personId) {
         final PersonCalendarDto dto = new PersonCalendarDto();
         dto.setPersonId(personId);
 
@@ -217,7 +217,7 @@ public class CalendarSharingViewController {
         return getDepartmentCalendarDtos(personId, null);
     }
 
-    private List<DepartmentCalendarDto> getDepartmentCalendarDtos(int personId, @Nullable Integer activeDepartmentId) {
+    private List<DepartmentCalendarDto> getDepartmentCalendarDtos(long personId, @Nullable Long activeDepartmentId) {
 
         final Person person = getPersonOrThrow(personId);
         final List<Department> departments = departmentService.getAssignedDepartmentsOfMember(person);
@@ -258,7 +258,7 @@ public class CalendarSharingViewController {
         return departmentCalendarDtos;
     }
 
-    private CompanyCalendarDto getCompanyCalendarDto(int personId) {
+    private CompanyCalendarDto getCompanyCalendarDto(long personId) {
 
         final CompanyCalendarDto companyCalendarDto = new CompanyCalendarDto();
         companyCalendarDto.setPersonId(personId);
@@ -278,7 +278,7 @@ public class CalendarSharingViewController {
         return companyCalendarDto;
     }
 
-    private Person getPersonOrThrow(int personId) {
+    private Person getPersonOrThrow(long personId) {
 
         final Optional<Person> maybePerson = personService.getPersonByID(personId);
         if (maybePerson.isEmpty()) {

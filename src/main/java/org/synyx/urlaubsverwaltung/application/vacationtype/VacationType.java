@@ -7,7 +7,7 @@ import java.util.Objects;
  */
 public class VacationType {
 
-    private Integer id;
+    private Long id;
     private boolean active;
     private VacationCategory category;
     private String messageKey;
@@ -19,7 +19,7 @@ public class VacationType {
         // ok
     }
 
-    public VacationType(Integer id, boolean active, VacationCategory category, String messageKey, boolean requiresApproval, VacationTypeColor color, boolean visibleToEveryone) {
+    public VacationType(Long id, boolean active, VacationCategory category, String messageKey, boolean requiresApproval, VacationTypeColor color, boolean visibleToEveryone) {
         this.id = id;
         this.active = active;
         this.category = category;
@@ -37,11 +37,11 @@ public class VacationType {
         this.active = enabled;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

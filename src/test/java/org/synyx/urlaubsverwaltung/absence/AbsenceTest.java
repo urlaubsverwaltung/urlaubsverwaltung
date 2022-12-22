@@ -156,7 +156,7 @@ class AbsenceTest {
     @Test
     void toStringTest() {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_USER));
         // Date where daylight saving time is relevant

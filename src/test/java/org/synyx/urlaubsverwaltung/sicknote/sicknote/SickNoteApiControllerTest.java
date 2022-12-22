@@ -211,8 +211,8 @@ class SickNoteApiControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(23);
-        when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
+        person.setId(23L);
+        when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
         final LocalDate from = LocalDate.of(2016, 5, 19);
         final LocalDate to = LocalDate.of(2016, 5, 20);
@@ -243,8 +243,8 @@ class SickNoteApiControllerTest {
 
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(23);
-        when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
+        person.setId(23L);
+        when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
         final LocalDate from = LocalDate.of(2016, 5, 19);
         final LocalDate to = LocalDate.of(2016, 5, 20);
@@ -276,8 +276,8 @@ class SickNoteApiControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(23);
-        when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
+        person.setId(23L);
+        when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
         final LocalDate from = LocalDate.of(2016, 5, 19);
         final LocalDate to = LocalDate.of(2016, 5, 20);
@@ -303,7 +303,7 @@ class SickNoteApiControllerTest {
 
     @Test
     void personsSickNotesForEmptyPerson() throws Exception {
-        when(personService.getPersonByID(23)).thenReturn(Optional.empty());
+        when(personService.getPersonByID(23L)).thenReturn(Optional.empty());
 
         perform(get("/api/persons/23/sicknotes")
             .param("from", "2016-01-01")

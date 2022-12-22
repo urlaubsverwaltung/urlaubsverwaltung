@@ -47,15 +47,15 @@ class PersonBasedataViewControllerTest {
     void ensuresCorrectModelOfPersonBasedata() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(1), "1337", "Some additional information");
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(1L), "1337", "Some additional information");
         when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(personBasedata));
 
         perform(get("/web/person/1/basedata"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("personBasedata", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personBasedata", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personBasedata", hasProperty("personnelNumber", is("1337"))))
             .andExpect(model().attribute("personBasedata", hasProperty("additionalInfo", is("Some additional information"))))
             .andExpect(view().name("thymeleaf/person/person-basedata"));
@@ -65,14 +65,14 @@ class PersonBasedataViewControllerTest {
     void ensuresFallbackOfPersonBasedata() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.empty());
 
         perform(get("/web/person/1/basedata"))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("personBasedata", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personBasedata", hasProperty("personId", is(1L))))
             .andExpect(model().attribute("personBasedata", hasProperty("personnelNumber", is(""))))
             .andExpect(model().attribute("personBasedata", hasProperty("additionalInfo", is(""))))
             .andExpect(view().name("thymeleaf/person/person-basedata"));
@@ -81,7 +81,7 @@ class PersonBasedataViewControllerTest {
     @Test
     void ensuresThrowingExceptionOnUnknownPerson() {
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+        when(personService.getPersonByID(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() ->
             perform(get("/web/person/1/basedata"))
@@ -103,7 +103,7 @@ class PersonBasedataViewControllerTest {
         verify(personBasedataService).update(captor.capture());
 
         final PersonBasedata personBasedata = captor.getValue();
-        assertThat(personBasedata.getPersonId()).isEqualTo(new PersonId(1));
+        assertThat(personBasedata.getPersonId()).isEqualTo(new PersonId(1L));
         assertThat(personBasedata.getPersonnelNumber()).isEqualTo("1337");
         assertThat(personBasedata.getAdditionalInformation()).isEqualTo("Additional Information");
     }

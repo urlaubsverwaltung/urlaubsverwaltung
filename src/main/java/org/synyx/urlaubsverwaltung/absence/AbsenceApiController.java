@@ -77,7 +77,7 @@ public class AbsenceApiController {
     public DayAbsencesDto personsAbsences(
         @Parameter(description = "ID of the person")
         @PathVariable("personId")
-        Integer personId,
+        Long personId,
         @Parameter(description = "start of interval to get absences from (inclusive)")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)

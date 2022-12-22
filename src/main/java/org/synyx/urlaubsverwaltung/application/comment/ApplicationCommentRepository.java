@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Repository for {@link ApplicationComment} entities.
  */
-interface ApplicationCommentRepository extends CrudRepository<ApplicationComment, Integer> {
+interface ApplicationCommentRepository extends CrudRepository<ApplicationComment, Long> {
 
     List<ApplicationComment> findByApplication(Application application);
 

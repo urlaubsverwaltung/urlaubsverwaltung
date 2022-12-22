@@ -12,7 +12,7 @@ class SpecialLeaveDtoMapperTest {
 
     @Test
     void mapToSpecialLeaveSettingsDto() {
-        Integer id = 1;
+        Long id = 1L;
         Boolean active = true;
         String messageKey = "";
         Integer days = 2;

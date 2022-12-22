@@ -52,7 +52,7 @@ public class AvailabilityApiController {
     public AvailabilityListDto personsAvailabilities(
         @Parameter(description = "id of the person")
         @PathVariable("personId")
-        Integer personId,
+        Long personId,
         @Parameter(description = "start of interval to get availabilities from (inclusive)")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)

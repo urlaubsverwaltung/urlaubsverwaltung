@@ -1980,11 +1980,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // APPLICATIONs
         final Application applicationA = createApplication(personDepartmentA);
-        applicationA.setId(1);
+        applicationA.setId(1L);
         final Application applicationB = createApplication(personDepartmentB);
-        applicationB.setId(2);
+        applicationB.setId(2L);
         final Application applicationC = createApplication(personDepartmentC);
-        applicationC.setId(3);
+        applicationC.setId(3L);
 
         // DEPARTMENT HEADs
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
@@ -2613,7 +2613,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final LocalDate now = LocalDate.now(UTC);
 
         Application application = new Application();
-        application.setId(1234);
+        application.setId(1234L);
         application.setPerson(person);
         application.setVacationType(createVacationTypeEntity(HOLIDAY, "application.data.vacationType.holiday"));
         application.setDayLength(FULL);

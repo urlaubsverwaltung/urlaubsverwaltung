@@ -46,7 +46,7 @@ class AccountTest {
     @Test
     void toStringTest() {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_USER));
 
@@ -65,13 +65,13 @@ class AccountTest {
     @Test
     void equals() {
         final Account accountOne = new Account();
-        accountOne.setId(1);
+        accountOne.setId(1L);
 
         final Account accountOneOne = new Account();
-        accountOneOne.setId(1);
+        accountOneOne.setId(1L);
 
         final Account accountTwo = new Account();
-        accountTwo.setId(2);
+        accountTwo.setId(2L);
 
         assertThat(accountOne)
             .isEqualTo(accountOne)
@@ -84,7 +84,7 @@ class AccountTest {
     @Test
     void hashCodeTest() {
         final Account accountOne = new Account();
-        accountOne.setId(1);
+        accountOne.setId(1L);
 
         assertThat(accountOne.hashCode()).isEqualTo(32);
     }

@@ -113,7 +113,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setFirstName("sam");
         person.setLastName("smith");
         person.setEmail("smith@example.org");
@@ -171,7 +171,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("sam");
         person.setLastName("smith");
@@ -181,7 +181,7 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
         final Person activePerson = new Person();
-        activePerson.setId(2);
+        activePerson.setId(2L);
         activePerson.setFirstName("sandra");
         activePerson.setLastName("smith");
         activePerson.setEmail("sandra@example.org");
@@ -205,7 +205,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("sam");
         person.setLastName("smith");
@@ -213,14 +213,14 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final Person activePerson = new Person();
-        activePerson.setId(2);
+        activePerson.setId(2L);
         activePerson.setPermissions(List.of(USER));
         activePerson.setFirstName("sandra");
         activePerson.setLastName("smith");
         activePerson.setEmail("sandra@example.org");
 
         final Person inactivePerson = new Person();
-        inactivePerson.setId(2);
+        inactivePerson.setId(2L);
         inactivePerson.setPermissions(List.of(INACTIVE));
         inactivePerson.setFirstName("sandra");
         inactivePerson.setLastName("smith");
@@ -249,7 +249,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("sam");
         person.setLastName("smith");
@@ -257,14 +257,14 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final Person activePerson = new Person();
-        activePerson.setId(2);
+        activePerson.setId(2L);
         activePerson.setPermissions(List.of(USER));
         activePerson.setFirstName("sandra");
         activePerson.setLastName("smith");
         activePerson.setEmail("sandra@example.org");
 
         final Person inactivePerson = new Person();
-        inactivePerson.setId(2);
+        inactivePerson.setId(2L);
         inactivePerson.setPermissions(List.of(INACTIVE));
         inactivePerson.setFirstName("sandra");
         inactivePerson.setLastName("smith");
@@ -585,7 +585,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
@@ -624,7 +624,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
@@ -667,7 +667,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
-        person.setId(13);
+        person.setId(13L);
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
@@ -714,11 +714,11 @@ class AbsenceOverviewViewControllerTest {
         heroDepartment.setMembers(List.of(person));
 
         final var joker = person("joker");
-        joker.setId(1);
+        joker.setId(1L);
         final var lex = person("lex");
-        lex.setId(2);
+        lex.setId(2L);
         final var harley = person("harley");
-        harley.setId(3);
+        harley.setId(3L);
         final var villainsDepartment = department("villains");
         villainsDepartment.setMembers(List.of(joker, lex, harley));
 
@@ -744,7 +744,7 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final var person = new Person();
-        person.setId(5);
+        person.setId(5L);
         person.setFirstName("bruce");
         person.setLastName("wayne");
         person.setEmail("batman@example.org");
@@ -754,11 +754,11 @@ class AbsenceOverviewViewControllerTest {
         heroDepartment.setMembers(List.of(person));
 
         final var joker = person("joker");
-        joker.setId(1);
+        joker.setId(1L);
         final var lex = person("lex");
-        lex.setId(2);
+        lex.setId(2L);
         final var harley = person("harley");
-        harley.setId(3);
+        harley.setId(3L);
         final var villainsDepartment = department("villains");
         villainsDepartment.setMembers(List.of(joker, lex, harley, person));
 
@@ -791,7 +791,7 @@ class AbsenceOverviewViewControllerTest {
         when(messageSource.getMessage(anyString(), any(), any())).thenReturn("awesome month text");
 
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
@@ -827,20 +827,20 @@ class AbsenceOverviewViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
         when(personService.getSignedInUser()).thenReturn(person);
 
         final var personTwo = new Person();
-        personTwo.setId(2);
+        personTwo.setId(2L);
         personTwo.setFirstName("aa");
         personTwo.setLastName("aa lastname");
         personTwo.setEmail("person2@example.org");
 
         final var personThree = new Person();
-        personThree.setId(3);
+        personThree.setId(3L);
         personThree.setFirstName("AA");
         personThree.setLastName("AA lastname");
         personThree.setEmail("person3@example.org");
@@ -881,7 +881,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -893,11 +893,11 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -951,7 +951,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -963,11 +963,11 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1021,7 +1021,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -1033,12 +1033,12 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, absenceStatus, 1, false);
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1102,7 +1102,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -1114,11 +1114,11 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1172,7 +1172,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -1184,11 +1184,11 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1242,7 +1242,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -1254,12 +1254,12 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, absenceStatus, 1, false);
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1314,7 +1314,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -1325,16 +1325,16 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, "other", false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, "other", false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1383,7 +1383,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -1394,9 +1394,9 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1448,7 +1448,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -1459,16 +1459,16 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1520,7 +1520,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -1531,9 +1531,9 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1585,7 +1585,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -1596,17 +1596,17 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1, absenceStatus, 1, false);
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1655,7 +1655,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -1666,10 +1666,10 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, absenceStatus, 1, false);
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1722,7 +1722,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -1733,16 +1733,16 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, "other", false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, "other", false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1794,7 +1794,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -1805,9 +1805,9 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1859,7 +1859,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -1870,16 +1870,16 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1931,7 +1931,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -1942,9 +1942,9 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -1996,7 +1996,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -2007,17 +2007,17 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1, absenceStatus, 1, false);
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, absenceStatus, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2069,7 +2069,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -2080,10 +2080,10 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, absenceStatus, 1, false);
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, absenceStatus, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, absenceStatus, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, absenceStatus, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2138,7 +2138,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -2150,11 +2150,11 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2205,7 +2205,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -2217,11 +2217,11 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2272,7 +2272,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -2284,12 +2284,12 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2341,7 +2341,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -2352,16 +2352,16 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2409,7 +2409,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -2420,9 +2420,9 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2470,7 +2470,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -2481,16 +2481,16 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2537,7 +2537,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -2548,9 +2548,9 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2597,7 +2597,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -2608,17 +2608,17 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2665,7 +2665,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -2676,10 +2676,10 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1L, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
 
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
-        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2730,7 +2730,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -2741,7 +2741,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1);
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2791,7 +2791,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -2802,7 +2802,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2853,7 +2853,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -2864,8 +2864,8 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1);
-        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1);
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2916,7 +2916,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -2927,14 +2927,14 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(other, 1);
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(other, 1L);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -2981,7 +2981,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -2992,7 +2992,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1);
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -3039,7 +3039,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -3050,14 +3050,14 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(other, 1);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(other, 1L);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -3105,7 +3105,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -3116,7 +3116,7 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -3164,7 +3164,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -3175,15 +3175,15 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(other, 1);
-        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(other, 1);
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(other, 1L);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(other, 1L);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -3230,7 +3230,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -3241,8 +3241,8 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1);
-        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1);
+        final AbsencePeriod.RecordMorningSick morning = new AbsencePeriod.RecordMorningSick(person, 1L);
+        final AbsencePeriod.RecordNoonSick noon = new AbsencePeriod.RecordNoonSick(person, 1L);
         final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
 
@@ -3293,7 +3293,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -3306,14 +3306,14 @@ class AbsenceOverviewViewControllerTest {
 
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, vacationMorning, null);
 
-        final AbsencePeriod.RecordNoonSick sickNoteNoon = new AbsencePeriod.RecordNoonSick(person, 1);
+        final AbsencePeriod.RecordNoonSick sickNoteNoon = new AbsencePeriod.RecordNoonSick(person, 1L);
         final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, sickNoteNoon);
 
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
@@ -3365,7 +3365,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -3377,14 +3377,14 @@ class AbsenceOverviewViewControllerTest {
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(ORANGE);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, vacationNoon);
 
-        final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(person, 1);
+        final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(person, 1L);
         final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, sickNoteMorning, null);
 
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
@@ -3437,7 +3437,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -3448,17 +3448,17 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(other, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, vacationMorning, null);
 
-        final AbsencePeriod.RecordNoonSick sickNoteNoon = new AbsencePeriod.RecordNoonSick(other, 1);
+        final AbsencePeriod.RecordNoonSick sickNoteNoon = new AbsencePeriod.RecordNoonSick(other, 1L);
         final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, null, sickNoteNoon);
 
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
@@ -3508,7 +3508,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -3516,7 +3516,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(CYAN);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
@@ -3524,10 +3524,10 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, vacationMorning, null);
 
-        final AbsencePeriod.RecordNoonSick sickNoteNoon = new AbsencePeriod.RecordNoonSick(person, 1);
+        final AbsencePeriod.RecordNoonSick sickNoteNoon = new AbsencePeriod.RecordNoonSick(person, 1L);
         final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, sickNoteNoon);
 
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
@@ -3577,7 +3577,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -3588,17 +3588,17 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
         when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
 
-        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(other, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, null, vacationNoon);
 
-        final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(other, 1);
+        final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(other, 1L);
         final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, sickNoteMorning, null);
 
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
@@ -3648,7 +3648,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -3656,7 +3656,7 @@ class AbsenceOverviewViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setColor(CYAN);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
@@ -3664,10 +3664,10 @@ class AbsenceOverviewViewControllerTest {
         department.setMembers(List.of(person));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, vacationNoon);
 
-        final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(person, 1);
+        final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(person, 1L);
         final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, sickNoteMorning, null);
 
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
@@ -3717,7 +3717,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -3730,14 +3730,14 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(
             List.of(
-                new VacationType(1, true, null, "", false, CYAN, true)
+                new VacationType(1L, true, null, "", false, CYAN, true)
             )
         );
 
-        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, true);
+        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, true);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, vacationMorning, null);
 
-        final AbsencePeriod.RecordNoonSick sickNoteNoon = new AbsencePeriod.RecordNoonSick(person, 1);
+        final AbsencePeriod.RecordNoonSick sickNoteNoon = new AbsencePeriod.RecordNoonSick(person, 1L);
         final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, sickNoteNoon);
 
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
@@ -3787,7 +3787,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -3798,7 +3798,7 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
@@ -3807,14 +3807,14 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(
             List.of(
-                new VacationType(1, true, null, "", false, CYAN, true)
+                new VacationType(1L, true, null, "", false, CYAN, true)
             )
         );
 
-        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(other, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, true);
+        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, true);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, null, vacationNoon);
 
-        final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(other, 1);
+        final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(other, 1L);
         final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), other, sickNoteMorning, null);
 
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
@@ -3864,7 +3864,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -3877,14 +3877,14 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(
             List.of(
-                new VacationType(1, true, null, "", false, CYAN, true)
+                new VacationType(1L, true, null, "", false, CYAN, true)
             )
         );
 
-        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, true);
+        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, true);
         final AbsencePeriod.Record vacationRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, null, vacationNoon);
 
-        final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(person, 1);
+        final AbsencePeriod.RecordMorningSick sickNoteMorning = new AbsencePeriod.RecordMorningSick(person, 1L);
         final AbsencePeriod.Record sickNoteRecord = new AbsencePeriod.Record(LocalDate.now(clock), person, sickNoteMorning, null);
 
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(vacationRecord, sickNoteRecord));
@@ -3935,7 +3935,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, role));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -3948,14 +3948,14 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes())
             .thenReturn(List.of(
-                new VacationType(1, true, null, "", false, ORANGE, false),
-                new VacationType(2, true, null, "", false, CYAN, false)
+                new VacationType(1L, true, null, "", false, ORANGE, false),
+                new VacationType(2L, true, null, "", false, CYAN, false)
             ));
 
-        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record recordOrange = new AbsencePeriod.Record(LocalDate.now(clock), person, vacationMorning, null);
 
-        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(person, 2, AbsencePeriod.AbsenceStatus.ALLOWED, 2, false);
+        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(person, 2L, AbsencePeriod.AbsenceStatus.ALLOWED, 2L, false);
         final AbsencePeriod.Record recordCyan = new AbsencePeriod.Record(LocalDate.now(clock), person, null, vacationNoon);
 
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(recordOrange, recordCyan));
@@ -4006,7 +4006,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         signedInUser.setFirstName("Bruce");
         signedInUser.setLastName("Springfield");
@@ -4017,7 +4017,7 @@ class AbsenceOverviewViewControllerTest {
         other.setFirstName("Dorie");
         other.setLastName("Fisch");
         other.setEmail("dorie@example.org");
-        other.setId(2);
+        other.setId(2L);
 
         final var department = department();
         department.setMembers(List.of(signedInUser, other));
@@ -4026,14 +4026,14 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes())
             .thenReturn(List.of(
-                new VacationType(1, true, null, "", false, ORANGE, false),
-                new VacationType(2, true, null, "", false, CYAN, false)
+                new VacationType(1L, true, null, "", false, ORANGE, false),
+                new VacationType(2L, true, null, "", false, CYAN, false)
             ));
 
-        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(other, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(other, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record recordOrange = new AbsencePeriod.Record(LocalDate.now(clock), other, vacationMorning, null);
 
-        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(other, 2, AbsencePeriod.AbsenceStatus.ALLOWED, 2, false);
+        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(other, 2L, AbsencePeriod.AbsenceStatus.ALLOWED, 2L, false);
         final AbsencePeriod.Record recordCyan = new AbsencePeriod.Record(LocalDate.now(clock), other, null, vacationNoon);
 
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(recordOrange, recordCyan));
@@ -4082,7 +4082,7 @@ class AbsenceOverviewViewControllerTest {
         settings.setWorkingTimeSettings(workingTimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         person.setFirstName("Bruce");
         person.setLastName("Springfield");
@@ -4095,14 +4095,14 @@ class AbsenceOverviewViewControllerTest {
 
         when(vacationTypeService.getAllVacationTypes())
             .thenReturn(List.of(
-                new VacationType(1, true, null, "", false, ORANGE, false),
-                new VacationType(2, true, null, "", false, CYAN, false)
+                new VacationType(1L, true, null, "", false, ORANGE, false),
+                new VacationType(2L, true, null, "", false, CYAN, false)
             ));
 
-        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED, 1, false);
+        final AbsencePeriod.RecordMorningVacation vacationMorning = new AbsencePeriod.RecordMorningVacation(person, 1L, AbsencePeriod.AbsenceStatus.ALLOWED, 1L, false);
         final AbsencePeriod.Record recordOrange = new AbsencePeriod.Record(LocalDate.now(clock), person, vacationMorning, null);
 
-        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(person, 2, AbsencePeriod.AbsenceStatus.ALLOWED, 2, false);
+        final AbsencePeriod.RecordNoonVacation vacationNoon = new AbsencePeriod.RecordNoonVacation(person, 2L, AbsencePeriod.AbsenceStatus.ALLOWED, 2L, false);
         final AbsencePeriod.Record recordCyan = new AbsencePeriod.Record(LocalDate.now(clock), person, null, vacationNoon);
 
         final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(recordOrange, recordCyan));
@@ -4156,7 +4156,7 @@ class AbsenceOverviewViewControllerTest {
             publicHolidaysService, settingsService, absenceService, workingTimeService, vacationTypeService);
 
         final var person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setFirstName("boss");
         person.setLastName("the hoss");
         person.setEmail("boss@example.org");
@@ -4270,11 +4270,11 @@ class AbsenceOverviewViewControllerTest {
     void ensurePublicHolidaysBasedOnCustomPublicHolidays() throws Exception {
 
         final Person personWithCustomPublicHolidays = person("joker");
-        personWithCustomPublicHolidays.setId(1);
+        personWithCustomPublicHolidays.setId(1L);
         when(personService.getSignedInUser()).thenReturn(personWithCustomPublicHolidays);
 
         final Person personDefaultPublicHolidays = person("lex");
-        personDefaultPublicHolidays.setId(2);
+        personDefaultPublicHolidays.setId(2L);
 
         when(departmentService.getNumberOfDepartments()).thenReturn(0L);
         when(personService.getActivePersons()).thenReturn(List.of(personWithCustomPublicHolidays, personDefaultPublicHolidays));

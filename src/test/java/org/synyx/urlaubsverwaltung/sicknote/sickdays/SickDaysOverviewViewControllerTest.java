@@ -135,24 +135,24 @@ class SickDaysOverviewViewControllerTest {
     void periodsSickNotesWithDateRangeWithRole() throws Exception {
 
         final Person office = new Person();
-        office.setId(1);
+        office.setId(1L);
         office.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(office);
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setFirstName("FirstName one");
         person.setLastName("LastName one");
         person.setPermissions(List.of(USER));
 
         final Person person2 = new Person();
-        person2.setId(2);
+        person2.setId(2L);
         person2.setFirstName("FirstName two");
         person2.setLastName("LastName two");
         person2.setPermissions(List.of(USER));
 
         final Person person3 = new Person();
-        person3.setId(3);
+        person3.setId(3L);
         person3.setFirstName("FirstName three");
         person3.setLastName("LastName three");
         person3.setPermissions(List.of(USER));
@@ -212,7 +212,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("sickDaysStatistics", contains(
                 allOf(
-                    hasProperty("personId", is(1)),
+                    hasProperty("personId", is(1L)),
                     hasProperty("personAvatarUrl", is("")),
                     hasProperty("personnelNumber", is("0000001337")),
                     hasProperty("personFirstName", is("FirstName one")),
@@ -224,7 +224,7 @@ class SickDaysOverviewViewControllerTest {
                     hasProperty("amountChildSickDaysWithAUB", is(ZERO))
                 ),
                 allOf(
-                    hasProperty("personId", is(2)),
+                    hasProperty("personId", is(2L)),
                     hasProperty("personAvatarUrl", is("")),
                     hasProperty("personnelNumber", is("0000000042")),
                     hasProperty("personFirstName", is("FirstName two")),
@@ -236,7 +236,7 @@ class SickDaysOverviewViewControllerTest {
                     hasProperty("amountChildSickDaysWithAUB", is(BigDecimal.valueOf(5)))
                 ),
                 allOf(
-                    hasProperty("personId", is(3)),
+                    hasProperty("personId", is(3L)),
                     hasProperty("personAvatarUrl", is("")),
                     hasProperty("personnelNumber", is("0000000021")),
                     hasProperty("personFirstName", is("FirstName three")),
@@ -260,7 +260,7 @@ class SickDaysOverviewViewControllerTest {
     void periodsSickNotesWithDateWithoutRange() throws Exception {
 
         final Person office = new Person();
-        office.setId(1);
+        office.setId(1L);
         office.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(office);
 
@@ -294,7 +294,7 @@ class SickDaysOverviewViewControllerTest {
     void sickNotesWithoutPersonnelNumberColumn() throws Exception {
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         signedInUser.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 

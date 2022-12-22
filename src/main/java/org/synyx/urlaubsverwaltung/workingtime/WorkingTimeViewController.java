@@ -69,7 +69,7 @@ public class WorkingTimeViewController {
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/workingtime")
-    public String getWorkingTime(@PathVariable("personId") Integer personId, Model model)
+    public String getWorkingTime(@PathVariable("personId") Long personId, Model model)
         throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
@@ -87,7 +87,7 @@ public class WorkingTimeViewController {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/workingtime")
-    public String updateWorkingTime(@PathVariable("personId") Integer personId,
+    public String updateWorkingTime(@PathVariable("personId") Long personId,
                                     @ModelAttribute("workingTime") WorkingTimeForm workingTimeForm, Errors errors,
                                     Model model, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 

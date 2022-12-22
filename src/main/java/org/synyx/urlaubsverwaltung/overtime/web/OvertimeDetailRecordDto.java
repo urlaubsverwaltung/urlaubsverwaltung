@@ -6,14 +6,14 @@ import java.util.Objects;
 
 public class OvertimeDetailRecordDto {
 
-    private final Integer id;
+    private final Long id;
     private final OvertimeDetailPersonDto person;
     private final LocalDate startDate;
     private final LocalDate endDate;
     private final Duration duration;
     private final LocalDate lastModificationDate;
 
-    OvertimeDetailRecordDto(Integer id, OvertimeDetailPersonDto person, LocalDate startDate, LocalDate endDate, Duration duration, LocalDate lastModificationDate) {
+    OvertimeDetailRecordDto(Long id, OvertimeDetailPersonDto person, LocalDate startDate, LocalDate endDate, Duration duration, LocalDate lastModificationDate) {
         this.id = id;
         this.person = person;
         this.startDate = startDate;
@@ -22,7 +22,7 @@ public class OvertimeDetailRecordDto {
         this.lastModificationDate = lastModificationDate;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

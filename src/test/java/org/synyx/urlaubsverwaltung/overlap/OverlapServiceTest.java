@@ -295,7 +295,7 @@ class OverlapServiceTest {
         final LocalDate sameDay = LocalDate.of(2015, MARCH, 16);
 
         final SickNote existentSickNote = SickNote.builder()
-                .id(23)
+                .id(23L)
                 .dayLength(FULL)
                 .startDate(sameDay)
                 .endDate(sameDay)
@@ -309,7 +309,7 @@ class OverlapServiceTest {
         final LocalDate endDate = LocalDate.of(2015, MARCH, 17);
 
         final SickNote sickNote = SickNote.builder()
-                .id(23)
+                .id(23L)
                 .person(person)
                 .dayLength(FULL)
                 .startDate(startDate)
@@ -434,7 +434,7 @@ class OverlapServiceTest {
         morningVacation.setStatus(ALLOWED);
 
         final Person person = new Person("username", "last name", "first name", "email@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(person)))
             .thenReturn(singletonList(morningVacation));
@@ -463,7 +463,7 @@ class OverlapServiceTest {
         morningVacation.setStatus(ApplicationStatus.TEMPORARY_ALLOWED);
 
         final Person person = new Person("username", "last name", "first name", "email@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(person)))
             .thenReturn(singletonList(morningVacation));
@@ -492,7 +492,7 @@ class OverlapServiceTest {
         morningCancellationRequest.setStatus(ALLOWED_CANCELLATION_REQUESTED);
 
         final Person person = new Person("username", "last name", "first name", "email@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(applicationService.getApplicationsForACertainPeriodAndPerson(any(LocalDate.class), any(LocalDate.class), eq(person)))
             .thenReturn(singletonList(morningCancellationRequest));

@@ -7,7 +7,7 @@ import org.synyx.urlaubsverwaltung.web.AbstractNoResultFoundException;
  */
 public class UnknownSickNoteException extends AbstractNoResultFoundException {
 
-    UnknownSickNoteException(Integer id) {
+    UnknownSickNoteException(Long id) {
         super(id, "sick note");
     }
 }

@@ -24,13 +24,13 @@ class SettingsTest {
     @Test
     void equals() {
         final Settings settingsOne = new Settings();
-        settingsOne.setId(1);
+        settingsOne.setId(1L);
 
         final Settings settingsOneOne = new Settings();
-        settingsOneOne.setId(1);
+        settingsOneOne.setId(1L);
 
         final Settings settingsTwo = new Settings();
-        settingsTwo.setId(2);
+        settingsTwo.setId(2L);
 
         assertThat(settingsOne)
             .isEqualTo(settingsOne)
@@ -43,7 +43,7 @@ class SettingsTest {
     @Test
     void hashCodeTest() {
         final Settings settingsOne = new Settings();
-        settingsOne.setId(1);
+        settingsOne.setId(1L);
 
         assertThat(settingsOne.hashCode()).isEqualTo(32);
     }

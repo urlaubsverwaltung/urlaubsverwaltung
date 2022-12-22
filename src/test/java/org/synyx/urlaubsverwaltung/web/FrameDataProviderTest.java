@@ -52,7 +52,7 @@ class FrameDataProviderTest {
         mockOvertime(true, false);
 
         final Person person = new Person();
-        person.setId(10);
+        person.setId(10L);
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");
         person.setEmail("person@example.org");
@@ -64,7 +64,7 @@ class FrameDataProviderTest {
         sut.postHandle(null, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap()).containsEntry("menuGravatarUrl", "https://gravatar.com/avatar/f651d5c5f6f68c5b13f2846da4ea544b");
-        assertThat(modelAndView.getModelMap()).containsEntry("userId", 10);
+        assertThat(modelAndView.getModelMap()).containsEntry("userId", 10L);
         assertThat(modelAndView.getModelMap()).containsEntry("userFirstName", "Marie");
         assertThat(modelAndView.getModelMap()).containsEntry("userLastName", "Reichenbach");
     }
@@ -74,7 +74,7 @@ class FrameDataProviderTest {
         mockOvertime(true, false);
 
         final Person person = new Person();
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");
@@ -97,7 +97,7 @@ class FrameDataProviderTest {
         mockOvertime(true, false);
 
         final Person person = new Person();
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW, SICK_NOTE_ADD));
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");
@@ -120,7 +120,7 @@ class FrameDataProviderTest {
         mockOvertime(true, false);
 
         final Person person = new Person();
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER, OFFICE));
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");
@@ -143,7 +143,7 @@ class FrameDataProviderTest {
         mockOvertime(true, false);
 
         final Person person = new Person();
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");
@@ -166,7 +166,7 @@ class FrameDataProviderTest {
         mockOvertime(true, false);
 
         final Person person = new Person();
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW, SICK_NOTE_ADD));
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");
@@ -189,7 +189,7 @@ class FrameDataProviderTest {
         mockOvertime(true, false);
 
         final Person person = new Person();
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW));
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");
@@ -212,7 +212,7 @@ class FrameDataProviderTest {
         mockOvertime(true, false);
 
         final Person person = new Person();
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW, SICK_NOTE_ADD));
         person.setFirstName("Marie");
         person.setLastName("Reichenbach");

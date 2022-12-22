@@ -19,8 +19,8 @@ class PersonLeftDepartmentListener {
     @Async
     @EventListener
     public void handlePersonDisabledEvent(PersonLeftDepartmentEvent event) {
-        final int personId = event.getPersonId();
-        final int departmentId = event.getDepartmentId();
+        final long personId = event.getPersonId();
+        final long departmentId = event.getDepartmentId();
 
         departmentCalendarService.deleteCalendarForDepartmentAndPerson(departmentId, personId);
     }

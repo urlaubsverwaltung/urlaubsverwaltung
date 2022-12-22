@@ -17,7 +17,7 @@ import static javax.persistence.EnumType.STRING;
 public class VacationTypeEntity {
 
     @Id
-    private Integer id;
+    private Long id;
 
     private boolean active;
 
@@ -42,11 +42,11 @@ public class VacationTypeEntity {
         this.active = enabled;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

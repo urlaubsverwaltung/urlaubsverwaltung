@@ -303,7 +303,7 @@ class PersonPermissionsDtoValidatorTest {
     void ensureAtLeastOneOtherPersonWithTheRoleOffice() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setId(1);
+        personPermissionsDto.setId(1L);
         personPermissionsDto.setPermissions(List.of(USER));
 
         when(personService.numberOfPersonsWithOfficeRoleExcludingPerson(1)).thenReturn(1);
@@ -316,7 +316,7 @@ class PersonPermissionsDtoValidatorTest {
     void ensureErrorIfNoPersonWithTheRoleOffice() {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setId(1);
+        personPermissionsDto.setId(1L);
         personPermissionsDto.setPermissions(List.of(USER));
 
         when(personService.numberOfPersonsWithOfficeRoleExcludingPerson(1)).thenReturn(0);

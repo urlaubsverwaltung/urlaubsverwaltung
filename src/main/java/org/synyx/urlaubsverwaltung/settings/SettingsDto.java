@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class SettingsDto {
 
-    private Integer id;
+    private Long id;
     private AbsenceTypeSettingsDto absenceTypeSettings;
     @Valid
     private SpecialLeaveSettingsDto specialLeaveSettings;
@@ -26,11 +26,11 @@ public class SettingsDto {
     private SickNoteSettings sickNoteSettings;
     private CalendarSettings calendarSettings;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

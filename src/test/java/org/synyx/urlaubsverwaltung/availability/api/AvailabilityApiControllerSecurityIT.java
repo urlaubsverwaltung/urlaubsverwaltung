@@ -121,7 +121,7 @@ class AvailabilityApiControllerSecurityIT extends TestContainersBase {
     void getAvailabilitiesHasOfficeRole() throws Exception {
 
         final Person testPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(5)).thenReturn(Optional.of(testPerson));
+        when(personService.getPersonByID(5L)).thenReturn(Optional.of(testPerson));
         when(availabilityService.getPersonsAvailabilities(any(), any(), any())).thenReturn(new AvailabilityListDto(emptyList(), testPerson.getId()));
 
         final LocalDateTime now = LocalDateTime.now();

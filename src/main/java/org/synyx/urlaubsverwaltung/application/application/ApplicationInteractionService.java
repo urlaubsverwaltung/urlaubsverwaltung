@@ -119,7 +119,7 @@ public interface ApplicationInteractionService {
      * @param applicationId to get the application
      * @return saved application for leave with id
      */
-    Optional<Application> get(Integer applicationId);
+    Optional<Application> get(Long applicationId);
 
     /**
      * Edit the application for leave if the status is waiting

@@ -146,7 +146,7 @@ public class AbsenceOverviewViewController {
         model.addAttribute("sickNoteLegendVisible", isSignedInUserAllowedToSeeAbsencesOfOthers || overviewPersons.contains(signedInUser));
 
         final List<VacationType> vacationTypes = vacationTypeService.getAllVacationTypes();
-        final Map<Integer, VacationType> vacationTypesById = vacationTypes.stream().collect(toMap(VacationType::getId, Function.identity()));
+        final Map<Long, VacationType> vacationTypesById = vacationTypes.stream().collect(toMap(VacationType::getId, Function.identity()));
 
         final boolean isSignedInUserInOverview = overviewPersons.contains(signedInUser);
         // use active vacation types instead of all to avoid too many items in the legend.
@@ -284,7 +284,7 @@ public class AbsenceOverviewViewController {
 
     private static AbsenceOverviewMonthPersonDto initializeAbsenceOverviewMonthPersonDto(Person person) {
 
-        final Integer id = person.getId();
+        final Long id = person.getId();
         final String firstName = person.getFirstName();
         final String lastName = person.getLastName();
         final String gravatarUrl = person.getGravatarURL();
@@ -441,7 +441,7 @@ public class AbsenceOverviewViewController {
         return builder;
     }
 
-    private VacationTypeColor recordInfoToColor(AbsencePeriod.RecordInfo recordInfo, Function<Integer, VacationType> vacationTypById) {
+    private VacationTypeColor recordInfoToColor(AbsencePeriod.RecordInfo recordInfo, Function<Long, VacationType> vacationTypById) {
         return recordInfo.getVacationTypeId()
             .map(vacationTypById)
             .map(VacationType::getColor)

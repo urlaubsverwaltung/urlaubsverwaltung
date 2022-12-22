@@ -65,10 +65,10 @@ class SickDaysStatisticsServiceTest {
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
         departmentHead.setFirstName("Department");
         departmentHead.setLastName("Head");
-        departmentHead.setId(42);
+        departmentHead.setId(42L);
 
         final Person member = new Person();
-        member.setId(2);
+        member.setId(2L);
         member.setFirstName("John");
         member.setLastName("Doe");
 
@@ -120,7 +120,7 @@ class SickDaysStatisticsServiceTest {
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
         departmentHead.setFirstName("Department");
         departmentHead.setLastName("Head");
-        departmentHead.setId(42);
+        departmentHead.setId(42L);
 
         when(departmentService.getManagedMembersOfPerson(departmentHead, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
             .thenReturn(new PageImpl<>(List.of(departmentHead)));
@@ -141,13 +141,13 @@ class SickDaysStatisticsServiceTest {
         final LocalDate endDate = LocalDate.parse("2022-12-31");
 
         final Person secondStageAuthority = new Person();
-        secondStageAuthority.setId(42);
+        secondStageAuthority.setId(42L);
         secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_VIEW));
         secondStageAuthority.setFirstName("Second");
         secondStageAuthority.setLastName("Stage");
 
         final Person member = new Person();
-        member.setId(2);
+        member.setId(2L);
         member.setFirstName("John");
         member.setLastName("Doe");
 
@@ -200,7 +200,7 @@ class SickDaysStatisticsServiceTest {
         secondStageAuthority.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
         secondStageAuthority.setFirstName("Second");
         secondStageAuthority.setLastName("Stage");
-        secondStageAuthority.setId(42);
+        secondStageAuthority.setId(42L);
 
         when(departmentService.getManagedMembersOfPerson(secondStageAuthority, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
             .thenReturn(new PageImpl<>(List.of(secondStageAuthority)));
@@ -221,7 +221,7 @@ class SickDaysStatisticsServiceTest {
         final LocalDate endDate = LocalDate.parse("2022-12-31");
 
         final Person office = new Person();
-        office.setId(42);
+        office.setId(42L);
         office.setPermissions(List.of(USER, OFFICE));
         office.setFirstName("Office");
         office.setLastName("Person");
@@ -270,7 +270,7 @@ class SickDaysStatisticsServiceTest {
         office.setPermissions(List.of(USER, OFFICE, departmentRole, SICK_NOTE_VIEW));
         office.setFirstName("Office");
         office.setLastName("Person");
-        office.setId(42);
+        office.setId(42L);
 
         final String personnelNumber = "Passagier1337";
         final PersonBasedata personBasedata = new PersonBasedata(new PersonId(office.getId()), personnelNumber, "additionalInfo");
@@ -313,7 +313,7 @@ class SickDaysStatisticsServiceTest {
         final LocalDate endDate = LocalDate.parse("2022-12-31");
 
         final Person boss = new Person();
-        boss.setId(42);
+        boss.setId(42L);
         boss.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
         boss.setFirstName("Boss");
         boss.setLastName("Person");
@@ -363,7 +363,7 @@ class SickDaysStatisticsServiceTest {
         boss.setPermissions(List.of(USER, BOSS, departmentRole, SICK_NOTE_VIEW));
         boss.setFirstName("Boss");
         boss.setLastName("Person");
-        boss.setId(42);
+        boss.setId(42L);
 
         final PersonBasedata personBasedata = new PersonBasedata(new PersonId(boss.getId()), "Passagier1337", "additionalInfo");
 
@@ -409,7 +409,7 @@ class SickDaysStatisticsServiceTest {
         boss.setPermissions(List.of(USER, BOSS));
         boss.setFirstName("Boss");
         boss.setLastName("Person");
-        boss.setId(42);
+        boss.setId(42L);
 
         when(departmentService.getManagedMembersOfPerson(boss, new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("firstName")), "")))
             .thenReturn(new PageImpl<>(List.of(boss)));
@@ -430,13 +430,13 @@ class SickDaysStatisticsServiceTest {
         final LocalDate endDate = LocalDate.parse("2022-12-31");
 
         final Person departmentHead = new Person();
-        departmentHead.setId(42);
+        departmentHead.setId(42L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
         departmentHead.setFirstName("Department");
         departmentHead.setLastName("Head");
 
         final Person member = new Person();
-        member.setId(2);
+        member.setId(2L);
         member.setFirstName("John");
         member.setLastName("Doe");
 
@@ -452,9 +452,9 @@ class SickDaysStatisticsServiceTest {
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
 
         final PersonBasedata departmentHeadBasedata = new PersonBasedata(new PersonId(departmentHead.getId()), "Passagier1337", "additionalInfo");
-        final PersonBasedata memberBasedata = new PersonBasedata(new PersonId(2), "000042", "additionalInfo member");
-        final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(departmentHead.getId()), departmentHeadBasedata, new PersonId(2), memberBasedata);
-        when(personBasedataService.getBasedataByPersonId(List.of(42, 2))).thenReturn(personIdBasedatamap);
+        final PersonBasedata memberBasedata = new PersonBasedata(new PersonId(2L), "000042", "additionalInfo member");
+        final Map<PersonId, PersonBasedata> personIdBasedatamap = Map.of(new PersonId(departmentHead.getId()), departmentHeadBasedata, new PersonId(2L), memberBasedata);
+        when(personBasedataService.getBasedataByPersonId(List.of(42L, 2L))).thenReturn(personIdBasedatamap);
 
         when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead, member))).thenReturn(Map.of());
 
@@ -486,13 +486,13 @@ class SickDaysStatisticsServiceTest {
         final LocalDate endDate = LocalDate.parse("2022-12-31");
 
         final Person departmentHead = new Person();
-        departmentHead.setId(42);
+        departmentHead.setId(42L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
         departmentHead.setFirstName("Department");
         departmentHead.setLastName("Head");
 
         final Person member = new Person();
-        member.setId(2);
+        member.setId(2L);
         member.setFirstName("John");
         member.setLastName("Doe");
 
@@ -508,10 +508,10 @@ class SickDaysStatisticsServiceTest {
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), List.of(departmentHead, member), startDate, endDate)).thenReturn(List.of(sickNote));
 
         final Map<PersonId, PersonBasedata> personIdBaseDataMap = Map.of();
-        when(personBasedataService.getBasedataByPersonId(List.of(42, 2))).thenReturn(personIdBaseDataMap);
+        when(personBasedataService.getBasedataByPersonId(List.of(42L, 2L))).thenReturn(personIdBaseDataMap);
 
         when(departmentService.getDepartmentNamesByMembers(List.of(departmentHead, member)))
-            .thenReturn(Map.of(new PersonId(42), List.of("Kitchen", "Service"), new PersonId(2), List.of("Service")));
+            .thenReturn(Map.of(new PersonId(42L), List.of("Kitchen", "Service"), new PersonId(2L), List.of("Service")));
 
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 10, Sort.by("person.firstName")), "");
         final Page<SickDaysDetailedStatistics> allSicknotesPage = sut.getAll(departmentHead, startDate, endDate, pageableSearchQuery);

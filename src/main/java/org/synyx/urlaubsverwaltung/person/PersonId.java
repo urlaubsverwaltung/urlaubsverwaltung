@@ -4,13 +4,13 @@ import java.util.Objects;
 
 public class PersonId {
 
-    private final Integer value;
+    private final Long value;
 
-    public PersonId(Integer value) {
+    public PersonId(Long value) {
         this.value = value;
     }
 
-    public Integer getValue() {
+    public Long getValue() {
         return value;
     }
 

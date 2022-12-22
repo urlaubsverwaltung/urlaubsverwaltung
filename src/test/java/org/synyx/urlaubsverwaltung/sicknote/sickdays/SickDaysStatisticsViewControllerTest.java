@@ -70,7 +70,7 @@ class SickDaysStatisticsViewControllerTest {
     void downloadCSVSetsDownloadHeaders() throws Exception {
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final String dateString = "2022-05-10";
@@ -104,7 +104,7 @@ class SickDaysStatisticsViewControllerTest {
     void downloadCSVWritesCSV() throws Exception {
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");

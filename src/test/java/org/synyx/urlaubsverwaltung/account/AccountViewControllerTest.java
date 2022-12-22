@@ -53,8 +53,8 @@ class AccountViewControllerTest {
 
     private AccountViewController sut;
 
-    private static final int UNKNOWN_PERSON_ID = 715;
-    private static final int SOME_PERSON_ID = 5;
+    private static final long UNKNOWN_PERSON_ID = 715;
+    private static final long SOME_PERSON_ID = 5;
 
     @Mock
     private PersonService personService;
@@ -87,14 +87,14 @@ class AccountViewControllerTest {
         final Person person = somePerson();
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
 
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/account"))
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("account", instanceOf(AccountForm.class)))
             .andExpect(model().attribute("currentYear", notNullValue()))
             .andExpect(model().attribute("selectedYear", notNullValue()))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(view().name("thymeleaf/account/account_form"));
     }
 
@@ -135,7 +135,7 @@ class AccountViewControllerTest {
     void updateAccountShowsFormIfValidationFailsOnFieldError() throws Exception {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -145,7 +145,7 @@ class AccountViewControllerTest {
 
         perform(post("/web/person/" + SOME_PERSON_ID + "/account"))
             .andExpect(model().attributeHasErrors("account"))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(view().name("thymeleaf/account/account_form"));
     }
 
@@ -169,7 +169,7 @@ class AccountViewControllerTest {
     void updateAccountCallsEditForExistingAccountWithoutOverridingExpireVacationDays() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(signedInPerson));
 
@@ -204,7 +204,7 @@ class AccountViewControllerTest {
     void updateAccountCallsEditForExistingAccountOverridingExpireVacationDays() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(signedInPerson));
 
@@ -257,9 +257,9 @@ class AccountViewControllerTest {
     void updateAccountAddsFlashAttributeAndRedirectsToPerson() throws Exception {
 
         final Person accountPerson = new Person();
-        accountPerson.setId(2);
+        accountPerson.setId(2L);
 
-        when(personService.getPersonByID(2)).thenReturn(Optional.of(accountPerson));
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(accountPerson));
         when(accountService.getHolidaysAccount(Year.now(clock).getValue(), accountPerson)).thenReturn(Optional.of(someAccount()));
 
         AccountForm mockedAccountForm = mock(AccountForm.class);
@@ -276,7 +276,7 @@ class AccountViewControllerTest {
     @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
     void ensureUpdateAccountSucceedsWithValidFromDateFormat(String givenDate) throws Exception {
 
-        when(personService.getPersonByID(5)).thenReturn(Optional.of(somePerson()));
+        when(personService.getPersonByID(5L)).thenReturn(Optional.of(somePerson()));
 
         perform(post("/web/person/5/account")
             .param("holidaysAccountValidFrom", givenDate))

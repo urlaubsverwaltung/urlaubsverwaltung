@@ -109,11 +109,11 @@ class OvertimeTest {
     @Test
     void toStringTest() {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_USER));
         final Overtime overtime = new Overtime(person, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
-        overtime.setId(1);
+        overtime.setId(1L);
 
         final String overtimeToString = overtime.toString();
         assertThat(overtimeToString).isEqualTo("Overtime{id=1, startDate=-999999999-01-01, endDate=+999999999-12-31, duration=PT10H, person=Person{id='10'}}");
@@ -122,13 +122,13 @@ class OvertimeTest {
     @Test
     void equals() {
         final Overtime overtimeOne = new Overtime();
-        overtimeOne.setId(1);
+        overtimeOne.setId(1L);
 
         final Overtime overtimeOneOne = new Overtime();
-        overtimeOneOne.setId(1);
+        overtimeOneOne.setId(1L);
 
         final Overtime overtimeTwo = new Overtime();
-        overtimeTwo.setId(2);
+        overtimeTwo.setId(2L);
 
         assertThat(overtimeOne)
             .isEqualTo(overtimeOne)
@@ -141,7 +141,7 @@ class OvertimeTest {
     @Test
     void hashCodeTest() {
         final Overtime overtimeOne = new Overtime();
-        overtimeOne.setId(1);
+        overtimeOne.setId(1L);
 
         assertThat(overtimeOne.hashCode()).isEqualTo(32);
     }

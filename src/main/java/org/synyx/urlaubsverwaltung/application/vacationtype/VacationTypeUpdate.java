@@ -2,13 +2,13 @@ package org.synyx.urlaubsverwaltung.application.vacationtype;
 
 public class VacationTypeUpdate {
 
-    private final Integer id;
+    private final Long id;
     private final boolean active;
     private final boolean requiresApproval;
     private final VacationTypeColor color;
     private final boolean visibleToEveryone;
 
-    public VacationTypeUpdate(Integer id, boolean active, boolean requiresApproval, VacationTypeColor color, boolean visibleToEveryone) {
+    public VacationTypeUpdate(Long id, boolean active, boolean requiresApproval, VacationTypeColor color, boolean visibleToEveryone) {
         this.id = id;
         this.active = active;
         this.requiresApproval = requiresApproval;
@@ -16,7 +16,7 @@ public class VacationTypeUpdate {
         this.visibleToEveryone = visibleToEveryone;
     }
 
-    Integer getId() {
+    Long getId() {
         return id;
     }
 

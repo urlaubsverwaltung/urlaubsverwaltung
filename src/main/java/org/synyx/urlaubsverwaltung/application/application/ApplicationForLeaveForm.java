@@ -68,7 +68,7 @@ public class ApplicationForLeaveForm {
 
     private String comment;
 
-    private Integer id;
+    private Long id;
 
     public Person getPerson() {
         return person;
@@ -190,11 +190,11 @@ public class ApplicationForLeaveForm {
         this.teamInformed = teamInformed;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -263,7 +263,7 @@ public class ApplicationForLeaveForm {
         private String address;
         private boolean teamInformed;
         private String comment;
-        private Integer id;
+        private Long id;
 
         public ApplicationForLeaveForm.Builder person(Person person) {
             this.person = person;
@@ -331,7 +331,7 @@ public class ApplicationForLeaveForm {
             return this;
         }
 
-        public ApplicationForLeaveForm.Builder id(Integer id) {
+        public ApplicationForLeaveForm.Builder id(Long id) {
             this.id = id;
             return this;
         }

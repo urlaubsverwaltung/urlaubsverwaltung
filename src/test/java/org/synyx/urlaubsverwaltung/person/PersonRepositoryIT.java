@@ -65,7 +65,7 @@ class PersonRepositoryIT extends TestContainersBase {
         bettina.setPermissions(List.of(USER, OFFICE));
         final Person savedBettina = personService.create(bettina);
 
-        final Integer id = savedBettina.getId();
+        final Long id = savedBettina.getId();
         final int countOfActivePersons = sut.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(id));
         assertThat(countOfActivePersons).isEqualTo(2);
     }

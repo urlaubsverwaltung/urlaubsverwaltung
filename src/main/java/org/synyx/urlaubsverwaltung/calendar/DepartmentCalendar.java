@@ -28,7 +28,7 @@ class DepartmentCalendar {
     @NotNull
     @Column(name = "department_id")
     @OnDelete(action = CASCADE)
-    private Integer departmentId;
+    private Long departmentId;
 
     @NotNull
     @OneToOne
@@ -44,7 +44,7 @@ class DepartmentCalendar {
         // for hibernate - do not use this
     }
 
-    DepartmentCalendar(Integer departmentId, Person person) {
+    DepartmentCalendar(Long departmentId, Person person) {
         generateSecret();
         this.departmentId = departmentId;
         this.person = person;
@@ -58,11 +58,11 @@ class DepartmentCalendar {
         this.id = id;
     }
 
-    public Integer getDepartmentId() {
+    public Long getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(Integer departmentId) {
+    public void setDepartmentId(Long departmentId) {
         this.departmentId = departmentId;
     }
 

@@ -11,17 +11,17 @@ import static org.synyx.urlaubsverwaltung.calendar.CalendarPeriodViewType.HALF_Y
 public class CompanyCalendarDto {
 
     @NotNull
-    private int personId;
+    private long personId;
     @Size(min = 1)
     private String calendarUrl;
     @NotNull
     private CalendarPeriodViewType calendarPeriod = HALF_YEAR;
 
-    public int getPersonId() {
+    public long getPersonId() {
         return personId;
     }
 
-    public void setPersonId(int personId) {
+    public void setPersonId(long personId) {
         this.personId = personId;
     }
 

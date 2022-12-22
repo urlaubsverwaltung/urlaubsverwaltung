@@ -21,7 +21,7 @@ public class SickNoteCommentEntity extends AbstractComment {
     @NotNull
     @Column(name = "sick_note_id")
     @OnDelete(action = CASCADE)
-    private Integer sickNoteId;
+    private Long sickNoteId;
 
     @Enumerated(STRING)
     private SickNoteCommentAction action;
@@ -34,11 +34,11 @@ public class SickNoteCommentEntity extends AbstractComment {
         super(clock);
     }
 
-    public Integer getSickNoteId() {
+    public Long getSickNoteId() {
         return sickNoteId;
     }
 
-    public void setSickNoteId(Integer sickNoteId) {
+    public void setSickNoteId(Long sickNoteId) {
         this.sickNoteId = sickNoteId;
     }
 

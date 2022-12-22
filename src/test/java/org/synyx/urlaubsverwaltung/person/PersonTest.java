@@ -157,7 +157,7 @@ class PersonTest {
     @Test
     void toStringTest() {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER));
         person.setNotifications(List.of(NOTIFICATION_USER));
 
@@ -170,13 +170,13 @@ class PersonTest {
     @Test
     void equals() {
         final Person personOne = new Person();
-        personOne.setId(1);
+        personOne.setId(1L);
 
         final Person personOneOne = new Person();
-        personOneOne.setId(1);
+        personOneOne.setId(1L);
 
         final Person personTwo = new Person();
-        personTwo.setId(2);
+        personTwo.setId(2L);
 
         assertThat(personOne)
             .isEqualTo(personOne)
@@ -189,7 +189,7 @@ class PersonTest {
     @Test
     void hashCodeTest() {
         final Person personOne = new Person();
-        personOne.setId(1);
+        personOne.setId(1L);
 
         assertThat(personOne.hashCode()).isEqualTo(32);
     }

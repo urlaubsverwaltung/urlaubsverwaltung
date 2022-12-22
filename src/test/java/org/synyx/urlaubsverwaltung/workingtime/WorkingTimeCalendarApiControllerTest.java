@@ -23,6 +23,7 @@ import static java.time.Month.JANUARY;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -52,7 +53,7 @@ class WorkingTimeCalendarApiControllerTest {
     void ensureReturnsWorkDays() throws Exception {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenReturn(BigDecimal.ONE);
 
@@ -65,7 +66,7 @@ class WorkingTimeCalendarApiControllerTest {
             .andExpect(jsonPath("$.workDays").exists())
             .andExpect(jsonPath("$.workDays", is("1")));
 
-        verify(personService).getPersonByID(23);
+        verify(personService).getPersonByID(23L);
         verify(workDaysCountService).getWorkDaysCount(FULL, LocalDate.of(2016, 1, 4), LocalDate.of(2016, 1, 4), person);
     }
 
@@ -73,7 +74,7 @@ class WorkingTimeCalendarApiControllerTest {
     void ensureReturnsNoContentForMissingWorkingDay() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
         when(workDaysCountService.getWorkDaysCount(any(DayLength.class), any(LocalDate.class), any(LocalDate.class), any(Person.class)))
             .thenThrow(WorkDaysCountException.class);
 
@@ -145,7 +146,7 @@ class WorkingTimeCalendarApiControllerTest {
     @Test
     void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
 
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.empty());
 
         perform(get("/api/persons/23/workdays")
             .param("from", "2016-01-01")
@@ -153,7 +154,7 @@ class WorkingTimeCalendarApiControllerTest {
             .param("length", "FULL"))
             .andExpect(status().isBadRequest());
 
-        verify(personService).getPersonByID(23);
+        verify(personService).getPersonByID(23L);
     }
 
     @ParameterizedTest
@@ -162,9 +163,9 @@ class WorkingTimeCalendarApiControllerTest {
     void ensureDayLengthFullFallbackForMissingLengthParameter(String givenLength) throws Exception {
 
         final Person person = new Person();
-        person.setId(23);
+        person.setId(23L);
 
-        when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
         when(workDaysCountService.getWorkDaysCount(FULL, LocalDate.of(2016, JANUARY, 4), LocalDate.of(2016, JANUARY, 4), person))
             .thenReturn(BigDecimal.ONE);
 
