@@ -136,7 +136,7 @@ class PersonApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "OFFICE")
     void getPersonAuthenticatedWithOfficeRoleIsOk() throws Exception {
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
 
         final ResultActions resultActions = perform(get("/api/persons/1"));
         resultActions.andExpect(status().isOk());

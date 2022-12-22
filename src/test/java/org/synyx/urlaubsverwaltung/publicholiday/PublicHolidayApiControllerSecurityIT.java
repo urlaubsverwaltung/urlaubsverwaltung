@@ -156,7 +156,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     void personsPublicHolidaysAsDepartmentHeadUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
@@ -176,7 +176,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     void personsPublicHolidaysAsSSAUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person ssa = new Person();
         ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
@@ -194,7 +194,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "BOSS")
     void personsPublicHolidaysWithBossRoleIsOk() throws Exception {
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
         when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 
         final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
@@ -207,7 +207,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "OFFICE")
     void personsPublicHolidaysWithOfficeRoleIsOk() throws Exception {
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
         when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 
         final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
@@ -222,7 +222,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(workingTimeService.getFederalStateForPerson(any(Person.class), any(LocalDate.class))).thenReturn(GERMANY_BAYERN);
 
         final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
@@ -237,7 +237,7 @@ class PublicHolidayApiControllerSecurityIT extends TestContainersBase {
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final ResultActions resultActions = perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")

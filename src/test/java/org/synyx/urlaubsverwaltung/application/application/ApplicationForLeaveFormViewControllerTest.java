@@ -139,8 +139,8 @@ class ApplicationForLeaveFormViewControllerTest {
         settings.setOvertimeSettings(overtimeSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final SpecialLeaveSettingsItem inactiveSetting = new SpecialLeaveSettingsItem(2, false, "", 2);
-        final SpecialLeaveSettingsItem activeSetting = new SpecialLeaveSettingsItem(1, true, "", 1);
+        final SpecialLeaveSettingsItem inactiveSetting = new SpecialLeaveSettingsItem(2L, false, "", 2);
+        final SpecialLeaveSettingsItem activeSetting = new SpecialLeaveSettingsItem(1L, true, "", 1);
         final List<SpecialLeaveSettingsItem> specialLeaveSettings = List.of(inactiveSetting, activeSetting);
         when(specialLeaveSettingsService.getSpecialLeaveSettings()).thenReturn(specialLeaveSettings);
 
@@ -197,7 +197,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, YELLOW, false);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -227,7 +227,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, YELLOW, false);
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -257,7 +257,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, YELLOW, false);
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -298,9 +298,9 @@ class ApplicationForLeaveFormViewControllerTest {
     void getNewApplicationFormUsesPersonOfGivenPersonId() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
@@ -319,11 +319,11 @@ class ApplicationForLeaveFormViewControllerTest {
     void getNewApplicationFormOfficeUserCanAddForAnotherUser() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person applier = personWithRole(USER, OFFICE);
-        applier.setId(3);
+        applier.setId(3L);
         when(personService.getSignedInUser()).thenReturn(applier);
 
         final LocalDate now = LocalDate.now(clock);
@@ -335,7 +335,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person managedPerson = new Person();
-        managedPerson.setId(2);
+        managedPerson.setId(2L);
         when(personService.getActivePersons()).thenReturn(List.of(person, managedPerson, applier));
 
         perform(get("/web/application/new")
@@ -348,11 +348,11 @@ class ApplicationForLeaveFormViewControllerTest {
     void getNewApplicationFormBossUserCanAddForAnotherUser() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        person.setId(1L);
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person applier = personWithRole(USER, BOSS, APPLICATION_ADD);
-        applier.setId(3);
+        applier.setId(3L);
         when(personService.getSignedInUser()).thenReturn(applier);
 
         final LocalDate now = LocalDate.now(clock);
@@ -364,7 +364,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person managedPerson = new Person();
-        managedPerson.setId(2);
+        managedPerson.setId(2L);
         when(personService.getActivePersons()).thenReturn(List.of(person, managedPerson, applier));
 
         perform(get("/web/application/new")
@@ -377,13 +377,13 @@ class ApplicationForLeaveFormViewControllerTest {
     void getNewApplicationFormUserWithRoleDepartmentHeadCanAddForAnotherUser() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setFirstName("Person One");
         person.setLastName("Lastname One");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person applier = personWithRole(USER, DEPARTMENT_HEAD, APPLICATION_ADD);
-        applier.setId(3);
+        applier.setId(3L);
         applier.setFirstName("Applier");
         applier.setLastName("Name");
         when(personService.getSignedInUser()).thenReturn(applier);
@@ -396,7 +396,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person managedPerson = new Person();
-        managedPerson.setId(2);
+        managedPerson.setId(2L);
         managedPerson.setFirstName("Person Two");
         managedPerson.setLastName("Lastname Two");
         when(departmentService.getManagedMembersOfDepartmentHead(applier)).thenReturn(List.of(person, managedPerson, applier));
@@ -411,13 +411,13 @@ class ApplicationForLeaveFormViewControllerTest {
     void getNewApplicationFormUserWithRoleSecondStageAuthorityCanAddForAnotherUser() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setFirstName("Person One");
         person.setLastName("Lastname One");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person applier = personWithRole(USER, SECOND_STAGE_AUTHORITY, APPLICATION_ADD);
-        applier.setId(3);
+        applier.setId(3L);
         applier.setFirstName("Applier");
         applier.setLastName("Name");
         when(personService.getSignedInUser()).thenReturn(applier);
@@ -431,7 +431,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person managedPerson = new Person();
-        managedPerson.setId(2);
+        managedPerson.setId(2L);
         managedPerson.setFirstName("Person Two");
         managedPerson.setLastName("Lastname Two");
         when(departmentService.getManagedMembersForSecondStageAuthority(applier)).thenReturn(List.of(person, managedPerson, applier));
@@ -446,10 +446,10 @@ class ApplicationForLeaveFormViewControllerTest {
     void getNewApplicationFormForUnknownPersonIdFallsBackToSignedInUser() throws Exception {
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1337);
+        signedInUser.setId(1337L);
 
         when(personService.getSignedInUser()).thenReturn(signedInUser);
-        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+        when(personService.getPersonByID(1L)).thenReturn(Optional.empty());
 
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInUser, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
@@ -457,7 +457,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get("/web/application/new").param("personId", "1"))
-            .andExpect(model().attribute("person", hasProperty("id", is(1337))));
+            .andExpect(model().attribute("person", hasProperty("id", is(1337L))));
     }
 
     @Test
@@ -465,7 +465,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(signedInPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(signedInPerson));
 
         perform(get("/web/application/new")
             .param("personId", "1"))
@@ -476,7 +476,7 @@ class ApplicationForLeaveFormViewControllerTest {
     void getNewApplicationFormAccessibleForOfficeIfGivenPersonNotSignedInPerson() throws Exception {
 
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(personWithId(1)));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(personWithId(1)));
 
         perform(get("/web/application/new")
             .param("personId", "1"))
@@ -487,9 +487,9 @@ class ApplicationForLeaveFormViewControllerTest {
     void getNewApplicationFormWithGivenDateFrom() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         final LocalDate validFrom = LocalDate.now(clock).withMonth(JANUARY.getValue()).withDayOfMonth(1);
@@ -533,7 +533,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(personWithRole(OFFICE));
 
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
@@ -579,11 +579,11 @@ class ApplicationForLeaveFormViewControllerTest {
         final LocalDate expireDate = LocalDate.of(2014, APRIL, 1);
         final Account account = new Account(person, validFrom, validTo, true, expireDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(anyInt(), eq(person))).thenReturn(Optional.of(account));
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(get("/web/application/new"))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
@@ -593,7 +593,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = personWithRole(USER);
-        person.setId(1);
+        person.setId(1L);
         when(personService.getSignedInUser()).thenReturn(person);
 
         perform(post("/web/application")
@@ -751,7 +751,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
         when(personService.getSignedInUser()).thenReturn(new Person());
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -763,7 +763,7 @@ class ApplicationForLeaveFormViewControllerTest {
         perform(post("/web/application"))
             .andExpect(model().attribute("errors", instanceOf(Errors.class)))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
@@ -816,21 +816,21 @@ class ApplicationForLeaveFormViewControllerTest {
     @ValueSource(strings = {"/web/application/new", "/web/application/21"})
     void ensureReplacementAddingForOtherPersonIsNotAllowedWhenMyRoleIsUser(String url) {
         final Person signedInUser = new Person();
-        signedInUser.setId(42);
+        signedInUser.setId(42L);
         signedInUser.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person();
-        person.setId(1337);
-        when(personService.getPersonByID(1337)).thenReturn(Optional.of(person));
+        person.setId(1337L);
+        when(personService.getPersonByID(1337L)).thenReturn(Optional.of(person));
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
 
         assertThatThrownBy(() -> {
             perform(post(url)
                 .param("holidayReplacementToAdd", "1")
                 .param("person", "1337")
-                .param("vacationType.category", "HOLIDAY")
+                .param("vacationType.categorfinal Long applicationId = 1L;y", "HOLIDAY")
                 .param("holidayReplacements[0].person.id", "42")
                 .param("holidayReplacements[1].person.id", "1337")
                 .param("add-holiday-replacement", ""));
@@ -840,15 +840,15 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void ensureAjaxReplacementAddingForOtherPersonIsNotAllowedWhenMyRoleIsUser() {
         final Person signedInUser = new Person();
-        signedInUser.setId(42);
+        signedInUser.setId(42L);
         signedInUser.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person();
-        person.setId(1337);
-        when(personService.getPersonByID(1337)).thenReturn(Optional.of(person));
+        person.setId(1337L);
+        when(personService.getPersonByID(1337L)).thenReturn(Optional.of(person));
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
 
         assertThatThrownBy(() -> perform(post("/web/application/new/replacements")
             .header("X-Requested-With", "ajax")
@@ -864,7 +864,7 @@ class ApplicationForLeaveFormViewControllerTest {
     void ensureAddingAnEmptyReplacementForNewApplicationDoesNotThrow() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
@@ -872,7 +872,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(signedInPerson, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         final ResultActions perform = perform(post("/web/application/new")
             .param("vacationType.category", "HOLIDAY")
@@ -887,12 +887,12 @@ class ApplicationForLeaveFormViewControllerTest {
                 hasProperty("holidayReplacements", allOf(
                     hasSize(2),
                     contains(
-                        hasProperty("person", hasProperty("id", is(42))),
-                        hasProperty("person", hasProperty("id", is(1337)))
+                        hasProperty("person", hasProperty("id", is(42L))),
+                        hasProperty("person", hasProperty("id", is(1337L)))
                     )
                 ))
             )))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
@@ -900,7 +900,7 @@ class ApplicationForLeaveFormViewControllerTest {
     void ensureAjaxAddingAnEmptyReplacementForNewApplicationReturnsEmptyTextResponse() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
@@ -923,18 +923,18 @@ class ApplicationForLeaveFormViewControllerTest {
     void ensureAddingReplacementRemovesItFromSelectables(String url) throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
 
         final Person leetPerson = new Person();
-        leetPerson.setId(1337);
+        leetPerson.setId(1337L);
 
         final Person replacmentPerson = new Person();
-        replacmentPerson.setId(42);
+        replacmentPerson.setId(42L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(personService.getPersonByID(42)).thenReturn(Optional.of(replacmentPerson));
+        when(personService.getPersonByID(42L)).thenReturn(Optional.of(replacmentPerson));
         when(personService.getActivePersons()).thenReturn(List.of(replacmentPerson, signedInPerson, leetPerson));
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
@@ -951,13 +951,13 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("id", nullValue()),
                 hasProperty("holidayReplacements", contains(
-                    hasProperty("person", hasProperty("id", is(42)))
+                    hasProperty("person", hasProperty("id", is(42L)))
                 ))
             )))
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
-                hasProperty("personId", is(1337))
+                hasProperty("personId", is(1337L))
             )))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
@@ -965,12 +965,12 @@ class ApplicationForLeaveFormViewControllerTest {
     void ensureAjaxAddingReplacementForNewApplication() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Person replacementPerson = new Person();
-        replacementPerson.setId(42);
-        when(personService.getPersonByID(42)).thenReturn(Optional.of(replacementPerson));
+        replacementPerson.setId(42L);
+        when(personService.getPersonByID(42L)).thenReturn(Optional.of(replacementPerson));
 
         final ResultActions perform = perform(post("/web/application/new/replacements")
             .header("X-Requested-With", "ajax")
@@ -982,7 +982,7 @@ class ApplicationForLeaveFormViewControllerTest {
         perform
             .andExpect(status().isOk())
             .andExpect(model().attribute("holidayReplacement", allOf(
-                hasProperty("person", hasProperty("id", is(42))),
+                hasProperty("person", hasProperty("id", is(42L))),
                 hasProperty("note", nullValue())
             )))
             .andExpect(model().attribute("index", is(2)))
@@ -994,12 +994,12 @@ class ApplicationForLeaveFormViewControllerTest {
     void ensureAjaxAddingReplacementForExistingApplication() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Person replacementPerson = new Person();
-        replacementPerson.setId(42);
-        when(personService.getPersonByID(42)).thenReturn(Optional.of(replacementPerson));
+        replacementPerson.setId(42L);
+        when(personService.getPersonByID(42L)).thenReturn(Optional.of(replacementPerson));
 
         final ResultActions perform = perform(post("/web/application/7/replacements")
             .header("X-Requested-With", "ajax")
@@ -1012,7 +1012,7 @@ class ApplicationForLeaveFormViewControllerTest {
         perform
             .andExpect(status().isOk())
             .andExpect(model().attribute("holidayReplacement", allOf(
-                hasProperty("person", hasProperty("id", is(42))),
+                hasProperty("person", hasProperty("id", is(42L))),
                 hasProperty("note", nullValue())
             )))
             .andExpect(model().attribute("index", is(2)))
@@ -1024,13 +1024,13 @@ class ApplicationForLeaveFormViewControllerTest {
     @ValueSource(strings = {"/web/application/new", "/web/application/21"})
     void ensureReplacementDeletionForOtherPersonIsNotAllowedWhenMyRoleIsUser(String url) {
         final Person signedInUser = new Person();
-        signedInUser.setId(42);
+        signedInUser.setId(42L);
         signedInUser.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person();
-        person.setId(1337);
-        when(personService.getPersonByID(1337)).thenReturn(Optional.of(person));
+        person.setId(1337L);
+        when(personService.getPersonByID(1337L)).thenReturn(Optional.of(person));
 
         assertThatThrownBy(() -> {
             perform(post(url)
@@ -1044,10 +1044,10 @@ class ApplicationForLeaveFormViewControllerTest {
     void ensureReplacementDeletionForNewApplicationRemovesPersonFromHolidayReplacements() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
@@ -1066,11 +1066,11 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("id", nullValue()),
                 hasProperty("holidayReplacements", contains(
-                    hasProperty("person", hasProperty("id", is(42))),
-                    hasProperty("person", hasProperty("id", is(21)))
+                    hasProperty("person", hasProperty("id", is(42L))),
+                    hasProperty("person", hasProperty("id", is(21L)))
                 ))
             )))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
@@ -1078,16 +1078,16 @@ class ApplicationForLeaveFormViewControllerTest {
     void ensureReplacementDeletionForNewApplicationAddsTheRemovedPersonToSelectableHolidayReplacements() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
 
         final Person bruce = new Person();
-        bruce.setId(42);
+        bruce.setId(42L);
 
         final Person clark = new Person();
-        clark.setId(1337);
+        clark.setId(1337L);
 
         final Person joker = new Person();
-        joker.setId(21);
+        joker.setId(21L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(personService.getActivePersons()).thenReturn(List.of(signedInPerson, bruce, clark, joker));
@@ -1108,7 +1108,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("applicationForLeaveForm", hasProperty("id", nullValue())))
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
-                hasProperty("personId", is(1337))
+                hasProperty("personId", is(1337L))
             )))
             .andExpect(view().name("thymeleaf/application/application_form"));
     }
@@ -1119,7 +1119,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
         when(personService.getActivePersons()).thenReturn(List.of(person));
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         final int year = Year.now(clock).getValue();
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
@@ -1131,7 +1131,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Settings settings = new Settings();
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
         final Application application = new Application();
         application.setPerson(person);
         application.setId(applicationId);
@@ -1143,7 +1143,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("noHolidaysAccount", is(false)))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
@@ -1151,17 +1151,17 @@ class ApplicationForLeaveFormViewControllerTest {
     void editApplicationFormForAnotherUserIsDenied() {
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person();
-        person.setId(2);
+        person.setId(2L);
         final Application application = new Application();
         application.setPerson(person);
-        application.setId(1);
+        application.setId(1L);
         application.setStatus(WAITING);
         application.setVacationType(createVacationTypeEntity(HOLIDAY));
-        when(applicationInteractionService.get(1)).thenReturn(Optional.of(application));
+        when(applicationInteractionService.get(1L)).thenReturn(Optional.of(application));
 
         assertThatThrownBy(() ->
             perform(get("/web/application/1/edit"))
@@ -1188,7 +1188,7 @@ class ApplicationForLeaveFormViewControllerTest {
         settings.setApplicationSettings(appSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
         final Application application = new Application();
         application.setPerson(person);
         application.setId(applicationId);
@@ -1223,7 +1223,7 @@ class ApplicationForLeaveFormViewControllerTest {
         settings.setApplicationSettings(appSettings);
         when(settingsService.getSettings()).thenReturn(settings);
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
         final Application application = new Application();
         application.setPerson(person);
         application.setId(applicationId);
@@ -1243,7 +1243,7 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void ensureUnknownApplicationEditingShowsNotEditablePage() throws Exception {
 
-        when(applicationInteractionService.get(1)).thenReturn(Optional.empty());
+        when(applicationInteractionService.get(1L)).thenReturn(Optional.empty());
 
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
@@ -1253,7 +1253,7 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void editApplicationFormNotWaiting() throws Exception {
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
         final Application application = new Application();
         application.setId(applicationId);
         application.setStatus(ALLOWED);
@@ -1273,7 +1273,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final int year = Year.now(clock).getValue();
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.empty());
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
         final Application application = new Application();
         application.setPerson(person);
         application.setId(applicationId);
@@ -1291,10 +1291,10 @@ class ApplicationForLeaveFormViewControllerTest {
     void ensureAddingAnEmptyReplacementToEditedApplicationDoesNotThrow() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
@@ -1311,16 +1311,16 @@ class ApplicationForLeaveFormViewControllerTest {
         perform
             .andExpect(status().isOk())
             .andExpect(model().attribute("applicationForLeaveForm", allOf(
-                hasProperty("id", is(7)),
+                hasProperty("id", is(7L)),
                 hasProperty("holidayReplacements", allOf(
                     hasSize(2),
                     contains(
-                        hasProperty("person", hasProperty("id", is(42))),
-                        hasProperty("person", hasProperty("id", is(1337)))
+                        hasProperty("person", hasProperty("id", is(42L))),
+                        hasProperty("person", hasProperty("id", is(1337L)))
                     )
                 ))
             )))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
@@ -1328,10 +1328,10 @@ class ApplicationForLeaveFormViewControllerTest {
     void ensureReplacementDeletionForEditedApplicationRemovesPersonFromHolidayReplacements() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         final LocalDate now = LocalDate.now(clock);
         final Account account = new Account(signedInPerson, now, now, true, LocalDate.of(now.getYear(), APRIL, 1), ZERO, ZERO, ZERO, "");
@@ -1349,13 +1349,13 @@ class ApplicationForLeaveFormViewControllerTest {
         perform
             .andExpect(status().isOk())
             .andExpect(model().attribute("applicationForLeaveForm", allOf(
-                hasProperty("id", is(7)),
+                hasProperty("id", is(7L)),
                 hasProperty("holidayReplacements", contains(
-                    hasProperty("person", hasProperty("id", is(42))),
-                    hasProperty("person", hasProperty("id", is(21)))
+                    hasProperty("person", hasProperty("id", is(42L))),
+                    hasProperty("person", hasProperty("id", is(21L)))
                 ))
             )))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(view().name("thymeleaf/application/application_form"));
     }
 
@@ -1363,16 +1363,16 @@ class ApplicationForLeaveFormViewControllerTest {
     void ensureReplacementDeletionForEditedApplicationAddsTheRemovedPersonToSelectableHolidayReplacements() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
 
         final Person bruce = new Person();
-        bruce.setId(42);
+        bruce.setId(42L);
 
         final Person clark = new Person();
-        clark.setId(1337);
+        clark.setId(1337L);
 
         final Person joker = new Person();
-        joker.setId(21);
+        joker.setId(21L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(personService.getActivePersons()).thenReturn(List.of(signedInPerson, bruce, clark, joker));
@@ -1392,9 +1392,9 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform
             .andExpect(status().isOk())
-            .andExpect(model().attribute("applicationForLeaveForm", hasProperty("id", is(7))))
+            .andExpect(model().attribute("applicationForLeaveForm", hasProperty("id", is(7L))))
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
-                hasProperty("personId", is(1337))
+                hasProperty("personId", is(1337L))
             )))
             .andExpect(view().name("thymeleaf/application/application_form"));
     }
@@ -1405,7 +1405,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
         final Application application = new Application();
         application.setStatus(WAITING);
 
@@ -1432,7 +1432,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
         final Application application = new Application();
         application.setStatus(WAITING);
 
@@ -1455,7 +1455,7 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void sendEditApplicationFormIsNotWaiting() throws Exception {
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
         final Application application = new Application();
         application.setId(applicationId);
         application.setStatus(ALLOWED);
@@ -1476,7 +1476,7 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void sendEditApplicationFormApplicationNotFound() {
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
         final Application application = new Application();
         application.setId(applicationId);
         application.setStatus(WAITING);
@@ -1499,7 +1499,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person person = new Person();
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
         final Application application = new Application();
         application.setStatus(WAITING);
         final Application editedApplication = new Application();
@@ -1521,7 +1521,7 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void sendEditApplicationFormHasErrors() throws Exception {
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
         final Application application = new Application();
         application.setId(applicationId);
         application.setStatus(WAITING);
@@ -1559,17 +1559,17 @@ class ApplicationForLeaveFormViewControllerTest {
         }).when(applicationForLeaveFormValidator).validate(any(), any());
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
         signedInPerson.setPermissions(List.of(USER, OFFICE));
 
         final Person bruce = new Person();
-        bruce.setId(42);
+        bruce.setId(42L);
 
         final Person clark = new Person();
-        clark.setId(1337);
+        clark.setId(1337L);
 
         final Person joker = new Person();
-        joker.setId(21);
+        joker.setId(21L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(personService.getActivePersons()).thenReturn(List.of(signedInPerson, bruce, clark, joker));
@@ -1577,10 +1577,10 @@ class ApplicationForLeaveFormViewControllerTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Application application = new Application();
-        application.setId(7);
+        application.setId(7L);
         application.setApplier(signedInPerson);
         application.setStatus(WAITING);
-        when(applicationInteractionService.get(7)).thenReturn(Optional.of(application));
+        when(applicationInteractionService.get(7L)).thenReturn(Optional.of(application));
 
         final ResultActions perform = perform(post("/web/application/7")
             .param("vacationType.category", "HOLIDAY")
@@ -1591,9 +1591,9 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attributeHasFieldErrors("applicationForLeaveForm", "startDate"))
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
-                hasProperty("personId", is(42)),
-                hasProperty("personId", is(1337)),
-                hasProperty("personId", is(21))
+                hasProperty("personId", is(42L)),
+                hasProperty("personId", is(1337L)),
+                hasProperty("personId", is(21L))
             )))
             .andExpect(view().name("thymeleaf/application/application_form"));
     }
@@ -1605,7 +1605,7 @@ class ApplicationForLeaveFormViewControllerTest {
         return person;
     }
 
-    private Person personWithId(int id) {
+    private Person personWithId(long id) {
         final Person person = new Person();
         person.setId(id);
 
@@ -1614,7 +1614,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
     private Application someApplication() {
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
+        final VacationType holidayType = new VacationType(1000L, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
 
         final Application application = new Application();
         application.setVacationType(convert(holidayType));
@@ -1624,7 +1624,7 @@ class ApplicationForLeaveFormViewControllerTest {
         return new Application();
     }
 
-    private Application applicationWithId(int id) {
+    private Application applicationWithId(long id) {
         final Application application = someApplication();
         application.setId(id);
 

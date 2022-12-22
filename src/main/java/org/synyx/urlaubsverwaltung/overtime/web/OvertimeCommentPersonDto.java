@@ -4,17 +4,17 @@ import java.util.Objects;
 
 public class OvertimeCommentPersonDto {
 
-    private final Integer id;
+    private final Long id;
     private final String niceName;
     private final String gravatarUrl;
 
-    OvertimeCommentPersonDto(Integer id, String niceName, String gravatarUrl) {
+    OvertimeCommentPersonDto(Long id, String niceName, String gravatarUrl) {
         this.id = id;
         this.niceName = niceName;
         this.gravatarUrl = gravatarUrl;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

@@ -59,9 +59,9 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         final Person person = new Person();
         person.setFirstName("personOneFirstName");
         person.setLastName("personOneLastName");
-        final PersonBasedata basedata = new PersonBasedata(new PersonId(-1), "42", "OneInformation");
+        final PersonBasedata basedata = new PersonBasedata(new PersonId((long) -1), "42", "OneInformation");
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "holiday", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "holiday", true, YELLOW, false);
 
         final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person, List.of(vacationType));
         applicationForLeaveStatistics.setPersonBasedata(basedata);
@@ -105,14 +105,14 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         final Person personOne = new Person();
         personOne.setFirstName("personOneFirstName");
         personOne.setLastName("personOneLastName");
-        final PersonBasedata basedataOne = new PersonBasedata(new PersonId(-1), "42", "OneInformation");
+        final PersonBasedata basedataOne = new PersonBasedata(new PersonId(-1L), "42", "OneInformation");
 
         final Person personTwo = new Person();
         personTwo.setFirstName("personTwoFirstName");
         personTwo.setLastName("personTwoLastName");
-        final PersonBasedata basedataTwo = new PersonBasedata(new PersonId(-1), "42", "SecondInformation");
+        final PersonBasedata basedataTwo = new PersonBasedata(new PersonId(-1L), "42", "SecondInformation");
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "holiday", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "holiday", true, YELLOW, false);
 
         final ApplicationForLeaveStatistics personOneStatistics = new ApplicationForLeaveStatistics(personOne, List.of(vacationType));
         personOneStatistics.setPersonBasedata(basedataOne);

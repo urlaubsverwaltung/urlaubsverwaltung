@@ -150,7 +150,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
     void personsSickNotesWithOfficeUserOnlyIsOk() throws Exception {
 
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
@@ -170,7 +170,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = {"BOSS", "SICK_NOTE_VIEW"})
     void personsSickNotesWithBossUserAndSickNoteViewAuthorityIsOk() throws Exception {
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person office = new Person();
         office.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
@@ -190,7 +190,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = {"DEPARTMENT_HEAD", "SICK_NOTE_VIEW"})
     void personsSickNotesWithDepartmentHeadUserAndSickNoteViewAuthorityIsOk() throws Exception {
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
@@ -211,7 +211,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = {"BOSS"})
     void personsSickNotesWithBossUserWithoutSickNoteViewAuthorityIsForbidden() throws Exception {
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person signedInPerson = new Person();
         signedInPerson.setPermissions(List.of(USER, BOSS));
@@ -229,7 +229,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = {"DEPARTMENT_HEAD"})
     void personsSickNotesWithDepartmentHeadUserWithoutSickNoteViewAuthorityIsForbidden() throws Exception {
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person signedInPerson = new Person();
         signedInPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD));
@@ -247,7 +247,7 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = {"SECOND_STAGE_AUTHORITY"})
     void personsSickNotesWithSecondStageUserWithoutSickNoteViewAuthorityIsForbidden() throws Exception {
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person signedInPerson = new Person();
         signedInPerson.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
@@ -306,9 +306,9 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
     void personsSickNotesWithSameUserIsOk() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
         when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(SickNote.builder().build()));
@@ -327,12 +327,12 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
     void personsSickNotesWithDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person otherPerson = new Person();
-        otherPerson.setId(1);
+        otherPerson.setId(1L);
         otherPerson.setUsername("other person");
         when(personService.getSignedInUser()).thenReturn(otherPerson);
 

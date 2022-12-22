@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Repository for {@link Application} entities.
  */
-interface ApplicationRepository extends CrudRepository<Application, Integer> {
+interface ApplicationRepository extends CrudRepository<Application, Long> {
 
     List<Application> findByStatusIn(List<ApplicationStatus> statuses);
 

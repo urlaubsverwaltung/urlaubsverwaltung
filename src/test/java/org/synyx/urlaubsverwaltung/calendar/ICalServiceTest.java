@@ -58,7 +58,7 @@ class ICalServiceTest {
     void getCalendarForPersonForOneFullDay() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Absence fullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-03-26"), FULL);
 
@@ -84,7 +84,7 @@ class ICalServiceTest {
     void getCalendarForPersonForHalfDayMorning() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Absence morningAbsence = absence(person, toDateTime("2019-04-26"), toDateTime("2019-04-26"), MORNING);
 
@@ -110,7 +110,7 @@ class ICalServiceTest {
     void getCalendarForPersonForMultipleFullDays() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Absence manyFullDayAbsence = absence(person, toDateTime("2019-03-26"), toDateTime("2019-04-01"), FULL);
 
@@ -138,7 +138,7 @@ class ICalServiceTest {
     void getCalendarForPersonForHalfDayNoon() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
@@ -164,7 +164,7 @@ class ICalServiceTest {
     void getCalendarPublishEvent() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
@@ -194,7 +194,7 @@ class ICalServiceTest {
     void cancelSingleAppointment() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
@@ -226,7 +226,7 @@ class ICalServiceTest {
     void singleAppointment() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         final Absence noonAbsence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), NOON);
 
         final CalendarProperties calendarProperties = new CalendarProperties();
@@ -255,10 +255,10 @@ class ICalServiceTest {
     void appointmentOfOtherPerson() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Person recipient = new Person();
-        recipient.setId(2);
+        recipient.setId(2L);
 
         final Absence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
 
@@ -287,10 +287,10 @@ class ICalServiceTest {
     void appointmentOfOtherPersonWoithoutEMailAddress() {
 
         final Person person = new Person("muster", "Muster", "Marlene", null);
-        person.setId(1);
+        person.setId(1L);
 
         final Person recipient = new Person();
-        recipient.setId(2);
+        recipient.setId(2L);
 
         final Absence absence = absence(person, toDateTime("2019-05-26"), toDateTime("2019-05-26"), FULL);
 

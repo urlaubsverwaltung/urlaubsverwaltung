@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class SickNote {
 
-    private final Integer id;
+    private final Long id;
     private final Person person;
     private final Person applier;
     private final SickNoteType sickNoteType;
@@ -29,7 +29,7 @@ public class SickNote {
     private final SickNoteStatus status;
     private final WorkingTimeCalendar workingTimeCalendar;
 
-    private SickNote(Integer id, Person person, Person applier, SickNoteType sickNoteType, LocalDate startDate,
+    private SickNote(Long id, Person person, Person applier, SickNoteType sickNoteType, LocalDate startDate,
                      LocalDate endDate, DayLength dayLength, LocalDate aubStartDate, LocalDate aubEndDate,
                      LocalDate lastEdited, LocalDate endOfSickPayNotificationSend, SickNoteStatus status,
                      WorkingTimeCalendar workingTimeCalendar) {
@@ -49,7 +49,7 @@ public class SickNote {
         this.workingTimeCalendar = workingTimeCalendar;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -227,7 +227,7 @@ public class SickNote {
     }
 
     public static class Builder {
-        private Integer id;
+        private Long id;
         private Person person;
         private Person applier;
         private SickNoteType sickNoteType;
@@ -241,7 +241,7 @@ public class SickNote {
         private SickNoteStatus status;
         private WorkingTimeCalendar workingTimeCalendar;
 
-        public Builder id(Integer id) {
+        public Builder id(Long id) {
             this.id = id;
             return this;
         }

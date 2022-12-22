@@ -38,9 +38,8 @@ public class PersonPropertyEditor extends PropertyEditorSupport {
             return;
         }
 
-        Integer id = Integer.valueOf(text);
-
-        Optional<Person> person = personService.getPersonByID(id);
+        final Long id = Long.valueOf(text);
+        final Optional<Person> person = personService.getPersonByID(id);
 
         if (person.isPresent()) {
             setValue(person.get());

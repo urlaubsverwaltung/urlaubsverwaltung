@@ -11,7 +11,7 @@ class HolidayReplacementDtoTest {
     @Test
     void ensureDoNotLogNote() {
         final Person holidayReplacement = new Person();
-        holidayReplacement.setId(1);
+        holidayReplacement.setId(1L);
         final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
         holidayReplacementDto.setPerson(holidayReplacement);
         holidayReplacementDto.setNote("This is some text for the replacement note");

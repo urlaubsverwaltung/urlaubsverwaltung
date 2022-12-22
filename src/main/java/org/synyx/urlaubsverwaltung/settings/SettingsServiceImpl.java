@@ -30,7 +30,7 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     public Settings getSettings() {
-        return settingsRepository.findById(1)
+        return settingsRepository.findById(1L)
             .orElseThrow(() -> new IllegalStateException("No settings in database found."));
     }
 }

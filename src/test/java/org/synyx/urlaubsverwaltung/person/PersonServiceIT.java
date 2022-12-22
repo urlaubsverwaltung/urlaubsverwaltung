@@ -64,7 +64,7 @@ class PersonServiceIT extends TestContainersBase {
         person.setPermissions(List.of(USER));
         person.setNotifications(List.of(MailNotification.NOTIFICATION_USER));
         final Person personWithId = personService.create(person);
-        final Integer personId = personWithId.getId();
+        final Long personId = personWithId.getId();
 
         final PersonBasedata personBasedata = new PersonBasedata(new PersonId(personId), "42", "lala");
         personBasedataService.update(personBasedata);

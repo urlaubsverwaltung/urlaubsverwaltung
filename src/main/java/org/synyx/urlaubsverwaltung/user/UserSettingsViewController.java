@@ -45,7 +45,7 @@ class UserSettingsViewController {
     }
 
     @GetMapping("/person/{personId}/settings")
-    String userSettings(@PathVariable("personId") Integer personId, Model model, Locale locale) {
+    String userSettings(@PathVariable("personId") Long personId, Model model, Locale locale) {
 
         final Person signedInUser = personService.getSignedInUser();
         if (!signedInUser.getId().equals(personId)) {
@@ -61,7 +61,7 @@ class UserSettingsViewController {
     }
 
     @PostMapping("/person/{personId}/settings")
-    String updateUserSettings(@PathVariable("personId") Integer personId, Model model, @ModelAttribute UserSettingsDto userSettingsDto, Errors errors, Locale locale) {
+    String updateUserSettings(@PathVariable("personId") Long personId, Model model, @ModelAttribute UserSettingsDto userSettingsDto, Errors errors, Locale locale) {
 
         final Person signedInUser = personService.getSignedInUser();
         if (!signedInUser.getId().equals(personId)) {

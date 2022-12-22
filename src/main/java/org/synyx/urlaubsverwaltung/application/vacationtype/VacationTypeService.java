@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface VacationTypeService {
 
-    Optional<VacationType> getById(Integer id);
+    Optional<VacationType> getById(Long id);
 
     /**
      * Returns all created vacation types

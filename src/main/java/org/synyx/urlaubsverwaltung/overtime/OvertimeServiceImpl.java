@@ -99,7 +99,7 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     @Override
-    public Optional<Overtime> getOvertimeById(Integer id) {
+    public Optional<Overtime> getOvertimeById(Long id) {
         return overtimeRepository.findById(id);
     }
 

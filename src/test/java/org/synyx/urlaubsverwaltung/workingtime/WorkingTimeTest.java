@@ -34,7 +34,7 @@ class WorkingTimeTest {
     void testDefaultValues() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG, false);
         assertThat(workingTime.getMonday()).isEqualTo(ZERO);
@@ -50,7 +50,7 @@ class WorkingTimeTest {
     void ensureWorkingDaysInWorkingTimeList() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final List<DayOfWeek> workingDays = List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY);
 
@@ -78,7 +78,7 @@ class WorkingTimeTest {
     })
     void ensureIsWorkingDayIsTrue(DayOfWeek dayOfWeek, DayLength dayLength) {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setDayLengthForWeekDay(dayOfWeek, dayLength);
@@ -89,7 +89,7 @@ class WorkingTimeTest {
     @EnumSource(DayOfWeek.class)
     void ensureIsWorkingDayIsFalseForDayLengthZero(DayOfWeek dayOfWeek) {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG, false);
         workingTime.setDayLengthForWeekDay(dayOfWeek, ZERO);
@@ -99,10 +99,10 @@ class WorkingTimeTest {
     @Test
     void ensureEqualsConsidersPerson() {
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person();
-        robin.setId(2);
+        robin.setId(2L);
 
         final WorkingTime workingTimeBatman = new WorkingTime(batman, LocalDate.of(2021, JUNE, 12), GERMANY_BADEN_WUERTTEMBERG, false);
         final WorkingTime workingTimeRobin = new WorkingTime(robin, LocalDate.of(2021, JUNE, 12), GERMANY_BADEN_WUERTTEMBERG, false);
@@ -115,7 +115,7 @@ class WorkingTimeTest {
     @Test
     void ensureEqualsConsidersValidFrom() {
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final WorkingTime workingTimeOne = new WorkingTime(batman, LocalDate.of(2021, JUNE, 12), GERMANY_BADEN_WUERTTEMBERG, false);
         final WorkingTime workingTimeTwo = new WorkingTime(batman, LocalDate.of(2021, JUNE, 13), GERMANY_BADEN_WUERTTEMBERG, false);
@@ -128,7 +128,7 @@ class WorkingTimeTest {
     @Test
     void hashCodeTest() {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final WorkingTime workingTime = new WorkingTime(person, LocalDate.of(2021, JUNE, 12), GERMANY_BADEN_WUERTTEMBERG, false);
 

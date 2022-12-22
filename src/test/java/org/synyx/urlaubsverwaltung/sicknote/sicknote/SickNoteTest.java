@@ -252,16 +252,16 @@ class SickNoteTest {
         sickNoteType.setMessageKey("messageKey");
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final Person applier = new Person();
-        applier.setId(2);
+        applier.setId(2L);
 
         final Map<LocalDate, DayLength> workingTimes = buildWorkingTimeByDate(LocalDate.of(2022, JANUARY, 1), LocalDate.of(2022, DECEMBER, 31), (date) -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(workingTimes);
 
         final SickNote sickNote = SickNote.builder()
-                .id(1)
+                .id(1L)
                 .sickNoteType(sickNoteType)
                 .startDate(LocalDate.of(2022, JANUARY, 1))
                 .endDate(LocalDate.of(2022, JANUARY, 31))

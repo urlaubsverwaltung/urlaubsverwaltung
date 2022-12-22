@@ -49,7 +49,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
         final LocalDate startDate = LocalDate.of(2020, 4, 16);
         final LocalDate endDate = LocalDate.of(2020, 4, 23);
         final Overtime overtime = new Overtime(person, startDate, endDate, Duration.parse("P1DT30H72M"));
-        overtime.setId(1);
+        overtime.setId(1L);
 
         final OvertimeComment overtimeComment = new OvertimeComment(person, overtime, CREATED, clock);
 

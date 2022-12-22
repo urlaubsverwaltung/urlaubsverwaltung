@@ -124,7 +124,7 @@ class ApplicationForLeaveFormViewController {
     }
 
     @GetMapping("/application/new")
-    public String newApplicationForm(@RequestParam(value = "personId", required = false) Integer personId,
+    public String newApplicationForm(@RequestParam(value = "personId", required = false) Long personId,
                                      @RequestParam(value = "from", required = false) String startDateString,
                                      @RequestParam(value = "to", required = false) String endDateString,
                                      Model model, Locale locale) {
@@ -219,7 +219,7 @@ class ApplicationForLeaveFormViewController {
 
         model.addAttribute("index", applicationForLeave.getHolidayReplacements().size());
 
-        final Integer applicationForLeaveId = applicationForLeave.getId();
+        final Long applicationForLeaveId = applicationForLeave.getId();
         if (applicationForLeaveId == null) {
             model.addAttribute("deleteButtonFormActionValue", "/web/application/new");
         } else {
@@ -231,7 +231,7 @@ class ApplicationForLeaveFormViewController {
 
     @PostMapping(value = {"/application/new", "/application/{applicationId}"}, params = "remove-holiday-replacement")
     public String removeHolidayReplacement(@ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm applicationForLeaveForm,
-                                           @RequestParam(name = "remove-holiday-replacement") Integer personIdToRemove,
+                                           @RequestParam(name = "remove-holiday-replacement") Long personIdToRemove,
                                            Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -310,7 +310,7 @@ class ApplicationForLeaveFormViewController {
     }
 
     @GetMapping("/application/{applicationId}/edit")
-    public String editApplicationForm(@PathVariable("applicationId") Integer applicationId, Model model) {
+    public String editApplicationForm(@PathVariable("applicationId") Long applicationId, Model model) {
 
         final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
         if (maybeApplication.isEmpty()) {
@@ -347,7 +347,7 @@ class ApplicationForLeaveFormViewController {
     }
 
     @PostMapping("/application/{applicationId}")
-    public String sendEditApplicationForm(@PathVariable("applicationId") Integer applicationId,
+    public String sendEditApplicationForm(@PathVariable("applicationId") Long applicationId,
                                           @ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm appForm, Errors errors,
                                           Model model, RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
@@ -397,7 +397,7 @@ class ApplicationForLeaveFormViewController {
         return "redirect:/web/application/" + savedApplicationForLeave.getId();
     }
 
-    private Optional<Person> getPersonByRequestParam(Integer personId) {
+    private Optional<Person> getPersonByRequestParam(Long personId) {
         if (personId == null) {
             return Optional.empty();
         }
@@ -440,7 +440,7 @@ class ApplicationForLeaveFormViewController {
         return person::equals;
     }
 
-    private static Predicate<Person> personEquals(Integer personId) {
+    private static Predicate<Person> personEquals(Long personId) {
         return p -> p.getId().equals(personId);
     }
 

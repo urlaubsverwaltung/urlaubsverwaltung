@@ -48,7 +48,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForPerson() throws Exception {
 
-        when(personCalendarService.getCalendarForPerson(1, "secret", GERMAN)).thenReturn(new ByteArrayResource("iCal string".getBytes()));
+        when(personCalendarService.getCalendarForPerson(1L, "secret", GERMAN)).thenReturn(new ByteArrayResource("iCal string".getBytes()));
 
         perform(get("/web/persons/1/calendar")
             .locale(GERMAN)
@@ -62,7 +62,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForPersonWithBadRequest() throws Exception {
 
-        when(personCalendarService.getCalendarForPerson(1, "secret", GERMAN)).thenThrow(new IllegalArgumentException());
+        when(personCalendarService.getCalendarForPerson(1L, "secret", GERMAN)).thenThrow(new IllegalArgumentException());
 
         perform(get("/web/persons/1/calendar")
             .locale(GERMAN)
@@ -73,7 +73,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForPersonWithNoContent() throws Exception {
 
-        when(personCalendarService.getCalendarForPerson(1, "secret", GERMAN)).thenThrow(CalendarException.class);
+        when(personCalendarService.getCalendarForPerson(1L, "secret", GERMAN)).thenThrow(CalendarException.class);
 
         perform(get("/web/persons/1/calendar")
             .locale(GERMAN)
@@ -84,7 +84,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForDepartment() throws Exception {
 
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenReturn(new ByteArrayResource("calendar department".getBytes()));
+        when(departmentCalendarService.getCalendarForDepartment(1L, 2L, "secret", GERMAN)).thenReturn(new ByteArrayResource("calendar department".getBytes()));
 
         perform(get("/web/departments/1/persons/2/calendar")
             .locale(GERMAN)
@@ -98,7 +98,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForDepartmentWithBadRequest() throws Exception {
 
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenThrow(new IllegalArgumentException());
+        when(departmentCalendarService.getCalendarForDepartment(1L, 2L, "secret", GERMAN)).thenThrow(new IllegalArgumentException());
 
         perform(get("/web/departments/1/persons/2/calendar")
             .locale(GERMAN)
@@ -109,7 +109,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForDepartmentWithNoContent() throws Exception {
 
-        when(departmentCalendarService.getCalendarForDepartment(1, 2, "secret", GERMAN)).thenThrow(CalendarException.class);
+        when(departmentCalendarService.getCalendarForDepartment(1L, 2L, "secret", GERMAN)).thenThrow(CalendarException.class);
 
         perform(get("/web/departments/1/persons/2/calendar")
             .locale(GERMAN)
@@ -120,7 +120,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForAll() throws Exception {
 
-        when(companyCalendarService.getCalendarForAll(2, "secret", GERMAN)).thenReturn(new ByteArrayResource("calendar all".getBytes()));
+        when(companyCalendarService.getCalendarForAll(2L, "secret", GERMAN)).thenReturn(new ByteArrayResource("calendar all".getBytes()));
 
         perform(get("/web/company/persons/2/calendar")
             .locale(GERMAN)
@@ -134,7 +134,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForAllWithNoContent() throws Exception {
 
-        when(companyCalendarService.getCalendarForAll(2, "secret", GERMAN)).thenThrow(CalendarException.class);
+        when(companyCalendarService.getCalendarForAll(2L, "secret", GERMAN)).thenThrow(CalendarException.class);
 
         perform(get("/web/company/persons/2/calendar")
             .locale(GERMAN)
@@ -145,7 +145,7 @@ class ICalViewControllerTest {
     @Test
     void getCalendarForAllWithIllegalArgumentException() throws Exception {
 
-        when(companyCalendarService.getCalendarForAll(2, "secret", GERMAN)).thenThrow(IllegalArgumentException.class);
+        when(companyCalendarService.getCalendarForAll(2L, "secret", GERMAN)).thenThrow(IllegalArgumentException.class);
 
         perform(get("/web/company/persons/2/calendar")
             .locale(GERMAN)

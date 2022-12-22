@@ -251,12 +251,12 @@ class ApplicationMailServiceTest {
         model.put("comment", comment);
 
         final Person office = new Person();
-        office.setId(1);
+        office.setId(1L);
         final List<Person> officeWorkers = List.of(office);
         when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(officeWorkers);
 
         final Person relevantPerson = new Person();
-        relevantPerson.setId(2);
+        relevantPerson.setId(2L);
         final List<Person> relevantPersons = new ArrayList<>();
         relevantPersons.add(relevantPerson);
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);

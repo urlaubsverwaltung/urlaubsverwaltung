@@ -16,7 +16,7 @@ import java.util.Optional;
  *
  * @since 2.11.0
  */
-interface OvertimeRepository extends CrudRepository<Overtime, Integer> {
+interface OvertimeRepository extends CrudRepository<Overtime, Long> {
 
     List<Overtime> findByPerson(Person person);
 

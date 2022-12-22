@@ -220,7 +220,7 @@ class ApplicationInteractionServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Optional<String> comment = of("Foo");
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", false, YELLOW, false);
+        final VacationType holidayType = new VacationType(1000L, true, HOLIDAY, "application.data.vacationType.holiday", false, YELLOW, false);
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setVacationType(convert(holidayType));
@@ -248,7 +248,7 @@ class ApplicationInteractionServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Optional<String> comment = of("Foo");
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", false, YELLOW, false);
+        final VacationType holidayType = new VacationType(1000L, true, HOLIDAY, "application.data.vacationType.holiday", false, YELLOW, false);
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setVacationType(convert(holidayType));
@@ -279,7 +279,7 @@ class ApplicationInteractionServiceImplTest {
         office.setPermissions(List.of(OFFICE));
         final Optional<String> comment = of("Foo");
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", false, YELLOW, false);
+        final VacationType holidayType = new VacationType(1000L, true, HOLIDAY, "application.data.vacationType.holiday", false, YELLOW, false);
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setVacationType(convert(holidayType));
@@ -1006,7 +1006,7 @@ class ApplicationInteractionServiceImplTest {
     void ensureDirectCancelByApplicantChangesStateAndOtherAttributesAndSendsEmail() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
@@ -1037,11 +1037,11 @@ class ApplicationInteractionServiceImplTest {
     void ensureDirectCancelByOfficeChangesStateAndOtherAttributesAndSendsEmail() {
 
         final Person office = new Person("office", "office", "orlanda", "office@example.org");
-        office.setId(1);
+        office.setId(1L);
         office.setPermissions(List.of(USER, OFFICE));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(2);
+        person.setId(2L);
         final Optional<String> comment = of("Foo");
 
         final Application applicationForLeave = getDummyApplication(person);
@@ -1220,7 +1220,7 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void getApplicationForLeave() {
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
@@ -1236,7 +1236,7 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void editApplicationForLeave() {
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Application application = createApplication(person, TestDataCreator.createVacationTypeEntity(HOLIDAY));
@@ -1257,12 +1257,12 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void editApplicationForLeaveHolidayReplacementAdded() {
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Person newHolidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        newHolidayReplacement.setId(1);
+        newHolidayReplacement.setId(1L);
 
         final HolidayReplacementEntity newReplacementEntity = new HolidayReplacementEntity();
         newReplacementEntity.setPerson(newHolidayReplacement);
@@ -1289,7 +1289,7 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void editApplicationForLeaveHolidayReplacementRemoved() {
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
@@ -1299,7 +1299,7 @@ class ApplicationInteractionServiceImplTest {
         when(applicationService.save(newApplication)).thenReturn(newApplication);
 
         final Person oldHolidayReplacement = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        oldHolidayReplacement.setId(2);
+        oldHolidayReplacement.setId(2L);
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(oldHolidayReplacement);
@@ -1321,12 +1321,12 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void editApplicationForLeaveHolidayRelevantEntriesChangedFromTo() {
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Person holidayReplacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        holidayReplacementPerson.setId(2);
+        holidayReplacementPerson.setId(2L);
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacementPerson);
@@ -1358,12 +1358,12 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void editApplicationForLeaveHolidayRelevantEntriesChangedDayLength() {
 
-        final Integer applicationId = 1;
+        final Long applicationId = 1L;
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Person holidayReplacementPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        holidayReplacementPerson.setId(2);
+        holidayReplacementPerson.setId(2L);
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacementPerson);
@@ -1429,7 +1429,7 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void ensureDeletionOfApplicationAndCommentsOnPersonDeletedEvent() {
         final Person person = new Person();
-        final int personId = 42;
+        final long personId = 42;
         person.setId(personId);
 
         sut.deleteAllByPerson(new PersonDeletedEvent(person));
@@ -1444,19 +1444,19 @@ class ApplicationInteractionServiceImplTest {
     @Test
     void ensureDeletionOfAbsenceMappingOnPersonDeletedEvent() {
         final Person person = new Person();
-        final int personId = 42;
+        final long personId = 42;
         person.setId(personId);
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         when(applicationService.deleteApplicationsByPerson(person)).thenReturn(List.of(application));
 
-        final AbsenceMapping absenceMapping = new AbsenceMapping(42, VACATION, "eventId");
-        when(absenceMappingService.getAbsenceByIdAndType(42, VACATION)).thenReturn(Optional.of(absenceMapping));
+        final AbsenceMapping absenceMapping = new AbsenceMapping(42L, VACATION, "eventId");
+        when(absenceMappingService.getAbsenceByIdAndType(42L, VACATION)).thenReturn(Optional.of(absenceMapping));
 
         sut.deleteAllByPerson(new PersonDeletedEvent(person));
 
-        verify(absenceMappingService).getAbsenceByIdAndType(42, VACATION);
+        verify(absenceMappingService).getAbsenceByIdAndType(42L, VACATION);
         verify(absenceMappingService).delete(absenceMapping);
         verify(calendarSyncService).deleteAbsence("eventId");
     }

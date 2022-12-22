@@ -34,9 +34,9 @@ class PersonApiControllerTest {
     void ensureReturnsAllActivePersons() throws Exception {
 
         final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
-        shane.setId(1);
+        shane.setId(1L);
         final Person carl = new Person("carl", "carl", "carl", "carl@example.org");
-        carl.setId(2);
+        carl.setId(2L);
 
         when(personService.getActivePersons()).thenReturn(List.of(shane, carl));
 
@@ -58,7 +58,7 @@ class PersonApiControllerTest {
     void ensureReturnSpecificPerson() throws Exception {
 
         final Person shane = new Person("shane", "shane", "shane", "shane@example.org");
-        shane.setId(1);
+        shane.setId(1L);
 
         when(personService.getPersonByID(shane.getId())).thenReturn(Optional.of(shane));
 

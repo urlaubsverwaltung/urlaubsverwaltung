@@ -7,7 +7,7 @@ import org.synyx.urlaubsverwaltung.web.AbstractNoResultFoundException;
  */
 public class UnknownApplicationForLeaveException extends AbstractNoResultFoundException {
 
-    UnknownApplicationForLeaveException(Integer id) {
+    UnknownApplicationForLeaveException(Long id) {
         super(id, "application for leave");
     }
 }

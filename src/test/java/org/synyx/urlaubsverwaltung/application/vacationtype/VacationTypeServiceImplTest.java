@@ -37,17 +37,17 @@ class VacationTypeServiceImplTest {
     void getActiveVacationTypesFilteredBy() {
 
         final VacationTypeEntity holiday = new VacationTypeEntity();
-        holiday.setId(1);
+        holiday.setId(1L);
         holiday.setCategory(HOLIDAY);
         holiday.setActive(true);
 
         final VacationTypeEntity overtime = new VacationTypeEntity();
-        overtime.setId(2);
+        overtime.setId(2L);
         overtime.setCategory(OVERTIME);
         overtime.setActive(true);
 
         final VacationTypeEntity overtimeActive = new VacationTypeEntity();
-        overtimeActive.setId(3);
+        overtimeActive.setId(3L);
         overtimeActive.setCategory(OVERTIME);
         overtimeActive.setActive(true);
 
@@ -62,12 +62,12 @@ class VacationTypeServiceImplTest {
     void getActiveVacationTypes() {
 
         final VacationTypeEntity holiday = new VacationTypeEntity();
-        holiday.setId(1);
+        holiday.setId(1L);
         holiday.setCategory(HOLIDAY);
         holiday.setActive(true);
 
         final VacationTypeEntity overtimeActive = new VacationTypeEntity();
-        overtimeActive.setId(2);
+        overtimeActive.setId(2L);
         overtimeActive.setCategory(OVERTIME);
         overtimeActive.setActive(true);
 
@@ -82,12 +82,12 @@ class VacationTypeServiceImplTest {
     @Test
     void getAllVacationTypes() {
         final VacationTypeEntity holiday = new VacationTypeEntity();
-        holiday.setId(1);
+        holiday.setId(1L);
         holiday.setCategory(HOLIDAY);
         holiday.setActive(true);
 
         final VacationTypeEntity overtime = new VacationTypeEntity();
-        overtime.setId(2);
+        overtime.setId(2L);
         overtime.setCategory(OVERTIME);
         overtime.setActive(false);
 
@@ -102,7 +102,7 @@ class VacationTypeServiceImplTest {
     @Test
     void ensureUpdateVacationTypesUpdatesTheGivenVacationTypes() {
         final VacationTypeEntity holidayEntity = new VacationTypeEntity();
-        holidayEntity.setId(1);
+        holidayEntity.setId(1L);
         holidayEntity.setCategory(HOLIDAY);
         holidayEntity.setMessageKey("holiday.message.key");
         holidayEntity.setActive(false);
@@ -110,7 +110,7 @@ class VacationTypeServiceImplTest {
         holidayEntity.setVisibleToEveryone(false);
 
         final VacationTypeEntity overtimeEntity = new VacationTypeEntity();
-        overtimeEntity.setId(2);
+        overtimeEntity.setId(2L);
         overtimeEntity.setCategory(OVERTIME);
         overtimeEntity.setMessageKey("overtime.message.key");
         overtimeEntity.setActive(false);
@@ -118,19 +118,19 @@ class VacationTypeServiceImplTest {
         overtimeEntity.setVisibleToEveryone(false);
 
         final VacationTypeEntity specialLeaveEntity = new VacationTypeEntity();
-        specialLeaveEntity.setId(3);
+        specialLeaveEntity.setId(3L);
         specialLeaveEntity.setCategory(SPECIALLEAVE);
         specialLeaveEntity.setMessageKey("specialleave.message.key");
         specialLeaveEntity.setActive(true);
         specialLeaveEntity.setRequiresApproval(false);
         specialLeaveEntity.setVisibleToEveryone(true);
 
-        when(vacationTypeRepository.findAllById(Set.of(1, 2, 3))).thenReturn(List.of(holidayEntity, overtimeEntity, specialLeaveEntity));
+        when(vacationTypeRepository.findAllById(Set.of(1L, 2L, 3L))).thenReturn(List.of(holidayEntity, overtimeEntity, specialLeaveEntity));
 
         sut.updateVacationTypes(List.of(
-            new VacationTypeUpdate(1, true, false, YELLOW, false),
-            new VacationTypeUpdate(2, false, true, YELLOW, false),
-            new VacationTypeUpdate(3, true, true, YELLOW, true)
+            new VacationTypeUpdate(1L, true, false, YELLOW, false),
+            new VacationTypeUpdate(2L, false, true, YELLOW, false),
+            new VacationTypeUpdate(3L, true, true, YELLOW, true)
         ));
 
         @SuppressWarnings("unchecked")

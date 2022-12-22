@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 class OidcLoginLoggerTest {
 
-    private static final Integer UNIQUE_ID = 42;
+    private static final Long UNIQUE_ID = 42L;
 
     private PersonService personService;
     private OidcLoginLogger sut;

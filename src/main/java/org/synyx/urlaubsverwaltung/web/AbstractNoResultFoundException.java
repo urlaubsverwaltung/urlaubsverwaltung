@@ -5,7 +5,7 @@ package org.synyx.urlaubsverwaltung.web;
  */
 public abstract class AbstractNoResultFoundException extends Exception {
 
-    protected AbstractNoResultFoundException(Integer id, String type) {
+    protected AbstractNoResultFoundException(Long id, String type) {
         super("No " + type + " found for ID = " + id);
     }
 

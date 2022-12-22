@@ -50,7 +50,7 @@ class VacationTypeEntityTest {
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
         vacationType.setMessageKey("messageKey");
-        vacationType.setId(10);
+        vacationType.setId(10L);
         vacationType.setActive(true);
         vacationType.setRequiresApproval(false);
         vacationType.setColor(YELLOW);
@@ -62,13 +62,13 @@ class VacationTypeEntityTest {
     @Test
     void equals() {
         final VacationTypeEntity vacationTypeOne = new VacationTypeEntity();
-        vacationTypeOne.setId(1);
+        vacationTypeOne.setId(1L);
 
         final VacationTypeEntity vacationTypeOneOne = new VacationTypeEntity();
-        vacationTypeOneOne.setId(1);
+        vacationTypeOneOne.setId(1L);
 
         final VacationTypeEntity vacationTypeTwo = new VacationTypeEntity();
-        vacationTypeTwo.setId(2);
+        vacationTypeTwo.setId(2L);
 
         assertThat(vacationTypeOne)
             .isEqualTo(vacationTypeOne)
@@ -81,7 +81,7 @@ class VacationTypeEntityTest {
     @Test
     void hashCodeTest() {
         final VacationTypeEntity vacationTypeOne = new VacationTypeEntity();
-        vacationTypeOne.setId(1);
+        vacationTypeOne.setId(1L);
 
         assertThat(vacationTypeOne.hashCode()).isEqualTo(32);
     }

@@ -102,7 +102,7 @@ public class OverviewViewController {
     }
 
     @GetMapping("/web/person/{personId}/overview")
-    public String showOverview(@PathVariable("personId") Integer personId,
+    public String showOverview(@PathVariable("personId") Long personId,
                                @RequestParam(value = "year", required = false) Integer year, Model model)
         throws UnknownPersonException {
 

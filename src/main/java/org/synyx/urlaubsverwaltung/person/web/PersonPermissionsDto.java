@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class PersonPermissionsDto {
 
-    private Integer id;
+    private Long id;
     private String niceName;
     private String gravatarURL;
     private String email;
@@ -16,11 +16,11 @@ public class PersonPermissionsDto {
     private List<PersonPermissionsRoleDto> permissions = new ArrayList<>();
     private List<MailNotification> notifications = new ArrayList<>();
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

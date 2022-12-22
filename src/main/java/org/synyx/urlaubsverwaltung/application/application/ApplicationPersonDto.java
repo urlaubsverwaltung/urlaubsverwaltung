@@ -5,9 +5,9 @@ public class ApplicationPersonDto {
     private final String name;
     private final String avatarUrl;
 
-    private final Integer id;
+    private final Long id;
 
-    ApplicationPersonDto(String name, String avatarUrl, Integer id) {
+    ApplicationPersonDto(String name, String avatarUrl, Long id) {
         this.name = name;
         this.avatarUrl = avatarUrl;
         this.id = id;
@@ -21,7 +21,7 @@ public class ApplicationPersonDto {
         return avatarUrl;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 }

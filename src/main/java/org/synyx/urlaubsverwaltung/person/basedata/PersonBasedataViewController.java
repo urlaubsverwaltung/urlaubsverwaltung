@@ -37,7 +37,7 @@ public class PersonBasedataViewController {
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/basedata")
-    public String showPersonBasedata(@PathVariable("personId") Integer personId, Model model) throws UnknownPersonException {
+    public String showPersonBasedata(@PathVariable("personId") Long personId, Model model) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final PersonBasedata personBasedata = personBasedataService.getBasedataByPersonId(personId)
@@ -50,7 +50,7 @@ public class PersonBasedataViewController {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/basedata")
-    public String editPersonBasedata(@PathVariable("personId") Integer personId,
+    public String editPersonBasedata(@PathVariable("personId") Long personId,
                                      @Valid @ModelAttribute("personBasedata") PersonBasedataDto basedataDto, Errors errors, Model model, RedirectAttributes redirectAttributes) {
 
         if (errors.hasErrors()) {

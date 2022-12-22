@@ -71,8 +71,8 @@ class CompanyCalendarServiceTest {
         when(absenceService.getOpenAbsencesSince(any(LocalDate.class))).thenReturn(absences);
 
         final Person person = new Person();
-        person.setId(10);
-        when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
+        person.setId(10L);
+        when(personService.getPersonByID(10L)).thenReturn(Optional.of(person));
 
         CompanyCalendar companyCalendar = new CompanyCalendar(person);
         companyCalendar.setId(1L);
@@ -83,7 +83,7 @@ class CompanyCalendarServiceTest {
         final ByteArrayResource iCal = new ByteArrayResource(new byte[]{}, "calendar.ics");
         when(iCalService.getCalendar("Abwesenheitskalender der Firma", absences, person)).thenReturn(iCal);
 
-        final ByteArrayResource calendar = sut.getCalendarForAll(10, "secret", GERMAN);
+        final ByteArrayResource calendar = sut.getCalendarForAll(10L, "secret", GERMAN);
         assertThat(calendar).isEqualTo(iCal);
     }
 
@@ -91,46 +91,46 @@ class CompanyCalendarServiceTest {
     void getCalendarForAllButNoCompanyCalendarWithSecretFound() {
 
         final Person person = new Person();
-        person.setId(10);
-        when(personService.getPersonByID(10)).thenReturn(Optional.of(person));
+        person.setId(10L);
+        when(personService.getPersonByID(10L)).thenReturn(Optional.of(person));
 
         when(companyCalendarRepository.findBySecretAndPerson("secret", person)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.getCalendarForAll(10, "secret", GERMAN));
+            .isThrownBy(() -> sut.getCalendarForAll(10L, "secret", GERMAN));
     }
 
     @Test
     void getCalendarForAllSecretIsNull() {
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.getCalendarForAll(1, null, GERMAN));
+            .isThrownBy(() -> sut.getCalendarForAll(1L, null, GERMAN));
     }
 
     @Test
     void getCalendarForAllSecretIsEmpty() {
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.getCalendarForAll(1, "", GERMAN));
+            .isThrownBy(() -> sut.getCalendarForAll(1L, "", GERMAN));
     }
 
     @Test
     void getCalendarForAllSecretIsEmptyWithWhitespace() {
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.getCalendarForAll(1, "  ", GERMAN));
+            .isThrownBy(() -> sut.getCalendarForAll(1L, "  ", GERMAN));
     }
 
     @Test
     void getCalendarForAllCorrectSecretButPersonIsWrong() {
-        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+        when(personService.getPersonByID(1L)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> sut.getCalendarForAll(1, "secret", GERMAN));
+            .isThrownBy(() -> sut.getCalendarForAll(1L, "secret", GERMAN));
     }
 
     @Test
     void deleteCalendarForPerson() {
 
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         sut.deleteCalendarForPerson(1);
 
@@ -162,7 +162,7 @@ class CompanyCalendarServiceTest {
 
     @Test
     void ensureGetCompanyCalendarThrowsWhenGivenPersonDoesNotExist() {
-        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+        when(personService.getPersonByID(1L)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> sut.getCompanyCalendar(1));
@@ -174,7 +174,7 @@ class CompanyCalendarServiceTest {
         final CompanyCalendar expectedCalendar = new CompanyCalendar();
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.of(expectedCalendar));
 
         final Optional<CompanyCalendar> actualCompanyCalendar = sut.getCompanyCalendar(1);
@@ -186,7 +186,7 @@ class CompanyCalendarServiceTest {
     void ensureGetCompanyCalendarReturnsEmptyOptional() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
 
         final Optional<CompanyCalendar> actualCompanyCalendar = sut.getCompanyCalendar(1);
@@ -196,7 +196,7 @@ class CompanyCalendarServiceTest {
 
     @Test
     void ensureCreateCalendarForPersonThrowsWhenGivenPersonDoesNotExist() {
-        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+        when(personService.getPersonByID(1L)).thenReturn(Optional.empty());
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> sut.createCalendarForPerson(1, java.time.Period.parse("P12M")));
@@ -206,7 +206,7 @@ class CompanyCalendarServiceTest {
     void ensureCreateCalendarForPerson() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         when(companyCalendarRepository.findByPerson(person)).thenReturn(Optional.empty());
         when(companyCalendarRepository.save(any(CompanyCalendar.class))).thenAnswer(returnsFirstArg());
@@ -221,7 +221,7 @@ class CompanyCalendarServiceTest {
     void ensureCreateCalendarForPersonUpdatesExistingCalendar() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final CompanyCalendar expectedCompanyCalendar = new CompanyCalendar();
         final String secretBeforeUpdate = expectedCompanyCalendar.getSecret();

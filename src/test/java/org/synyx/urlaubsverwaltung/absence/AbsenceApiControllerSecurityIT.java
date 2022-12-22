@@ -68,7 +68,7 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "DEPARTMENT_HEAD", username = "departmentHead")
     void getAbsencesAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
@@ -90,7 +90,7 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "DEPARTMENT_HEAD", username = "departmentHead")
     void getAbsencesAsDepartmentHeadUserForOtherUserInSameDepartmentIsOk() throws Exception {
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person departmentHead = new Person();
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
@@ -110,7 +110,7 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY", username = "ssa")
     void getAbsencesAsSSAUserForOtherUserIsForbidden() throws Exception {
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person ssa = new Person();
         ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
@@ -132,7 +132,7 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY", username = "ssa")
     void getAbsencesAsSSAUserForOtherUserInSameDepartmentIsOk() throws Exception {
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person ssa = new Person();
         ssa.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
@@ -186,7 +186,7 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         when(absenceService.getOpenAbsences(person, LocalDate.of(2016, JANUARY, 1), LocalDate.of(2016, DECEMBER, 31)))
             .thenReturn(emptyList());
@@ -203,7 +203,7 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(get("/api/persons/1/absences")
             .param("from", "2016-01-01")
@@ -213,7 +213,7 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
 
     private void testWithUserWithCorrectPermissions() throws Exception {
         final Person person = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);

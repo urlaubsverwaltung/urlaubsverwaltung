@@ -5,7 +5,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
  */
 public class SickNoteAlreadyInactiveException extends Exception {
 
-    SickNoteAlreadyInactiveException(Integer id) {
+    SickNoteAlreadyInactiveException(Long id) {
         super("Sick note with ID = " + id + " is already inactive.");
     }
 }

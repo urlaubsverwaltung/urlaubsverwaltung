@@ -24,7 +24,7 @@ class SickNoteEntity {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     /**
      * One person may have multiple sick notes.
@@ -73,11 +73,11 @@ class SickNoteEntity {
     @Enumerated(STRING)
     private SickNoteStatus status;
 
-    Integer getId() {
+    Long getId() {
         return id;
     }
 
-    void setId(Integer id) {
+    void setId(Long id) {
         this.id = id;
     }
 

@@ -14,7 +14,7 @@ import static java.time.ZoneOffset.UTC;
  */
 public class Department {
 
-    private Integer id;
+    private Long id;
     private String name;
     private String description;
     private LocalDate createdAt;
@@ -28,11 +28,11 @@ public class Department {
         this.lastModification = LocalDate.now(UTC);
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

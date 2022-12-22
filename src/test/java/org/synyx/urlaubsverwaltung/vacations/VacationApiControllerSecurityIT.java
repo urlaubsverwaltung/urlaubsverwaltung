@@ -69,7 +69,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByUsername("department head")).thenReturn(Optional.of(requester));
 
         final Person requestedPerson = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
 
         when(departmentService.isDepartmentHeadAllowedToManagePerson(requester, requestedPerson)).thenReturn(false);
 
@@ -90,7 +90,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByUsername("second stage authority")).thenReturn(Optional.of(requester));
 
         final Person requestedPerson = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
 
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(requester, requestedPerson)).thenReturn(false);
 
@@ -133,7 +133,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByUsername("department head")).thenReturn(Optional.of(requester));
 
         final Person requestedPerson = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
 
         when(departmentService.isDepartmentHeadAllowedToManagePerson(requester, requestedPerson)).thenReturn(true);
 
@@ -154,7 +154,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByUsername("second stage authority")).thenReturn(Optional.of(requester));
 
         final Person requestedPerson = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
 
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(requester, requestedPerson)).thenReturn(true);
 
@@ -170,7 +170,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "BOSS")
     void getVacationsAsBossUserForOtherUserIsOk() throws Exception {
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/vacations")
@@ -184,7 +184,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "OFFICE")
     void getVacationsWithBasicAuthIsOk() throws Exception {
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/vacations")
@@ -200,7 +200,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/vacations")
@@ -217,7 +217,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/vacations")
@@ -257,7 +257,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByUsername("department head")).thenReturn(Optional.of(requester));
 
         final Person requestedPerson = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
 
         when(departmentService.isDepartmentHeadAllowedToManagePerson(requester, requestedPerson)).thenReturn(false);
 
@@ -279,7 +279,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByUsername("second stage authority")).thenReturn(Optional.of(requester));
 
         final Person requestedPerson = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
 
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(requester, requestedPerson)).thenReturn(false);
 
@@ -325,7 +325,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByUsername("department head")).thenReturn(Optional.of(requester));
 
         final Person requestedPerson = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
 
         when(departmentService.isDepartmentHeadAllowedToManagePerson(requester, requestedPerson)).thenReturn(true);
 
@@ -347,7 +347,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByUsername("second stage authority")).thenReturn(Optional.of(requester));
 
         final Person requestedPerson = new Person();
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(requestedPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(requestedPerson));
 
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(requester, requestedPerson)).thenReturn(true);
 
@@ -364,7 +364,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "OFFICE")
     void getVacationsOfDepartmentMembersWithOfficeUserIsOk() throws Exception {
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/vacations")
@@ -379,7 +379,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
     @WithMockUser(authorities = "BOSS")
     void getVacationsOfDepartmentMembersAsBossUserForOtherUserIsOk() throws Exception {
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(new Person()));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/vacations")
@@ -396,7 +396,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/vacations")
@@ -414,7 +414,7 @@ class VacationApiControllerSecurityIT extends TestContainersBase {
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final LocalDateTime now = LocalDateTime.now();
         final ResultActions resultActions = perform(get("/api/persons/1/vacations")

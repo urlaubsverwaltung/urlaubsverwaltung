@@ -6,7 +6,7 @@ import org.synyx.urlaubsverwaltung.web.AbstractNoResultFoundException;
  * Thrown in case no department found for a certain ID.
  */
 public class UnknownDepartmentException extends AbstractNoResultFoundException {
-    public UnknownDepartmentException(Integer id) {
+    public UnknownDepartmentException(Long id) {
         super(id, "department");
     }
 }

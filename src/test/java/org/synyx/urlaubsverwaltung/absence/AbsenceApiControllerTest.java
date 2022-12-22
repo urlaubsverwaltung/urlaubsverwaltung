@@ -34,7 +34,7 @@ import static java.time.Month.FEBRUARY;
 import static java.time.Month.JANUARY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -70,7 +70,7 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfNonWorkingdays() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, JANUARY, 31);
@@ -117,13 +117,13 @@ class AbsenceApiControllerTest {
     void ensureCorrectVacationOverridesNonWorkingdays() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, JANUARY, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1, false);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42, WAITING, 1, false);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, 1L, false);
         final AbsencePeriod.Record recordOne = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation, recordNoonVacation);
         final AbsencePeriod.Record recordTwo = new AbsencePeriod.Record(startDate.plusDays(2), person, recordMorningVacation, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(recordOne, recordTwo));
@@ -166,13 +166,13 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfVacationFullDay() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1, false);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42, WAITING, 1, false);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, 1L, false);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -198,12 +198,12 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfVacationMorning() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1, false);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -229,12 +229,12 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfVacationNoon() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42, WAITING, 1, false);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, 1L, false);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -261,13 +261,13 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfSickFullDay() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42);
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L);
         final AbsencePeriod.Record fullDaySickRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningSick, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDaySickRecord));
 
@@ -293,12 +293,12 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfSickMorning() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L);
         final AbsencePeriod.Record morningSickRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(morningSickRecord));
 
@@ -324,12 +324,12 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfSickNoon() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L);
         final AbsencePeriod.Record noonSickRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(noonSickRecord));
 
@@ -356,13 +356,13 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfVacationMorningAndSickNoon() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 1337, WAITING, 1, false);
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 1337L, WAITING, 1L, false);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L);
         final AbsencePeriod.Record absenceRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningVacation, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(absenceRecord));
 
@@ -393,13 +393,13 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfVacationNoonAndSickMorning() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 1337, WAITING, 1, false);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 1337L, WAITING, 1L, false);
         final AbsencePeriod.Record absenceRecord = new AbsencePeriod.Record(startDate.plusDays(1), person, recordMorningSick, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(absenceRecord));
 
@@ -431,13 +431,13 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfVacationFullDayWithHalfDayChristmasEve() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1, false);
-        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42, WAITING, 1, false);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
+        final AbsencePeriod.RecordNoon recordNoonVacation = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, 1L, false);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningVacation, recordNoonVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -468,12 +468,12 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfVacationMorningWithHalfDayChristmasEve() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1, false);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -504,12 +504,12 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfVacationWithMultipleWorkingTimes() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1, false);
+        final AbsencePeriod.RecordMorning recordMorningVacation = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
         final AbsencePeriod.Record fullDayVacationRecord = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningVacation);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDayVacationRecord));
 
@@ -550,13 +550,13 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfSickFullDayWithHalfDayChristmasEve() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42);
-        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L);
+        final AbsencePeriod.RecordNoon recordNoonSick = new AbsencePeriod.RecordNoonSick(person, 42L);
         final AbsencePeriod.Record fullDaySick = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningSick, recordNoonSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(fullDaySick));
 
@@ -587,12 +587,12 @@ class AbsenceApiControllerTest {
     void ensureCorrectConversionOfSickMorningWithHalfDayChristmasEve() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
 
-        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42);
+        final AbsencePeriod.RecordMorning recordMorningSick = new AbsencePeriod.RecordMorningSick(person, 42L);
         final AbsencePeriod.Record morningSick = new AbsencePeriod.Record(LocalDate.of(2016, DECEMBER, 24), person, recordMorningSick);
         final AbsencePeriod absencePeriod = new AbsencePeriod(List.of(morningSick));
 
@@ -624,7 +624,7 @@ class AbsenceApiControllerTest {
     void ensureTypeFilterIsWorkingForVacationOnly() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
@@ -651,7 +651,7 @@ class AbsenceApiControllerTest {
     void ensureTypeFilterIsWorkingForSickNoteOnly() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
@@ -678,7 +678,7 @@ class AbsenceApiControllerTest {
     void ensureTypeFilterFallbackIsEverything() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate startDate = LocalDate.of(2016, JANUARY, 1);
         final LocalDate endDate = LocalDate.of(2016, DECEMBER, 31);
@@ -705,14 +705,14 @@ class AbsenceApiControllerTest {
     void ensureNoWorkdaysInclusiveDoesNotMissOnTwoHalfDays() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.of(person));
 
         final LocalDate date = LocalDate.of(2016, JANUARY, 1);
 
-        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1, false);
+        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
         final AbsencePeriod.Record recordMorning = new AbsencePeriod.Record(date, person, morning);
         final AbsencePeriod absencePeriodMorning = new AbsencePeriod(List.of(recordMorning));
-        final AbsencePeriod.RecordNoon noon = new AbsencePeriod.RecordNoonVacation(person, 42, WAITING, 1, false);
+        final AbsencePeriod.RecordNoon noon = new AbsencePeriod.RecordNoonVacation(person, 42L, WAITING, 1L, false);
         final AbsencePeriod.Record recordNoon = new AbsencePeriod.Record(date, person, noon);
         final AbsencePeriod absencePeriodNoon = new AbsencePeriod(List.of(recordNoon));
 
@@ -784,7 +784,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureBadRequestIfThereIsNoPersonForGivenID() throws Exception {
-        when(personService.getPersonByID(anyInt())).thenReturn(Optional.empty());
+        when(personService.getPersonByID(anyLong())).thenReturn(Optional.empty());
 
         perform(get("/api/persons/23/absences")
             .param("from", "2016-01-01")
@@ -794,7 +794,7 @@ class AbsenceApiControllerTest {
 
     @Test
     void ensureBadRequestForInvalidTypeParameter() throws Exception {
-        when(personService.getPersonByID(anyInt()))
+        when(personService.getPersonByID(anyLong()))
             .thenReturn(Optional.of(new Person("muster", "Muster", "Marlene", "muster@example.org")));
 
         perform(get("/api/persons/23/absences")
@@ -813,12 +813,12 @@ class AbsenceApiControllerTest {
     }
 
     private static AbsencePeriod.Record anyVacationRecord(Person person, LocalDate date) {
-        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningVacation(person, 42, WAITING, 1, false);
+        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningVacation(person, 42L, WAITING, 1L, false);
         return new AbsencePeriod.Record(date, person, morning);
     }
 
     private static AbsencePeriod.Record anySickRecord(Person person, LocalDate date) {
-        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningSick(person, 42);
+        final AbsencePeriod.RecordMorning morning = new AbsencePeriod.RecordMorningSick(person, 42L);
         return new AbsencePeriod.Record(date, person, morning);
     }
 

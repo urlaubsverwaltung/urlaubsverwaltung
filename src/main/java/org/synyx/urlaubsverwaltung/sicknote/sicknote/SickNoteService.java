@@ -26,7 +26,7 @@ public interface SickNoteService {
      * @param id to search the sick note by
      * @return optional sick note matching the given id
      */
-    Optional<SickNote> getById(Integer id);
+    Optional<SickNote> getById(Long id);
 
     /**
      * Get all the sick notes of the given person that are in the given period.

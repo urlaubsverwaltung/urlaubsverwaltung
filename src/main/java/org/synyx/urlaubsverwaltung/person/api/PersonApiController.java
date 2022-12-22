@@ -66,7 +66,7 @@ public class PersonApiController {
     @Operation(summary = "Get one active person by id", description = "Get one active person by id")
     @GetMapping(PERSON_URL)
     @PreAuthorize(IS_OFFICE)
-    public ResponseEntity<PersonDto> getPerson(@PathVariable Integer id) {
+    public ResponseEntity<PersonDto> getPerson(@PathVariable Long id) {
 
         return personService.getPersonByID(id)
             .map(value -> new ResponseEntity<>(createPersonResponse(value), OK))

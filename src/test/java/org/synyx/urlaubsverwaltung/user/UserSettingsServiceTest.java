@@ -41,14 +41,14 @@ class UserSettingsServiceTest {
     void ensureUserSettingsForPerson() {
 
         final Person person = new Person();
-        person.setId(42);
+        person.setId(42L);
 
         final UserSettingsEntity entity = new UserSettingsEntity();
-        entity.setPersonId(42);
+        entity.setPersonId(42L);
         entity.setTheme(Theme.DARK);
         entity.setLocale(Locale.GERMAN);
 
-        when(userSettingsRepository.findById(42)).thenReturn(Optional.of(entity));
+        when(userSettingsRepository.findById(42L)).thenReturn(Optional.of(entity));
 
         final UserSettings actual = sut.getUserSettingsForPerson(person);
 
@@ -59,9 +59,9 @@ class UserSettingsServiceTest {
     @Test
     void ensureUserSettingsForPersonReturnsDefault() {
         final Person person = new Person();
-        person.setId(42);
+        person.setId(42L);
 
-        when(userSettingsRepository.findById(42)).thenReturn(Optional.empty());
+        when(userSettingsRepository.findById(42L)).thenReturn(Optional.empty());
 
         final UserSettings actual = sut.getUserSettingsForPerson(person);
 
@@ -72,17 +72,17 @@ class UserSettingsServiceTest {
     @Test
     void ensureUpdateUserThemePreference() {
         final Person person = new Person();
-        person.setId(42);
+        person.setId(42L);
 
         final UserSettingsEntity entity = new UserSettingsEntity();
-        entity.setPersonId(42);
+        entity.setPersonId(42L);
         entity.setPerson(person);
         entity.setTheme(Theme.DARK);
 
-        when(userSettingsRepository.findById(42)).thenReturn(Optional.of(entity));
+        when(userSettingsRepository.findById(42L)).thenReturn(Optional.of(entity));
 
         final UserSettingsEntity entityToSave = new UserSettingsEntity();
-        entityToSave.setPersonId(42);
+        entityToSave.setPersonId(42L);
         entityToSave.setPerson(null);
         entityToSave.setTheme(Theme.LIGHT);
         entityToSave.setLocale(Locale.GERMAN);
@@ -100,12 +100,12 @@ class UserSettingsServiceTest {
     @Test
     void ensureUpdateUserThemePreferenceWhenNothingHasBeenPersistedYet() {
         final Person person = new Person();
-        person.setId(42);
+        person.setId(42L);
 
-        when(userSettingsRepository.findById(42)).thenReturn(Optional.empty());
+        when(userSettingsRepository.findById(42L)).thenReturn(Optional.empty());
 
         final UserSettingsEntity entityToSave = new UserSettingsEntity();
-        entityToSave.setPersonId(42);
+        entityToSave.setPersonId(42L);
         entityToSave.setPerson(null);
         entityToSave.setTheme(Theme.LIGHT);
         entityToSave.setLocale(Locale.GERMAN);

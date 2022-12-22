@@ -48,7 +48,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     void periodsSickNotesWithCorrectRole() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDateTime now = LocalDateTime.now();
@@ -64,7 +64,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     void periodsSickNotesWithBossRole() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDateTime now = LocalDateTime.now();
@@ -80,7 +80,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     void periodsSickNotesWithSSARole() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDateTime now = LocalDateTime.now();
@@ -96,7 +96,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
     void periodsSickNotesWithDHRole() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         when(personService.getSignedInUser()).thenReturn(person);
 
         final LocalDateTime now = LocalDateTime.now();

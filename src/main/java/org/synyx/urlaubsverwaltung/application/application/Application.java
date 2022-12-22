@@ -37,7 +37,7 @@ public class Application {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     /**
      * Person that will be on vacation if this application for leave is allowed.
@@ -164,11 +164,11 @@ public class Application {
 
     private LocalDate upcomingApplicationsReminderSend;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

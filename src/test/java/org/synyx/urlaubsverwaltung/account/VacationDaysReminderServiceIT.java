@@ -56,7 +56,7 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
         final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(42);
+        person.setId(42L);
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         final Account account = new Account();
@@ -91,7 +91,7 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
         final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(42);
+        person.setId(42L);
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         final Account account2022 = new Account();
@@ -141,7 +141,7 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
         final VacationDaysReminderService sut = new VacationDaysReminderService(personService, accountService, vacationDaysService, mailService, clock);
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         when(personService.getActivePersons()).thenReturn(List.of(person));
 
         final Account account2022 = new Account();

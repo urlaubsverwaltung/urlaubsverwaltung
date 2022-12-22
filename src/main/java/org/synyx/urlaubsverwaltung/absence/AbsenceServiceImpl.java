@@ -179,10 +179,10 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private AbsencePeriod.Record toVacationAbsencePeriodRecord(DateDayLengthTuple tuple, Application application) {
 
-        final Integer applicationId = application.getId();
+        final Long applicationId = application.getId();
         final Person person = application.getPerson();
         final AbsencePeriod.AbsenceStatus status = toAbsenceStatus(application.getStatus());
-        final Integer vacationTypeId = application.getVacationType().getId();
+        final Long vacationTypeId = application.getVacationType().getId();
         final boolean visibleToEveryone = application.getVacationType().isVisibleToEveryone();
 
         if (tuple.publicHolidayDayLength.isHalfDay()) {
@@ -240,7 +240,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private AbsencePeriod.Record toSickAbsencePeriodRecord(DateDayLengthTuple tuple, SickNote sickNote) {
 
-        final Integer sickNoteId = sickNote.getId();
+        final Long sickNoteId = sickNote.getId();
         final Person person = sickNote.getPerson();
 
         if (tuple.publicHolidayDayLength.isHalfDay()) {

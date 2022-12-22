@@ -112,7 +112,7 @@ class DepartmentCalendarRepositoryIT extends TestContainersBase {
         department.setMembers(List.of(savedPerson));
         final Department savedDepartment = departmentService.create(department);
 
-        final Integer departmentId = savedDepartment.getId();
+        final Long departmentId = savedDepartment.getId();
         final DepartmentCalendar firstDepartmentCalendar = new DepartmentCalendar(departmentId, savedPerson);
         firstDepartmentCalendar.setCalendarPeriod(Period.ofDays(1));
         sut.save(firstDepartmentCalendar);

@@ -732,7 +732,7 @@ class VacationDaysServiceTest {
 
     private Person anyPerson() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         return person;
     }
 
@@ -751,7 +751,7 @@ class VacationDaysServiceTest {
 
     private static Application anyApplication(Person person) {
         final Application application = new Application();
-        application.setId(1);
+        application.setId(1L);
         application.setPerson(person);
         application.setVacationType(createVacationTypeEntity(HOLIDAY));
         application.setDayLength(FULL);

@@ -125,9 +125,9 @@ class PublicHolidayApiControllerTest {
     void personsPublicHolidays() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final WorkingTimeSettings workingTimeSettings = anyWorkingTimeSettings();
         when(settingsService.getSettings()).thenReturn(settingsWithWorkingTimeSettings(workingTimeSettings));
@@ -160,7 +160,7 @@ class PublicHolidayApiControllerTest {
 
     @Test
     void personsSickNotesForEmptyPerson() throws Exception {
-        when(personService.getPersonByID(1)).thenReturn(Optional.empty());
+        when(personService.getPersonByID(1L)).thenReturn(Optional.empty());
 
         perform(get("/api/persons/1/public-holidays")
             .param("from", "2016-01-01")

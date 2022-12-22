@@ -12,11 +12,11 @@ class OvertimeCommentDtoTest {
     void equals() {
         final Instant now = Instant.now();
 
-        final OvertimeCommentPersonDto personDto = new OvertimeCommentPersonDto(1, "niceName", "gravatarUrl");
+        final OvertimeCommentPersonDto personDto = new OvertimeCommentPersonDto(1L, "niceName", "gravatarUrl");
         final OvertimeCommentDto overtimeCommentDtoOne = new OvertimeCommentDto(personDto, "CREATED", now, "text");
         final OvertimeCommentDto overtimeCommentDtoOneOne = new OvertimeCommentDto(personDto, "CREATED", now, "text");
 
-        final OvertimeCommentPersonDto personDtoTwo = new OvertimeCommentPersonDto(2, "niceNameDifferent", "gravatarUrl");
+        final OvertimeCommentPersonDto personDtoTwo = new OvertimeCommentPersonDto(2L, "niceNameDifferent", "gravatarUrl");
         final OvertimeCommentDto overtimeCommentDtoTwo = new OvertimeCommentDto(personDtoTwo, "CREATED", now, "text");
         final OvertimeCommentDto overtimeCommentDtoThree = new OvertimeCommentDto(personDto, "EDITED", now, "text");
         final OvertimeCommentDto overtimeCommentDtoFour = new OvertimeCommentDto(personDto, "EDITED", now.minusSeconds(100), "text");
@@ -35,7 +35,7 @@ class OvertimeCommentDtoTest {
 
     @Test
     void hashCodeTest() {
-        final OvertimeCommentPersonDto personDto = new OvertimeCommentPersonDto(1, "niceName", "gravatarUrl");
+        final OvertimeCommentPersonDto personDto = new OvertimeCommentPersonDto(1L, "niceName", "gravatarUrl");
         final OvertimeCommentDto overtimeCommentDto = new OvertimeCommentDto(personDto, "CREATED", Instant.parse("2021-06-28T00:00:00.00Z"), "text");
         assertThat(overtimeCommentDto.hashCode()).isEqualTo(-2074185642);
     }

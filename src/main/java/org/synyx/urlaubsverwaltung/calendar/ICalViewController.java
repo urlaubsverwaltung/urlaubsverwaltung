@@ -37,7 +37,7 @@ public class ICalViewController {
 
     @GetMapping("/persons/{personId}/calendar")
     @ResponseBody
-    public String getCalendarForPerson(Locale locale, HttpServletResponse response, @PathVariable Integer personId, @RequestParam String secret) {
+    public String getCalendarForPerson(Locale locale, HttpServletResponse response, @PathVariable Long personId, @RequestParam String secret) {
 
         final ByteArrayResource iCal;
         try {
@@ -55,7 +55,7 @@ public class ICalViewController {
 
     @GetMapping("/departments/{departmentId}/persons/{personId}/calendar")
     @ResponseBody
-    public String getCalendarForDepartment(Locale locale, HttpServletResponse response, @PathVariable Integer departmentId, @PathVariable Integer personId, @RequestParam String secret) {
+    public String getCalendarForDepartment(Locale locale, HttpServletResponse response, @PathVariable Long departmentId, @PathVariable Long personId, @RequestParam String secret) {
 
         final ByteArrayResource iCal;
         try {
@@ -73,7 +73,7 @@ public class ICalViewController {
 
     @GetMapping("/company/persons/{personId}/calendar")
     @ResponseBody
-    public String getCalendarForCompany(Locale locale, HttpServletResponse response, @PathVariable Integer personId, @RequestParam String secret) {
+    public String getCalendarForCompany(Locale locale, HttpServletResponse response, @PathVariable Long personId, @RequestParam String secret) {
 
         final ByteArrayResource iCal;
         try {

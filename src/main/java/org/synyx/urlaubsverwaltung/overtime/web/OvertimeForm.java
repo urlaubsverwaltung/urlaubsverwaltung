@@ -21,7 +21,7 @@ import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
  */
 public class OvertimeForm {
 
-    private Integer id;
+    private Long id;
     private Person person;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
     private LocalDate startDate;
@@ -56,11 +56,11 @@ public class OvertimeForm {
         this.reduce = overtimeHours.doubleValue() < 0;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

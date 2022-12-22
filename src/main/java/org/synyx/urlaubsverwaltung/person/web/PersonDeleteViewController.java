@@ -31,7 +31,7 @@ public class PersonDeleteViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping(value = "/person/{personId}/delete", params = {"delete"})
     public String deletePerson(
-        @PathVariable("personId") Integer personId,
+        @PathVariable("personId") Long personId,
         @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm,
         RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
@@ -49,7 +49,7 @@ public class PersonDeleteViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping(value = "/person/{personId}/delete", params = {"delete"}, headers = {"Turbo-Frame"})
     public String deletePersonAjax(
-        @PathVariable("personId") Integer personId,
+        @PathVariable("personId") Long personId,
         @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm,
         @RequestHeader(name = "Turbo-Frame") String turboFrame,
         Model model) throws UnknownPersonException {
@@ -76,7 +76,7 @@ public class PersonDeleteViewController {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/delete")
-    public String deletePersonConfirmed(@PathVariable("personId") Integer personId, @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm, RedirectAttributes redirectAttributes) throws UnknownPersonException {
+    public String deletePersonConfirmed(@PathVariable("personId") Long personId, @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm, RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         final Person personToDelete = getPerson(personId);
 
@@ -97,7 +97,7 @@ public class PersonDeleteViewController {
     @PreAuthorize(IS_OFFICE)
     @PostMapping(value = "/person/{personId}/delete", headers = {"Turbo-Frame"})
     public String deletePersonConfirmedAjax(
-        @PathVariable("personId") Integer personId,
+        @PathVariable("personId") Long personId,
         @ModelAttribute("personDeleteForm") PersonDeleteForm personDeleteForm,
         @RequestHeader("Turbo-Frame") String turboFrame,
         RedirectAttributes redirectAttributes, Model model) throws UnknownPersonException {
@@ -122,7 +122,7 @@ public class PersonDeleteViewController {
         return deletePerson(personToDelete, redirectAttributes);
     }
 
-    private Person getPerson(Integer personId) throws UnknownPersonException {
+    private Person getPerson(Long personId) throws UnknownPersonException {
         return personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
     }
 

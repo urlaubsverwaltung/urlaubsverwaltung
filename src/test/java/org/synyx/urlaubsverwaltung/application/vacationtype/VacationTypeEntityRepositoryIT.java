@@ -26,7 +26,7 @@ class VacationTypeEntityRepositoryIT extends TestContainersBase {
         sut.deleteAll();
 
         final VacationTypeEntity active = new VacationTypeEntity();
-        active.setId(1);
+        active.setId(1L);
         active.setActive(true);
         active.setCategory(HOLIDAY);
         active.setMessageKey("message.key.active");
@@ -34,7 +34,7 @@ class VacationTypeEntityRepositoryIT extends TestContainersBase {
         sut.save(active);
 
         final VacationTypeEntity inactive = new VacationTypeEntity();
-        inactive.setId(2);
+        inactive.setId(2L);
         inactive.setActive(false);
         inactive.setCategory(OVERTIME);
         inactive.setMessageKey("message.key.inactive");

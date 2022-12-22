@@ -52,14 +52,14 @@ class SickNoteMailServiceTest {
         person.setUsername("Hulk");
 
         final SickNote sickNoteA = SickNote.builder()
-                .id(1)
+                .id(1L)
                 .person(person)
                 .startDate(LocalDate.of(2022, 4, 1))
                 .endDate(LocalDate.of(2022, 4, 13))
                 .build();
 
         final SickNote sickNoteB = SickNote.builder()
-                .id(2)
+                .id(2L)
                 .person(person)
                 .startDate(LocalDate.of(2022, 4, 10))
                 .endDate(LocalDate.of(2022, 4, 20))

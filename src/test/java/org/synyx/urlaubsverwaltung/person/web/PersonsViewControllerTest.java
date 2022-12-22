@@ -165,7 +165,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("username", "Cloud", "Sky", "sky@exaple.org");
-        person.setId(2);
+        person.setId(2L);
 
         final PageImpl<Person> page = new PageImpl<>(List.of(person));
         when(departmentService.getManagedMembersOfPerson(signedInUser, defaultPersonSearchQuery())).thenReturn(page);
@@ -255,7 +255,7 @@ class PersonsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person person = new Person("username", "Cloud", "Sky", "sky@exaple.org");
-        person.setId(2);
+        person.setId(2L);
         person.setPermissions(List.of(INACTIVE));
 
         final PageImpl<Person> page = new PageImpl<>(List.of(person));
@@ -278,15 +278,15 @@ class PersonsViewControllerTest {
     void showPersonWithActiveFalseForUserWithRoleDepartmentHeadAndSecondStageAuthorityPersonsSortedByFirstname() throws Exception {
 
         final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person bruce = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        bruce.setId(2);
+        bruce.setId(2L);
         bruce.setPermissions(List.of(INACTIVE));
 
         final Person clark = new Person("superman", "Kent", "Clark", "superman@example.org");
-        clark.setId(3);
+        clark.setId(3L);
         clark.setPermissions(List.of(INACTIVE));
 
         final PageImpl<Person> page = new PageImpl<>(List.of(bruce, clark));
@@ -308,7 +308,7 @@ class PersonsViewControllerTest {
     @Test
     void showPersonForUnknownDepartmentIdThrowsUnknownDepartmentException() {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
@@ -329,14 +329,14 @@ class PersonsViewControllerTest {
         final Department department = new Department();
         department.setName("awesome-department");
         department.setMembers(List.of());
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(department));
 
         final Person john = new Person();
-        john.setId(2);
+        john.setId(2L);
         john.setFirstName("John");
 
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
-        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1L, defaultPersonSearchQuery())).thenReturn(page);
 
         when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(true);
 
@@ -365,14 +365,14 @@ class PersonsViewControllerTest {
         final Department department = new Department();
         department.setName("awesome-department");
         department.setMembers(List.of(signedInUser));
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(department));
 
         final Person john = new Person();
-        john.setId(2);
+        john.setId(2L);
         john.setFirstName("John");
 
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
-        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1, defaultPersonSearchQuery())).thenReturn(page);
+        when(departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, 1L, defaultPersonSearchQuery())).thenReturn(page);
 
         when(departmentService.isPersonAllowedToManageDepartment(signedInUser, department)).thenReturn(true);
 
@@ -398,10 +398,10 @@ class PersonsViewControllerTest {
 
         final Department department = new Department();
         department.setName("awesome-department");
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(department));
 
         final Person john = new Person();
-        john.setId(2);
+        john.setId(2L);
         john.setFirstName("John");
 
         final PageImpl<Person> page = new PageImpl<>(List.of(john));
@@ -428,7 +428,7 @@ class PersonsViewControllerTest {
     @Test
     void showPersonUsesDepartmentUsesCorrectView() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
@@ -446,7 +446,7 @@ class PersonsViewControllerTest {
         sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
@@ -468,7 +468,7 @@ class PersonsViewControllerTest {
         sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
@@ -540,7 +540,7 @@ class PersonsViewControllerTest {
         mockDefaultPageRequest(secondStageAuthority);
 
         final Department department = new Department();
-        department.setId(1);
+        department.setId(1L);
         department.setName("awesome-department");
         when(departmentService.getManagedDepartmentsOfSecondStageAuthority(secondStageAuthority)).thenReturn(List.of(department));
 
@@ -564,13 +564,13 @@ class PersonsViewControllerTest {
         mockDefaultPageRequest(departmentHeadAndSecondStageAuthority);
 
         final Department department = new Department();
-        department.setId(1);
+        department.setId(1L);
         department.setName("1");
         final Department department2 = new Department();
-        department2.setId(2);
+        department2.setId(2L);
         department2.setName("2");
         final Department department3 = new Department();
-        department3.setId(3);
+        department3.setId(3L);
         department3.setName("3");
 
         when(departmentService.getManagedDepartmentsOfDepartmentHead(departmentHeadAndSecondStageAuthority)).thenReturn(List.of(department, department3));
@@ -599,21 +599,21 @@ class PersonsViewControllerTest {
     void showPersonWithPersonnelNumberIfPresent() throws Exception {
 
         final Person signedInUser = personWithRole(USER, OFFICE);
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person wayne = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        wayne.setId(2);
+        wayne.setId(2L);
         wayne.setPermissions(List.of(USER));
 
         final Person wolf = new Person("red.wolf", "Xavier", "Bruce", "red.wolf@example.org");
-        wolf.setId(3);
+        wolf.setId(3L);
         wolf.setPermissions(List.of(USER));
 
         final PageImpl<Person> page = new PageImpl<>(List.of(wayne, wolf));
         when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(page);
 
-        when(personBasedataService.getBasedataByPersonId(2)).thenReturn(Optional.of(new PersonBasedata(new PersonId(2), "42", null)));
+        when(personBasedataService.getBasedataByPersonId(2)).thenReturn(Optional.of(new PersonBasedata(new PersonId(2L), "42", null)));
 
         perform(get("/web/person"))
             .andExpect(
@@ -636,15 +636,15 @@ class PersonsViewControllerTest {
     void showNoPersonnelNumberColumnIfPersonnelNumberIsPresent() throws Exception {
 
         final Person signedInUser = personWithRole(USER, OFFICE);
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final Person wayne = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        wayne.setId(2);
+        wayne.setId(2L);
         wayne.setPermissions(List.of(USER));
 
         final Person wolf = new Person("red.wolf", "Xavier", "Bruce", "red.wolf@example.org");
-        wolf.setId(3);
+        wolf.setId(3L);
         wolf.setPermissions(List.of(USER));
 
         final PageImpl<Person> page = new PageImpl<>(List.of(wayne, wolf));
@@ -682,7 +682,7 @@ class PersonsViewControllerTest {
 
     private static Person personWithRole(Role... role) {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(Arrays.asList(role));
 
         return person;

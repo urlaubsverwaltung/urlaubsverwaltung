@@ -108,7 +108,7 @@ class OvertimeFormTest {
 
         final Field idField = ReflectionUtils.findField(Overtime.class, "id");
         idField.setAccessible(true);
-        idField.set(overtime, 42);
+        idField.set(overtime, 42L);
 
         final OvertimeForm overtimeForm = new OvertimeForm(overtime);
 

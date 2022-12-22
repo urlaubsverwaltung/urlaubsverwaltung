@@ -50,7 +50,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/company")
             .with(csrf())
@@ -67,7 +67,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/company")
             .with(csrf())
@@ -84,7 +84,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/company")
             .with(csrf())
@@ -133,7 +133,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/company").with(csrf()))
             .andExpect(status().isForbidden());
@@ -148,7 +148,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/company").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
@@ -161,7 +161,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/company").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
@@ -174,7 +174,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/company").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
@@ -219,7 +219,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/company").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());
@@ -234,7 +234,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/company/accessible").with(csrf()))
             .andExpect(status().is3xxRedirection())
@@ -247,7 +247,7 @@ class CalendarSharingViewControllerCompanyCalendarSecurityIT extends TestContain
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/company/accessible").with(csrf()))
             .andExpect(status().is3xxRedirection())

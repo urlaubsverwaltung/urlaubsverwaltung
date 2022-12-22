@@ -36,7 +36,7 @@ class PersonMailServiceIT extends TestContainersBase {
     void ensureOfficeWithNotificationsGetMailNewPersonIsCreated() throws MessagingException, IOException {
 
         final Person createdPerson = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
-        createdPerson.setId(1);
+        createdPerson.setId(1L);
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(singletonList(OFFICE));

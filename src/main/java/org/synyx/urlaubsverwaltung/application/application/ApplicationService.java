@@ -23,7 +23,7 @@ public interface ApplicationService {
      * @param id to get the {@link Application} by.
      * @return optional {@link Application} for the given id
      */
-    Optional<Application> getApplicationById(Integer id);
+    Optional<Application> getApplicationById(Long id);
 
     /**
      * Saves a new {@link Application}.

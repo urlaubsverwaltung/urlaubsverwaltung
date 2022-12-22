@@ -194,7 +194,7 @@ class ApplicationForLeaveViewController {
     }
 
     private static ApplicationPersonDto toViewPerson(Person person, boolean allowedToAccessPersonData) {
-        final Integer id = allowedToAccessPersonData ? person.getId() : null;
+        final Long id = allowedToAccessPersonData ? person.getId() : null;
         return new ApplicationPersonDto(person.getNiceName(), person.getGravatarURL(), id);
     }
 

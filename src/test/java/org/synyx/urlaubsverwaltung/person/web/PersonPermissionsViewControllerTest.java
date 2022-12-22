@@ -40,8 +40,8 @@ class PersonPermissionsViewControllerTest {
 
     private PersonPermissionsViewController sut;
 
-    private static final int PERSON_ID = 1;
-    private static final int UNKNOWN_PERSON_ID = 675;
+    private static final long PERSON_ID = 1;
+    private static final long UNKNOWN_PERSON_ID = 675;
 
     @Mock
     private PersonService personService;
@@ -172,7 +172,7 @@ class PersonPermissionsViewControllerTest {
         ).hasCauseInstanceOf(UnknownPersonException.class);
     }
 
-    private static Person personWithId(int personId) {
+    private static Person personWithId(long personId) {
         final Person person = new Person();
         person.setId(personId);
         return person;

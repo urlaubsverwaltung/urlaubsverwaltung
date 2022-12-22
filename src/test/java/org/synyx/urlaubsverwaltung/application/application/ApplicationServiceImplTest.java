@@ -44,13 +44,13 @@ class ApplicationServiceImplTest {
     // Get application by ID -------------------------------------------------------------------------------------------
     @Test
     void ensureGetApplicationByIdCallsCorrectDaoMethod() {
-        sut.getApplicationById(1234);
-        verify(applicationRepository).findById(1234);
+        sut.getApplicationById(1234L);
+        verify(applicationRepository).findById(1234L);
     }
 
     @Test
     void ensureGetApplicationByIdReturnsAbsentOptionalIfNoOneExists() {
-        final Optional<Application> optional = sut.getApplicationById(1234);
+        final Optional<Application> optional = sut.getApplicationById(1234L);
         assertThat(optional).isEmpty();
     }
 
@@ -307,14 +307,14 @@ class ApplicationServiceImplTest {
     void ensureGetApplicationsForACertainPeriod() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final LocalDate startDate = LocalDate.of(2022, 8, 18);
         final LocalDate endDate = LocalDate.of(2022, 8, 18);
         final List<Person> persons = List.of(person);
 
         final Application application = new Application();
-        application.setId(1);
+        application.setId(1L);
 
         when(applicationRepository.findByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndStatusIn(persons, startDate, endDate, List.of(WAITING)))
             .thenReturn(List.of(application));
@@ -340,9 +340,9 @@ class ApplicationServiceImplTest {
     @Test
     void deleteBossInteractionOnPersonDeletionEvent() {
         final Person boss = new Person();
-        boss.setId(1);
+        boss.setId(1L);
         final Application application = new Application();
-        application.setId(1);
+        application.setId(1L);
         application.setCanceller(boss);
         final List<Application> applicationsOfBoss = List.of(application);
         when(applicationRepository.findByBoss(boss)).thenReturn(applicationsOfBoss);
@@ -356,9 +356,9 @@ class ApplicationServiceImplTest {
     @Test
     void deleteCancellerInteractionOnPersonDeletionEvent() {
         final Person canceller = new Person();
-        canceller.setId(1);
+        canceller.setId(1L);
         final Application application = new Application();
-        application.setId(1);
+        application.setId(1L);
         application.setCanceller(canceller);
         final List<Application> applicationsOfCanceller = List.of(application);
         when(applicationRepository.findByCanceller(canceller)).thenReturn(applicationsOfCanceller);
@@ -372,9 +372,9 @@ class ApplicationServiceImplTest {
     @Test
     void deleteApplierInteractionOnPersonDeletionEvent() {
         final Person applier = new Person();
-        applier.setId(1);
+        applier.setId(1L);
         final Application application = new Application();
-        application.setId(1);
+        application.setId(1L);
         application.setApplier(applier);
         final List<Application> applicationsOfApplier = List.of(application);
         when(applicationRepository.findByApplier(applier)).thenReturn(applicationsOfApplier);
@@ -391,14 +391,14 @@ class ApplicationServiceImplTest {
         Application application = new Application();
 
         final Person person = new Person();
-        person.setId(42);
+        person.setId(42L);
         final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
         holidayReplacement.setPerson(person);
 
 
         final HolidayReplacementEntity otherHolidayReplacement = new HolidayReplacementEntity();
         final Person other = new Person();
-        other.setId(21);
+        other.setId(21L);
         otherHolidayReplacement.setPerson(other);
 
         application.setHolidayReplacements(List.of(holidayReplacement, otherHolidayReplacement));
@@ -416,13 +416,13 @@ class ApplicationServiceImplTest {
     void ensureGetTotalOvertimeReductionOfPersonsBefore() {
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person();
-        robin.setId(2);
+        robin.setId(2L);
 
         final Person alfred = new Person();
-        alfred.setId(3);
+        alfred.setId(3L);
 
         final List<Person> persons = List.of(batman, robin, alfred);
         final LocalDate date = LocalDate.of(2022, 8, 30);
@@ -447,13 +447,13 @@ class ApplicationServiceImplTest {
     void ensureGetTotalOvertimeReductionOfPersonsBeforeReturnsDurationZeroForPersonsWithoutOvertimeReduction() {
 
         final Person batman = new Person();
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person();
-        robin.setId(2);
+        robin.setId(2L);
 
         final Person alfred = new Person();
-        alfred.setId(3);
+        alfred.setId(3L);
 
         final List<Person> persons = List.of(batman, robin, alfred);
         final LocalDate date = LocalDate.of(2022, 8, 30);

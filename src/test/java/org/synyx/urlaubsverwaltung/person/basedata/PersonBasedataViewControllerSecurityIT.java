@@ -89,9 +89,9 @@ class PersonBasedataViewControllerSecurityIT extends TestContainersBase {
     void ensuresAuthorizedPersonWithOfficeRoleCanAccess() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.empty());
         when(personService.getSignedInUser()).thenReturn(person);
 

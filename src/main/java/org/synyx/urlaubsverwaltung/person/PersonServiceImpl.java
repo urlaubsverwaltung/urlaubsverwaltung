@@ -109,7 +109,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Optional<Person> getPersonByID(Integer id) {
+    public Optional<Person> getPersonByID(Long id) {
         return personRepository.findById(id);
     }
 
@@ -205,7 +205,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public int numberOfPersonsWithOfficeRoleExcludingPerson(int excludingId) {
+    public int numberOfPersonsWithOfficeRoleExcludingPerson(long excludingId) {
         return personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(excludingId));
     }
 

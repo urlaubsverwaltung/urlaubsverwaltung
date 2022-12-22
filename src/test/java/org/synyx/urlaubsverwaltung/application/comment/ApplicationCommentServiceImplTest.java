@@ -99,7 +99,7 @@ class ApplicationCommentServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final ApplicationComment applicationComment = new ApplicationComment(person, Clock.fixed(Instant.ofEpochSecond(0), ZoneId.systemDefault()));
-        applicationComment.setId(1);
+        applicationComment.setId(1L);
         final List<ApplicationComment> applicationCommentsOfAuthor = List.of(applicationComment);
         when(commentRepository.findByPerson(person)).thenReturn(applicationCommentsOfAuthor);
 
@@ -115,7 +115,7 @@ class ApplicationCommentServiceImplTest {
     @Test
     void ensureDeletionByApplicationPerson() {
         final Person applicationPerson = new Person();
-        applicationPerson.setId(1);
+        applicationPerson.setId(1L);
 
         commentService.deleteByApplicationPerson(applicationPerson);
 

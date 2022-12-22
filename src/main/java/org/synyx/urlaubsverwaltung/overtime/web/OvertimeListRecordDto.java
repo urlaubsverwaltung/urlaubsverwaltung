@@ -11,7 +11,7 @@ public final class OvertimeListRecordDto {
         ABSENCE,
     }
 
-    private final Integer id;
+    private final Long id;
     private final LocalDate startDate;
     private final LocalDate endDate;
     private final Duration duration;
@@ -20,7 +20,7 @@ public final class OvertimeListRecordDto {
     private final String type;
     private final boolean isAllowedToEdit;
 
-    OvertimeListRecordDto(Integer id, LocalDate startDate, LocalDate endDate, Duration duration, Duration sum, String status, String type, boolean isAllowedToEdit) {
+    OvertimeListRecordDto(Long id, LocalDate startDate, LocalDate endDate, Duration duration, Duration sum, String status, String type, boolean isAllowedToEdit) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -36,7 +36,7 @@ public final class OvertimeListRecordDto {
             sum, overtimeListRecordDto.getStatus(), overtimeListRecordDto.getType(), overtimeListRecordDto.isAllowedToEdit);
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

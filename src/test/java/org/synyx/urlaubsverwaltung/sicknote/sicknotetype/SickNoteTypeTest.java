@@ -29,13 +29,13 @@ class SickNoteTypeTest {
     @Test
     void equals() {
         final SickNoteType sickNoteTypeOne = new SickNoteType();
-        sickNoteTypeOne.setId(1);
+        sickNoteTypeOne.setId(1L);
 
         final SickNoteType sickNoteTypeOneOne = new SickNoteType();
-        sickNoteTypeOneOne.setId(1);
+        sickNoteTypeOneOne.setId(1L);
 
         final SickNoteType sickNoteTypeTwo = new SickNoteType();
-        sickNoteTypeTwo.setId(2);
+        sickNoteTypeTwo.setId(2L);
 
         assertThat(sickNoteTypeOne)
             .isEqualTo(sickNoteTypeOne)
@@ -48,7 +48,7 @@ class SickNoteTypeTest {
     @Test
     void hashCodeTest() {
         final SickNoteType sickNoteTypeOne = new SickNoteType();
-        sickNoteTypeOne.setId(1);
+        sickNoteTypeOne.setId(1L);
 
         assertThat(sickNoteTypeOne.hashCode()).isEqualTo(32);
     }

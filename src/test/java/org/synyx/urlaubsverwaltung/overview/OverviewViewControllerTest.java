@@ -79,7 +79,7 @@ class OverviewViewControllerTest {
 
     private OverviewViewController sut;
 
-    private static final int SOME_PERSON_ID = 1;
+    private static final long SOME_PERSON_ID = 1;
 
     @Mock
     private PersonService personService;
@@ -189,11 +189,11 @@ class OverviewViewControllerTest {
     @Test
     void showOverviewAddsHolidayAccountInfoToModel() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
 
         final Account account = someAccount();
@@ -212,10 +212,10 @@ class OverviewViewControllerTest {
     @Test
     void showOverviewWithoutExistingAccount() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
 
         when(accountService.getHolidaysAccount(1984, person)).thenReturn(Optional.empty());
@@ -232,7 +232,7 @@ class OverviewViewControllerTest {
     @Test
     void showOverviewCanAccessAbsenceOverview() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -247,7 +247,7 @@ class OverviewViewControllerTest {
     @Test
     void showOverviewCanAccessCalendarShareForOwn() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -261,7 +261,7 @@ class OverviewViewControllerTest {
     @Test
     void showOverviewCanAccessCalendarShareAssOffice() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -275,7 +275,7 @@ class OverviewViewControllerTest {
     @Test
     void showOverviewCanAccessCalendarShareAsBoss() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, BOSS));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -289,7 +289,7 @@ class OverviewViewControllerTest {
     @Test
     void showOverviewCanAddApplicationForAnotherUser() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -304,7 +304,7 @@ class OverviewViewControllerTest {
     @EnumSource(value = Role.class, names = {"OFFICE", "BOSS"})
     void ensureOverviewCanAddSickNoteForAnotherUserIfRole(Role role) throws Exception {
         final Person personWithRole = new Person();
-        personWithRole.setId(1);
+        personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, role, SICK_NOTE_ADD));
         when(personService.getSignedInUser()).thenReturn(personWithRole);
 
@@ -318,7 +318,7 @@ class OverviewViewControllerTest {
     @Test
     void ensureOverviewCanAddSickNoteForAnotherUserIfDepartmentRoleAndDepartmentMember() throws Exception {
         final Person departmentHead = new Person();
-        departmentHead.setId(1);
+        departmentHead.setId(1L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_ADD));
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
@@ -334,7 +334,7 @@ class OverviewViewControllerTest {
     @Test
     void ensureOverviewCanAddSickNoteForAnotherUserIfSAARoleAndDepartmentMember() throws Exception {
         final Person ssa = new Person();
-        ssa.setId(1);
+        ssa.setId(1L);
         ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD));
         when(personService.getSignedInUser()).thenReturn(ssa);
 
@@ -350,7 +350,7 @@ class OverviewViewControllerTest {
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfOffice() throws Exception {
         final Person personWithRole = new Person();
-        personWithRole.setId(1);
+        personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(personWithRole);
 
@@ -364,7 +364,7 @@ class OverviewViewControllerTest {
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfBossAndSickNoteView() throws Exception {
         final Person personWithRole = new Person();
-        personWithRole.setId(1);
+        personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
         when(personService.getSignedInUser()).thenReturn(personWithRole);
 
@@ -378,7 +378,7 @@ class OverviewViewControllerTest {
     @Test
     void ensureOverviewCanNotViewSickNoteForAnotherUserIfBossAndSickNoteView() throws Exception {
         final Person personWithRole = new Person();
-        personWithRole.setId(1);
+        personWithRole.setId(1L);
         personWithRole.setPermissions(List.of(USER, BOSS));
         when(personService.getSignedInUser()).thenReturn(personWithRole);
 
@@ -392,7 +392,7 @@ class OverviewViewControllerTest {
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfDepartmentRoleAndSickNoteAddRoleAndDepartmentMember() throws Exception {
         final Person departmentHead = new Person();
-        departmentHead.setId(1);
+        departmentHead.setId(1L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_ADD));
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
@@ -408,7 +408,7 @@ class OverviewViewControllerTest {
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfDepartmentRoleAndDepartmentMember() throws Exception {
         final Person departmentHead = new Person();
-        departmentHead.setId(1);
+        departmentHead.setId(1L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         when(personService.getSignedInUser()).thenReturn(departmentHead);
 
@@ -425,7 +425,7 @@ class OverviewViewControllerTest {
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfSAARoleAndSickNoteAddRoleDepartmentMember() throws Exception {
         final Person ssa = new Person();
-        ssa.setId(1);
+        ssa.setId(1L);
         ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY, SICK_NOTE_ADD));
         when(personService.getSignedInUser()).thenReturn(ssa);
 
@@ -441,7 +441,7 @@ class OverviewViewControllerTest {
     @Test
     void ensureOverviewCanViewSickNoteForAnotherUserIfSAARoleAndDepartmentMember() throws Exception {
         final Person ssa = new Person();
-        ssa.setId(1);
+        ssa.setId(1L);
         ssa.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
         when(personService.getSignedInUser()).thenReturn(ssa);
 
@@ -457,7 +457,7 @@ class OverviewViewControllerTest {
     @Test
     void ensureModelWhenThereAreNoApplications() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -477,7 +477,7 @@ class OverviewViewControllerTest {
     @Test
     void showOverview() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         when(personService.getSignedInUser()).thenReturn(person);
 
         final ResultActions resultActions = perform(get("/web/overview?year=2017"));
@@ -488,7 +488,7 @@ class OverviewViewControllerTest {
     @Test
     void showOverviewWithoutYear() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         when(personService.getSignedInUser()).thenReturn(person);
 
         final ResultActions resultActions = perform(get("/web/overview"));
@@ -500,16 +500,16 @@ class OverviewViewControllerTest {
     void showPersonalOverview() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(DEPARTMENT_HEAD));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(true);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), eq(person))).thenReturn(ONE);
 
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
@@ -561,7 +561,7 @@ class OverviewViewControllerTest {
             .andExpect(model().attribute("sickNotes", hasSize(2)))
             .andExpect(model().attribute("signedInUser", person))
             .andExpect(model().attribute("userIsAllowedToWriteOvertime", true))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))));
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))));
     }
 
 
@@ -569,11 +569,11 @@ class OverviewViewControllerTest {
     void showUserPersonalOverviewAndIsNotAllowedToWriteOvertime() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(false);
 

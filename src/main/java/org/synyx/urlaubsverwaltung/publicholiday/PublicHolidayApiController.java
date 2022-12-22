@@ -91,7 +91,7 @@ public class PublicHolidayApiController {
     public PublicHolidaysDto personsPublicHolidays(
         @Parameter(description = "ID of the person to get the public holidays for.")
         @PathVariable("personId")
-        Integer personId,
+        Long personId,
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)

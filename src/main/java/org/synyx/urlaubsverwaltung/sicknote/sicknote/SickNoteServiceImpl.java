@@ -55,7 +55,7 @@ class SickNoteServiceImpl implements SickNoteService {
     }
 
     @Override
-    public Optional<SickNote> getById(Integer id) {
+    public Optional<SickNote> getById(Long id) {
         return sickNoteRepository.findById(id)
             .map(SickNoteServiceImpl::toSickNote)
             .map(sickNote -> {
