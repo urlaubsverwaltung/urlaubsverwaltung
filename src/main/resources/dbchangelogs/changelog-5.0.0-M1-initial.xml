@@ -1,0 +1,585 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+  <changeSet author="schneider" id="initial">
+
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="absence_mapping_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="account_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="application_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="calendar_accessible_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="comment_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="company_calendar_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="department_calendar_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="department_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="overtime_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="person_calendar_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="person_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="settings_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="sick_note_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="special_leaves_settings_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="working_time_id_seq" startValue="1"/>
+    <createTable tableName="absence_mapping">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="absence_mapping_pkey"/>
+      </column>
+      <column name="absence_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="absence_mapping_type" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="event_id" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="account">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="account_pkey"/>
+      </column>
+      <column name="actual_vacation_days" type="numeric(19, 2)"/>
+      <column name="annual_vacation_days" type="numeric(19, 2)"/>
+      <column name="comment" type="VARCHAR(255)"/>
+      <column name="do_remaining_vacation_days_expire" type="BOOLEAN"/>
+      <column name="expiry_date" type="date"/>
+      <column name="expiry_notification_sent_date" type="date"/>
+      <column name="remaining_vacation_days" type="numeric(19, 2)"/>
+      <column name="remaining_vacation_days_not_expiring" type="numeric(19, 2)"/>
+      <column name="valid_from" type="date"/>
+      <column name="valid_to" type="date"/>
+      <column name="person_id" type="BIGINT"/>
+    </createTable>
+
+    <createTable tableName="application">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="application_pkey"/>
+      </column>
+      <column name="address" type="VARCHAR(255)"/>
+      <column name="application_date" type="date"/>
+      <column name="cancel_date" type="date"/>
+      <column name="day_length" type="VARCHAR(255)"/>
+      <column name="edited_date" type="date"/>
+      <column name="end_date" type="date"/>
+      <column name="end_time" type="time(6) WITHOUT TIME ZONE"/>
+      <column name="hours" type="FLOAT8"/>
+      <column name="reason" type="VARCHAR(255)"/>
+      <column name="remind_date" type="date"/>
+      <column name="start_date" type="date"/>
+      <column name="start_time" type="time(6) WITHOUT TIME ZONE"/>
+      <column name="status" type="VARCHAR(255)"/>
+      <column name="team_informed" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="two_stage_approval" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="upcoming_applications_reminder_send" type="date"/>
+      <column name="upcoming_holiday_replacement_notification_send" type="date"/>
+      <column name="applier_id" type="BIGINT"/>
+      <column name="boss_id" type="BIGINT"/>
+      <column name="canceller_id" type="BIGINT"/>
+      <column name="person_id" type="BIGINT"/>
+      <column name="vacation_type_id" type="BIGINT"/>
+    </createTable>
+
+    <createTable tableName="application_comment">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="application_comment_pkey"/>
+      </column>
+      <column name="date" type="TIMESTAMP WITHOUT TIME ZONE">
+        <constraints nullable="false"/>
+      </column>
+      <column name="text" type="VARCHAR(255)"/>
+      <column name="action" type="VARCHAR(255)"/>
+      <column name="person_id" type="BIGINT"/>
+      <column name="application_id" type="BIGINT"/>
+    </createTable>
+
+    <createTable tableName="calendar_accessible">
+      <column name="dtype" type="VARCHAR(31)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="calendar_accessible_pkey"/>
+      </column>
+      <column name="is_accessible" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="company_calendar">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="company_calendar_pkey"/>
+      </column>
+      <column name="calendar_period" type="VARCHAR(255)"/>
+      <column name="secret" type="VARCHAR(32)"/>
+      <column name="person_id" type="BIGINT">
+        <constraints nullable="false" unique="true"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="department">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="department_pkey"/>
+      </column>
+      <column name="created_at" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="description" type="VARCHAR(255)"/>
+      <column name="last_modification" type="date"/>
+      <column name="name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="two_stage_approval" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="department_calendar">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="department_calendar_pkey"/>
+      </column>
+      <column name="calendar_period" type="VARCHAR(255)"/>
+      <column name="department_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="secret" type="VARCHAR(32)"/>
+      <column name="person_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="department_department_head">
+      <column name="department_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="department_heads_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="department_member">
+      <column name="department_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="accession_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+      <column name="members_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="department_second_stage_authority">
+      <column name="department_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="second_stage_authorities_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="holiday_replacements">
+      <column name="application_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="note" type="VARCHAR(255)"/>
+      <column name="person_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="holiday_replacements" columnNames="person_id, application_id"/>
+
+    <createTable tableName="overtime">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="overtime_pkey"/>
+      </column>
+      <column name="duration" type="FLOAT8">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_modification_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="start_date" type="date">
+        <constraints nullable="false"/>
+      </column>
+      <column name="person_id" type="BIGINT"/>
+    </createTable>
+
+    <createTable tableName="overtime_comment">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="overtime_comment_pkey"/>
+      </column>
+      <column name="date" type="TIMESTAMP WITHOUT TIME ZONE">
+        <constraints nullable="false"/>
+      </column>
+      <column name="text" type="VARCHAR(255)"/>
+      <column name="action" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="person_id" type="BIGINT"/>
+      <column name="overtime_id" type="BIGINT"/>
+    </createTable>
+
+    <createTable tableName="person">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="person_pkey"/>
+      </column>
+      <column name="email" type="VARCHAR(255)"/>
+      <column name="first_name" type="VARCHAR(255)"/>
+      <column name="last_name" type="VARCHAR(255)"/>
+      <column name="username" type="VARCHAR(255)">
+        <constraints unique="true"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="person_basedata">
+      <column name="person_id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="person_basedata_pkey"/>
+      </column>
+      <column name="additional_information" type="VARCHAR(500)"/>
+      <column name="personnel_number" type="VARCHAR(20)"/>
+    </createTable>
+
+    <createTable tableName="person_calendar">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="person_calendar_pkey"/>
+      </column>
+      <column name="calendar_period" type="VARCHAR(255)"/>
+      <column name="secret" type="VARCHAR(32)"/>
+      <column name="person_id" type="BIGINT">
+        <constraints nullable="false" unique="true"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="person_notifications">
+      <column name="person_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="notifications" type="VARCHAR(255)"/>
+    </createTable>
+
+    <createTable tableName="person_permissions">
+      <column name="person_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="permissions" type="VARCHAR(255)"/>
+    </createTable>
+
+    <createTable tableName="settings">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="settings_pkey"/>
+      </column>
+      <column name="default_vacation_days" type="INTEGER"/>
+      <column name="do_remaining_vacation_days_expire_globally" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="maximum_annual_vacation_days" type="INTEGER"/>
+      <column name="allow_half_days" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="days_before_remind_for_upcoming_applications" type="INTEGER"/>
+      <column name="days_before_remind_for_upcoming_holiday_replacement" type="INTEGER"/>
+      <column name="days_before_remind_for_waiting_applications" type="INTEGER"/>
+      <column name="maximum_months_to_apply_for_leave_in_advance" type="INTEGER"/>
+      <column name="remind_for_upcoming_applications" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="remind_for_upcoming_holiday_replacement" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="remind_for_waiting_applications" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="calendar_ews_calendar" type="VARCHAR(255)"/>
+      <column name="calendar_ews_email" type="VARCHAR(255)"/>
+      <column name="calendar_ews_url" type="VARCHAR(255)"/>
+      <column name="calendar_ews_password" type="VARCHAR(255)"/>
+      <column name="calendar_ews_send_invitation_active" type="BOOLEAN"/>
+      <column name="calendar_ews_timezoneid" type="VARCHAR(255)"/>
+      <column name="calendar_google_calendar_id" type="VARCHAR(255)"/>
+      <column name="calendar_google_client_id" type="VARCHAR(255)"/>
+      <column name="calendar_google_client_secret" type="VARCHAR(255)"/>
+      <column name="calendar_google_refresh_token" type="VARCHAR(255)"/>
+      <column name="calendar_provider" type="VARCHAR(255)"/>
+      <column name="overtime_maximum" type="INTEGER"/>
+      <column name="overtime_minimum" type="INTEGER"/>
+      <column name="overtime_minimum_reduction" type="INTEGER"/>
+      <column name="overtime_active" type="BOOLEAN"/>
+      <column name="overtime_reduction_without_application_active" type="BOOLEAN"/>
+      <column name="overtime_write_privileged_only" type="BOOLEAN"/>
+      <column name="days_before_end_of_sick_pay_notification" type="INTEGER"/>
+      <column name="maximum_sick_pay_days" type="INTEGER"/>
+      <column name="timezoneid" type="VARCHAR(255)"/>
+      <column name="work_day_begin_hour" type="INTEGER"/>
+      <column name="work_day_end_hour" type="INTEGER"/>
+      <column name="federal_state" type="VARCHAR(255)"/>
+      <column name="friday" type="VARCHAR(255)"/>
+      <column name="monday" type="VARCHAR(255)"/>
+      <column name="saturday" type="VARCHAR(255)"/>
+      <column name="sunday" type="VARCHAR(255)"/>
+      <column name="thursday" type="VARCHAR(255)"/>
+      <column name="tuesday" type="VARCHAR(255)"/>
+      <column name="wednesday" type="VARCHAR(255)"/>
+      <column name="working_duration_for_christmas_eve" type="VARCHAR(255)"/>
+      <column name="working_duration_for_new_years_eve" type="VARCHAR(255)"/>
+    </createTable>
+
+    <createTable tableName="sick_note">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="sick_note_pkey"/>
+      </column>
+      <column name="aub_end_date" type="date"/>
+      <column name="aub_start_date" type="date"/>
+      <column name="day_length" type="VARCHAR(255)"/>
+      <column name="end_date" type="date"/>
+      <column name="end_of_sick_pay_notification_send" type="date"/>
+      <column name="last_edited" type="date"/>
+      <column name="start_date" type="date"/>
+      <column name="status" type="VARCHAR(255)"/>
+      <column name="applier_id" type="BIGINT"/>
+      <column name="person_id" type="BIGINT"/>
+      <column name="sick_note_type_id" type="BIGINT"/>
+    </createTable>
+
+    <createTable tableName="sick_note_comment">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="sick_note_comment_pkey"/>
+      </column>
+      <column name="date" type="TIMESTAMP WITHOUT TIME ZONE">
+        <constraints nullable="false"/>
+      </column>
+      <column name="text" type="VARCHAR(255)"/>
+      <column name="action" type="VARCHAR(255)"/>
+      <column name="sick_note_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="person_id" type="BIGINT"/>
+    </createTable>
+
+    <createTable tableName="sick_note_type">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="sick_note_type_pkey"/>
+      </column>
+      <column name="category" type="VARCHAR(255)"/>
+      <column name="message_key" type="VARCHAR(255)"/>
+    </createTable>
+
+    <createTable tableName="special_leave_settings">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="special_leave_settings_pkey"/>
+      </column>
+      <column name="active" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="days" type="INTEGER"/>
+      <column name="message_key" type="VARCHAR(255)"/>
+    </createTable>
+
+    <createTable tableName="user_settings">
+      <column name="person_id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="user_settings_pkey"/>
+      </column>
+      <column name="locale" type="VARCHAR(255)"/>
+      <column name="theme" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="vacation_type">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="vacation_type_pkey"/>
+      </column>
+      <column name="active" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="category" type="VARCHAR(255)"/>
+      <column name="color" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="message_key" type="VARCHAR(255)"/>
+      <column name="requires_approval" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+      <column name="visible_to_everyone" type="BOOLEAN">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="working_time">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="working_time_pkey"/>
+      </column>
+      <column name="federal_state_override" type="VARCHAR(255)"/>
+      <column name="friday" type="VARCHAR(255)"/>
+      <column name="monday" type="VARCHAR(255)"/>
+      <column name="saturday" type="VARCHAR(255)"/>
+      <column name="sunday" type="VARCHAR(255)"/>
+      <column name="thursday" type="VARCHAR(255)"/>
+      <column name="tuesday" type="VARCHAR(255)"/>
+      <column name="valid_from" type="date"/>
+      <column name="wednesday" type="VARCHAR(255)"/>
+      <column name="person_id" type="BIGINT"/>
+    </createTable>
+
+    <createTable tableName="shedlock">
+      <column name="name" type="VARCHAR(64)">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="lock_until" type="TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="locked_at" type="TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="locked_by" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addUniqueConstraint columnNames="second_stage_authorities_id" constraintName="uk_8jff6amcpbn586afrkn2gys3i"
+                         tableName="department_second_stage_authority"/>
+    <addUniqueConstraint columnNames="department_heads_id" constraintName="uk_sxunxcq19tguk06vu5bx0m2u6"
+                         tableName="department_department_head"/>
+    <addUniqueConstraint columnNames="valid_from, person_id" constraintName="unique_account_by_valid-from_and_person"
+                         tableName="account"/>
+    <addUniqueConstraint columnNames="department_id, person_id" constraintName="unique_department_calendar_per_person"
+                         tableName="department_calendar"/>
+
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="sick_note"
+                             constraintName="fk134nni6nwa976n1debfh6aeyc" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="vacation_type_id" baseTableName="application"
+                             constraintName="fk2wfgtv8frhctm80uutmj1wktq" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="vacation_type" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="department_heads_id" baseTableName="department_department_head"
+                             constraintName="fk42v6njqbbf2q7djmmfnxu3wkx" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="department_id" baseTableName="department_department_head"
+                             constraintName="fk4fahbxvgo8vedh6jwpatj3yqp" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="department" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="person_notifications"
+                             constraintName="fk667b972v099ct2ip5af248tqd" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="department_id" baseTableName="department_second_stage_authority"
+                             constraintName="fk6e2nv4snpg7bdsat1ihck3iy7" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="department" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="boss_id" baseTableName="application"
+                             constraintName="fk6rpjm6c93ei39h2kswv215egf" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="department_id" baseTableName="department_member"
+                             constraintName="fk845yiwgn0jjh36jmc3om5bo1m" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="department" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="application"
+                             constraintName="fk8beb5qvi7h8b4s9vsk7byjnpm" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="sick_note_type_id" baseTableName="sick_note"
+                             constraintName="fk8w53gdjuaa48qfypfxon1ygmu" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="sick_note_type" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="applier_id" baseTableName="sick_note"
+                             constraintName="fk99jlbvv98cnnmu4aai3j3sm9g" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="canceller_id" baseTableName="application"
+                             constraintName="fk9xn27lvr2087ar3lbsvr8vfh5" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="overtime_comment"
+                             constraintName="fka69rnisl69l0fyowh7kjamu" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="sick_note_comment"
+                             constraintName="fkca8k3tbf9by0slanlps1gdrug" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="account"
+                             constraintName="fkd9dhia7smrg88vcbiykhofxee" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="department_calendar"
+                             constraintName="fkg1vrncgfl6a25osr648sr4inc" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="holiday_replacements"
+                             constraintName="fkhj1etgfxf8ja1yks2igyta8b0" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="application_id" baseTableName="application_comment"
+                             constraintName="fkil1cps8t7x98nek0b63wx7flt" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="application" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="working_time"
+                             constraintName="fkjrowf2nwuoflpyph0d495y5ae" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="person_calendar"
+                             constraintName="fkkft9x29wo89tjvxd116sc0hs6" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="applier_id" baseTableName="application"
+                             constraintName="fkn5crvlcxc4thbenl7ivvtbklq" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="overtime_id" baseTableName="overtime_comment"
+                             constraintName="fkofgobbi68ure8t3rerclergyq" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="overtime" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="second_stage_authorities_id"
+                             baseTableName="department_second_stage_authority"
+                             constraintName="fkop68p8y3i6sdkogonexfxjfc9" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="members_id" baseTableName="department_member"
+                             constraintName="fkp5jgcynel1bq3g61uc23lt383" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="application_id" baseTableName="holiday_replacements"
+                             constraintName="fkpf8m8p5ec0f3rl2wp62xcldse" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="application" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="overtime"
+                             constraintName="fkr3apeyjt5a6hh5btt2ras6r7m" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="company_calendar"
+                             constraintName="fkrna4e8hk3gbcbf95l8fj06fp6" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="person_permissions"
+                             constraintName="fktggoyu7sfqifef59ksbk2r4mr" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="application_comment"
+                             constraintName="fktje5lde6lfr2wkabxtbog7q9o" deferrable="false" initiallyDeferred="false"
+                             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+  </changeSet>
+</databaseChangeLog>
