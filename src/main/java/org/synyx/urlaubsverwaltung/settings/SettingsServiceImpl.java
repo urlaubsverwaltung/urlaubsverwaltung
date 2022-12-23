@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.settings;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -31,6 +33,12 @@ public class SettingsServiceImpl implements SettingsService {
     @Override
     public Settings getSettings() {
         return settingsRepository.findById(1L)
-            .orElseThrow(() -> new IllegalStateException("No settings in database found."));
+            .orElseGet(() -> {
+                final Settings settings = new Settings();
+                settings.setId(1L);
+                final Settings savedSettings = settingsRepository.save(settings);
+                LOG.info("Saved initial settings {}", savedSettings);
+                return savedSettings;
+            });
     }
 }

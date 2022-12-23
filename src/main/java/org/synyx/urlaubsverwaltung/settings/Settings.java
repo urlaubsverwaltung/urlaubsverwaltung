@@ -28,20 +28,18 @@ public class Settings {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "settings_generator")
-    @SequenceGenerator(name = "settings_generator", sequenceName = "settings_id_seq")
+    @SequenceGenerator(name = "settings_generator", sequenceName = "settings_id_seq", allocationSize = 1)
     private Long id;
 
-    private ApplicationSettings applicationSettings;
-    private AccountSettings accountSettings;
-    private WorkingTimeSettings workingTimeSettings;
-    private OvertimeSettings overtimeSettings;
-    private TimeSettings timeSettings;
-    private SickNoteSettings sickNoteSettings;
-
-    private AvatarSettings avatarSettings;
-
+    private ApplicationSettings applicationSettings = new ApplicationSettings();
+    private AccountSettings accountSettings = new AccountSettings();
+    private WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+    private OvertimeSettings overtimeSettings = new OvertimeSettings();
+    private TimeSettings timeSettings = new TimeSettings();
+    private SickNoteSettings sickNoteSettings = new SickNoteSettings();
+    private AvatarSettings avatarSettings = new AvatarSettings();
     @Deprecated(since = "4.0.0", forRemoval = true)
-    private CalendarSettings calendarSettings;
+    private CalendarSettings calendarSettings = new CalendarSettings();
 
 
     public Long getId() {
@@ -53,10 +51,6 @@ public class Settings {
     }
 
     public ApplicationSettings getApplicationSettings() {
-        if (applicationSettings == null) {
-            applicationSettings = new ApplicationSettings();
-        }
-
         return applicationSettings;
     }
 
@@ -65,10 +59,6 @@ public class Settings {
     }
 
     public AccountSettings getAccountSettings() {
-        if (accountSettings == null) {
-            accountSettings = new AccountSettings();
-        }
-
         return accountSettings;
     }
 
@@ -77,10 +67,6 @@ public class Settings {
     }
 
     public WorkingTimeSettings getWorkingTimeSettings() {
-        if (workingTimeSettings == null) {
-            workingTimeSettings = new WorkingTimeSettings();
-        }
-
         return workingTimeSettings;
     }
 
@@ -89,10 +75,6 @@ public class Settings {
     }
 
     public OvertimeSettings getOvertimeSettings() {
-        if (overtimeSettings == null) {
-            overtimeSettings = new OvertimeSettings();
-        }
-
         return overtimeSettings;
     }
 
@@ -101,26 +83,15 @@ public class Settings {
     }
 
     public CalendarSettings getCalendarSettings() {
-
-        if (calendarSettings == null) {
-            calendarSettings = new CalendarSettings();
-        }
-
         return calendarSettings;
     }
 
     @Deprecated(since = "4.0.0", forRemoval = true)
     public void setCalendarSettings(CalendarSettings calendarSettings) {
-
         this.calendarSettings = calendarSettings;
     }
 
     public TimeSettings getTimeSettings() {
-
-        if (timeSettings == null) {
-            timeSettings = new TimeSettings();
-        }
-
         return timeSettings;
     }
 
@@ -129,11 +100,6 @@ public class Settings {
     }
 
     public SickNoteSettings getSickNoteSettings() {
-
-        if (sickNoteSettings == null) {
-            sickNoteSettings = new SickNoteSettings();
-        }
-
         return sickNoteSettings;
     }
 
