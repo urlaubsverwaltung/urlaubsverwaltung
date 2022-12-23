@@ -63,7 +63,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     private final ApplicationMailService applicationMailService;
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
-    private final TimeSettings timeSettings;
+    private final SettingsService settingsService;
     private final DepartmentService departmentService;
     private final Clock clock;
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -85,7 +85,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         this.applicationMailService = applicationMailService;
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
-        this.timeSettings = settingsService.getSettings().getTimeSettings();
+        this.settingsService = settingsService;
         this.departmentService = departmentService;
         this.clock = clock;
         this.applicationEventPublisher = applicationEventPublisher;
@@ -134,6 +134,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
 
         if (calendarSyncService.isRealProviderConfigured()) {
+            final TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
             final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(timeSettings);
             final Absence absence = new Absence(savedApplication.getPerson(), savedApplication.getPeriod(), absenceTimeConfiguration);
             calendarSyncService.addAbsence(absence)
@@ -212,6 +213,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
 
         if (calendarSyncService.isRealProviderConfigured()) {
+            final TimeSettings timeSettings = settingsService.getSettings().getTimeSettings();
             final AbsenceTimeConfiguration absenceTimeConfiguration = new AbsenceTimeConfiguration(timeSettings);
             final Absence absence = new Absence(savedApplication.getPerson(), savedApplication.getPeriod(), absenceTimeConfiguration);
             calendarSyncService.addAbsence(absence)
