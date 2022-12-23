@@ -98,8 +98,7 @@ class SettingsViewControllerTest {
         vacationType.setMessageKey("vacationType.messageKey");
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        final Settings settings = someSettings();
-        when(settingsService.getSettings()).thenReturn(settings);
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         final String requestUrl = "/web/settings";
 
@@ -187,7 +186,7 @@ class SettingsViewControllerTest {
 
     @Test
     void ensureSettingsDetailsUsesCorrectView() throws Exception {
-        when(settingsService.getSettings()).thenReturn(someSettings());
+        when(settingsService.getSettings()).thenReturn(new Settings());
         perform(get("/web/settings"))
             .andExpect(view().name("thymeleaf/settings/settings_form"));
     }
@@ -220,8 +219,7 @@ class SettingsViewControllerTest {
     @Test
     void ensureSavingWorkingTimeSettings() throws Exception {
 
-        final Settings storedSettings = someSettings();
-        when(settingsService.getSettings()).thenReturn(storedSettings);
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(
             post("/web/settings")
@@ -243,6 +241,7 @@ class SettingsViewControllerTest {
                 .param("_workingTimeSettings.workingDays", "on")
                 .param("_workingTimeSettings.workingDays", "on")
                 .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
+                .param("calendarSettings.clientId", "clientId")
         )
             .andExpect(redirectedUrl("/web/settings"));
 
@@ -264,12 +263,13 @@ class SettingsViewControllerTest {
     @Test
     void ensureSettingsSavedSavesSettingsIfValidationSuccessfully() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(someSettings());
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(
             post("/web/settings")
                 .param("absenceTypeSettings.items[0].id", "10")
                 .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
+                .param("calendarSettings.clientId", "clientId")
         );
 
         verify(settingsService).save(any(Settings.class));
@@ -291,12 +291,13 @@ class SettingsViewControllerTest {
     @Test
     void ensureSettingsSavedAddFlashAttributeAndRedirectsToSettings() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(someSettings());
+        when(settingsService.getSettings()).thenReturn(new Settings());
 
         perform(
             post("/web/settings")
                 .param("absenceTypeSettings.items[0].id", "10")
                 .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
+                .param("calendarSettings.clientId", "clientId")
         )
             .andExpect(flash().attribute("success", true));
 
@@ -304,40 +305,28 @@ class SettingsViewControllerTest {
             post("/web/settings")
                 .param("absenceTypeSettings.items[0].id", "10")
                 .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
+                .param("calendarSettings.clientId", "clientId")
         )
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/settings"));
     }
 
-    private static Settings someSettings() {
-        final Settings settings = new Settings();
-        settings.setId(1L);
-        settings.setApplicationSettings(new ApplicationSettings());
-        settings.setAccountSettings(new AccountSettings());
-        settings.setWorkingTimeSettings(new WorkingTimeSettings());
-        settings.setOvertimeSettings(new OvertimeSettings());
-        settings.setTimeSettings(new TimeSettings());
-        settings.setSickNoteSettings(new SickNoteSettings());
-        settings.setCalendarSettings(new CalendarSettings());
-        return settings;
-    }
-
     private static Settings someSettingsWithNoExchangeTimezone() {
-        return someSettings();
+        return new Settings();
     }
 
     private static Settings someSettingsWithExchangeTimeZone(String timeZoneId) {
-        final Settings settings = someSettings();
+        final Settings settings = new Settings();
         settings.getCalendarSettings().getExchangeCalendarSettings().setTimeZoneId(timeZoneId);
         return settings;
     }
 
     private static Settings someSettingsWithoutGoogleCalendarRefreshToken() {
-        return someSettings();
+        return new Settings();
     }
 
     private static Settings someSettingsWithGoogleCalendarRefreshToken() {
-        final Settings settings = someSettings();
+        final Settings settings = new Settings();
         settings.getCalendarSettings().getGoogleCalendarSettings().setRefreshToken(SOME_GOOGLE_REFRESH_TOKEN);
         return settings;
     }

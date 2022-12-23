@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.absence.Absence;
-import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
@@ -98,11 +97,6 @@ class ApplicationInteractionServiceImplTest {
 
     @BeforeEach
     void setUp() {
-
-        final Settings settings = new Settings();
-        settings.setTimeSettings(new TimeSettings());
-        when(settingsService.getSettings()).thenReturn(settings);
-
         sut = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
             applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService, clock);
     }
@@ -120,6 +114,9 @@ class ApplicationInteractionServiceImplTest {
 
         Application applicationForLeave = getDummyApplication(person);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
 
         sut.apply(applicationForLeave, applier, comment);
 
@@ -145,6 +142,9 @@ class ApplicationInteractionServiceImplTest {
         Application applicationForLeave = getDummyApplication(person);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
 
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
         sut.apply(applicationForLeave, applier, comment);
 
         verify(calendarSyncService).addAbsence(any(Absence.class));
@@ -164,6 +164,9 @@ class ApplicationInteractionServiceImplTest {
 
         ApplicationComment applicationComment = new ApplicationComment(person, clock);
         when(commentService.create(eq(applicationForLeave), eq(ApplicationCommentAction.APPLIED), any(), eq(person))).thenReturn(applicationComment);
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
 
         sut.apply(applicationForLeave, person, of("Foo"));
 
@@ -188,6 +191,9 @@ class ApplicationInteractionServiceImplTest {
         ApplicationComment applicationComment = new ApplicationComment(person, clock);
         when(commentService.create(eq(applicationForLeave), eq(ApplicationCommentAction.APPLIED), any(), eq(applier))).thenReturn(applicationComment);
 
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
         sut.apply(applicationForLeave, applier, of("Foo"));
 
         verify(applicationMailService, never()).sendConfirmation(eq(applicationForLeave), any(ApplicationComment.class));
@@ -207,6 +213,9 @@ class ApplicationInteractionServiceImplTest {
 
         final Application applicationForLeave = getDummyApplication(person);
         when(applicationService.save(applicationForLeave)).thenReturn(applicationForLeave);
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
 
         sut.apply(applicationForLeave, applier, comment);
 
@@ -260,6 +269,9 @@ class ApplicationInteractionServiceImplTest {
         when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
         when(calendarSyncService.addAbsence(any(Absence.class))).thenReturn(Optional.of("eventId"));
 
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
         sut.directAllow(applicationForLeave, person, comment);
 
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED_DIRECTLY, comment, person);
@@ -269,7 +281,6 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService).sendNewDirectlyAllowedApplicationNotification(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
     }
-
 
     @Test
     void ensureApplicationForLeaveCanBeAllowedDirectlyByOffice() {
