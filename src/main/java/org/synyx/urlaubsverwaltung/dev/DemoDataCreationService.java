@@ -1,11 +1,12 @@
 package org.synyx.urlaubsverwaltung.dev;
 
 import org.slf4j.Logger;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
-import javax.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -75,8 +76,8 @@ public class DemoDataCreationService {
         this.clock = clock;
     }
 
-    @PostConstruct
-    public void createDemoData() {
+    @EventListener
+    public void createDemoData(ApplicationStartedEvent event) {
 
         LOG.info(">> Demo data creation (uv.development.demodata.create={})", demoDataProperties.isCreate());
 
