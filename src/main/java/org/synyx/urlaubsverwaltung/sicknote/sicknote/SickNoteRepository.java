@@ -26,12 +26,15 @@ interface SickNoteRepository extends CrudRepository<SickNoteEntity, Long> {
     Long findNumberOfPersonsWithMinimumOneSickNote(int year);
 
     // NOTE: Only needed to send email after certain duration of a sick note
-    @Query("SELECT x " +
-        "FROM SickNoteEntity x " +
-        "WHERE DATEDIFF(x.endDate, x.startDate) + 1 > ?1 " +
-        "AND ?3 >= ADDDATE(x.startDate, (?1 - ?2 - 1)) " +
-        "AND x.status = 'ACTIVE' " +
-        "AND (x.endOfSickPayNotificationSend IS NULL OR x.lastEdited > x.endOfSickPayNotificationSend)"
+    @Query(value = """
+        SELECT *
+        FROM sick_note
+        WHERE (end_date - start_date) + 1 > ?1
+        AND ?3 >= (start_date + ((?1 - ?2 - 1) * interval '1 day'))
+        AND status = 'ACTIVE'
+        AND (end_of_sick_pay_notification_send IS NULL OR last_edited > end_of_sick_pay_notification_send)
+        """
+        ,nativeQuery = true
     )
     List<SickNoteEntity> findSickNotesToNotifyForSickPayEnd(int maximumSickPayDays, int daysBeforeEndOfSickPayNotification, LocalDate today);
 
