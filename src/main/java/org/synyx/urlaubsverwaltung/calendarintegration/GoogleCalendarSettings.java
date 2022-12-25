@@ -13,16 +13,16 @@ import java.util.Objects;
 public class GoogleCalendarSettings {
 
     @Column(name = "calendar_google_client_id")
-    private String clientId;
+    private String clientId = null;
 
     @Column(name = "calendar_google_client_secret")
-    private String clientSecret;
+    private String clientSecret = null;
 
     @Column(name = "calendar_google_calendar_id")
-    private String calendarId;
+    private String calendarId = null;
 
     @Column(name = "calendar_google_refresh_token")
-    private String refreshToken;
+    private String refreshToken = null;
 
     public String getRefreshToken() {
         return refreshToken;

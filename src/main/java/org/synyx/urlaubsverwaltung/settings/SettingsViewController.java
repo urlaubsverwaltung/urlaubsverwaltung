@@ -196,18 +196,18 @@ public class SettingsViewController {
     }
 
     private Settings processGoogleRefreshToken(Settings settingsUpdate) {
-        final Settings storedSettings = settingsService.getSettings();
 
-        final GoogleCalendarSettings storedGoogleSettings = storedSettings.getCalendarSettings().getGoogleCalendarSettings();
+        final GoogleCalendarSettings storedGoogleSettings = settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
         final GoogleCalendarSettings updateGoogleSettings = settingsUpdate.getCalendarSettings().getGoogleCalendarSettings();
 
-        updateGoogleSettings.setRefreshToken(storedGoogleSettings.getRefreshToken());
+        if (storedGoogleSettings != null) {
+            updateGoogleSettings.setRefreshToken(storedGoogleSettings.getRefreshToken());
 
-        if (refreshTokenGotInvalid(storedGoogleSettings, updateGoogleSettings)) {
-            // refresh token is invalid if settings changed
-            updateGoogleSettings.setRefreshToken(null);
+            if (refreshTokenGotInvalid(storedGoogleSettings, updateGoogleSettings)) {
+                // refresh token is invalid if settings changed
+                updateGoogleSettings.setRefreshToken(null);
+            }
         }
-
         return settingsUpdate;
     }
 

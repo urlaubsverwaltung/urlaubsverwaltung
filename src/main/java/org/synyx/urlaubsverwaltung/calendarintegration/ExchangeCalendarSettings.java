@@ -13,10 +13,10 @@ import java.util.Base64;
 public class ExchangeCalendarSettings {
 
     @Column(name = "calendar_ews_email")
-    private String email;
+    private String email = null;
 
     @Column(name = "calendar_ews_password")
-    private String password;
+    private String password = null;
 
     @Column(name = "calendar_ews_calendar")
     private String calendar = "";
@@ -25,36 +25,29 @@ public class ExchangeCalendarSettings {
     private boolean sendInvitationActive = false;
 
     @Column(name = "calendar_ews_url")
-    private String ewsUrl;
+    private String ewsUrl = null;
 
     @Column(name = "calendar_ews_timezoneid")
-    private String timeZoneId;
+    private String timeZoneId = null;
 
 
     public String getEmail() {
-
         return email;
     }
 
-
     public void setEmail(String email) {
-
         this.email = email;
     }
 
-
     public String getPassword() {
-
         if (password == null) {
             return null;
         }
-
         return new String(Base64.getDecoder().decode(password));
     }
 
 
     public void setPassword(String password) {
-
         if (password == null) {
             this.password = null;
         } else {
@@ -62,42 +55,30 @@ public class ExchangeCalendarSettings {
         }
     }
 
-
     public String getCalendar() {
-
         return calendar;
     }
 
-
     public void setCalendar(String calendar) {
-
         this.calendar = calendar;
     }
 
-
     public boolean isSendInvitationActive() {
-
         return sendInvitationActive;
     }
 
-
     public void setSendInvitationActive(boolean sendInvitationActive) {
-
         this.sendInvitationActive = sendInvitationActive;
     }
 
     public String getEwsUrl() {
-
         if (ewsUrl == null || ewsUrl.isEmpty()) {
             return null;
         }
-
         return ewsUrl;
     }
 
-
     public void setEwsUrl(String ewsUrl) {
-
         if (ewsUrl == null || ewsUrl.isEmpty()) {
             this.ewsUrl = null;
         } else {
