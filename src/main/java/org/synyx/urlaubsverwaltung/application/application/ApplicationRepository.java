@@ -93,6 +93,15 @@ interface ApplicationRepository extends CrudRepository<Application, Long> {
 
     List<Application> findAllByHolidayReplacements_Person(Person person);
 
-    @Query("SELECT a.person as person, SUM(a.hours) as durationDouble FROM Application a WHERE a.status IN :statuses AND a.vacationType.category = 'OVERTIME' AND a.person IN :persons AND a.startDate < :date GROUP BY a.person")
+    @Query("""
+        SELECT p as person, SUM(a.hours) as durationDouble
+        FROM Application a
+        INNER JOIN Person p on p.id = a.person.id
+        WHERE a.status IN :statuses
+            AND a.vacationType.category = 'OVERTIME'
+            AND a.person IN :persons
+            AND a.startDate < :date
+        GROUP BY p.id
+        """)
     List<ApplicationOvertimeDurationSum> calculateTotalOvertimeReductionOfPersonsBefore(@Param("persons") Collection<Person> persons, @Param("date") LocalDate date, @Param("statuses") List<ApplicationStatus> statuses);
 }
