@@ -65,6 +65,6 @@ class DepartmentRepositoryIT extends TestContainersBase {
         final DepartmentEntity savedDepartmentB = sut.save(departmentB);
 
         final List<DepartmentEntity> departments = sut.findByDepartmentHeadsOrSecondStageAuthorities(savedPerson, savedPerson);
-        assertThat(departments).containsExactly(savedDepartmentB, savedDepartmentA);
+        assertThat(departments).containsExactly(savedDepartmentA, savedDepartmentB);
     }
 }
