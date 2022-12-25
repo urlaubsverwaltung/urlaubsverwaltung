@@ -28,12 +28,12 @@ interface PersonRepository extends JpaRepository<Person, Long> {
 
     List<Person> findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(Role permission);
 
-    @Query("select p from Person p where :permission not member of p.permissions and (p.firstName like %:query% or p.lastName like %:query%)")
+    @Query("select p from Person p where :permission not member of p.permissions and (lower(p.firstName) like lower('%'||:query||'%') or lower(p.lastName) like lower('%'||:query||'%'))")
     Page<Person> findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(@Param("permission") Role role, @Param("query") String query, Pageable pageable);
 
     List<Person> findByPermissionsContainingOrderByFirstNameAscLastNameAsc(Role permission);
 
-    @Query("select p from Person p where :permission member of p.permissions and (p.firstName like %:query% or p.lastName like %:query%)")
+    @Query("select p from Person p where :permission member of p.permissions and (lower(p.firstName) like lower('%'||:query||'%') or lower(p.lastName) like lower('%'||:query||'%'))")
     Page<Person> findByPermissionsContainingAndNiceNameContainingIgnoreCase(@Param("permission") Role permission, @Param("query") String nameQuery, Pageable pageable);
 
     List<Person> findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(Role permissionContaining, Role permissionNotContaining);
