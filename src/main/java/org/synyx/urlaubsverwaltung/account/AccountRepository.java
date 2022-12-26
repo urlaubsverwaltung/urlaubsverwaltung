@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -13,7 +14,7 @@ import java.util.Optional;
 /**
  * Repository for {@link Account} entities.
  */
-public interface AccountRepository extends CrudRepository<AccountEntity, Long> {
+public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
 
     @Query("select x from account x where YEAR(x.validFrom) = ?1 and x.person = ?2")
     Optional<AccountEntity> getHolidaysAccountByYearAndPerson(int year, Person person);
