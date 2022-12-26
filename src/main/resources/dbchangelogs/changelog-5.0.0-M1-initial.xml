@@ -528,6 +528,10 @@
                              constraintName="fkg1vrncgfl6a25osr648sr4inc" deferrable="false" initiallyDeferred="false"
                              onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
                              referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="department_id" baseTableName="department_calendar"
+                             constraintName="fkg1vrncgfl6a25osr648sr4ias" deferrable="false" initiallyDeferred="false"
+                             onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="department" validate="true"/>
     <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="holiday_replacements"
                              constraintName="fkhj1etgfxf8ja1yks2igyta8b0" deferrable="false" initiallyDeferred="false"
                              onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
