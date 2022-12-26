@@ -77,7 +77,7 @@ class DepartmentCalendarRepositoryIT extends TestContainersBase {
 
         final DepartmentCalendar departmentCalendar = new DepartmentCalendar(savedDepartmentTwo.getId(), savedPerson);
         departmentCalendar.setCalendarPeriod(Period.ofDays(1));
-        sut.save(departmentCalendar);
+        sut.saveAndFlush(departmentCalendar);
 
         assertThat(sut.findAll()).hasSize(2);
     }
@@ -98,7 +98,10 @@ class DepartmentCalendarRepositoryIT extends TestContainersBase {
 
         final DepartmentCalendar secondDepartmentCalendar = new DepartmentCalendar(savedDepartment.getId(), savedPerson);
         secondDepartmentCalendar.setCalendarPeriod(Period.ofDays(1));
-        final DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> sut.save(secondDepartmentCalendar));
+        final DataIntegrityViolationException exception = assertThrows(
+            DataIntegrityViolationException.class,
+            () -> sut.saveAndFlush(secondDepartmentCalendar)
+        );
         assertThat(exception.getMessage()).contains("constraint [unique_department_calendar_per_person]");
     }
 

@@ -41,11 +41,10 @@ class AccountRepositoryIT extends TestContainersBase {
         final AccountEntity accountEntity = new AccountEntity(savedPerson, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         sut.save(accountEntity);
 
-        final LocalDate validFrom2 = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo2 = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expiryDate2 = LocalDate.of(2014, APRIL, 1);
-        final AccountEntity accountEntity2 = new AccountEntity(savedPerson, validFrom2, validTo2, true, expiryDate2, TEN, TEN, TEN, "comment 2");
-        assertThatThrownBy(() -> sut.save(accountEntity2))
+        final AccountEntity accountEntity2 = new AccountEntity(savedPerson, validFrom, validTo2, true, expiryDate2, TEN, TEN, TEN, "comment 2");
+        assertThatThrownBy(() -> sut.saveAndFlush(accountEntity2))
             .isInstanceOf(DataIntegrityViolationException.class);
     }
 

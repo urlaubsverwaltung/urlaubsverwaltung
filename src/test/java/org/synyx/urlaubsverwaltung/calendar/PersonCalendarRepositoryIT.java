@@ -52,7 +52,7 @@ class PersonCalendarRepositoryIT extends TestContainersBase {
         final PersonCalendar secondPersonCalendar = new PersonCalendar(savedPerson);
         secondPersonCalendar.setCalendarPeriod(Period.ofDays(1));
 
-        final DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> sut.save(secondPersonCalendar));
-        assertThat(exception.getMessage()).contains("constraint [unique_person_calendar_per_person]");
+        final DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> sut.saveAndFlush(secondPersonCalendar));
+        assertThat(exception.getMessage()).contains("constraint [person_calendar_person_id_key]");
     }
 }
