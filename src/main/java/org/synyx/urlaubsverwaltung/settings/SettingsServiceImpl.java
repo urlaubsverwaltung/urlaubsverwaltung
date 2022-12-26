@@ -25,9 +25,10 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public void save(Settings settings) {
-        settingsRepository.save(settings);
-        LOG.info("Updated settings: {}", settings);
+    public Settings save(Settings settings) {
+        final Settings savedSettings = settingsRepository.save(settings);
+        LOG.info("Updated settings: {}", savedSettings);
+        return savedSettings;
     }
 
     @Override
