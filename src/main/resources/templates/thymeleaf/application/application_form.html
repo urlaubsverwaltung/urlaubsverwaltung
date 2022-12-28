@@ -457,6 +457,7 @@
                                   th:text="${holidayReplacement.person.niceName}"
                                   th:href="@{/web/person/__${holidayReplacement.person.id}__/overview}"
                                   class="icon-link"
+                                  data-turbo-frame="_top"
                                 ></a>
                                 <ul
                                   th:if="${not #lists.isEmpty(holidayReplacement.departments)}"

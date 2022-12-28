@@ -316,6 +316,7 @@
                     th:text="${statistic.firstName}"
                     th:href="@{/web/person/__${statistic.id}__/overview}"
                     class="icon-link"
+                    data-turbo-frame="_top"
                   ></a>
                 </td>
                 <td class="tw-hidden lg:tw-table-cell print:tw-table-cell">
@@ -323,6 +324,7 @@
                     th:text="${statistic.lastName}"
                     th:href="@{/web/person/__${statistic.id}__/overview}"
                     class="icon-link"
+                    data-turbo-frame="_top"
                   ></a>
                 </td>
                 <td class="lg:tw-hidden print:tw-hidden">
@@ -330,6 +332,7 @@
                     th:text="${statistic.niceName}"
                     th:href="@{/web/person/__${statistic.id}__/overview}"
                     class="icon-link"
+                    data-turbo-frame="_top"
                   ></a>
                 </td>
                 <td class="md:tw-hidden print:tw-hidden">
