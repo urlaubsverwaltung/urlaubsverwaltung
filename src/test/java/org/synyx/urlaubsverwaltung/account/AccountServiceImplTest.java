@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -21,6 +22,8 @@ import static java.time.Month.APRIL;
 import static java.time.Month.JUNE;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -277,5 +280,121 @@ class AccountServiceImplTest {
         sut.deleteAllByPerson(person);
 
         verify(accountRepository).deleteByPerson(person);
+    }
+
+    @Test
+    void ensureSave() {
+
+        final Account account = new Account();
+        account.setValidFrom(LocalDate.of(2022, 1, 1));
+        account.setValidTo(LocalDate.of(2022, 12, 31));
+        account.setExpiryDate(LocalDate.of(2022, JUNE, 1));
+        account.setDoRemainingVacationDaysExpireLocally(true);
+        account.setDoRemainingVacationDaysExpireGlobally(false);
+        account.setAnnualVacationDays(BigDecimal.valueOf(30));
+        account.setActualVacationDays(BigDecimal.valueOf(20));
+        account.setRemainingVacationDays(BigDecimal.valueOf(10));
+        account.setRemainingVacationDaysNotExpiring(BigDecimal.valueOf(5));
+        account.setComment("awesome comment");
+
+        when(accountRepository.save(any(AccountEntity.class))).thenAnswer(returnsFirstArg());
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Account actual = sut.save(account);
+
+        final ArgumentCaptor<AccountEntity> captor = ArgumentCaptor.forClass(AccountEntity.class);
+        verify(accountRepository).save(captor.capture());
+
+        assertThat(captor.getValue()).satisfies(entity -> {
+            assertThat(entity.getYear()).isEqualTo(2022);
+            assertThat(entity.getExpiryDate()).isEqualTo(LocalDate.of(2022, JUNE, 1));
+            assertThat(entity.getValidFrom()).isEqualTo(LocalDate.of(2022, 1, 1));
+            assertThat(entity.getValidTo()).isEqualTo(LocalDate.of(2022, 12, 31));
+            assertThat(entity.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(30));
+            assertThat(entity.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(20));
+            assertThat(entity.getRemainingVacationDays()).isEqualTo(BigDecimal.valueOf(10));
+            assertThat(entity.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.valueOf(5));
+            assertThat(entity.getComment()).isEqualTo("awesome comment");
+        });
+
+        assertThat(actual.getYear()).isEqualTo(2022);
+        assertThat(actual.getExpiryDate()).isEqualTo(LocalDate.of(2022, JUNE, 1));
+        assertThat(actual.getValidFrom()).isEqualTo(LocalDate.of(2022, 1, 1));
+        assertThat(actual.getValidTo()).isEqualTo(LocalDate.of(2022, 12, 31));
+        assertThat(actual.getAnnualVacationDays()).isEqualTo(BigDecimal.valueOf(30));
+        assertThat(actual.getActualVacationDays()).isEqualTo(BigDecimal.valueOf(20));
+        assertThat(actual.getRemainingVacationDays()).isEqualTo(BigDecimal.valueOf(10));
+        assertThat(actual.getRemainingVacationDaysNotExpiring()).isEqualTo(BigDecimal.valueOf(5));
+        assertThat(actual.getComment()).isEqualTo("awesome comment");
+    }
+
+    @Test
+    void ensureSaveAddsExpiryDateOfPreviousYearAccountWhenNotSetAndExpirationIsDisabled() {
+
+        final Person person = new Person();
+        person.setId(1);
+
+        final Account account = new Account();
+        account.setPerson(person);
+        account.setValidFrom(LocalDate.of(2022, 1, 1));
+        account.setValidTo(LocalDate.of(2022, 12, 31));
+        account.setExpiryDate(null);
+        account.setDoRemainingVacationDaysExpireLocally(null);
+        account.setDoRemainingVacationDaysExpireGlobally(false);
+
+        final AccountEntity previousYearAccountEntity = new AccountEntity();
+        previousYearAccountEntity.setPerson(person);
+        previousYearAccountEntity.setExpiryDate(LocalDate.of(2021, JUNE, 1));
+
+        when(accountRepository.findAccountByYearAndPersons(2021, List.of(person))).thenReturn(List.of(previousYearAccountEntity));
+                when(accountRepository.save(any(AccountEntity.class))).thenAnswer(returnsFirstArg());
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Account actual = sut.save(account);
+
+        final ArgumentCaptor<AccountEntity> captor = ArgumentCaptor.forClass(AccountEntity.class);
+        verify(accountRepository).save(captor.capture());
+
+        assertThat(captor.getValue()).satisfies(entity -> {
+            assertThat(entity.getExpiryDate()).isEqualTo(LocalDate.of(2022, JUNE, 1));
+        });
+
+        assertThat(actual.getExpiryDate()).isEqualTo(LocalDate.of(2022, JUNE, 1));
+    }
+
+    @Test
+    void ensureSaveAddsDefaultExpiryDateWhenNotSetAndExpirationIsDisabled() {
+
+        final Person person = new Person();
+        person.setId(1);
+
+        final Account account = new Account();
+        account.setPerson(person);
+        account.setValidFrom(LocalDate.of(2022, 1, 1));
+        account.setValidTo(LocalDate.of(2022, 12, 31));
+        account.setExpiryDate(null);
+        account.setDoRemainingVacationDaysExpireLocally(null);
+        account.setDoRemainingVacationDaysExpireGlobally(false);
+
+        when(accountRepository.findAccountByYearAndPersons(2021, List.of(person))).thenReturn(List.of());
+        when(accountRepository.save(any(AccountEntity.class))).thenAnswer(returnsFirstArg());
+
+        final Settings settings = new Settings();
+        when(settingsService.getSettings()).thenReturn(settings);
+
+        final Account actual = sut.save(account);
+
+        final ArgumentCaptor<AccountEntity> captor = ArgumentCaptor.forClass(AccountEntity.class);
+        verify(accountRepository).save(captor.capture());
+
+        assertThat(captor.getValue()).satisfies(entity -> {
+            assertThat(entity.getExpiryDate()).isEqualTo(LocalDate.of(2022, APRIL, 1));
+        });
+
+        assertThat(actual.getExpiryDate()).isEqualTo(LocalDate.of(2022, APRIL, 1));
     }
 }

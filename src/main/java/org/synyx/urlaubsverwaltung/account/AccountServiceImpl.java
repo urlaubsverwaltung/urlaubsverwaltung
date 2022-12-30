@@ -71,6 +71,18 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account save(Account account) {
         final AccountEntity accountEntity = mapToAccountEntity(account);
+
+        if (!account.doRemainingVacationDaysExpire() && account.getExpiryDate() == null) {
+            // expiry_date has a notNull constraint in the database.
+            // therefore we're looking for the previous expiryDate or using a fallback by german law.
+
+            final LocalDate expiryDate = getHolidaysAccount(account.getYear() - 1, account.getPerson())
+                    .map(Account::getExpiryDate)
+                    .orElse(LocalDate.of(account.getYear() - 1, APRIL, 1));
+
+            accountEntity.setExpiryDate(expiryDate.withYear(account.getYear()));
+        }
+
         final AccountEntity savedAccountEntity = accountRepository.save(accountEntity);
         return mapToAccount(savedAccountEntity, remainingVacationDaysExpireGlobally());
     }
