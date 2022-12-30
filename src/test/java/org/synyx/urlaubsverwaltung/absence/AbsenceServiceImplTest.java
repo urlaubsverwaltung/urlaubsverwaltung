@@ -33,6 +33,7 @@ import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.time.Month.JUNE;
 import static java.time.Month.MAY;
 import static java.util.Collections.emptyList;
@@ -51,7 +52,9 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BADEN_WUERTTEMBERG;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BAYERN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_BERLIN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.UNITED_KINGDOM_ENGLAND;
 
 @ExtendWith(MockitoExtension.class)
 class AbsenceServiceImplTest {
@@ -351,6 +354,93 @@ class AbsenceServiceImplTest {
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getType)).hasValue(AbsencePeriod.AbsenceType.VACATION);
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::getVacationTypeId)).hasValue(Optional.of(1));
         assertThat(actualAbsences.get(0).getAbsenceRecords().get(0).getNoon().map(AbsencePeriod.RecordInfo::isVisibleToEveryone)).hasValue(false);
+    }
+
+    @Test
+    void ensureOpenAbsencesWithDifferentFederalStates() {
+
+        final LocalDate start = LocalDate.of(2023, JANUARY, 1);
+        final LocalDate end = LocalDate.of(2023, JANUARY, 31);
+
+        final Person captainBritain = new Person("captain.britain", "Britain", "Captain", "captain.britain@example.org");
+        captainBritain.setId(1);
+
+        final Person blackSwan = new Person("black.swan", "Swan", "Black", "black.swan@example.org");
+        blackSwan.setId(2);
+
+        final WorkingTime workingTimeBritain = new WorkingTime(captainBritain, start.minusDays(1), UNITED_KINGDOM_ENGLAND, false);
+        workingTimeBritain.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
+        workingTimeBritain.setDayLengthForWeekDay(SATURDAY, DayLength.ZERO);
+        workingTimeBritain.setDayLengthForWeekDay(SUNDAY, DayLength.ZERO);
+
+        final WorkingTime workingTimeBayern = new WorkingTime(blackSwan, start.minusDays(1), GERMANY_BAYERN, false);
+        workingTimeBayern.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
+        workingTimeBayern.setDayLengthForWeekDay(SATURDAY, DayLength.ZERO);
+        workingTimeBayern.setDayLengthForWeekDay(SUNDAY, DayLength.ZERO);
+
+        when(workingTimeService.getByPersons(List.of(captainBritain, blackSwan))).thenReturn(List.of(workingTimeBritain, workingTimeBayern));
+
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setVisibleToEveryone(false);
+
+        final Application applicationBritain = new Application();
+        applicationBritain.setId(1);
+        applicationBritain.setPerson(captainBritain);
+        applicationBritain.setStartDate(LocalDate.of(2023, 1, 1));
+        applicationBritain.setEndDate(LocalDate.of(2023, 1, 6));
+        applicationBritain.setDayLength(FULL);
+        applicationBritain.setStatus(ALLOWED);
+        applicationBritain.setVacationType(vacationTypeEntity);
+
+        final Application applicationBayern = new Application();
+        applicationBayern.setId(2);
+        applicationBayern.setPerson(blackSwan);
+        applicationBayern.setStartDate(LocalDate.of(2023, 1, 1));
+        applicationBayern.setEndDate(LocalDate.of(2023, 1, 6));
+        applicationBayern.setDayLength(FULL);
+        applicationBayern.setStatus(ALLOWED);
+        applicationBayern.setVacationType(vacationTypeEntity);
+
+        when(applicationService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(applicationBritain, applicationBayern));
+
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.empty());
+
+        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2023, 1, 2), UNITED_KINGDOM_ENGLAND))
+            .thenReturn(Optional.of(new PublicHoliday(LocalDate.of(2023, 1, 2), FULL, "Neujahr")));
+
+        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2023, 1, 1), GERMANY_BAYERN))
+            .thenReturn(Optional.of(new PublicHoliday(LocalDate.of(2023, 1, 1), FULL, "Neujahr")));
+
+        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2023, 1, 6), GERMANY_BAYERN))
+            .thenReturn(Optional.of(new PublicHoliday(LocalDate.of(2023, 1, 6), FULL, "Heilige Drei Könige")));
+
+
+        final List<AbsencePeriod> actual = sut.getOpenAbsences(List.of(captainBritain, blackSwan), start, end);
+
+        assertThat(actual).hasSize(2);
+
+        // in the United Kingdom england the first monday of the year is 'new year eve'
+        // therefore the absence must be from tuesday to friday
+        assertThat(actual.get(0)).satisfies(absencePeriod -> {
+            assertThat(absencePeriod.getAbsenceRecords()).hasSize(4);
+            assertThat(absencePeriod.getAbsenceRecords().get(0).getPerson()).isSameAs(captainBritain);
+            assertThat(absencePeriod.getAbsenceRecords().get(0).getDate()).isEqualTo(LocalDate.of(2023, 1, 3));
+            assertThat(absencePeriod.getAbsenceRecords().get(1).getDate()).isEqualTo(LocalDate.of(2023, 1, 4));
+            assertThat(absencePeriod.getAbsenceRecords().get(2).getDate()).isEqualTo(LocalDate.of(2023, 1, 5));
+            assertThat(absencePeriod.getAbsenceRecords().get(3).getDate()).isEqualTo(LocalDate.of(2023, 1, 6));
+        });
+
+        // in germany the first january is 'new year eve'
+        // therefore the absence must be from monday to thursday (friday is a public holiday)
+        assertThat(actual.get(1)).satisfies(absencePeriod -> {
+            assertThat(absencePeriod.getAbsenceRecords()).hasSize(4);
+            assertThat(absencePeriod.getAbsenceRecords().get(0).getPerson()).isSameAs(blackSwan);
+            assertThat(absencePeriod.getAbsenceRecords().get(0).getDate()).isEqualTo(LocalDate.of(2023, 1, 2));
+            assertThat(absencePeriod.getAbsenceRecords().get(1).getDate()).isEqualTo(LocalDate.of(2023, 1, 3));
+            assertThat(absencePeriod.getAbsenceRecords().get(2).getDate()).isEqualTo(LocalDate.of(2023, 1, 4));
+            assertThat(absencePeriod.getAbsenceRecords().get(3).getDate()).isEqualTo(LocalDate.of(2023, 1, 5));
+        });
     }
 
     @Test

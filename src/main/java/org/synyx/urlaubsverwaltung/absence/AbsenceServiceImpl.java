@@ -164,7 +164,7 @@ public class AbsenceServiceImpl implements AbsenceService {
             .collect(toList());
 
         return new DateRange(start, end).stream()
-            .map(date -> new DateDayLengthTuple(date, publicHolidayAbsence(date, workingTimeList, systemDefaultFederalState)))
+            .map(date -> new DateDayLengthTuple(date, publicHolidayAbsence(date, personWorkingTimeList, systemDefaultFederalState)))
             // ignore full public holiday since it is no "absence".
             // it could still be an official workday with an application for leave.
             .filter(tuple -> !tuple.publicHolidayDayLength.equals(DayLength.FULL))
