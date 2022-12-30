@@ -602,6 +602,89 @@ class AbsenceServiceImplTest {
     }
 
     @Test
+    void ensureSickWithDifferentFederalStates() {
+
+        final LocalDate start = LocalDate.of(2023, JANUARY, 1);
+        final LocalDate end = LocalDate.of(2023, JANUARY, 31);
+
+        final Person captainBritain = new Person("captain.britain", "Britain", "Captain", "captain.britain@example.org");
+        captainBritain.setId(1);
+
+        final Person blackSwan = new Person("black.swan", "Swan", "Black", "black.swan@example.org");
+        blackSwan.setId(2);
+
+        final WorkingTime workingTimeBritain = new WorkingTime(captainBritain, start.minusDays(1), UNITED_KINGDOM_ENGLAND, false);
+        workingTimeBritain.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
+        workingTimeBritain.setDayLengthForWeekDay(SATURDAY, DayLength.ZERO);
+        workingTimeBritain.setDayLengthForWeekDay(SUNDAY, DayLength.ZERO);
+
+        final WorkingTime workingTimeBayern = new WorkingTime(blackSwan, start.minusDays(1), GERMANY_BAYERN, false);
+        workingTimeBayern.setWorkingDays(List.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY), FULL);
+        workingTimeBayern.setDayLengthForWeekDay(SATURDAY, DayLength.ZERO);
+        workingTimeBayern.setDayLengthForWeekDay(SUNDAY, DayLength.ZERO);
+
+        when(workingTimeService.getByPersons(List.of(captainBritain, blackSwan))).thenReturn(List.of(workingTimeBritain, workingTimeBayern));
+
+        final SickNote sickNoteBritain = SickNote.builder()
+            .id(42)
+            .person(captainBritain)
+            .startDate(LocalDate.of(2023, 1, 1))
+            .endDate(LocalDate.of(2023, 1, 6))
+            .dayLength(FULL)
+            .build();
+
+        final SickNote sickNoteSwan = SickNote.builder()
+            .id(42)
+            .person(blackSwan)
+            .startDate(LocalDate.of(2023, 1, 1))
+            .endDate(LocalDate.of(2023, 1, 6))
+            .dayLength(FULL)
+            .build();
+
+        when(sickNoteService.getForStatesAndPerson(any(), any(), any(), any())).thenReturn(List.of(sickNoteBritain, sickNoteSwan));
+
+        when(publicHolidaysService.getPublicHoliday(any(), any())).thenReturn(Optional.empty());
+
+        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2023, 1, 2), UNITED_KINGDOM_ENGLAND))
+            .thenReturn(Optional.of(new PublicHoliday(LocalDate.of(2023, 1, 2), FULL, "Neujahr")));
+
+        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2023, 1, 1), GERMANY_BAYERN))
+            .thenReturn(Optional.of(new PublicHoliday(LocalDate.of(2023, 1, 1), FULL, "Neujahr")));
+
+        when(publicHolidaysService.getPublicHoliday(LocalDate.of(2023, 1, 6), GERMANY_BAYERN))
+            .thenReturn(Optional.of(new PublicHoliday(LocalDate.of(2023, 1, 6), FULL, "Heilige Drei Könige")));
+
+
+        final List<AbsencePeriod> actual = sut.getOpenAbsences(List.of(captainBritain, blackSwan), start, end);
+
+        assertThat(actual).hasSize(2);
+
+        // in the United Kingdom england the first monday of the year is 'new year eve'
+        // therefore the absence must be from tuesday to friday
+        assertThat(actual.get(0)).satisfies(absencePeriod -> {
+            // sickNotes are present event for non-working days
+            assertThat(absencePeriod.getAbsenceRecords()).hasSize(5);
+            assertThat(absencePeriod.getAbsenceRecords().get(0).getPerson()).isSameAs(captainBritain);
+            assertThat(absencePeriod.getAbsenceRecords().get(0).getDate()).isEqualTo(LocalDate.of(2023, 1, 1));
+            assertThat(absencePeriod.getAbsenceRecords().get(1).getDate()).isEqualTo(LocalDate.of(2023, 1, 3));
+            assertThat(absencePeriod.getAbsenceRecords().get(2).getDate()).isEqualTo(LocalDate.of(2023, 1, 4));
+            assertThat(absencePeriod.getAbsenceRecords().get(3).getDate()).isEqualTo(LocalDate.of(2023, 1, 5));
+            assertThat(absencePeriod.getAbsenceRecords().get(4).getDate()).isEqualTo(LocalDate.of(2023, 1, 6));
+        });
+
+        // in germany the first january is 'new year eve'
+        // therefore the absence must be from monday to thursday (friday is a public holiday)
+        assertThat(actual.get(1)).satisfies(absencePeriod -> {
+            assertThat(absencePeriod.getAbsenceRecords()).hasSize(4);
+            assertThat(absencePeriod.getAbsenceRecords().get(0).getPerson()).isSameAs(blackSwan);
+            assertThat(absencePeriod.getAbsenceRecords().get(0).getDate()).isEqualTo(LocalDate.of(2023, 1, 2));
+            assertThat(absencePeriod.getAbsenceRecords().get(1).getDate()).isEqualTo(LocalDate.of(2023, 1, 3));
+            assertThat(absencePeriod.getAbsenceRecords().get(2).getDate()).isEqualTo(LocalDate.of(2023, 1, 4));
+            assertThat(absencePeriod.getAbsenceRecords().get(3).getDate()).isEqualTo(LocalDate.of(2023, 1, 5));
+        });
+    }
+
+    @Test
     void ensureVacationMorningAndSickNoon() {
         final LocalDate start = LocalDate.of(2021, MAY, 1);
         final LocalDate end = LocalDate.of(2021, MAY, 31);

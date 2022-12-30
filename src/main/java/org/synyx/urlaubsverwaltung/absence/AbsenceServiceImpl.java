@@ -234,8 +234,15 @@ public class AbsenceServiceImpl implements AbsenceService {
         final LocalDate start = maxDate(sickNote.getStartDate(), askedDateRange.getStartDate());
         final LocalDate end = minDate(sickNote.getEndDate(), askedDateRange.getEndDate());
 
+        final Person person = sickNote.getPerson();
+        final List<WorkingTime> personWorkingTimeList = workingTimeList
+            .stream()
+            .filter(workingTime -> workingTime.getPerson().equals(person))
+            .sorted(comparing(WorkingTime::getValidFrom).reversed())
+            .collect(toList());
+
         return new DateRange(start, end).stream()
-            .map(date -> new DateDayLengthTuple(date, publicHolidayAbsence(date, workingTimeList, systemDefaultFederalState)))
+            .map(date -> new DateDayLengthTuple(date, publicHolidayAbsence(date, personWorkingTimeList, systemDefaultFederalState)))
             // ignore full public holiday since it is no "absence".
             // it could still be an official workday with a sick note.
             .filter(tuple -> !tuple.publicHolidayDayLength.equals(DayLength.FULL))
