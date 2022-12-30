@@ -173,7 +173,7 @@ class AccountInteractionServiceImplTest {
         assertThat(editedAccount.getPerson()).isEqualTo(person);
         assertThat(editedAccount.getValidFrom()).isEqualTo(validFrom);
         assertThat(editedAccount.getValidTo()).isEqualTo(validTo);
-        assertThat(editedAccount.doRemainigVacationDaysExpire()).isTrue();
+        assertThat(editedAccount.doRemainingVacationDaysExpire()).isTrue();
         assertThat(editedAccount.getExpiryDate()).isEqualTo(expiryDate);
         assertThat(editedAccount.getAnnualVacationDays()).isEqualTo(TEN);
         assertThat(editedAccount.getActualVacationDays()).isEqualTo(ONE);
@@ -307,7 +307,7 @@ class AccountInteractionServiceImplTest {
         assertThat(createdHolidaysAccount.getValidTo()).isEqualTo(LocalDate.of(nextYear, 12, 31));
         assertThat(createdHolidaysAccount.getExpiryDate()).isEqualTo(expiryDate.plusYears(1));
         assertThat(createdHolidaysAccount.isDoRemainingVacationDaysExpireLocally()).isNull();
-        assertThat(createdHolidaysAccount.doRemainigVacationDaysExpire()).isFalse();
+        assertThat(createdHolidaysAccount.doRemainingVacationDaysExpire()).isFalse();
 
         verify(accountService).save(createdHolidaysAccount);
         verify(vacationDaysService).calculateTotalLeftVacationDays(referenceHolidaysAccount);
@@ -346,7 +346,7 @@ class AccountInteractionServiceImplTest {
         assertThat(account.getValidTo()).isEqualTo(nextYearAccount.getValidTo());
         assertThat(account.getExpiryDate()).isEqualTo(expiryDateOld);
         assertThat(account.isDoRemainingVacationDaysExpireLocally()).isTrue();
-        assertThat(account.doRemainigVacationDaysExpire()).isTrue();
+        assertThat(account.doRemainingVacationDaysExpire()).isTrue();
 
         verify(accountService).save(account);
         verify(vacationDaysService).calculateTotalLeftVacationDays(referenceAccount);

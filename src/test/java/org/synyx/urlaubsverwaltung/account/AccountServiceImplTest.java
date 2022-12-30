@@ -76,7 +76,7 @@ class AccountServiceImplTest {
         assertThat(holidaysAccount.getPerson()).isEqualTo(person);
         assertThat(holidaysAccount.getValidFrom()).isEqualTo(from);
         assertThat(holidaysAccount.getValidTo()).isEqualTo(to);
-        assertThat(holidaysAccount.doRemainigVacationDaysExpire()).isEqualTo(doRemainingVacationDaysExpire);
+        assertThat(holidaysAccount.doRemainingVacationDaysExpire()).isEqualTo(doRemainingVacationDaysExpire);
         assertThat(holidaysAccount.isDoRemainingVacationDaysExpireGlobally()).isTrue();
         assertThat(holidaysAccount.getExpiryDate()).isEqualTo(expiryDate);
         assertThat(holidaysAccount.getExpiryNotificationSentDate()).isEqualTo(expiryNotificationSentDate);

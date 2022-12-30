@@ -81,7 +81,7 @@ public class Account {
      *
      * @return true the remaining vacation days of a user does expire, otherwise false
      */
-    public boolean doRemainigVacationDaysExpire() {
+    public boolean doRemainingVacationDaysExpire() {
         return doRemainingVacationDaysExpireLocally == null ? doRemainingVacationDaysExpireGlobally : doRemainingVacationDaysExpireLocally;
     }
 

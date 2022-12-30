@@ -40,7 +40,7 @@ class AccountTest {
         final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
         final Account account = new Account(person, validFrom, validTo, locally, expiryDate, TEN, TEN, TEN, "Comment");
         account.setDoRemainingVacationDaysExpireGlobally(globally);
-        assertThat(account.doRemainigVacationDaysExpire()).isEqualTo(result);
+        assertThat(account.doRemainingVacationDaysExpire()).isEqualTo(result);
     }
 
     @Test

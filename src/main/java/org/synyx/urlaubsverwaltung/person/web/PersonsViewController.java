@@ -225,7 +225,7 @@ public class PersonsViewController {
                 final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(holidaysAccount, accountNextYear);
 
                 final boolean beforeExpiryDate = now.isBefore(holidaysAccount.getExpiryDate());
-                final double remainingVacationDays = holidaysAccount.doRemainigVacationDaysExpire() || beforeExpiryDate
+                final double remainingVacationDays = holidaysAccount.doRemainingVacationDaysExpire() || beforeExpiryDate
                     ? vacationDaysLeft.getRemainingVacationDays().doubleValue()
                     : vacationDaysLeft.getRemainingVacationDaysNotExpiring().doubleValue();
 
