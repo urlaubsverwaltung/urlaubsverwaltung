@@ -5,10 +5,13 @@ import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import static java.time.Month.APRIL;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -32,9 +35,32 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public AccountDraft createHolidaysAccountDraft(int year, Person person) {
+        final Optional<Account> prevYearAccount = getHolidaysAccount(year - 1, person);
+
+        final boolean expiresGlobally = remainingVacationDaysExpireGlobally();
+        final Boolean expiresLocally = prevYearAccount.map(Account::isDoRemainingVacationDaysExpireLocally).orElse(null);
+
+        final LocalDate defaultExpiryDate = LocalDate.of(year, APRIL, 1);
+
+        final LocalDate expiryDate = (expiresLocally != null && expiresLocally) || (expiresLocally == null && expiresGlobally)
+                ? prevYearAccount.map(Account::getExpiryDate).map(date -> date.withYear(year)).orElse(defaultExpiryDate)
+                : defaultExpiryDate;
+
+        return AccountDraft.builder()
+                .person(person)
+                .year(Year.of(year))
+                .annualVacationDays(prevYearAccount.map(Account::getAnnualVacationDays).orElse(null))
+                .doRemainingVacationDaysExpireLocally(expiresLocally)
+                .doRemainingVacationDaysExpireGlobally(expiresGlobally)
+                .expiryDate(expiryDate)
+                .setRemainingVacationDaysNotExpiring(prevYearAccount.map(Account::getRemainingVacationDaysNotExpiring).orElse(null))
+                .build();
+    }
+
+    @Override
     public List<Account> getHolidaysAccount(int year, List<Person> persons) {
-        final CachedSupplier<Boolean> expireGlobally =
-            new CachedSupplier<>(() -> settingsService.getSettings().getAccountSettings().isDoRemainingVacationDaysExpireGlobally());
+        final CachedSupplier<Boolean> expireGlobally = new CachedSupplier<>(this::remainingVacationDaysExpireGlobally);
 
         return accountRepository.findAccountByYearAndPersons(year, persons)
             .stream()
@@ -46,8 +72,7 @@ public class AccountServiceImpl implements AccountService {
     public Account save(Account account) {
         final AccountEntity accountEntity = mapToAccountEntity(account);
         final AccountEntity savedAccountEntity = accountRepository.save(accountEntity);
-        final boolean doRemainingVacationDaysExpireGlobally = settingsService.getSettings().getAccountSettings().isDoRemainingVacationDaysExpireGlobally();
-        return mapToAccount(savedAccountEntity, doRemainingVacationDaysExpireGlobally);
+        return mapToAccount(savedAccountEntity, remainingVacationDaysExpireGlobally());
     }
 
     private Account mapToAccount(AccountEntity accountEntity, boolean doRemainingVacationDaysExpireGlobally) {
@@ -90,6 +115,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void deleteAllByPerson(Person person) {
         accountRepository.deleteByPerson(person);
+    }
+
+    private boolean remainingVacationDaysExpireGlobally() {
+        return settingsService.getSettings().getAccountSettings().isDoRemainingVacationDaysExpireGlobally();
     }
 
     private static class CachedSupplier<T> implements Supplier<T> {

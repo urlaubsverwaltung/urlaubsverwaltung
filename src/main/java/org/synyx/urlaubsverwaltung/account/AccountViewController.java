@@ -73,8 +73,7 @@ public class AccountViewController {
         final int selectedYear = year != null ? year : currentYear;
 
         final Optional<Account> maybeHolidaysAccount = accountService.getHolidaysAccount(selectedYear, person);
-        final AccountForm accountForm = maybeHolidaysAccount.map(AccountForm::new)
-            .orElseGet(() -> new AccountForm(selectedYear));
+        final AccountForm accountForm = maybeHolidaysAccount.map(AccountForm::new).orElseGet(() -> getAccountFormDraft(selectedYear, person));
 
         model.addAttribute("account", accountForm);
         model.addAttribute("person", person);
@@ -133,6 +132,26 @@ public class AccountViewController {
         redirectAttributes.addFlashAttribute("updateSuccess", true);
 
         return "redirect:/web/person/" + personId;
+    }
+
+    private AccountForm getAccountFormDraft(int year, Person person) {
+
+        final AccountDraft accountDraft = accountService.createHolidaysAccountDraft(year, person);
+        final AccountForm accountForm = new AccountForm(accountDraft.getYear().getValue());
+
+        accountForm.setAnnualVacationDays(accountDraft.getAnnualVacationDays());
+        accountForm.setActualVacationDays(accountDraft.getAnnualVacationDays());
+
+        accountForm.setHolidaysAccountValidFrom(accountDraft.getValidFrom());
+        accountForm.setHolidaysAccountValidTo(accountDraft.getValidTo());
+        accountForm.setExpiryDate(accountDraft.getExpiryDate());
+        accountForm.setRemainingVacationDaysNotExpiring(accountDraft.getRemainingVacationDaysNotExpiring());
+
+        accountForm.setDoRemainingVacationDaysExpireLocally(accountDraft.getDoRemainingVacationDaysExpireLocally());
+        accountForm.setDoRemainingVacationDaysExpireGlobally(accountDraft.isDoRemainingVacationDaysExpireGlobally());
+        accountForm.setOverrideVacationDaysExpire(accountDraft.getDoRemainingVacationDaysExpireLocally() != null);
+
+        return accountForm;
     }
 
     private void addVacationTypeColorsToModel(Model model) {

@@ -28,15 +28,20 @@ import static java.time.Month.MARCH;
 import static java.time.temporal.TemporalAdjusters.firstDayOfYear;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -84,9 +89,17 @@ class AccountViewControllerTest {
     @Test
     void editAccountProvidesCorrectModelAndView() throws Exception {
 
-        final Person person = somePerson();
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        final int currentYear = Year.now(clock).getValue();
 
+        final Person person = new Person();
+        person.setId(1);
+
+        final Account account = new Account();
+        account.setValidFrom(Year.of(currentYear).atDay(1));
+        account.setValidTo(Year.of(currentYear).atDay(1).with(lastDayOfYear()));
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(accountService.getHolidaysAccount(currentYear, person)).thenReturn(Optional.of(account));
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/account"))
@@ -101,23 +114,75 @@ class AccountViewControllerTest {
     @Test
     void editAccountUsesProvidedYear() throws Exception {
 
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
-
         final int providedYear = 1987;
         final int currentYear = Year.now(clock).getValue();
+
+        final Person person = new Person();
+        person.setId(1);
+
+        final Account account = new Account();
+        account.setValidFrom(Year.of(providedYear).atDay(1));
+        account.setValidTo(Year.of(providedYear).atDay(1).with(lastDayOfYear()));
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(accountService.getHolidaysAccount(providedYear, person)).thenReturn(Optional.of(account));
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/account")
             .param("year", Integer.toString(providedYear)))
             .andExpect(model().attribute("currentYear", currentYear))
             .andExpect(model().attribute("selectedYear", providedYear));
+
+        verifyNoMoreInteractions(accountService);
+    }
+
+    @Test
+    void editAccountUsesProvidedYearWithNonExistentAccount() throws Exception {
+
+        final Year currentYear = Year.now(clock);
+        final Year providedYear = currentYear.plusYears(1);
+
+        final Person person = new Person();
+        person.setId(1);
+
+        final AccountDraft accountDraft = AccountDraft.builder()
+                .person(person)
+                .year(providedYear)
+                .annualVacationDays(BigDecimal.valueOf(30))
+                .doRemainingVacationDaysExpireLocally(null)
+                .doRemainingVacationDaysExpireGlobally(false)
+                .build();
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(accountService.getHolidaysAccount(providedYear.getValue(), person)).thenReturn(Optional.empty());
+        when(accountService.createHolidaysAccountDraft(providedYear.getValue(), person)).thenReturn(accountDraft);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/account")
+                .param("year", String.valueOf(providedYear.getValue())))
+                .andExpect(model().attribute("currentYear", currentYear.getValue()))
+                .andExpect(model().attribute("selectedYear", providedYear.getValue()))
+                .andExpect(model().attribute("account", allOf(
+                        hasProperty("holidaysAccountYear", is(providedYear.getValue())),
+                        hasProperty("holidaysAccountValidFrom", is(providedYear.atDay(1))),
+                        hasProperty("holidaysAccountValidTo", is(providedYear.atDay(1).with(lastDayOfYear()))),
+                        hasProperty("expiryDate", nullValue()),
+                        hasProperty("annualVacationDays", is(BigDecimal.valueOf(30)))
+                )));
     }
 
     @Test
     void editAccountDefaultsToCurrentYear() throws Exception {
 
-        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(somePerson()));
-
         final int currentYear = Year.now(clock).getValue();
+
+        final Person person = new Person();
+        person.setId(1);
+
+        final Account account = new Account();
+        account.setValidFrom(Year.of(currentYear).atDay(1));
+        account.setValidTo(Year.of(currentYear).atDay(1).with(lastDayOfYear()));
+
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(accountService.getHolidaysAccount(currentYear, person)).thenReturn(Optional.of(account));
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/account"))
             .andExpect(model().attribute("currentYear", currentYear))
