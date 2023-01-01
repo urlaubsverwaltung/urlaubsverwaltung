@@ -147,7 +147,6 @@
                     account="${account}"
                     vacationDaysLeft="${vacationDaysLeft}"
                     expiredRemainingVacationDays="${expiredRemainingVacationDays}"
-                    doRemainingVacationDaysExpire="${doRemainingVacationDaysExpire}"
                     expiryDate="${expiryDate}"
                     beforeExpiryDate="${isBeforeExpiryDate}"
                     className="tw-mb-4 lg:tw-mb-6"

@@ -424,7 +424,6 @@ class ApplicationForLeaveDetailsViewController {
             final LocalDate now = LocalDate.now(clock);
             final LocalDate expiryDate = acc.getExpiryDate();
             final BigDecimal expiredRemainingVacationDays = vacationDaysLeft.getExpiredRemainingVacationDays(now, expiryDate);
-            model.addAttribute("doRemainingVacationDaysExpire", acc.doRemainigVacationDaysExpire());
             model.addAttribute("expiredRemainingVacationDays", expiredRemainingVacationDays);
             model.addAttribute("expiryDate", expiryDate);
 
