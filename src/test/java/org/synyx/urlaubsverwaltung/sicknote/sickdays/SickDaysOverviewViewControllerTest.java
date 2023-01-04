@@ -69,7 +69,7 @@ class SickDaysOverviewViewControllerTest {
     @Mock
     private PersonService personService;
 
-    private final Clock clock = Clock.systemUTC();
+    private static final Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
@@ -90,23 +90,23 @@ class SickDaysOverviewViewControllerTest {
     }
 
     private static Stream<Arguments> dateInputAndIsoDateTuple() {
+        final int year = Year.now(clock).getValue();
         return Stream.of(
-            Arguments.of("25.03.2022", "2022-03-25"),
-            Arguments.of("25.03.22", "2022-03-25"),
-            Arguments.of("25.3.2022", "2022-03-25"),
-            Arguments.of("25.3.22", "2022-03-25"),
-            Arguments.of("1.4.22", "2022-04-01")
+            Arguments.of(String.format("25.03.%s", year), String.format("%s-03-25", year)),
+            Arguments.of(String.format("25.03.%s", year - 2000), String.format("%s-03-25", year)),
+            Arguments.of(String.format("25.3.%s", year), String.format("%s-03-25", year)),
+            Arguments.of(String.format("25.3.%s", year - 2000), String.format("%s-03-25", year)),
+            Arguments.of(String.format("1.4.%s", year - 2000), String.format("%s-04-01", year))
         );
     }
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
     void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDate, String givenIsoDate) throws Exception {
-
         perform(post("/web/sickdays/filter")
             .param("startDate", givenDate))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/sickdays?from=" + givenIsoDate + "&to=2022-12-31"));
+            .andExpect(redirectedUrl(String.format("/web/sickdays?from=%s&to=%s-12-31", givenIsoDate, clockYear())));
     }
 
     @ParameterizedTest
@@ -116,7 +116,7 @@ class SickDaysOverviewViewControllerTest {
         perform(post("/web/sickdays/filter")
             .param("endDate", givenDate))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/sickdays?from=2022-01-01&to=" + givenIsoDate));
+            .andExpect(redirectedUrl(String.format("/web/sickdays?from=%s-01-01&to=%s", clockYear(), givenIsoDate)));
     }
 
     @Test
@@ -128,7 +128,7 @@ class SickDaysOverviewViewControllerTest {
         perform(post("/web/sickdays/filter")
             .flashAttr("period", filterPeriod))
             .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/sickdays?from=" + year + "-01-01&to=" + year + "-12-31"));
+            .andExpect(view().name(String.format("redirect:/web/sickdays?from=%s-01-01&to=%s-12-31", year, year)));
     }
 
     @Test
@@ -324,6 +324,10 @@ class SickDaysOverviewViewControllerTest {
             map.put(date, dayLengthProvider.apply(date));
         }
         return map;
+    }
+
+    private static int clockYear() {
+        return Year.now(clock).getValue();
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
