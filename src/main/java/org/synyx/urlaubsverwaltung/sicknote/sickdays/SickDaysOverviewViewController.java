@@ -9,14 +9,10 @@ import org.springframework.data.web.SortDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
@@ -64,20 +60,6 @@ public class SickDaysOverviewViewController {
         this.personService = personService;
         this.dateFormatAware = dateFormatAware;
         this.clock = clock;
-    }
-
-    @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
-    @PostMapping("/sickdays/filter")
-    public String filterSickNotes(@ModelAttribute("period") FilterPeriod period, Errors errors, RedirectAttributes redirectAttributes) {
-
-        if (errors.hasErrors()) {
-            redirectAttributes.addFlashAttribute("filterPeriodIncorrect", true);
-        }
-
-        final String startDateIsoString = dateFormatAware.formatISO(period.getStartDate());
-        final String endDateISoString = dateFormatAware.formatISO(period.getEndDate());
-
-        return "redirect:/web/sickdays?from=" + startDateIsoString + "&to=" + endDateISoString;
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
