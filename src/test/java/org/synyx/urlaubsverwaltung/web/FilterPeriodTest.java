@@ -2,14 +2,11 @@ package org.synyx.urlaubsverwaltung.web;
 
 import org.junit.jupiter.api.Test;
 
-import java.time.Clock;
 import java.time.LocalDate;
-import java.time.Year;
 
 import static java.time.Month.DECEMBER;
 import static java.time.Month.MAY;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
 
 class FilterPeriodTest {
 
@@ -19,19 +16,18 @@ class FilterPeriodTest {
         final LocalDate endDate = LocalDate.of(2199, MAY, 19);
 
         final FilterPeriod filterPeriod = new FilterPeriod(null, endDate);
-        assertThat(filterPeriod.getStartDate()).isInstanceOf(LocalDate.class);
+        assertThat(filterPeriod.getStartDate()).isNull();
         assertThat(filterPeriod.getEndDate()).isEqualTo(endDate);
     }
 
     @Test
     void ensureThrowsIfInitializedWithNullEndDateString() {
 
-        final LocalDate now = LocalDate.now(Clock.systemUTC());
         final LocalDate startDate = LocalDate.of(2015, MAY, 19);
 
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, null);
         assertThat(filterPeriod.getStartDate()).isEqualTo(startDate);
-        assertThat(filterPeriod.getEndDate()).isEqualTo(LocalDate.of(now.getYear(), DECEMBER, 31));
+        assertThat(filterPeriod.getEndDate()).isNull();
     }
 
     @Test
@@ -48,24 +44,18 @@ class FilterPeriodTest {
     @Test
     void ensureStartDateSetterIsOk() {
 
-        final LocalDate now = LocalDate.now(Clock.systemUTC());
-        final LocalDate firstDayOfYear = Year.of(now.getYear()).atDay(1);
-
         final FilterPeriod filterPeriod = new FilterPeriod(null, LocalDate.of(2199, MAY, 19));
 
-        assertThat(filterPeriod.getStartDateIsoValue()).isEqualTo(firstDayOfYear.toString());
+        assertThat(filterPeriod.getStartDateIsoValue()).isEmpty();
         assertThat(filterPeriod.getEndDateIsoValue()).isEqualTo("2199-05-19");
     }
 
     @Test
     void ensureEndDateSetterIsOk() {
 
-        final LocalDate now = LocalDate.now(Clock.systemUTC());
-        final LocalDate lastDayOfYear = getLastDayOfYear(now.getYear());
-
         final FilterPeriod filterPeriod = new FilterPeriod(LocalDate.of(1899, MAY, 19), null);
 
         assertThat(filterPeriod.getStartDateIsoValue()).isEqualTo("1899-05-19");
-        assertThat(filterPeriod.getEndDateIsoValue()).isEqualTo(lastDayOfYear.toString());
+        assertThat(filterPeriod.getEndDateIsoValue()).isEmpty();
     }
 }

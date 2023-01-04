@@ -22,8 +22,12 @@ import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
+import java.util.Locale;
 
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.springframework.http.HttpStatus.OK;
 
 /**
@@ -37,15 +41,18 @@ class SickDaysStatisticsViewController {
     private final SickDaysDetailedStatisticsCsvExportService sickDaysDetailedStatisticsCsvExportService;
     private final PersonService personService;
     private final DateFormatAware dateFormatAware;
+    private final Clock clock;
 
     @Autowired
     SickDaysStatisticsViewController(SickDaysStatisticsService sickDaysStatisticsService,
                                      SickDaysDetailedStatisticsCsvExportService sickDaysDetailedStatisticsCsvExportService,
-                                     PersonService personService, DateFormatAware dateFormatAware) {
+                                     PersonService personService, DateFormatAware dateFormatAware, Clock clock) {
+
         this.sickDaysStatisticsService = sickDaysStatisticsService;
         this.sickDaysDetailedStatisticsCsvExportService = sickDaysDetailedStatisticsCsvExportService;
         this.personService = personService;
         this.dateFormatAware = dateFormatAware;
+        this.clock = clock;
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_VIEW')")
@@ -54,9 +61,9 @@ class SickDaysStatisticsViewController {
                                                          @RequestParam(value = "to", defaultValue = "") String to,
                                                          @RequestParam(value = "query", required = false, defaultValue = "") String query,
                                                          @SortDefault.SortDefaults({@SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)})
-                                                         Pageable pageable) {
+                                                         Pageable pageable, Locale locale) {
 
-        final FilterPeriod period = toFilterPeriod(from, to);
+        final FilterPeriod period = toFilterPeriod(from, to, locale);
 
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
@@ -77,9 +84,10 @@ class SickDaysStatisticsViewController {
         return ResponseEntity.status(OK).headers(headers).body(csvFile.getResource());
     }
 
-    private FilterPeriod toFilterPeriod(String startDateString, String endDateString) {
-        final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
-        final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(null);
+    private FilterPeriod toFilterPeriod(String startDateString, String endDateString, Locale locale) {
+        final LocalDate firstDayOfYear = Year.now(clock).atDay(1);
+        final LocalDate startDate = dateFormatAware.parse(startDateString, locale).orElse(firstDayOfYear);
+        final LocalDate endDate = dateFormatAware.parse(endDateString, locale).orElseGet(() -> firstDayOfYear.with(lastDayOfYear()));
         return new FilterPeriod(startDate, endDate);
     }
 }

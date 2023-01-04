@@ -23,7 +23,6 @@ import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.web.DateFormatAware;
-import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.math.BigDecimal;
@@ -44,11 +43,10 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -76,59 +74,64 @@ class SickDaysOverviewViewControllerTest {
         sut = new SickDaysOverviewViewController(sickDaysStatisticsService, personService, new DateFormatAware(), clock);
     }
 
-    @Test
-    void filterSickNotes() throws Exception {
-
-        final int year = Year.now(clock).getValue();
-        final LocalDate startDate = LocalDate.parse(year + "-01-01");
-        final LocalDate endDate = LocalDate.parse(year + "-12-31");
-        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
-
-        perform(post("/web/sickdays/filter").flashAttr("period", filterPeriod))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(view().name("redirect:/web/sickdays?from=" + year + "-01-01&to=" + year + "-12-31"));
-    }
-
     private static Stream<Arguments> dateInputAndIsoDateTuple() {
         final int year = Year.now(clock).getValue();
         return Stream.of(
-            Arguments.of(String.format("25.03.%s", year), String.format("%s-03-25", year)),
-            Arguments.of(String.format("25.03.%s", year - 2000), String.format("%s-03-25", year)),
-            Arguments.of(String.format("25.3.%s", year), String.format("%s-03-25", year)),
-            Arguments.of(String.format("25.3.%s", year - 2000), String.format("%s-03-25", year)),
-            Arguments.of(String.format("1.4.%s", year - 2000), String.format("%s-04-01", year))
+            Arguments.of(String.format("25.03.%s", year), LocalDate.of(year, 3, 25)),
+            Arguments.of(String.format("25.03.%s", year - 2000), LocalDate.of(year, 3, 25)),
+            Arguments.of(String.format("25.3.%s", year), LocalDate.of(year, 3, 25)),
+            Arguments.of(String.format("25.3.%s", year - 2000), LocalDate.of(year, 3, 25)),
+            Arguments.of(String.format("1.4.%s", year - 2000), LocalDate.of(year, 4, 1))
         );
     }
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
-    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDate, String givenIsoDate) throws Exception {
-        perform(post("/web/sickdays/filter")
-            .param("startDate", givenDate))
-            .andExpect(status().isFound())
-            .andExpect(redirectedUrl(String.format("/web/sickdays?from=%s&to=%s-12-31", givenIsoDate, clockYear())));
+    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDateString, LocalDate givenDate) throws Exception {
+
+        final int year = clockYear();
+
+        when(sickDaysStatisticsService.getAll(any(), any(), any(), any())).thenReturn(new PageImpl<>(List.of()));
+
+        perform(get("/web/sickdays")
+            .param("from", givenDateString))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("today", LocalDate.now(clock)))
+            .andExpect(model().attribute("from", givenDate))
+            .andExpect(model().attribute("to", LocalDate.of(year, 12, 31)))
+            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
-    void applicationForLeaveStatisticsRedirectsToStatisticsForEndDate(String givenDate, String givenIsoDate) throws Exception {
+    void applicationForLeaveStatisticsRedirectsToStatisticsForEndDate(String givenDateString, LocalDate givenDate) throws Exception {
 
-        perform(post("/web/sickdays/filter")
-            .param("endDate", givenDate))
-            .andExpect(status().isFound())
-            .andExpect(redirectedUrl(String.format("/web/sickdays?from=%s-01-01&to=%s", clockYear(), givenIsoDate)));
+        final int year = clockYear();
+
+        when(sickDaysStatisticsService.getAll(any(), any(), any(), any())).thenReturn(new PageImpl<>(List.of()));
+
+        perform(get("/web/sickdays")
+            .param("to", givenDateString))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("today", LocalDate.now(clock)))
+            .andExpect(model().attribute("from", LocalDate.of(year, 1, 1)))
+            .andExpect(model().attribute("to", givenDate))
+            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
 
     @Test
     void filterSickNotesWithNullDates() throws Exception {
 
         final int year = Year.now(clock).getValue();
-        final FilterPeriod filterPeriod = new FilterPeriod(null, null);
 
-        perform(post("/web/sickdays/filter")
-            .flashAttr("period", filterPeriod))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(view().name(String.format("redirect:/web/sickdays?from=%s-01-01&to=%s-12-31", year, year)));
+        when(sickDaysStatisticsService.getAll(any(), any(), any(), any())).thenReturn(new PageImpl<>(List.of()));
+
+        perform(get("/web/sickdays"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("today", LocalDate.now(clock)))
+            .andExpect(model().attribute("from", LocalDate.of(year, 1, 1)))
+            .andExpect(model().attribute("to", LocalDate.of(year, 12, 31)))
+            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
     }
 
     @Test

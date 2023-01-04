@@ -32,14 +32,16 @@ import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.OK;
@@ -61,12 +63,14 @@ class ApplicationForLeaveStatisticsViewController {
     private final VacationTypeService vacationTypeService;
     private final DateFormatAware dateFormatAware;
     private final MessageSource messageSource;
+    private final Clock clock;
 
     @Autowired
     ApplicationForLeaveStatisticsViewController(
         PersonService personService, ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService,
         ApplicationForLeaveStatisticsCsvExportService applicationForLeaveStatisticsCsvExportService,
-        VacationTypeService vacationTypeService, DateFormatAware dateFormatAware, MessageSource messageSource) {
+        VacationTypeService vacationTypeService, DateFormatAware dateFormatAware, MessageSource messageSource,
+        Clock clock) {
 
         this.personService = personService;
         this.applicationForLeaveStatisticsService = applicationForLeaveStatisticsService;
@@ -74,6 +78,7 @@ class ApplicationForLeaveStatisticsViewController {
         this.vacationTypeService = vacationTypeService;
         this.dateFormatAware = dateFormatAware;
         this.messageSource = messageSource;
+        this.clock = clock;
     }
 
     @PreAuthorize(IS_PRIVILEGED_USER)
@@ -87,7 +92,7 @@ class ApplicationForLeaveStatisticsViewController {
         @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
         Model model, Locale locale
     ) {
-        final FilterPeriod period = toFilterPeriod(from, to);
+        final FilterPeriod period = toFilterPeriod(from, to, locale);
         final String pageLinkPrefix = buildPageLinkPrefix(pageable, Map.of("from", period.getStartDateIsoValue(), "to", period.getEndDateIsoValue()));
 
         final HtmlSelectDto sortSelectDto = sortSelectDto(pageable.getSort());
@@ -143,9 +148,9 @@ class ApplicationForLeaveStatisticsViewController {
         @RequestParam(value = "from", defaultValue = "") String from,
         @RequestParam(value = "to", defaultValue = "") String to,
         @RequestParam(value = "query", required = false, defaultValue = "") String query,
-        HttpServletResponse response
+        Locale locale, HttpServletResponse response
     ) {
-        final FilterPeriod period = toFilterPeriod(from, to);
+        final FilterPeriod period = toFilterPeriod(from, to, locale);
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageable, query);
 
         // NOTE: Not supported at the moment
@@ -166,9 +171,10 @@ class ApplicationForLeaveStatisticsViewController {
         return ResponseEntity.status(OK).headers(headers).body(csvFile.getResource());
     }
 
-    private FilterPeriod toFilterPeriod(String startDateString, String endDateString) {
-        final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
-        final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(null);
+    private FilterPeriod toFilterPeriod(String startDateString, String endDateString, Locale locale) {
+        final LocalDate firstDayOfYear = Year.now(clock).atDay(1);
+        final LocalDate startDate = dateFormatAware.parse(startDateString, locale).orElse(firstDayOfYear);
+        final LocalDate endDate = dateFormatAware.parse(endDateString, locale).orElseGet(() -> firstDayOfYear.with(lastDayOfYear()));
         return new FilterPeriod(startDate, endDate);
     }
 

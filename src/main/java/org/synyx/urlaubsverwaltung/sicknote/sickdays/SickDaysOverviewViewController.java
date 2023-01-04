@@ -29,11 +29,14 @@ import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
@@ -85,10 +88,11 @@ public class SickDaysOverviewViewController {
                                    @SortDefault.SortDefaults({@SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)})
                                    Pageable pageable,
                                    @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
-                                   Model model) {
+                                   Model model, Locale locale) {
 
-        final LocalDate startDate = dateFormatAware.parse(from).orElse(null);
-        final LocalDate endDate = dateFormatAware.parse(to).orElse(null);
+        final LocalDate firstDayOfYear = Year.now(clock).atDay(1);
+        final LocalDate startDate = dateFormatAware.parse(from, locale).orElse(firstDayOfYear);
+        final LocalDate endDate = dateFormatAware.parse(to, locale).orElseGet(() -> firstDayOfYear.with(lastDayOfYear()));
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
         final Person signedInUser = personService.getSignedInUser();
