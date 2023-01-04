@@ -22,7 +22,7 @@ public enum FederalState {
     GERMANY_BAYERN_WUERZBURG("de", "by", "wu"),
     GERMANY_BAYERN_REGENSBURG("de", "by", "re"),
     GERMANY_BAYERN_INGOLSTADT("de", "by", "in"),
-    GERMANY_BERLIN("de", "b"),
+    GERMANY_BERLIN("de", "be"),
     GERMANY_BRANDENBURG("de", "bb"),
     GERMANY_BREMEN("de", "hb"),
     GERMANY_HAMBURG("de", "hh"),

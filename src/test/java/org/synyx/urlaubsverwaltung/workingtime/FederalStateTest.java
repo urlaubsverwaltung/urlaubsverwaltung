@@ -95,7 +95,7 @@ class FederalStateTest {
             Arguments.of(GERMANY_BAYERN_WUERZBURG, "by", "wu"),
             Arguments.of(GERMANY_BAYERN_REGENSBURG, "by", "re"),
             Arguments.of(GERMANY_BAYERN_INGOLSTADT, "by", "in"),
-            Arguments.of(GERMANY_BERLIN, "b", null),
+            Arguments.of(GERMANY_BERLIN, "be", null),
             Arguments.of(GERMANY_BRANDENBURG, "bb", null),
             Arguments.of(GERMANY_BREMEN, "hb", null),
             Arguments.of(GERMANY_HAMBURG, "hh", null),
