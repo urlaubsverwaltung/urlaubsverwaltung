@@ -87,7 +87,7 @@ class SickDaysOverviewViewControllerTest {
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
-    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDateString, LocalDate givenDate) throws Exception {
+    void sickDaysRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDateString, LocalDate givenDate) throws Exception {
 
         final int year = clockYear();
 
@@ -104,7 +104,7 @@ class SickDaysOverviewViewControllerTest {
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
-    void applicationForLeaveStatisticsRedirectsToStatisticsForEndDate(String givenDateString, LocalDate givenDate) throws Exception {
+    void sickDaysRedirectsToStatisticsAfterIncorrectPeriodForEndDate(String givenDateString, LocalDate givenDate) throws Exception {
 
         final int year = clockYear();
 
