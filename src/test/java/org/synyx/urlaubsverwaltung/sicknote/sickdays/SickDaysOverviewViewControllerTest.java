@@ -101,22 +101,22 @@ class SickDaysOverviewViewControllerTest {
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
-    void applicationForLeaveStatisticsRedirectsToStatisticsAfterIncorrectPeriodForStartDate(String givenDate, String givenIsoDate) throws Exception {
+    void sickDaysOverviewRedirectsToOverviewAfterIncorrectPeriodForStartDate(String givenDate, String givenIsoDate) throws Exception {
 
         perform(post("/web/sickdays/filter")
             .param("startDate", givenDate))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/sickdays?from=" + givenIsoDate + "&to=2022-12-31"));
+            .andExpect(redirectedUrl("/web/sickdays?from=" + givenIsoDate + "&to=" + LocalDate.now().with(lastDayOfYear()).toString()));
     }
 
     @ParameterizedTest
     @MethodSource("dateInputAndIsoDateTuple")
-    void applicationForLeaveStatisticsRedirectsToStatisticsForEndDate(String givenDate, String givenIsoDate) throws Exception {
+    void sickDaysOverviewRedirectsToOverviewForEndDate(String givenDate, String givenIsoDate) throws Exception {
 
         perform(post("/web/sickdays/filter")
             .param("endDate", givenDate))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/sickdays?from=2022-01-01&to=" + givenIsoDate));
+            .andExpect(redirectedUrl("/web/sickdays?from=" + LocalDate.now().with(firstDayOfYear()).toString() + "&to=" + givenIsoDate));
     }
 
     @Test
