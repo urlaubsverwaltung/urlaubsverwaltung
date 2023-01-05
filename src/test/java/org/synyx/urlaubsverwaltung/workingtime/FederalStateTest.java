@@ -43,6 +43,7 @@ import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_SACHS
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_SACHSEN_ANHALT;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_SCHLESWIG_HOLSTEIN;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.GERMANY_THUERINGEN;
+import static org.synyx.urlaubsverwaltung.workingtime.FederalState.MALTA;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.NONE;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_AARGAU;
 import static org.synyx.urlaubsverwaltung.workingtime.FederalState.SWITZERLAND_APPENZELL_AUSSERRHODEN;
@@ -156,7 +157,8 @@ class FederalStateTest {
             Arguments.of(UNITED_KINGDOM_JERSEY, "je", null),
             Arguments.of(UNITED_KINGDOM_NORTHERN_IRELAND, "ni", null),
             Arguments.of(UNITED_KINGDOM_SCOTLAND, "sc", null),
-            Arguments.of(UNITED_KINGDOM_WALES, "wa", null)
+            Arguments.of(UNITED_KINGDOM_WALES, "wa", null),
+            Arguments.of(MALTA, "mt", null)
         );
     }
 
@@ -267,7 +269,9 @@ class FederalStateTest {
         final List<FederalState> switzerlandFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "ch".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> ukFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "gb".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> grFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "gr".equals(federalState.getCountry())).collect(toList());
-        assertThat(federalStatesTypesByCountry).hasSize(5)
-            .contains(entry("de", germanyFederalStates), entry("at", austriaFederalStates), entry("ch", switzerlandFederalStates), entry("gb", ukFederalStates), entry("gr", grFederalStates));
+        final List<FederalState> mtFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "mt".equals(federalState.getCountry())).collect(toList());
+
+        assertThat(federalStatesTypesByCountry).hasSize(6)
+            .contains(entry("de", germanyFederalStates), entry("at", austriaFederalStates), entry("ch", switzerlandFederalStates), entry("gb", ukFederalStates), entry("gr", grFederalStates), entry("mt", mtFederalStates));
     }
 }
