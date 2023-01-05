@@ -29,6 +29,7 @@ import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
@@ -70,10 +71,12 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Mock
     private MessageSource messageSource;
 
+    private static Clock clock = Clock.systemUTC();
+
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveStatisticsViewController(personService, applicationForLeaveStatisticsService,
-            applicationForLeaveStatisticsCsvExportService, vacationTypeService, new DateFormatAware(), messageSource);
+            applicationForLeaveStatisticsCsvExportService, vacationTypeService, new DateFormatAware(), messageSource, clock);
     }
 
     @Test

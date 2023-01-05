@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDate;
 
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DateAndTimeFormatAwareTest {
@@ -15,23 +16,23 @@ class DateAndTimeFormatAwareTest {
 
     @Test
     void ensureParseForIsoDateString() {
-        assertThat(parser.parse("2020-10-30")).hasValue(LocalDate.of(2020, 10, 30));
+        assertThat(parser.parse("2020-10-30", GERMAN)).hasValue(LocalDate.of(2020, 10, 30));
     }
 
     @Test
     void ensureParseForGermanDateString() {
-        assertThat(parser.parse("30.10.2020")).hasValue(LocalDate.of(2020, 10, 30));
+        assertThat(parser.parse("30.10.2020", GERMAN)).hasValue(LocalDate.of(2020, 10, 30));
     }
 
     @Test
     void ensureParseReturnsEmptyOptionalForUnknownDateFormat() {
-        assertThat(parser.parse("30/10/2020")).isEmpty();
+        assertThat(parser.parse("30/10/2020", GERMAN)).isEmpty();
     }
 
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"", "  "})
     void ensureParseReturnsEmptyOptionalForEmptyString(String givenDateString) {
-        assertThat(parser.parse(givenDateString)).isEmpty();
+        assertThat(parser.parse(givenDateString, GERMAN)).isEmpty();
     }
 }

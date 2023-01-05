@@ -128,7 +128,7 @@ class ApplicationForLeaveFormViewController {
     public String newApplicationForm(@RequestParam(value = "personId", required = false) Integer personId,
                                      @RequestParam(value = "from", required = false) String startDateString,
                                      @RequestParam(value = "to", required = false) String endDateString,
-                                     Model model) {
+                                     Model model, Locale locale) {
 
         final Person signedInUser = personService.getSignedInUser();
         final Person person = getPersonByRequestParam(personId).orElse(signedInUser);
@@ -136,8 +136,8 @@ class ApplicationForLeaveFormViewController {
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
 
-            final LocalDate startDate = dateFormatAware.parse(startDateString).orElse(null);
-            final LocalDate endDate = dateFormatAware.parse(endDateString).orElse(startDate);
+            final LocalDate startDate = dateFormatAware.parse(startDateString, locale).orElse(null);
+            final LocalDate endDate = dateFormatAware.parse(endDateString, locale).orElse(startDate);
 
             final ApplicationForLeaveForm appForLeaveForm = new ApplicationForLeaveForm();
             appForLeaveForm.setStartDate(startDate);

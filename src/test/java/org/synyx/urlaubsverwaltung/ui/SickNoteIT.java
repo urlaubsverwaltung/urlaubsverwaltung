@@ -6,8 +6,11 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -26,9 +29,12 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
+import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -58,9 +64,19 @@ import static org.synyx.urlaubsverwaltung.ui.PageConditions.pageIsVisible;
 import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_FAILING;
 
 @Testcontainers
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"spring.main.allow-bean-definition-overriding=true"})
 @ContextConfiguration(initializers = UITestInitializer.class)
 class SickNoteIT {
+
+    @TestConfiguration
+    static class Configuration {
+        @Bean
+        @Primary
+        public Clock clock() {
+            // use a fixed clock to avoid weekends or public holidays while creating sick notes
+            return Clock.fixed(Instant.parse("2022-02-01T00:00:00.00Z"), ZoneId.systemDefault());
+        }
+    }
 
     @LocalServerPort
     private int port;
@@ -131,16 +147,14 @@ class SickNoteIT {
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
         assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
 
-        final int currentYear = LocalDate.now().getYear();
-
-        sickNotePage.startDate(LocalDate.of(currentYear, FEBRUARY, 23));
-        assertThat(sickNotePage.showsToDate(LocalDate.of(currentYear, FEBRUARY, 23))).isTrue();
+        sickNotePage.startDate(LocalDate.of(2022, FEBRUARY, 23));
+        assertThat(sickNotePage.showsToDate(LocalDate.of(2022, FEBRUARY, 23))).isTrue();
 
         sickNotePage.submit();
 
         wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(currentYear, FEBRUARY, 23))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, FEBRUARY, 23))).isTrue();
         assertThat(sickNoteDetailPage.showsNoIncapacityCertificate()).isTrue();
     }
 
@@ -159,22 +173,20 @@ class SickNoteIT {
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
         assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
 
-        final int currentYear = LocalDate.now().getYear();
+        sickNotePage.startDate(LocalDate.of(2022, MARCH, 10));
+        sickNotePage.toDate(LocalDate.of(2022, MARCH, 11));
 
-        sickNotePage.startDate(LocalDate.of(currentYear, MARCH, 10));
-        sickNotePage.toDate(LocalDate.of(currentYear, MARCH, 11));
-
-        sickNotePage.aubStartDate(LocalDate.of(currentYear, MARCH, 11));
-        assertThat(sickNotePage.showsAubToDate(LocalDate.of(currentYear, MARCH, 11))).isTrue();
+        sickNotePage.aubStartDate(LocalDate.of(2022, MARCH, 11));
+        assertThat(sickNotePage.showsAubToDate(LocalDate.of(2022, MARCH, 11))).isTrue();
 
         sickNotePage.submit();
 
         wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(currentYear, MARCH, 10))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(currentYear, MARCH, 11))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteAubDateFrom(LocalDate.of(currentYear, MARCH, 11))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(currentYear, MARCH, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, MARCH, 10))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2022, MARCH, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteAubDateFrom(LocalDate.of(2022, MARCH, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(2022, MARCH, 11))).isTrue();
     }
 
     private void childSickNote(RemoteWebDriver webDriver, Person person) {
@@ -192,18 +204,16 @@ class SickNoteIT {
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
         assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
 
-        final int currentYear = LocalDate.now().getYear();
-
         sickNotePage.selectTypeChildSickNote();
-        sickNotePage.startDate(LocalDate.of(currentYear, APRIL, 10));
-        sickNotePage.toDate(LocalDate.of(currentYear, APRIL, 11));
+        sickNotePage.startDate(LocalDate.of(2022, APRIL, 11));
+        sickNotePage.toDate(LocalDate.of(2022, APRIL, 12));
 
         sickNotePage.submit();
 
         wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsChildSickNoteForPerson(person.getNiceName())).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(currentYear, APRIL, 10))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(currentYear, APRIL, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, APRIL, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2022, APRIL, 12))).isTrue();
         assertThat(sickNoteDetailPage.showsNoIncapacityCertificate()).isTrue();
     }
 
@@ -222,23 +232,21 @@ class SickNoteIT {
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
         assertThat(sickNotePage.dayTypeFullSelected()).isTrue();
 
-        final int currentYear = LocalDate.now().getYear();
-
         sickNotePage.selectTypeChildSickNote();
-        sickNotePage.startDate(LocalDate.of(currentYear, MAY, 10));
-        sickNotePage.toDate(LocalDate.of(currentYear, MAY, 11));
+        sickNotePage.startDate(LocalDate.of(2022, MAY, 10));
+        sickNotePage.toDate(LocalDate.of(2022, MAY, 11));
 
-        sickNotePage.aubStartDate(LocalDate.of(currentYear, MAY, 11));
-        assertThat(sickNotePage.showsAubToDate(LocalDate.of(currentYear, MAY, 11))).isTrue();
+        sickNotePage.aubStartDate(LocalDate.of(2022, MAY, 11));
+        assertThat(sickNotePage.showsAubToDate(LocalDate.of(2022, MAY, 11))).isTrue();
 
         sickNotePage.submit();
 
         wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsChildSickNoteForPerson(person.getNiceName())).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(currentYear, MAY, 10))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(currentYear, MAY, 11))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteAubDateFrom(LocalDate.of(currentYear, MAY, 11))).isTrue();
-        assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(currentYear, MAY, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, MAY, 10))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2022, MAY, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteAubDateFrom(LocalDate.of(2022, MAY, 11))).isTrue();
+        assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(2022, MAY, 11))).isTrue();
     }
 
     private void sickNoteStatisticListView(RemoteWebDriver webDriver, Person person) {
@@ -260,14 +268,13 @@ class SickNoteIT {
         person.setPermissions(List.of(USER, OFFICE));
         final Person savedPerson = personService.create(person);
 
-        final int currentYear = LocalDate.now().getYear();
-        final LocalDate validFrom = LocalDate.of(currentYear, 1, 1);
+        final LocalDate validFrom = LocalDate.of(2022, 1, 1);
         final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).map(DayOfWeek::getValue).collect(toList());
         workingTimeWriteService.touch(workingDays, validFrom, savedPerson);
 
-        final LocalDate firstDayOfYear = LocalDate.of(currentYear, JANUARY, 1);
-        final LocalDate lastDayOfYear = LocalDate.of(currentYear, DECEMBER, 31);
-        final LocalDate expiryDate = LocalDate.of(currentYear, APRIL, 1);
+        final LocalDate firstDayOfYear = LocalDate.of(2022, JANUARY, 1);
+        final LocalDate lastDayOfYear = LocalDate.of(2022, DECEMBER, 31);
+        final LocalDate expiryDate = LocalDate.of(2022, APRIL, 1);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, true, expiryDate, TEN, TEN, TEN, ZERO, null);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), true, expiryDate.plusYears(1), TEN, TEN, TEN, ZERO, null);
 
