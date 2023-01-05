@@ -19,7 +19,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
-import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO_DATE;
 
 /**
  * Handles date {@link String}s and {@link LocalDate}s with the user specific date format.
@@ -47,7 +47,7 @@ public class DateFormatAware {
 
         final DateFormatter dateFormatter = new DateFormatter();
         dateFormatter.setIso(DateTimeFormat.ISO.DATE);
-        dateFormatter.setPattern(ISO);
+        dateFormatter.setPattern(ISO_DATE);
         dateFormatter.setFallbackPatterns(D_M_YY, DD_MM_YYYY, D_M_YYYY);
 
         Optional<Date> d = Optional.empty();

@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.util;
 
 public final class DateAndTimeFormat {
 
-    public static final String ISO = "yyyy-MM-dd";
+    public static final String ISO_DATE = "yyyy-MM-dd";
 
     /**
      * The main date format used to display dates to the user.
