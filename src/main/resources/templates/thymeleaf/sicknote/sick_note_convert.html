@@ -114,7 +114,7 @@
                   >
                     <th:block th:ref="sicknote-box-icon-rounded">
                       <th:block th:if="${sickNote.sickNoteType == 'SICK_NOTE_CHILD'}">
-                        <svg th:replace="icon/person-standing::svg(className='tw-w-8 tw-h-8')"></svg>&nbsp;
+                        <svg th:replace="icon/child::svg(className='tw-w-8 tw-h-8')"></svg>&nbsp;
                       </th:block>
                       <th:block th:if="${sickNote.sickNoteType != 'SICK_NOTE_CHILD'}">
                         <svg th:replace="icon/medkit::svg(className='tw-w-8 tw-h-8')"></svg>&nbsp;
