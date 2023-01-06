@@ -453,6 +453,12 @@ spring.web.resources.cache.cachecontrol.max-age=0
 spring.web.resources.chain.strategy.content.enabled=false
 ```
 
+#### Icons
+
+Wir nutzen das großartige Lucide Icon Set. Vielen Dank! ♥️
+
+- https://lucide.dev
+- https://github.com/lucide-icons/lucide
 
 ### API
 
