@@ -157,24 +157,24 @@
                 th:title="${#messages.msg(app.status)}"
               >
                 <th:block th:if="${app.status.name == 'WAITING'}">
-                  <svg th:replace="icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                  <svg th:replace="icon/help-circle::svg(className='tw-w-6 tw-h-6')"></svg>
                 </th:block>
                 <th:block th:if="${app.status.name == 'ALLOWED'}">
-                  <svg th:replace="icon/check-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-6 tw-h-6')"></svg>
                 </th:block>
                 <th:block th:if="${app.status.name == 'TEMPORARY_ALLOWED'}">
-                  <svg th:replace="icon/check-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-6 tw-h-6')"></svg>
                 </th:block>
                 <th:block th:if="${app.status.name == 'ALLOWED_CANCELLATION_REQUESTED'}">
-                  <svg th:replace="icon/check-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-6 tw-h-6')"></svg>
                   <svg th:replace="icon/arrow-narrow-right::svg(className='tw-w-5 tw-h-5')"></svg>
-                  <svg th:replace="icon/trash::svg(className='tw-w-6 tw-h-6')"></svg>
+                  <svg th:replace="icon/trash-2::svg(className='tw-w-6 tw-h-6')"></svg>
                 </th:block>
                 <th:block th:if="${app.status.name == 'REJECTED'}">
-                  <svg th:replace="icon/ban::svg(className='tw-w-6 tw-h-6')"></svg>
+                  <svg th:replace="icon/slash::svg(className='tw-w-6 tw-h-6')"></svg>
                 </th:block>
                 <th:block th:if="${app.status.name == 'CANCELLED' || app.status.name == 'REVOKED'}">
-                  <svg th:replace="icon/trash::svg(className='tw-w-6 tw-h-6')"></svg>
+                  <svg th:replace="icon/trash-2::svg(className='tw-w-6 tw-h-6')"></svg>
                 </th:block>
               </td>
               <td class="tw-py-6">

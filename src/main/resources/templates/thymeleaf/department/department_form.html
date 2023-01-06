@@ -34,7 +34,7 @@
             <div class="row">
               <div class="col-md-4 col-md-push-8">
                 <span class="help-block tw-text-sm">
-                  <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
                   <span th:text="#{department.data.description}"></span>
                 </span>
               </div>
@@ -82,9 +82,9 @@
             <div class="row tw-mb-8">
               <div class="col-md-4 col-md-push-8">
                 <span class="help-block tw-text-sm">
-                  <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
                   <th:block th:text="#{department.data.twoStageApproval.help.members}" /><br />
-                  <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
                   <th:block th:text="#{department.data.twoStageApproval.help.departmentHead}" />
                 </span>
               </div>
@@ -136,11 +136,11 @@
             <div class="row">
               <div class="col-md-4 col-md-push-8">
                 <span class="help-block tw-text-sm">
-                  <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
                   <span th:text="#{department.members.description}"></span>
                 </span>
                 <span class="help-block tw-text-sm">
-                  <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
                   <span th:text="#{department.members.secondStageAuthority.description}"></span>
                 </span>
               </div>
@@ -225,7 +225,7 @@
                             </p>
                             <div th:if="${isInactive}" class="tw-flex tw-items-center">
                               <svg
-                                th:replace="icon/information-circle::svg(className='tw-text-amber-300 tw-w-5 tw-h-5 tw-m-0 tw-mr-1')"
+                                th:replace="icon/info::svg(className='tw-text-amber-300 tw-w-5 tw-h-5 tw-m-0 tw-mr-1')"
                               ></svg>
                               <th:block th:text="#{department.members.assigned.inactive}"></th:block>
                             </div>

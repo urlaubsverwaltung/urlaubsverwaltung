@@ -91,7 +91,7 @@
                       <summary class="overflow tw-flex tw-items-center">
                         <th:block th:text="${department.name}"></th:block>
                         <span data-uv-popover-placement class="tw-flex tw-items-center tw-ml-1">
-                          <svg th:replace="icon/information-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                          <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
                         </span>
                       </summary>
                       <p>
@@ -166,7 +166,7 @@
 
                     <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
                       <a class="action-link" th:href="@{/web/department/__${department.id}__/edit}">
-                        <svg th:replace="icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                        <svg th:replace="icon/edit-2::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
                         <th:block th:text="#{action.edit}" />
                       </a>
                       <a
@@ -174,7 +174,7 @@
                         data-toggle="modal"
                         th:href="@{/web/department#modal-cancel-__${department.id}__}"
                       >
-                        <svg th:replace="icon/trash::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                        <svg th:replace="icon/trash-2::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
                         <th:block th:text="#{action.department.delete}" />
                       </a>
                     </div>

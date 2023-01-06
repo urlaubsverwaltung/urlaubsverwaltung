@@ -60,12 +60,12 @@
                 </li>
                 <li th:if="${navigationDepartmentAccess}">
                   <a
-                    th:replace="~{::navigation-item(id='department-link', href=@{/web/department}, text=#{nav.department.title}, icon=~{icon/user-group::svg})}"
+                    th:replace="~{::navigation-item(id='department-link', href=@{/web/department}, text=#{nav.department.title}, icon=~{icon/users::svg})}"
                   ></a>
                 </li>
                 <li th:if="${navigationSettingsAccess}">
                   <a
-                    th:replace="~{::navigation-item(id='settings-link', href=@{/web/settings}, text=#{nav.settings.title}, icon=~{icon/cog::svg}, dataTestId='navigation-settings-link')}"
+                    th:replace="~{::navigation-item(id='settings-link', href=@{/web/settings}, text=#{nav.settings.title}, icon=~{icon/settings::svg}, dataTestId='navigation-settings-link')}"
                   ></a>
                 </li>
               </ul>
@@ -96,7 +96,7 @@
                           >
                             <svg
                               th:ref="menu-add-application-icon"
-                              th:replace="~{icon/document-text::svg(className='tw-w-6 tw-h-6')}"
+                              th:replace="~{icon/file-text::svg(className='tw-w-6 tw-h-6')}"
                             ></svg>
                           </a>
                         </li>
@@ -191,7 +191,7 @@
                           >
                             <svg
                               th:ref="menu-help-icon"
-                              th:replace="~{icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')}"
+                              th:replace="~{icon/help-circle::svg(className='tw-w-6 tw-h-6')}"
                             ></svg>
                           </a>
                         </li>
@@ -213,7 +213,7 @@
                           >
                             <svg
                               th:ref="menu-user-settings-icon"
-                              th:replace="~{icon/adjustments::svg(className='tw-w-6 tw-h-6')}"
+                              th:replace="~{icon/sliders::svg(className='tw-w-6 tw-h-6')}"
                             ></svg>
                           </a>
                         </li>

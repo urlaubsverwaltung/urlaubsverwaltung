@@ -133,7 +133,7 @@
                   </th:block>
                 </select>
                 <span class="help-block tw-hidden md:tw-inline tw-text-sm tw-col-start-3 tw-row-start-3">
-                  <svg th:replace="~{icon/information-circle::svg(className='tw-w-4 tw-h-4')}"></svg>
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                   <th:block th:text="#{absences.overview.department.help}"></th:block>
                 </span>
               </th:block>
@@ -221,7 +221,7 @@
                       style="height: 100%; display: flex; align-items: center; justify-content: center"
                     >
                       <svg
-                        th:replace="icon/ban::svg(className='no-workday-icon tw-w-5 tw-h-5 tw--translate-y-px')"
+                        th:replace="icon/slash::svg(className='no-workday-icon tw-w-5 tw-h-5 tw--translate-y-px')"
                       ></svg>
                     </div>
                     <span class="tw-hidden print:tw-inline print:tw-font-mono">
@@ -290,7 +290,7 @@
               <tr>
                 <td class="vacationOverview-legend-colorbox">
                   <div class="cal-day tw-flex tw-items-center tw-justify-center">
-                    <svg th:replace="icon/ban::svg(className='no-workday-icon')" />
+                    <svg th:replace="icon/slash::svg(className='no-workday-icon')" />
                   </div>
                 </td>
                 <td class="vacationOverview-legend-text" th:text="#{absences.overview.no-workday}"></td>

@@ -75,7 +75,7 @@
                   th:replace="fragments/rounded::block(content=~{::child-sick-days-box-icon-rounded}, className='tw-bg-red-500 tw-text-white dark:tw-bg-red-600 dark:tw-text-zinc-900')"
                 >
                   <th:block th:ref="child-sick-days-box-icon-rounded">
-                    <svg th:replace="icon/child::svg(className='tw-w-8 tw-h-8')"></svg>
+                    <svg th:replace="icon/person-standing::svg(className='tw-w-8 tw-h-8')"></svg>
                   </th:block>
                 </div>
               </th:block>
@@ -119,7 +119,7 @@
           >
             <td class="is-centered print:tw-hidden state ${sickNote.status}">
               <th:block th:if="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
-                <svg th:replace="icon/child::svg(className='tw-w-6 tw-h-6')"></svg>
+                <svg th:replace="icon/person-standing::svg(className='tw-w-6 tw-h-6')"></svg>
               </th:block>
               <th:block th:if="${sickNote.sickNoteType.category != 'SICK_NOTE_CHILD'}">
                 <svg th:replace="icon/medkit::svg(className='tw-w-6 tw-h-6')"></svg>

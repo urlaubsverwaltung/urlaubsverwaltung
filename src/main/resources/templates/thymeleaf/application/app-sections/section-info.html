@@ -40,27 +40,27 @@
                 >
                   <th:block th:switch="${app.status.name}">
                     <th:block th:case="'WAITING'">
-                      <svg th:replace="icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                      <svg th:replace="icon/help-circle::svg(className='tw-w-6 tw-h-6')"></svg>
                     </th:block>
                     <th:block th:case="'TEMPORARY_ALLOWED'">
-                      <svg th:replace="icon/check-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                      <svg th:replace="icon/check-circle-2::svg(className='tw-w-6 tw-h-6')"></svg>
                     </th:block>
                     <th:block th:case="'ALLOWED'">
-                      <svg th:replace="icon/check-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                      <svg th:replace="icon/check-circle-2::svg(className='tw-w-6 tw-h-6')"></svg>
                     </th:block>
                     <th:block th:case="'ALLOWED_CANCELLATION_REQUESTED'">
-                      <svg th:replace="icon/check-circle::svg(className='tw-w-6 tw-h-6')"></svg>
+                      <svg th:replace="icon/check-circle-2::svg(className='tw-w-6 tw-h-6')"></svg>
                       <svg th:replace="icon/arrow-narrow-right::svg(className='tw-w-6 tw-h-6')"></svg>
-                      <svg th:replace="icon/trash::svg(className='tw-w-6 tw-h-6')"></svg>
+                      <svg th:replace="icon/trash-2::svg(className='tw-w-6 tw-h-6')"></svg>
                     </th:block>
                     <th:block th:case="'REJECTED'">
-                      <svg th:replace="icon/ban::svg(className='tw-w-6 tw-h-6')"></svg>
+                      <svg th:replace="icon/slash::svg(className='tw-w-6 tw-h-6')"></svg>
                     </th:block>
                     <th:block th:case="'CANCELLED'">
-                      <svg th:replace="icon/trash::svg(className='tw-w-6 tw-h-6')"></svg>
+                      <svg th:replace="icon/trash-2::svg(className='tw-w-6 tw-h-6')"></svg>
                     </th:block>
                     <th:block th:case="'REVOKED'">
-                      <svg th:replace="icon/trash::svg(className='tw-w-6 tw-h-6')"></svg>
+                      <svg th:replace="icon/trash-2::svg(className='tw-w-6 tw-h-6')"></svg>
                     </th:block>
                     <th:block th:case="*"> &nbsp; </th:block>
                   </th:block>
@@ -168,11 +168,11 @@
           <td>
             <div class="tw-flex tw-items-center">
               <th:block th:if="${app.teamInformed == true}">
-                <svg th:replace="icon/emoji-happy::svg(className='tw-w-4 tw-h-4')"></svg>
+                <svg th:replace="icon/smile::svg(className='tw-w-4 tw-h-4')"></svg>
                 &nbsp; <span th:text="#{application.data.teamInformed.true}"></span>
               </th:block>
               <th:block th:if="${app.teamInformed == false}">
-                <svg th:replace="icon/emoji-sad::svg(className='tw-w-4 tw-h-4')"></svg>
+                <svg th:replace="icon/frown::svg(className='tw-w-4 tw-h-4')"></svg>
                 &nbsp; <span th:text="#{application.data.teamInformed.false}"></span>
               </th:block>
             </div>

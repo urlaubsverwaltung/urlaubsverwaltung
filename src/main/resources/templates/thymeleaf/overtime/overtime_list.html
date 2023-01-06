@@ -93,18 +93,18 @@
                 </a>
                 <th:block th:switch="${record.status}">
                   <th:block th:case="WAITING">
-                    <svg th:replace="icon/question-mark-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="icon/help-circle::svg(className='tw-w-4 tw-h-4')"></svg>
                   </th:block>
                   <th:block th:case="ALLOWED">
-                    <svg th:replace="icon/check-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')"></svg>
                   </th:block>
                   <th:block th:case="TEMPORARY_ALLOWED">
-                    <svg th:replace="icon/check-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')"></svg>
                   </th:block>
                   <th:block th:case="ALLOWED_CANCELLATION_REQUESTED">
-                    <svg th:replace="icon/check-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')"></svg>
                     <svg th:replace="icon/arrow-narrow-right::svg(className='tw-w-5 tw-h-5')"></svg>
-                    <svg th:replace="icon/trash::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="icon/trash-2::svg(className='tw-w-4 tw-h-4')"></svg>
                   </th:block>
                   <th:block th:case="*"> &nbsp; </th:block>
                 </th:block>
@@ -125,7 +125,7 @@
 
             <td class="tw-text-right">
               <a th:if="${record.allowedToEdit}" class="button tw-flex-1" th:href="|@{__${recordDetailsUrl}__/edit}|">
-                <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')"></svg>
+                <svg th:replace="icon/edit-2::svg(className='tw-w-5 tw-h-5 xs:tw-w-4 xs:tw-h-4 tw-mr-1')"></svg>
                 <span th:text="#{action.edit}" class="tw-sr-only xs:tw-not-sr-only"> </span>
               </a>
             </td>
