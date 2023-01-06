@@ -6,22 +6,23 @@
   </head>
   <body>
     <svg
-      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
+      fill="none"
       stroke="currentColor"
-      width="16px"
-      height="16px"
-      class="tw-stroke-2"
-      th:classappend="${className}"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
       role="img"
       aria-hidden="true"
       focusable="false"
+      th:classappend="${className}"
     >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-      ></path>
+      <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+      <line x1="9" y1="3" x2="9" y2="18"></line>
+      <line x1="15" y1="6" x2="15" y2="21"></line>
     </svg>
   </body>
 </html>

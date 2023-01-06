@@ -6,21 +6,22 @@
   </head>
   <body>
     <svg
-      fill="currentColor"
-      viewBox="0 0 20 20"
-      width="16"
-      height="16"
-      class=""
-      th:class="${className}"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
       role="img"
       aria-hidden="true"
       focusable="false"
+      th:classappend="${className}"
     >
-      <path
-        fill-rule="evenodd"
-        d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z"
-        clip-rule="evenodd"
-      ></path>
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <polyline points="19 12 12 19 5 12"></polyline>
     </svg>
   </body>
 </html>
