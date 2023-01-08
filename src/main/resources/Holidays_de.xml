@@ -123,6 +123,7 @@
 
   <tns:SubConfigurations hierarchy="mv" description="Mecklenburg-Vorpommern">
     <tns:Holidays>
+      <tns:Fixed month="MARCH" day="8" descriptionPropertiesKey="INTERNATIONAL_WOMAN" validFrom="2023"/>
       <tns:Fixed month="OCTOBER" day="31" descriptionPropertiesKey="REFORMATION_DAY"/>
     </tns:Holidays>
   </tns:SubConfigurations>
