@@ -247,6 +247,7 @@
                       th:text="${person.firstName}"
                       th:href="@{/web/person/__${person.id}__/overview}"
                       class="icon-link"
+                      data-turbo-frame="_top"
                     ></a>
                   </td>
                   <td class="lastname">
@@ -254,6 +255,7 @@
                       th:text="${person.lastName}"
                       th:href="@{/web/person/__${person.id}__/overview}"
                       class="icon-link"
+                      data-turbo-frame="_top"
                     ></a>
                   </td>
                   <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">

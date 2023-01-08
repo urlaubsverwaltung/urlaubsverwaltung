@@ -125,6 +125,7 @@
                     th:text="${signedInUser.niceName}"
                     th:href="@{/web/person/__${signedInUser.id}__/overview}"
                     class="icon-link"
+                    data-turbo-frame="_top"
                   ></a>
                 </span>
                 <span class="tw-text-lg lg:tw-text-sm" th:text="#{application.applier.applied}"></span>
@@ -237,6 +238,7 @@
                     th:text="${signedInUser.niceName}"
                     th:href="@{/web/person/__${signedInUser.id}__/overview}"
                     class="icon-link"
+                    data-turbo-frame="_top"
                   />
                 </span>
                 <span class="tw-text-lg lg:tw-text-sm" th:text="#{application.applier.represents}"></span>
@@ -264,6 +266,7 @@
                         th:text="${replacementInfo.person.name}"
                         th:href="@{/web/person/__${replacementInfo.person.id}__/overview}"
                         class="icon-link"
+                        data-turbo-frame="_top"
                       />
                     </span>
                   </div>
@@ -329,6 +332,7 @@
                   th:text="${otherRequestForLeave.person.name}"
                   th:href="@{/web/person/__${otherRequestForLeave.person.id}__/overview}"
                   class="icon-link"
+                  data-turbo-frame="_top"
                 ></a>
                 <span class="md:tw-text-sm" th:text="#{application.applier.applied}"></span>
               </span>
@@ -454,6 +458,7 @@
                     th:text="${cancellationRequest.person.name}"
                     th:href="@{/web/person/__${cancellationRequest.person.id}__/overview}"
                     class="icon-link"
+                    data-turbo-frame="_top"
                   ></a>
                   <span class="md:tw-text-sm" th:text="#{application.applier.applied}"></span>
                 </span>

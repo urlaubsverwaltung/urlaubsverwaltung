@@ -222,6 +222,7 @@
                     th:text="${comment.person.niceName}"
                     th:href="@{/web/person/__${comment.person.id}__/overview}"
                     class="icon-link"
+                    data-turbo-frame="_top"
                   ></a>
                 </td>
                 <td th:if="${comment.person == null}" th:text="#{sicknote.progress.deleted-author}"></td>
