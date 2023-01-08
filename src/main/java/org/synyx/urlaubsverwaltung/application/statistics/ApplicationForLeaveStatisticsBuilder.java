@@ -85,12 +85,12 @@ class ApplicationForLeaveStatisticsBuilder {
                     final HolidayAccountVacationDays holidayAccountVacationDays = holidayAccountVacationDaysByAccount.get(account);
 
                     final VacationDaysLeft vacationDaysLeftYear = holidayAccountVacationDays.getVacationDaysYear();
-                    statistics.setLeftVacationDaysForYear(vacationDaysLeftYear.getLeftVacationDays(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
-                    statistics.setLeftRemainingVacationDaysForYear(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
+                    statistics.setLeftVacationDaysForYear(vacationDaysLeftYear.getLeftVacationDays(today, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
+                    statistics.setLeftRemainingVacationDaysForYear(vacationDaysLeftYear.getRemainingVacationDaysLeft(today, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
 
                     final VacationDaysLeft vacationDaysLeftPeriod = holidayAccountVacationDays.getVacationDaysDateRange();
-                    statistics.setLeftVacationDaysForPeriod(vacationDaysLeftPeriod.getLeftVacationDays(to, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
-                    statistics.setLeftRemainingVacationDaysForPeriod(vacationDaysLeftPeriod.getRemainingVacationDaysLeft(to, account.doRemainigVacationDaysExpire(), account.getExpiryDate()));
+                    statistics.setLeftVacationDaysForPeriod(vacationDaysLeftPeriod.getLeftVacationDays(to, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
+                    statistics.setLeftRemainingVacationDaysForPeriod(vacationDaysLeftPeriod.getRemainingVacationDaysLeft(to, account.doRemainingVacationDaysExpire(), account.getExpiryDate()));
                 }
 
                 if (leftOvertimeForPersons.containsKey(accountPerson)) {

@@ -18,6 +18,20 @@ public interface AccountService {
     Optional<Account> getHolidaysAccount(int year, Person person);
 
     /**
+     * Creates an {@link AccountDraft} for the given year and person.
+     * This may consider information of the persons {@link Account} of the previous year.
+     *
+     * <p>
+     *     Note that this does not take care about whether the person has an actual {@link Account} for this year or not.
+     * </p>
+     *
+     * @param year to get the holidays account draft for
+     * @param person to get the holiday account draft for
+     * @return {@link AccountDraft}
+     */
+    AccountDraft createHolidaysAccountDraft(int year, Person person);
+
+    /**
      * Get existing {@link Account}s for the given year and persons.
      *
      * @param year   to get the holidays account for
