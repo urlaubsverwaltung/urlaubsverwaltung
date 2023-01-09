@@ -83,7 +83,9 @@ public enum FederalState {
     UNITED_KINGDOM_JERSEY("gb", "je"),
     UNITED_KINGDOM_NORTHERN_IRELAND("gb", "ni"),
     UNITED_KINGDOM_SCOTLAND("gb", "sc"),
-    UNITED_KINGDOM_WALES("gb", "wa");
+    UNITED_KINGDOM_WALES("gb", "wa"),
+
+    MALTA("mt", "mt");
 
     private final String[] codes;
 
