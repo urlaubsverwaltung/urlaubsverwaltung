@@ -141,6 +141,7 @@
                         th:field="*{annualVacationDays}"
                         class="form-control"
                         th:errorclass="error"
+                        step="0.5"
                         th:value="${account.annualVacationDays}"
                       />
                       <div class="error tw-mt-1 tw-text-sm" th:if="${#fields.hasErrors('annualVacationDays')}">
