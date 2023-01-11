@@ -13,24 +13,26 @@
             <h2 id="calendar" th:text="#{overview.calendar.title}">Kalender</h2>
           </th:block>
           <th:block th:ref="calendar-heading-actions">
-            <a
-              th:if="${canAccessAbsenceOverview}"
-              class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
-              href="#"
-              th:href="@{/web/absences}"
-            >
-              <svg th:replace="icon/calendar::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
-              <span th:text="#{overview.absences.overview.link.text}"></span>
-            </a>
-            <a
-              th:if="${canAccessCalendarShare}"
-              class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
-              href="#"
-              th:href="@{/web/calendars/share/persons/{personId} (personId=${person.id})}"
-            >
-              <svg th:replace="icon/share::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
-              <span th:text="#{overview.calendar.share.link.text}"></span>
-            </a>
+            <div class="tw-flex tw-flex-col sm:tw-flex-row">
+              <a
+                th:if="${canAccessAbsenceOverview}"
+                class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                href="#"
+                th:href="@{/web/absences}"
+              >
+                <svg th:replace="icon/calendar::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                <span th:text="#{overview.absences.overview.link.text}"></span>
+              </a>
+              <a
+                th:if="${canAccessCalendarShare}"
+                class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
+                href="#"
+                th:href="@{/web/calendars/share/persons/{personId} (personId=${person.id})}"
+              >
+                <svg th:replace="icon/share::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                <span th:text="#{overview.calendar.share.link.text}"></span>
+              </a>
+            </div>
           </th:block>
         </div>
 
