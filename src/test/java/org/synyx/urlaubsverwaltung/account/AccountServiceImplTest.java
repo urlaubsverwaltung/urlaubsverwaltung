@@ -178,7 +178,7 @@ class AccountServiceImplTest {
     void ensureCreateHolidaysAccountDraftWithGloballyDisabledExpiration() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final AccountSettings accountSettings = new AccountSettings();
         accountSettings.setDoRemainingVacationDaysExpireGlobally(false);
@@ -203,7 +203,7 @@ class AccountServiceImplTest {
     void ensureCreateHolidaysAccountDraftWithGloballyEnabledExpiration() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final AccountSettings accountSettings = new AccountSettings();
         accountSettings.setDoRemainingVacationDaysExpireGlobally(true);
@@ -229,7 +229,7 @@ class AccountServiceImplTest {
     void ensureCreateHolidaysAccountDraftWithGloballyDisabledExpirationButLocallyEnabled() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final AccountSettings accountSettings = new AccountSettings();
         accountSettings.setDoRemainingVacationDaysExpireGlobally(false);
@@ -255,7 +255,7 @@ class AccountServiceImplTest {
     void ensureCreateHolidaysAccountDraftWithoutPreviousYearAccount() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final AccountSettings accountSettings = new AccountSettings();
         accountSettings.setDoRemainingVacationDaysExpireGlobally(false);
@@ -334,7 +334,7 @@ class AccountServiceImplTest {
     void ensureSaveAddsExpiryDateOfPreviousYearAccountWhenNotSetAndExpirationIsDisabled() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final Account account = new Account();
         account.setPerson(person);
@@ -370,7 +370,7 @@ class AccountServiceImplTest {
     void ensureSaveAddsDefaultExpiryDateWhenNotSetAndExpirationIsDisabled() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final Account account = new Account();
         account.setPerson(person);

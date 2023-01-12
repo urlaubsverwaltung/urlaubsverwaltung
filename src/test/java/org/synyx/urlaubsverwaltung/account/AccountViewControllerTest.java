@@ -92,7 +92,7 @@ class AccountViewControllerTest {
         final int currentYear = Year.now(clock).getValue();
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final Account account = new Account();
         account.setValidFrom(Year.of(currentYear).atDay(1));
@@ -118,7 +118,7 @@ class AccountViewControllerTest {
         final int currentYear = Year.now(clock).getValue();
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final Account account = new Account();
         account.setValidFrom(Year.of(providedYear).atDay(1));
@@ -142,7 +142,7 @@ class AccountViewControllerTest {
         final Year providedYear = currentYear.plusYears(1);
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final AccountDraft accountDraft = AccountDraft.builder()
             .person(person)
@@ -175,7 +175,7 @@ class AccountViewControllerTest {
         final int currentYear = Year.now(clock).getValue();
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final Account account = new Account();
         account.setValidFrom(Year.of(currentYear).atDay(1));
