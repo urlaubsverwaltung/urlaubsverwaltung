@@ -19,19 +19,24 @@ public class VacationTypeEntity {
     @Id
     private Long id;
 
+    @NotNull
     private boolean active;
 
+    @NotNull
     @Enumerated(STRING)
     private VacationCategory category;
 
+    @NotNull
     private String messageKey;
 
+    @NotNull
     private boolean requiresApproval;
 
-    @Enumerated(STRING)
     @NotNull
+    @Enumerated(STRING)
     private VacationTypeColor color;
 
+    @NotNull
     private boolean visibleToEveryone;
 
     public boolean isActive() {
