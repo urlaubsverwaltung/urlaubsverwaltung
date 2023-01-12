@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
+import org.hibernate.annotations.OnDelete;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import static javax.persistence.FetchType.LAZY;
+import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 @Entity
 @Table(name = "person_basedata")
@@ -18,6 +20,7 @@ class PersonBasedataEntity {
 
     @Id
     @Column(name = "person_id")
+    @OnDelete(action = CASCADE)
     private Long personId;
 
     @OneToOne(fetch = LAZY)

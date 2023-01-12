@@ -31,9 +31,11 @@ class PersonCalendar {
     @OneToOne
     private Person person;
 
+    @NotNull
     @Length(min = SECRET_LENGTH, max = SECRET_LENGTH)
     private String secret;
 
+    @NotNull
     @Convert(converter = PeriodConverter.class)
     private Period calendarPeriod;
 

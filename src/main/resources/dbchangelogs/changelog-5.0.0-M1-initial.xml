@@ -58,7 +58,9 @@
       <column name="annual_vacation_days" type="numeric(19, 2)"/>
       <column name="comment" type="VARCHAR(255)"/>
       <column name="do_remaining_vacation_days_expire" type="BOOLEAN"/>
-      <column name="expiry_date" type="date"/>
+      <column name="expiry_date" type="date">
+        <constraints nullable="false"/>
+      </column>
       <column name="expiry_notification_sent_date" type="date"/>
       <column name="remaining_vacation_days" type="numeric(19, 2)"/>
       <column name="remaining_vacation_days_not_expiring" type="numeric(19, 2)"/>
@@ -128,8 +130,12 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="company_calendar_pkey"/>
       </column>
-      <column name="calendar_period" type="VARCHAR(255)"/>
-      <column name="secret" type="VARCHAR(32)"/>
+      <column name="calendar_period" type="VARCHAR(255)" defaultValue="P100Y">
+        <constraints nullable="false"/>
+      </column>
+      <column name="secret" type="VARCHAR(32)">
+        <constraints nullable="false"/>
+      </column>
       <column name="person_id" type="BIGINT">
         <constraints nullable="false" unique="true"/>
       </column>
@@ -156,11 +162,15 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="department_calendar_pkey"/>
       </column>
-      <column name="calendar_period" type="VARCHAR(255)"/>
+      <column name="calendar_period" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
       <column name="department_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
-      <column name="secret" type="VARCHAR(32)"/>
+      <column name="secret" type="VARCHAR(32)">
+        <constraints nullable="false"/>
+      </column>
       <column name="person_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
@@ -179,7 +189,9 @@
       <column name="department_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
-      <column name="accession_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+      <column name="accession_date" type="TIMESTAMP WITHOUT TIME ZONE" defaultValue="1970-01-01">
+        <constraints nullable="false"/>
+      </column>
       <column name="members_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
@@ -244,10 +256,14 @@
         <constraints nullable="false" primaryKey="true" primaryKeyName="person_pkey"/>
       </column>
       <column name="email" type="VARCHAR(255)"/>
-      <column name="first_name" type="VARCHAR(255)"/>
-      <column name="last_name" type="VARCHAR(255)"/>
+      <column name="first_name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
       <column name="username" type="VARCHAR(255)">
-        <constraints unique="true"/>
+        <constraints unique="true" nullable="false"/>
       </column>
     </createTable>
 
@@ -263,8 +279,12 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="person_calendar_pkey"/>
       </column>
-      <column name="calendar_period" type="VARCHAR(255)"/>
-      <column name="secret" type="VARCHAR(32)"/>
+      <column name="calendar_period" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="secret" type="VARCHAR(32)">
+        <constraints nullable="false"/>
+      </column>
       <column name="person_id" type="BIGINT">
         <constraints nullable="false" unique="true"/>
       </column>
@@ -379,8 +399,12 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="sick_note_type_pkey"/>
       </column>
-      <column name="category" type="VARCHAR(255)"/>
-      <column name="message_key" type="VARCHAR(255)"/>
+      <column name="category" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="message_key" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
     </createTable>
 
     <createTable tableName="special_leave_settings">
@@ -390,8 +414,12 @@
       <column name="active" type="BOOLEAN">
         <constraints nullable="false"/>
       </column>
-      <column name="days" type="INTEGER"/>
-      <column name="message_key" type="VARCHAR(255)"/>
+      <column name="days" type="INTEGER">
+        <constraints nullable="false"/>
+      </column>
+      <column name="message_key" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
     </createTable>
 
     <createTable tableName="user_settings">
@@ -415,7 +443,9 @@
       <column name="color" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
-      <column name="message_key" type="VARCHAR(255)"/>
+      <column name="message_key" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
       <column name="requires_approval" type="BOOLEAN">
         <constraints nullable="false"/>
       </column>
@@ -455,10 +485,9 @@
       </column>
     </createTable>
 
-    <addUniqueConstraint columnNames="second_stage_authorities_id" constraintName="uk_8jff6amcpbn586afrkn2gys3i"
-                         tableName="department_second_stage_authority"/>
-    <addUniqueConstraint columnNames="department_heads_id" constraintName="uk_sxunxcq19tguk06vu5bx0m2u6"
-                         tableName="department_department_head"/>
+    <addUniqueConstraint columnNames="absence_id, absence_mapping_type"
+                         constraintName="unique_absence_id_and_absence_mapping_type"
+                         tableName="absence_mapping"/>
     <addUniqueConstraint columnNames="valid_from, person_id" constraintName="unique_account_by_valid-from_and_person"
                          tableName="account"/>
     <addUniqueConstraint columnNames="department_id, person_id" constraintName="unique_department_calendar_per_person"
@@ -584,6 +613,18 @@
     <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="application_comment"
                              constraintName="fktje5lde6lfr2wkabxtbog7q9o" deferrable="false" initiallyDeferred="false"
                              onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="person_basedata"
+                             constraintName="fkg1vrdsd7sgd7s7s7dgsiaawon" deferrable="false" initiallyDeferred="false"
+                             onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="sick_note_id" baseTableName="sick_note_comment"
+                             constraintName="fkg1jrdsd7sgd3ag47gghswegza" deferrable="false" initiallyDeferred="false"
+                             onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="sick_note" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="user_settings"
+                             constraintName="fk7687azhshs87687qwertzhbsd" deferrable="false" initiallyDeferred="false"
+                             onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id"
                              referencedTableName="person" validate="true"/>
   </changeSet>
 </databaseChangeLog>

@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotNull;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
@@ -18,7 +19,9 @@ class SpecialLeaveSettingsEntity {
     private Long id;
 
     private boolean active;
+    @NotNull
     private String messageKey;
+    @NotNull
     private Integer days;
 
     protected SpecialLeaveSettingsEntity() {

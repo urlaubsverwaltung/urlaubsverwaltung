@@ -34,8 +34,11 @@ public class Person {
     @SequenceGenerator(name = "person_generator", sequenceName = "person_id_seq")
     private Long id;
 
+    @Column(nullable = false)
     private String username;
+    @Column(nullable = false)
     private String lastName;
+    @Column(nullable = false)
     private String firstName;
     private String email;
 
