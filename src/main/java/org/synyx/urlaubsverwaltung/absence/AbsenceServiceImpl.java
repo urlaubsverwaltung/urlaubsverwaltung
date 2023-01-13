@@ -232,7 +232,7 @@ public class AbsenceServiceImpl implements AbsenceService {
         final AbsencePeriod.RecordNoonSick noon;
 
         if (workingTimeDayLength.isHalfDay()) {
-            if (workingTimeDayLength.equals(DayLength.MORNING)) {
+            if (workingTimeDayLength.isMorning()) {
                 morning = null;
                 noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
             } else {

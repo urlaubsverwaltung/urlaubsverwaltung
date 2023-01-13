@@ -16,15 +16,11 @@ public class Period {
     public Period(LocalDate startDate, LocalDate endDate, DayLength dayLength) {
         Assert.isTrue(!dayLength.equals(DayLength.ZERO), "Day length may not be zero");
 
-        boolean isFullDay = dayLength.equals(DayLength.FULL);
-
-        if (isFullDay && startDate.isAfter(endDate)) {
+        if (dayLength.isFull() && startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Start date must be before end date");
         }
 
-        boolean isHalfDay = dayLength.equals(DayLength.MORNING) || dayLength.equals(DayLength.NOON);
-
-        if (isHalfDay && !startDate.isEqual(endDate)) {
+        if (dayLength.isHalfDay() && !startDate.isEqual(endDate)) {
             throw new IllegalArgumentException("Start and end date must be same for half day length");
         }
 
