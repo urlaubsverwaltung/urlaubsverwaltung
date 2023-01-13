@@ -16,7 +16,7 @@ import org.synyx.urlaubsverwaltung.overtime.LeftOvertime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -46,18 +46,18 @@ class ApplicationForLeaveStatisticsBuilder {
 
     private final AccountService accountService;
     private final ApplicationService applicationService;
-    private final WorkingTimeService workingTimeService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final VacationDaysService vacationDaysService;
     private final OvertimeService overtimeService;
     private final Clock clock;
 
     @Autowired
     ApplicationForLeaveStatisticsBuilder(AccountService accountService, ApplicationService applicationService,
-                                         WorkingTimeService workingTimeService, VacationDaysService vacationDaysService,
-                                         OvertimeService overtimeService, Clock clock) {
+                                         WorkingTimeCalendarService workingTimeCalendarService,
+                                         VacationDaysService vacationDaysService, OvertimeService overtimeService, Clock clock) {
         this.accountService = accountService;
         this.applicationService = applicationService;
-        this.workingTimeService = workingTimeService;
+        this.workingTimeCalendarService = workingTimeCalendarService;
         this.vacationDaysService = vacationDaysService;
         this.overtimeService = overtimeService;
         this.clock = clock;
@@ -70,7 +70,7 @@ class ApplicationForLeaveStatisticsBuilder {
         final DateRange dateRange = new DateRange(from, to);
 
         final List<Account> holidayAccounts = accountService.getHolidaysAccount(from.getYear(), persons);
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarsByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(from.getYear()));
 
         final List<Application> applications = applicationService.getApplicationsForACertainPeriodAndStatus(from.with(firstDayOfYear()), from.with(lastDayOfYear()), persons, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED));
         final Map<Person, LeftOvertime> leftOvertimeForPersons = overtimeService.getLeftOvertimeTotalAndDateRangeForPersons(persons, applications, from, to);

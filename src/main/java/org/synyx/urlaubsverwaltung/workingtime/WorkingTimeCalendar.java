@@ -59,7 +59,7 @@ public class WorkingTimeCalendar {
      * </p>
      *
      * @param localDate
-     * @return the dayLength workingTime for the given date (e.g. 0.5 days), or empty {@link Optional} when there is no entry found.
+     * @return the dayLength workingTime for the given date (e.g. 0.5 days), or empty {@linkplain Optional} when there is no entry found.
      */
     public Optional<BigDecimal> workingTime(LocalDate localDate) {
         return workingTimeDayLength(localDate).map(DayLength::getDuration);
@@ -69,7 +69,7 @@ public class WorkingTimeCalendar {
      * Return the {@linkplain DayLength} for the given date.
      *
      * @param localDate
-     * @return the {@linkplain DayLength} workingTime for the given date (e.g. DayLength.MORNING), or empty {@link Optional} when there is no entry found.
+     * @return the {@linkplain DayLength} workingTime for the given date (e.g. DayLength.MORNING), or empty {@linkplain Optional} when there is no entry found.
      */
     public Optional<DayLength> workingTimeDayLength(LocalDate localDate) {
         if (workingTimeByDate.containsKey(localDate)) {

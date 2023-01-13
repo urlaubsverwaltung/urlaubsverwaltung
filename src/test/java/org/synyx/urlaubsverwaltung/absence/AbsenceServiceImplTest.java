@@ -15,7 +15,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -55,11 +55,11 @@ class AbsenceServiceImplTest {
     @Mock
     private SickNoteService sickNoteService;
     @Mock
-    private WorkingTimeService workingTimeService;
+    private WorkingTimeCalendarService workingTimeCalendarService;
 
     @BeforeEach
     void setUp() {
-        sut = new AbsenceServiceImpl(applicationService, sickNoteService, settingsService, workingTimeService);
+        sut = new AbsenceServiceImpl(applicationService, sickNoteService, settingsService, workingTimeCalendarService);
     }
 
     @Test
@@ -173,7 +173,7 @@ class AbsenceServiceImplTest {
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
         vacationTypeEntity.setId(1);
@@ -214,7 +214,7 @@ class AbsenceServiceImplTest {
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
         vacationTypeEntity.setId(1);
@@ -255,7 +255,7 @@ class AbsenceServiceImplTest {
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
         vacationTypeEntity.setId(1);
@@ -301,7 +301,7 @@ class AbsenceServiceImplTest {
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> ZERO);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
             .id(42)
@@ -335,7 +335,7 @@ class AbsenceServiceImplTest {
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> ZERO);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
             .id(42)
@@ -368,7 +368,7 @@ class AbsenceServiceImplTest {
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
         application.setId(42);
@@ -421,7 +421,7 @@ class AbsenceServiceImplTest {
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
         application.setId(42);
@@ -456,7 +456,7 @@ class AbsenceServiceImplTest {
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(start, end, date -> ZERO);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final SickNote sickNote = SickNote.builder()
             .id(42)
@@ -497,7 +497,7 @@ class AbsenceServiceImplTest {
             }
         });
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
         application.setId(42);
@@ -554,7 +554,7 @@ class AbsenceServiceImplTest {
             }
         });
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
         application.setId(42);
@@ -614,7 +614,7 @@ class AbsenceServiceImplTest {
             }
         });
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
         final Application application = new Application();
         application.setId(42);

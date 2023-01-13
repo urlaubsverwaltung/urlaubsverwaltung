@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -46,13 +46,13 @@ class SickNoteServiceImplTest {
     @Mock
     private SettingsService settingsService;
     @Mock
-    private WorkingTimeService workingTimeService;
+    private WorkingTimeCalendarService workingTimeCalendarService;
 
     private final Clock fixedClock = Clock.fixed(Instant.parse("2021-06-28T00:00:00.00Z"), UTC);
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteServiceImpl(sickNoteRepository, settingsService, workingTimeService, fixedClock);
+        sut = new SickNoteServiceImpl(sickNoteRepository, settingsService, workingTimeCalendarService, fixedClock);
     }
 
     @Test
@@ -147,7 +147,7 @@ class SickNoteServiceImplTest {
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(Map.of(person, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(startDate, endDate))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final Optional<SickNote> actualMaybe = sut.getById(1);
         assertThat(actualMaybe).isPresent();
@@ -213,7 +213,7 @@ class SickNoteServiceImplTest {
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(from, to, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(person), new DateRange(from, to))).thenReturn(Map.of(person, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(from, to))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final List<SickNote> sickNotes = sut.getAllActiveByPeriod(from, to);
         assertThat(sickNotes).hasSize(2);
@@ -337,7 +337,7 @@ class SickNoteServiceImplTest {
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(startDate, endDate, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(person), new DateRange(since, now))).thenReturn(Map.of(person, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(since, now))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final List<SickNote> sickNotes = sut.getForStatesSince(List.of(ACTIVE), since);
         assertThat(sickNotes).hasSize(1);
@@ -392,7 +392,7 @@ class SickNoteServiceImplTest {
 
         final Map<LocalDate, DayLength> personWorkingTimeByDate = buildWorkingTimeByDate(since, now, date -> FULL);
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(person), new DateRange(since, now))).thenReturn(Map.of(person, workingTimeCalendar));
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), new DateRange(since, now))).thenReturn(Map.of(person, workingTimeCalendar));
 
         final List<SickNote> sickNotes = sut.getForStatesAndPersonSince(openSickNoteStatuses, persons, since);
         assertThat(sickNotes).hasSize(1);

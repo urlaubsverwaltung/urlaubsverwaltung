@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -43,16 +43,16 @@ public class AbsenceServiceImpl implements AbsenceService {
     private final ApplicationService applicationService;
     private final SickNoteService sickNoteService;
     private final SettingsService settingsService;
-    private final WorkingTimeService workingTimeService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
 
     @Autowired
     public AbsenceServiceImpl(ApplicationService applicationService, SickNoteService sickNoteService,
-                              SettingsService settingsService, WorkingTimeService workingTimeService) {
+                              SettingsService settingsService, WorkingTimeCalendarService workingTimeCalendarService) {
 
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
         this.settingsService = settingsService;
-        this.workingTimeService = workingTimeService;
+        this.workingTimeCalendarService = workingTimeCalendarService;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
         final DateRange askedDateRange = new DateRange(start, end);
 
-        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = workingTimeService.getWorkingTimesByPersons(persons, askedDateRange);
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, askedDateRange);
 
         final List<Application> openApplications = applicationService.getForStatesAndPerson(APPLICATION_STATUSES, persons, start, end);
         final List<AbsencePeriod> applicationAbsences = generateAbsencePeriodFromApplication(openApplications, askedDateRange, workingTimeCalendarByPerson::get);
