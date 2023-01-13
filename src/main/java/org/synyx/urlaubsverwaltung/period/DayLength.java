@@ -46,4 +46,16 @@ public enum DayLength {
     public boolean isHalfDay() {
         return isHalfDay;
     }
+
+    public boolean isMorning() {
+        return MORNING.equals(this);
+    }
+
+    public boolean isNoon() {
+        return NOON.equals(this);
+    }
+
+    public boolean isFull() {
+        return FULL.equals(this);
+    }
 }

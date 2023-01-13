@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.absence;
 
 import org.apache.commons.collections4.ListUtils;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.application.Application;
@@ -8,24 +9,22 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHoliday;
-import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus;
-import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static java.util.Comparator.comparing;
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toList;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -35,6 +34,9 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIV
 @Service
 public class AbsenceServiceImpl implements AbsenceService {
 
+    private static final Logger LOG = getLogger(lookup().lookupClass());
+
+
     private static final List<ApplicationStatus> APPLICATION_STATUSES = List.of(ALLOWED, WAITING, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
     private static final List<SickNoteStatus> SICK_NOTE_STATUSES = List.of(ACTIVE);
 
@@ -42,18 +44,15 @@ public class AbsenceServiceImpl implements AbsenceService {
     private final SickNoteService sickNoteService;
     private final SettingsService settingsService;
     private final WorkingTimeService workingTimeService;
-    private final PublicHolidaysService publicHolidaysService;
 
     @Autowired
     public AbsenceServiceImpl(ApplicationService applicationService, SickNoteService sickNoteService,
-                              SettingsService settingsService, WorkingTimeService workingTimeService,
-                              PublicHolidaysService publicHolidaysService) {
+                              SettingsService settingsService, WorkingTimeService workingTimeService) {
 
         this.applicationService = applicationService;
         this.sickNoteService = sickNoteService;
         this.settingsService = settingsService;
         this.workingTimeService = workingTimeService;
-        this.publicHolidaysService = publicHolidaysService;
     }
 
     @Override
@@ -63,15 +62,16 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     @Override
     public List<AbsencePeriod> getOpenAbsences(List<Person> persons, LocalDate start, LocalDate end) {
+
         final DateRange askedDateRange = new DateRange(start, end);
-        final List<WorkingTime> workingTimeList = workingTimeService.getByPersons(persons);
-        final FederalState systemDefaultFederalState = workingTimeService.getSystemDefaultFederalState();
+
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = workingTimeService.getWorkingTimesByPersons(persons, askedDateRange);
 
         final List<Application> openApplications = applicationService.getForStatesAndPerson(APPLICATION_STATUSES, persons, start, end);
-        final List<AbsencePeriod> applicationAbsences = generateAbsencePeriodFromApplication(openApplications, askedDateRange, workingTimeList, systemDefaultFederalState);
+        final List<AbsencePeriod> applicationAbsences = generateAbsencePeriodFromApplication(openApplications, askedDateRange, workingTimeCalendarByPerson::get);
 
         final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPerson(SICK_NOTE_STATUSES, persons, start, end);
-        final List<AbsencePeriod> sickNoteAbsences = generateAbsencePeriodFromSickNotes(openSickNotes, askedDateRange, workingTimeList, systemDefaultFederalState);
+        final List<AbsencePeriod> sickNoteAbsences = generateAbsencePeriodFromSickNotes(openSickNotes, askedDateRange, workingTimeCalendarByPerson::get);
 
         return Stream.concat(applicationAbsences.stream(), sickNoteAbsences.stream()).collect(toList());
     }
@@ -107,10 +107,9 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private List<AbsencePeriod> generateAbsencePeriodFromApplication(List<Application> applications,
                                                                      DateRange askedDateRange,
-                                                                     List<WorkingTime> workingTimeList,
-                                                                     FederalState systemDefaultFederalState) {
+                                                                     Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
         return applications.stream()
-            .map(application -> toAbsencePeriod(application, askedDateRange, workingTimeList, systemDefaultFederalState))
+            .map(application -> toAbsencePeriod(application, askedDateRange, workingTimeCalendarSupplier))
             .collect(toList());
     }
 
@@ -123,16 +122,14 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private List<AbsencePeriod> generateAbsencePeriodFromSickNotes(List<SickNote> sickNotes,
                                                                    DateRange askedDateRange,
-                                                                   List<WorkingTime> workingTimeList,
-                                                                   FederalState systemDefaultFederalState) {
+                                                                   Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
         return sickNotes.stream()
-            .map(sickNote -> toAbsencePeriod(sickNote, askedDateRange, workingTimeList, systemDefaultFederalState))
+            .map(sickNote -> toAbsencePeriod(sickNote, askedDateRange, workingTimeCalendarSupplier))
             .collect(toList());
     }
 
-    private AbsencePeriod toAbsencePeriod(Application application, DateRange askedDateRange, List<WorkingTime> workingTimeList,
-                                          FederalState systemDefaultFederalState) {
-        return new AbsencePeriod(days(application, askedDateRange, workingTimeList, systemDefaultFederalState));
+    private AbsencePeriod toAbsencePeriod(Application application, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
+        return new AbsencePeriod(days(application, askedDateRange, workingTimeCalendarSupplier));
     }
 
     private AbsencePeriod.AbsenceStatus toAbsenceStatus(ApplicationStatus applicationStatus) {
@@ -150,69 +147,53 @@ public class AbsenceServiceImpl implements AbsenceService {
         }
     }
 
-    private List<AbsencePeriod.Record> days(Application application, DateRange askedDateRange, List<WorkingTime> workingTimeList,
-                                            FederalState systemDefaultFederalState) {
+    private List<AbsencePeriod.Record> days(Application application, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
 
         final LocalDate start = maxDate(application.getStartDate(), askedDateRange.getStartDate());
         final LocalDate end = minDate(application.getEndDate(), askedDateRange.getEndDate());
 
         final Person person = application.getPerson();
-        final List<WorkingTime> personWorkingTimeList = workingTimeList
-            .stream()
-            .filter(workingTime -> workingTime.getPerson().equals(person))
-            .sorted(comparing(WorkingTime::getValidFrom).reversed())
-            .collect(toList());
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarSupplier.apply(person);
 
         return new DateRange(start, end).stream()
-            .map(date -> new DateDayLengthTuple(date, publicHolidayAbsence(date, personWorkingTimeList, systemDefaultFederalState)))
-            // ignore full public holiday since it is no "absence".
-            // it could still be an official workday with an application for leave.
-            .filter(tuple -> !tuple.publicHolidayDayLength.equals(DayLength.FULL))
-            .filter(tuple -> isWorkday(tuple.date, personWorkingTimeList))
-            .map(tuple -> toVacationAbsencePeriodRecord(tuple, application))
+            .map(date -> Map.entry(date, workingTimeCalendar.workingTimeDayLength(date).orElse(DayLength.ZERO)))
+            .filter(entry -> !entry.getValue().equals(DayLength.ZERO))
+            .map(entry -> toVacationAbsencePeriodRecord(entry.getKey(), entry.getValue(), application))
             .collect(toList());
     }
 
-    private boolean isWorkday(LocalDate date, List<WorkingTime> workingTimeList) {
-        return workingTimeList
-            .stream()
-            .filter(w -> w.getValidFrom().isBefore(date) || w.getValidFrom().isEqual(date))
-            .findFirst()
-            .map(w -> w.isWorkingDay(date.getDayOfWeek()))
-            .orElse(false);
-    }
+    private AbsencePeriod.Record toVacationAbsencePeriodRecord(LocalDate date, DayLength workingDayLength, Application application) {
 
-    private AbsencePeriod.Record toVacationAbsencePeriodRecord(DateDayLengthTuple tuple, Application application) {
-
-        final Integer applicationId = application.getId();
         final Person person = application.getPerson();
+        final Integer applicationId = application.getId();
         final AbsencePeriod.AbsenceStatus status = toAbsenceStatus(application.getStatus());
         final Integer vacationTypeId = application.getVacationType().getId();
         final boolean visibleToEveryone = application.getVacationType().isVisibleToEveryone();
-
-        if (tuple.publicHolidayDayLength.isHalfDay()) {
-            final AbsencePeriod.RecordMorning morning;
-            final AbsencePeriod.RecordNoon noon;
-            if (tuple.publicHolidayDayLength.equals(DayLength.MORNING)) {
-                morning = null;
-                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
-            } else if (tuple.publicHolidayDayLength.equals(DayLength.NOON)) {
-                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
-                noon = null;
-            } else {
-                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
-                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
-            }
-            return new AbsencePeriod.Record(tuple.date, person, morning, noon);
-        }
+        final DayLength applicationDayLength = application.getDayLength();
 
         final AbsencePeriod.RecordMorningVacation morning;
         final AbsencePeriod.RecordNoonVacation noon;
 
-        if (DayLength.MORNING.equals(application.getDayLength())) {
+        if (workingDayLength.isMorning()) {
+            noon = null;
+            if (applicationDayLength.isFull() || applicationDayLength.isMorning()) {
+                morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
+            } else {
+                LOG.info("calculate absence seems fishy. workingDayLength={} application.dayLength={} application.id={}", workingDayLength, applicationDayLength, applicationId);
+                morning = null;
+            }
+        } else if (workingDayLength.isNoon()) {
+            morning = null;
+            if (applicationDayLength.isFull() || applicationDayLength.isNoon()) {
+                noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
+            } else {
+                LOG.info("calculate absence seems fishy. workingDayLength={} application.dayLength={} application.id={} ", workingDayLength, applicationDayLength, applicationId);
+                noon = null;
+            }
+        } else if (applicationDayLength.isMorning()) {
             morning = new AbsencePeriod.RecordMorningVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
             noon = null;
-        } else if (DayLength.NOON.equals(application.getDayLength())) {
+        } else if (applicationDayLength.isNoon()) {
             morning = null;
             noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
         } else {
@@ -220,59 +201,46 @@ public class AbsenceServiceImpl implements AbsenceService {
             noon = new AbsencePeriod.RecordNoonVacation(person, applicationId, status, vacationTypeId, visibleToEveryone);
         }
 
-        return new AbsencePeriod.Record(tuple.date, person, morning, noon);
+        return new AbsencePeriod.Record(date, person, morning, noon);
     }
 
-    private AbsencePeriod toAbsencePeriod(SickNote sickNote, DateRange askedDateRange, List<WorkingTime> workingTimeList,
-                                          FederalState systemDefaultFederalState) {
-        return new AbsencePeriod(days(sickNote, askedDateRange, workingTimeList, systemDefaultFederalState));
+    private AbsencePeriod toAbsencePeriod(SickNote sickNote, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
+        return new AbsencePeriod(days(sickNote, askedDateRange, workingTimeCalendarSupplier));
     }
 
-    private List<AbsencePeriod.Record> days(SickNote sickNote, DateRange askedDateRange, List<WorkingTime> workingTimeList,
-                                            FederalState systemDefaultFederalState) {
+    private List<AbsencePeriod.Record> days(SickNote sickNote, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
 
         final LocalDate start = maxDate(sickNote.getStartDate(), askedDateRange.getStartDate());
         final LocalDate end = minDate(sickNote.getEndDate(), askedDateRange.getEndDate());
 
         final Person person = sickNote.getPerson();
-        final List<WorkingTime> personWorkingTimeList = workingTimeList
-            .stream()
-            .filter(workingTime -> workingTime.getPerson().equals(person))
-            .sorted(comparing(WorkingTime::getValidFrom).reversed())
-            .collect(toList());
+        final WorkingTimeCalendar workingTimeCalendar = workingTimeCalendarSupplier.apply(person);
 
         return new DateRange(start, end).stream()
-            .map(date -> new DateDayLengthTuple(date, publicHolidayAbsence(date, personWorkingTimeList, systemDefaultFederalState)))
-            // ignore full public holiday since it is no "absence".
-            // it could still be an official workday with a sick note.
-            .filter(tuple -> !tuple.publicHolidayDayLength.equals(DayLength.FULL))
-            .map(tuple -> toSickAbsencePeriodRecord(tuple, sickNote))
+            .map(date -> Map.entry(date, workingTimeCalendar.workingTimeDayLength(date).orElse(DayLength.ZERO)))
+            // sickNotes are
+            .map(entry -> toSickAbsencePeriodRecord(entry.getKey(), entry.getValue(), sickNote))
             .collect(toList());
     }
 
-    private AbsencePeriod.Record toSickAbsencePeriodRecord(DateDayLengthTuple tuple, SickNote sickNote) {
+    private AbsencePeriod.Record toSickAbsencePeriodRecord(LocalDate date, DayLength workingTimeDayLength, SickNote sickNote) {
 
         final Integer sickNoteId = sickNote.getId();
         final Person person = sickNote.getPerson();
 
-        if (tuple.publicHolidayDayLength.isHalfDay()) {
-            final AbsencePeriod.RecordMorning morning;
-            final AbsencePeriod.RecordNoon noon;
-            if (tuple.publicHolidayDayLength.equals(DayLength.MORNING)) {
-                morning = null;
-                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
-            } else if (tuple.publicHolidayDayLength.equals(DayLength.NOON)) {
-                morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
-                noon = null;
-            } else {
-                morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
-                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
-            }
-            return new AbsencePeriod.Record(tuple.date, person, morning, noon);
-        }
-
         final AbsencePeriod.RecordMorningSick morning;
         final AbsencePeriod.RecordNoonSick noon;
+
+        if (workingTimeDayLength.isHalfDay()) {
+            if (workingTimeDayLength.equals(DayLength.MORNING)) {
+                morning = null;
+                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
+            } else {
+                morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
+                noon = null;
+            }
+            return new AbsencePeriod.Record(date, person, morning, noon);
+        }
 
         if (DayLength.MORNING.equals(sickNote.getDayLength())) {
             morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
@@ -285,29 +253,7 @@ public class AbsenceServiceImpl implements AbsenceService {
             noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
         }
 
-        return new AbsencePeriod.Record(tuple.date, person, morning, noon);
-    }
-
-    private DayLength publicHolidayAbsence(LocalDate date, List<WorkingTime> workingTimeList, FederalState federalStateDefault) {
-
-        final FederalState federalState = workingTime(date, workingTimeList)
-            .or(() -> workingTimeList.isEmpty()
-                ? Optional.empty()
-                : Optional.of(workingTimeList.get(0))
-            )
-            .map(WorkingTime::getFederalState)
-            .orElse(federalStateDefault);
-
-        final Optional<PublicHoliday> maybePublicHoliday = publicHolidaysService.getPublicHoliday(date, federalState);
-        return maybePublicHoliday.isPresent() ? maybePublicHoliday.get().getDayLength() : DayLength.ZERO;
-    }
-
-    private static Optional<WorkingTime> workingTime(LocalDate validFrom, List<WorkingTime> workingTimeList) {
-        final Predicate<LocalDate> isEqual = validFrom::isEqual;
-        final Predicate<LocalDate> isAfter = validFrom::isAfter;
-        return workingTimeList.stream()
-            .filter(workingTime -> isEqual.or(isAfter).test(workingTime.getValidFrom()))
-            .findFirst();
+        return new AbsencePeriod.Record(date, person, morning, noon);
     }
 
     private AbsenceTimeConfiguration getAbsenceTimeConfiguration() {
@@ -321,15 +267,5 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private static LocalDate minDate(LocalDate date, LocalDate date2) {
         return date.isBefore(date2) ? date : date2;
-    }
-
-    private static class DateDayLengthTuple {
-        final LocalDate date;
-        final DayLength publicHolidayDayLength;
-
-        private DateDayLengthTuple(LocalDate date, DayLength publicHolidayDayLength) {
-            this.date = date;
-            this.publicHolidayDayLength = publicHolidayDayLength;
-        }
     }
 }
