@@ -51,13 +51,29 @@ public class WorkingTimeCalendar {
     }
 
     /**
+     * Return the dayLength duration value for the given date.
+     *
+     * <p>
+     *   If you are interested in the {@linkplain DayLength} to get information about morning or noon,
+     *   see {@linkplain WorkingTimeCalendar#workingTimeDayLength(LocalDate)} instead.
+     * </p>
      *
      * @param localDate
-     * @return the dayLength workingTime for the given date (e.g. 0.5 days), or empty {@link Optional} when there is no entry found.
+     * @return the dayLength workingTime for the given date (e.g. 0.5 days), or empty {@linkplain Optional} when there is no entry found.
      */
     public Optional<BigDecimal> workingTime(LocalDate localDate) {
+        return workingTimeDayLength(localDate).map(DayLength::getDuration);
+    }
+
+    /**
+     * Return the {@linkplain DayLength} for the given date.
+     *
+     * @param localDate
+     * @return the {@linkplain DayLength} workingTime for the given date (e.g. DayLength.MORNING), or empty {@linkplain Optional} when there is no entry found.
+     */
+    public Optional<DayLength> workingTimeDayLength(LocalDate localDate) {
         if (workingTimeByDate.containsKey(localDate)) {
-            return Optional.of(workingTimeByDate.get(localDate).getDuration());
+            return Optional.of(workingTimeByDate.get(localDate));
         }
         return Optional.empty();
     }

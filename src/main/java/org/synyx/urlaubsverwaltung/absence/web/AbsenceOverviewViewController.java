@@ -295,13 +295,13 @@ public class AbsenceOverviewViewController {
 
     private AbsenceOverviewDayType.Builder getAbsenceOverviewDayType(List<AbsencePeriod.Record> absenceRecords, Function<AbsencePeriod.RecordInfo, Boolean> shouldAnonymizeAbsenceType, PublicHoliday publicHoliday, Function<AbsencePeriod.RecordInfo, VacationTypeColor> recordInfoToColor) {
         AbsenceOverviewDayType.Builder builder = getAbsenceOverviewDayType(absenceRecords, shouldAnonymizeAbsenceType, recordInfoToColor);
-        if (publicHoliday.getDayLength().equals(DayLength.MORNING)) {
+        if (publicHoliday.getDayLength().isMorning()) {
             builder = builder.publicHolidayMorning();
         }
-        if (publicHoliday.getDayLength().equals(DayLength.NOON)) {
+        if (publicHoliday.getDayLength().isNoon()) {
             builder = builder.publicHolidayNoon();
         }
-        if (publicHoliday.getDayLength().equals(DayLength.FULL)) {
+        if (publicHoliday.getDayLength().isFull()) {
             builder = builder.publicHolidayFull();
         }
         return builder;

@@ -10,7 +10,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.time.Clock;
 import java.time.LocalDate;
@@ -31,16 +31,16 @@ class SickNoteServiceImpl implements SickNoteService {
 
     private final SickNoteRepository sickNoteRepository;
     private final SettingsService settingsService;
-    private final WorkingTimeService workingTimeService;
+    private final WorkingTimeCalendarService workingTimeCalendarService;
     private final Clock clock;
 
     @Autowired
     SickNoteServiceImpl(SickNoteRepository sickNoteRepository, SettingsService settingsService,
-                        WorkingTimeService workingTimeService, Clock clock) {
+                        WorkingTimeCalendarService workingTimeCalendarService, Clock clock) {
 
         this.sickNoteRepository = sickNoteRepository;
         this.settingsService = settingsService;
-        this.workingTimeService = workingTimeService;
+        this.workingTimeCalendarService = workingTimeCalendarService;
         this.clock = clock;
     }
 
@@ -61,7 +61,7 @@ class SickNoteServiceImpl implements SickNoteService {
             .map(sickNote -> {
                 final Person person = sickNote.getPerson();
                 final DateRange dateRange = new DateRange(sickNote.getStartDate(), sickNote.getEndDate());
-                final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeService.getWorkingTimesByPersons(List.of(person), dateRange);
+                final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), dateRange);
                 return SickNote.builder(sickNote).workingTimeCalendar(workingTimesByPersons.get(sickNote.getPerson())).build();
             });
     }
@@ -200,7 +200,7 @@ class SickNoteServiceImpl implements SickNoteService {
         }
 
         final List<Person> personsWithSickNotes = entities.stream().map(SickNoteEntity::getPerson).distinct().collect(toList());
-        final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeService.getWorkingTimesByPersons(personsWithSickNotes, dateRange);
+        final Map<Person, WorkingTimeCalendar> workingTimesByPersons = workingTimeCalendarService.getWorkingTimesByPersons(personsWithSickNotes, dateRange);
 
         return entities
             .stream()

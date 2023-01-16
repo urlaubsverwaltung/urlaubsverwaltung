@@ -20,7 +20,7 @@ import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeService;
+import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendarService;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -68,12 +68,12 @@ class ApplicationForLeaveStatisticsBuilderTest {
     @Mock
     private OvertimeService overtimeService;
     @Mock
-    private WorkingTimeService workingTimeService;
+    private WorkingTimeCalendarService workingTimeCalendarService;
 
     @BeforeEach
     void setUp() {
         sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
-            workingTimeService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2015-06-24T16:02:42.00Z"), ZoneOffset.UTC));
+            workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2015-06-24T16:02:42.00Z"), ZoneOffset.UTC));
     }
 
     @Test
@@ -86,8 +86,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
     @Test
     void ensureLeftVacationDays() {
-        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, workingTimeService,
-            vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
+        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
+            workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
 
         final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
 
@@ -106,7 +106,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -144,8 +144,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
     @Test
     void ensureLeftVacationDaysForDateRange() {
-        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, workingTimeService,
-            vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
+        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
+            workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
 
         final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
 
@@ -166,7 +166,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -205,8 +205,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
     @Test
     void ensureLeftRemainingVacationDaysAfterExpiryDate() {
-        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, workingTimeService,
-            vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
+        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
+            workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
 
         final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
 
@@ -225,7 +225,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -274,8 +274,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
     @Test
     void ensureLeftRemainingVacationDaysBeforeExpiryDate() {
-        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, workingTimeService,
-            vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
+        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
+            workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
 
         final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
 
@@ -294,7 +294,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(person);
@@ -342,8 +342,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
     @Test
     void ensureUsesWaitingAndAllowedVacationOfAllHolidayTypesToBuildStatistics() {
 
-        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, workingTimeService,
-            vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
+        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
+            workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
 
         final List<VacationTypeEntity> vacationTypes = createVacationTypesEntities();
 
@@ -362,7 +362,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(person), Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final Application holidayWaiting = new Application();
         holidayWaiting.setPerson(person);
@@ -457,8 +457,8 @@ class ApplicationForLeaveStatisticsBuilderTest {
 
     @Test
     void ensureLeftOvertime() {
-        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService, workingTimeService,
-            vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
+        final ApplicationForLeaveStatisticsBuilder sut = new ApplicationForLeaveStatisticsBuilder(accountService, applicationService,
+            workingTimeCalendarService, vacationDaysService, overtimeService, Clock.fixed(Instant.parse("2014-06-24T16:02:42.00Z"), ZoneOffset.UTC));
 
         final Person person = new Person();
 
@@ -476,7 +476,7 @@ class ApplicationForLeaveStatisticsBuilderTest {
         final WorkingTimeCalendar personWorkingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
 
         final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = Map.of(person, personWorkingTimeCalendar);
-        when(workingTimeService.getWorkingTimesByPersons(persons, Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
+        when(workingTimeCalendarService.getWorkingTimesByPersons(persons, Year.of(2014))).thenReturn(workingTimeCalendarByPerson);
 
         final List<Application> applications = List.of();
         when(applicationService.getApplicationsForACertainPeriodAndStatus(from, to, persons, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED))).thenReturn(applications);

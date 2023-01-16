@@ -127,12 +127,11 @@ public class AbsenceApiController {
 
         final List<DayAbsenceDto> absencesWithNoWorkdays = new ArrayList<>();
 
+        final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
         final List<WorkingTime> workingTimeList = workingTimeService.getByPerson(person);
 
         for (LocalDate date : new DateRange(start, end)) {
-            final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(RestApiDateFormat.DATE_PATTERN);
-            final String formattedDate = dateTimeFormatter.format(date);
-            final List<DayAbsenceDto> maybeAbsenceDto = dayAbsenceDtoForDate(formattedDate, absences);
+            final List<DayAbsenceDto> maybeAbsenceDto = dayAbsenceDtoForDate(dateTimeFormatter.format(date), absences);
             if (!maybeAbsenceDto.isEmpty()) {
                 absencesWithNoWorkdays.addAll(maybeAbsenceDto);
             } else if (!isWorkday(date, workingTimeList)) {

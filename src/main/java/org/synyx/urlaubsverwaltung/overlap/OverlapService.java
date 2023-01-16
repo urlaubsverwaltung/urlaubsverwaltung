@@ -25,7 +25,6 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.FULLY_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.NO_OVERLAPPING;
 import static org.synyx.urlaubsverwaltung.overlap.OverlapCase.PARTLY_OVERLAPPING;
-import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 
 /**
  * This service handles the validation of {@link Application} for leave concerning overlapping, i.e. if there is already
@@ -179,7 +178,7 @@ public class OverlapService {
     }
 
     private Predicate<Application> withOverlappingDayLength(DayLength dayLength) {
-        return application -> application.getDayLength().equals(FULL) || dayLength.equals(FULL) || application.getDayLength().equals(dayLength);
+        return application -> application.getDayLength().isFull() || dayLength.isFull() || application.getDayLength().equals(dayLength);
     }
 
     private Predicate<Application> withConflictingStatus() {
