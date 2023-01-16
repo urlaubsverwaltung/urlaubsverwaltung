@@ -60,19 +60,19 @@
                 </li>
                 <li th:if="${navigationDepartmentAccess}">
                   <a
-                    th:replace="~{::navigation-item(id='department-link', href=@{/web/department}, text=#{nav.department.title}, icon=~{icon/user-group::svg})}"
+                    th:replace="~{::navigation-item(id='department-link', href=@{/web/department}, text=#{nav.department.title}, icon=~{icon/users::svg})}"
                   ></a>
                 </li>
                 <li th:if="${navigationSettingsAccess}">
                   <a
-                    th:replace="~{::navigation-item(id='settings-link', href=@{/web/settings}, text=#{nav.settings.title}, icon=~{icon/cog::svg}, dataTestId='navigation-settings-link')}"
+                    th:replace="~{::navigation-item(id='settings-link', href=@{/web/settings}, text=#{nav.settings.title}, icon=~{icon/settings::svg}, dataTestId='navigation-settings-link')}"
                   ></a>
                 </li>
               </ul>
             </div>
             <div class="tw-absolute tw-right-0 tw-top-0 lg:tw-static lg:tw-flex-1 tw-flex tw-justify-end">
               <div class="tw-px-6 lg:tw-px-0 tw-py-3 lg:tw-py-2 tw-flex tw-space-x-2">
-                <div th:if="${navigationRequestPopupEnabled}" class="tw-relative">
+                <div th:if="${navigationRequestPopupEnabled}" class="tw-relative tw-flex tw-items-center">
                   <a
                     id="add-something-new"
                     href="#add-something-new-menu"
@@ -81,7 +81,7 @@
                     tabindex="-1"
                   >
                     <svg
-                      th:replace="~{icon/plus::svg(className='nav-popup-menu-button_icon tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9')}"
+                      th:replace="~{icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7 lg:tw-w-8 lg:tw-h-8')}"
                     ></svg>
                     <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
                     <span class="dropdown-caret"></span>
@@ -96,7 +96,7 @@
                           >
                             <svg
                               th:ref="menu-add-application-icon"
-                              th:replace="~{icon/document-text::svg(className='tw-w-6 tw-h-6')}"
+                              th:replace="~{icon/file-text::svg(className='tw-w-6 tw-h-6')}"
                             ></svg>
                           </a>
                         </li>
@@ -191,7 +191,7 @@
                           >
                             <svg
                               th:ref="menu-help-icon"
-                              th:replace="~{icon/question-mark-circle::svg(className='tw-w-6 tw-h-6')}"
+                              th:replace="~{icon/help-circle::svg(className='tw-w-6 tw-h-6')}"
                             ></svg>
                           </a>
                         </li>
@@ -213,7 +213,7 @@
                           >
                             <svg
                               th:ref="menu-user-settings-icon"
-                              th:replace="~{icon/adjustments::svg(className='tw-w-6 tw-h-6')}"
+                              th:replace="~{icon/sliders::svg(className='tw-w-6 tw-h-6')}"
                             ></svg>
                           </a>
                         </li>

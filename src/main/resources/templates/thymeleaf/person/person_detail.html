@@ -159,7 +159,7 @@
                   th:replace="fragments/rounded::block(content=~{::person-details-departments-box-icon-rounded}, className='tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-zinc-900')"
                 >
                   <th:block th:ref="person-details-departments-box-icon-rounded">
-                    <svg th:replace="icon/user-group::svg(className='tw-w-8 tw-h-8')" />
+                    <svg th:replace="icon/users::svg(className='tw-w-8 tw-h-8')" />
                   </th:block>
                 </div>
               </th:block>
@@ -352,7 +352,7 @@
                         <tr class="tw-flex tw-flex-col">
                           <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                             <th:block th:if="${workingTime.monday.duration > 0}">
-                              <svg th:replace="icon/check-circle::svg" />
+                              <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.monday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
@@ -361,7 +361,7 @@
                           </td>
                           <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                             <th:block th:if="${workingTime.tuesday.duration > 0}">
-                              <svg th:replace="icon/check-circle::svg" />
+                              <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.tuesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
@@ -370,7 +370,7 @@
                           </td>
                           <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                             <th:block th:if="${workingTime.wednesday.duration > 0}">
-                              <svg th:replace="icon/check-circle::svg" />
+                              <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.wednesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
@@ -379,7 +379,7 @@
                           </td>
                           <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                             <th:block th:if="${workingTime.thursday.duration > 0}">
-                              <svg th:replace="icon/check-circle::svg" />
+                              <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.thursday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
@@ -388,7 +388,7 @@
                           </td>
                           <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                             <th:block th:if="${workingTime.friday.duration > 0}">
-                              <svg th:replace="icon/check-circle::svg" />
+                              <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.friday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
@@ -397,7 +397,7 @@
                           </td>
                           <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                             <th:block th:if="${workingTime.saturday.duration > 0}">
-                              <svg th:replace="icon/check-circle::svg" />
+                              <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.saturday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"
@@ -406,7 +406,7 @@
                           </td>
                           <td class="tw-flex-1 tw-flex tw-items-center tw-py-0.5">
                             <th:block th:if="${workingTime.sunday.duration > 0}">
-                              <svg th:replace="icon/check-circle::svg" />
+                              <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')" />
                             </th:block>
                             <span
                               th:text="#{${workingTime.sunday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}}"

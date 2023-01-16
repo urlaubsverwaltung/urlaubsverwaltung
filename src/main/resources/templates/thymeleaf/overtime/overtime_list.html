@@ -93,18 +93,18 @@
                 </a>
                 <th:block th:switch="${record.status}">
                   <th:block th:case="WAITING">
-                    <svg th:replace="icon/question-mark-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="icon/help-circle::svg(className='tw-w-4 tw-h-4')"></svg>
                   </th:block>
                   <th:block th:case="ALLOWED">
-                    <svg th:replace="icon/check-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')"></svg>
                   </th:block>
                   <th:block th:case="TEMPORARY_ALLOWED">
-                    <svg th:replace="icon/check-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')"></svg>
                   </th:block>
                   <th:block th:case="ALLOWED_CANCELLATION_REQUESTED">
-                    <svg th:replace="icon/check-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')"></svg>
                     <svg th:replace="icon/arrow-narrow-right::svg(className='tw-w-5 tw-h-5')"></svg>
-                    <svg th:replace="icon/trash::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="icon/trash-2::svg(className='tw-w-4 tw-h-4')"></svg>
                   </th:block>
                   <th:block th:case="*"> &nbsp; </th:block>
                 </th:block>

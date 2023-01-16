@@ -6,24 +6,22 @@
   </head>
   <body>
     <svg
-      th:with="strokeWidth=${strokeWidth ?: 2}"
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      width="16px"
-      height="16px"
-      th:classappend="${className}"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
       role="img"
       aria-hidden="true"
       focusable="false"
+      th:classappend="${className}"
     >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        th:stroke-width="${strokeWidth}"
-        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-      />
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
     </svg>
   </body>
 </html>

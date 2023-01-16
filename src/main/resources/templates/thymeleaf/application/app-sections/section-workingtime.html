@@ -37,7 +37,7 @@
               </th>
               <td class="tw-py-0.5 text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.monday.duration > 0}">
-                  <svg th:replace="icon/check-circle::svg"></svg>
+                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-5 tw-h-5')"></svg>
                 </th:block>
                 <span
                   th:with="messageKey=${dateRangeWorkingTime.value.monday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
@@ -48,7 +48,7 @@
               </td>
               <td class="tw-py-0.5 text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.tuesday.duration > 0}">
-                  <svg th:replace="icon/check-circle::svg"></svg>
+                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-5 tw-h-5')"></svg>
                 </th:block>
                 <span
                   th:with="messageKey=${dateRangeWorkingTime.value.tuesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
@@ -59,7 +59,7 @@
               </td>
               <td class="tw-py-0.5 text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.wednesday.duration > 0}">
-                  <svg th:replace="icon/check-circle::svg"></svg>
+                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-5 tw-h-5')"></svg>
                 </th:block>
                 <span
                   th:with="messageKey=${dateRangeWorkingTime.value.wednesday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
@@ -70,7 +70,7 @@
               </td>
               <td class="tw-py-0.5 text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.thursday.duration > 0}">
-                  <svg th:replace="icon/check-circle::svg"></svg>
+                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-5 tw-h-5')"></svg>
                 </th:block>
                 <span
                   th:with="messageKey=${dateRangeWorkingTime.value.thursday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
@@ -81,7 +81,7 @@
               </td>
               <td class="tw-py-0.5 text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.friday.duration > 0}">
-                  <svg th:replace="icon/check-circle::svg"></svg>
+                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-5 tw-h-5')"></svg>
                 </th:block>
                 <span
                   th:with="messageKey=${dateRangeWorkingTime.value.friday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
@@ -92,7 +92,7 @@
               </td>
               <td class="tw-py-0.5 text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.saturday.duration > 0}">
-                  <svg th:replace="icon/check-circle::svg"></svg>
+                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-5 tw-h-5')"></svg>
                 </th:block>
                 <span
                   th:with="messageKey=${dateRangeWorkingTime.value.saturday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
@@ -103,7 +103,7 @@
               </td>
               <td class="tw-py-0.5 text-center">
                 <th:block th:if="${dateRangeWorkingTime.value.sunday.duration > 0}">
-                  <svg th:replace="icon/check-circle::svg"></svg>
+                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-5 tw-h-5')"></svg>
                 </th:block>
                 <span
                   th:with="messageKey=${dateRangeWorkingTime.value.sunday.duration > 0 ? 'person.workingday.yes' : 'person.workingday.no'}"
