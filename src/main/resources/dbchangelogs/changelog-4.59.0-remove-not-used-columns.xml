@@ -1,0 +1,22 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="remove-not-used-columns">
+    <preConditions>
+      <tableExists tableName="application"/>
+      <columnExists tableName="application" columnName="office_id"/>
+      <foreignKeyConstraintExists foreignKeyTableName="application" foreignKeyName="FKC00DAD308DE74EB"/>
+      <tableExists tableName="department_department_head"/>
+      <columnExists tableName="department_department_head" columnName="id"/>
+      <tableExists tableName="department_second_stage_authority"/>
+      <columnExists tableName="department_second_stage_authority" columnName="id"/>
+    </preConditions>
+
+    <dropForeignKeyConstraint baseTableName="application" constraintName="FKC00DAD308DE74EB"/>
+    <dropColumn tableName="application" columnName="office_id"/>
+    <dropColumn tableName="department_department_head" columnName="id"/>
+    <dropColumn tableName="department_second_stage_authority" columnName="id"/>
+  </changeSet>
+</databaseChangeLog>
