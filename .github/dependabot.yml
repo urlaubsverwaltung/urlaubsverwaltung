@@ -8,9 +8,10 @@ updates:
       - "type: dependencies"
       - "javascript"
     ignore:
-      - dependency-name: bootstrap
-        versions:
-          - ">= 4.a"
+      - dependency-name: "bootstrap"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "node-fetch"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "maven"
     directory: "/"
