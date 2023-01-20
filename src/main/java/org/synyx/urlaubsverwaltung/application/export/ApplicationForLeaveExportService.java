@@ -75,12 +75,18 @@ class ApplicationForLeaveExportService {
         final Page<Person> relevantMembersPage = getMembersForPerson(person, pageableSearchQuery);
         final List<Person> relevantMembers = relevantMembersPage.getContent();
         final List<Integer> relevantPersonIds = relevantMembers.stream().map(Person::getId).collect(toList());
+
+        if (relevantPersonIds.isEmpty()) {
+            return Page.empty();
+        }
+
         final List<Application> applications = getApplications(person, relevantMembers, from, to);
 
         final Map<Person, List<Application>> applicationsByPerson = applications.stream().collect(groupingBy(Application::getPerson));
         for (Person member : relevantMembers) {
             applicationsByPerson.putIfAbsent(member, List.of());
         }
+
 
         final Map<PersonId, PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(relevantPersonIds);
         final Map<PersonId, List<String>> departmentsByPersonId = departmentService.getDepartmentNamesByMembers(relevantMembers);
@@ -117,7 +123,7 @@ class ApplicationForLeaveExportService {
     }
 
     private List<Application> getApplications(Person person, List<Person> members, LocalDate from, LocalDate to) {
-        if (person.hasRole(OFFICE) || (person.hasRole(BOSS) || person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && person.hasRole(SICK_NOTE_VIEW)) {
+        if (person.hasRole(OFFICE) || person.hasRole(BOSS) || person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) {
             return applicationService.getForStatesAndPerson(List.of(ALLOWED, TEMPORARY_ALLOWED, ALLOWED_CANCELLATION_REQUESTED), members, from, to);
         }
 
@@ -128,7 +134,7 @@ class ApplicationForLeaveExportService {
         final Pageable pageable = pageableSearchQuery.getPageable();
         final boolean sortByPerson = isSortByPersonAttribute(pageable);
 
-        if (person.hasRole(OFFICE) || person.hasRole(BOSS) && person.hasRole(SICK_NOTE_VIEW)) {
+        if (person.hasRole(OFFICE) || person.hasRole(BOSS)) {
             final PageableSearchQuery query = sortByPerson
                 ? new PageableSearchQuery(mapToPersonPageRequest(pageable), pageableSearchQuery.getQuery())
                 : new PageableSearchQuery(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()), pageableSearchQuery.getQuery());
