@@ -15,6 +15,10 @@ legend {
   @apply tw-border-neutral-300;
 }
 
+.details-dropdown_summary::-webkit-details-marker {
+  display: none;
+}
+
 .form-control,
 .tw-form-control,
 .details-dropdown_summary {
