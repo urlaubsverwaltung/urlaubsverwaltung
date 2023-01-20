@@ -460,6 +460,11 @@
                   <option th:if="${size > 20 && size < 40}" th:value="${size}" selected th:text="${size}">24</option>
                   <option value="40" th:selected="${size == 40}">40</option>
                   <option th:if="${size > 40}" th:value="${size}" selected th:text="${size}">44</option>
+                  <option th:if="${size > 40 && size < 100}" th:value="${size}" selected th:text="${size}">44</option>
+                  <option value="100" th:selected="${size == 100}">100</option>
+                  <option th:if="${size > 100 && size < 200}" th:value="${size}" selected th:text="${size}">111</option>
+                  <option value="200" th:selected="${size == 200}">200</option>
+                  <option th:if="${size > 200}" th:value="${size}" selected th:text="${size}">222</option>
                 </th:block>
               </select>
             </span>
