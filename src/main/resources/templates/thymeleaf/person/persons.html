@@ -346,22 +346,8 @@
                     <select
                       name="size"
                       id="pagination-size-select"
-                      th:replace="fragments/select::one(id='pagination-size-select', name='size', options=~{::pagination-size-options}, autosubmit='size-submit')"
-                    >
-                      <th:block th:ref="pagination-size-options" th:with="size=${personsPagination.page.size}">
-                        <option th:if="${size < 10}" th:value="${size}" selected th:text="${size}">4</option>
-                        <option value="10" th:selected="${size == 10}">10</option>
-                        <option th:if="${size > 10 && size < 20}" th:value="${size}" selected th:text="${size}">
-                          14
-                        </option>
-                        <option value="20" th:selected="${size == 20}">20</option>
-                        <option th:if="${size > 20 && size < 40}" th:value="${size}" selected th:text="${size}">
-                          24
-                        </option>
-                        <option value="40" th:selected="${size == 40}">40</option>
-                        <option th:if="${size > 40}" th:value="${size}" selected th:text="${size}">44</option>
-                      </th:block>
-                    </select>
+                      th:replace="fragments/pagination::default-size-select(id='pagination-size-select', size=${personsPagination.page.size}, autosubmit='size-submit')"
+                    ></select>
                   </span>
                   <span
                     class="tw-whitespace-nowrap"
