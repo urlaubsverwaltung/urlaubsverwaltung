@@ -20,13 +20,13 @@ import org.synyx.urlaubsverwaltung.user.pagination.UserPaginationSettingsSupplie
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(SpringDataWebProperties.class)
-public class PaginationConfiguration extends SpringDataWebConfiguration {
+public class PageableConfiguration extends SpringDataWebConfiguration {
 
     private final SpringDataWebProperties properties;
 
-    public PaginationConfiguration(ApplicationContext context,
-                                   @Qualifier("mvcConversionService") ObjectFactory<ConversionService> conversionService,
-                                   SpringDataWebProperties properties) {
+    public PageableConfiguration(ApplicationContext context,
+                                 @Qualifier("mvcConversionService") ObjectFactory<ConversionService> conversionService,
+                                 SpringDataWebProperties properties) {
 
         super(context, conversionService);
         this.properties = properties;
