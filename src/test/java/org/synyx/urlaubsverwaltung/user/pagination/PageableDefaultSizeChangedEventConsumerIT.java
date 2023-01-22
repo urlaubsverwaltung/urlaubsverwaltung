@@ -7,7 +7,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.synyx.urlaubsverwaltung.person.PersonId;
-import org.synyx.urlaubsverwaltung.web.pagination.PageableDefaultSizeChangedEvent;
+import org.synyx.urlaubsverwaltung.web.pageable.PageableDefaultSizeChangedEvent;
 
 import java.time.Duration;
 

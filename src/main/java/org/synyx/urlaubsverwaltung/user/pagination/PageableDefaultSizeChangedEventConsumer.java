@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.user.pagination;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.web.pagination.PageableDefaultSizeChangedEvent;
+import org.synyx.urlaubsverwaltung.web.pageable.PageableDefaultSizeChangedEvent;
 
 @Component
 class PageableDefaultSizeChangedEventConsumer {

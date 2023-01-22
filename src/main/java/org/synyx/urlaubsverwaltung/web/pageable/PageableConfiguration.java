@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.pagination;
+package org.synyx.urlaubsverwaltung.web.pageable;
 
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Qualifier;

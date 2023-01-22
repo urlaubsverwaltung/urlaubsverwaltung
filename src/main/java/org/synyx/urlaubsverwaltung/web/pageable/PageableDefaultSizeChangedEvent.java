@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.pagination;
+package org.synyx.urlaubsverwaltung.web.pageable;
 
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
