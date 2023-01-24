@@ -46,17 +46,29 @@
             <h1 th:text="#{applications.statistics}">Abwesenheitsstatistik</h1>
           </th:block>
           <th:block th:ref="absences-statistics-heading-actions">
-            <a
-              id="statistics-csv-download-link"
-              th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
-              class="icon-link tw-px-1"
-              th:data-title="#{action.download}"
-              download
-            >
-              <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
-              <span class="tw-sr-only" th:text="#{action.download}"></span>
-            </a>
-            <button th:replace="fragments/print::button"></button>
+            <div class="tw-flex tw-flex-col sm:tw-flex-row">
+              <a
+                id="statistics-csv-download-link"
+                th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
+                class="icon-link tw-px-1"
+                th:data-title="#{applications.statistics.button.hover}"
+                download
+              >
+                <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                <span th:text="#{applications.statistics.button}"></span>
+              </a>
+              <a
+                id="export-csv-download-link"
+                th:href="@{/web/application/export (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
+                class="icon-link tw-px-1"
+                th:data-title="#{applications.export.button.hover}"
+                download
+              >
+                <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                <span th:text="#{applications.export.button}"></span>
+              </a>
+              <button th:replace="fragments/print::button"></button>
+            </div>
           </th:block>
         </div>
 
@@ -223,6 +235,9 @@
           <th:block th:if="${turboFrameRequested}">
             <turbo-stream target="statistics-csv-download-link" action="replace">
               <template th:insert="::#statistics-csv-download-link"></template>
+            </turbo-stream>
+            <turbo-stream target="export-csv-download-link" action="replace">
+              <template th:insert="::#export-csv-download-link"></template>
             </turbo-stream>
             <turbo-stream target="statistics-filter-inputs" action="replace">
               <template th:insert="::#statistics-filter-inputs"></template>
