@@ -27,3 +27,6 @@ changelog:
     title: "❤️ Contributors"
     exclude:
       names: ["dependabot[bot]"]
+  external_links:
+    - name: "Docker Images"
+      location: "https://github.com/urlaubsverwaltung/urlaubsverwaltung/pkgs/container/urlaubsverwaltung"
