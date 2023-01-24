@@ -320,6 +320,33 @@ class AccountInteractionServiceImplTest {
     }
 
     @Test
+    void ensureUpdatesAnnualVacationDaysOfHolidaysAccountIfAlreadyExists() {
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+
+        final int year = 2014;
+        final int nextYear = 2015;
+
+        final LocalDate startDate = LocalDate.of(year, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(year, OCTOBER, 31);
+        final LocalDate expiryDateNew = LocalDate.of(year, APRIL, 2);
+        final BigDecimal leftDays = BigDecimal.valueOf(7);
+
+        final Account referenceAccount = new Account(person, startDate, endDate, false, expiryDateNew, BigDecimal.valueOf(30),
+                ZERO, ZERO, "");
+
+        final LocalDate expiryDateOld = LocalDate.of(year, APRIL, 1);
+        final Account nextYearAccount = new Account(person, LocalDate.of(nextYear, 1, 1), LocalDate.of(
+                nextYear, 10, 31), true, expiryDateOld, BigDecimal.valueOf(28), ZERO, ZERO, "");
+
+        when(accountService.getHolidaysAccount(nextYear, person)).thenReturn(Optional.of(nextYearAccount));
+        when(vacationDaysService.calculateTotalLeftVacationDays(referenceAccount)).thenReturn(leftDays);
+
+        final Account account = sut.autoCreateOrUpdateNextYearsHolidaysAccount(referenceAccount);
+        assertThat(account.getAnnualVacationDays()).isEqualTo(referenceAccount.getAnnualVacationDays());
+    }
+
+
+    @Test
     void createHolidaysAccount() {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 

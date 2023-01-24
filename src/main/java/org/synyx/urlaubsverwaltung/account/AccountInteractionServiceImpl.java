@@ -141,7 +141,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
                     final Account changedHolidaysAccount = holidaysAccount.get();
                     final Account nextYearsHolidaysAccount = nextYearsHolidaysAccountOptional.get();
 
-                    updateRemainingVacationDays(nextYearsHolidaysAccount, changedHolidaysAccount);
+                    updateVacationDays(nextYearsHolidaysAccount, changedHolidaysAccount);
 
                     LOG.info("Updated remaining vacation days of holidays account: {}", nextYearsHolidaysAccount);
 
@@ -169,7 +169,7 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         final Optional<Account> nextYearAccountOptional = accountService.getHolidaysAccount(nextYear, referenceAccount.getPerson());
         if (nextYearAccountOptional.isPresent()) {
             final Account nextYearAccount = nextYearAccountOptional.get();
-            updateRemainingVacationDays(nextYearAccount, referenceAccount);
+            updateVacationDays(nextYearAccount, referenceAccount);
 
             LOG.info("Updated existing holidays account for {}: {}", nextYear, nextYearAccount);
 
@@ -206,12 +206,13 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     /**
-     * Updates the remaining vacation days of the given new account by using data of the given last account.
+     * Updates the remaining and annual vacation days of the given new account by using data of the given
+     * last account.
      *
-     * @param newAccount  to calculate and update remaining vacation days for
-     * @param lastAccount as reference to be used for calculation of remaining vacation days
+     * @param newAccount  to calculate and update remaining and annual vacation days for
+     * @param lastAccount as reference to be used for calculation of remaining and annual vacation days
      */
-    private void updateRemainingVacationDays(Account newAccount, Account lastAccount) {
+    private void updateVacationDays(Account newAccount, Account lastAccount) {
 
         final BigDecimal leftVacationDays = vacationDaysService.calculateTotalLeftVacationDays(lastAccount);
         newAccount.setRemainingVacationDays(leftVacationDays);
@@ -220,6 +221,8 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
         if (newAccount.getRemainingVacationDaysNotExpiring().compareTo(leftVacationDays) > 0) {
             newAccount.setRemainingVacationDaysNotExpiring(leftVacationDays);
         }
+
+        newAccount.setAnnualVacationDays(lastAccount.getAnnualVacationDays());
 
         accountService.save(newAccount);
     }
