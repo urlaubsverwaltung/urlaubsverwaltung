@@ -49,10 +49,16 @@
               </th:block>
               <th:block th:ref="person-details-basedata-box-body">
                 <a
-                  th:text="${person.niceName}"
                   th:href="@{/web/person/__${person.id}__/overview}"
                   class="tw-text-lg tw-mb-1 tw-mt-2 icon-link print:no-link"
-                ></a>
+                >
+                <span class="tw-flex tw-items-center">
+                  <th:block th:text="${person.niceName}" />
+                  <th:block th:if="${person.isInactive}">
+                    &nbsp;<svg th:replace="icon/lock::svg(className='tw-w-4 tw-h-4')" />
+                  </th:block>
+                </span>
+                </a>
                 <a
                   th:if="${person.email != null}"
                   th:href="|mailto:${person.email}|"

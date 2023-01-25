@@ -36,9 +36,13 @@
                 href="#"
                 th:href="@{/web/person/{personId}/overview (personId=${personBasedata.personId})}"
                 class="text-link tw-text-lg print:no-link"
-                th:text="${personBasedata.niceName}"
               >
-                John Doe
+              <span class="tw-flex tw-items-center">
+                <th:block th:text="${personBasedata.niceName}" />
+                <th:block th:if="${personBasedata.isInactive}">
+                  &nbsp;<svg th:replace="icon/lock::svg(className='tw-w-4 tw-h-4')" />
+                </th:block>
+              </span>
               </a>
             </div>
             <a

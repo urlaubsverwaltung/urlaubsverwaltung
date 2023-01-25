@@ -265,11 +265,17 @@
                   <div>
                     <span class="tw-text-lg">
                       <a
-                        th:text="${replacementInfo.person.name}"
                         th:href="@{/web/person/__${replacementInfo.person.id}__/overview}"
                         class="icon-link"
                         data-turbo-frame="_top"
-                      />
+                      >
+                      <span>
+                        <th:block th:text="${replacementInfo.person.name}" />
+                        <th:block th:if="${replacementInfo.person.isInactive}">
+                          &nbsp;<svg th:replace="icon/lock::svg(className='tw-w-4 tw-h-4')" />
+                        </th:block>
+                      </span>
+                      </a>
                     </span>
                   </div>
                   <div class="tw-text-sm">
@@ -331,11 +337,17 @@
               </span>
               <span class="tw-pl-20 md:tw-pl-0 md:tw-flex md:tw-flex-col tw-text-lg">
                 <a
-                  th:text="${otherRequestForLeave.person.name}"
                   th:href="@{/web/person/__${otherRequestForLeave.person.id}__/overview}"
                   class="icon-link"
                   data-turbo-frame="_top"
-                ></a>
+                >
+                <span>
+                  <th:block th:text="${otherRequestForLeave.person.name}" />
+                  <th:block th:if="${otherRequestForLeave.person.isInactive}">
+                    &nbsp;<svg th:replace="icon/lock::svg(className='tw-w-4 tw-h-4')" />
+                  </th:block>
+                </span>
+                </a>
                 <span class="md:tw-text-sm" th:text="#{application.applier.applied}"></span>
               </span>
             </div>
@@ -457,11 +469,17 @@
                 </span>
                 <span class="tw-pl-20 md:tw-pl-0 md:tw-flex md:tw-flex-col tw-text-lg">
                   <a
-                    th:text="${cancellationRequest.person.name}"
                     th:href="@{/web/person/__${cancellationRequest.person.id}__/overview}"
                     class="icon-link"
                     data-turbo-frame="_top"
-                  ></a>
+                  >
+                  <span>
+                    <th:block th:text="${cancellationRequest.person.name}" />
+                    <th:block th:if="${cancellationRequest.person.isInactive}">
+                      &nbsp;<svg th:replace="icon/lock::svg(className='tw-w-4 tw-h-4')" />
+                    </th:block>
+                  </span>
+                  </a>
                   <span class="md:tw-text-sm" th:text="#{application.applier.applied}"></span>
                 </span>
               </div>
