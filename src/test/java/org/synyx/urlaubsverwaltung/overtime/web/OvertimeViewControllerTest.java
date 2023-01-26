@@ -332,7 +332,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.getTotalOvertimeForPersonAndYear(overtimePerson, overtimeEndDate.getYear())).thenReturn(Duration.ofHours(1));
         when(overtimeService.getLeftOvertimeForPerson(overtimePerson)).thenReturn(Duration.ZERO);
 
-        final OvertimeDetailPersonDto personDto = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getGravatarURL());
+        final OvertimeDetailPersonDto personDto = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getGravatarURL(), false);
         final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtimeId, personDto, overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate());
         final OvertimeCommentDto commentDto = new OvertimeCommentDto(new OvertimeCommentPersonDto(comment.getPerson().getId(), comment.getPerson().getNiceName(), comment.getPerson().getGravatarURL()), comment.getAction().toString(), comment.getDate(), comment.getText());
 

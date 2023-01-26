@@ -10,12 +10,14 @@ public class OvertimeDetailPersonDto {
     private final String email;
     private final String niceName;
     private final String gravatarURL;
+    private final Boolean isInactive;
 
-    OvertimeDetailPersonDto(Integer id, @Nullable String email, String niceName, String gravatarURL) {
+    OvertimeDetailPersonDto(Integer id, @Nullable String email, String niceName, String gravatarURL, Boolean isInactive) {
         this.id = id;
         this.email = email;
         this.niceName = niceName;
         this.gravatarURL = gravatarURL;
+        this.isInactive = isInactive;
     }
 
     public Integer getId() {
@@ -33,6 +35,10 @@ public class OvertimeDetailPersonDto {
 
     public String getGravatarURL() {
         return gravatarURL;
+    }
+
+    public Boolean getIsInactive() {
+        return isInactive;
     }
 
     @Override
@@ -55,6 +61,7 @@ public class OvertimeDetailPersonDto {
             ", email='" + email + '\'' +
             ", niceName='" + niceName + '\'' +
             ", gravatarUrl='" + gravatarURL + '\'' +
+            ", isInactive='" + isInactive + '\'' +
             '}';
     }
 }

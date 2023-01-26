@@ -15,17 +15,18 @@
           </span>
         </th:block>
         <th:block th:ref="person-box-body">
-          <a
-            th:href="@{/web/person/__${person.id}__/overview}"
-            class="tw-text-lg tw-mb-1 icon-link print:no-link"
-          >
           <span class="tw-flex tw-items-center">
-            <th:block th:text="${person.niceName}" />
+            <a
+              th:text="${person.niceName}"
+              th:href="@{/web/person/__${person.id}__/overview}"
+              class="tw-text-lg tw-mb-1 icon-link print:no-link"
+            ></a>
             <th:block th:if="${person.isInactive}">
-              &nbsp;<svg th:replace="icon/lock::svg(className='tw-w-4 tw-h-4')" />
+              <span th:data-title="#{department.members.assigned.inactive}">
+                &nbsp;<svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')" />
+              </span>
             </th:block>
           </span>
-          </a>
           <a
             th:if="${person.email != null}"
             href="#"

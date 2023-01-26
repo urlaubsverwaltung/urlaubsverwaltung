@@ -17,7 +17,7 @@ class OvertimeDetailsMapper {
     static OvertimeDetailsDto mapToDto(Overtime overtime, List<OvertimeComment> comments, Duration totalOvertime, Duration leftOvertime) {
 
         final Person overtimePerson = overtime.getPerson();
-        final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getGravatarURL());
+        final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(overtimePerson.getId(), overtimePerson.getEmail(), overtimePerson.getNiceName(), overtimePerson.getGravatarURL(), overtimePerson.isInactive());
         final OvertimeDetailRecordDto record = new OvertimeDetailRecordDto(overtime.getId(), person, overtime.getStartDate(), overtime.getEndDate(), overtime.getDuration(), overtime.getLastModificationDate());
 
         final List<OvertimeCommentDto> commentDtos = comments.stream()

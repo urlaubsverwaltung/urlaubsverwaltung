@@ -32,18 +32,21 @@
           </div>
           <div>
             <div class="tw-mb-1">
-              <a
-                href="#"
-                th:href="@{/web/person/{personId}/overview (personId=${personBasedata.personId})}"
-                class="text-link tw-text-lg print:no-link"
-              >
               <span class="tw-flex tw-items-center">
-                <th:block th:text="${personBasedata.niceName}" />
+                <a
+                  href="#"
+                  th:href="@{/web/person/{personId}/overview (personId=${personBasedata.personId})}"
+                  class="text-link tw-text-lg print:no-link"
+                  th:text="${personBasedata.niceName}"
+                >
+                  John Doe
+                </a>
                 <th:block th:if="${personBasedata.isInactive}">
-                  &nbsp;<svg th:replace="icon/lock::svg(className='tw-w-4 tw-h-4')" />
+                  <span class="tw-mt-1" th:data-title="#{department.members.assigned.inactive}">
+                    &nbsp;<svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')" />
+                  </span>
                 </th:block>
               </span>
-              </a>
             </div>
             <a
               th:if="${personBasedata.email != null}"
