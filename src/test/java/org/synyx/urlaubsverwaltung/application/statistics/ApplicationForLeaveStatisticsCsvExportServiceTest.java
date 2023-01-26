@@ -7,12 +7,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
-import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.math.BigDecimal;
@@ -46,11 +46,12 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveStatisticsCsvExportService(messageSource, vacationTypeService, new DateFormatAware());
+        sut = new ApplicationForLeaveStatisticsCsvExportService(messageSource, vacationTypeService);
     }
 
     @Test
     void writeStatisticsForOnePersonFor2018() {
+        LocaleContextHolder.setLocale(GERMAN);
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
@@ -72,7 +73,6 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         applicationForLeaveStatistics.addWaitingVacationDays(vacationType, ONE);
         statistics.add(applicationForLeaveStatistics);
 
-        addMessageSource("absence.period");
         addMessageSource("person.data.firstName");
         addMessageSource("person.data.lastName");
         addMessageSource("applications.statistics.allowed");
@@ -88,7 +88,6 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         sut.write(period, statistics, csvWriter);
-        verify(csvWriter).writeNext(new String[]{"{absence.period}: 01.01.2018 - 31.12.2018"});
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left}", "", "{applications.statistics.left} (2018)", "", "{person.account.basedata.additionalInformation}"});
         verify(csvWriter).writeNext(new String[]{"", "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}", "{duration.vacationDays}", "{duration.overtime}"});
         verify(csvWriter).writeNext(new String[]{null, null, null, "{holiday}", "0", "1", null, null, null, null, null});
@@ -97,6 +96,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
     @Test
     void writeStatisticsForTwoPersonsFor2019() {
+        LocaleContextHolder.setLocale(GERMAN);
         final LocalDate startDate = LocalDate.parse("2019-01-02");
         final LocalDate endDate = LocalDate.parse("2019-12-24");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
@@ -128,7 +128,6 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         personTwoStatistics.addAllowedVacationDays(vacationType, TEN);
         statistics.add(personTwoStatistics);
 
-        addMessageSource("absence.period");
         addMessageSource("person.data.firstName");
         addMessageSource("person.data.lastName");
         addMessageSource("applications.statistics.allowed");
@@ -144,7 +143,6 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         sut.write(period, statistics, csvWriter);
-        verify(csvWriter).writeNext(new String[]{"{absence.period}: 02.01.2019 - 24.12.2019"});
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}",
             "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}",
             "{applications.statistics.left}", "", "{applications.statistics.left} (2019)", "",
@@ -158,6 +156,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
     @Test
     void getFileNameForComplete2018() {
+        LocaleContextHolder.setLocale(GERMAN);
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
@@ -165,11 +164,12 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         when(messageSource.getMessage("applications.statistics", new String[]{}, GERMAN)).thenReturn("test");
 
         final String fileName = sut.fileName(period);
-        assertThat(fileName).isEqualTo("test_01012018_31122018.csv");
+        assertThat(fileName).isEqualTo("test_01.01.18_31.12.18_de.csv");
     }
 
     @Test
     void getFileNameForComplete2019() {
+        LocaleContextHolder.setLocale(GERMAN);
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
@@ -177,7 +177,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         when(messageSource.getMessage(eq("applications.statistics"), any(), any())).thenReturn("test");
 
         String fileName = sut.fileName(period);
-        assertThat(fileName).isEqualTo("test_01012019_31122019.csv");
+        assertThat(fileName).isEqualTo("test_01.01.19_31.12.19_de.csv");
     }
 
     private void addMessageSource(String key) {

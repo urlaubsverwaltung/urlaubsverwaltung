@@ -4,62 +4,65 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 import com.opencsv.CSVWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.csv.CsvExportService;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
-import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
 import static java.lang.String.format;
-import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.text.NumberFormat.getInstance;
+import static java.time.format.DateTimeFormatter.ofLocalizedDate;
+import static java.time.format.FormatStyle.SHORT;
 
 @Service
 class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<ApplicationForLeaveStatistics> {
 
-    private static final Locale LOCALE = Locale.GERMAN;
-    private static final String DATE_FORMAT = "ddMMyyyy";
-
     private final MessageSource messageSource;
     private final VacationTypeService vacationTypeService;
-    private final DateFormatAware dateFormatAware;
 
     @Autowired
-    ApplicationForLeaveStatisticsCsvExportService(MessageSource messageSource, VacationTypeService vacationTypeService, DateFormatAware dateFormatAware) {
+    ApplicationForLeaveStatisticsCsvExportService(MessageSource messageSource, VacationTypeService vacationTypeService) {
         this.messageSource = messageSource;
         this.vacationTypeService = vacationTypeService;
-        this.dateFormatAware = dateFormatAware;
     }
 
     @Override
     public String fileName(FilterPeriod period) {
-        return format("%s_%s_%s.csv", getTranslation("applications.statistics"),
-            period.getStartDate().format(ofPattern(DATE_FORMAT)),
-            period.getEndDate().format(ofPattern(DATE_FORMAT)));
+        final Locale locale = LocaleContextHolder.getLocale();
+        final DateTimeFormatter dateTimeFormatter = ofLocalizedDate(SHORT).withLocale(locale);
+        return format("%s_%s_%s_%s.csv",
+            getTranslation(locale, "applications.statistics"),
+            period.getStartDate().format(dateTimeFormatter),
+            period.getEndDate().format(dateTimeFormatter),
+            locale.getLanguage());
     }
 
     @Override
     public void write(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
+
+        final Locale locale = LocaleContextHolder.getLocale();
+
         final String[] csvHeader = {
-            getTranslation("person.account.basedata.personnelNumber"),
-            getTranslation("person.data.firstName"),
-            getTranslation("person.data.lastName"),
+            getTranslation(locale, "person.account.basedata.personnelNumber"),
+            getTranslation(locale, "person.data.firstName"),
+            getTranslation(locale, "person.data.lastName"),
             "",
-            getTranslation("applications.statistics.allowed"),
-            getTranslation("applications.statistics.waiting"),
-            getTranslation("applications.statistics.left"),
+            getTranslation(locale, "applications.statistics.allowed"),
+            getTranslation(locale, "applications.statistics.waiting"),
+            getTranslation(locale, "applications.statistics.left"),
             "",
-            getTranslation("applications.statistics.left") + " (" + period.getStartDate().getYear() + ")",
+            getTranslation(locale, "applications.statistics.left") + " (" + period.getStartDate().getYear() + ")",
             "",
-            getTranslation("person.account.basedata.additionalInformation")
+            getTranslation(locale, "person.account.basedata.additionalInformation")
         };
         final String[] csvSubHeader = {
             "",
@@ -68,30 +71,20 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
             "",
             "",
             "",
-            getTranslation("duration.vacationDays"),
-            getTranslation("duration.overtime"),
-            getTranslation("duration.vacationDays"),
-            getTranslation("duration.overtime")
+            getTranslation(locale, "duration.vacationDays"),
+            getTranslation(locale, "duration.overtime"),
+            getTranslation(locale, "duration.vacationDays"),
+            getTranslation(locale, "duration.overtime")
         };
 
-        final String startDateString = dateFormatAware.format(period.getStartDate());
-        final String endDateString = dateFormatAware.format(period.getEndDate());
-        final String headerNote = getTranslation("absence.period") + ": " + startDateString + " - " + endDateString;
+        final DecimalFormat decimalFormat = (DecimalFormat) getInstance(locale);
 
-        final DecimalFormatSymbols newSymbols = new DecimalFormatSymbols(LOCALE);
-        newSymbols.setDecimalSeparator(',');
-        newSymbols.setGroupingSeparator('.');
-
-        final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getInstance(LOCALE);
-        decimalFormat.setDecimalFormatSymbols(newSymbols);
-
-        csvWriter.writeNext(new String[]{headerNote});
         csvWriter.writeNext(csvHeader);
         csvWriter.writeNext(csvSubHeader);
 
         final List<VacationType> allVacationTypes = vacationTypeService.getAllVacationTypes();
 
-        final String translatedTextTotal = getTranslation("applications.statistics.total");
+        final String translatedTextTotal = getTranslation(locale, "applications.statistics.total");
         for (ApplicationForLeaveStatistics applicationForLeaveStatistics : statistics) {
 
             final String[] csvRow = new String[csvHeader.length];
@@ -114,7 +107,7 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
             for (final VacationType type : allVacationTypes) {
                 if (applicationForLeaveStatistics.hasVacationType(type)) {
                     final String[] csvRowVacationTypes = new String[csvHeader.length];
-                    csvRowVacationTypes[3] = getTranslation(type.getMessageKey());
+                    csvRowVacationTypes[3] = getTranslation(locale, type.getMessageKey());
                     csvRowVacationTypes[4] = decimalFormat.format(applicationForLeaveStatistics.getAllowedVacationDays(type));
                     csvRowVacationTypes[5] = decimalFormat.format(applicationForLeaveStatistics.getWaitingVacationDays(type));
                     csvWriter.writeNext(csvRowVacationTypes);
@@ -123,7 +116,7 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
         }
     }
 
-    private String getTranslation(String key, Object... args) {
-        return messageSource.getMessage(key, args, LOCALE);
+    private String getTranslation(Locale locale, String key, Object... args) {
+        return messageSource.getMessage(key, args, locale);
     }
 }
