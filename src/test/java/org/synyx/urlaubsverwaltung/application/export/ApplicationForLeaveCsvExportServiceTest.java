@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
@@ -19,8 +20,10 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static java.math.BigDecimal.TEN;
+import static java.util.Locale.GERMAN;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -42,11 +45,13 @@ class ApplicationForLeaveCsvExportServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveCsvExportService(messageSource, new DateFormatAware());
+        sut = new ApplicationForLeaveCsvExportService(messageSource);
     }
 
     @Test
     void writeApplicationForLeaveExports() {
+        LocaleContextHolder.setLocale(GERMAN);
+
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);

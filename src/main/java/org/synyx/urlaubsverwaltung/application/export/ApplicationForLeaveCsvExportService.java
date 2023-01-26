@@ -3,62 +3,61 @@ package org.synyx.urlaubsverwaltung.application.export;
 
 import com.opencsv.CSVWriter;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.csv.CsvExportService;
-import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
 import static java.lang.String.format;
-import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.text.NumberFormat.getInstance;
+import static java.time.format.DateTimeFormatter.ofLocalizedDate;
+import static java.time.format.FormatStyle.MEDIUM;
+import static java.time.format.FormatStyle.SHORT;
 
 @Service
 class ApplicationForLeaveCsvExportService implements CsvExportService<ApplicationForLeaveExport> {
 
-    private static final Locale LOCALE = Locale.GERMAN;
-    private static final String DATE_FORMAT = "ddMMyyyy";
-
     private final MessageSource messageSource;
-    private final DateFormatAware dateFormatAware;
 
-    ApplicationForLeaveCsvExportService(MessageSource messageSource, DateFormatAware dateFormatAware) {
+    ApplicationForLeaveCsvExportService(MessageSource messageSource) {
         this.messageSource = messageSource;
-        this.dateFormatAware = dateFormatAware;
     }
 
     @Override
     public String fileName(FilterPeriod period) {
-        return format("%s_%s_%s.csv", getTranslation("applications.export"),
-            period.getStartDate().format(ofPattern(DATE_FORMAT)),
-            period.getEndDate().format(ofPattern(DATE_FORMAT)));
+        final Locale locale = LocaleContextHolder.getLocale();
+        final DateTimeFormatter dateTimeFormatter = ofLocalizedDate(SHORT).withLocale(locale);
+        return format("%s_%s_%s_%s.csv",
+            getTranslation(locale, "applications.export"),
+            period.getStartDate().format(dateTimeFormatter),
+            period.getEndDate().format(dateTimeFormatter),
+            locale.getLanguage());
     }
 
     @Override
     public void write(FilterPeriod period, List<ApplicationForLeaveExport> applicationForLeaveExports, CSVWriter csvWriter) {
+
+        final Locale locale = LocaleContextHolder.getLocale();
+
         final String[] csvHeader = {
-            getTranslation("person.account.basedata.personnelNumber"),
-            getTranslation("person.data.firstName"),
-            getTranslation("person.data.lastName"),
-            getTranslation("applications.export.departments"),
-            getTranslation("applications.export.from"),
-            getTranslation("applications.export.to"),
-            getTranslation("applications.export.length"),
-            getTranslation("applications.export.type"),
-            getTranslation("applications.export.days"),
+            getTranslation(locale, "person.account.basedata.personnelNumber"),
+            getTranslation(locale, "person.data.firstName"),
+            getTranslation(locale, "person.data.lastName"),
+            getTranslation(locale, "applications.export.departments"),
+            getTranslation(locale, "applications.export.from"),
+            getTranslation(locale, "applications.export.to"),
+            getTranslation(locale, "applications.export.length"),
+            getTranslation(locale, "applications.export.type"),
+            getTranslation(locale, "applications.export.days"),
         };
 
-        final DecimalFormatSymbols newSymbols = new DecimalFormatSymbols(LOCALE);
-        newSymbols.setDecimalSeparator(',');
-        newSymbols.setGroupingSeparator('.');
-
-        final DecimalFormat decimalFormat = (DecimalFormat) NumberFormat.getInstance(LOCALE);
-        decimalFormat.setDecimalFormatSymbols(newSymbols);
-
+        final DateTimeFormatter dateTimeFormatter = ofLocalizedDate(MEDIUM).withLocale(locale);
+        final DecimalFormat decimalFormat = (DecimalFormat) getInstance(locale);
         csvWriter.writeNext(csvHeader);
 
         applicationForLeaveExports.forEach(applicationForLeaveExport ->
@@ -68,10 +67,10 @@ class ApplicationForLeaveCsvExportService implements CsvExportService<Applicatio
                 applicationCsvRow[1] = applicationForLeaveExport.getFirstName();
                 applicationCsvRow[2] = applicationForLeaveExport.getLastName();
                 applicationCsvRow[3] = String.join(", ", applicationForLeaveExport.getDepartments());
-                applicationCsvRow[4] = dateFormatAware.format(applicationForLeave.getStartDate());
-                applicationCsvRow[5] = dateFormatAware.format(applicationForLeave.getEndDate());
-                applicationCsvRow[6] = getTranslation(applicationForLeave.getDayLength().name());
-                applicationCsvRow[7] = getTranslation(applicationForLeave.getVacationType().getMessageKey());
+                applicationCsvRow[4] = applicationForLeave.getStartDate().format(dateTimeFormatter);
+                applicationCsvRow[5] = applicationForLeave.getEndDate().format(dateTimeFormatter);
+                applicationCsvRow[6] = getTranslation(locale, applicationForLeave.getDayLength().name());
+                applicationCsvRow[7] = getTranslation(locale, applicationForLeave.getVacationType().getMessageKey());
                 applicationCsvRow[8] = decimalFormat.format(applicationForLeave.getWorkDays());
 
                 csvWriter.writeNext(applicationCsvRow);
@@ -79,7 +78,7 @@ class ApplicationForLeaveCsvExportService implements CsvExportService<Applicatio
         );
     }
 
-    private String getTranslation(String key, Object... args) {
-        return messageSource.getMessage(key, args, LOCALE);
+    private String getTranslation(Locale locale, String key, Object... args) {
+        return messageSource.getMessage(key, args, locale);
     }
 }
