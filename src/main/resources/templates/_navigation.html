@@ -48,6 +48,11 @@
                     th:replace="~{::navigation-item(id='application-link', href=@{/web/application}, text=#{nav.vacation.title}, icon=~{icon/calendar::svg})}"
                   ></a>
                 </li>
+                <li th:if="${navigationOvertimeItemEnabled}">
+                  <a
+                    th:replace="~{::navigation-item(id='overtime-link', href=@{/web/overtime}, text=#{nav.overtime.title}, icon=~{icon/briefcase::svg})}"
+                  ></a>
+                </li>
                 <li th:if="${navigationSickNoteStatisticsAccess}">
                   <a
                     th:replace="~{::navigation-item(id='sicknote-link', href=@{/web/sickdays}, text=#{nav.sicknote.title}, icon=~{icon/medkit::svg}, dataTestId='navigation-sick-notes-link')}"
