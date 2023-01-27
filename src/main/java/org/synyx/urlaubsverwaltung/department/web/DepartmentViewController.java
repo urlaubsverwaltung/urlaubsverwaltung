@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.department.web;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -39,7 +40,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
 @RequestMapping(value = "/web")
-public class DepartmentViewController {
+public class DepartmentViewController implements HasLaunchpad {
 
     private static final String REDIRECT_WEB_DEPARTMENT = "redirect:/web/department/";
     private static final String DEPARTMENT_DEPARTMENT_FORM = "thymeleaf/department/department_form";

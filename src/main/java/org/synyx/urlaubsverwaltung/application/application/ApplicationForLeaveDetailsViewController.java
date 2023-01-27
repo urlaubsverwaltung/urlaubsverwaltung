@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -69,7 +70,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
  */
 @RequestMapping("/web/application")
 @Controller
-class ApplicationForLeaveDetailsViewController {
+class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
 
     private static final String REDIRECT_WEB_APPLICATION = "redirect:/web/application/";
     private static final String ATTRIBUTE_ERRORS = "errors";

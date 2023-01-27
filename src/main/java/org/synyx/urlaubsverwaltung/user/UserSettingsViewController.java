@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.user;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.slf4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Controller
 @RequestMapping("/web")
-class UserSettingsViewController {
+class UserSettingsViewController implements HasLaunchpad {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 

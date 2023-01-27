@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.export;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_U
 
 @Controller
 @RequestMapping("/web/application")
-class ApplicationForLeaveExportViewController {
+class ApplicationForLeaveExportViewController implements HasLaunchpad {
 
     private final PersonService personService;
     private final ApplicationForLeaveExportService applicationForLeaveExportService;

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
@@ -55,7 +56,7 @@ import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.bui
  */
 @Controller
 @RequestMapping("/web/application/statistics")
-class ApplicationForLeaveStatisticsViewController {
+class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
 
     private final PersonService personService;
     private final ApplicationForLeaveStatisticsService applicationForLeaveStatisticsService;

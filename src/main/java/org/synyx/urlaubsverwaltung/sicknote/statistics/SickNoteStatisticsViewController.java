@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.statistics;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -19,7 +20,7 @@ import java.time.ZonedDateTime;
  */
 @Controller
 @RequestMapping("/web/sicknote/statistics")
-class SickNoteStatisticsViewController {
+class SickNoteStatisticsViewController implements HasLaunchpad {
 
     private final SickNoteStatisticsService sickNoteStatisticsService;
     private final PersonService personService;

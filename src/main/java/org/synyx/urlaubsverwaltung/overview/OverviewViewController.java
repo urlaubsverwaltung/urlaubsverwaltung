@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.overview;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,7 +51,7 @@ import static org.synyx.urlaubsverwaltung.util.DateUtil.getLastDayOfYear;
  */
 @Controller
 @RequestMapping("/")
-public class OverviewViewController {
+public class OverviewViewController implements HasLaunchpad {
 
     private static final String PERSON_ATTRIBUTE = "person";
 

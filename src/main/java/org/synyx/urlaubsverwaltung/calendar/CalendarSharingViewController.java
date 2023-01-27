@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,7 +32,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_OFFI
 
 @Controller
 @RequestMapping("/web/calendars/share")
-public class CalendarSharingViewController {
+public class CalendarSharingViewController implements HasLaunchpad {
 
     private static final String REDIRECT_WEB_CALENDARS_SHARE_PERSONS = "redirect:/web/calendars/share/persons/%d";
 
