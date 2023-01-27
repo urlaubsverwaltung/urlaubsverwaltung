@@ -22,8 +22,8 @@
               class="tw-text-lg tw-mb-1 icon-link print:no-link"
             ></a>
             <th:block th:if="${person.isInactive}">
-              <span th:data-title="#{department.members.assigned.inactive}">
-                &nbsp;<svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')" />
+              <span th:data-title="#{person.data.inactive}">
+                &nbsp;<svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only" >(<th:block th:text="#{person.data.inactive}" />)</span>
               </span>
             </th:block>
           </span>

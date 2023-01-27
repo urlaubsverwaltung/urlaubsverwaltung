@@ -272,8 +272,8 @@
                           data-turbo-frame="_top"
                         />
                         <th:block th:if="${replacementInfo.person.isInactive}">
-                          <span th:data-title="#{department.members.assigned.inactive}">
-                            &nbsp;<svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')" />
+                          <span th:data-title="#{person.data.inactive}">
+                            &nbsp;<svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only" >(<th:block th:text="#{person.data.inactive}" />)</span>
                           </span>
                         </th:block>
                       </span>
@@ -345,8 +345,8 @@
                     data-turbo-frame="_top"
                   ></a>
                   <th:block th:if="${otherRequestForLeave.person.isInactive}">
-                    <span th:data-title="#{department.members.assigned.inactive}">
-                      &nbsp;<svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')" />
+                    <span th:data-title="#{person.data.inactive}">
+                      &nbsp;<svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only" >(<th:block th:text="#{person.data.inactive}" />)</span>
                     </span>
                   </th:block>
                 </span>
@@ -478,8 +478,8 @@
                     data-turbo-frame="_top"
                     ></a>
                     <th:block th:if="${cancellationRequest.person.isInactive}">
-                      <span th:data-title="#{department.members.assigned.inactive}">
-                        &nbsp;<svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')" />
+                      <span th:data-title="#{person.data.inactive}">
+                        &nbsp;<svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only" >(<th:block th:text="#{person.data.inactive}" />)</span>
                       </span>
                     </th:block>
                   </span>

@@ -42,8 +42,8 @@
                   John Doe
                 </a>
                 <th:block th:if="${personBasedata.isInactive}">
-                  <span class="tw-mt-1" th:data-title="#{department.members.assigned.inactive}">
-                    &nbsp;<svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')" />
+                  <span class="tw-mt-1" th:data-title="#{person.data.inactive}">
+                    &nbsp;<svg th:replace="icon/eye-off::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only" >(<th:block th:text="#{person.data.inactive}" />)</span>
                   </span>
                 </th:block>
               </span>
