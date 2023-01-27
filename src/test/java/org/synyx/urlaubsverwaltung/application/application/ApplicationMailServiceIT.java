@@ -986,7 +986,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Hätte gerne Urlaub");
 
-        sut.sendAppliedNotification(application, null);
+        sut.sendAppliedNotification(application, comment);
 
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inbox.length).isOne();
