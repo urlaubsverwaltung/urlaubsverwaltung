@@ -6,7 +6,7 @@
   </head>
   <body>
     <div th:fragment="navigation-item" th:if="${launchpad}" class="tw-relative tw-flex tw-items-center">
-      <a href="#launchpad" aria-expanded="false" aria-haspopup="true" is="uv-nav-popup-menu-button">
+      <a href="#launchpad" aria-expanded="false" aria-haspopup="true" is="uv-nav-popup-menu-button" class="tw-flex">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -36,18 +36,18 @@
       <div id="launchpad" class="nav-popup-menu xs:-tw-right-4">
         <div class="nav-popup-menu-inner">
           <div class="nav-popup-menu-inner__header">
-            <h2 class="tw-text-base tw-text-gray-700" th:text="#{launchpad.core.apps.heading}">Anwendungen</h2>
+            <h2 class="tw-text-base tw-text-gray-700 tw-m-0" th:text="#{launchpad.core.apps.heading}">Anwendungen</h2>
           </div>
           <div class="nav-popup-menu-inner__content">
             <ul
-              class="tw-grid tw-gap-2"
+              class="tw-grid tw-gap-2 tw-list-none tw-p-0 tw-m-0"
               style="grid-template-columns: repeat(var(--cols, 1), minmax(8rem, 1fr))"
               th:with="size=${#lists.size(launchpad.apps)}"
               th:styleappend="${size > 3 ? '--cols:3' : (size > 1 ? '--cols:2' : '--cols:1')}"
             >
               <li th:each="app : ${launchpad.apps}">
                 <a
-                  class="tw-flex tw-flex-col tw-items-center tw-text-sm tw-px-4 tw-py-2 tw-rounded-lg tw-bg-transparent tw-transition-colors hover:tw-bg-gray-100"
+                  class="tw-flex tw-flex-col tw-items-center tw-no-underline tw-text-black tw-text-sm tw-px-4 tw-py-2 tw-rounded-lg tw-bg-transparent tw-transition-colors hover:tw-bg-gray-100"
                   href="#"
                   th:href="${app.url}"
                 >
