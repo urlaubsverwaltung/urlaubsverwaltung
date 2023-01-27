@@ -1,7 +1,8 @@
 Hallo [[${recipient.niceName}]],
 
 der am [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]] gestellte, nicht genehmigte Antrag von [[${application.person.niceName}]] wurde [# th:if="${application.person.niceName != comment.person.niceName}"]von [[${comment.person.niceName}]] [/]storniert.
-[# th:if="${not #strings.isEmpty(comment.text)}"]Begründung:
+[# th:if="${not #strings.isEmpty(comment.text)}"]
+Begründung:
 [[${comment.text}]]
 [/]
 Link zur Abwesenheit: [[${baseLinkURL}]]web/application/[[${application.id}]]

@@ -61,7 +61,7 @@ class CalendarMailServiceTest {
         final Mail mails = argument.getValue();
         assertThat(mails.isSendToTechnicalMail()).isTrue();
         assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.error.calendar.sync");
-        assertThat(mails.getTemplateName()).isEqualTo("error_calendar_sync");
+        assertThat(mails.getTemplateName()).isEqualTo("calendar_error_sync");
         assertThat(mails.getTemplateModel()).isEqualTo(model);
     }
 
@@ -94,7 +94,7 @@ class CalendarMailServiceTest {
         final Mail mails = argument.getValue();
         assertThat(mails.isSendToTechnicalMail()).isTrue();
         assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.error.calendar.update");
-        assertThat(mails.getTemplateName()).isEqualTo("error_calendar_update");
+        assertThat(mails.getTemplateName()).isEqualTo("calendar_error_update");
         assertThat(mails.getTemplateModel()).isEqualTo(model);
     }
 
@@ -117,7 +117,7 @@ class CalendarMailServiceTest {
         final Mail mails = argument.getValue();
         assertThat(mails.isSendToTechnicalMail()).isTrue();
         assertThat(mails.getSubjectMessageKey()).isEqualTo("subject.error.calendar.delete");
-        assertThat(mails.getTemplateName()).isEqualTo("error_calendar_delete");
+        assertThat(mails.getTemplateName()).isEqualTo("calendar_error_delete");
         assertThat(mails.getTemplateModel()).isEqualTo(model);
     }
 }

@@ -128,7 +128,7 @@ public class VacationDaysReminderService {
         model.put("vacationDaysLeft", vacationDaysLeft);
         model.put("nextYear", nextYear);
 
-        sendMail(person, "subject.account.remindForCurrentlyLeftVacationDays", "remind_currently_left_vacation_days", model);
+        sendMail(person, "subject.account.remindForCurrentlyLeftVacationDays", "account_cron_currently_left_vacation_days", model);
     }
 
     private void sendReminderForRemainingVacationDaysNotification(Person person, BigDecimal remainingVacationDays, LocalDate dayBeforeExpiryDate) {
@@ -136,7 +136,7 @@ public class VacationDaysReminderService {
         model.put("remainingVacationDays", remainingVacationDays);
         model.put("dayBeforeExpiryDate", dayBeforeExpiryDate);
 
-        sendMail(person, "subject.account.remindForRemainingVacationDays", "remind_remaining_vacation_days", model);
+        sendMail(person, "subject.account.remindForRemainingVacationDays", "account_cron_remind_remaining_vacation_days", model);
     }
 
     private void sendNotificationForExpiredRemainingVacationDays(Person person, BigDecimal expiredRemainingVacationDays, BigDecimal totalLeftVacationDays, BigDecimal remainingVacationDaysNotExpiring, LocalDate expiryDate) {
@@ -146,7 +146,7 @@ public class VacationDaysReminderService {
         model.put("remainingVacationDaysNotExpiring", remainingVacationDaysNotExpiring);
         model.put("expiryDate", expiryDate);
 
-        sendMail(person, "subject.account.notifyForExpiredRemainingVacationDays", "notify_expired_remaining_vacation_days", model);
+        sendMail(person, "subject.account.notifyForExpiredRemainingVacationDays", "account_cron_expired_remaining_vacation_days", model);
     }
 
     private void sendMail(Person person, String subjectMessageKey, String templateName, Map<String, Object> model) {

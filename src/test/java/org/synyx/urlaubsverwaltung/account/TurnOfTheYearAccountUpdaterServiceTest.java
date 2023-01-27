@@ -101,12 +101,12 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         final Mail mail0 = mails.get(0);
         assertThat(mail0.getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
         assertThat(mail0.getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
-        assertThat(mail0.getTemplateName()).isEqualTo("updated_accounts");
+        assertThat(mail0.getTemplateName()).isEqualTo("account_cron_updated_accounts_turn_of_the_year");
         assertThat(mail0.getTemplateModel()).containsEntry("totalRemainingVacationDays", BigDecimal.valueOf(30));
         final Mail mail1 = mails.get(1);
         assertThat(mail1.isSendToTechnicalMail()).isTrue();
         assertThat(mail1.getSubjectMessageKey()).isEqualTo("subject.account.updatedRemainingDays");
-        assertThat(mail1.getTemplateName()).isEqualTo("updated_accounts");
+        assertThat(mail1.getTemplateName()).isEqualTo("account_cron_updated_accounts_turn_of_the_year");
         assertThat(mail1.getTemplateModel()).containsEntry("totalRemainingVacationDays", BigDecimal.valueOf(30));
     }
 }

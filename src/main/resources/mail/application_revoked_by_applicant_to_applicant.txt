@@ -1,7 +1,8 @@
 Hallo [[${application.person.niceName}]],
 
 dein am [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]] gestellter, nicht genehmigter Antrag wurde von dir erfolgreich storniert.
-[# th:if="${not #strings.isEmpty(comment.text)}"]Begründung:
+[# th:if="${not #strings.isEmpty(comment.text)}"]
+Begründung:
 [[${comment.text}]]
 [/]
 Link zur Abwesenheit: [[${baseLinkURL}]]web/application/[[${application.id}]]

@@ -458,7 +458,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setStartDate(LocalDate.of(2022, 5, 20));
         application.setEndDate(LocalDate.of(2022, 5, 29));
 
-        sut.sendReferApplicationNotification(application, recipient, sender);
+        sut.sendReferredToManagementNotification(application, recipient, sender);
 
         // was email sent?
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(recipient.getEmail());
@@ -758,7 +758,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("OK, Urlaub kann genommen werden");
 
-        sut.sendNewDirectlyAllowedApplicationNotification(application, comment);
+        sut.sendDirectlyAllowedNotificationToManagement(application, comment);
 
         // email sent?
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
@@ -978,7 +978,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Application application = createApplication(person);
 
-        sut.sendConfirmation(application, null);
+        sut.sendAppliedNotification(application, null);
 
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inbox.length).isOne();
@@ -1000,7 +1000,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Hätte gerne Urlaub");
 
-        sut.sendConfirmation(application, comment);
+        sut.sendAppliedNotification(application, comment);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1037,7 +1037,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Hätte gerne Urlaub");
 
-        sut.sendConfirmation(application, comment);
+        sut.sendAppliedNotification(application, comment);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1086,7 +1086,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Hätte gerne Urlaub");
 
-        sut.sendConfirmation(application, comment);
+        sut.sendAppliedNotification(application, comment);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1127,7 +1127,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
 
         application.setApplier(office);
-        sut.sendAppliedForLeaveByManagementNotification(application, comment);
+        sut.sendAppliedByManagementNotification(application, comment);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1169,7 +1169,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
 
         application.setApplier(office);
-        sut.sendAppliedForLeaveByManagementNotification(application, comment);
+        sut.sendAppliedByManagementNotification(application, comment);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1222,7 +1222,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         office.setPermissions(singletonList(OFFICE));
 
         application.setApplier(office);
-        sut.sendAppliedForLeaveByManagementNotification(application, comment);
+        sut.sendAppliedByManagementNotification(application, comment);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -1364,7 +1364,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person recipientOfInterest = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(recipientOfInterest));
 
-        sut.sendCancelledDirectlyInformationToRecipientOfInterest(application, comment);
+        sut.sendCancelledDirectlyToManagement(application, comment);
 
         // was email sent to applicant?
         final MimeMessage[] inboxRecipientOfInterest = greenMail.getReceivedMessagesForDomain(recipientOfInterest.getEmail());
@@ -1562,7 +1562,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, departmentHead));
 
-        sut.sendNewApplicationNotification(application, comment);
+        sut.sendAppliedNotificationToManagement(application, comment);
 
         // was email sent to boss?
         MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
@@ -1601,7 +1601,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(secondStage, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, departmentHead));
 
-        sut.sendNewApplicationNotification(application, comment);
+        sut.sendAppliedNotificationToManagement(application, comment);
 
         // was email sent to boss?
         MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
@@ -1636,7 +1636,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(departmentHead, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, secondStage));
 
-        sut.sendNewApplicationNotification(application, comment);
+        sut.sendAppliedNotificationToManagement(application, comment);
 
         // was email sent to boss?
         MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
@@ -1679,7 +1679,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss));
 
-        sut.sendNewApplicationNotification(application, new ApplicationComment(clock));
+        sut.sendAppliedNotificationToManagement(application, new ApplicationComment(clock));
 
         MimeMessage[] messages = greenMail.getReceivedMessagesForDomain(boss.getEmail());
         assertThat(messages.length).isOne();
@@ -1735,7 +1735,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss));
 
-        sut.sendNewApplicationNotification(application, new ApplicationComment(clock));
+        sut.sendAppliedNotificationToManagement(application, new ApplicationComment(clock));
 
         MimeMessage[] messages = greenMail.getReceivedMessagesForDomain(boss.getEmail());
         assertThat(messages.length).isOne();
@@ -2008,7 +2008,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, departmentHead));
 
-        sut.sendRemindBossNotification(application);
+        sut.sendRemindNotificationToManagement(application);
 
         // was email sent to boss?
         MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
@@ -2068,7 +2068,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(recipient);
         application.setPerson(recipient);
 
-        sut.sendEditedApplicationNotification(application, recipient);
+        sut.sendEditedNotification(application, recipient);
 
         // was email sent?
         MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(recipient.getEmail());
