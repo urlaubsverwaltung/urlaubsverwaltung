@@ -164,66 +164,133 @@
     background-color: transparent !important;
   }
 
-  .nav-popup-menu::before {
-    content: "";
-    border-color: transparent;
-    border-width: 8px;
-    @apply tw-border-b-gray-200;
-    position: absolute;
-    top: -17px;
-    @apply tw-right-8;
-    @apply lg:tw-right-7;
-    @apply dark:tw-border-b-neutral-600;
-  }
-
   .nav-popup-menu {
-    @apply tw-w-72;
-    @apply tw-transition-transform;
-    @apply tw-origin-top-right;
     @apply tw-scale-0;
-    @apply tw-border;
-    @apply tw-border-gray-200;
-    @apply tw-shadow-xl;
-    @apply tw-mt-4;
-    @apply lg:tw-mt-3;
-    @apply tw-z-50;
-    @apply tw-absolute;
-    @apply -tw-right-2;
-    @apply tw-top-full;
-    @apply tw-rounded-2xl;
-    @apply lg:tw-right-0;
-    @apply dark:tw-border-zinc-800;
-    @apply dark:tw-shadow-none;
-  }
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    @apply tw-transition-all;
+    @apply tw-duration-150;
 
-  .nav-popup-menu-inner {
-    @apply tw-rounded-2xl;
-    @apply tw-border-gray-200;
     @apply tw-bg-white;
     @apply tw-backdrop-blur;
+    @apply supports-backdrop-blur:tw-bg-white/[0.95];
     @apply dark:tw-bg-zinc-900;
-    @apply dark:tw-border-zinc-800;
-    @apply supports-backdrop-blur:tw-bg-white/[0.85];
-    @apply supports-backdrop-blur:dark:tw-bg-zinc-900/[0.85];
+    @apply dark:supports-backdrop-blur:tw-bg-zinc-900/[0.95];
   }
 
-  .nav-popup-menu-inner ul li:first-of-type .nav-popup-menu_link {
+  .nav-popup-menu.visible {
+    @apply tw-scale-100;
     @apply tw-rounded-t-2xl;
   }
 
-  .nav-popup-menu-inner ul li:last-of-type .nav-popup-menu_link {
-    @apply tw-rounded-b-2xl;
+  /* screen xs */
+  @media screen and (max-width: 481px) {
+    .nav-popup-menu.visible {
+      height: calc(100vh - 4rem);
+    }
   }
 
-  .nav-popup-menu-inner ul li[role="separator"] {
-    @apply tw-border-t;
-    @apply tw-border-gray-200;
-    @apply dark:tw-border-zinc-700;
+  .nav-popup-menu-inner {
+    @apply tw-flex;
+    @apply tw-flex-col;
+    @apply tw-max-h-screen;
   }
 
-  .nav-popup-menu.visible,
-  .nav-popup-menu:focus-within {
-    @apply tw-scale-100;
+  .nav-popup-menu-inner__header {
+    @apply tw-rounded-t-2xl;
+    @apply tw-bg-gradient-to-br;
+    @apply tw-from-blue-50;
+    @apply tw-via-gray-100;
+    @apply tw-to-blue-100;
+    @apply tw-px-4;
+    @apply tw-py-2;
+    @apply dark:tw-from-sky-800;
+    @apply dark:tw-via-slate-800;
+    @apply dark:tw-to-sky-900;
+  }
+
+  .nav-popup-menu-inner__content {
+    @apply tw-p-2;
+    overflow-y: auto;
+  }
+
+  body:has(.nav-popup-menu.visible) {
+    /* disable body scroll as long as nav-popup-menu is open */
+    overflow: hidden;
+  }
+
+  .nav-popup-menu.visible .nav-popup-menu-inner {
+    width: 100%;
+    height: 100%;
+  }
+
+  @screen xs {
+    .nav-popup-menu::before {
+      content: "";
+      border-color: transparent;
+      border-width: 8px;
+      @apply tw-border-b-gray-200;
+      position: absolute;
+      top: -17px;
+      @apply tw-right-6;
+      @apply dark:tw-border-b-neutral-600;
+    }
+
+    .nav-popup-menu {
+      @apply tw-transition-transform;
+      @apply tw-origin-top-right;
+      @apply tw-scale-0;
+      @apply tw-border;
+      @apply tw-border-gray-200;
+      @apply tw-shadow-xl;
+      @apply tw-mt-3;
+      @apply tw-z-50;
+      @apply tw-absolute;
+      @apply tw-left-auto;
+      @apply tw-right-0;
+      @apply tw-bottom-auto;
+      @apply tw-top-full;
+      @apply tw-rounded-2xl;
+      @apply dark:tw-border-zinc-800;
+      @apply dark:tw-shadow-none;
+    }
+
+    .nav-popup-menu-inner {
+      max-height: 75vh;
+      @apply tw-w-auto;
+      @apply tw-h-auto;
+      @apply tw-rounded-2xl;
+    }
+
+    .nav-popup-menu-inner ul li:first-of-type .nav-popup-menu_link {
+      @apply tw-rounded-t-2xl;
+    }
+
+    .nav-popup-menu-inner ul li:last-of-type .nav-popup-menu_link {
+      @apply tw-rounded-b-2xl;
+    }
+
+    .nav-popup-menu-inner ul li[role="separator"] {
+      @apply tw-border-t;
+      @apply tw-border-gray-200;
+      @apply dark:tw-border-zinc-700;
+    }
+
+    .nav-popup-menu.visible,
+    .nav-popup-menu:focus-within {
+      @apply tw-scale-100;
+    }
+  }
+
+  .nav-popup-menu-button {
+    @apply tw-text-zinc-700;
+    @apply hover:tw-text-zinc-700;
+    @apply focus:tw-text-zinc-700;
+    @apply dark:tw-text-neutral-100;
+    @apply dark:hover:tw-text-neutral-100;
+    @apply dark:focus:tw-text-neutral-100;
   }
 
   .nav-popup-menu-button_icon {

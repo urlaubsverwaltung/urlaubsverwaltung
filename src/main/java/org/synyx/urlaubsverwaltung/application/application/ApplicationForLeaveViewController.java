@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -44,7 +45,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  */
 @Controller
 @RequestMapping("/web")
-class ApplicationForLeaveViewController {
+class ApplicationForLeaveViewController implements HasLaunchpad {
 
     private final ApplicationService applicationService;
     private final WorkDaysCountService workDaysCountService;

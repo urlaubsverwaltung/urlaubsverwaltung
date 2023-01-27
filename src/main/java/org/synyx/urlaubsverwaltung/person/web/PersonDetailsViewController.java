@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -33,7 +34,7 @@ import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.map
 
 @Controller
 @RequestMapping("/web")
-public class PersonDetailsViewController {
+public class PersonDetailsViewController implements HasLaunchpad {
 
     private final PersonService personService;
     private final AccountService accountService;

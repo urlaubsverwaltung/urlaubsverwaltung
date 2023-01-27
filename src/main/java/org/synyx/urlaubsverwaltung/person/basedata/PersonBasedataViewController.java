@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -24,7 +25,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 
 @Controller
 @RequestMapping("/web")
-public class PersonBasedataViewController {
+public class PersonBasedataViewController implements HasLaunchpad {
 
     private final PersonBasedataService personBasedataService;
     private final PersonService personService;

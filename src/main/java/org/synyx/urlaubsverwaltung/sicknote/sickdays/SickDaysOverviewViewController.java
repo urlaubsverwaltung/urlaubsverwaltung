@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -45,7 +46,7 @@ import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.bui
  */
 @Controller
 @RequestMapping("/web")
-public class SickDaysOverviewViewController {
+public class SickDaysOverviewViewController implements HasLaunchpad {
 
     private final SickDaysStatisticsService sickDaysStatisticsService;
     private final PersonService personService;

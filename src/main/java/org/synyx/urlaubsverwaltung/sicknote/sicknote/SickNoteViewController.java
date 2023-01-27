@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -62,7 +63,7 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteMapper.merge
  */
 @Controller
 @RequestMapping("/web")
-class SickNoteViewController {
+class SickNoteViewController implements HasLaunchpad {
 
     private final SickNoteService sickNoteService;
     private final SickNoteInteractionService sickNoteInteractionService;

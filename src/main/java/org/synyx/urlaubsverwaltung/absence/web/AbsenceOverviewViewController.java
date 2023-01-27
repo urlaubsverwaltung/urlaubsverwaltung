@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.absence.web;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomCollectionEditor;
 import org.springframework.context.MessageSource;
@@ -64,7 +65,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @RequestMapping("/web/absences")
 @Controller
-public class AbsenceOverviewViewController {
+public class AbsenceOverviewViewController implements HasLaunchpad {
 
     private static final VacationTypeColor ANONYMIZED_ABSENCE_COLOR = VacationTypeColor.YELLOW;
 

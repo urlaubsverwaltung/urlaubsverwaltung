@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -77,7 +78,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
  */
 @Controller
 @RequestMapping("/web")
-class ApplicationForLeaveFormViewController {
+class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 

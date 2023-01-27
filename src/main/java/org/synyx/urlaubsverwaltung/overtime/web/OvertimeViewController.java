@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -55,7 +56,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
  */
 @Controller
 @RequestMapping("/web")
-public class OvertimeViewController {
+public class OvertimeViewController implements HasLaunchpad {
 
     private static final String SIGNED_IN_USER = "signedInUser";
     private static final String OVERTIME_OVERTIME_FORM = "thymeleaf/overtime/overtime_form";

@@ -285,6 +285,39 @@ logging.file.name=logs/urlaubsverwaltung.log
 
 geschrieben wird.
 
+#### Launchpad
+
+Es kann ein Launchpad konfiguriert werden, welches einen Absprung zu anderen Anwendungen ermöglicht. 
+
+```properties
+launchpad.name-default-locale=de
+
+launchpad.apps[0].url=https://example.org
+launchpad.apps[0].name.de=Anwendung 1
+launchpad.apps[0].name.en=App 1
+launchpad.apps[0].icon=
+
+launchpad.apps[1].url=https://example-2.org
+launchpad.apps[1].name.de=Anwendung 2
+launchpad.apps[1].name.en=App 2
+launchpad.apps[1].icon=
+```
+
+| Property                        | Type     | Description                                                                                                                                                |
+|---------------------------------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| launchpad.name-default-locale   | Locale   | Standard Name der Anwendung wenn für ein Locale keine Übersetzung gefunden wird.                                                                           |
+| launchpad.apps[x].url           | String   | URL der Anwendung.                                                                                                                                         |
+| launchpad.apps[x].name.[locale] | String   | Name der Anwendung für ein Locale.                                                                                                                         |
+| launchpad.apps[x].icon          | String   | URL eines Bildes oder ein base64 encodiertes Bild. Wird in das `<img src="" />` Attribut geschrieben.<br/>Das Bild sollte optimalerweise ein Quadrat sein. |
+
+Das Launchpad hat eigene Übersetzungen. Spring muss entsprechend konfiguriert werden, damit die messages.properties gefunden wird:
+
+```properties
+spring.messages.basename=messages,launchpad-core
+```
+
+* **(required)** `messages` standardmäßige application messages properties
+* **(required)** `launchpad-core` launchpad message properties
 
 ### Anwendung als Service
 

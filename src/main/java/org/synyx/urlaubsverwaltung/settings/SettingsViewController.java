@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -38,7 +39,7 @@ import static org.synyx.urlaubsverwaltung.settings.SpecialLeaveSettingsDtoMapper
 
 @Controller
 @RequestMapping("/web/settings")
-public class SettingsViewController {
+public class SettingsViewController implements HasLaunchpad {
 
     private final AccountProperties accountProperties;
     private final WorkingTimeProperties workingTimeProperties;

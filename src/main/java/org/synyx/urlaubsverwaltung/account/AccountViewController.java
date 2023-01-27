@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.account;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -36,7 +37,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
  */
 @Controller
 @RequestMapping("/web")
-public class AccountViewController {
+public class AccountViewController implements HasLaunchpad {
 
     private final PersonService personService;
     private final AccountService accountService;

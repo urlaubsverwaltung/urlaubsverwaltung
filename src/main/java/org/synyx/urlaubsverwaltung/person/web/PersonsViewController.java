@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -58,7 +59,7 @@ import static org.synyx.urlaubsverwaltung.web.html.PaginationPageLinkBuilder.bui
 
 @Controller
 @RequestMapping("/web")
-public class PersonsViewController {
+public class PersonsViewController implements HasLaunchpad {
 
     private final PersonService personService;
     private final AccountService accountService;
