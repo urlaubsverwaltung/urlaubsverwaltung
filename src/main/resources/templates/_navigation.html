@@ -85,7 +85,7 @@
                       th:replace="~{icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7 lg:tw-w-8 lg:tw-h-8')}"
                     ></svg>
                     <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
-                    <span class="dropdown-caret"></span>
+                    <svg th:replace="icon/chevron-down::svg(className='tw-w-4 tw-h-4')"></svg>
                   </a>
                   <div id="add-something-new-menu" class="nav-popup-menu" data-test-id="add-something-new-popupmenu">
                     <div class="nav-popup-menu-inner">
@@ -161,7 +161,7 @@
                         alt=""
                       />
                     </span>
-                    <span class="dropdown-caret tw-translate-x-px"></span>
+                    <svg th:replace="icon/chevron-down::svg(className='tw-w-4 tw-h-4')"></svg>
                   </a>
                   <div id="avatar-menu" class="nav-popup-menu" data-test-id="avatar-popupmenu">
                     <div class="nav-popup-menu-inner">

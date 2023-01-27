@@ -284,6 +284,15 @@
     }
   }
 
+  .nav-popup-menu-button {
+    @apply tw-text-zinc-700;
+    @apply hover:tw-text-zinc-700;
+    @apply focus:tw-text-zinc-700;
+    @apply dark:tw-text-neutral-100;
+    @apply dark:hover:tw-text-neutral-100;
+    @apply dark:focus:tw-text-neutral-100;
+  }
+
   .nav-popup-menu-button_icon {
     @apply tw-text-zinc-900;
     @apply tw-text-opacity-75;
