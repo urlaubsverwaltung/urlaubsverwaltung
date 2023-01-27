@@ -11,7 +11,7 @@ public class PersonCreatedEvent extends ApplicationEvent {
     private final String email;
     private final boolean active;
 
-    PersonCreatedEvent(Object source, Integer personId, String personNiceName, String username, @Nullable String email, boolean active) {
+    public PersonCreatedEvent(Object source, Integer personId, String personNiceName, String username, @Nullable String email, boolean active) {
         super(source);
         this.personId = personId;
         this.personNiceName = personNiceName;
