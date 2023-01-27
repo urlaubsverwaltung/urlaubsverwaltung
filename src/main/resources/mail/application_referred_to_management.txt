@@ -1,17 +1,17 @@
-Hallo [[${recipient.niceName}]],
+[[#{greeting(${recipient.niceName})}]],
 
-[[${sender.niceName}]] bittet dich um Hilfe bei der Bearbeitung eines Antrags von [[${application.person.niceName}]].
-Bitte kümmere dich um die Bearbeitung dieses Antrags oder halte ggf. nochmals Rücksprache mit [[${sender.niceName}]].
+[[#{application.referred.to_management.first(${sender.niceName},${application.person.niceName})}]]
+[[#{application.referred.to_management.second(${sender.niceName})}]]
 
     [[${baseLinkURL}]]web/application/[[${application.id}]]
 
-Informationen zur Abwesenheit:
+[[#{absence.information.title}]]
 
-    Mitarbeiter:         [[${application.person.niceName}]]
-    Zeitraum:            [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]], [[${dayLength}]]
-    Art der Abwesenheit: [[${vacationType}]]
-    Grund:               [[${application.reason}]]
-    Vertretung:          [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:text="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
-    Anschrift/Telefon:   [[${#strings.trim(application.address)}]]
-    Erstellungsdatum:    [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]]
-    Weitergeleitet von:  [[${sender.niceName}]]
+    [[#{absence.information.person}]]         [[${application.person.niceName}]]
+    [[#{absence.information.period}]]            [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] [[#{until}]] [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]], [[#{__${dayLength}__}]]
+    [[#{absence.information.type}]] [[#{__${vacationTypeMessageKey}__}]]
+    [[#{absence.information.reason}]]               [[${application.reason}]]
+    [[#{absence.information.holiday_replacement}]]          [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:text="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
+    [[#{absence.information.address}]]   [[${#strings.trim(application.address)}]]
+    [[#{absence.information.date}]]    [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]]
+    [[#{absence.information.referred_from}]]  [[${sender.niceName}]]

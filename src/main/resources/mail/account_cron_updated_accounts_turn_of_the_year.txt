@@ -1,9 +1,9 @@
-Hallo [[${recipient.niceName}]],
+[[#{greeting(${recipient.niceName})}]],
 
-Stand Resturlaubstage zum 1. Januar [[${today.format("yyyy")}]] (mitgenommene Resturlaubstage aus dem Vorjahr)
+[[#{account.remaining_vacation_days(${today.format("yyyy")})}]
 
 [# th:each="account : ${accounts}"]
 [[${account.person.niceName}]]: [[${account.remainingVacationDays}]]
 [/]
 
-Gesamtzahl an Resturlaubstagen aus dem Vorjahr: [[${totalRemainingVacationDays}]]
+[[#{account.remaining_vacation_days.last_year}]] [[${totalRemainingVacationDays}]]

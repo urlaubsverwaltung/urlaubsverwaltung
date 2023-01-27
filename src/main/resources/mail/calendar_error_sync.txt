@@ -1,8 +1,8 @@
-Der Termin für folgende Abwesenheit konnte nicht erstellt werden:
+[[#{calendar.error.sync.first}]]
 
 [[${absence.person.niceName}]]
 [[${#temporals.format(absence.startDate, "dd.MM.yyyy")}]] - [[${#temporals.format(absence.endDate, "dd.MM.yyyy")}]]
 
-Beim Synchronisieren mit dem Kalender '[[${calendar}]]' ist ein Fehler aufgetreten:
+[[#{calendar.error.sync.second(${calendar})}]]
 
 [[${exception}]]

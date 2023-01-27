@@ -1,9 +1,10 @@
-Hallo [[${holidayReplacement.niceName}]],
+[[#{greeting(${holidayReplacement.niceName})}]],
 
-der Zeitraum für die Abwesenheit von [[${application.person.niceName}]] bei dem du als Vertretung vorgesehen bist, hat sich geändert.
-Der neue Zeitraum ist von [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]], [[${dayLength}]].
+[[#{application.edited.to_holiday_replacement.first(${application.person.niceName})}]]
+[[#{application.edited.to_holiday_replacement.second(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")},#{__${dayLength}__})}]]
 
-[# th:if="${not #strings.isEmpty(holidayReplacementNote)}"]Notiz von [[${application.person.niceName}]] an dich:
+[# th:if="${not #strings.isEmpty(holidayReplacementNote)}"][[#{application.edited.to_holiday_replacement.note(${application.person.niceName})}]]
 [[${holidayReplacementNote}]][/]
 
-Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter [[${baseLinkURL}]]web/application/replacement
+[[#{application.edited.to_holiday_replacement.overview_holiday_replacement}]] [[${baseLinkURL}]]web/application/replacement
+

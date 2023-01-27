@@ -1,8 +1,10 @@
-Hallo [[${recipient.niceName}]],
+[[#{greeting(${recipient.niceName})}]],
 
-der am [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]] gestellte, nicht genehmigte Antrag von [[${application.person.niceName}]] wurde [# th:if="${application.person.niceName != comment.person.niceName}"]von [[${comment.person.niceName}]] [/]storniert.
+
+[# th:if="${application.person.niceName == comment.person.niceName}"][[#{application.revoked.to_management(${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${application.person.niceName})}]][/][# th:if="${application.person.niceName != comment.person.niceName}"][[#{application.revoked.to_management.with_name(${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${application.person.niceName},${comment.person.niceName})}]][/]
+
+    [[${baseLinkURL}]]web/application/[[${application.id}]]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
-Begründung:
+[[#{application.revoked.to_management.reason}]]
 [[${comment.text}]]
 [/]
-Link zur Abwesenheit: [[${baseLinkURL}]]web/application/[[${application.id}]]

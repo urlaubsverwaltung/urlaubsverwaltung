@@ -1,5 +1,5 @@
-Hallo [[${recipientNiceName}]],
+[[#{greeting(${recipientNiceName})}]],
 
-Du hast noch [[${remainingVacationDays}]] Tag(e) Resturlaub aus dem Vorjahr, bitte denke daran den Urlaub bis zum [[${#temporals.format(dayBeforeExpiryDate, "dd.MM.yyyy")}]] zu nehmen.
+[[#{account.remaining_vacation_days.last_year.use_until(${remainingVacationDays},${#temporals.format(dayBeforeExpiryDate, "dd.MM.yyyy")})}]]
 
-Mehr Informationen zu deinem Urlaubsanspruch findest du hier: [[${baseLinkURL}]]web/person/[[${personId}]]/overview
+[[#{account.vacation_entitlement.information}]] [[${baseLinkURL}]]web/person/[[${personId}]]/overview

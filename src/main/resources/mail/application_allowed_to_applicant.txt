@@ -1,17 +1,17 @@
-Hallo [[${application.person.niceName}]],
+[[#{greeting(${application.person.niceName})}]],
 
-deine Abwesenheit vom [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis zum [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]] wurde von [[${application.boss.niceName}]] genehmigt.
+[[#{application.allowed.to_applicant(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")},${application.boss.niceName})}]]
 
     [[${baseLinkURL}]]web/application/[[${application.id}]]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
-Kommentar von [[|${comment.person.niceName}:|]]
+[[#{comment.by(${comment.person.niceName})}]]
 [[${comment.text}]]
 [/]
-Informationen zur Abwesenheit:
+[[#{absence.information.title}]]
 
-    Zeitraum:            [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]], [[${dayLength}]]
-    Art der Abwesenheit: [[${vacationType}]]
-    Grund:               [[${application.reason}]]
-    Vertretung:          [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:text="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
-    Anschrift/Telefon:   [[${#strings.trim(application.address)}]]
-    Erstellungsdatum:    [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]]
+    [[#{absence.information.period}]]            [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] [[#{until}]] [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]], [[#{__${dayLength}__}]]
+    [[#{absence.information.type}]] [[#{__${vacationTypeMessageKey}__}]]
+    [[#{absence.information.reason}]]               [[${application.reason}]]
+    [[#{absence.information.holiday_replacement}]]          [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:text="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
+    [[#{absence.information.address}]]   [[${#strings.trim(application.address)}]]
+    [[#{absence.information.date}]]    [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]]

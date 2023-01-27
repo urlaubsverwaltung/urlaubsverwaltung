@@ -1,8 +1,8 @@
-Hallo [[${recipient.niceName}]],
+[[#{greeting(${recipient.niceName})}]],
 
-es wurde ein neuer Benutzer erstellt.
+[[#{person.new}]]
 
     [[${personNiceName}]]
 
-Du kannst unter folgender Adresse die Einstellungen des Benutzers einsehen und anpassen:
+[[#{person.overview}]]
 [[${baseLinkURL}]]web/person/[[${personId}]]

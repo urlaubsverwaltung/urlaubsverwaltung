@@ -76,9 +76,9 @@ class SickNoteMailServiceIT extends TestContainersBase {
         assertThat(msgUser.getSubject()).isEqualTo("Ende deiner Lohnfortzahlung");
 
         final String content = (String) msgUser.getContent();
-        assertThat(content).contains("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+        assertThat(content).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "dein Anspruch auf Lohnfortzahlung von 42 Tag(en) endete am 14.03.2022." + EMAIL_LINE_BREAK +
+            "dein Anspruch auf Lohnfortzahlung von 42 Tagen endete am 14.03.2022." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/sicknote/1" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
@@ -102,9 +102,9 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
         // check content of office email
         final String contentOfficeMail = (String) msgOffice.getContent();
-        assertThat(contentOfficeMail).contains("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+        assertThat(contentOfficeMail).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "der Anspruch auf Lohnfortzahlung von Lieschen Müller von 42 Tag(en) endete am 14.03.2022." + EMAIL_LINE_BREAK +
+            "der Anspruch auf Lohnfortzahlung von Lieschen Müller von 42 Tagen endete am 14.03.2022." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/sicknote/1" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +

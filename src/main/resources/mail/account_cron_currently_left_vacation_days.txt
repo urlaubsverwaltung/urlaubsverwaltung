@@ -1,5 +1,5 @@
-Hallo [[${recipientNiceName}]],
+[[#{greeting(${recipientNiceName})}]],
 
-Du hast noch [[${vacationDaysLeft}]] Tag(e) Urlaub für dieses Jahr offen, bitte denke daran, deinen Urlaub zu planen.
+[[#{account.vacation_days.this_year(${vacationDaysLeft})}]]
 
-Mehr Informationen zu deinem Urlaubsanspruch findest du hier: [[${baseLinkURL}]]web/person/[[${personId}]]/overview
+[[#{account.vacation_entitlement.information}]] [[${baseLinkURL}]]web/person/[[${personId}]]/overview

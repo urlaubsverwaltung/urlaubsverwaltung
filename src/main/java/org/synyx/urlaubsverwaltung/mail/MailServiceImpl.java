@@ -28,16 +28,16 @@ class MailServiceImpl implements MailService {
     private static final Logger LOG = getLogger(lookup().lookupClass());
     private static final Locale LOCALE = Locale.GERMAN;
 
-    private final MessageSource messageSource;
+    private final MessageSource emailMessageSource;
     private final ITemplateEngine emailTemplateEngine;
     private final MailSenderService mailSenderService;
     private final MailProperties mailProperties;
     private final PersonService personService;
 
     @Autowired
-    MailServiceImpl(MessageSource messageSource, ITemplateEngine emailTemplateEngine, MailSenderService mailSenderService,
+    MailServiceImpl(MessageSource emailMessageSource, ITemplateEngine emailTemplateEngine, MailSenderService mailSenderService,
                     MailProperties mailProperties, PersonService personService) {
-        this.messageSource = messageSource;
+        this.emailMessageSource = emailMessageSource;
         this.emailTemplateEngine = emailTemplateEngine;
         this.mailProperties = mailProperties;
         this.mailSenderService = mailSenderService;
@@ -84,7 +84,7 @@ class MailServiceImpl implements MailService {
     }
 
     private String getTranslation(String key, Object... args) {
-        return messageSource.getMessage(key, args, LOCALE);
+        return emailMessageSource.getMessage(key, args, LOCALE);
     }
 
     private String getApplicationUrl() {

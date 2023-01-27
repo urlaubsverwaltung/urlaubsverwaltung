@@ -1,6 +1,5 @@
-Hallo [[${application.person.niceName}]],
+[[#{greeting(${application.person.niceName})}]],
 
-[[${application.applier.niceName}]] hat deine Krankmeldung zu Urlaub umgewandelt.
-Es handelt sich um folgenden Zeitraum: [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]]
+[[#{sick_note.converted(${application.applier.niceName},${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")})}]]
 
-Für Details siehe: [[${baseLinkURL}]]web/application/[[${application.id}]]
+    [[${baseLinkURL}]]web/application/[[${application.id}]]

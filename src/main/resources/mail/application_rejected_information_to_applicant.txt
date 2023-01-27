@@ -1,8 +1,9 @@
-Hallo [[${application.person.niceName}]],
+[[#{greeting(${application.person.niceName})}]],
 
-dein am [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]] gestellte Abwesenheit wurde leider von [[${comment.person.niceName}]] abgelehnt.
+[[#{application.rejected.to_applicant(${#temporals.format(application.applicationDate, "dd.MM.yyyy")}, ${comment.person.niceName})}]]
+
+    [[${baseLinkURL}]]web/application/[[${application.id}]]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
-Begründung:
+[[#{application.rejected.to_applicant.reason}]]
 [[${comment.text}]]
 [/]
-Link zur Abwesenheit: [[${baseLinkURL}]]web/application/[[${application.id}]]

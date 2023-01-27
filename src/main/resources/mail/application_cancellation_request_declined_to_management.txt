@@ -1,6 +1,6 @@
 [[#{greeting(${recipient.niceName})}]],
 
-[[#{application.cancelled.by_management_to_management(${application.canceller.niceName},${application.person.niceName},${#temporals.format(application.applicationDate, "dd.MM.yyyy")})}]]
+[[#{application.cancellation_request.declined.to_management(${application.person.niceName},${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")})}]]
 
     [[${baseLinkURL}]]web/application/[[${application.id}]]
 [# th:if="${not #strings.isEmpty(comment.text)}"]

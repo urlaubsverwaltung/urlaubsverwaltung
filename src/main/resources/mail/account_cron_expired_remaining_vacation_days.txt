@@ -1,11 +1,11 @@
-Hallo [[${recipientNiceName}]],
+[[#{greeting(${recipientNiceName})}]],
 
-leider ist dein Resturlaub zum [[${#temporals.format(expiryDate, "dd.MM.yyyy")}]] in Höhe von [[${expiredRemainingVacationDays}]] Tag(en) verfallen.
+[[#{account.remaining_vacation_days.expired(${#temporals.format(expiryDate, "dd.MM.yyyy")},${expiredRemainingVacationDays})}]]
 
-Dein aktueller Urlaubsanspruch:
-    [[${totalLeftVacationDays}]] Tag(e)
+[[#{account.remaining_vacation_days.expired.vacation}]]
+    [[#{days(${totalLeftVacationDays})}]]
 [# th:if="${remainingVacationDaysNotExpiring > 0}"]
-Resturlaub, der nicht am [[${#temporals.format(expiryDate, "dd.MM.yyyy")}]] verfallen ist:
-    [[${remainingVacationDaysNotExpiring}]] Tag(e)
+[[#{account.remaining_vacation_days.expired.not_expiring(${#temporals.format(expiryDate, "dd.MM.yyyy")})}]]
+    [[#{days(${remainingVacationDaysNotExpiring})}]]
 [/]
-Mehr Informationen zu deinem Urlaubsanspruch findest du hier: [[${baseLinkURL}]]web/person/[[${personId}]]/overview
+[[#{account.vacation_entitlement.information}]] [[${baseLinkURL}]]web/person/[[${personId}]]/overview

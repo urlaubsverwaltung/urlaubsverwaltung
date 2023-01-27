@@ -77,9 +77,9 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
 
         // check content of email
         final String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+        assertThat(content).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Du hast noch 10 Tag(e) Urlaub für dieses Jahr offen, bitte denke daran, deinen Urlaub zu planen." + EMAIL_LINE_BREAK +
+            "Du hast noch 10 Tage Urlaub für dieses Jahr offen, bitte denke daran, deinen Urlaub zu planen." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview");
     }
@@ -125,11 +125,9 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
 
         // check content of email
         final String content = (String) msg.getContent();
-
-
-        assertThat(content).contains("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+        assertThat(content).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Du hast noch 10 Tag(e) Resturlaub aus dem Vorjahr, bitte denke daran den Urlaub bis zum 31.03.2022 zu nehmen." + EMAIL_LINE_BREAK +
+            "Du hast noch 10 Tage Resturlaub aus dem Vorjahr, bitte denke daran den Urlaub bis zum 31.03.2022 zu nehmen." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview");
     }
@@ -177,10 +175,10 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
         // check content of email
         assertThat(msg.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "leider ist dein Resturlaub zum 01.04.2022 in Höhe von 10 Tag(en) verfallen." + EMAIL_LINE_BREAK +
+            "leider ist dein Resturlaub zum 01.04.2022 in Höhe von 10 Tagen verfallen." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Dein aktueller Urlaubsanspruch:" + EMAIL_LINE_BREAK +
-            "    10 Tag(e)" + EMAIL_LINE_BREAK +
+            "    10 Tage" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/1/overview");
     }

@@ -1,8 +1,9 @@
-Hallo [[${recipient.niceName}]],
+[[#{greeting(${recipient.niceName})}]],
 
-der von [[${application.person.niceName}]] am [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]] gestellte Antrag wurde von [[${comment.person.niceName}]] abgelehnt.
+[[#{application.rejected.to_management(${application.person.niceName},${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${comment.person.niceName})}]]
+
+    [[${baseLinkURL}]]web/application/[[${application.id}]]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
-Begründung:
+[[#{application.rejected.to_management.reason}]]
 [[${comment.text}]]
 [/]
-Link zur Abwesenheit: [[${baseLinkURL}]]web/application/[[${application.id}]]

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -14,7 +15,7 @@ import static org.thymeleaf.templatemode.TemplateMode.TEXT;
 @Configuration
 class MailConfiguration {
 
-    private static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
+    private static final String UTF_8 = "UTF-8";
 
     private final ApplicationContext applicationContext;
 
@@ -28,7 +29,16 @@ class MailConfiguration {
         final SpringTemplateEngine emailTemplateEngine = new SpringTemplateEngine();
         emailTemplateEngine.addTemplateResolver(textTemplateResolver());
         emailTemplateEngine.addDialect(new Java8TimeDialect());
+        emailTemplateEngine.setTemplateEngineMessageSource(emailMessageSource());
         return emailTemplateEngine;
+    }
+
+    @Bean
+    ResourceBundleMessageSource emailMessageSource() {
+        final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setDefaultEncoding(UTF_8);
+        messageSource.setBasename("MailMessages");
+        return messageSource;
     }
 
     private SpringResourceTemplateResolver textTemplateResolver() {
@@ -38,7 +48,7 @@ class MailConfiguration {
         textEmailTemplateResolver.setPrefix("classpath:/mail/");
         textEmailTemplateResolver.setSuffix(".txt");
         textEmailTemplateResolver.setTemplateMode(TEXT);
-        textEmailTemplateResolver.setCharacterEncoding(EMAIL_TEMPLATE_ENCODING);
+        textEmailTemplateResolver.setCharacterEncoding(UTF_8);
         textEmailTemplateResolver.setCacheable(false);
         return textEmailTemplateResolver;
     }

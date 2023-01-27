@@ -1,8 +1,0 @@
-Hallo [[${recipient.niceName}]],
-
-dein Stornierungsantrag der genehmigten Abwesenheit vom [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]] wurde abgelehnt.
-[# th:if="${not #strings.isEmpty(comment.text)}"]
-Kommentar von [[|${comment.person.niceName}:|]]
-[[${comment.text}]]
-[/]
-Es handelt sich um folgende Abwesenheit: [[${baseLinkURL}]]web/application/[[${application.id}]]

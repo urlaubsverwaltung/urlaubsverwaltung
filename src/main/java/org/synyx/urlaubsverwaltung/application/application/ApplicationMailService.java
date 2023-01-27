@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
@@ -25,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
@@ -38,7 +36,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_O
 class ApplicationMailService {
 
     private static final String APPLICATION = "application";
-    private static final String VACATION_TYPE = "vacationType";
+    private static final String VACATION_TYPE = "vacationTypeMessageKey";
     private static final String DAY_LENGTH = "dayLength";
     private static final String COMMENT = "comment";
     private static final String CALENDAR_ICS = "calendar.ics";
@@ -50,19 +48,17 @@ class ApplicationMailService {
     private final DepartmentService departmentService;
     private final ApplicationRecipientService applicationRecipientService;
     private final ICalService iCalService;
-    private final MessageSource messageSource;
     private final SettingsService settingsService;
     private final Clock clock;
 
     @Autowired
     ApplicationMailService(MailService mailService, DepartmentService departmentService,
                            ApplicationRecipientService applicationRecipientService, ICalService iCalService,
-                           MessageSource messageSource, SettingsService settingsService, Clock clock) {
+                           SettingsService settingsService, Clock clock) {
         this.mailService = mailService;
         this.departmentService = departmentService;
         this.applicationRecipientService = applicationRecipientService;
         this.iCalService = iCalService;
-        this.messageSource = messageSource;
         this.settingsService = settingsService;
         this.clock = clock;
     }
@@ -73,8 +69,8 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, applicationComment);
 
         // Inform user that the application for leave has been allowed
@@ -108,8 +104,8 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         // send reject information to the applicant
@@ -145,8 +141,8 @@ class ApplicationMailService {
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
         model.put(RECIPIENT, recipient);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put("sender", sender);
 
         final Mail mailToApplicant = Mail.builder()
@@ -195,7 +191,7 @@ class ApplicationMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancellationRequest.declined.applicant", application.getPerson().getNiceName())
-            .withTemplate("application_cancellation_request_declined_applicant", model)
+            .withTemplate("application_cancellation_request_declined_to_applicant", model)
             .build();
         mailService.send(mailToApplicant);
 
@@ -205,7 +201,7 @@ class ApplicationMailService {
         final Mail mailToOffice = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancellationRequest.declined.management")
-            .withTemplate("application_cancellation_request_declined_management", model)
+            .withTemplate("application_cancellation_request_declined_to_management", model)
             .build();
         mailService.send(mailToOffice);
     }
@@ -227,7 +223,7 @@ class ApplicationMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancellationRequest.applicant")
-            .withTemplate("application_cancellation_request_applicant", model)
+            .withTemplate("application_cancellation_request_to_applicant", model)
             .build();
         mailService.send(mailToApplicant);
 
@@ -236,7 +232,7 @@ class ApplicationMailService {
         final Mail mailToOffice = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancellationRequest")
-            .withTemplate("application_cancellation_request", model)
+            .withTemplate("application_cancellation_request_to_management", model)
             .build();
         mailService.send(mailToOffice);
     }
@@ -271,8 +267,8 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final Mail mailToApplicant = Mail.builder()
@@ -295,8 +291,8 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final Mail mailToApplicant = Mail.builder()
@@ -320,8 +316,8 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
@@ -350,7 +346,7 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
         model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(DAY_LENGTH, application.getDayLength().name());
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
@@ -375,7 +371,7 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
         model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(DAY_LENGTH, application.getDayLength().name());
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
@@ -401,7 +397,7 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
         model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(DAY_LENGTH, application.getDayLength().name());
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
@@ -427,12 +423,12 @@ class ApplicationMailService {
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
         model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(DAY_LENGTH, application.getDayLength().name());
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
             .withSubject("subject.application.holidayReplacement.cancellation", application.getPerson().getNiceName())
-            .withTemplate("application_cancellation_to_holiday_replacement", model)
+            .withTemplate("application_cancelled_to_holiday_replacement", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
@@ -452,7 +448,7 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
         model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(DAY_LENGTH, application.getDayLength().name());
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
@@ -474,8 +470,8 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final Mail mailToApplicant = Mail.builder()
@@ -498,8 +494,8 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final Mail mailToApplicant = Mail.builder()
@@ -561,8 +557,8 @@ class ApplicationMailService {
 
         final Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
@@ -588,8 +584,8 @@ class ApplicationMailService {
 
         final Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         // send cancelled by office information to the applicant
@@ -614,8 +610,8 @@ class ApplicationMailService {
 
         final Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final Mail mailToApplicant = Mail.builder()
@@ -679,8 +675,8 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
         model.put("departmentVacations", applicationsForLeave);
 
@@ -706,7 +702,7 @@ class ApplicationMailService {
         // Inform user that the application for leave has been allowed temporary
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final Mail mailToApplicant = Mail.builder()
@@ -722,8 +718,8 @@ class ApplicationMailService {
 
         Map<String, Object> modelSecondStage = new HashMap<>();
         modelSecondStage.put(APPLICATION, application);
-        modelSecondStage.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        modelSecondStage.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        modelSecondStage.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        modelSecondStage.put(DAY_LENGTH, application.getDayLength().name());
         modelSecondStage.put(COMMENT, comment);
         modelSecondStage.put("departmentVacations", applicationsForLeave);
 
@@ -829,10 +825,6 @@ class ApplicationMailService {
 
             mailService.send(mailToRemindForWaiting);
         }
-    }
-
-    private String getTranslation(String key, Object... args) {
-        return messageSource.getMessage(key, args, GERMAN);
     }
 
     private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType, Person recipient) {

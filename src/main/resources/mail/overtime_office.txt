@@ -1,14 +1,14 @@
-Hallo [[${recipient.niceName}]],
+[[#{greeting(${recipient.niceName})}]],
 
-es wurden Überstunden erfasst.
+[[#{overtime.added}]]
 
     [[${baseLinkURL}]]web/overtime/[[${overtime.id}]]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
-Kommentar von [[|${comment.person.niceName}:|]]
+[[#{comment.by(${comment.person.niceName})}]]
 [[${comment.text}]]
 [/]
-Informationen zu den Überstunden:
+[[#{overtime.information.title}]]
 
-    Mitarbeiter: [[${overtime.person.niceName}]]
-    Zeitraum:    [[${#temporals.format(overtime.startDate, "dd.MM.yyyy")}]] - [[${#temporals.format(overtime.endDate, "dd.MM.yyyy")}]]
-    Dauer:       [[${overtimeDurationHours}]] [[${overtimeDurationMinutes}]]
+    [[#{absence.information.person}]] [[${overtime.person.niceName}]]
+    [[#{absence.information.period}]]    [[${#temporals.format(overtime.startDate, "dd.MM.yyyy")}]] - [[${#temporals.format(overtime.endDate, "dd.MM.yyyy")}]]
+    [[#{overtime.information.duration}]]       [[${overtimeDurationHours}]] [[${overtimeDurationMinutes}]]

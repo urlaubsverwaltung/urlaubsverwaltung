@@ -1,17 +1,17 @@
-Hallo [[${recipient.niceName}]],
+[[#{greeting(${recipient.niceName})}]],
 
-der Anspruch auf Lohnfortzahlung von [[${sickNote.person.niceName}]] von [[${maximumSickPayDays}]] Tag(en) [# th:if="${isLastDayOfSickPayDaysInPast}"]endete[/][# th:if="${not isLastDayOfSickPayDaysInPast}"]endet[/] am [[${#temporals.format(endOfSickPayDays, "dd.MM.yyyy")}]].
+[[#{sick_note.sick_pay.to_management(${sickNote.person.niceName},${maximumSickPayDays},${sickPayDaysEndedDaysAgo},${#temporals.format(endOfSickPayDays, "dd.MM.yyyy")})}]]
 
     [[${baseLinkURL}]]web/sicknote/[[${sickNote.id}]]
 
-Informationen zur Krankmeldung:
+[[#{sick_note.information.title}]]
 
-    Mitarbeiter:                  [[${sickNote.person.niceName}]]
-    Zeitraum:                     [[${#temporals.format(sickNote.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(sickNote.endDate, "dd.MM.yyyy")}]]
-    Anspruch auf Lohnfortzahlung: [[${#temporals.format(sickNotePayFrom, "dd.MM.yyyy")}]] bis [[${#temporals.format(sickNotePayTo, "dd.MM.yyyy")}]]
+    [[#{absence.information.person}]]                  [[${sickNote.person.niceName}]]
+    [[#{absence.information.period}]]                     [[${#temporals.format(sickNote.startDate, "dd.MM.yyyy")}]] [[#{until}]] [[${#temporals.format(sickNote.endDate, "dd.MM.yyyy")}]]
+    [[#{sick_note.information.sick_pay}]] [[${#temporals.format(sickNotePayFrom, "dd.MM.yyyy")}]] [[#{until}]] [[${#temporals.format(sickNotePayTo, "dd.MM.yyyy")}]]
 
 
-Hinweis:
-Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal [[${maximumSickPayDays}]] Tage
-(fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage).
-Danach wird für gesetzlich Krankenversicherte in der Regel Krankengeld von der Krankenkasse gezahlt.
+[[#{sick_note.sick_pay.note.title}]]
+[[#{sick_note.sick_pay.note.first(${maximumSickPayDays})}]]
+[[#{sick_note.sick_pay.note.second}]]
+[[#{sick_note.sick_pay.note.third}]]

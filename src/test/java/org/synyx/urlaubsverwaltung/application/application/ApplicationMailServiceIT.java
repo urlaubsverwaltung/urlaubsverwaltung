@@ -649,10 +649,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("Marlene Muster hat deine Krankmeldung zu Urlaub umgewandelt");
-        assertThat(content).contains("/web/application/1234");
+        assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Marlene Muster hat deine Krankmeldung vom 02.02.2023 bis 02.02.2023 zu Urlaub umgewandelt." + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234");
     }
 
     @Test
@@ -1813,12 +1814,15 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of user email
         String contentUser = (String) msg.getContent();
-        assertThat(contentUser).contains("Hallo Lieschen Müller");
-        assertThat(contentUser).contains("Bitte beachte, dass diese von einem entsprechenden Verantwortlichen freigegeben werden muss");
-        assertThat(contentUser).contains(comment.getText());
-        assertThat(contentUser).contains(comment.getPerson().getNiceName());
-        assertThat(contentUser).contains("Link zur Abwesenheit:");
-        assertThat(contentUser).contains("/web/application/1234");
+        assertThat(contentUser).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "deine am 12.04.2021 gestellte Abwesenheit von 16.04.2021 bis 16.04.2021, ganztägig wurde vorläufig genehmigt." + EMAIL_LINE_BREAK +
+            "Bitte beachte, dass diese von einem entsprechenden Verantwortlichen freigegeben werden muss." + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
+            "Kommentar von Kai Schmitt:" + EMAIL_LINE_BREAK +
+            "OK, spricht von meiner Seite aus nix dagegen");
 
         // get email office
         Message msgSecondStage = inboxSecondStage[0];
@@ -2126,13 +2130,21 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("heute beginnt deine Abwesenheit und du wirst vertreten durch:");
-        assertThat(content).contains("- replacement holiday");
-        assertThat(content).contains("\"Some notes\"");
-        assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
-        assertThat(content).contains("/web/application/1234");
+        assertThat(msg.getContent()).isEqualTo(
+            "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "heute beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "- replacement holiday" + EMAIL_LINE_BREAK +
+                "  \"Some notes\"" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "Da du vom 01.01.2022 bis zum 01.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+        );
     }
 
     @Test
@@ -2161,13 +2173,21 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("morgen beginnt deine Abwesenheit und du wirst vertreten durch:");
-        assertThat(content).contains("- replacement holiday");
-        assertThat(content).contains("\"Some notes\"");
-        assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
-        assertThat(content).contains("/web/application/1234");
+        assertThat(msg.getContent()).isEqualTo(
+            "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "- replacement holiday" + EMAIL_LINE_BREAK +
+                "  \"Some notes\"" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+        );
     }
 
     @Test
@@ -2195,13 +2215,21 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("in 2 Tagen beginnt deine Abwesenheit und du wirst vertreten durch:");
-        assertThat(content).contains("- replacement holiday");
-        assertThat(content).contains("\"Some notes\"");
-        assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
-        assertThat(content).contains("/web/application/1234");
+        assertThat(msg.getContent()).isEqualTo(
+            "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "in 2 Tagen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "- replacement holiday" + EMAIL_LINE_BREAK +
+                "  \"Some notes\"" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Da du vom 03.01.2022 bis zum 03.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+        );
     }
 
     @Test
@@ -2223,8 +2251,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
-        assertThat(content).contains("heute beginnt deine Abwesenheit.");
+        assertThat(msg.getContent()).isEqualTo(
+            "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "heute beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "Da du vom 01.01.2022 bis zum 01.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+        );
     }
 
     @Test
@@ -2247,7 +2285,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of email
         String content = (String) msg.getContent();
-        assertThat(content).contains("morgen beginnt deine Abwesenheit.");
+        assertThat(msg.getContent()).isEqualTo(
+            "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+        );
     }
 
     @Test
@@ -2269,11 +2318,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("in 30 Tagen beginnt deine Abwesenheit.");
-        assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
-        assertThat(content).contains("/web/application/1234");
+        assertThat(msg.getContent()).isEqualTo(
+            "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "in 30 Tagen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "Da du vom 31.01.2022 bis zum 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+        );
     }
 
     @Test
@@ -2295,11 +2351,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("in 30 Tagen beginnt deine Abwesenheit.");
-        assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
-        assertThat(content).contains("/web/application/1234");
+        assertThat(msg.getContent()).isEqualTo(
+            "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "in 30 Tagen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "Da du vom 31.01.2022 bis zum 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+        );
     }
 
     @Test
@@ -2330,15 +2393,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
                 "" + EMAIL_LINE_BREAK +
-                "morgen beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
                 "" + EMAIL_LINE_BREAK +
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 "" + EMAIL_LINE_BREAK +
                 "" + EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
-                "Link zur Abwesenheit: https://localhost:8080/web/application/1234"
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
         );
     }
 
@@ -2372,15 +2437,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "morgen beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 "  \"Hey Alfred, denke bitte an Pinguin, danke dir!\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
-                EMAIL_LINE_BREAK +
-                "Link zur Abwesenheit: https://localhost:8080/web/application/1234"
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
         );
     }
 
@@ -2415,21 +2482,41 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getSubject()).contains("Erinnerung an deine Abwesenheit");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
-        // check content of email
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-                EMAIL_LINE_BREAK +
-                "morgen beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
-                EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 "  \"Hey Alfred, denke bitte an Pinguin, danke dir!\"" + EMAIL_LINE_BREAK +
                 "- Robin" + EMAIL_LINE_BREAK +
                 "  \"Uffbasse Rob. Ich sehe dich.\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+        );
+
+        // check content of email
+        assertThat(msg.getContent()).isEqualTo(
+            "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "Link zur Abwesenheit: https://localhost:8080/web/application/1234"
+                "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
+                "  \"Hey Alfred, denke bitte an Pinguin, danke dir!\"" + EMAIL_LINE_BREAK +
+                "- Robin" + EMAIL_LINE_BREAK +
+                "  \"Uffbasse Rob. Ich sehe dich.\"" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
         );
     }
 
@@ -2466,17 +2553,19 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "morgen beginnt deine Abwesenheit und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
-                EMAIL_LINE_BREAK +
+                "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "- Robin" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
-                EMAIL_LINE_BREAK +
-                "Link zur Abwesenheit: https://localhost:8080/web/application/1234"
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
         );
     }
 
@@ -2505,12 +2594,21 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("in 30 Tagen beginnt deine Abwesenheit und du wirst vertreten durch:");
-        assertThat(content).contains("replacement holiday");
-        assertThat(content).contains("nicht anwesend bist, denke bitte an die Übergabe.");
-        assertThat(content).contains("/web/application/1234");
+        assertThat(msg.getContent()).isEqualTo(
+            "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "in 30 Tagen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "- replacement holiday" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "" + EMAIL_LINE_BREAK +
+                "Da du vom 31.01.2022 bis zum 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+        );
     }
 
     @Test
