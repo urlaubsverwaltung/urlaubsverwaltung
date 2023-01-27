@@ -5,7 +5,7 @@
     <title>Launchpad</title>
   </head>
   <body>
-    <div th:fragment="navigation-item" th:if="${launchpad}" class="relative flex items-center">
+    <div th:fragment="navigation-item" th:if="${launchpad}" class="tw-relative tw-flex tw-items-center">
       <a href="#launchpad" aria-expanded="false" aria-haspopup="true" is="uv-nav-popup-menu-button">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +19,7 @@
           stroke-linejoin="round"
           role="presentation"
           aria-hidden="true"
-          class="w-9 h-9 lg:w-8 lg:h-8 text-gray-800"
+          class="tw-w-9 tw-h-9 lg:tw-w-8 lg:tw-h-8 tw-text-gray-800"
         >
           <circle cx="12" cy="6" r="1"></circle>
           <circle cx="19" cy="6" r="1"></circle>
@@ -31,29 +31,29 @@
           <circle cx="19" cy="18" r="1"></circle>
           <circle cx="5" cy="18" r="1"></circle>
         </svg>
-        <span class="sr-only" th:text="#{launchpad.core.apps.heading}"> Anwendungen </span>
+        <span class="tw-sr-only" th:text="#{launchpad.core.apps.heading}"> Anwendungen </span>
       </a>
-      <div id="launchpad" class="nav-popup-menu xs:-right-4">
+      <div id="launchpad" class="nav-popup-menu xs:-tw-right-4">
         <div class="nav-popup-menu-inner">
           <div class="nav-popup-menu-inner__header">
-            <h2 class="text-base text-gray-700" th:text="#{launchpad.core.apps.heading}">Anwendungen</h2>
+            <h2 class="tw-text-base tw-text-gray-700" th:text="#{launchpad.core.apps.heading}">Anwendungen</h2>
           </div>
           <div class="nav-popup-menu-inner__content">
             <ul
-              class="grid gap-2"
+              class="tw-grid tw-gap-2"
               style="grid-template-columns: repeat(var(--cols, 1), minmax(8rem, 1fr))"
               th:with="size=${#lists.size(launchpad.apps)}"
               th:styleappend="${size > 3 ? '--cols:3' : (size > 1 ? '--cols:2' : '--cols:1')}"
             >
               <li th:each="app : ${launchpad.apps}">
                 <a
-                  class="flex flex-col items-center text-sm px-4 py-2 rounded-lg bg-transparent transition-colors hover:bg-gray-100"
+                  class="tw-flex tw-flex-col tw-items-center tw-text-sm tw-px-4 tw-py-2 tw-rounded-lg tw-bg-transparent tw-transition-colors hover:tw-bg-gray-100"
                   href="#"
                   th:href="${app.url}"
                 >
                   <img src="" th:src="${app.icon}" width="64" height="64" alt="" />
                   <span
-                    class="block text-center w-full whitespace-nowrap overflow-hidden text-ellipsis"
+                    class="tw-block tw-text-center tw-w-full tw-whitespace-nowrap tw-overflow-hidden tw-text-ellipsis"
                     th:text="${app.name}"
                   >
                     Awesome App
