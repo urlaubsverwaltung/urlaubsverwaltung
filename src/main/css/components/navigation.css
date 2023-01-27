@@ -282,20 +282,20 @@
     .nav-popup-menu:focus-within {
       @apply tw-scale-100;
     }
+  }
 
-    .nav-popup-menu-button_icon {
-      @apply tw-text-zinc-900;
-      @apply tw-text-opacity-75;
-      @apply tw-transition-colors;
-      @apply dark:tw-text-zinc-100;
-      @apply dark:hover:tw-text-opacity-100;
-    }
+  .nav-popup-menu-button_icon {
+    @apply tw-text-zinc-900;
+    @apply tw-text-opacity-75;
+    @apply tw-transition-colors;
+    @apply dark:tw-text-zinc-100;
+    @apply dark:hover:tw-text-opacity-100;
+  }
 
-    .nav-popup-menu-button:is(:hover, :focus) .nav-popup-menu-button_icon {
-      @apply tw-text-opacity-100;
-      @apply tw-text-zinc-800;
-      @apply dark:tw-text-zinc-100;
-    }
+  .nav-popup-menu-button:is(:hover, :focus) .nav-popup-menu-button_icon {
+    @apply tw-text-opacity-100;
+    @apply tw-text-zinc-800;
+    @apply dark:tw-text-zinc-100;
   }
 
   .nav-popup-menu_link {
