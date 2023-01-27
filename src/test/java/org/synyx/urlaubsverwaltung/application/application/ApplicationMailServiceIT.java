@@ -684,6 +684,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Mueller:" + EMAIL_LINE_BREAK +
+            "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
@@ -691,7 +694,6 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Kommentar:           OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
 
@@ -730,6 +732,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Mueller:" + EMAIL_LINE_BREAK +
+            "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
@@ -738,7 +743,6 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Kommentar:           OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
 
@@ -774,6 +778,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Mueller:" + EMAIL_LINE_BREAK +
+            "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
@@ -782,7 +789,6 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Kommentar:           OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
 
@@ -972,11 +978,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void ensureCorrectFrom() throws MessagingException {
+    void ensureToSendAppliedNotificationWhereFromIsNotNull() throws MessagingException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 
         final Application application = createApplication(person);
+        final ApplicationComment comment = new ApplicationComment(person, clock);
+        comment.setText("Hätte gerne Urlaub");
 
         sut.sendAppliedNotification(application, null);
 
@@ -1053,6 +1061,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
+            "Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
@@ -1060,7 +1071,6 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Kommentar:           Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
 
@@ -1102,6 +1112,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
+            "Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
@@ -1109,7 +1122,6 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Kommentar:           Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
 
@@ -1185,6 +1197,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
+            "Habe das mal für dich beantragt" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
@@ -1192,7 +1207,6 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Kommentar:           Habe das mal für dich beantragt" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
 
@@ -1238,6 +1252,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
+            "Habe das mal für dich beantragt" + EMAIL_LINE_BREAK +
+            "" + EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
@@ -1245,7 +1262,6 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Kommentar:           Habe das mal für dich beantragt" + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
     }
 
@@ -1699,7 +1715,6 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Kommentar:           " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
@@ -1755,7 +1770,6 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Kommentar:           " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +

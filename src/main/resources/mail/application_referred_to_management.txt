@@ -4,9 +4,7 @@ Hallo [[${recipient.niceName}]],
 Bitte kümmere dich um die Bearbeitung dieses Antrags oder halte ggf. nochmals Rücksprache mit [[${sender.niceName}]].
 
     [[${baseLinkURL}]]web/application/[[${application.id}]]
-[# th:if="${comment != null && not #strings.isEmpty(comment.text)}"]Kommentar von [[${comment.person.niceName}]]:
-[[${comment.text}]]
-[/]
+
 Informationen zur Abwesenheit:
 
     Mitarbeiter:         [[${application.person.niceName}]]

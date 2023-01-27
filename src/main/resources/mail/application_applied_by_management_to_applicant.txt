@@ -3,7 +3,10 @@ Hallo [[${application.person.niceName}]],
 [[${application.applier.niceName}]] hat eine Abwesenheit für dich gestellt.
 
     [[${baseLinkURL}]]web/application/[[${application.id}]]
-
+[# th:if="${not #strings.isEmpty(comment.text)}"]
+Kommentar von [[|${comment.person.niceName}:|]]
+[[${comment.text}]]
+[/]
 Informationen zur Abwesenheit:
 
     Zeitraum:            [[${#temporals.format(application.startDate, 'dd.MM.yyyy')}]] bis [[${#temporals.format(application.endDate, 'dd.MM.yyyy')}]], [[${dayLength}]]
@@ -11,5 +14,4 @@ Informationen zur Abwesenheit:
     Grund:               [[${application.reason}]]
     Vertretung:          [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:text="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
     Anschrift/Telefon:   [[${#strings.trim(application.address)}]]
-    Kommentar:           [[${#strings.trim(comment.text)}]]
     Erstellungsdatum:    [[${#temporals.format(application.applicationDate, 'dd.MM.yyyy')}]]

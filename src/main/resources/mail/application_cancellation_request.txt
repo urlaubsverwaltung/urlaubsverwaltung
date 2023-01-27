@@ -1,6 +1,7 @@
 Hallo [[${recipient.niceName}]],
 
-[[${application.person.niceName}]] möchte die bereits genehmigte Abwesenheit vom [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]] stornieren.[# th:if="${not #strings.isEmpty(comment.text)}"]
+[[${application.person.niceName}]] möchte die bereits genehmigte Abwesenheit vom [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] bis [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]] stornieren.
+[# th:if="${not #strings.isEmpty(comment.text)}"]
 Kommentar von [[|${comment.person.niceName}:|]]
 [[${comment.text}]]
 [/]
