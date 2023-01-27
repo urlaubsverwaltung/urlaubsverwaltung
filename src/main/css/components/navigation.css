@@ -176,6 +176,8 @@
     @apply tw-bg-white;
     @apply tw-backdrop-blur;
     @apply supports-backdrop-blur:tw-bg-white/[0.95];
+    @apply dark:tw-bg-zinc-900;
+    @apply dark:supports-backdrop-blur:tw-bg-zinc-900/[0.95];
   }
 
   .nav-popup-menu.visible {
@@ -204,6 +206,9 @@
     @apply tw-to-blue-100;
     @apply tw-px-4;
     @apply tw-py-2;
+    @apply dark:tw-from-sky-800;
+    @apply dark:tw-via-slate-800;
+    @apply dark:tw-to-sky-900;
   }
 
   .nav-popup-menu-inner__content {
@@ -230,6 +235,7 @@
       position: absolute;
       top: -17px;
       @apply tw-right-6;
+      @apply dark:tw-border-b-neutral-600;
     }
 
     .nav-popup-menu {
@@ -256,10 +262,6 @@
       @apply tw-w-auto;
       @apply tw-h-auto;
       @apply tw-rounded-2xl;
-      @apply tw-border-gray-200;
-      @apply tw-bg-white;
-      @apply tw-backdrop-blur;
-      @apply supports-backdrop-blur:tw-bg-white/[0.85];
     }
 
     .nav-popup-menu-inner ul li:first-of-type .nav-popup-menu_link {
@@ -273,6 +275,7 @@
     .nav-popup-menu-inner ul li[role="separator"] {
       @apply tw-border-t;
       @apply tw-border-gray-200;
+      @apply dark:tw-border-zinc-700;
     }
 
     .nav-popup-menu.visible,
@@ -284,11 +287,14 @@
       @apply tw-text-zinc-900;
       @apply tw-text-opacity-75;
       @apply tw-transition-colors;
+      @apply dark:tw-text-zinc-100;
+      @apply dark:hover:tw-text-opacity-100;
     }
 
     .nav-popup-menu-button:is(:hover, :focus) .nav-popup-menu-button_icon {
       @apply tw-text-opacity-100;
       @apply tw-text-zinc-800;
+      @apply dark:tw-text-zinc-100;
     }
   }
 
@@ -308,5 +314,10 @@
     @apply focus:tw-text-black;
     @apply hover:tw-bg-gray-50;
     @apply focus:tw-bg-gray-50;
+    @apply dark:tw-text-zinc-50;
+    @apply dark:hover:tw-text-zinc-200;
+    @apply dark:focus:tw-text-zinc-200;
+    @apply dark:hover:tw-bg-slate-800;
+    @apply dark:focus:tw-bg-slate-800;
   }
 }

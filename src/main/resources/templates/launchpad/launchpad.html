@@ -6,7 +6,13 @@
   </head>
   <body>
     <div th:fragment="navigation-item" th:if="${launchpad}" class="tw-relative tw-flex tw-items-center">
-      <a href="#launchpad" aria-expanded="false" aria-haspopup="true" is="uv-nav-popup-menu-button" class="tw-flex">
+      <a
+        href="#launchpad"
+        aria-expanded="false"
+        aria-haspopup="true"
+        is="uv-nav-popup-menu-button"
+        class="tw-flex tw-text-gray-800 dark:tw-text-zinc-100 hover:dark:tw-text-zinc-400"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -19,7 +25,7 @@
           stroke-linejoin="round"
           role="presentation"
           aria-hidden="true"
-          class="tw-w-9 tw-h-9 lg:tw-w-8 lg:tw-h-8 tw-text-gray-800"
+          class="tw-w-9 tw-h-9 lg:tw-w-8 lg:tw-h-8"
         >
           <circle cx="12" cy="6" r="1"></circle>
           <circle cx="19" cy="6" r="1"></circle>
@@ -36,23 +42,23 @@
       <div id="launchpad" class="nav-popup-menu xs:-tw-right-4">
         <div class="nav-popup-menu-inner">
           <div class="nav-popup-menu-inner__header">
-            <h2 class="tw-text-base tw-text-gray-700 tw-m-0" th:text="#{launchpad.core.apps.heading}">Anwendungen</h2>
+            <h2
+              class="tw-text-base tw-text-gray-700 dark:tw-text-zinc-200 tw-m-0"
+              th:text="#{launchpad.core.apps.heading}"
+            >
+              Anwendungen
+            </h2>
           </div>
           <div class="nav-popup-menu-inner__content">
             <ul
               class="tw-grid tw-gap-2 tw-list-none tw-p-0 tw-m-0"
-              style="
-                grid-template-columns: repeat(
-                  var(--cols, 1),
-                  minmax(8rem, 1fr)
-                );
-              "
+              style="grid-template-columns: repeat(var(--cols, 1), minmax(8rem, 1fr))"
               th:with="size=${#lists.size(launchpad.apps)}"
               th:styleappend="${size > 3 ? '--cols:3' : (size > 1 ? '--cols:2' : '--cols:1')}"
             >
               <li th:each="app : ${launchpad.apps}">
                 <a
-                  class="tw-flex tw-flex-col tw-items-center tw-no-underline tw-text-black tw-text-sm tw-px-4 tw-py-2 tw-rounded-lg tw-bg-transparent tw-transition-colors hover:tw-bg-gray-100"
+                  class="tw-flex tw-flex-col tw-items-center tw-no-underline tw-text-black dark:tw-text-zinc-200 tw-text-sm tw-px-4 tw-py-2 tw-rounded-lg tw-bg-transparent tw-transition-colors hover:tw-bg-gray-100 dark:hover:tw-bg-slate-800"
                   href="#"
                   th:href="${app.url}"
                 >
