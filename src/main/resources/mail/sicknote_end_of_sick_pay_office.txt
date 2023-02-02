@@ -6,9 +6,9 @@
 
 [(#{sick_note.information.title})]
 
-    [(#{absence.information.person})]                  [(${sickNote.person.niceName})]
-    [(#{absence.information.period})]                     [(${#temporals.format(sickNote.startDate, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(sickNote.endDate, "dd.MM.yyyy")})]
-    [(#{sick_note.information.sick_pay})] [(${#temporals.format(sickNotePayFrom, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(sickNotePayTo, "dd.MM.yyyy")})]
+    [(${rightPadder.rightPad('__#{absence.information.person}__',__#{sick_note.information.max_length}__)})] [(${sickNote.person.niceName})]
+    [(${rightPadder.rightPad('__#{absence.information.period}__',__#{sick_note.information.max_length}__)})] [(${#temporals.format(sickNote.startDate, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(sickNote.endDate, "dd.MM.yyyy")})]
+    [(${rightPadder.rightPad('__#{sick_note.information.sick_pay}__',__#{sick_note.information.max_length}__)})] [(${#temporals.format(sickNotePayFrom, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(sickNotePayTo, "dd.MM.yyyy")})]
 
 
 [(#{sick_note.sick_pay.note.title})]

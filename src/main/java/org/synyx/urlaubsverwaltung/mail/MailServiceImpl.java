@@ -50,6 +50,7 @@ class MailServiceImpl implements MailService {
         final Context context = new Context(LOCALE);
         context.setVariables(mail.getTemplateModel());
         context.setVariable("baseLinkURL", getApplicationUrl());
+        context.setVariable("rightPadder", RightPadder.getInstance());
 
         final String subject = getTranslation(mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
         final String sender = generateMailAddressAndDisplayName(mailProperties.getSender(), mailProperties.getSenderDisplayName());
