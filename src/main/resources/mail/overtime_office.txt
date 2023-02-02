@@ -1,14 +1,14 @@
-[[#{greeting(${recipient.niceName})}]],
+[(#{greeting(${recipient.niceName})})],
 
-[[#{overtime.added}]]
+[(#{overtime.added})]
 
-    [[${baseLinkURL}]]web/overtime/[[${overtime.id}]]
+    [(${baseLinkURL})]web/overtime/[(${overtime.id})]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
-[[#{comment.by(${comment.person.niceName})}]]
-[[${comment.text}]]
+[(#{comment.by(${comment.person.niceName})})]
+[(${comment.text})]
 [/]
-[[#{overtime.information.title}]]
+[(#{overtime.information.title})]
 
-    [[#{absence.information.person}]] [[${overtime.person.niceName}]]
-    [[#{absence.information.period}]]    [[${#temporals.format(overtime.startDate, "dd.MM.yyyy")}]] - [[${#temporals.format(overtime.endDate, "dd.MM.yyyy")}]]
-    [[#{overtime.information.duration}]]       [[${overtimeDurationHours}]] [[${overtimeDurationMinutes}]]
+    [(#{absence.information.person})] [(${overtime.person.niceName})]
+    [(#{absence.information.period})]    [(${#temporals.format(overtime.startDate, "dd.MM.yyyy")})] - [(${#temporals.format(overtime.endDate, "dd.MM.yyyy")})]
+    [(#{overtime.information.duration})]       [(${overtimeDurationHours})] [(${overtimeDurationMinutes})]

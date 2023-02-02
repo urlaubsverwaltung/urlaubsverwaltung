@@ -1,9 +1,9 @@
-[[#{greeting(${application.person.niceName})}]],
+[(#{greeting(${application.person.niceName})})],
 
-[[#{application.cancelled.by_management_to_applicant(${application.canceller.niceName})}]]
+[(#{application.cancelled.by_management_to_applicant(${application.canceller.niceName})})]
 
-    [[${baseLinkURL}]]web/application/[[${application.id}]]
+    [(${baseLinkURL})]web/application/[(${application.id})]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
-[[#{comment.by(${comment.person.niceName})}]]
-[[${comment.text}]]
+[(#{comment.by(${comment.person.niceName})})]
+[(${comment.text})]
 [/]

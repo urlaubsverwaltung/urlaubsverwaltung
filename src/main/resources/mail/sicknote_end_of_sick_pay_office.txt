@@ -1,17 +1,17 @@
-[[#{greeting(${recipient.niceName})}]],
+[(#{greeting(${recipient.niceName})})],
 
-[[#{sick_note.sick_pay.to_management(${sickNote.person.niceName},${maximumSickPayDays},${sickPayDaysEndedDaysAgo},${#temporals.format(endOfSickPayDays, "dd.MM.yyyy")})}]]
+[(#{sick_note.sick_pay.to_management(${sickNote.person.niceName},${maximumSickPayDays},${sickPayDaysEndedDaysAgo},${#temporals.format(endOfSickPayDays, "dd.MM.yyyy")})})]
 
-    [[${baseLinkURL}]]web/sicknote/[[${sickNote.id}]]
+    [(${baseLinkURL})]web/sicknote/[(${sickNote.id})]
 
-[[#{sick_note.information.title}]]
+[(#{sick_note.information.title})]
 
-    [[#{absence.information.person}]]                  [[${sickNote.person.niceName}]]
-    [[#{absence.information.period}]]                     [[${#temporals.format(sickNote.startDate, "dd.MM.yyyy")}]] [[#{until}]] [[${#temporals.format(sickNote.endDate, "dd.MM.yyyy")}]]
-    [[#{sick_note.information.sick_pay}]] [[${#temporals.format(sickNotePayFrom, "dd.MM.yyyy")}]] [[#{until}]] [[${#temporals.format(sickNotePayTo, "dd.MM.yyyy")}]]
+    [(#{absence.information.person})]                  [(${sickNote.person.niceName})]
+    [(#{absence.information.period})]                     [(${#temporals.format(sickNote.startDate, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(sickNote.endDate, "dd.MM.yyyy")})]
+    [(#{sick_note.information.sick_pay})] [(${#temporals.format(sickNotePayFrom, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(sickNotePayTo, "dd.MM.yyyy")})]
 
 
-[[#{sick_note.sick_pay.note.title}]]
-[[#{sick_note.sick_pay.note.first(${maximumSickPayDays})}]]
-[[#{sick_note.sick_pay.note.second}]]
-[[#{sick_note.sick_pay.note.third}]]
+[(#{sick_note.sick_pay.note.title})]
+[(#{sick_note.sick_pay.note.first(${maximumSickPayDays})})]
+[(#{sick_note.sick_pay.note.second})]
+[(#{sick_note.sick_pay.note.third})]

@@ -1,8 +1,8 @@
-[[#{greeting(${recipient.niceName})}]],
+[(#{greeting(${recipient.niceName})})],
 
-[[#{person.new}]]
+[(#{person.new})]
 
-    [[${personNiceName}]]
+    [(${personNiceName})]
 
-[[#{person.overview}]]
-[[${baseLinkURL}]]web/person/[[${personId}]]
+[(#{person.overview})]
+[(${baseLinkURL})]web/person/[(${personId})]

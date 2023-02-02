@@ -1,11 +1,11 @@
-[[#{greeting(${recipient.niceName})}]],
+[(#{greeting(${recipient.niceName})})],
 
-[[#{application.cancellation_request.to_management(${application.person.niceName},${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")})}]]
+[(#{application.cancellation_request.to_management(${application.person.niceName},${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")})})]
 
-    [[${baseLinkURL}]]web/application/[[${application.id}]]
+    [(${baseLinkURL})]web/application/[(${application.id})]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
-[[#{comment.by(${comment.person.niceName})}]]
-[[${comment.text}]]
+[(#{comment.by(${comment.person.niceName})})]
+[(${comment.text})]
 [/]
 
-[[#{application.cancellation_request.to_management.overview}]] [[${baseLinkURL}]]web/application#cancellation-requests
+[(#{application.cancellation_request.to_management.overview})] [(${baseLinkURL})]web/application#cancellation-requests

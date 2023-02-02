@@ -1,9 +1,9 @@
-[[#{greeting(${application.person.niceName})}]],
+[(#{greeting(${application.person.niceName})})],
 
-[[#{application.revoked.by_applicant_to_applicant(${#temporals.format(application.applicationDate, "dd.MM.yyyy")})}]]
+[(#{application.revoked.by_applicant_to_applicant(${#temporals.format(application.applicationDate, "dd.MM.yyyy")})})]
 
-    [[${baseLinkURL}]]web/application/[[${application.id}]]
+    [(${baseLinkURL})]web/application/[(${application.id})]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
-[[#{application.revoked.by_applicant_to_applicant.reason}]]
-[[${comment.text}]]
+[(#{application.revoked.by_applicant_to_applicant.reason})]
+[(${comment.text})]
 [/]

@@ -1,17 +1,17 @@
-[[#{greeting(${recipient.niceName})}]],
+[(#{greeting(${recipient.niceName})})],
 
-[[#{application.cancelled_directly.confirmation.by_management_to_applicant(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")},${application.canceller.niceName})}]]
+[(#{application.cancelled_directly.confirmation.by_management_to_applicant(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")},${application.canceller.niceName})})]
 
-    [[${baseLinkURL}]]web/application/[[${application.id}]]
+    [(${baseLinkURL})]web/application/[(${application.id})]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
-[[#{comment.by(${comment.person.niceName})}]]
-[[${comment.text}]]
+[(#{comment.by(${comment.person.niceName})})]
+[(${comment.text})]
 [/]
-[[#{absence.information.title}]]
+[(#{absence.information.title})]
 
-    [[#{absence.information.period}]]            [[${#temporals.format(application.startDate, "dd.MM.yyyy")}]] [[#{until}]] [[${#temporals.format(application.endDate, "dd.MM.yyyy")}]], [[#{__${dayLength}__}]]
-    [[#{absence.information.type}]] [[#{__${vacationTypeMessageKey}__}]]
-    [[#{absence.information.reason}]]               [[${application.reason}]]
-    [[#{absence.information.holiday_replacement}]]          [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:text="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
-    [[#{absence.information.address}]]   [[${#strings.trim(application.address)}]]
-    [[#{absence.information.date}]]    [[${#temporals.format(application.applicationDate, "dd.MM.yyyy")}]]
+    [(#{absence.information.period})]            [(${#temporals.format(application.startDate, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(application.endDate, "dd.MM.yyyy")})], [(#{__${dayLength}__})]
+    [(#{absence.information.type})] [(#{__${vacationTypeMessageKey}__})]
+    [(#{absence.information.reason})]               [(${application.reason})]
+    [(#{absence.information.holiday_replacement})]          [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:utext="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
+    [(#{absence.information.address})]   [(${#strings.trim(application.address)})]
+    [(#{absence.information.date})]    [(${#temporals.format(application.applicationDate, "dd.MM.yyyy")})]

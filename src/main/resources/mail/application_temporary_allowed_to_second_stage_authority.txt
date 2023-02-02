@@ -1,24 +1,24 @@
-[[#{greeting(${recipient.niceName})}]],
+[(#{greeting(${recipient.niceName})})],
 
-[[#{application.temporary_allowed.to_second_stage_authority}]]
+[(#{application.temporary_allowed.to_second_stage_authority})]
 
-    [[${baseLinkURL}]]web/application/[[${application.id}]]
+    [(${baseLinkURL})]web/application/[(${application.id})]
 
-[[#{application.temporary_allowed.to_second_stage_authority.temporary_allowed}]]
+[(#{application.temporary_allowed.to_second_stage_authority.temporary_allowed})]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
-[[#{comment.by(${comment.person.niceName})}]]
-[[${comment.text}]]
+[(#{comment.by(${comment.person.niceName})})]
+[(${comment.text})]
 [/]
-[[#{absence.information.title}]]
+[(#{absence.information.title})]
 
-    [[#{absence.information.person}]]         [[${application.person.niceName}]]
-    [[#{absence.information.period}]]            [[${#temporals.format(application.startDate, 'dd.MM.yyyy')}]] [[#{until}]] [[${#temporals.format(application.endDate, 'dd.MM.yyyy')}]], [[#{__${dayLength}__}]]
-    [[#{absence.information.type}]] [[#{__${vacationTypeMessageKey}__}]]
-    [[#{absence.information.reason}]]               [[${application.reason}]]
-    [[#{absence.information.holiday_replacement}]]          [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:text="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
-    [[#{absence.information.address}]]   [[${#strings.trim(application.address)}]]
-    [[#{absence.information.date}]]    [[${#temporals.format(application.applicationDate, 'dd.MM.yyyy')}]]
+    [(#{absence.information.person})]         [(${application.person.niceName})]
+    [(#{absence.information.period})]            [(${#temporals.format(application.startDate, 'dd.MM.yyyy')})] [(#{until})] [(${#temporals.format(application.endDate, 'dd.MM.yyyy')})], [(#{__${dayLength}__})]
+    [(#{absence.information.type})] [(#{__${vacationTypeMessageKey}__})]
+    [(#{absence.information.reason})]               [(${application.reason})]
+    [(#{absence.information.holiday_replacement})]          [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:utext="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
+    [(#{absence.information.address})]   [(${#strings.trim(application.address)})]
+    [(#{absence.information.date})]    [(${#temporals.format(application.applicationDate, 'dd.MM.yyyy')})]
 
-[[#{application.temporary_allowed.to_second_stage_authority.overlapping.title}]]
+[(#{application.temporary_allowed.to_second_stage_authority.overlapping.title})]
 
-    [# th:each="vacation : ${departmentVacations}"][[${vacation.person.niceName}]]: [[#{application.temporary_allowed.to_second_stage_authority.overlapping.from_to(${#temporals.format(vacation.startDate, "dd.MM.yyyy")},${#temporals.format(vacation.endDate, "dd.MM.yyyy")})}]][/][# th:if="${#lists.isEmpty(departmentVacations)}"][[#{application.temporary_allowed.to_second_stage_authority.overlapping.none}]][/]
+    [# th:each="vacation : ${departmentVacations}"][(${vacation.person.niceName})]: [(#{application.temporary_allowed.to_second_stage_authority.overlapping.from_to(${#temporals.format(vacation.startDate, "dd.MM.yyyy")},${#temporals.format(vacation.endDate, "dd.MM.yyyy")})})][/][# th:if="${#lists.isEmpty(departmentVacations)}"][(#{application.temporary_allowed.to_second_stage_authority.overlapping.none})][/]

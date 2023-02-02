@@ -1,5 +1,5 @@
-[[#{greeting(${recipient.niceName})}]],
+[(#{greeting(${recipient.niceName})})],
 
-[[#{application.edited.by_applicant_to_applicant(${application.person.niceName})}]]
+[(#{application.edited.by_applicant_to_applicant(${application.person.niceName})})]
 
-    [[${baseLinkURL}]]web/application/[[${application.id}]]
+    [(${baseLinkURL})]web/application/[(${application.id})]

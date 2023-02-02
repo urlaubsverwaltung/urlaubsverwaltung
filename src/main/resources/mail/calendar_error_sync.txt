@@ -1,8 +1,8 @@
-[[#{calendar.error.sync.first}]]
+[(#{calendar.error.sync.first})]
 
-[[${absence.person.niceName}]]
-[[${#temporals.format(absence.startDate, "dd.MM.yyyy")}]] - [[${#temporals.format(absence.endDate, "dd.MM.yyyy")}]]
+[(${absence.person.niceName})]
+[(${#temporals.format(absence.startDate, "dd.MM.yyyy")})] - [(${#temporals.format(absence.endDate, "dd.MM.yyyy")})]
 
-[[#{calendar.error.sync.second(${calendar})}]]
+[(#{calendar.error.sync.second(${calendar})})]
 
-[[${exception}]]
+[(${exception})]

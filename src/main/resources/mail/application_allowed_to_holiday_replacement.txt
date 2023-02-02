@@ -1,9 +1,9 @@
-[[#{greeting(${holidayReplacement.niceName})}]],
+[(#{greeting(${holidayReplacement.niceName})})],
 
-[[#{application.allowed.to_holiday_replacement.first(${application.person.niceName})}]]
-[[#{application.allowed.to_holiday_replacement.second(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")},#{__${dayLength}__})}]]
+[(#{application.allowed.to_holiday_replacement.first(${application.person.niceName})})]
+[(#{application.allowed.to_holiday_replacement.second(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")},#{__${dayLength}__})})]
 
-[# th:if="${not #strings.isEmpty(holidayReplacementNote)}"][[#{application.holiday_replacement.note(${application.person.niceName})}]]
-[[${holidayReplacementNote}]][/]
+[# th:if="${not #strings.isEmpty(holidayReplacementNote)}"][(#{application.holiday_replacement.note(${application.person.niceName})})]
+[(${holidayReplacementNote})][/]
 
-[[#{application.allowed.to_holiday_replacement.third}]] [[${baseLinkURL}]]web/application/replacement
+[(#{application.allowed.to_holiday_replacement.third})] [(${baseLinkURL})]web/application/replacement

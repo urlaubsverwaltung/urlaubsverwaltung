@@ -1,10 +1,10 @@
-[[#{greeting(${recipient.niceName})}]],
+[(#{greeting(${recipient.niceName})})],
 
 
-[# th:if="${application.person.niceName == comment.person.niceName}"][[#{application.revoked.to_management(${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${application.person.niceName})}]][/][# th:if="${application.person.niceName != comment.person.niceName}"][[#{application.revoked.to_management.with_name(${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${application.person.niceName},${comment.person.niceName})}]][/]
+[# th:if="${application.person.niceName == comment.person.niceName}"][(#{application.revoked.to_management(${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${application.person.niceName})})][/][# th:if="${application.person.niceName != comment.person.niceName}"][(#{application.revoked.to_management.with_name(${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${application.person.niceName},${comment.person.niceName})})][/]
 
-    [[${baseLinkURL}]]web/application/[[${application.id}]]
+    [(${baseLinkURL})]web/application/[(${application.id})]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
-[[#{application.revoked.to_management.reason}]]
-[[${comment.text}]]
+[(#{application.revoked.to_management.reason})]
+[(${comment.text})]
 [/]

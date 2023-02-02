@@ -1,5 +1,5 @@
-[[#{greeting(${recipient.niceName})}]],
+[(#{greeting(${recipient.niceName})})],
 
-[[#{application.remind.to_management(${application.person.niceName},${#temporals.format(application.applicationDate, "dd.MM.yyyy")})}]]
+[(#{application.remind.to_management(${application.person.niceName},${#temporals.format(application.applicationDate, "dd.MM.yyyy")})})]
 
-    [[${baseLinkURL}]]web/application/[[${application.id}]]
+    [(${baseLinkURL})]web/application/[(${application.id})]

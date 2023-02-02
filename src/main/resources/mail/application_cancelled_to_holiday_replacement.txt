@@ -1,7 +1,7 @@
-[[#{greeting(${holidayReplacement.niceName})}]],
+[(#{greeting(${holidayReplacement.niceName})})],
 
-[[#{application.cancelled.to_holiday_replacement.first(${application.person.niceName})}]]
-[[#{application.cancelled.to_holiday_replacement.second(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")},#{__${dayLength}__})}]]
-[[#{application.cancelled.to_holiday_replacement.third}]]
+[(#{application.cancelled.to_holiday_replacement.first(${application.person.niceName})})]
+[(#{application.cancelled.to_holiday_replacement.second(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")},#{__${dayLength}__})})]
+[(#{application.cancelled.to_holiday_replacement.third})]
 
-[[#{application.cancelled.to_holiday_replacement.fourth}]] [[${baseLinkURL}]]web/application/replacement
+[(#{application.cancelled.to_holiday_replacement.fourth})] [(${baseLinkURL})]web/application/replacement
