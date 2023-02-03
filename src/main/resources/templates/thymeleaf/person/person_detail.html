@@ -48,15 +48,15 @@
                 </span>
               </th:block>
               <th:block th:ref="person-details-basedata-box-body">
-                <span class="tw-flex tw-items-center">
+                <span class="tw-flex tw-items-center tw-mb-1 tw-mt-2">
                   <a
                     th:text="${person.niceName}"
                     th:href="@{/web/person/__${person.id}__/overview}"
-                    class="tw-text-lg tw-mb-1 tw-mt-2 text-link print:no-link"
+                    class="tw-text-lg text-link print:no-link"
                   ></a>
                   <th:block th:if="${person.isInactive}">
                     <span
-                      class="tw-mt-2 tw-text-zinc-700 dark:tw-text-zinc-50 dark:tw-text-opacity-75"
+                      class="tw-flex tw-items-center tw-text-zinc-700 dark:tw-text-zinc-50 dark:tw-text-opacity-75"
                       th:data-title="#{person.data.inactive}"
                     >
                       &nbsp;<svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')" />
