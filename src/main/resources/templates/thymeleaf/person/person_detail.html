@@ -55,7 +55,10 @@
                     class="tw-text-lg tw-mb-1 tw-mt-2 text-link print:no-link"
                   ></a>
                   <th:block th:if="${person.isInactive}">
-                    <span class="tw-mt-2" th:data-title="#{person.data.inactive}">
+                    <span
+                      class="tw-mt-2 tw-text-zinc-700 dark:tw-text-zinc-50 dark:tw-text-opacity-75"
+                      th:data-title="#{person.data.inactive}"
+                    >
                       &nbsp;<svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')" />
                       <span class="tw-sr-only">(<th:block th:text="#{person.data.inactive}" />)</span>
                     </span>
