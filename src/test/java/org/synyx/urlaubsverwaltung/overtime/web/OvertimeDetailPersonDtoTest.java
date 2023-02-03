@@ -8,10 +8,10 @@ class OvertimeDetailPersonDtoTest {
 
     @Test
     void equals() {
-        final OvertimeDetailPersonDto personDto = new OvertimeDetailPersonDto(1, "mail@example.org", "niceName", "gravatarUrl");
-        final OvertimeDetailPersonDto personDtoOne = new OvertimeDetailPersonDto(1, "mail@example.org", "niceName", "gravatarUrl");
+        final OvertimeDetailPersonDto personDto = new OvertimeDetailPersonDto(1, "mail@example.org", "niceName", "gravatarUrl", false);
+        final OvertimeDetailPersonDto personDtoOne = new OvertimeDetailPersonDto(1, "mail@example.org", "niceName", "gravatarUrl", false);
 
-        final OvertimeDetailPersonDto personDtoTwo = new OvertimeDetailPersonDto(1, "differentMail@example.org", "niceName", "gravatarUrl");
+        final OvertimeDetailPersonDto personDtoTwo = new OvertimeDetailPersonDto(1, "differentMail@example.org", "niceName", "gravatarUrl", false);
 
         assertThat(personDto)
             .isEqualTo(personDto)
@@ -23,7 +23,7 @@ class OvertimeDetailPersonDtoTest {
 
     @Test
     void hashCodeTest() {
-        final OvertimeDetailPersonDto personDtoOne = new OvertimeDetailPersonDto(1, "mail@example.org", "niceName", "gravatarUrl");
+        final OvertimeDetailPersonDto personDtoOne = new OvertimeDetailPersonDto(1, "mail@example.org", "niceName", "gravatarUrl", false);
         assertThat(personDtoOne.hashCode()).isEqualTo(-754489482);
     }
 }

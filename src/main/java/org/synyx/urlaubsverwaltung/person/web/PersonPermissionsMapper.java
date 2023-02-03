@@ -21,6 +21,7 @@ final class PersonPermissionsMapper {
         personPermissionsDto.setNiceName(person.getNiceName());
         personPermissionsDto.setGravatarURL(person.getGravatarURL());
         personPermissionsDto.setEmail(person.getEmail());
+        personPermissionsDto.setIsInactive(person.isInactive());
         personPermissionsDto.setPermissions(mapRoleToPermissionsDto(List.copyOf(person.getPermissions())));
         personPermissionsDto.setNotifications(List.copyOf(person.getNotifications()));
         return personPermissionsDto;

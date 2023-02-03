@@ -12,6 +12,7 @@ public class PersonPermissionsDto {
     private String niceName;
     private String gravatarURL;
     private String email;
+    private Boolean isInactive;
 
     private List<PersonPermissionsRoleDto> permissions = new ArrayList<>();
     private List<MailNotification> notifications = new ArrayList<>();
@@ -47,6 +48,15 @@ public class PersonPermissionsDto {
 
     public PersonPermissionsDto setEmail(String email) {
         this.email = email;
+        return this;
+    }
+
+    public Boolean getIsInactive() {
+        return isInactive;
+    }
+
+    public PersonPermissionsDto setIsInactive(Boolean isInactive) {
+        this.isInactive = isInactive;
         return this;
     }
 

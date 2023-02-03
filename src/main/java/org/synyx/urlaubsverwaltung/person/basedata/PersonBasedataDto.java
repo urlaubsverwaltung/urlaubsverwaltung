@@ -17,6 +17,7 @@ public class PersonBasedataDto {
     private String niceName;
     private String gravatarURL;
     private String email;
+    private Boolean isInactive;
 
     public int getPersonId() {
         return personId;
@@ -50,6 +51,15 @@ public class PersonBasedataDto {
 
     public PersonBasedataDto setEmail(@Nullable String email) {
         this.email = email;
+        return this;
+    }
+
+    public Boolean getIsInactive() {
+        return isInactive;
+    }
+
+    public PersonBasedataDto setIsInactive(Boolean isInactive) {
+        this.isInactive = isInactive;
         return this;
     }
 

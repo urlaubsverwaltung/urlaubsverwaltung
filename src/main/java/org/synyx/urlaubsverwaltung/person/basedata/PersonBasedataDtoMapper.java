@@ -16,6 +16,7 @@ final class PersonBasedataDtoMapper {
         personBasedataDto.setNiceName(person.getNiceName());
         personBasedataDto.setGravatarURL(person.getGravatarURL());
         personBasedataDto.setEmail(person.getEmail());
+        personBasedataDto.setIsInactive(person.isInactive());
         return personBasedataDto;
     }
 
