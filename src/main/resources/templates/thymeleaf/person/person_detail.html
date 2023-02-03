@@ -52,7 +52,7 @@
                   <a
                     th:text="${person.niceName}"
                     th:href="@{/web/person/__${person.id}__/overview}"
-                    class="tw-text-lg tw-mb-1 tw-mt-2 icon-link print:no-link"
+                    class="tw-text-lg tw-mb-1 tw-mt-2 text-link print:no-link"
                   ></a>
                   <th:block th:if="${person.isInactive}">
                     <span class="tw-mt-2" th:data-title="#{person.data.inactive}">
