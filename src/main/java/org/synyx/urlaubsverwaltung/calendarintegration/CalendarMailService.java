@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.calendarintegration;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.mail.Mail;
@@ -28,6 +29,7 @@ public class CalendarMailService {
      * @param absence      represents the absence of a person
      * @param exception    describes the error
      */
+    @Async
     public void sendCalendarSyncErrorNotification(String calendarName, Absence absence, String exception) {
 
         Map<String, Object> model = new HashMap<>();
@@ -51,6 +53,7 @@ public class CalendarMailService {
      * @param eventId      unique calendar event id
      * @param exception    describes the error
      */
+    @Async
     public void sendCalendarUpdateErrorNotification(String calendarName, Absence absence, String eventId,
                                                     String exception) {
 
@@ -75,6 +78,7 @@ public class CalendarMailService {
      * @param eventId      id of event which should be deleted
      * @param exception    describes the error
      */
+    @Async
     public void sendCalendarDeleteErrorNotification(String calendarName, String eventId, String exception) {
 
         Map<String, Object> model = new HashMap<>();

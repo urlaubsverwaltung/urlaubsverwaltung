@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
@@ -63,6 +64,7 @@ class ApplicationMailService {
         this.clock = clock;
     }
 
+    @Async
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, application.getPerson());
@@ -100,6 +102,7 @@ class ApplicationMailService {
      * @param application the application which got rejected
      * @param comment     reason why application was rejected
      */
+    @Async
     void sendRejectedNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
@@ -136,6 +139,7 @@ class ApplicationMailService {
      * @param recipient   to request for a second opinion
      * @param sender      person that asks for a second opinion
      */
+    @Async
     void sendReferredToManagementNotification(Application application, Person recipient, Person sender) {
 
         Map<String, Object> model = new HashMap<>();
@@ -161,6 +165,7 @@ class ApplicationMailService {
      * @param application that has been edited
      * @param recipient   that edited the application for leave
      */
+    @Async
     void sendEditedNotification(Application application, Person recipient) {
 
         Map<String, Object> model = new HashMap<>();
@@ -181,6 +186,7 @@ class ApplicationMailService {
      *
      * @param application cancellation requested application
      */
+    @Async
     void sendDeclinedCancellationRequestApplicationNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
@@ -213,6 +219,7 @@ class ApplicationMailService {
      * @param application    cancelled application
      * @param createdComment additional comment for the confirming application
      */
+    @Async
     void sendCancellationRequest(Application application, ApplicationComment createdComment) {
 
         Map<String, Object> model = new HashMap<>();
@@ -242,6 +249,7 @@ class ApplicationMailService {
      *
      * @param application the application that has been converted from sick note to vacation
      */
+    @Async
     void sendSickNoteConvertedToVacationNotification(Application application) {
 
         Map<String, Object> model = new HashMap<>();
@@ -263,6 +271,7 @@ class ApplicationMailService {
      * @param application confirmed application
      * @param comment     additional comment for the confirming application
      */
+    @Async
     void sendConfirmationAllowedDirectly(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
@@ -287,6 +296,7 @@ class ApplicationMailService {
      * @param application confirmed application on behalf
      * @param comment     additional comment for the application
      */
+    @Async
     void sendConfirmationAllowedDirectlyByManagement(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
@@ -312,6 +322,7 @@ class ApplicationMailService {
      * @param application
      * @param comment     additional comment for the application
      */
+    @Async
     void sendDirectlyAllowedNotificationToManagement(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
@@ -338,6 +349,7 @@ class ApplicationMailService {
      *
      * @param application to inform the replacement
      */
+    @Async
     void notifyHolidayReplacementAboutDirectlyAllowedApplication(HolidayReplacementEntity holidayReplacement, Application application) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
@@ -365,6 +377,7 @@ class ApplicationMailService {
      *
      * @param application to inform the replacement beforehand
      */
+    @Async
     void notifyHolidayReplacementForApply(HolidayReplacementEntity holidayReplacement, Application application) {
 
         Map<String, Object> model = new HashMap<>();
@@ -389,6 +402,7 @@ class ApplicationMailService {
      *
      * @param application to inform the replacement
      */
+    @Async
     void notifyHolidayReplacementAllow(HolidayReplacementEntity holidayReplacement, Application application) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
@@ -416,6 +430,7 @@ class ApplicationMailService {
      *
      * @param application to inform the replacement was cancelled
      */
+    @Async
     void notifyHolidayReplacementAboutCancellation(HolidayReplacementEntity holidayReplacement, Application application) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, holidayReplacement.getPerson());
@@ -442,6 +457,7 @@ class ApplicationMailService {
      *
      * @param application to inform the replacement was cancelled
      */
+    @Async
     void notifyHolidayReplacementAboutEdit(HolidayReplacementEntity holidayReplacement, Application application) {
 
         Map<String, Object> model = new HashMap<>();
@@ -466,6 +482,7 @@ class ApplicationMailService {
      * @param application confirmed application
      * @param comment     additional comment for the confirming application
      */
+    @Async
     void sendAppliedNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
@@ -490,6 +507,7 @@ class ApplicationMailService {
      * @param application confirmed application on behalf
      * @param comment     additional comment for the application
      */
+    @Async
     void sendAppliedByManagementNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
@@ -513,6 +531,7 @@ class ApplicationMailService {
      * @param application the application which got cancelled
      * @param comment     describes the reason of the revocation
      */
+    @Async
     void sendRevokedNotifications(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
@@ -553,6 +572,7 @@ class ApplicationMailService {
      * @param application that was cancelled directly
      * @param comment     additional comment for the application
      */
+    @Async
     void sendCancelledDirectlyToManagement(Application application, ApplicationComment comment) {
 
         final Map<String, Object> model = new HashMap<>();
@@ -577,6 +597,7 @@ class ApplicationMailService {
      * @param application the application which got cancelled directly
      * @param comment     describes the reason of the direct cancellation
      */
+    @Async
     void sendCancelledDirectlyConfirmationByApplicant(Application application, ApplicationComment comment) {
 
         final Person recipient = application.getPerson();
@@ -606,6 +627,7 @@ class ApplicationMailService {
      * @param application confirmed application on behalf
      * @param comment     additional comment for the application
      */
+    @Async
     void sendCancelledDirectlyConfirmationByManagement(Application application, ApplicationComment comment) {
 
         final Map<String, Object> model = new HashMap<>();
@@ -629,6 +651,7 @@ class ApplicationMailService {
      * @param application the application which got cancelled
      * @param comment     describes the reason of the cancellation
      */
+    @Async
     void sendCancelledConfirmationByManagement(Application application, ApplicationComment comment) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, application.getPerson());
@@ -668,6 +691,7 @@ class ApplicationMailService {
      * @param application to allow or reject
      * @param comment     additional comment for the application
      */
+    @Async
     void sendAppliedNotificationToManagement(Application application, ApplicationComment comment) {
 
         final List<Application> applicationsForLeave =
@@ -697,6 +721,7 @@ class ApplicationMailService {
      * @param application that has been allowed temporary by a department head
      * @param comment     contains reason why application for leave has been allowed temporary
      */
+    @Async
     void sendTemporaryAllowedNotification(Application application, ApplicationComment comment) {
 
         // Inform user that the application for leave has been allowed temporary
@@ -739,6 +764,7 @@ class ApplicationMailService {
      *
      * @param application to receive a reminding notification
      */
+    @Async
     void sendRemindNotificationToManagement(Application application) {
 
         Map<String, Object> model = new HashMap<>();
@@ -753,6 +779,7 @@ class ApplicationMailService {
         mailService.send(mailToAllowAndRemind);
     }
 
+    @Async
     void sendRemindForUpcomingApplicationsReminderNotification(List<Application> applications) {
         for (Application application : applications) {
             final Map<String, Object> model = new HashMap<>();
@@ -768,6 +795,7 @@ class ApplicationMailService {
         }
     }
 
+    @Async
     void sendRemindForUpcomingHolidayReplacement(List<Application> applications) {
         for (Application application : applications) {
             for (HolidayReplacementEntity holidayReplacement : application.getHolidayReplacements()) {
@@ -787,6 +815,7 @@ class ApplicationMailService {
         }
     }
 
+    @Async
     void sendRemindForWaitingApplicationsReminderNotification(List<Application> waitingApplications) {
 
         /*
