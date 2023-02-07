@@ -271,7 +271,7 @@
                       <th:block th:text="#{application.progress.REJECTED}"></th:block>
                       <th:block th:replace="fragments/date::date(${app.editedDate})"></th:block>
                     </th:block>
-                    <th:block th:if="${app.status.name == 'CANCELLED' || app.status == 'REVOKED'}">
+                    <th:block th:if="${app.status.name == 'CANCELLED' || app.status.name == 'REVOKED'}">
                       <th:block th:text="#{application.progress.CANCELLED}"></th:block>
                       <th:block th:replace="fragments/date::date(${app.cancelDate})"></th:block>
                     </th:block>
