@@ -29,7 +29,7 @@ class UserThemeDataProviderTest {
     private UserThemeDataProvider sut;
 
     @Mock
-    private UserSettingsService userSettingsService;
+    private UserSettingsServiceImpl userSettingsService;
 
     @BeforeEach
     void setUp() {

@@ -1,40 +1,64 @@
 package org.synyx.urlaubsverwaltung.user;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.LocaleResolver;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.user.Theme.LIGHT;
 
 @ExtendWith(MockitoExtension.class)
 class UserSettingsServiceTest {
 
-    private UserSettingsService sut;
+    private UserSettingsServiceImpl sut;
 
     @Mock
     private UserSettingsRepository userSettingsRepository;
     @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    @Captor
-    private ArgumentCaptor<UserLocaleChangedEvent> userLocaleChangedEventCaptor;
-
+    private LocaleResolver localeResolver;
+    @Mock
+    private PersonService personService;
 
     @BeforeEach
     void setUp() {
-        sut = new UserSettingsService(userSettingsRepository, applicationEventPublisher);
+        sut = new UserSettingsServiceImpl(userSettingsRepository, localeResolver, personService);
+    }
+
+    @AfterEach
+    void tearDown() {
+        RequestContextHolder.resetRequestAttributes();
     }
 
     @Test
@@ -46,14 +70,14 @@ class UserSettingsServiceTest {
         final UserSettingsEntity entity = new UserSettingsEntity();
         entity.setPersonId(42);
         entity.setTheme(Theme.DARK);
-        entity.setLocale(Locale.GERMAN);
+        entity.setLocale(GERMAN);
 
         when(userSettingsRepository.findById(42)).thenReturn(Optional.of(entity));
 
         final UserSettings actual = sut.getUserSettingsForPerson(person);
 
         assertThat(actual.theme()).isEqualTo(Theme.DARK);
-        assertThat(actual.locale()).hasValue(Locale.GERMAN);
+        assertThat(actual.locale()).hasValue(GERMAN);
     }
 
     @Test
@@ -70,7 +94,12 @@ class UserSettingsServiceTest {
     }
 
     @Test
-    void ensureUpdateUserThemePreference() {
+    void ensureUpdateUserPreference() {
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        when(localeResolver.resolveLocale(request)).thenReturn(ENGLISH);
+
         final Person person = new Person();
         person.setId(42);
 
@@ -78,27 +107,39 @@ class UserSettingsServiceTest {
         entity.setPersonId(42);
         entity.setPerson(person);
         entity.setTheme(Theme.DARK);
+        entity.setLocale(null);
 
         when(userSettingsRepository.findById(42)).thenReturn(Optional.of(entity));
 
         final UserSettingsEntity entityToSave = new UserSettingsEntity();
         entityToSave.setPersonId(42);
         entityToSave.setPerson(null);
-        entityToSave.setTheme(Theme.LIGHT);
-        entityToSave.setLocale(Locale.GERMAN);
+        entityToSave.setTheme(LIGHT);
+        entityToSave.setLocale(GERMAN);
 
         when(userSettingsRepository.save(entityToSave)).thenReturn(entityToSave);
 
-        final UserSettings updatedUserSettings = sut.updateUserThemePreference(person, Theme.LIGHT, Locale.GERMAN);
-        assertThat(updatedUserSettings.theme()).isEqualTo(Theme.LIGHT);
+        final UserSettings updatedUserSettings = sut.updateUserPreference(person, LIGHT, GERMAN);
+        assertThat(updatedUserSettings.theme()).isEqualTo(LIGHT);
+        assertThat(updatedUserSettings.locale()).hasValue(GERMAN);
 
-        verify(applicationEventPublisher).publishEvent(userLocaleChangedEventCaptor.capture());
-        final UserLocaleChangedEvent userLocaleChangedEvent = userLocaleChangedEventCaptor.getValue();
-        assertThat(userLocaleChangedEvent.getLocale()).isEqualTo(Locale.GERMAN);
+        final ArgumentCaptor<UserSettingsEntity> entityArgumentCaptor = ArgumentCaptor.forClass(UserSettingsEntity.class);
+        verify(userSettingsRepository).save(entityArgumentCaptor.capture());
+        assertThat(entityArgumentCaptor.getValue())
+            .satisfies(userSettingsEntity -> {
+                assertThat(userSettingsEntity.getTheme()).isEqualTo(LIGHT);
+                assertThat(userSettingsEntity.getLocale()).isEqualTo(GERMAN);
+                assertThat(userSettingsEntity.getLocaleBrowserSpecific()).isEqualTo(ENGLISH);
+            });
     }
 
     @Test
-    void ensureUpdateUserThemePreferenceWhenNothingHasBeenPersistedYet() {
+    void ensureUpdateUserPreferenceWhenNothingHasBeenPersistedYet() {
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        when(localeResolver.resolveLocale(request)).thenReturn(ENGLISH);
+
         final Person person = new Person();
         person.setId(42);
 
@@ -107,50 +148,64 @@ class UserSettingsServiceTest {
         final UserSettingsEntity entityToSave = new UserSettingsEntity();
         entityToSave.setPersonId(42);
         entityToSave.setPerson(null);
-        entityToSave.setTheme(Theme.LIGHT);
-        entityToSave.setLocale(Locale.GERMAN);
+        entityToSave.setTheme(LIGHT);
+        entityToSave.setLocale(GERMAN);
 
         when(userSettingsRepository.save(entityToSave)).thenReturn(entityToSave);
 
-        final UserSettings updatedUserSettings = sut.updateUserThemePreference(person, Theme.LIGHT, Locale.GERMAN);
-        assertThat(updatedUserSettings.theme()).isEqualTo(Theme.LIGHT);
+        final UserSettings updatedUserSettings = sut.updateUserPreference(person, LIGHT, GERMAN);
+        assertThat(updatedUserSettings.theme()).isEqualTo(LIGHT);
 
-        verify(applicationEventPublisher).publishEvent(userLocaleChangedEventCaptor.capture());
-        final UserLocaleChangedEvent userLocaleChangedEvent = userLocaleChangedEventCaptor.getValue();
-        assertThat(userLocaleChangedEvent.getLocale()).isEqualTo(Locale.GERMAN);
+        final ArgumentCaptor<UserSettingsEntity> entityArgumentCaptor = ArgumentCaptor.forClass(UserSettingsEntity.class);
+        verify(userSettingsRepository).save(entityArgumentCaptor.capture());
+        assertThat(entityArgumentCaptor.getValue())
+            .satisfies(userSettingsEntity -> {
+                assertThat(userSettingsEntity.getTheme()).isEqualTo(LIGHT);
+                assertThat(userSettingsEntity.getLocale()).isEqualTo(GERMAN);
+                assertThat(userSettingsEntity.getLocaleBrowserSpecific()).isEqualTo(ENGLISH);
+            });
     }
 
     @Test
     void ensureFindLocaleForUsernameReturnsEmptyOptionalWhenUsernameIsUnknown() {
 
-        when(userSettingsRepository.findByPersonUsername("batman")).thenReturn(Optional.empty());
+        final Person person = new Person();
+        person.setId(1);
 
-        final Optional<Locale> actual = sut.findLocaleForUsername("batman");
+        when(userSettingsRepository.findByPerson(person)).thenReturn(Optional.empty());
+
+        final Optional<Locale> actual = sut.getLocale(person);
         assertThat(actual).isEmpty();
     }
 
     @Test
     void ensureFindLocaleForUsernameReturnsEmptyOptionalWhenThereIsNoLocale() {
 
+        final Person person = new Person();
+        person.setId(1);
+
         final UserSettingsEntity entity = new UserSettingsEntity();
         entity.setLocale(null);
 
-        when(userSettingsRepository.findByPersonUsername("batman")).thenReturn(Optional.of(entity));
+        when(userSettingsRepository.findByPerson(person)).thenReturn(Optional.of(entity));
 
-        final Optional<Locale> actual = sut.findLocaleForUsername("batman");
+        final Optional<Locale> actual = sut.getLocale(person);
         assertThat(actual).isEmpty();
     }
 
     @Test
     void ensureFindLocaleForUsernameReturnsLocale() {
 
+        final Person person = new Person();
+        person.setId(1);
+
         final UserSettingsEntity entity = new UserSettingsEntity();
-        entity.setLocale(Locale.GERMAN);
+        entity.setLocale(GERMAN);
 
-        when(userSettingsRepository.findByPersonUsername("batman")).thenReturn(Optional.of(entity));
+        when(userSettingsRepository.findByPerson(person)).thenReturn(Optional.of(entity));
 
-        final Optional<Locale> actual = sut.findLocaleForUsername("batman");
-        assertThat(actual).hasValue(Locale.GERMAN);
+        final Optional<Locale> actual = sut.getLocale(person);
+        assertThat(actual).hasValue(GERMAN);
     }
 
     @Test
@@ -193,5 +248,57 @@ class UserSettingsServiceTest {
         sut.delete(new PersonDeletedEvent(person));
 
         verify(userSettingsRepository).deleteByPerson(person);
+    }
+
+    static Stream<Arguments> authentications() {
+        return Stream.of(
+            Arguments.of(new TestingAuthenticationToken(new User("username", "password", List.of()), null), GERMAN),
+            Arguments.of(new TestingAuthenticationToken(new User("username", "password", List.of()), null), ENGLISH),
+            Arguments.of(new TestingAuthenticationToken(new DefaultOidcUser(List.of(), new OidcIdToken("tokenValue", Instant.parse("2020-12-01T00:00:00.00Z"), Instant.parse("2020-12-02T00:00:00.00Z"), Map.of("sub", "username"))), null), GERMAN),
+            Arguments.of(new TestingAuthenticationToken(new DefaultOidcUser(List.of(), new OidcIdToken("tokenValue", Instant.parse("2020-12-01T00:00:00.00Z"), Instant.parse("2020-12-02T00:00:00.00Z"), Map.of("sub", "username"))), null), ENGLISH)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("authentications")
+    void ensureAuthenticationSuccessSetsLocaleForAuthentication(Authentication authentication, Locale locale) {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setUsername("username");
+        when(personService.getPersonByUsername("username")).thenReturn(Optional.of(person));
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        final UserSettingsEntity userSettingsEntity = new UserSettingsEntity();
+        userSettingsEntity.setLocale(locale);
+
+        when(localeResolver.resolveLocale(request)).thenReturn(locale);
+        when(userSettingsRepository.findByPerson(person)).thenReturn(Optional.of(userSettingsEntity));
+
+        final AuthenticationSuccessEvent authenticationSuccessEvent = new AuthenticationSuccessEvent(authentication);
+        sut.handleAuthenticationSuccess(authenticationSuccessEvent);
+
+        verify(localeResolver).setLocale(request, null, locale);
+    }
+
+    @Test
+    void ensureAuthenticationSuccessDoesNotSetLocaleWhenNotAvailable() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setUsername("username");
+        when(personService.getPersonByUsername("username")).thenReturn(Optional.of(person));
+
+        final UserSettingsEntity userSettingsEntity = new UserSettingsEntity();
+        userSettingsEntity.setLocale(null);
+
+        when(userSettingsRepository.findByPerson(person)).thenReturn(Optional.of(userSettingsEntity));
+
+        final AuthenticationSuccessEvent authenticationSuccessEvent = new AuthenticationSuccessEvent(new TestingAuthenticationToken(new User("username", "password", List.of()), null));
+        sut.handleAuthenticationSuccess(authenticationSuccessEvent);
+
+        verifyNoInteractions(localeResolver);
     }
 }

@@ -32,12 +32,12 @@ class UserSettingsViewController implements HasLaunchpad {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
-    private final UserSettingsService userSettingsService;
+    private final UserSettingsServiceImpl userSettingsService;
     private final SupportedLocaleService supportedLocaleService;
     private final MessageSource messageSource;
     private final UserSettingsDtoValidator userSettingsDtoValidator;
 
-    UserSettingsViewController(PersonService personService, UserSettingsService userSettingsService, SupportedLocaleService supportedLocaleService, MessageSource messageSource, UserSettingsDtoValidator userSettingsDtoValidator) {
+    UserSettingsViewController(PersonService personService, UserSettingsServiceImpl userSettingsService, SupportedLocaleService supportedLocaleService, MessageSource messageSource, UserSettingsDtoValidator userSettingsDtoValidator) {
         this.personService = personService;
         this.userSettingsService = userSettingsService;
         this.supportedLocaleService = supportedLocaleService;
@@ -62,7 +62,8 @@ class UserSettingsViewController implements HasLaunchpad {
     }
 
     @PostMapping("/person/{personId}/settings")
-    String updateUserSettings(@PathVariable("personId") Integer personId, Model model, @ModelAttribute UserSettingsDto userSettingsDto, Errors errors, Locale locale) {
+    String updateUserSettings(@PathVariable("personId") Integer personId, Model model, @ModelAttribute UserSettingsDto userSettingsDto,
+                              Errors errors, Locale locale) {
 
         final Person signedInUser = personService.getSignedInUser();
         if (!signedInUser.getId().equals(personId)) {
@@ -79,7 +80,7 @@ class UserSettingsViewController implements HasLaunchpad {
 
         final Theme theme = themeNameToTheme(userSettingsDto.getTheme());
         final Locale userLocale = userSettingsDto.getLocale();
-        userSettingsService.updateUserThemePreference(signedInUser, theme, userLocale);
+        userSettingsService.updateUserPreference(signedInUser, theme, userLocale);
 
         return String.format("redirect:/web/person/%s/settings", personId);
     }

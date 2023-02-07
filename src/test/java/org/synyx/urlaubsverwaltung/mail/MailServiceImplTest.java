@@ -12,6 +12,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.user.UserSettingsService;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -42,6 +43,8 @@ class MailServiceImplTest {
     private MailProperties mailProperties;
     @Mock
     private PersonService personService;
+    @Mock
+    private UserSettingsService userSettingsService;
 
     @BeforeEach
     void setUp() {
@@ -50,7 +53,7 @@ class MailServiceImplTest {
         when(mailProperties.getSender()).thenReturn("no-reply@example.org");
         when(mailProperties.getSenderDisplayName()).thenReturn("Urlaubsverwaltung");
         when(mailProperties.getApplicationUrl()).thenReturn("http://localhost:8080");
-        sut = new MailServiceImpl(messageSource, emailTemplateEngine, mailSenderService, mailProperties, personService);
+        sut = new MailServiceImpl(messageSource, emailTemplateEngine, mailSenderService, mailProperties, personService, userSettingsService);
     }
 
     @Test

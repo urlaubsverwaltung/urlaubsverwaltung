@@ -34,6 +34,8 @@ class UserSettingsEntity {
 
     private Locale locale;
 
+    private Locale localeBrowserSpecific;
+
     public Integer getPersonId() {
         return personId;
     }
@@ -66,12 +68,21 @@ class UserSettingsEntity {
         this.locale = locale;
     }
 
+    public Locale getLocaleBrowserSpecific() {
+        return localeBrowserSpecific;
+    }
+
+    public void setLocaleBrowserSpecific(Locale localeBrowserSpecific) {
+        this.localeBrowserSpecific = localeBrowserSpecific;
+    }
+
     @Override
     public String toString() {
         return "UserSettingsEntity{" +
             "personId=" + personId +
             ", theme=" + theme +
             ", locale=" + locale +
+            ", localeBrowserSpecific=" + localeBrowserSpecific +
             '}';
     }
 

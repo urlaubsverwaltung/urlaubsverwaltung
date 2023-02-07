@@ -13,9 +13,9 @@ import java.util.Optional;
 @Component
 public class UserThemeDataProvider implements HandlerInterceptor {
 
-    private final UserSettingsService userSettingsService;
+    private final UserSettingsServiceImpl userSettingsService;
 
-    UserThemeDataProvider(UserSettingsService userSettingsService) {
+    UserThemeDataProvider(UserSettingsServiceImpl userSettingsService) {
         this.userSettingsService = userSettingsService;
     }
 
