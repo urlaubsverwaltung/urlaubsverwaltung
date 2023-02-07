@@ -118,10 +118,10 @@
             th:onclick="|navigate('/web/sicknote/${sickNote.id}');|"
           >
             <td class="is-centered print:tw-hidden state ${sickNote.status}">
-              <th:block th:if="${sickNote.sickNoteType.category == 'SICK_NOTE_CHILD'}">
+              <th:block th:if="${sickNote.sickNoteType.category.name == 'SICK_NOTE_CHILD'}">
                 <svg th:replace="icon/child::svg(className='tw-w-6 tw-h-6')"></svg>
               </th:block>
-              <th:block th:if="${sickNote.sickNoteType.category != 'SICK_NOTE_CHILD'}">
+              <th:block th:if="${sickNote.sickNoteType.category.name != 'SICK_NOTE_CHILD'}">
                 <svg th:replace="icon/medkit::svg(className='tw-w-6 tw-h-6')"></svg>
               </th:block>
             </td>
