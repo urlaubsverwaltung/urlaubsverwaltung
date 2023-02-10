@@ -52,7 +52,12 @@
           <div class="nav-popup-menu-inner__content">
             <ul
               class="tw-grid tw-gap-2 tw-list-none tw-p-0 tw-m-0"
-              style="grid-template-columns: repeat(var(--cols, 1), minmax(8rem, 1fr))"
+              style="
+                grid-template-columns: repeat(
+                  var(--cols, 1),
+                  minmax(8rem, 1fr)
+                );
+              "
               th:with="size=${#lists.size(launchpad.apps)}"
               th:styleappend="${size > 3 ? '--cols:3' : (size > 1 ? '--cols:2' : '--cols:1')}"
             >
