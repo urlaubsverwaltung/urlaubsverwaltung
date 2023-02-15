@@ -440,16 +440,16 @@ class OvertimeServiceImplTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "USER"})
+    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE"})
     void ensurePersonIsNotAllowedToWriteOthersOvertimeWithPrivilegedRestriction(Role role) {
 
-        final Person person = new Person();
-        person.setPermissions(List.of(role));
-        final Person other = new Person();
+        final Person signedInUser = new Person();
+        signedInUser.setPermissions(List.of(role));
+        final Person personOfOvertime = new Person();
 
         when(settingsService.getSettings()).thenReturn(overtimeSettings(true));
 
-        assertThat(sut.isUserIsAllowedToWriteOvertime(person, other)).isFalse();
+        assertThat(sut.isUserIsAllowedToWriteOvertime(signedInUser, personOfOvertime)).isTrue();
     }
 
     @Test

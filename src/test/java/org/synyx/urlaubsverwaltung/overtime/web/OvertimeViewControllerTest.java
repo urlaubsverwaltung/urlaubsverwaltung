@@ -59,6 +59,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -451,6 +452,33 @@ class OvertimeViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         final List<Person> activePersons = List.of(signedInPerson, overtimePerson);
         when(personService.getActivePersons()).thenReturn(activePersons);
+        when(personService.getPersonByID(overtimePersonId)).thenReturn(Optional.of(overtimePerson));
+        when(overtimeService.isUserIsAllowedToWriteOvertime(signedInPerson, overtimePerson)).thenReturn(true);
+
+        mockSettings();
+
+        final ResultActions resultActions = perform(get("/web/overtime/new").param("person", "1"));
+        resultActions
+            .andExpect(status().isOk())
+            .andExpect(view().name("thymeleaf/overtime/overtime_form"))
+            .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
+            .andExpect(model().attribute("persons", is(activePersons)));
+    }
+
+    @Test
+    void recordOvertimeSignedInUserIsNotSameButPrivileged() throws Exception {
+
+        final Person overtimePerson = new Person();
+        final int overtimePersonId = 1;
+        overtimePerson.setId(overtimePersonId);
+
+        final Person signedInPerson = new Person();
+        signedInPerson.setId(2);
+        signedInPerson.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        final List<Person> activePersons = List.of(signedInPerson, overtimePerson);
+        when(departmentService.getManagedActiveMembersOfPerson(signedInPerson)).thenReturn(activePersons);
         when(personService.getPersonByID(overtimePersonId)).thenReturn(Optional.of(overtimePerson));
         when(overtimeService.isUserIsAllowedToWriteOvertime(signedInPerson, overtimePerson)).thenReturn(true);
 

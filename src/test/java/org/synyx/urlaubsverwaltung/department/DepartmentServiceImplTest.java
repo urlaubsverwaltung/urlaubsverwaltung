@@ -77,7 +77,7 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureGetManagedMembersOfPersonReturnsDistinctActivePersonsForDepartmentHeadAndSecondStageAuthority() {
+    void ensureGetManagedMembersOfPersonReturnsPageOfDistinctActivePersonsForDepartmentHeadAndSecondStageAuthority() {
 
         final Person person = new Person();
         person.setId(1);
@@ -113,7 +113,7 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureGetManagedMembersOfPersonReturnsDistinctActivePersonsForDepartmentHead() {
+    void ensureGetManagedMembersOfPersonReturnsPageOfDistinctActivePersonsForDepartmentHead() {
 
         final Person person = new Person();
         person.setId(1);
@@ -149,7 +149,7 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureGetManagedMembersOfPersonReturnsDistinctActivePersonsForSecondStageAuthority() {
+    void ensureGetManagedMembersOfPersonReturnsPageOfDistinctActivePersonsForSecondStageAuthority() {
 
         final Person person = new Person();
         person.setId(1);
@@ -185,7 +185,7 @@ class DepartmentServiceImplTest {
     }
 
     @Test
-    void ensureGetManagedMembersOfPersonReturnsEmptyList() {
+    void ensureGetManagedMembersOfPersonReturnsPageOfEmptyList() {
 
         final Person person = new Person();
         person.setId(1);
@@ -194,6 +194,128 @@ class DepartmentServiceImplTest {
         final Page<Person> actual = sut.getManagedMembersOfPerson(person, defaultPersonSearchQuery());
 
         assertThat(actual.getContent()).isEmpty();
+        verifyNoInteractions(departmentRepository);
+    }
+
+
+    @Test
+    void ensureGetManagedActiveMembersOfPersonReturnsDistinctActivePersonsForDepartmentHeadAndSecondStageAuthority() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember));
+
+        when(departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person)).thenReturn(List.of(admins, developers));
+
+        final List<Person> actual = sut.getManagedActiveMembersOfPerson(person);
+
+        assertThat(actual).containsExactlyInAnyOrder(jane, max);
+    }
+
+    @Test
+    void ensureGetManagedActiveMembersOfPersonReturnsDistinctActivePersonsForDepartmentHead() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(DEPARTMENT_HEAD));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember));
+
+        when(departmentRepository.findByDepartmentHeads(person)).thenReturn(List.of(admins, developers));
+
+        final List<Person> actual = sut.getManagedActiveMembersOfPerson(person);
+
+        assertThat(actual).containsExactlyInAnyOrder(jane, max);
+    }
+
+    @Test
+    void ensureGetManagedActiveMembersOfPersonReturnsDistinctActivePersonsForSecondStageAuthority() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+
+        final Person max = new Person();
+        max.setId(2);
+        max.setFirstName("Max");
+        max.setLastName("Mustermann");
+        final DepartmentMemberEmbeddable maxMember = new DepartmentMemberEmbeddable();
+        maxMember.setPerson(max);
+
+        final Person jane = new Person();
+        jane.setId(3);
+        jane.setFirstName("Jane");
+        jane.setLastName("Doe");
+        final DepartmentMemberEmbeddable janeMember = new DepartmentMemberEmbeddable();
+        janeMember.setPerson(jane);
+
+        final DepartmentEntity admins = new DepartmentEntity();
+        admins.setName("admins");
+        admins.setMembers(List.of(maxMember, janeMember));
+
+        final DepartmentEntity developers = new DepartmentEntity();
+        developers.setName("developers");
+        developers.setMembers(List.of(janeMember));
+
+        when(departmentRepository.findBySecondStageAuthorities(person)).thenReturn(List.of(admins, developers));
+
+        final List<Person> actual = sut.getManagedActiveMembersOfPerson(person);
+
+        assertThat(actual).containsExactlyInAnyOrder(jane, max);
+    }
+
+    @Test
+    void ensureGetManagedActiveMembersOfPersonReturnsEmptyList() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of());
+
+        final List<Person> actual = sut.getManagedActiveMembersOfPerson(person);
+
+        assertThat(actual).isEmpty();
         verifyNoInteractions(departmentRepository);
     }
 

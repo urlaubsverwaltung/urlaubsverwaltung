@@ -286,7 +286,8 @@ class OvertimeServiceImpl implements OvertimeService {
     public boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime) {
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
         return signedInUser.hasRole(OFFICE)
-            || signedInUser.equals(personOfOvertime) && (!overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged());
+            || (signedInUser.equals(personOfOvertime) && !overtimeSettings.isOvertimeWritePrivilegedOnly())
+            || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly());
     }
 
     /**
