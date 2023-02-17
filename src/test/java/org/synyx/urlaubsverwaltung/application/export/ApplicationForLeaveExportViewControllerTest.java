@@ -28,8 +28,10 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 import static java.math.BigDecimal.TEN;
+import static java.util.Locale.JAPANESE;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -71,6 +73,8 @@ class ApplicationForLeaveExportViewControllerTest {
     @Test
     void ensuresToExportAbsences() throws Exception {
 
+        final Locale locale = JAPANESE;
+
         final Person signedInUser = new Person();
         signedInUser.setId(1);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -101,9 +105,10 @@ class ApplicationForLeaveExportViewControllerTest {
         when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
-        when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, List.of(applicationForLeaveExport))).thenReturn(csvFile);
+        when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
 
         perform(get("/web/application/export")
+            .locale(locale)
             .param("from", "01.01.2019")
             .param("to", "01.08.2019"))
             .andExpect(status().isOk())

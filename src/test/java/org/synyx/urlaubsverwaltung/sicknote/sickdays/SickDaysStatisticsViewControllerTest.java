@@ -22,9 +22,10 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
-import static java.util.Locale.GERMAN;
+import static java.util.Locale.JAPANESE;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -56,15 +57,18 @@ class SickDaysStatisticsViewControllerTest {
     @Test
     void downloadCSVReturnsBadRequestIfPeriodNotTheSameYear() throws Exception {
 
+        final Locale locale = JAPANESE;
+
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2018-08-01");
 
         final String fromString = "01.01.2019";
-        when(dateFormatAware.parse(fromString, GERMAN)).thenReturn(Optional.of(startDate));
+        when(dateFormatAware.parse(fromString, locale)).thenReturn(Optional.of(startDate));
         final String endString = "01.08.2018";
-        when(dateFormatAware.parse(endString, GERMAN)).thenReturn(Optional.of(endDate));
+        when(dateFormatAware.parse(endString, locale)).thenReturn(Optional.of(endDate));
 
-        perform(get("/web/sickdays/statistics/download").locale(GERMAN)
+        perform(get("/web/sickdays/statistics/download")
+            .locale(locale)
             .param("from", fromString)
             .param("to", endString))
             .andExpect(status().isBadRequest());
@@ -72,6 +76,8 @@ class SickDaysStatisticsViewControllerTest {
 
     @Test
     void downloadCSVSetsDownloadHeaders() throws Exception {
+
+        final Locale locale = JAPANESE;
 
         final Person signedInUser = new Person();
         signedInUser.setId(1);
@@ -84,29 +90,31 @@ class SickDaysStatisticsViewControllerTest {
         final PageableSearchQuery pageableSearchQuery =
             new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
 
-        when(dateFormatAware.parse(dateString, GERMAN)).thenReturn(Optional.of(date));
-        when(dateFormatAware.parse(dateString, GERMAN)).thenReturn(Optional.of(date));
+        when(dateFormatAware.parse(dateString, locale)).thenReturn(Optional.of(date));
+        when(dateFormatAware.parse(dateString, locale)).thenReturn(Optional.of(date));
 
         when(sickDaysStatisticsService.getAll(signedInUser, date, date, pageableSearchQuery))
             .thenReturn(new PageImpl<>(List.of()));
 
-        when(sickDaysDetailedStatisticsCsvExportService.generateCSV(filterPeriod, List.of()))
+        when(sickDaysDetailedStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of()))
             .thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
         perform(get("/web/sickdays/statistics/download")
-            .locale(GERMAN)
+            .locale(locale)
             .param("from", dateString)
             .param("to", dateString)
             .param("page", "2")
             .param("size", "50")
             .param("query", "")
         )
-            .andExpect(header().string("Content-disposition", "attachment; filename=\"filename.csv\""))
-            .andExpect(header().string("Content-Type", "text/csv"));
+            .andExpect(header().string("Content-disposition", "attachment; filename*=UTF-8''filename.csv"))
+            .andExpect(header().string("Content-Type", "text/csv;charset=UTF-8"));
     }
 
     @Test
     void downloadCSVWritesCSV() throws Exception {
+
+        final Locale locale = JAPANESE;
 
         final Person signedInUser = new Person();
         signedInUser.setId(1);
@@ -120,18 +128,18 @@ class SickDaysStatisticsViewControllerTest {
             new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
 
         final String fromString = "01.01.2019";
-        when(dateFormatAware.parse(fromString, GERMAN)).thenReturn(Optional.of(startDate));
+        when(dateFormatAware.parse(fromString, locale)).thenReturn(Optional.of(startDate));
         final String endString = "01.08.2019";
-        when(dateFormatAware.parse(endString, GERMAN)).thenReturn(Optional.of(endDate));
+        when(dateFormatAware.parse(endString, locale)).thenReturn(Optional.of(endDate));
 
         when(sickDaysStatisticsService.getAll(signedInUser, startDate, endDate, pageableSearchQuery))
             .thenReturn(new PageImpl<>(List.of()));
 
-        when(sickDaysDetailedStatisticsCsvExportService.generateCSV(filterPeriod, List.of()))
+        when(sickDaysDetailedStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of()))
             .thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
         perform(get("/web/sickdays/statistics/download")
-            .locale(GERMAN)
+            .locale(locale)
             .param("from", fromString)
             .param("to", endString)
             .param("page", "2")

@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
+import java.util.Locale;
 
 import static com.opencsv.ICSVWriter.DEFAULT_LINE_END;
 import static com.opencsv.ICSVWriter.DEFAULT_QUOTE_CHARACTER;
@@ -22,18 +23,20 @@ public interface CsvExportService<T> {
      * Writes the data and other information from the filter period into the csv writer
      *
      * @param period    to add period to csv
+     * @param locale    for i18n (messages and number formats)
      * @param data      are the main information for the csv
      * @param csvWriter to write data that will be used to create the ByteArrayResource
      */
-    void write(FilterPeriod period, List<T> data, CSVWriter csvWriter);
+    void write(FilterPeriod period, Locale locale, List<T> data, CSVWriter csvWriter);
 
     /**
      * Contains the algorithm to create a unique filename
      *
      * @param period can be used for a unique filename
+     * @param locale for i18n (messages and number formats)
      * @return the filename to be used for this kind of files
      */
-    String fileName(FilterPeriod period);
+    String fileName(FilterPeriod period, Locale locale);
 
     /**
      * Main method of this interface to retrieve the {@link CSVFile} containing the filename and resource.
@@ -42,8 +45,8 @@ public interface CsvExportService<T> {
      * @param data   will be used to create the content of the csv file
      * @return a {@link CSVFile} containing the filename and resource
      */
-    default CSVFile generateCSV(FilterPeriod period, List<T> data) {
-        return new CSVFile(fileName(period), resource(period, data));
+    default CSVFile generateCSV(FilterPeriod period, Locale locale, List<T> data) {
+        return new CSVFile(fileName(period, locale), resource(period, locale, data));
     }
 
     /**
@@ -72,7 +75,7 @@ public interface CsvExportService<T> {
      * @param data   to create content
      * @return {@link ByteArrayResource} based on the filter period and data
      */
-    default ByteArrayResource resource(FilterPeriod period, List<T> data) {
+    default ByteArrayResource resource(FilterPeriod period, Locale locale, List<T> data) {
         final ByteArrayResource byteArrayResource;
 
         try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
@@ -80,7 +83,7 @@ public interface CsvExportService<T> {
 
             try (final OutputStreamWriter outputStreamWriter = new OutputStreamWriter(byteArrayOutputStream, UTF_8)) {
                 try (final CSVWriter csvWriter = new CSVWriter(outputStreamWriter, separator(), NO_QUOTE_CHARACTER, DEFAULT_QUOTE_CHARACTER, DEFAULT_LINE_END)) {
-                    write(period, data, csvWriter);
+                    write(period, locale, data, csvWriter);
                 }
             }
             byteArrayResource = new ByteArrayResource(byteArrayOutputStream.toByteArray());

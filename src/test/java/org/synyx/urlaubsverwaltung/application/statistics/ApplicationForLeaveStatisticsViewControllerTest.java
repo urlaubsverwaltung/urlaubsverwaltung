@@ -33,8 +33,9 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
-import static java.util.Locale.ENGLISH;
+import static java.util.Locale.JAPANESE;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasItems;
@@ -124,11 +125,13 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void applicationForLeaveStatisticsSetsModelAndViewWithStatistics() throws Exception {
 
+        final Locale locale = JAPANESE;
+
         final Person signedInUser = new Person();
         signedInUser.setId(1);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        when(messageSource.getMessage("hours.abbr", new Object[]{}, ENGLISH)).thenReturn("Std.");
+        when(messageSource.getMessage("hours.abbr", new Object[]{}, locale)).thenReturn("Std.");
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
@@ -154,6 +157,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
+            .locale(locale)
             .param("from", "01.01.2019")
             .param("to", "01.08.2019"));
 
@@ -322,7 +326,11 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
     void downloadCSVSetsDownloadHeaders(String givenDate) throws Exception {
-        when(applicationForLeaveStatisticsCsvExportService.generateCSV(any(FilterPeriod.class), any())).thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
+
+        final Locale locale = JAPANESE;
+
+        when(applicationForLeaveStatisticsCsvExportService.generateCSV(any(FilterPeriod.class), eq(locale), any()))
+            .thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
         final Person signedInUser = new Person();
         signedInUser.setId(1);
@@ -332,14 +340,17 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .thenReturn(new PageImpl<>(List.of()));
 
         perform(get("/web/application/statistics/download")
+            .locale(locale)
             .param("from", givenDate)
             .param("to", givenDate))
-            .andExpect(header().string("Content-disposition", "attachment; filename=\"filename.csv\""))
-            .andExpect(header().string("Content-Type", "text/csv"));
+            .andExpect(header().string("Content-disposition", "attachment; filename*=UTF-8''filename.csv"))
+            .andExpect(header().string("Content-Type", "text/csv;charset=UTF-8"));
     }
 
     @Test
     void downloadCSVWritesCSV() throws Exception {
+
+        final Locale locale = JAPANESE;
 
         final Person signedInUser = new Person();
         signedInUser.setId(1);
@@ -356,9 +367,10 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .thenReturn(new PageImpl<>(List.of(statistics)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
-        when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, List.of(statistics))).thenReturn(csvFile);
+        when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
 
         perform(get("/web/application/statistics/download")
+            .locale(locale)
             .param("from", "01.01.2019")
             .param("to", "01.08.2019"))
             .andExpect(status().isOk())

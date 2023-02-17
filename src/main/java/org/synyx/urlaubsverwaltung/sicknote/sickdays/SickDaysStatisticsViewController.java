@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.Locale;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -75,11 +76,11 @@ class SickDaysStatisticsViewController {
         final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage =
                 sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate(), new PageableSearchQuery(pageable, query));
 
-        final CSVFile csvFile = sickDaysDetailedStatisticsCsvExportService.generateCSV(period, sickDaysStatisticsPage.getContent());
+        final CSVFile csvFile = sickDaysDetailedStatisticsCsvExportService.generateCSV(period, locale, sickDaysStatisticsPage.getContent());
 
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("text", "csv"));
-        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(csvFile.getFileName()).build());
+        headers.setContentType(new MediaType("text", "csv", UTF_8));
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(csvFile.getFileName(), UTF_8).build());
 
         return ResponseEntity.status(OK).headers(headers).body(csvFile.getResource());
     }

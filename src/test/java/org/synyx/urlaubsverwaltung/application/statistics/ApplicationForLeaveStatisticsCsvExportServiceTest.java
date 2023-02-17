@@ -12,7 +12,6 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedata;
-import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.math.BigDecimal;
@@ -20,10 +19,11 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
-import static java.util.Locale.GERMAN;
+import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -46,11 +46,14 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveStatisticsCsvExportService(messageSource, vacationTypeService, new DateFormatAware());
+        sut = new ApplicationForLeaveStatisticsCsvExportService(messageSource, vacationTypeService);
     }
 
     @Test
     void writeStatisticsForOnePersonFor2018() {
+
+        final Locale locale = JAPANESE;
+
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
@@ -72,23 +75,21 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         applicationForLeaveStatistics.addWaitingVacationDays(vacationType, ONE);
         statistics.add(applicationForLeaveStatistics);
 
-        addMessageSource("absence.period");
-        addMessageSource("person.data.firstName");
-        addMessageSource("person.data.lastName");
-        addMessageSource("applications.statistics.allowed");
-        addMessageSource("applications.statistics.waiting");
-        addMessageSource("applications.statistics.left");
-        addMessageSource("duration.vacationDays");
-        addMessageSource("duration.overtime");
-        addMessageSource("applications.statistics.total");
-        addMessageSource("person.account.basedata.personnelNumber");
-        addMessageSource("person.account.basedata.additionalInformation");
-        addMessageSource(vacationType.getMessageKey());
+        addMessageSource("person.data.firstName", locale);
+        addMessageSource("person.data.lastName", locale);
+        addMessageSource("applications.statistics.allowed", locale);
+        addMessageSource("applications.statistics.waiting", locale);
+        addMessageSource("applications.statistics.left", locale);
+        addMessageSource("duration.vacationDays", locale);
+        addMessageSource("duration.overtime", locale);
+        addMessageSource("applications.statistics.total", locale);
+        addMessageSource("person.account.basedata.personnelNumber", locale);
+        addMessageSource("person.account.basedata.additionalInformation", locale);
+        addMessageSource(vacationType.getMessageKey(), locale);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        sut.write(period, statistics, csvWriter);
-        verify(csvWriter).writeNext(new String[]{"{absence.period}: 01.01.2018 - 31.12.2018"});
+        sut.write(period, locale, statistics, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left}", "", "{applications.statistics.left} (2018)", "", "{person.account.basedata.additionalInformation}"});
         verify(csvWriter).writeNext(new String[]{"", "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}", "{duration.vacationDays}", "{duration.overtime}"});
         verify(csvWriter).writeNext(new String[]{null, null, null, "{holiday}", "0", "1", null, null, null, null, null});
@@ -97,6 +98,9 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
     @Test
     void writeStatisticsForTwoPersonsFor2019() {
+
+        final Locale locale = JAPANESE;
+
         final LocalDate startDate = LocalDate.parse("2019-01-02");
         final LocalDate endDate = LocalDate.parse("2019-12-24");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
@@ -128,23 +132,21 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         personTwoStatistics.addAllowedVacationDays(vacationType, TEN);
         statistics.add(personTwoStatistics);
 
-        addMessageSource("absence.period");
-        addMessageSource("person.data.firstName");
-        addMessageSource("person.data.lastName");
-        addMessageSource("applications.statistics.allowed");
-        addMessageSource("applications.statistics.waiting");
-        addMessageSource("applications.statistics.left");
-        addMessageSource("duration.vacationDays");
-        addMessageSource("duration.overtime");
-        addMessageSource("applications.statistics.total");
-        addMessageSource("person.account.basedata.personnelNumber");
-        addMessageSource("person.account.basedata.additionalInformation");
-        addMessageSource(vacationType.getMessageKey());
+        addMessageSource("person.data.firstName", locale);
+        addMessageSource("person.data.lastName", locale);
+        addMessageSource("applications.statistics.allowed", locale);
+        addMessageSource("applications.statistics.waiting", locale);
+        addMessageSource("applications.statistics.left", locale);
+        addMessageSource("duration.vacationDays", locale);
+        addMessageSource("duration.overtime", locale);
+        addMessageSource("applications.statistics.total", locale);
+        addMessageSource("person.account.basedata.personnelNumber", locale);
+        addMessageSource("person.account.basedata.additionalInformation", locale);
+        addMessageSource(vacationType.getMessageKey(), locale);
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        sut.write(period, statistics, csvWriter);
-        verify(csvWriter).writeNext(new String[]{"{absence.period}: 02.01.2019 - 24.12.2019"});
+        sut.write(period, locale, statistics, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}",
             "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}",
             "{applications.statistics.left}", "", "{applications.statistics.left} (2019)", "",
@@ -157,30 +159,51 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
     }
 
     @Test
-    void getFileNameForComplete2018() {
+    void getFileNameWithoutWhitespace() {
+
+        final Locale locale = JAPANESE;
+
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        when(messageSource.getMessage("applications.statistics", new String[]{}, GERMAN)).thenReturn("test");
+        when(messageSource.getMessage("applications.statistics", new String[]{}, locale)).thenReturn("test filename");
 
-        final String fileName = sut.fileName(period);
-        assertThat(fileName).isEqualTo("test_01012018_31122018.csv");
+        final String fileName = sut.fileName(period, locale);
+        assertThat(fileName).startsWith("test-filename_");
+    }
+
+    @Test
+    void getFileNameForComplete2018() {
+
+        final Locale locale = JAPANESE;
+
+        final LocalDate startDate = LocalDate.parse("2018-01-01");
+        final LocalDate endDate = LocalDate.parse("2018-12-31");
+        final FilterPeriod period = new FilterPeriod(startDate, endDate);
+
+        when(messageSource.getMessage("applications.statistics", new String[]{}, locale)).thenReturn("test");
+
+        final String fileName = sut.fileName(period, locale);
+        assertThat(fileName).isEqualTo("test_2018-01-01_2018-12-31_ja.csv");
     }
 
     @Test
     void getFileNameForComplete2019() {
+
+        final Locale locale = JAPANESE;
+
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        when(messageSource.getMessage(eq("applications.statistics"), any(), any())).thenReturn("test");
+        when(messageSource.getMessage(eq("applications.statistics"), any(), eq(locale))).thenReturn("test");
 
-        String fileName = sut.fileName(period);
-        assertThat(fileName).isEqualTo("test_01012019_31122019.csv");
+        String fileName = sut.fileName(period, locale);
+        assertThat(fileName).isEqualTo("test_2019-01-01_2019-12-31_ja.csv");
     }
 
-    private void addMessageSource(String key) {
-        when(messageSource.getMessage(eq(key), any(), any())).thenReturn(String.format("{%s}", key));
+    private void addMessageSource(String key, Locale locale) {
+        when(messageSource.getMessage(eq(key), any(), eq(locale))).thenReturn(String.format("{%s}", key));
     }
 }
