@@ -78,7 +78,7 @@ class ApplicationForLeaveExportViewController implements HasLaunchpad {
 
         final Page<ApplicationForLeaveExport> exportPage = applicationForLeaveExportService.getAll(signedInUser, period.getStartDate(), period.getEndDate(), pageableSearchQuery);
         final List<ApplicationForLeaveExport> export = exportPage.getContent();
-        final CSVFile csvFile = applicationForLeaveCsvExportService.generateCSV(period, export);
+        final CSVFile csvFile = applicationForLeaveCsvExportService.generateCSV(period, locale, export);
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("text", "csv"));

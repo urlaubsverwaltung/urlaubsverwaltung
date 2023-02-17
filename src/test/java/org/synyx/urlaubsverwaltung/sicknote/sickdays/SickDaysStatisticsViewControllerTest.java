@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static java.util.Locale.GERMAN;
@@ -73,6 +74,8 @@ class SickDaysStatisticsViewControllerTest {
     @Test
     void downloadCSVSetsDownloadHeaders() throws Exception {
 
+        final Locale locale = GERMAN;
+
         final Person signedInUser = new Person();
         signedInUser.setId(1);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -84,17 +87,17 @@ class SickDaysStatisticsViewControllerTest {
         final PageableSearchQuery pageableSearchQuery =
             new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
 
-        when(dateFormatAware.parse(dateString, GERMAN)).thenReturn(Optional.of(date));
-        when(dateFormatAware.parse(dateString, GERMAN)).thenReturn(Optional.of(date));
+        when(dateFormatAware.parse(dateString, locale)).thenReturn(Optional.of(date));
+        when(dateFormatAware.parse(dateString, locale)).thenReturn(Optional.of(date));
 
         when(sickDaysStatisticsService.getAll(signedInUser, date, date, pageableSearchQuery))
             .thenReturn(new PageImpl<>(List.of()));
 
-        when(sickDaysDetailedStatisticsCsvExportService.generateCSV(filterPeriod, List.of()))
+        when(sickDaysDetailedStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of()))
             .thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
         perform(get("/web/sickdays/statistics/download")
-            .locale(GERMAN)
+            .locale(locale)
             .param("from", dateString)
             .param("to", dateString)
             .param("page", "2")
@@ -108,6 +111,8 @@ class SickDaysStatisticsViewControllerTest {
     @Test
     void downloadCSVWritesCSV() throws Exception {
 
+        final Locale locale = GERMAN;
+
         final Person signedInUser = new Person();
         signedInUser.setId(1);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
@@ -120,18 +125,18 @@ class SickDaysStatisticsViewControllerTest {
             new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
 
         final String fromString = "01.01.2019";
-        when(dateFormatAware.parse(fromString, GERMAN)).thenReturn(Optional.of(startDate));
+        when(dateFormatAware.parse(fromString, locale)).thenReturn(Optional.of(startDate));
         final String endString = "01.08.2019";
-        when(dateFormatAware.parse(endString, GERMAN)).thenReturn(Optional.of(endDate));
+        when(dateFormatAware.parse(endString, locale)).thenReturn(Optional.of(endDate));
 
         when(sickDaysStatisticsService.getAll(signedInUser, startDate, endDate, pageableSearchQuery))
             .thenReturn(new PageImpl<>(List.of()));
 
-        when(sickDaysDetailedStatisticsCsvExportService.generateCSV(filterPeriod, List.of()))
+        when(sickDaysDetailedStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of()))
             .thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
 
         perform(get("/web/sickdays/statistics/download")
-            .locale(GERMAN)
+            .locale(locale)
             .param("from", fromString)
             .param("to", endString)
             .param("page", "2")

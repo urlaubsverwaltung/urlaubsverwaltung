@@ -163,7 +163,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
 
         final Page<ApplicationForLeaveStatistics> statisticsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageableSearchQuery);
         final List<ApplicationForLeaveStatistics> statistics = statisticsPage.getContent();
-        final CSVFile csvFile = applicationForLeaveStatisticsCsvExportService.generateCSV(period, statistics);
+        final CSVFile csvFile = applicationForLeaveStatisticsCsvExportService.generateCSV(period, locale, statistics);
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("text", "csv"));

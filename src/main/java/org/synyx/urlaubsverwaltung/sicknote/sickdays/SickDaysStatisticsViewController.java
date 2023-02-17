@@ -75,7 +75,7 @@ class SickDaysStatisticsViewController {
         final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage =
                 sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate(), new PageableSearchQuery(pageable, query));
 
-        final CSVFile csvFile = sickDaysDetailedStatisticsCsvExportService.generateCSV(period, sickDaysStatisticsPage.getContent());
+        final CSVFile csvFile = sickDaysDetailedStatisticsCsvExportService.generateCSV(period, locale, sickDaysStatisticsPage.getContent());
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("text", "csv"));

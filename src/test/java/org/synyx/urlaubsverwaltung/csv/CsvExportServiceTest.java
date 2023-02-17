@@ -10,8 +10,10 @@ import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,7 +31,7 @@ class CsvExportServiceTest {
     @Test
     void ensureBomIsUsedAsDefault() {
         final FilterPeriod period = new FilterPeriod(LocalDate.of(2022, 10, 2), LocalDate.of(2022, 10, 3));
-        final ByteArrayResource aLotOfData = sut.resource(period, List.of());
+        final ByteArrayResource aLotOfData = sut.resource(period, GERMAN, List.of());
         assertThat(aLotOfData.getByteArray()).startsWith((byte) 239, (byte) 187, (byte) 191);
     }
 
@@ -44,7 +46,7 @@ class CsvExportServiceTest {
 
         final CsvExportService<String> sut = new CsvExportService<>() {
             @Override
-            public void write(FilterPeriod period, List<String> data, CSVWriter csvWriter) {
+            public void write(FilterPeriod period, Locale locale, List<String> data, CSVWriter csvWriter) {
                 final String[] row = new String[data.size()];
                 row[0] = data.get(0);
                 row[1] = data.get(1);
@@ -52,13 +54,13 @@ class CsvExportServiceTest {
             }
 
             @Override
-            public String fileName(FilterPeriod period) {
+            public String fileName(FilterPeriod period, Locale locale) {
                 return "someFileName.csv";
             }
         };
 
         final FilterPeriod period = new FilterPeriod(LocalDate.of(2022, 10, 2), LocalDate.of(2022, 10, 3));
-        final ByteArrayResource aLotOfData = sut.resource(period, List.of("A lot of data", "Next data"));
+        final ByteArrayResource aLotOfData = sut.resource(period, GERMAN, List.of("A lot of data", "Next data"));
         assertThat(new String(aLotOfData.getByteArray(), UTF_8)).contains("A lot of data;Next data");
     }
 
@@ -67,19 +69,19 @@ class CsvExportServiceTest {
 
         final CsvExportService<String> sut = new CsvExportService<>() {
             @Override
-            public void write(FilterPeriod period, List<String> data, CSVWriter csvWriter) {
+            public void write(FilterPeriod period, Locale locale, List<String> data, CSVWriter csvWriter) {
                 csvWriter.writeNext(new String[]{data.get(0)});
 
             }
 
             @Override
-            public String fileName(FilterPeriod period) {
+            public String fileName(FilterPeriod period, Locale locale) {
                 return "someFileName.csv";
             }
         };
 
         final FilterPeriod period = new FilterPeriod(LocalDate.of(2022, 10, 2), LocalDate.of(2022, 10, 3));
-        final ByteArrayResource aLotOfData = sut.resource(period, List.of("A lot of data"));
+        final ByteArrayResource aLotOfData = sut.resource(period, GERMAN, List.of("A lot of data"));
         assertThat(new String(aLotOfData.getByteArray(), UTF_8)).contains("A lot of data");
     }
 }

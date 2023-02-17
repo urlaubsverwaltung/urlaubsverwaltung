@@ -7,20 +7,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static java.math.BigDecimal.TEN;
 import static java.util.Locale.GERMAN;
@@ -50,7 +47,6 @@ class ApplicationForLeaveCsvExportServiceTest {
 
     @Test
     void writeApplicationForLeaveExports() {
-        LocaleContextHolder.setLocale(GERMAN);
 
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
@@ -96,7 +92,7 @@ class ApplicationForLeaveCsvExportServiceTest {
         addMessageSource("FULL");
         addMessageSource("messagekey.holiday");
 
-        sut.write(period, applicationForLeaveExports, csvWriter);
+        sut.write(period, GERMAN, applicationForLeaveExports, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{applications.export.departments}", "{applications.export.from}", "{applications.export.to}", "{applications.export.length}", "{applications.export.type}", "{applications.export.days}"});
         verify(csvWriter).writeNext(new String[]{"1", "personOneFirstName", "personOneLastName", "departmentA", "01.01.2018", "31.12.2018", "{FULL}", "{messagekey.holiday}", "10"});
     }

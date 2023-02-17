@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -20,6 +19,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
@@ -51,7 +51,6 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
     @Test
     void writeStatisticsForOnePersonFor2018() {
-        LocaleContextHolder.setLocale(GERMAN);
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
@@ -87,7 +86,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        sut.write(period, statistics, csvWriter);
+        sut.write(period, GERMAN, statistics, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}", "{applications.statistics.left}", "", "{applications.statistics.left} (2018)", "", "{person.account.basedata.additionalInformation}"});
         verify(csvWriter).writeNext(new String[]{"", "", "", "", "", "", "{duration.vacationDays}", "{duration.overtime}", "{duration.vacationDays}", "{duration.overtime}"});
         verify(csvWriter).writeNext(new String[]{null, null, null, "{holiday}", "0", "1", null, null, null, null, null});
@@ -96,7 +95,6 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
     @Test
     void writeStatisticsForTwoPersonsFor2019() {
-        LocaleContextHolder.setLocale(GERMAN);
         final LocalDate startDate = LocalDate.parse("2019-01-02");
         final LocalDate endDate = LocalDate.parse("2019-12-24");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
@@ -142,7 +140,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
-        sut.write(period, statistics, csvWriter);
+        sut.write(period, GERMAN, statistics, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}",
             "{person.data.lastName}", "", "{applications.statistics.allowed}", "{applications.statistics.waiting}",
             "{applications.statistics.left}", "", "{applications.statistics.left} (2019)", "",
@@ -156,27 +154,31 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
 
     @Test
     void getFileNameForComplete2018() {
-        LocaleContextHolder.setLocale(GERMAN);
+
+        final Locale locale = GERMAN;
+
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        when(messageSource.getMessage("applications.statistics", new String[]{}, GERMAN)).thenReturn("test");
+        when(messageSource.getMessage("applications.statistics", new String[]{}, locale)).thenReturn("test");
 
-        final String fileName = sut.fileName(period);
+        final String fileName = sut.fileName(period, locale);
         assertThat(fileName).isEqualTo("test_01.01.18_31.12.18_de.csv");
     }
 
     @Test
     void getFileNameForComplete2019() {
-        LocaleContextHolder.setLocale(GERMAN);
+
+        final Locale locale = GERMAN;
+
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        when(messageSource.getMessage(eq("applications.statistics"), any(), any())).thenReturn("test");
+        when(messageSource.getMessage(eq("applications.statistics"), any(), eq(locale))).thenReturn("test");
 
-        String fileName = sut.fileName(period);
+        String fileName = sut.fileName(period, locale);
         assertThat(fileName).isEqualTo("test_01.01.19_31.12.19_de.csv");
     }
 

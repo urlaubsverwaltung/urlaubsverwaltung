@@ -4,7 +4,6 @@ package org.synyx.urlaubsverwaltung.application.statistics;
 import com.opencsv.CSVWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
@@ -36,8 +35,7 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
     }
 
     @Override
-    public String fileName(FilterPeriod period) {
-        final Locale locale = LocaleContextHolder.getLocale();
+    public String fileName(FilterPeriod period, Locale locale) {
         final DateTimeFormatter dateTimeFormatter = ofLocalizedDate(SHORT).withLocale(locale);
         return format("%s_%s_%s_%s.csv",
             getTranslation(locale, "applications.statistics"),
@@ -47,9 +45,7 @@ class ApplicationForLeaveStatisticsCsvExportService implements CsvExportService<
     }
 
     @Override
-    public void write(FilterPeriod period, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
-
-        final Locale locale = LocaleContextHolder.getLocale();
+    public void write(FilterPeriod period, Locale locale, List<ApplicationForLeaveStatistics> statistics, CSVWriter csvWriter) {
 
         final String[] csvHeader = {
             getTranslation(locale, "person.account.basedata.personnelNumber"),

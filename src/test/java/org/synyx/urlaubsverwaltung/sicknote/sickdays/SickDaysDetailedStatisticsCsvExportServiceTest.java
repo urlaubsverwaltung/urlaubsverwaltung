@@ -7,19 +7,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
-import org.synyx.urlaubsverwaltung.web.DateFormatAware;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeCalendar;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -53,33 +52,36 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
 
     @Test
     void getFileNameForComplete2018() {
-        LocaleContextHolder.setLocale(GERMAN);
+
+        final Locale locale = GERMAN;
+
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        when(messageSource.getMessage("sicknotes.statistics", new String[]{}, GERMAN)).thenReturn("test");
+        when(messageSource.getMessage("sicknotes.statistics", new String[]{}, locale)).thenReturn("test");
 
-        final String fileName = sut.fileName(period);
+        final String fileName = sut.fileName(period, locale);
         assertThat(fileName).isEqualTo("test_01.01.18_31.12.18_de.csv");
     }
 
     @Test
     void getFileNameForComplete2019() {
-        LocaleContextHolder.setLocale(GERMAN);
+
+        final Locale locale = GERMAN;
+
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
         when(messageSource.getMessage(eq("sicknotes.statistics"), any(), any())).thenReturn("test");
 
-        String fileName = sut.fileName(period);
+        final String fileName = sut.fileName(period, locale);
         assertThat(fileName).isEqualTo("test_01.01.19_31.12.19_de.csv");
     }
 
     @Test
     void writeStatisticsForOnePerson() {
-        LocaleContextHolder.setLocale(GERMAN);
         final LocalDate startDate = LocalDate.parse("2022-01-01");
         final LocalDate endDate = LocalDate.parse("2022-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
@@ -159,7 +161,7 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         addMessageSource("application.data.sicknotetype.sicknotechild");
 
         final CSVWriter csvWriter = mock(CSVWriter.class);
-        sut.write(period, statistics, csvWriter);
+        sut.write(period, GERMAN, statistics, csvWriter);
 
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{sicknotes.statistics.departments}", "{sicknotes.statistics.from}", "{sicknotes.statistics.to}", "{sicknotes.statistics.length}", "{sicknotes.statistics.days}", "{sicknotes.statistics.type}", "{sicknotes.statistics.certificate.from}", "{sicknotes.statistics.certificate.to}", "{sicknotes.statistics.certificate.days}"});
         verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "02.01.2022", "{FULL}", "0", "{application.data.sicknotetype.sicknote}", null, null, null});

@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 
 import com.opencsv.CSVWriter;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.csv.CsvExportService;
 import org.synyx.urlaubsverwaltung.web.FilterPeriod;
@@ -29,8 +28,7 @@ class SickDaysDetailedStatisticsCsvExportService implements CsvExportService<Sic
     }
 
     @Override
-    public String fileName(FilterPeriod period) {
-        final Locale locale = LocaleContextHolder.getLocale();
+    public String fileName(FilterPeriod period, Locale locale) {
         final DateTimeFormatter dateTimeFormatter = ofLocalizedDate(SHORT).withLocale(locale);
         return format("%s_%s_%s_%s.csv",
             getTranslation(locale, "sicknotes.statistics"),
@@ -40,9 +38,7 @@ class SickDaysDetailedStatisticsCsvExportService implements CsvExportService<Sic
     }
 
     @Override
-    public void write(FilterPeriod period, List<SickDaysDetailedStatistics> allDetailedSickNotes, CSVWriter csvWriter) {
-
-        final Locale locale = LocaleContextHolder.getLocale();
+    public void write(FilterPeriod period, Locale locale, List<SickDaysDetailedStatistics> allDetailedSickNotes, CSVWriter csvWriter) {
 
         final String[] csvHeader = {
             getTranslation(locale, "person.account.basedata.personnelNumber"),

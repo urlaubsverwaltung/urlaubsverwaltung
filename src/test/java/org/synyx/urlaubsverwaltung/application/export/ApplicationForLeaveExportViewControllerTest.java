@@ -30,6 +30,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static java.math.BigDecimal.TEN;
+import static java.util.Locale.GERMAN;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -101,7 +102,7 @@ class ApplicationForLeaveExportViewControllerTest {
         when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
-        when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, List.of(applicationForLeaveExport))).thenReturn(csvFile);
+        when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, GERMAN, List.of(applicationForLeaveExport))).thenReturn(csvFile);
 
         perform(get("/web/application/export")
             .param("from", "01.01.2019")
