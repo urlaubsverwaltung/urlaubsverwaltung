@@ -35,8 +35,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 
-import static java.util.Locale.ENGLISH;
-import static java.util.Locale.GERMAN;
+import static java.util.Locale.JAPANESE;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasItems;
@@ -126,11 +125,13 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void applicationForLeaveStatisticsSetsModelAndViewWithStatistics() throws Exception {
 
+        final Locale locale = JAPANESE;
+
         final Person signedInUser = new Person();
         signedInUser.setId(1);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
-        when(messageSource.getMessage("hours.abbr", new Object[]{}, ENGLISH)).thenReturn("Std.");
+        when(messageSource.getMessage("hours.abbr", new Object[]{}, locale)).thenReturn("Std.");
 
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
@@ -156,6 +157,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .thenReturn(new PageImpl<>(List.of(statistic)));
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
+            .locale(locale)
             .param("from", "01.01.2019")
             .param("to", "01.08.2019"));
 
@@ -325,7 +327,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @ValueSource(strings = {"25.03.2022", "25.03.22", "25.3.2022", "25.3.22", "1.4.22"})
     void downloadCSVSetsDownloadHeaders(String givenDate) throws Exception {
 
-        final Locale locale = GERMAN;
+        final Locale locale = JAPANESE;
 
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(any(FilterPeriod.class), eq(locale), any()))
             .thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
@@ -348,7 +350,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     @Test
     void downloadCSVWritesCSV() throws Exception {
 
-        final Locale locale = GERMAN;
+        final Locale locale = JAPANESE;
 
         final Person signedInUser = new Person();
         signedInUser.setId(1);

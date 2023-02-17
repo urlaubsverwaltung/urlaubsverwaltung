@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static java.util.Locale.GERMAN;
+import static java.util.Locale.JAPANESE;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -57,15 +57,18 @@ class SickDaysStatisticsViewControllerTest {
     @Test
     void downloadCSVReturnsBadRequestIfPeriodNotTheSameYear() throws Exception {
 
+        final Locale locale = JAPANESE;
+
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2018-08-01");
 
         final String fromString = "01.01.2019";
-        when(dateFormatAware.parse(fromString, GERMAN)).thenReturn(Optional.of(startDate));
+        when(dateFormatAware.parse(fromString, locale)).thenReturn(Optional.of(startDate));
         final String endString = "01.08.2018";
-        when(dateFormatAware.parse(endString, GERMAN)).thenReturn(Optional.of(endDate));
+        when(dateFormatAware.parse(endString, locale)).thenReturn(Optional.of(endDate));
 
-        perform(get("/web/sickdays/statistics/download").locale(GERMAN)
+        perform(get("/web/sickdays/statistics/download")
+            .locale(locale)
             .param("from", fromString)
             .param("to", endString))
             .andExpect(status().isBadRequest());
@@ -74,7 +77,7 @@ class SickDaysStatisticsViewControllerTest {
     @Test
     void downloadCSVSetsDownloadHeaders() throws Exception {
 
-        final Locale locale = GERMAN;
+        final Locale locale = JAPANESE;
 
         final Person signedInUser = new Person();
         signedInUser.setId(1);
@@ -111,7 +114,7 @@ class SickDaysStatisticsViewControllerTest {
     @Test
     void downloadCSVWritesCSV() throws Exception {
 
-        final Locale locale = GERMAN;
+        final Locale locale = JAPANESE;
 
         final Person signedInUser = new Person();
         signedInUser.setId(1);

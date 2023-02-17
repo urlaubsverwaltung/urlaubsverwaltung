@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Locale.GERMAN;
+import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +31,7 @@ class CsvExportServiceTest {
     @Test
     void ensureBomIsUsedAsDefault() {
         final FilterPeriod period = new FilterPeriod(LocalDate.of(2022, 10, 2), LocalDate.of(2022, 10, 3));
-        final ByteArrayResource aLotOfData = sut.resource(period, GERMAN, List.of());
+        final ByteArrayResource aLotOfData = sut.resource(period, JAPANESE, List.of());
         assertThat(aLotOfData.getByteArray()).startsWith((byte) 239, (byte) 187, (byte) 191);
     }
 
@@ -60,7 +60,7 @@ class CsvExportServiceTest {
         };
 
         final FilterPeriod period = new FilterPeriod(LocalDate.of(2022, 10, 2), LocalDate.of(2022, 10, 3));
-        final ByteArrayResource aLotOfData = sut.resource(period, GERMAN, List.of("A lot of data", "Next data"));
+        final ByteArrayResource aLotOfData = sut.resource(period, JAPANESE, List.of("A lot of data", "Next data"));
         assertThat(new String(aLotOfData.getByteArray(), UTF_8)).contains("A lot of data;Next data");
     }
 
@@ -81,7 +81,7 @@ class CsvExportServiceTest {
         };
 
         final FilterPeriod period = new FilterPeriod(LocalDate.of(2022, 10, 2), LocalDate.of(2022, 10, 3));
-        final ByteArrayResource aLotOfData = sut.resource(period, GERMAN, List.of("A lot of data"));
+        final ByteArrayResource aLotOfData = sut.resource(period, JAPANESE, List.of("A lot of data"));
         assertThat(new String(aLotOfData.getByteArray(), UTF_8)).contains("A lot of data");
     }
 }

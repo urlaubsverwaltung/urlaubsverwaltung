@@ -18,9 +18,10 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static java.math.BigDecimal.TEN;
-import static java.util.Locale.GERMAN;
+import static java.util.Locale.JAPANESE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -47,6 +48,8 @@ class ApplicationForLeaveCsvExportServiceTest {
 
     @Test
     void writeApplicationForLeaveExports() {
+
+        final Locale locale = JAPANESE;
 
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
@@ -80,24 +83,24 @@ class ApplicationForLeaveCsvExportServiceTest {
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", person.getFirstName(), person.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
         applicationForLeaveExports.add(applicationForLeaveExport);
 
-        addMessageSource("person.account.basedata.personnelNumber");
-        addMessageSource("person.data.firstName");
-        addMessageSource("person.data.lastName");
-        addMessageSource("applications.export.departments");
-        addMessageSource("applications.export.from");
-        addMessageSource("applications.export.to");
-        addMessageSource("applications.export.length");
-        addMessageSource("applications.export.type");
-        addMessageSource("applications.export.days");
-        addMessageSource("FULL");
-        addMessageSource("messagekey.holiday");
+        addMessageSource("person.account.basedata.personnelNumber", locale);
+        addMessageSource("person.data.firstName", locale);
+        addMessageSource("person.data.lastName", locale);
+        addMessageSource("applications.export.departments", locale);
+        addMessageSource("applications.export.from", locale);
+        addMessageSource("applications.export.to", locale);
+        addMessageSource("applications.export.length", locale);
+        addMessageSource("applications.export.type", locale);
+        addMessageSource("applications.export.days", locale);
+        addMessageSource("FULL", locale);
+        addMessageSource("messagekey.holiday", locale);
 
-        sut.write(period, GERMAN, applicationForLeaveExports, csvWriter);
+        sut.write(period, locale, applicationForLeaveExports, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{applications.export.departments}", "{applications.export.from}", "{applications.export.to}", "{applications.export.length}", "{applications.export.type}", "{applications.export.days}"});
-        verify(csvWriter).writeNext(new String[]{"1", "personOneFirstName", "personOneLastName", "departmentA", "01.01.2018", "31.12.2018", "{FULL}", "{messagekey.holiday}", "10"});
+        verify(csvWriter).writeNext(new String[]{"1", "personOneFirstName", "personOneLastName", "departmentA", "2018/01/01", "2018/12/31", "{FULL}", "{messagekey.holiday}", "10"});
     }
 
-    private void addMessageSource(String key) {
-        when(messageSource.getMessage(eq(key), any(), any())).thenReturn(String.format("{%s}", key));
+    private void addMessageSource(String key, Locale locale) {
+        when(messageSource.getMessage(eq(key), any(), eq(locale))).thenReturn(String.format("{%s}", key));
     }
 }

@@ -24,7 +24,7 @@ import java.util.function.Function;
 
 import static java.time.DayOfWeek.SATURDAY;
 import static java.time.DayOfWeek.SUNDAY;
-import static java.util.Locale.GERMAN;
+import static java.util.Locale.JAPANESE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -53,7 +53,7 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
     @Test
     void getFileNameForComplete2018() {
 
-        final Locale locale = GERMAN;
+        final Locale locale = JAPANESE;
 
         final LocalDate startDate = LocalDate.parse("2018-01-01");
         final LocalDate endDate = LocalDate.parse("2018-12-31");
@@ -62,13 +62,13 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         when(messageSource.getMessage("sicknotes.statistics", new String[]{}, locale)).thenReturn("test");
 
         final String fileName = sut.fileName(period, locale);
-        assertThat(fileName).isEqualTo("test_01.01.18_31.12.18_de.csv");
+        assertThat(fileName).isEqualTo("test_2018/01/01_2018/12/31_ja.csv");
     }
 
     @Test
     void getFileNameForComplete2019() {
 
-        final Locale locale = GERMAN;
+        final Locale locale = JAPANESE;
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
         final LocalDate endDate = LocalDate.parse("2019-12-31");
@@ -77,11 +77,14 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         when(messageSource.getMessage(eq("sicknotes.statistics"), any(), any())).thenReturn("test");
 
         final String fileName = sut.fileName(period, locale);
-        assertThat(fileName).isEqualTo("test_01.01.19_31.12.19_de.csv");
+        assertThat(fileName).isEqualTo("test_2019/01/01_2019/12/31_ja.csv");
     }
 
     @Test
     void writeStatisticsForOnePerson() {
+
+        final Locale locale = JAPANESE;
+
         final LocalDate startDate = LocalDate.parse("2022-01-01");
         final LocalDate endDate = LocalDate.parse("2022-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
@@ -142,36 +145,36 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
 
         final List<SickDaysDetailedStatistics> statistics = List.of(sickDaysDetailedStatistics);
 
-        addMessageSource("person.account.basedata.personnelNumber");
-        addMessageSource("person.data.firstName");
-        addMessageSource("person.data.lastName");
-        addMessageSource("sicknotes.statistics.departments");
-        addMessageSource("sicknotes.statistics.from");
-        addMessageSource("sicknotes.statistics.to");
-        addMessageSource("sicknotes.statistics.length");
-        addMessageSource("sicknotes.statistics.type");
-        addMessageSource("sicknotes.statistics.days");
-        addMessageSource("sicknotes.statistics.certificate.from");
-        addMessageSource("sicknotes.statistics.certificate.to");
-        addMessageSource("sicknotes.statistics.certificate.days");
-        addMessageSource("FULL");
-        addMessageSource("MORNING");
-        addMessageSource("NOON");
-        addMessageSource("application.data.sicknotetype.sicknote");
-        addMessageSource("application.data.sicknotetype.sicknotechild");
+        addMessageSource("person.account.basedata.personnelNumber", locale);
+        addMessageSource("person.data.firstName", locale);
+        addMessageSource("person.data.lastName", locale);
+        addMessageSource("sicknotes.statistics.departments", locale);
+        addMessageSource("sicknotes.statistics.from", locale);
+        addMessageSource("sicknotes.statistics.to", locale);
+        addMessageSource("sicknotes.statistics.length", locale);
+        addMessageSource("sicknotes.statistics.type", locale);
+        addMessageSource("sicknotes.statistics.days", locale);
+        addMessageSource("sicknotes.statistics.certificate.from", locale);
+        addMessageSource("sicknotes.statistics.certificate.to", locale);
+        addMessageSource("sicknotes.statistics.certificate.days", locale);
+        addMessageSource("FULL", locale);
+        addMessageSource("MORNING", locale);
+        addMessageSource("NOON", locale);
+        addMessageSource("application.data.sicknotetype.sicknote", locale);
+        addMessageSource("application.data.sicknotetype.sicknotechild", locale);
 
         final CSVWriter csvWriter = mock(CSVWriter.class);
-        sut.write(period, GERMAN, statistics, csvWriter);
+        sut.write(period, locale, statistics, csvWriter);
 
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{sicknotes.statistics.departments}", "{sicknotes.statistics.from}", "{sicknotes.statistics.to}", "{sicknotes.statistics.length}", "{sicknotes.statistics.days}", "{sicknotes.statistics.type}", "{sicknotes.statistics.certificate.from}", "{sicknotes.statistics.certificate.to}", "{sicknotes.statistics.certificate.days}"});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "02.01.2022", "{FULL}", "0", "{application.data.sicknotetype.sicknote}", null, null, null});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "04.01.2022", "05.01.2022", "{FULL}", "2", "{application.data.sicknotetype.sicknotechild}", "04.01.2022", "05.01.2022", "2"});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "01.01.2022", "{MORNING}", "0", "{application.data.sicknotetype.sicknote}", null, null, null});
-        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "01.01.2022", "01.01.2022", "{NOON}", "0", "{application.data.sicknotetype.sicknote}", null, null, null});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "2022/01/01", "2022/01/02", "{FULL}", "0", "{application.data.sicknotetype.sicknote}", null, null, null});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "2022/01/04", "2022/01/05", "{FULL}", "2", "{application.data.sicknotetype.sicknotechild}", "2022/01/04", "2022/01/05", "2"});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "2022/01/01", "2022/01/01", "{MORNING}", "0", "{application.data.sicknotetype.sicknote}", null, null, null});
+        verify(csvWriter).writeNext(new String[]{"42", "personOneFirstName", "personOneLastName", "Here, There", "2022/01/01", "2022/01/01", "{NOON}", "0", "{application.data.sicknotetype.sicknote}", null, null, null});
     }
 
-    private void addMessageSource(String key) {
-        when(messageSource.getMessage(eq(key), any(), any())).thenReturn(String.format("{%s}", key));
+    private void addMessageSource(String key, Locale locale) {
+        when(messageSource.getMessage(eq(key), any(), eq(locale))).thenReturn(String.format("{%s}", key));
     }
 
     private Map<LocalDate, DayLength> workingTimeMondayToFriday(LocalDate from, LocalDate to) {
