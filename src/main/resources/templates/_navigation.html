@@ -33,45 +33,27 @@
             </div>
             <div class="tw-grow tw-w-full tw-max-w-6xl tw-flex navigation-items tw-max-h-0 lg:tw-max-h-full">
               <ul class="navigation-list tw-list-none tw-m-0 tw-px-0 tw-py-8 lg:tw-py-3 lg:tw-px-2 xl:tw-px-0">
-                <li>
+                <li th:each="navigationItem : ${navigation.elements}">
                   <a
-                    th:replace="~{::navigation-item(id='home-link', href=@{/web/overview}, text=#{nav.home.title}, icon=~{icon/home::svg})}"
-                  ></a>
-                </li>
-                <li>
-                  <a
-                    th:replace="~{::navigation-item(id='application-new-link', href=@{/web/application/new}, text=#{nav.apply.title}, icon=~{icon/plus-circle::svg})}"
-                  ></a>
-                </li>
-                <li>
-                  <a
-                    th:replace="~{::navigation-item(id='application-link', href=@{/web/application}, text=#{nav.vacation.title}, icon=~{icon/calendar::svg})}"
-                  ></a>
-                </li>
-                <li th:if="${navigationOvertimeItemEnabled}">
-                  <a
-                    th:replace="~{::navigation-item(id='overtime-link', href=@{/web/overtime}, text=#{nav.overtime.title}, icon=~{icon/briefcase::svg})}"
-                  ></a>
-                </li>
-                <li th:if="${navigationSickNoteStatisticsAccess}">
-                  <a
-                    th:replace="~{::navigation-item(id='sicknote-link', href=@{/web/sickdays}, text=#{nav.sicknote.title}, icon=~{icon/medkit::svg}, dataTestId='navigation-sick-notes-link')}"
-                  ></a>
-                </li>
-                <li th:if="${navigationPersonListAccess}">
-                  <a
-                    th:replace="~{::navigation-item(id='person-link', href=@{/web/person(active=true)}, text=#{nav.person.title}, icon=~{icon/user::svg})}"
-                  ></a>
-                </li>
-                <li th:if="${navigationDepartmentAccess}">
-                  <a
-                    th:replace="~{::navigation-item(id='department-link', href=@{/web/department}, text=#{nav.department.title}, icon=~{icon/users::svg})}"
-                  ></a>
-                </li>
-                <li th:if="${navigationSettingsAccess}">
-                  <a
-                    th:replace="~{::navigation-item(id='settings-link', href=@{/web/settings}, text=#{nav.settings.title}, icon=~{icon/settings::svg}, dataTestId='navigation-settings-link')}"
-                  ></a>
+                    th:fragment="navigation-item(id, href, text, icon)"
+                    href="#"
+                    th:href="@{__${navigationItem.href}__}"
+                    th:id="${navigationItem.id}"
+                    class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
+                    th:data-test-id="${navigationItem.dataTestId}"
+                    th:title="${#messages.msg(navigationItem.messageKey)}"
+                  >
+                    <th:block
+                      th:with="className='tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400'"
+                    >
+                      <svg th:replace="~{__${'icon/' + navigationItem.iconName + '::svg'}__}"></svg>
+                    </th:block>
+                    <span
+                      class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap"
+                      style="min-width: 0"
+                      th:text="${#messages.msg(navigationItem.messageKey)}"
+                    ></span>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -260,27 +242,6 @@
       </div>
       <div class="navigation-content-gap"></div>
     </th:block>
-
-    <a
-      th:fragment="navigation-item(id, href, text, icon)"
-      href="#"
-      th:href="${href}"
-      th:id="${id}"
-      class="group tw-no-underline tw-flex tw-items-center tw-text-zinc-900 tw-overflow-hidden hover:tw-text-blue-400 focus:tw-text-blue-400 tw-transition-colors tw-text-2xl tw-font-medium tw-no-underline tw-space-x-5 dark:tw-text-zinc-100 dark:hover:tw-text-zinc-400 dark:focus:tw-text-zinc-400 lg:tw-text-lg lg:tw-font-normal lg:tw-space-x-2 xl:tw-space-x-2"
-      th:data-test-id="${dataTestId}"
-      th:title="${text}"
-    >
-      <th:block
-        th:with="className='tw-shrink-0 tw-text-zinc-900 tw-text-opacity-50 tw-transition-colors dark:tw-text-zinc-100 dark:tw-text-opacity-100 tw-w-8 tw-h-8 lg:tw-w-5 lg:tw-h-5 group-hover:tw-text-blue-400 group-hover:dark:tw-text-zinc-400 group-focus:tw-text-blue-400 group-focus:dark:tw-text-zinc-400'"
-      >
-        <svg th:replace="${icon}"></svg>
-      </th:block>
-      <span
-        class="tw-overflow-hidden tw-text-ellipsis tw-whitespace-nowrap"
-        style="min-width: 0"
-        th:text="${text}"
-      ></span>
-    </a>
 
     <a
       th:with="external=${false}"
