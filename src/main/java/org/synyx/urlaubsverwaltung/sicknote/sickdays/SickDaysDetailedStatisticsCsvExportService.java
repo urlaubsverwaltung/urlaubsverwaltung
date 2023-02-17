@@ -32,8 +32,8 @@ class SickDaysDetailedStatisticsCsvExportService implements CsvExportService<Sic
         final DateTimeFormatter dateTimeFormatter = ofLocalizedDate(SHORT).withLocale(locale);
         return format("%s_%s_%s_%s.csv",
             getTranslation(locale, "sicknotes.statistics"),
-            period.getStartDate().format(dateTimeFormatter),
-            period.getEndDate().format(dateTimeFormatter),
+            period.getStartDate().format(dateTimeFormatter).replaceAll("/", "-"),
+            period.getEndDate().format(dateTimeFormatter).replace("/", "-"),
             locale.getLanguage());
     }
 

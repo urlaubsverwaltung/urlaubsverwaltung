@@ -62,7 +62,7 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         when(messageSource.getMessage("sicknotes.statistics", new String[]{}, locale)).thenReturn("test");
 
         final String fileName = sut.fileName(period, locale);
-        assertThat(fileName).isEqualTo("test_2018/01/01_2018/12/31_ja.csv");
+        assertThat(fileName).isEqualTo("test_2018-01-01_2018-12-31_ja.csv");
     }
 
     @Test
@@ -77,7 +77,7 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         when(messageSource.getMessage(eq("sicknotes.statistics"), any(), any())).thenReturn("test");
 
         final String fileName = sut.fileName(period, locale);
-        assertThat(fileName).isEqualTo("test_2019/01/01_2019/12/31_ja.csv");
+        assertThat(fileName).isEqualTo("test_2019-01-01_2019-12-31_ja.csv");
     }
 
     @Test

@@ -170,7 +170,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         when(messageSource.getMessage("applications.statistics", new String[]{}, locale)).thenReturn("test");
 
         final String fileName = sut.fileName(period, locale);
-        assertThat(fileName).isEqualTo("test_2018/01/01_2018/12/31_ja.csv");
+        assertThat(fileName).isEqualTo("test_2018-01-01_2018-12-31_ja.csv");
     }
 
     @Test
@@ -185,7 +185,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         when(messageSource.getMessage(eq("applications.statistics"), any(), eq(locale))).thenReturn("test");
 
         String fileName = sut.fileName(period, locale);
-        assertThat(fileName).isEqualTo("test_2019/01/01_2019/12/31_ja.csv");
+        assertThat(fileName).isEqualTo("test_2019-01-01_2019-12-31_ja.csv");
     }
 
     private void addMessageSource(String key, Locale locale) {
