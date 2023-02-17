@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import static java.math.BigDecimal.TEN;
 import static java.util.Locale.JAPANESE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -98,6 +99,21 @@ class ApplicationForLeaveCsvExportServiceTest {
         sut.write(period, locale, applicationForLeaveExports, csvWriter);
         verify(csvWriter).writeNext(new String[]{"{person.account.basedata.personnelNumber}", "{person.data.firstName}", "{person.data.lastName}", "{applications.export.departments}", "{applications.export.from}", "{applications.export.to}", "{applications.export.length}", "{applications.export.type}", "{applications.export.days}"});
         verify(csvWriter).writeNext(new String[]{"1", "personOneFirstName", "personOneLastName", "departmentA", "2018/01/01", "2018/12/31", "{FULL}", "{messagekey.holiday}", "10"});
+    }
+
+    @Test
+    void getFileNameWithoutWhitespace() {
+
+        final Locale locale = JAPANESE;
+
+        final LocalDate startDate = LocalDate.parse("2018-01-01");
+        final LocalDate endDate = LocalDate.parse("2018-12-31");
+        final FilterPeriod period = new FilterPeriod(startDate, endDate);
+
+        when(messageSource.getMessage("applications.export", new String[]{}, locale)).thenReturn("test filename");
+
+        final String fileName = sut.fileName(period, locale);
+        assertThat(fileName).startsWith("test-filename_");
     }
 
     private void addMessageSource(String key, Locale locale) {

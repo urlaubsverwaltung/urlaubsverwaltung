@@ -159,6 +159,21 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
     }
 
     @Test
+    void getFileNameWithoutWhitespace() {
+
+        final Locale locale = JAPANESE;
+
+        final LocalDate startDate = LocalDate.parse("2018-01-01");
+        final LocalDate endDate = LocalDate.parse("2018-12-31");
+        final FilterPeriod period = new FilterPeriod(startDate, endDate);
+
+        when(messageSource.getMessage("applications.statistics", new String[]{}, locale)).thenReturn("test filename");
+
+        final String fileName = sut.fileName(period, locale);
+        assertThat(fileName).startsWith("test-filename_");
+    }
+
+    @Test
     void getFileNameForComplete2018() {
 
         final Locale locale = JAPANESE;
