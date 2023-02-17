@@ -29,6 +29,7 @@ import java.time.Year;
 import java.util.List;
 import java.util.Locale;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.springframework.http.HttpStatus.OK;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
@@ -81,8 +82,8 @@ class ApplicationForLeaveExportViewController implements HasLaunchpad {
         final CSVFile csvFile = applicationForLeaveCsvExportService.generateCSV(period, locale, export);
 
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("text", "csv"));
-        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(csvFile.getFileName()).build());
+        headers.setContentType(new MediaType("text", "csv", UTF_8));
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(csvFile.getFileName(), UTF_8).build());
 
         return ResponseEntity.status(OK).headers(headers).body(csvFile.getResource());
     }

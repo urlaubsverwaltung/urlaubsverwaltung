@@ -42,6 +42,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -166,8 +167,8 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         final CSVFile csvFile = applicationForLeaveStatisticsCsvExportService.generateCSV(period, locale, statistics);
 
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("text", "csv"));
-        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(csvFile.getFileName()).build());
+        headers.setContentType(new MediaType("text", "csv", UTF_8));
+        headers.setContentDisposition(ContentDisposition.builder("attachment").filename(csvFile.getFileName(), UTF_8).build());
 
         return ResponseEntity.status(OK).headers(headers).body(csvFile.getResource());
     }

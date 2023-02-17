@@ -343,8 +343,8 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .locale(locale)
             .param("from", givenDate)
             .param("to", givenDate))
-            .andExpect(header().string("Content-disposition", "attachment; filename=\"filename.csv\""))
-            .andExpect(header().string("Content-Type", "text/csv"));
+            .andExpect(header().string("Content-disposition", "attachment; filename*=UTF-8''filename.csv"))
+            .andExpect(header().string("Content-Type", "text/csv;charset=UTF-8"));
     }
 
     @Test
