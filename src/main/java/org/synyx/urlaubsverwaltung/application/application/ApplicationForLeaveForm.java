@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNullElse;
+import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
@@ -46,7 +47,7 @@ public class ApplicationForLeaveForm {
     private VacationType vacationType;
 
     // length of day: contains time of day (morning, noon or full day) and value (1.0 or 0.5 - as BigDecimal)
-    private DayLength dayLength;
+    private DayLength dayLength = FULL;
 
     // hours are relevant for overtime reduction, decimal input possible
     private BigDecimal hours;
