@@ -85,11 +85,25 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOf(NavigationDto.class)
+            .satisfies(navigation -> {
+                final NavigationDto dto = (NavigationDto) navigation;
+                assertThat(dto.getElements()).containsExactly(
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
+                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user"),
+                    new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users")
+                );
+            });
+
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
     }
 
     @Test
@@ -108,11 +122,25 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOf(NavigationDto.class)
+            .satisfies(navigation -> {
+                final NavigationDto dto = (NavigationDto) navigation;
+                assertThat(dto.getElements()).containsExactly(
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
+                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user"),
+                    new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users")
+                );
+            });
+
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
     }
 
     @Test
@@ -131,11 +159,26 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOf(NavigationDto.class)
+            .satisfies(navigation -> {
+                final NavigationDto dto = (NavigationDto) navigation;
+                assertThat(dto.getElements()).containsExactly(
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
+                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user"),
+                    new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users"),
+                    new NavigationItemDto("settings-link", "/web/settings", "nav.settings.title", "settings", "navigation-settings-link")
+                );
+            });
+
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", true);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
     }
 
     @Test
@@ -154,11 +197,24 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOf(NavigationDto.class)
+            .satisfies(navigation -> {
+                final NavigationDto dto = (NavigationDto) navigation;
+                assertThat(dto.getElements()).containsExactly(
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
+                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user")
+                );
+            });
+
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
     }
 
     @Test
@@ -177,11 +233,24 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOf(NavigationDto.class)
+            .satisfies(navigation -> {
+                final NavigationDto dto = (NavigationDto) navigation;
+                assertThat(dto.getElements()).containsExactly(
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
+                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user")
+                );
+            });
+
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
     }
 
     @Test
@@ -200,11 +269,24 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOf(NavigationDto.class)
+            .satisfies(navigation -> {
+                final NavigationDto dto = (NavigationDto) navigation;
+                assertThat(dto.getElements()).containsExactly(
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
+                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user")
+                );
+            });
+
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
     }
 
     @Test
@@ -223,11 +305,24 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
 
         sut.postHandle(null, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOf(NavigationDto.class)
+            .satisfies(navigation -> {
+                final NavigationDto dto = (NavigationDto) navigation;
+                assertThat(dto.getElements()).containsExactly(
+                    new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
+                    new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
+                    new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
+                    new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user")
+                );
+            });
+
         assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteAddAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSickNoteStatisticsAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationSettingsAccess", false);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationPersonListAccess", true);
-        assertThat(modelAndView.getModelMap()).containsEntry("navigationDepartmentAccess", false);
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
     }
 
     @Test
@@ -259,12 +354,62 @@ class FrameDataProviderTest {
         assertThat(modelAndView.getModelMap().get("menuGravatarUrl")).isNull();
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void ensureOvertimeIsSetForOfficeWhenFeatureEnabledAnd(boolean privilegedOnly) {
+        mockOvertime(true, privilegedOnly);
+
+        final Person person = new Person();
+        person.setPermissions(List.of(OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(null, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOf(NavigationDto.class)
+            .satisfies(navigation -> {
+                final NavigationDto dto = (NavigationDto) navigation;
+                assertThat(dto.getElements()).contains(
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase")
+                );
+            });
+
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", true);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void ensureOvertimeNotSetForOfficeWhenFeatureDisabledAnd(boolean privilegedOnly) {
+        mockOvertime(false, privilegedOnly);
+
+        final Person person = new Person();
+        person.setPermissions(List.of(OFFICE));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("someView");
+
+        sut.postHandle(null, null, null, modelAndView);
+
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOf(NavigationDto.class)
+            .satisfies(navigation -> {
+                final NavigationDto dto = (NavigationDto) navigation;
+                assertThat(dto.getElements()).doesNotContain(
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase")
+                );
+            });
+
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", false);
+    }
+
     static Stream<Arguments> modelPropertiesNavigation() {
         return Stream.of(
-            Arguments.of("navigationOvertimeItemEnabled", true, true, true),
-            Arguments.of("navigationOvertimeItemEnabled", true, true, false),
-            Arguments.of("navigationOvertimeItemEnabled", false, false, true),
-            Arguments.of("navigationOvertimeItemEnabled", false, false, false),
             Arguments.of("navigationRequestPopupEnabled", true, false, true),
             Arguments.of("navigationRequestPopupEnabled", true, false, false),
             Arguments.of("navigationRequestPopupEnabled", true, true, true),
@@ -318,7 +463,17 @@ class FrameDataProviderTest {
 
         sut.postHandle(null, null, null, modelAndView);
 
-        assertThat(modelAndView.getModel()).containsEntry("navigationOvertimeItemEnabled", false);
+        assertThat(modelAndView.getModelMap().get("navigation"))
+            .isNotNull()
+            .isInstanceOf(NavigationDto.class)
+            .satisfies(navigation -> {
+                final NavigationDto dto = (NavigationDto) navigation;
+                assertThat(dto.getElements()).doesNotContain(
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase")
+                );
+            });
+
+        assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", false);
     }
 
     private void mockOvertime(boolean overtimeFeatureActive, boolean overtimeWritePrivilegedOnly) {
