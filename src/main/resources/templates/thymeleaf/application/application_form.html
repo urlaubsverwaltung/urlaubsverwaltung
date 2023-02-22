@@ -261,18 +261,18 @@
                         type="radio"
                         id="fullDay"
                         class="dayLength-full"
-                        name="dayLength"
-                        checked="checked"
+                        th:field="*{dayLength}"
                         value="FULL"
+                        th:checked="${applicationForLeaveForm.dayLength == null}"
                       />
                       <th:block th:text="#{FULL}" />
                     </label>
                     <label class="thirds" data-test-id="day-length-morning">
-                      <input type="radio" id="morning" class="dayLength-half" name="dayLength" value="MORNING" />
+                      <input type="radio" id="morning" class="dayLength-half" th:field="*{dayLength}" value="MORNING" />
                       <th:block th:text="#{MORNING}" />
                     </label>
                     <label class="thirds" data-test-id="day-length-noon">
-                      <input type="radio" id="noon" class="dayLength-half" name="dayLength" value="NOON" />
+                      <input type="radio" id="noon" class="dayLength-half" th:field="*{dayLength}" value="NOON" />
                       <th:block th:text="#{NOON}" />
                     </label>
                     <p
@@ -372,13 +372,7 @@
                       <th:block th:text="#{application.data.teamInformed.true}" />
                     </label>
                     <label class="thirds">
-                      <input
-                        type="radio"
-                        id="teamNotInformed"
-                        th:field="*{teamInformed}"
-                        value="false"
-                        th:checked="true"
-                      />
+                      <input type="radio" id="teamNotInformed" th:field="*{teamInformed}" value="false" />
                       <th:block th:text="#{application.data.teamInformed.false}" />
                     </label>
                     <label class="thirds"></label>

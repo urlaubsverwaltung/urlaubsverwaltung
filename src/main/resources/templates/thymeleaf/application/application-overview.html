@@ -273,7 +273,10 @@
                         />
                         <th:block th:if="${replacementInfo.person.isInactive}">
                           <span th:data-title="#{person.data.inactive}">
-                            &nbsp;<svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only" >(<th:block th:text="#{person.data.inactive}" />)</span>
+                            &nbsp;<svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')" /><span
+                              class="tw-sr-only"
+                              >(<th:block th:text="#{person.data.inactive}" />)</span
+                            >
                           </span>
                         </th:block>
                       </span>
@@ -346,7 +349,9 @@
                   ></a>
                   <th:block th:if="${otherRequestForLeave.person.isInactive}">
                     <span th:data-title="#{person.data.inactive}">
-                      &nbsp;<svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only" >(<th:block th:text="#{person.data.inactive}" />)</span>
+                      &nbsp;<svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only"
+                        >(<th:block th:text="#{person.data.inactive}" />)</span
+                      >
                     </span>
                   </th:block>
                 </span>
@@ -472,14 +477,16 @@
                 <span class="tw-pl-20 md:tw-pl-0 md:tw-flex md:tw-flex-col tw-text-lg">
                   <span class="tw-flex tw-items-center">
                     <a
-                    th:text="${cancellationRequest.person.name}"
-                    th:href="@{/web/person/__${cancellationRequest.person.id}__/overview}"
-                    class="icon-link"
-                    data-turbo-frame="_top"
+                      th:text="${cancellationRequest.person.name}"
+                      th:href="@{/web/person/__${cancellationRequest.person.id}__/overview}"
+                      class="icon-link"
+                      data-turbo-frame="_top"
                     ></a>
                     <th:block th:if="${cancellationRequest.person.isInactive}">
                       <span th:data-title="#{person.data.inactive}">
-                        &nbsp;<svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only" >(<th:block th:text="#{person.data.inactive}" />)</span>
+                        &nbsp;<svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only"
+                          >(<th:block th:text="#{person.data.inactive}" />)</span
+                        >
                       </span>
                     </th:block>
                   </span>
