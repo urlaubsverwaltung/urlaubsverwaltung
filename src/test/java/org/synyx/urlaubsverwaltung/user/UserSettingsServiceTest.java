@@ -105,7 +105,6 @@ class UserSettingsServiceTest {
 
         final UserSettingsEntity entity = new UserSettingsEntity();
         entity.setPersonId(42);
-        entity.setPerson(person);
         entity.setTheme(Theme.DARK);
         entity.setLocale(null);
 
@@ -113,7 +112,6 @@ class UserSettingsServiceTest {
 
         final UserSettingsEntity entityToSave = new UserSettingsEntity();
         entityToSave.setPersonId(42);
-        entityToSave.setPerson(null);
         entityToSave.setTheme(LIGHT);
         entityToSave.setLocale(GERMAN);
 
@@ -147,7 +145,6 @@ class UserSettingsServiceTest {
 
         final UserSettingsEntity entityToSave = new UserSettingsEntity();
         entityToSave.setPersonId(42);
-        entityToSave.setPerson(null);
         entityToSave.setTheme(LIGHT);
         entityToSave.setLocale(GERMAN);
 

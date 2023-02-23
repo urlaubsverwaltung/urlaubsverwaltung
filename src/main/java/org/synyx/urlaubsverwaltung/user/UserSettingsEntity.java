@@ -48,10 +48,6 @@ class UserSettingsEntity {
         return person;
     }
 
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
     public Theme getTheme() {
         return theme;
     }

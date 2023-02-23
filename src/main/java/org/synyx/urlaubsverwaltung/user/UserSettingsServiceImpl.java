@@ -82,7 +82,6 @@ class UserSettingsServiceImpl implements UserSettingsService {
     UserSettings updateUserPreference(Person person, Theme theme, @Nullable Locale locale) {
         final UserSettingsEntity entity = findForPersonOrGetDefault(person);
         entity.setPersonId(person.getId());
-        entity.setPerson(null);
         entity.setTheme(theme);
         entity.setLocale(locale);
         getLocaleFromRequest().ifPresent(entity::setLocaleBrowserSpecific);
@@ -113,7 +112,6 @@ class UserSettingsServiceImpl implements UserSettingsService {
             }, () -> {
                 final UserSettingsEntity defaultUserSettingsEntity = defaultUserSettingsEntity(person);
                 defaultUserSettingsEntity.setLocaleBrowserSpecific(localeBrowserSpecific);
-                defaultUserSettingsEntity.setPersonId(person.getId());
                 userSettingsRepository.save(defaultUserSettingsEntity);
             });
     }
@@ -143,6 +141,7 @@ class UserSettingsServiceImpl implements UserSettingsService {
     private UserSettingsEntity defaultUserSettingsEntity(Person person) {
         final UserSettingsEntity userSettingsEntity = new UserSettingsEntity();
         userSettingsEntity.setTheme(Theme.SYSTEM);
+        userSettingsEntity.setPersonId(person.getId());
 
         LOG.debug("created (not persisted) default userSettingsEntity={}", userSettingsEntity);
 
