@@ -84,7 +84,9 @@ class UserSettingsServiceImpl implements UserSettingsService {
         entity.setPersonId(person.getId());
         entity.setTheme(theme);
         entity.setLocale(locale);
-        getLocaleFromRequest().ifPresent(entity::setLocaleBrowserSpecific);
+
+        final Locale localeFromRequest = locale == null ? getLocaleFromRequest().orElse(null) : null;
+        entity.setLocaleBrowserSpecific(localeFromRequest);
 
         final UserSettingsEntity persistedEntity = userSettingsRepository.save(entity);
         setLocale(persistedEntity.getLocale());

@@ -96,10 +96,6 @@ class UserSettingsServiceTest {
     @Test
     void ensureUpdateUserPreference() {
 
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        when(localeResolver.resolveLocale(request)).thenReturn(ENGLISH);
-
         final Person person = new Person();
         person.setId(42);
 
@@ -107,6 +103,7 @@ class UserSettingsServiceTest {
         entity.setPersonId(42);
         entity.setTheme(Theme.DARK);
         entity.setLocale(null);
+        entity.setLocaleBrowserSpecific(ENGLISH);
 
         when(userSettingsRepository.findById(42)).thenReturn(Optional.of(entity));
 
@@ -120,6 +117,7 @@ class UserSettingsServiceTest {
         final UserSettings updatedUserSettings = sut.updateUserPreference(person, LIGHT, GERMAN);
         assertThat(updatedUserSettings.theme()).isEqualTo(LIGHT);
         assertThat(updatedUserSettings.locale()).hasValue(GERMAN);
+        assertThat(updatedUserSettings.localeBrowserSpecific()).isEmpty();
 
         final ArgumentCaptor<UserSettingsEntity> entityArgumentCaptor = ArgumentCaptor.forClass(UserSettingsEntity.class);
         verify(userSettingsRepository).save(entityArgumentCaptor.capture());
@@ -127,16 +125,53 @@ class UserSettingsServiceTest {
             .satisfies(userSettingsEntity -> {
                 assertThat(userSettingsEntity.getTheme()).isEqualTo(LIGHT);
                 assertThat(userSettingsEntity.getLocale()).isEqualTo(GERMAN);
-                assertThat(userSettingsEntity.getLocaleBrowserSpecific()).isEqualTo(ENGLISH);
+                assertThat(userSettingsEntity.getLocaleBrowserSpecific()).isNull();
+            });
+    }
+
+    @Test
+    void ensureUpdateUserPreferenceUsesBrowserSpecificLocaleLocaleWillBeNull() {
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+        when(localeResolver.resolveLocale(request)).thenReturn(GERMAN);
+
+        final Person person = new Person();
+        person.setId(42);
+
+        final UserSettingsEntity entity = new UserSettingsEntity();
+        entity.setPersonId(42);
+        entity.setTheme(Theme.DARK);
+        entity.setLocale(ENGLISH);
+        entity.setLocaleBrowserSpecific(null);
+
+        when(userSettingsRepository.findById(42)).thenReturn(Optional.of(entity));
+
+        final UserSettingsEntity entityToSave = new UserSettingsEntity();
+        entityToSave.setPersonId(42);
+        entityToSave.setTheme(LIGHT);
+        entityToSave.setLocale(null);
+        entityToSave.setLocaleBrowserSpecific(GERMAN);
+
+        when(userSettingsRepository.save(entityToSave)).thenReturn(entityToSave);
+
+        final UserSettings updatedUserSettings = sut.updateUserPreference(person, LIGHT, null);
+        assertThat(updatedUserSettings.theme()).isEqualTo(LIGHT);
+        assertThat(updatedUserSettings.locale()).isEmpty();
+        assertThat(updatedUserSettings.localeBrowserSpecific()).hasValue(GERMAN);
+
+        final ArgumentCaptor<UserSettingsEntity> entityArgumentCaptor = ArgumentCaptor.forClass(UserSettingsEntity.class);
+        verify(userSettingsRepository).save(entityArgumentCaptor.capture());
+        assertThat(entityArgumentCaptor.getValue())
+            .satisfies(userSettingsEntity -> {
+                assertThat(userSettingsEntity.getTheme()).isEqualTo(LIGHT);
+                assertThat(userSettingsEntity.getLocale()).isNull();
+                assertThat(userSettingsEntity.getLocaleBrowserSpecific()).isEqualTo(GERMAN);
             });
     }
 
     @Test
     void ensureUpdateUserPreferenceWhenNothingHasBeenPersistedYet() {
-
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        when(localeResolver.resolveLocale(request)).thenReturn(ENGLISH);
 
         final Person person = new Person();
         person.setId(42);
@@ -159,7 +194,7 @@ class UserSettingsServiceTest {
             .satisfies(userSettingsEntity -> {
                 assertThat(userSettingsEntity.getTheme()).isEqualTo(LIGHT);
                 assertThat(userSettingsEntity.getLocale()).isEqualTo(GERMAN);
-                assertThat(userSettingsEntity.getLocaleBrowserSpecific()).isEqualTo(ENGLISH);
+                assertThat(userSettingsEntity.getLocaleBrowserSpecific()).isNull();
             });
     }
 
