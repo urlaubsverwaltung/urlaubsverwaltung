@@ -33,6 +33,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.time.Month.FEBRUARY;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -632,6 +633,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Application application = createApplication(person);
         application.setApplier(office);
+        application.setStartDate(LocalDate.of(2023, FEBRUARY, 2));
+        application.setEndDate(LocalDate.of(2023, FEBRUARY, 4));
 
         sut.sendSickNoteConvertedToVacationNotification(application);
 
@@ -651,7 +654,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
-            "Marlene Muster hat deine Krankmeldung vom 02.02.2023 bis 02.02.2023 zu Urlaub umgewandelt." + EMAIL_LINE_BREAK +
+            "Marlene Muster hat deine Krankmeldung vom 02.02.2023 bis 04.02.2023 zu Urlaub umgewandelt." + EMAIL_LINE_BREAK +
             "" + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234");
     }
