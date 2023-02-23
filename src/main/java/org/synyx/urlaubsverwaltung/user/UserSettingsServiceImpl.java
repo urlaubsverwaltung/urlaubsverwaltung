@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Locale;
@@ -51,7 +52,9 @@ class UserSettingsServiceImpl implements UserSettingsService {
         final String userName = userName(event.getAuthentication());
         final Optional<Person> maybePerson = personService.getPersonByUsername(userName);
 
-        getLocaleFromRequest().ifPresent(locale -> maybePerson.ifPresent(person -> updateLocaleBrowserSpecific(person, locale)));
+        getRequest()
+            .map(ServletRequest::getLocale)
+            .ifPresent(locale -> maybePerson.ifPresent(person -> updateLocaleBrowserSpecific(person, locale)));
         maybePerson.flatMap(this::getLocale).ifPresent(this::setLocale);
     }
 
@@ -85,7 +88,7 @@ class UserSettingsServiceImpl implements UserSettingsService {
         entity.setTheme(theme);
         entity.setLocale(locale);
 
-        final Locale localeFromRequest = locale == null ? getLocaleFromRequest().orElse(null) : null;
+        final Locale localeFromRequest = locale == null ? getRequest().map(ServletRequest::getLocale).orElse(null) : null;
         entity.setLocaleBrowserSpecific(localeFromRequest);
 
         final UserSettingsEntity persistedEntity = userSettingsRepository.save(entity);
@@ -152,10 +155,6 @@ class UserSettingsServiceImpl implements UserSettingsService {
 
     private static UserSettings toUserSettings(UserSettingsEntity userSettingsEntity) {
         return new UserSettings(userSettingsEntity.getTheme(), userSettingsEntity.getLocale(), userSettingsEntity.getLocaleBrowserSpecific());
-    }
-
-    private Optional<Locale> getLocaleFromRequest() {
-        return getRequest().map(localeResolver::resolveLocale);
     }
 
     private void setLocale(Locale locale) {

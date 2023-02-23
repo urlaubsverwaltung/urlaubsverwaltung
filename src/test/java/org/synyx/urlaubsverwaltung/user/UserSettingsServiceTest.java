@@ -133,8 +133,8 @@ class UserSettingsServiceTest {
     void ensureUpdateUserPreferenceUsesBrowserSpecificLocaleLocaleWillBeNull() {
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addPreferredLocale(GERMAN);
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        when(localeResolver.resolveLocale(request)).thenReturn(GERMAN);
 
         final Person person = new Person();
         person.setId(42);
@@ -301,12 +301,12 @@ class UserSettingsServiceTest {
         when(personService.getPersonByUsername("username")).thenReturn(Optional.of(person));
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addPreferredLocale(locale);
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         final UserSettingsEntity userSettingsEntity = new UserSettingsEntity();
         userSettingsEntity.setLocale(locale);
 
-        when(localeResolver.resolveLocale(request)).thenReturn(locale);
         when(userSettingsRepository.findByPerson(person)).thenReturn(Optional.of(userSettingsEntity));
 
         final AuthenticationSuccessEvent authenticationSuccessEvent = new AuthenticationSuccessEvent(authentication);
