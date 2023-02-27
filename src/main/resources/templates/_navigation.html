@@ -63,20 +63,21 @@
             <div class="tw-absolute tw-right-0 tw-top-0 lg:tw-static lg:tw-flex-1 tw-flex tw-justify-end">
               <div class="tw-px-6 lg:tw-px-0 tw-py-3 lg:tw-py-2 tw-flex tw-items-center tw-gap-2">
                 <div th:if="${navigationRequestPopupEnabled}" class="tw-relative tw-flex tw-items-center">
-                  <a
-                    id="add-something-new"
-                    href="#add-something-new-menu"
-                    class="nav-popup-menu-button tw-flex tw-items-center tw-no-underline tw-outline-none"
-                    data-test-id="add-something-new"
-                    tabindex="-1"
-                    is="uv-nav-popup-menu-button"
-                  >
-                    <svg
-                      th:replace="~{icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7 lg:tw-w-8 lg:tw-h-8')}"
-                    ></svg>
-                    <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
-                    <svg th:replace="icon/chevron-down::svg(className='tw-w-4 tw-h-4')"></svg>
-                  </a>
+                  <uv-nav-popup-menu-button>
+                    <a
+                      id="add-something-new"
+                      href="#add-something-new-menu"
+                      class="nav-popup-menu-button tw-flex tw-items-center tw-no-underline tw-outline-none"
+                      data-test-id="add-something-new"
+                      tabindex="-1"
+                    >
+                      <svg
+                        th:replace="~{icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7 lg:tw-w-8 lg:tw-h-8')}"
+                      ></svg>
+                      <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
+                      <svg th:replace="icon/chevron-down::svg(className='tw-w-4 tw-h-4')"></svg>
+                    </a>
+                  </uv-nav-popup-menu-button>
                   <div id="add-something-new-menu" class="nav-popup-menu" data-test-id="add-something-new-popupmenu">
                     <div class="nav-popup-menu-inner">
                       <div class="nav-popup-menu-inner__header">
@@ -136,23 +137,24 @@
                 </a>
                 <div th:replace="launchpad/launchpad::navigation-item"></div>
                 <div class="tw-relative">
-                  <a
-                    href="#avatar-menu"
-                    class="nav-popup-menu-button tw-h-full tw-flex tw-items-center tw-gap-1 tw-no-underline tw-outline-none"
-                    id="avatar-link"
-                    data-test-id="avatar"
-                    aria-hidden="true"
-                    tabindex="-1"
-                    is="uv-nav-popup-menu-button"
-                  >
-                    <span class="tw-inline-flex tw-text-blue-200 dark:tw-text-sky-800">
-                      <img
-                        th:replace="~{fragments/avatar::avatar(className='tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9',url=${menuGravatarUrl + '?d=404'},niceName=${userFirstName + ' ' + userLastName},width='40px',height='40px',personId=null)}"
-                        alt=""
-                      />
-                    </span>
-                    <svg th:replace="icon/chevron-down::svg(className='tw-w-4 tw-h-4')"></svg>
-                  </a>
+                  <uv-nav-popup-menu-button>
+                    <a
+                      href="#avatar-menu"
+                      class="nav-popup-menu-button tw-h-full tw-flex tw-items-center tw-gap-1 tw-no-underline tw-outline-none"
+                      id="avatar-link"
+                      data-test-id="avatar"
+                      aria-hidden="true"
+                      tabindex="-1"
+                    >
+                      <span class="tw-inline-flex tw-text-blue-200 dark:tw-text-sky-800">
+                        <img
+                          th:replace="~{fragments/avatar::avatar(className='tw-w-8 tw-h-8 lg:tw-w-9 lg:tw-h-9',url=${menuGravatarUrl + '?d=404'},niceName=${userFirstName + ' ' + userLastName},width='40px',height='40px',personId=null)}"
+                          alt=""
+                        />
+                      </span>
+                      <svg th:replace="icon/chevron-down::svg(className='tw-w-4 tw-h-4')"></svg>
+                    </a>
+                  </uv-nav-popup-menu-button>
                   <div id="avatar-menu" class="nav-popup-menu" data-test-id="avatar-popupmenu">
                     <div class="nav-popup-menu-inner">
                       <div class="nav-popup-menu-inner__header">
