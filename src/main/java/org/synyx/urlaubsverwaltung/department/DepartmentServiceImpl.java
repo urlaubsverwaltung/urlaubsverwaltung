@@ -92,7 +92,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .flatMap(List::stream)
             .map(DepartmentMemberEmbeddable::getPerson)
             .distinct()
-            .filter(not(Person::isInactive))
+            .filter(Person::isActive)
             .collect(toList());
     }
 
