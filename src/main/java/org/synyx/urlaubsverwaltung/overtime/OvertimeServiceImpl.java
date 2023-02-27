@@ -272,9 +272,9 @@ class OvertimeServiceImpl implements OvertimeService {
      *  |------------------------|--------|-------|---------|------|
      *  | PrivilegedOnly         | true   |       |  false  |      |
      *  | OFFICE                 | true   | true  |  true   | true |
-     *  | BOSS                   | false  | true  |  false  | true |
-     *  | SECOND_STAGE_AUTHORITY | false  | true  |  false  | true |
-     *  | DEPARTMENT_HEAD        | false  | true  |  false  | true |
+     *  | BOSS                   | true   | true  |  false  | true |
+     *  | SECOND_STAGE_AUTHORITY | true   | true  |  false  | true |
+     *  | DEPARTMENT_HEAD        | true   | true  |  false  | true |
      *  | USER                   | false  | false |  false  | true |
      * </pre>
      *
@@ -286,7 +286,8 @@ class OvertimeServiceImpl implements OvertimeService {
     public boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime) {
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
         return signedInUser.hasRole(OFFICE)
-            || signedInUser.equals(personOfOvertime) && (!overtimeSettings.isOvertimeWritePrivilegedOnly() || signedInUser.isPrivileged());
+            || (signedInUser.equals(personOfOvertime) && !overtimeSettings.isOvertimeWritePrivilegedOnly())
+            || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly());
     }
 
     /**

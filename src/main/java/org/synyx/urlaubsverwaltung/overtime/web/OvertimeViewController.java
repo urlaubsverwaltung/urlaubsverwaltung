@@ -49,7 +49,10 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListMapper.mapToDto;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
  * Manage overtime of persons.
@@ -270,7 +273,13 @@ public class OvertimeViewController implements HasLaunchpad {
     }
 
     private void prepareModelForCreation(Model model, Person signedInUser, Person person, OvertimeForm overtimeForm) {
-        if (signedInUser.hasRole(OFFICE)) {
+
+        if (signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
+            final List<Person> persons = departmentService.getManagedActiveMembersOfPerson(signedInUser);
+            model.addAttribute("persons", persons);
+        }
+
+        if (signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS)) {
             final List<Person> persons = personService.getActivePersons();
             model.addAttribute("persons", persons);
         }
@@ -282,7 +291,7 @@ public class OvertimeViewController implements HasLaunchpad {
         model.addAttribute("overtime", overtimeForm);
         model.addAttribute("person", person);
         model.addAttribute(SIGNED_IN_USER, signedInUser);
-        model.addAttribute("canAddOvertimeForAnotherUser", signedInUser.hasRole(OFFICE));
+        model.addAttribute("canAddOvertimeForAnotherUser", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
 
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
         model.addAttribute("overtimeReductionPossible", overtimeSettings.isOvertimeReductionWithoutApplicationActive());

@@ -73,6 +73,30 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public List<Person> getManagedActiveMembersOfPerson(Person person) {
+
+        final List<DepartmentEntity> departments;
+
+        if (person.hasRole(DEPARTMENT_HEAD) && person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            departments = departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person);
+        } else if (person.hasRole(DEPARTMENT_HEAD)) {
+            departments = departmentRepository.findByDepartmentHeads(person);
+        } else if (person.hasRole(SECOND_STAGE_AUTHORITY)) {
+            departments = departmentRepository.findBySecondStageAuthorities(person);
+        } else {
+            departments = List.of();
+        }
+
+        return departments.stream()
+            .map(DepartmentEntity::getMembers)
+            .flatMap(List::stream)
+            .map(DepartmentMemberEmbeddable::getPerson)
+            .distinct()
+            .filter(Person::isActive)
+            .collect(toList());
+    }
+
+    @Override
     public Page<Person> getManagedInactiveMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery) {
         return getManagedMembersOfPerson(person, personPageableSearchQuery, Person::isInactive);
     }

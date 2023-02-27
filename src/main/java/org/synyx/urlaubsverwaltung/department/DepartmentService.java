@@ -152,6 +152,16 @@ public interface DepartmentService {
     Page<Person> getManagedMembersOfPerson(Person person, PageableSearchQuery personPageableSearchQuery);
 
     /**
+     * Check the role of the given person and return a {@link List} of all managed and active {@link Person}s.
+     * Managed members are all persons for which a privileged person are responsible
+     * for and can perform actions for this person.
+     *
+     * @param person                    person to get managed members for
+     * @return all managed and active members for the person
+     */
+    List<Person> getManagedActiveMembersOfPerson(Person person);
+
+    /**
      * Check the role of the given person and return a {@link Page} of all managed and active {@link Person}s for the
      * {@link Pageable} request. Managed members are all persons for which a privileged person are responsible
      * for and can perform actions for this person.
