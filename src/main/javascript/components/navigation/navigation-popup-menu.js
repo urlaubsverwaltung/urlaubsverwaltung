@@ -1,4 +1,4 @@
-export class NavPopupMenuButton extends HTMLAnchorElement {
+export class NavPopupMenuButton extends HTMLElement {
   static get observedAttributes() {
     return ["data-open"];
   }
@@ -12,18 +12,22 @@ export class NavPopupMenuButton extends HTMLAnchorElement {
 
     this.#open = typeof newValue === "string";
 
-    const menu = document.querySelector(this.getAttribute("href"));
+    const href = this.querySelector("a")?.getAttribute("href");
+    const menu = document.querySelector(href);
+
     if (this.#open) {
-      menu.classList.add("visible");
+      menu?.classList.add("visible");
     } else {
-      menu.classList.remove("visible");
+      menu?.classList.remove("visible");
     }
   }
 
   connectedCallback() {
     this.addEventListener("click", (event) => {
       event.preventDefault();
-      const menu = document.querySelector(this.getAttribute("href"));
+
+      const href = this.querySelector("a").getAttribute("href");
+      const menu = document.querySelector(href);
 
       for (const otherMenu of document.querySelectorAll(".nav-popup-menu[data-open]")) {
         if (otherMenu !== menu) {
@@ -45,14 +49,12 @@ export class NavPopupMenuButton extends HTMLAnchorElement {
 
 // hide other popups
 document.body.addEventListener("click", function (event) {
-  const closestClickedDatePicker = event.target.closest("[is='uv-nav-popup-menu-button']");
-  for (const picker of document.querySelectorAll("[is='uv-nav-popup-menu-button'][data-open]")) {
+  const closestClickedDatePicker = event.target.closest("uv-nav-popup-menu-button");
+  for (const picker of document.querySelectorAll("uv-nav-popup-menu-button[data-open]")) {
     if (picker !== closestClickedDatePicker) {
       delete picker.dataset.open;
     }
   }
 });
 
-customElements.define("uv-nav-popup-menu-button", NavPopupMenuButton, {
-  extends: "a",
-});
+customElements.define("uv-nav-popup-menu-button", NavPopupMenuButton);
