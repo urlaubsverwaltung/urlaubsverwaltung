@@ -441,7 +441,7 @@ class OvertimeServiceImplTest {
 
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "BOSS", "OFFICE"})
-    void ensurePersonIsNotAllowedToWriteOthersOvertimeWithPrivilegedRestriction(Role role) {
+    void ensurePersonIsAllowedToWriteOthersOvertimeWithPrivilegedRestriction(Role role) {
 
         final Person signedInUser = new Person();
         signedInUser.setPermissions(List.of(role));
