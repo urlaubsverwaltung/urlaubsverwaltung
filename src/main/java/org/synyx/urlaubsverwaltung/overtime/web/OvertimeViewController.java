@@ -291,9 +291,12 @@ public class OvertimeViewController implements HasLaunchpad {
         model.addAttribute("overtime", overtimeForm);
         model.addAttribute("person", person);
         model.addAttribute(SIGNED_IN_USER, signedInUser);
-        model.addAttribute("canAddOvertimeForAnotherUser", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
 
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
+
+        boolean canAddOvertimeForAnotherUser = signedInUser.hasRole(OFFICE) || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly());
+        model.addAttribute("canAddOvertimeForAnotherUser", canAddOvertimeForAnotherUser);
+
         model.addAttribute("overtimeReductionPossible", overtimeSettings.isOvertimeReductionWithoutApplicationActive());
 
         final List<VacationTypeDto> vacationTypeColors = vacationTypeViewModelService.getVacationTypeColors();
