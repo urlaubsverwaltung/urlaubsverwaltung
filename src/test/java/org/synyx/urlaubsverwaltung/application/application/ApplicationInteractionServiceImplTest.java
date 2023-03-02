@@ -167,9 +167,9 @@ class ApplicationInteractionServiceImplTest {
 
         sut.apply(applicationForLeave, person, of("Foo"));
 
-        verify(applicationMailService).sendConfirmation(applicationForLeave, applicationComment);
-        verify(applicationMailService, never()).sendAppliedForLeaveByManagementNotification(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(applicationMailService).sendNewApplicationNotification(applicationForLeave, applicationComment);
+        verify(applicationMailService).sendAppliedNotification(applicationForLeave, applicationComment);
+        verify(applicationMailService, never()).sendAppliedByManagementNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendAppliedNotificationToManagement(applicationForLeave, applicationComment);
     }
 
     @Test
@@ -190,9 +190,9 @@ class ApplicationInteractionServiceImplTest {
 
         sut.apply(applicationForLeave, applier, of("Foo"));
 
-        verify(applicationMailService, never()).sendConfirmation(eq(applicationForLeave), any(ApplicationComment.class));
-        verify(applicationMailService).sendAppliedForLeaveByManagementNotification(applicationForLeave, applicationComment);
-        verify(applicationMailService).sendNewApplicationNotification(applicationForLeave, applicationComment);
+        verify(applicationMailService, never()).sendAppliedNotification(eq(applicationForLeave), any(ApplicationComment.class));
+        verify(applicationMailService).sendAppliedByManagementNotification(applicationForLeave, applicationComment);
+        verify(applicationMailService).sendAppliedNotificationToManagement(applicationForLeave, applicationComment);
     }
 
     @Test
@@ -238,7 +238,7 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationMailService).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByManagement(any(Application.class), any(ApplicationComment.class));
-        verify(applicationMailService).sendNewDirectlyAllowedApplicationNotification(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService).sendDirectlyAllowedNotificationToManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
     }
 
@@ -266,7 +266,7 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationMailService).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByManagement(any(Application.class), any(ApplicationComment.class));
-        verify(applicationMailService).sendNewDirectlyAllowedApplicationNotification(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService).sendDirectlyAllowedNotificationToManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
     }
 
@@ -297,7 +297,7 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationMailService, never()).sendConfirmationAllowedDirectly(eq(applicationForLeave), any(ApplicationComment.class));
         verify(applicationMailService).sendConfirmationAllowedDirectlyByManagement(any(Application.class), any(ApplicationComment.class));
-        verify(applicationMailService).sendNewDirectlyAllowedApplicationNotification(any(Application.class), any(ApplicationComment.class));
+        verify(applicationMailService).sendDirectlyAllowedNotificationToManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
     }
 
@@ -1026,7 +1026,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(savedApplication.getCancelDate()).isEqualTo(LocalDate.now(UTC));
 
         verify(applicationMailService).sendCancelledDirectlyConfirmationByApplicant(savedApplication, applicationComment);
-        verify(applicationMailService).sendCancelledDirectlyInformationToRecipientOfInterest(savedApplication, applicationComment);
+        verify(applicationMailService).sendCancelledDirectlyToManagement(savedApplication, applicationComment);
 
         verify(applicationMailService).notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
 
@@ -1061,7 +1061,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(savedApplication.getCancelDate()).isEqualTo(LocalDate.now(UTC));
 
         verify(applicationMailService).sendCancelledDirectlyConfirmationByManagement(savedApplication, applicationComment);
-        verify(applicationMailService).sendCancelledDirectlyInformationToRecipientOfInterest(savedApplication, applicationComment);
+        verify(applicationMailService).sendCancelledDirectlyToManagement(savedApplication, applicationComment);
 
         verify(applicationMailService).notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
 
@@ -1188,7 +1188,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getRemindDate()).isEqualTo(LocalDate.now(UTC));
 
         verify(applicationService).save(applicationForLeave);
-        verify(applicationMailService).sendRemindBossNotification(applicationForLeave);
+        verify(applicationMailService).sendRemindNotificationToManagement(applicationForLeave);
     }
 
     // REFER -----------------------------------------------------------------------------------------------------------
@@ -1201,7 +1201,7 @@ class ApplicationInteractionServiceImplTest {
         final Application applicationForLeave = mock(Application.class);
         sut.refer(applicationForLeave, recipient, sender);
 
-        verify(applicationMailService).sendReferApplicationNotification(applicationForLeave, recipient, sender);
+        verify(applicationMailService).sendReferredToManagementNotification(applicationForLeave, recipient, sender);
     }
 
     @Test
@@ -1250,7 +1250,7 @@ class ApplicationInteractionServiceImplTest {
         assertThat(editedApplication.getStatus()).isEqualTo(WAITING);
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
-        verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
+        verify(applicationMailService).sendEditedNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
 
@@ -1282,7 +1282,7 @@ class ApplicationInteractionServiceImplTest {
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
         verify(applicationMailService).notifyHolidayReplacementForApply(newReplacementEntity, newApplication);
-        verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
+        verify(applicationMailService).sendEditedNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
 
@@ -1314,7 +1314,7 @@ class ApplicationInteractionServiceImplTest {
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
         verify(applicationMailService).notifyHolidayReplacementAboutCancellation(replacementEntity, newApplication);
-        verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
+        verify(applicationMailService).sendEditedNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
 
@@ -1351,7 +1351,7 @@ class ApplicationInteractionServiceImplTest {
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
         verify(applicationMailService).notifyHolidayReplacementAboutEdit(replacementEntity, newApplication);
-        verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
+        verify(applicationMailService).sendEditedNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
 
@@ -1386,7 +1386,7 @@ class ApplicationInteractionServiceImplTest {
 
         verify(commentService).create(editedApplication, EDITED, comment, person);
         verify(applicationMailService).notifyHolidayReplacementAboutEdit(replacementEntity, newApplication);
-        verify(applicationMailService).sendEditedApplicationNotification(editedApplication, person);
+        verify(applicationMailService).sendEditedNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
     }
 

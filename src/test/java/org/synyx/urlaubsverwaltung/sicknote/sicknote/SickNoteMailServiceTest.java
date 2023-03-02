@@ -15,7 +15,9 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +44,8 @@ class SickNoteMailServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SickNoteMailService(settingsService, sickNoteService, mailService, Clock.systemUTC());
+        final Clock fixedClock = Clock.fixed(Instant.parse("2022-04-01T00:00:00.00Z"), ZoneId.of("UTC"));
+        sut = new SickNoteMailService(settingsService, sickNoteService, mailService, fixedClock);
     }
 
     @Test
@@ -72,7 +75,7 @@ class SickNoteMailServiceTest {
         final Map<String, Object> modelA = new HashMap<>();
         modelA.put("maximumSickPayDays", 5);
         modelA.put("endOfSickPayDays", LocalDate.of(2022,4,5));
-        modelA.put("isLastDayOfSickPayDaysInPast", true);
+        modelA.put("sickPayDaysEndedDaysAgo", 4);
         modelA.put("sickNotePayFrom", sickNoteA.getStartDate());
         modelA.put("sickNotePayTo", LocalDate.of(2022,4,5));
         modelA.put("sickNote", sickNoteA);
@@ -80,7 +83,7 @@ class SickNoteMailServiceTest {
         final Map<String, Object> modelB = new HashMap<>();
         modelB.put("maximumSickPayDays", 5);
         modelB.put("endOfSickPayDays", LocalDate.of(2022,4,14));
-        modelB.put("isLastDayOfSickPayDaysInPast", true);
+        modelB.put("sickPayDaysEndedDaysAgo", 13);
         modelB.put("sickNotePayFrom", sickNoteB.getStartDate());
         modelB.put("sickNotePayTo", LocalDate.of(2022,4,14));
         modelB.put("sickNote", sickNoteB);

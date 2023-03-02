@@ -1,0 +1,9 @@
+[(#{greeting(${application.person.niceName})})],
+
+[(#{application.rejected.to_applicant(${#temporals.format(application.applicationDate, "dd.MM.yyyy")}, ${comment.person.niceName})})]
+
+    [(${baseLinkURL})]web/application/[(${application.id})]
+[# th:if="${not #strings.isEmpty(comment.text)}"]
+[(#{application.rejected.to_applicant.reason})]
+[(${comment.text})]
+[/]

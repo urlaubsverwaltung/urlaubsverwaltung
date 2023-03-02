@@ -1,0 +1,11 @@
+[(#{greeting(${recipientNiceName})})],
+
+[(#{account.remaining_vacation_days.expired(${#temporals.format(expiryDate, "dd.MM.yyyy")},${expiredRemainingVacationDays})})]
+
+[(#{account.remaining_vacation_days.expired.vacation})]
+    [(#{days(${totalLeftVacationDays})})]
+[# th:if="${remainingVacationDaysNotExpiring > 0}"]
+[(#{account.remaining_vacation_days.expired.not_expiring(${#temporals.format(expiryDate, "dd.MM.yyyy")})})]
+    [(#{days(${remainingVacationDaysNotExpiring})})]
+[/]
+[(#{account.vacation_entitlement.information})] [(${baseLinkURL})]web/person/[(${personId})]/overview

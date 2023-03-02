@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
@@ -45,6 +46,7 @@ public class VacationDaysReminderService {
     /**
      * Reminds for vacation days left for <b>current year</b>.
      */
+    @Async
     void remindForCurrentlyLeftVacationDays() {
         final int year = Year.now(clock).getValue();
         final List<Person> persons = personService.getActivePersons();
@@ -66,6 +68,7 @@ public class VacationDaysReminderService {
      * Remind for remaining vacation days of last year
      * Should be called after turn of the year logic which calculates the new account for the new year
      */
+    @Async
     void remindForRemainingVacationDays() {
         final int year = Year.now(clock).getValue();
         final List<Person> persons = personService.getActivePersons();
@@ -92,6 +95,7 @@ public class VacationDaysReminderService {
     /**
      * Notify about expired remaining vacation days
      */
+    @Async
     void notifyForExpiredRemainingVacationDays() {
         final LocalDate now = LocalDate.now(clock);
         final int year = now.getYear();
@@ -128,7 +132,7 @@ public class VacationDaysReminderService {
         model.put("vacationDaysLeft", vacationDaysLeft);
         model.put("nextYear", nextYear);
 
-        sendMail(person, "subject.account.remindForCurrentlyLeftVacationDays", "remind_currently_left_vacation_days", model);
+        sendMail(person, "subject.account.remindForCurrentlyLeftVacationDays", "account_cron_currently_left_vacation_days", model);
     }
 
     private void sendReminderForRemainingVacationDaysNotification(Person person, BigDecimal remainingVacationDays, LocalDate dayBeforeExpiryDate) {
@@ -136,7 +140,7 @@ public class VacationDaysReminderService {
         model.put("remainingVacationDays", remainingVacationDays);
         model.put("dayBeforeExpiryDate", dayBeforeExpiryDate);
 
-        sendMail(person, "subject.account.remindForRemainingVacationDays", "remind_remaining_vacation_days", model);
+        sendMail(person, "subject.account.remindForRemainingVacationDays", "account_cron_remind_remaining_vacation_days", model);
     }
 
     private void sendNotificationForExpiredRemainingVacationDays(Person person, BigDecimal expiredRemainingVacationDays, BigDecimal totalLeftVacationDays, BigDecimal remainingVacationDaysNotExpiring, LocalDate expiryDate) {
@@ -146,7 +150,7 @@ public class VacationDaysReminderService {
         model.put("remainingVacationDaysNotExpiring", remainingVacationDaysNotExpiring);
         model.put("expiryDate", expiryDate);
 
-        sendMail(person, "subject.account.notifyForExpiredRemainingVacationDays", "notify_expired_remaining_vacation_days", model);
+        sendMail(person, "subject.account.notifyForExpiredRemainingVacationDays", "account_cron_expired_remaining_vacation_days", model);
     }
 
     private void sendMail(Person person, String subjectMessageKey, String templateName, Map<String, Object> model) {

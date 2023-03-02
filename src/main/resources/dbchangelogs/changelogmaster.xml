@@ -113,4 +113,5 @@
   <include file="dbchangelogs/changelog-4.52.0-overtime-comment-author-can-be-null.xml"/>
   <include file="dbchangelogs/changelog-4.52.0-fk-constraint-sick-note-comment-to-sick-note.xml"/>
   <include file="dbchangelogs/changelog-4.59.0-remove-not-used-columns.xml"/>
+  <include file="dbchangelogs/changelog-4.60.0-last-locale-of-user.xml"/>
 </databaseChangeLog>

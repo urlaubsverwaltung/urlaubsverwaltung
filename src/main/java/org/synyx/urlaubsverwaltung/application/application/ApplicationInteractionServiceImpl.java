@@ -112,14 +112,14 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         if (person.equals(applier)) {
             // person himself applies for leave
             // person gets a confirmation email with the data of the application for leave
-            applicationMailService.sendConfirmation(savedApplication, createdComment);
+            applicationMailService.sendAppliedNotification(savedApplication, createdComment);
         } else {
             // The person gets an email that someone else has applied for leave on behalf
-            applicationMailService.sendAppliedForLeaveByManagementNotification(savedApplication, createdComment);
+            applicationMailService.sendAppliedByManagementNotification(savedApplication, createdComment);
         }
 
         // relevant management person gets email that a new application for leave has been created
-        applicationMailService.sendNewApplicationNotification(savedApplication, createdComment);
+        applicationMailService.sendAppliedNotificationToManagement(savedApplication, createdComment);
 
         // send email to replacement to inform beforehand the confirmation
         for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
@@ -194,7 +194,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         }
 
         // relevant management person gets email that a new directly allowed application for leave has been created
-        applicationMailService.sendNewDirectlyAllowedApplicationNotification(savedApplication, createdComment);
+        applicationMailService.sendDirectlyAllowedNotificationToManagement(savedApplication, createdComment);
 
         // send email to replacement to inform beforehand the confirmation
         for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
@@ -342,11 +342,11 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             // person gets a confirmation email with the data of the application for leave
             applicationMailService.sendCancelledDirectlyConfirmationByApplicant(savedApplication, createdComment);
         } else {
-            // The person gets an email that someone else has applied for leave on behalf
+            // The person gets an email that someone else has cancelled an application on behalf
             applicationMailService.sendCancelledDirectlyConfirmationByManagement(savedApplication, createdComment);
         }
 
-        applicationMailService.sendCancelledDirectlyInformationToRecipientOfInterest(savedApplication, createdComment);
+        applicationMailService.sendCancelledDirectlyToManagement(savedApplication, createdComment);
 
         for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
             applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
@@ -462,7 +462,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             throw new RemindAlreadySentException("Reminding is possible maximum one time per day!");
         }
 
-        applicationMailService.sendRemindBossNotification(application);
+        applicationMailService.sendRemindNotificationToManagement(application);
 
         application.setRemindDate(LocalDate.now(clock));
         return applicationService.save(application);
@@ -472,7 +472,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     public Application refer(Application application, Person recipient, Person sender) {
 
         commentService.create(application, ApplicationCommentAction.REFERRED, Optional.of(recipient.getNiceName()), sender);
-        applicationMailService.sendReferApplicationNotification(application, recipient, sender);
+        applicationMailService.sendReferredToManagementNotification(application, recipient, sender);
 
         return application;
     }
@@ -500,7 +500,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
         commentService.create(savedEditedApplication, EDITED, comment, person);
 
-        applicationMailService.sendEditedApplicationNotification(savedEditedApplication, person);
+        applicationMailService.sendEditedNotification(savedEditedApplication, person);
 
         final List<HolidayReplacementEntity> addedReplacements = replacementAdded(oldApplication, savedEditedApplication);
         final List<HolidayReplacementEntity> deletedReplacements = replacementDeleted(oldApplication, savedEditedApplication);

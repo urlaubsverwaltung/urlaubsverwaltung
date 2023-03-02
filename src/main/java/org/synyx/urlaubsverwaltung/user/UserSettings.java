@@ -7,14 +7,16 @@ class UserSettings {
 
     private final Theme theme;
     private final Locale locale;
+    private final Locale localeBrowserSpecific;
 
     UserSettings(Theme theme) {
-        this(theme, null);
+        this(theme, null, null);
     }
 
-    UserSettings(Theme theme, Locale locale) {
+    UserSettings(Theme theme, Locale locale, Locale localeBrowserSpecific) {
         this.theme = theme;
         this.locale = locale;
+        this.localeBrowserSpecific = localeBrowserSpecific;
     }
 
     Theme theme() {
@@ -23,5 +25,9 @@ class UserSettings {
 
     Optional<Locale> locale() {
         return Optional.ofNullable(locale);
+    }
+
+    Optional<Locale> localeBrowserSpecific() {
+        return Optional.ofNullable(localeBrowserSpecific);
     }
 }

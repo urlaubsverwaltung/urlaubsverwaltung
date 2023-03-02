@@ -1,0 +1,8 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{application.upcoming_application_to_holiday_replacement.starting_in(${application.person.niceName},${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")},${daysBeforeUpcomingHolidayReplacement})})]
+
+[# th:if="${not #strings.isEmpty(replacementNote)}"][(#{application.upcoming_application_to_holiday_replacement.note})]
+[(${replacementNote})]
+[/]
+[(#{application.upcoming_application_to_holiday_replacement.overview_holiday_replacement})] [(${baseLinkURL})]web/application/replacement

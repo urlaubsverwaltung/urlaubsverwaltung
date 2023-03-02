@@ -144,15 +144,6 @@
       <artifactId>spring-boot-starter-mail</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.freemarker</groupId>
-      <artifactId>freemarker</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>no.api.freemarker</groupId>
-      <artifactId>freemarker-java8</artifactId>
-      <version>2.1.0</version>
-    </dependency>
-    <dependency>
       <groupId>com.icegreen</groupId>
       <artifactId>greenmail-junit5</artifactId>
       <version>1.6.14</version>
@@ -249,6 +240,10 @@
     <dependency>
       <groupId>org.thymeleaf.extras</groupId>
       <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.thymeleaf.extras</groupId>
+      <artifactId>thymeleaf-extras-java8time</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>

@@ -1,0 +1,9 @@
+[(#{greeting(${application.person.niceName})})],
+
+[(#{application.temporary_allowed.to_applicant.first(${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")},#{__${dayLength}__})})]
+[(#{application.temporary_allowed.to_applicant.second})]
+
+    [(${baseLinkURL})]web/application/[(${application.id})]
+[# th:if="${not #strings.isEmpty(comment.text)}"]
+[(#{comment.by(${comment.person.niceName})})]
+[(${comment.text})][/]

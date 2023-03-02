@@ -1,0 +1,17 @@
+[(#{greeting(${application.person.niceName})})],
+
+[(#{application.cancelled_directly.confirmation.by_applicant_to_applicant(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")})})]
+
+    [(${baseLinkURL})]web/application/[(${application.id})]
+[# th:if="${not #strings.isEmpty(comment.text)}"]
+[(#{comment.by(${comment.person.niceName})})]
+[(${comment.text})]
+[/]
+[(#{absence.information.title})]
+
+    [(${rightPadder.rightPad('__#{absence.information.period}__',__#{absence.information.max_length}__)})] [(${#temporals.format(application.startDate, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(application.endDate, "dd.MM.yyyy")})], [(#{__${dayLength}__})]
+    [(${rightPadder.rightPad('__#{absence.information.type}__',__#{absence.information.max_length}__)})] [(#{__${vacationTypeMessageKey}__})]
+    [(${rightPadder.rightPad('__#{absence.information.reason}__',__#{absence.information.max_length}__)})] [(${application.reason})]
+    [(${rightPadder.rightPad('__#{absence.information.holiday_replacement}__',__#{absence.information.max_length}__)})] [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:utext="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
+    [(${rightPadder.rightPad('__#{absence.information.address}__',__#{absence.information.max_length}__)})] [(${#strings.trim(application.address)})]
+    [(${rightPadder.rightPad('__#{absence.information.date}__',__#{absence.information.max_length}__)})] [(${#temporals.format(application.applicationDate, "dd.MM.yyyy")})]

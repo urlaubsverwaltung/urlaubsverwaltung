@@ -1,0 +1,5 @@
+[(#{greeting(${recipientNiceName})})],
+
+[(#{account.remaining_vacation_days.last_year.use_until(${remainingVacationDays},${#temporals.format(dayBeforeExpiryDate, "dd.MM.yyyy")})})]
+
+[(#{account.vacation_entitlement.information})] [(${baseLinkURL})]web/person/[(${personId})]/overview

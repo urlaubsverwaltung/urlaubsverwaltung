@@ -1,0 +1,9 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{application.cancelled.by_management_to_management(${application.canceller.niceName},${application.person.niceName},${#temporals.format(application.applicationDate, "dd.MM.yyyy")})})]
+
+    [(${baseLinkURL})]web/application/[(${application.id})]
+[# th:if="${not #strings.isEmpty(comment.text)}"]
+[(#{comment.by(${comment.person.niceName})})]
+[(${comment.text})]
+[/]

@@ -4,9 +4,13 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.user.UserSettingsService;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,38 +29,46 @@ import static org.slf4j.LoggerFactory.getLogger;
 class MailServiceImpl implements MailService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
-    private static final Locale LOCALE = Locale.GERMAN;
 
-    private final MessageSource messageSource;
-    private final MailContentBuilder mailContentBuilder;
+    private final MessageSource emailMessageSource;
+    private final ITemplateEngine emailTemplateEngine;
     private final MailSenderService mailSenderService;
     private final MailProperties mailProperties;
     private final PersonService personService;
+    private final UserSettingsService userSettingsService;
 
     @Autowired
-    MailServiceImpl(MessageSource messageSource, MailContentBuilder mailContentBuilder, MailSenderService mailSenderService,
-                    MailProperties mailProperties, PersonService personService) {
-
-        this.messageSource = messageSource;
-        this.mailContentBuilder = mailContentBuilder;
+    MailServiceImpl(MessageSource emailMessageSource, ITemplateEngine emailTemplateEngine, MailSenderService mailSenderService,
+                    MailProperties mailProperties, PersonService personService, UserSettingsService userSettingsService) {
+        this.emailMessageSource = emailMessageSource;
+        this.emailTemplateEngine = emailTemplateEngine;
         this.mailProperties = mailProperties;
         this.mailSenderService = mailSenderService;
         this.personService = personService;
+        this.userSettingsService = userSettingsService;
     }
 
+    @Async
     @Override
     public void send(Mail mail) {
 
-        final Map<String, Object> model = mail.getTemplateModel();
-        model.put("baseLinkURL", getApplicationUrl());
+        final List<Person> recipients = getRecipients(mail);
+        final Map<Person, Locale> effectiveLocales = userSettingsService.getEffectiveLocale(recipients);
 
-        final String subject = getTranslation(mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
-        final String sender = generateMailAddressAndDisplayName(mailProperties.getSender(), mailProperties.getSenderDisplayName());
+        recipients.forEach(recipient -> {
 
-        getRecipients(mail).forEach(recipient -> {
-            model.put("recipient", recipient);
-            final String body = mailContentBuilder.buildMailBody(mail.getTemplateName(), model, LOCALE);
+            final Locale effectiveLocale = effectiveLocales.get(recipient);
+
+            final Context context = new Context(effectiveLocale);
+            context.setVariables(mail.getTemplateModel());
+            context.setVariable("baseLinkURL", getApplicationUrl());
+            context.setVariable("rightPadder", RightPadder.getInstance());
+            context.setVariable("recipient", recipient);
+
+            final String sender = generateMailAddressAndDisplayName(mailProperties.getSender(), mailProperties.getSenderDisplayName());
             final String email = recipient.getEmail();
+            final String subject = getTranslation(effectiveLocale, mail.getSubjectMessageKey(), mail.getSubjectMessageArguments());
+            final String body = emailTemplateEngine.process(mail.getTemplateName(), context);
 
             if (email != null) {
                 mail.getMailAttachments().ifPresentOrElse(
@@ -82,8 +94,8 @@ class MailServiceImpl implements MailService {
         return recipients.stream().distinct().collect(Collectors.toList());
     }
 
-    private String getTranslation(String key, Object... args) {
-        return messageSource.getMessage(key, args, LOCALE);
+    private String getTranslation(Locale locale, String key, Object... args) {
+        return emailMessageSource.getMessage(key, args, locale);
     }
 
     private String getApplicationUrl() {

@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
@@ -39,6 +40,7 @@ class SickNoteMailService {
     /**
      * Sends mail to person and office if sick pay (gesetzliche Lohnfortzahlung im Krankheitsfall) is about to end.
      */
+    @Async
     void sendEndOfSickPayNotification() {
 
         final List<SickNote> sickNotes = sickNoteService.getSickNotesReachingEndOfSickPay();
@@ -53,12 +55,12 @@ class SickNoteMailService {
             final LocalDate lastDayOfSickPayDays = sickNote.getStartDate()
                 .plus(maximumSickPayDays.longValue(), DAYS)
                 .minusDays(1);
-            final boolean isLastDayOfSickPayDaysInPast = lastDayOfSickPayDays.isBefore(LocalDate.now(clock));
+            final int sickPayDaysEndedDaysAgo = LocalDate.now(clock).until(lastDayOfSickPayDays).getDays();
 
             final Map<String, Object> model = new HashMap<>();
             model.put("maximumSickPayDays", maximumSickPayDays);
             model.put("endOfSickPayDays", lastDayOfSickPayDays);
-            model.put("isLastDayOfSickPayDaysInPast", isLastDayOfSickPayDaysInPast);
+            model.put("sickPayDaysEndedDaysAgo", sickPayDaysEndedDaysAgo);
             model.put("sickNotePayFrom", sickNote.getStartDate());
             model.put("sickNotePayTo", lastDayOfSickPayDays);
             model.put("sickNote", sickNote);

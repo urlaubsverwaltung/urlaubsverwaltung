@@ -43,7 +43,7 @@ class UserSettingsViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
-    private UserSettingsService userSettingsService;
+    private UserSettingsServiceImpl userSettingsService;
     @Mock
     private SupportedLocaleService supportedLocaleService;
     @Mock
@@ -64,7 +64,7 @@ class UserSettingsViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        final UserSettings userSettings = new UserSettings(Theme.DARK, Locale.GERMAN);
+        final UserSettings userSettings = new UserSettings(Theme.DARK, Locale.GERMAN, null);
         when(userSettingsService.getUserSettingsForPerson(signedInPerson)).thenReturn(userSettings);
 
         when(supportedLocaleService.getSupportedLocales()).thenReturn(Set.of(Locale.GERMAN, Locale.ENGLISH));
@@ -185,7 +185,7 @@ class UserSettingsViewControllerTest {
             )))
             .andExpect(model().attribute("supportedLocales", hasItem(hasProperty("locale", is(Locale.GERMAN)))));
 
-        verify(userSettingsService, never()).updateUserThemePreference(any(), any(), any());
+        verify(userSettingsService, never()).updateUserPreference(any(), any(), any());
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.AbsenceTimeConfiguration;
@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
@@ -38,7 +37,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_O
 class ApplicationMailService {
 
     private static final String APPLICATION = "application";
-    private static final String VACATION_TYPE = "vacationType";
+    private static final String VACATION_TYPE = "vacationTypeMessageKey";
     private static final String DAY_LENGTH = "dayLength";
     private static final String COMMENT = "comment";
     private static final String CALENDAR_ICS = "calendar.ics";
@@ -50,38 +49,37 @@ class ApplicationMailService {
     private final DepartmentService departmentService;
     private final ApplicationRecipientService applicationRecipientService;
     private final ICalService iCalService;
-    private final MessageSource messageSource;
     private final SettingsService settingsService;
     private final Clock clock;
 
     @Autowired
     ApplicationMailService(MailService mailService, DepartmentService departmentService,
                            ApplicationRecipientService applicationRecipientService, ICalService iCalService,
-                           MessageSource messageSource, SettingsService settingsService, Clock clock) {
+                           SettingsService settingsService, Clock clock) {
         this.mailService = mailService;
         this.departmentService = departmentService;
         this.applicationRecipientService = applicationRecipientService;
         this.iCalService = iCalService;
-        this.messageSource = messageSource;
         this.settingsService = settingsService;
         this.clock = clock;
     }
 
+    @Async
     void sendAllowedNotification(Application application, ApplicationComment applicationComment) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, application.getPerson());
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, applicationComment);
 
         // Inform user that the application for leave has been allowed
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.allowed.user")
-            .withTemplate("allowed_user", model)
+            .withTemplate("application_allowed_to_applicant", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToApplicant);
@@ -92,7 +90,7 @@ class ApplicationMailService {
             .withRecipient(relevantRecipientsToInform)
             .withRecipient(NOTIFICATION_OFFICE)
             .withSubject("subject.application.allowed.management", application.getPerson().getNiceName())
-            .withTemplate("allowed_management", model)
+            .withTemplate("application_allowed_to_management", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToRelevantRecipients);
@@ -104,29 +102,30 @@ class ApplicationMailService {
      * @param application the application which got rejected
      * @param comment     reason why application was rejected
      */
+    @Async
     void sendRejectedNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         // send reject information to the applicant
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.rejected")
-            .withTemplate("rejected", model)
+            .withTemplate("application_rejected_information_to_applicant", model)
             .build();
 
         mailService.send(mailToApplicant);
 
-        // send reject information to all other relevant
+        // send reject information to the management
         final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application);
         final Mail mailToRelevantRecipients = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.rejected_information")
-            .withTemplate("rejected_information", model)
+            .withTemplate("application_rejected_information_to_management", model)
             .build();
         mailService.send(mailToRelevantRecipients);
 
@@ -140,19 +139,20 @@ class ApplicationMailService {
      * @param recipient   to request for a second opinion
      * @param sender      person that asks for a second opinion
      */
-    void sendReferApplicationNotification(Application application, Person recipient, Person sender) {
+    @Async
+    void sendReferredToManagementNotification(Application application, Person recipient, Person sender) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
         model.put(RECIPIENT, recipient);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put("sender", sender);
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(recipient)
             .withSubject("subject.application.refer")
-            .withTemplate("refer", model)
+            .withTemplate("application_referred_to_management", model)
             .build();
 
         mailService.send(mailToApplicant);
@@ -165,7 +165,8 @@ class ApplicationMailService {
      * @param application that has been edited
      * @param recipient   that edited the application for leave
      */
-    void sendEditedApplicationNotification(Application application, Person recipient) {
+    @Async
+    void sendEditedNotification(Application application, Person recipient) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -174,7 +175,7 @@ class ApplicationMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(recipient)
             .withSubject("subject.application.edited", application.getPerson().getNiceName())
-            .withTemplate("edited", model)
+            .withTemplate("application_edited_by_applicant_to_applicant", model)
             .build();
 
         mailService.send(mailToApplicant);
@@ -185,6 +186,7 @@ class ApplicationMailService {
      *
      * @param application cancellation requested application
      */
+    @Async
     void sendDeclinedCancellationRequestApplicationNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
@@ -195,7 +197,7 @@ class ApplicationMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancellationRequest.declined.applicant", application.getPerson().getNiceName())
-            .withTemplate("application_cancellation_request_declined_applicant", model)
+            .withTemplate("application_cancellation_request_declined_to_applicant", model)
             .build();
         mailService.send(mailToApplicant);
 
@@ -205,7 +207,7 @@ class ApplicationMailService {
         final Mail mailToOffice = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancellationRequest.declined.management")
-            .withTemplate("application_cancellation_request_declined_management", model)
+            .withTemplate("application_cancellation_request_declined_to_management", model)
             .build();
         mailService.send(mailToOffice);
     }
@@ -217,6 +219,7 @@ class ApplicationMailService {
      * @param application    cancelled application
      * @param createdComment additional comment for the confirming application
      */
+    @Async
     void sendCancellationRequest(Application application, ApplicationComment createdComment) {
 
         Map<String, Object> model = new HashMap<>();
@@ -227,7 +230,7 @@ class ApplicationMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancellationRequest.applicant")
-            .withTemplate("application_cancellation_request_applicant", model)
+            .withTemplate("application_cancellation_request_to_applicant", model)
             .build();
         mailService.send(mailToApplicant);
 
@@ -236,7 +239,7 @@ class ApplicationMailService {
         final Mail mailToOffice = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancellationRequest")
-            .withTemplate("application_cancellation_request", model)
+            .withTemplate("application_cancellation_request_to_management", model)
             .build();
         mailService.send(mailToOffice);
     }
@@ -246,6 +249,7 @@ class ApplicationMailService {
      *
      * @param application the application that has been converted from sick note to vacation
      */
+    @Async
     void sendSickNoteConvertedToVacationNotification(Application application) {
 
         Map<String, Object> model = new HashMap<>();
@@ -267,18 +271,19 @@ class ApplicationMailService {
      * @param application confirmed application
      * @param comment     additional comment for the confirming application
      */
+    @Async
     void sendConfirmationAllowedDirectly(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.allowedDirectly.user")
-            .withTemplate("confirm_allowed_directly", model)
+            .withTemplate("application_allowed_directly_to_applicant", model)
             .build();
 
         mailService.send(mailToApplicant);
@@ -291,18 +296,19 @@ class ApplicationMailService {
      * @param application confirmed application on behalf
      * @param comment     additional comment for the application
      */
+    @Async
     void sendConfirmationAllowedDirectlyByManagement(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.allowedDirectly.management")
-            .withTemplate("new_directly_allowed_applications_by_management", model)
+            .withTemplate("application_allowed_directly_by_management_to_applicant", model)
             .build();
 
         mailService.send(mailToApplicant);
@@ -316,19 +322,20 @@ class ApplicationMailService {
      * @param application
      * @param comment     additional comment for the application
      */
-    void sendNewDirectlyAllowedApplicationNotification(Application application, ApplicationComment comment) {
+    @Async
+    void sendDirectlyAllowedNotificationToManagement(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
         final Mail mailToAllowAndRemind = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.allowedDirectly.boss", application.getPerson().getNiceName())
-            .withTemplate("new_directly_allowed_applications", model)
+            .withTemplate("application_allowed_directly_to_management", model)
             .build();
 
         mailService.send(mailToAllowAndRemind);
@@ -342,6 +349,7 @@ class ApplicationMailService {
      *
      * @param application to inform the replacement
      */
+    @Async
     void notifyHolidayReplacementAboutDirectlyAllowedApplication(HolidayReplacementEntity holidayReplacement, Application application) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
@@ -350,12 +358,12 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
         model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(DAY_LENGTH, application.getDayLength().name());
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
             .withSubject("subject.application.allowedDirectly.holidayReplacement", application.getPerson().getNiceName())
-            .withTemplate("notify_holiday_replacement_directly_allow", model)
+            .withTemplate("application_allowed_directly_to_holiday_replacement", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
@@ -369,18 +377,19 @@ class ApplicationMailService {
      *
      * @param application to inform the replacement beforehand
      */
+    @Async
     void notifyHolidayReplacementForApply(HolidayReplacementEntity holidayReplacement, Application application) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
         model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
         model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(DAY_LENGTH, application.getDayLength().name());
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
             .withSubject("subject.application.holidayReplacement.apply", application.getPerson().getNiceName())
-            .withTemplate("notify_holiday_replacement_apply", model)
+            .withTemplate("application_applied_to_holiday_replacement", model)
             .build();
 
         mailService.send(mailToReplacement);
@@ -393,6 +402,7 @@ class ApplicationMailService {
      *
      * @param application to inform the replacement
      */
+    @Async
     void notifyHolidayReplacementAllow(HolidayReplacementEntity holidayReplacement, Application application) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
@@ -401,12 +411,12 @@ class ApplicationMailService {
         model.put(APPLICATION, application);
         model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
         model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(DAY_LENGTH, application.getDayLength().name());
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
             .withSubject("subject.application.holidayReplacement.allow", application.getPerson().getNiceName())
-            .withTemplate("notify_holiday_replacement_allow", model)
+            .withTemplate("application_allowed_to_holiday_replacement", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
@@ -420,6 +430,7 @@ class ApplicationMailService {
      *
      * @param application to inform the replacement was cancelled
      */
+    @Async
     void notifyHolidayReplacementAboutCancellation(HolidayReplacementEntity holidayReplacement, Application application) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, holidayReplacement.getPerson());
@@ -427,12 +438,12 @@ class ApplicationMailService {
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
         model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(DAY_LENGTH, application.getDayLength().name());
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
             .withSubject("subject.application.holidayReplacement.cancellation", application.getPerson().getNiceName())
-            .withTemplate("notify_holiday_replacement_cancellation", model)
+            .withTemplate("application_cancelled_to_holiday_replacement", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
@@ -446,18 +457,19 @@ class ApplicationMailService {
      *
      * @param application to inform the replacement was cancelled
      */
+    @Async
     void notifyHolidayReplacementAboutEdit(HolidayReplacementEntity holidayReplacement, Application application) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
         model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
         model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(DAY_LENGTH, application.getDayLength().name());
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson())
             .withSubject("subject.application.holidayReplacement.edit", application.getPerson().getNiceName())
-            .withTemplate("notify_holiday_replacement_edit", model)
+            .withTemplate("application_edited_to_holiday_replacement", model)
             .build();
 
         mailService.send(mailToReplacement);
@@ -470,18 +482,19 @@ class ApplicationMailService {
      * @param application confirmed application
      * @param comment     additional comment for the confirming application
      */
-    void sendConfirmation(Application application, ApplicationComment comment) {
+    @Async
+    void sendAppliedNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.applied.user")
-            .withTemplate("confirm", model)
+            .withTemplate("application_applied_by_applicant_to_applicant", model)
             .build();
 
         mailService.send(mailToApplicant);
@@ -494,18 +507,19 @@ class ApplicationMailService {
      * @param application confirmed application on behalf
      * @param comment     additional comment for the application
      */
-    void sendAppliedForLeaveByManagementNotification(Application application, ApplicationComment comment) {
+    @Async
+    void sendAppliedByManagementNotification(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.applied.management")
-            .withTemplate("new_application_by_management", model)
+            .withTemplate("application_applied_by_management_to_applicant", model)
             .build();
 
         mailService.send(mailToApplicant);
@@ -517,6 +531,7 @@ class ApplicationMailService {
      * @param application the application which got cancelled
      * @param comment     describes the reason of the revocation
      */
+    @Async
     void sendRevokedNotifications(Application application, ApplicationComment comment) {
 
         Map<String, Object> model = new HashMap<>();
@@ -524,22 +539,18 @@ class ApplicationMailService {
         model.put(COMMENT, comment);
 
         if (application.getPerson().equals(application.getCanceller())) {
-
             final Mail mailToApplicant = Mail.builder()
                 .withRecipient(application.getPerson())
                 .withSubject("subject.application.revoked.applicant")
-                .withTemplate("revoked_applicant", model)
+                .withTemplate("application_revoked_by_applicant_to_applicant", model)
                 .build();
-
             mailService.send(mailToApplicant);
         } else {
-
             final Mail mailToNotApplicant = Mail.builder()
                 .withRecipient(application.getPerson())
                 .withSubject("subject.application.revoked.notApplicant")
-                .withTemplate("revoked_not_applicant", model)
+                .withTemplate("application_revoked_by_management_to_applicant", model)
                 .build();
-
             mailService.send(mailToNotApplicant);
         }
 
@@ -548,7 +559,7 @@ class ApplicationMailService {
         final Mail mailToRelevantPersons = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.revoked.management")
-            .withTemplate("revoked_management", model)
+            .withTemplate("application_revoked_to_management", model)
             .build();
 
         mailService.send(mailToRelevantPersons);
@@ -561,19 +572,20 @@ class ApplicationMailService {
      * @param application that was cancelled directly
      * @param comment     additional comment for the application
      */
-    void sendCancelledDirectlyInformationToRecipientOfInterest(Application application, ApplicationComment comment) {
+    @Async
+    void sendCancelledDirectlyToManagement(Application application, ApplicationComment comment) {
 
         final Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
         final Mail mailToAllowAndRemind = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.cancelledDirectly.information.recipients_of_interest", application.getPerson().getNiceName())
-            .withTemplate("cancelled_directly_information_recipient_of_interest", model)
+            .withTemplate("application_cancelled_directly_to_management", model)
             .build();
 
         mailService.send(mailToAllowAndRemind);
@@ -585,6 +597,7 @@ class ApplicationMailService {
      * @param application the application which got cancelled directly
      * @param comment     describes the reason of the direct cancellation
      */
+    @Async
     void sendCancelledDirectlyConfirmationByApplicant(Application application, ApplicationComment comment) {
 
         final Person recipient = application.getPerson();
@@ -592,15 +605,15 @@ class ApplicationMailService {
 
         final Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         // send cancelled by office information to the applicant
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(recipient)
             .withSubject("subject.application.cancelledDirectly.user")
-            .withTemplate("cancelled_directly_confirmation_applicant", model)
+            .withTemplate("application_cancelled_directly_confirmation_by_applicant_to_applicant", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
@@ -614,18 +627,19 @@ class ApplicationMailService {
      * @param application confirmed application on behalf
      * @param comment     additional comment for the application
      */
+    @Async
     void sendCancelledDirectlyConfirmationByManagement(Application application, ApplicationComment comment) {
 
         final Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancelledDirectly.management")
-            .withTemplate("cancelled_directly_confirmation_management", model)
+            .withTemplate("application_cancelled_directly_confirmation_by_management_to_applicant", model)
             .build();
 
         mailService.send(mailToApplicant);
@@ -637,6 +651,7 @@ class ApplicationMailService {
      * @param application the application which got cancelled
      * @param comment     describes the reason of the cancellation
      */
+    @Async
     void sendCancelledConfirmationByManagement(Application application, ApplicationComment comment) {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, application.getPerson());
@@ -649,7 +664,7 @@ class ApplicationMailService {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.cancelled.user")
-            .withTemplate("cancelled_by_management", model)
+            .withTemplate("application_cancelled_by_management_to_applicant", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
@@ -661,7 +676,7 @@ class ApplicationMailService {
         final Mail mailToRelevantPersons = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancelled.management")
-            .withTemplate("cancelled_by_management_management", model)
+            .withTemplate("application_cancelled_by_management_to_management", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
 
@@ -676,15 +691,16 @@ class ApplicationMailService {
      * @param application to allow or reject
      * @param comment     additional comment for the application
      */
-    void sendNewApplicationNotification(Application application, ApplicationComment comment) {
+    @Async
+    void sendAppliedNotificationToManagement(Application application, ApplicationComment comment) {
 
         final List<Application> applicationsForLeave =
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(), application.getStartDate(), application.getEndDate());
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
         model.put("departmentVacations", applicationsForLeave);
 
@@ -692,7 +708,7 @@ class ApplicationMailService {
         final Mail mailToAllowAndRemind = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.applied.boss", application.getPerson().getNiceName())
-            .withTemplate("new_applications", model)
+            .withTemplate("application_applied_to_management", model)
             .build();
 
         mailService.send(mailToAllowAndRemind);
@@ -705,18 +721,19 @@ class ApplicationMailService {
      * @param application that has been allowed temporary by a department head
      * @param comment     contains reason why application for leave has been allowed temporary
      */
+    @Async
     void sendTemporaryAllowedNotification(Application application, ApplicationComment comment) {
 
         // Inform user that the application for leave has been allowed temporary
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson())
             .withSubject("subject.application.temporaryAllowed.user")
-            .withTemplate("temporary_allowed_user", model)
+            .withTemplate("application_temporary_allowed_to_applicant", model)
             .build();
         mailService.send(mailToApplicant);
 
@@ -726,8 +743,8 @@ class ApplicationMailService {
 
         Map<String, Object> modelSecondStage = new HashMap<>();
         modelSecondStage.put(APPLICATION, application);
-        modelSecondStage.put(VACATION_TYPE, getTranslation(application.getVacationType().getMessageKey()));
-        modelSecondStage.put(DAY_LENGTH, getTranslation(application.getDayLength().name()));
+        modelSecondStage.put(VACATION_TYPE, application.getVacationType().getMessageKey());
+        modelSecondStage.put(DAY_LENGTH, application.getDayLength().name());
         modelSecondStage.put(COMMENT, comment);
         modelSecondStage.put("departmentVacations", applicationsForLeave);
 
@@ -735,18 +752,20 @@ class ApplicationMailService {
         final Mail mailToTemporaryAllow = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.temporaryAllowed.secondStage")
-            .withTemplate("temporary_allowed_second_stage_authority", modelSecondStage)
+            .withTemplate("application_temporary_allowed_to_second_stage_authority", modelSecondStage)
             .build();
         mailService.send(mailToTemporaryAllow);
     }
 
     /**
-     * If an application has status waiting and no boss has decided about it after a certain time, the bosses receive a
+     * If an application has status waiting and no person with management rights
+     * has decided about it after a certain time, the management will receive a
      * reminding notification.
      *
      * @param application to receive a reminding notification
      */
-    void sendRemindBossNotification(Application application) {
+    @Async
+    void sendRemindNotificationToManagement(Application application) {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
@@ -755,11 +774,12 @@ class ApplicationMailService {
         final Mail mailToAllowAndRemind = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.remind")
-            .withTemplate("remind", model)
+            .withTemplate("application_remind_to_management", model)
             .build();
         mailService.send(mailToAllowAndRemind);
     }
 
+    @Async
     void sendRemindForUpcomingApplicationsReminderNotification(List<Application> applications) {
         for (Application application : applications) {
             final Map<String, Object> model = new HashMap<>();
@@ -769,12 +789,13 @@ class ApplicationMailService {
             final Mail mailToUpcomingApplicationsPersons = Mail.builder()
                 .withRecipient(application.getPerson())
                 .withSubject("subject.application.remind.upcoming")
-                .withTemplate("remind_application_upcoming", model)
+                .withTemplate("application_cron_remind_for_upcoming_application_to_applicant", model)
                 .build();
             mailService.send(mailToUpcomingApplicationsPersons);
         }
     }
 
+    @Async
     void sendRemindForUpcomingHolidayReplacement(List<Application> applications) {
         for (Application application : applications) {
             for (HolidayReplacementEntity holidayReplacement : application.getHolidayReplacements()) {
@@ -787,13 +808,14 @@ class ApplicationMailService {
                 final Mail mailToUpcomingHolidayReplacement = Mail.builder()
                     .withRecipient(holidayReplacement.getPerson())
                     .withSubject("subject.application.remind.upcoming.holiday_replacement", application.getPerson().getNiceName())
-                    .withTemplate("remind_holiday_replacement_upcoming", model)
+                    .withTemplate("application_cron_upcoming_holiday_replacement_to_holiday_replacement", model)
                     .build();
                 mailService.send(mailToUpcomingHolidayReplacement);
             }
         }
     }
 
+    @Async
     void sendRemindForWaitingApplicationsReminderNotification(List<Application> waitingApplications) {
 
         /*
@@ -827,15 +849,11 @@ class ApplicationMailService {
             final Mail mailToRemindForWaiting = Mail.builder()
                 .withRecipient(recipient)
                 .withSubject("subject.application.cronRemind")
-                .withTemplate("cron_remind", model)
+                .withTemplate("application_remind_cron_to_management", model)
                 .build();
 
             mailService.send(mailToRemindForWaiting);
         }
-    }
-
-    private String getTranslation(String key, Object... args) {
-        return messageSource.getMessage(key, args, GERMAN);
     }
 
     private ByteArrayResource generateCalendar(Application application, AbsenceType absenceType, Person recipient) {

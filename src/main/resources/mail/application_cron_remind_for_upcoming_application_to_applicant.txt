@@ -1,0 +1,13 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{application.upcoming_application_to_applicant.starting_in(${daysBeforeUpcomingApplication})})]
+
+    [(${baseLinkURL})]web/application/[(${application.id})]
+[# th:if="${not #lists.isEmpty(application.holidayReplacements)}"]
+[(#{application.upcoming_application_to_applicant.holiday_replacement})][/]
+[# th:each="replacement, iterStat : ${application.holidayReplacements}"]
+- [(${replacement.person.niceName})]
+[# th:if="${not #strings.isEmpty(replacement.note)}"][(${not #strings.isEmpty(replacement.note) ? '  "' + #strings.trim(replacement.note) + '"' : ''})][/][/]
+
+[(#{application.upcoming_application_to_applicant.note.first(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")})})]
+[(#{application.upcoming_application_to_applicant.note.second})]

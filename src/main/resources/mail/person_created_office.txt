@@ -1,0 +1,8 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{person.new})]
+
+    [(${personNiceName})]
+
+[(#{person.overview})]
+[(${baseLinkURL})]web/person/[(${personId})]

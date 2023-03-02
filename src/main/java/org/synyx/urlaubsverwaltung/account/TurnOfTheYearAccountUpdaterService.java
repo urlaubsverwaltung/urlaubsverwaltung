@@ -91,7 +91,7 @@ public class TurnOfTheYearAccountUpdaterService {
         model.put("today", LocalDate.now(clock));
 
         final String subjectMessageKey = "subject.account.updatedRemainingDays";
-        final String templateName = "updated_accounts";
+        final String templateName = "account_cron_updated_accounts_turn_of_the_year";
 
         // send email to office for printing statistic
         final Mail mailToOffice = Mail.builder()

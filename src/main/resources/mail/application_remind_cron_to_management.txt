@@ -1,0 +1,7 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{application.remind.cron_to_management})]
+
+[# th:each="application : ${applicationList}"]
+[(#{application.remind.cron_to_management.entry(${application.person.niceName},${#temporals.format(application.applicationDate, "dd.MM.yyyy")})})] [(${baseLinkURL})]web/application/[(${application.id})]
+[/]

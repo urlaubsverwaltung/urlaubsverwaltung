@@ -1,0 +1,10 @@
+[(#{greeting(${application.person.niceName})})],
+
+[(#{application.revoked.by_management_to_applicant(${#temporals.format(application.applicationDate, "dd.MM.yyyy")},${comment.person.niceName})})]
+
+    [(${baseLinkURL})]web/application/[(${application.id})]
+[# th:if="${not #strings.isEmpty(comment.text)}"]
+[(#{application.revoked.by_management_to_applicant.reason})]
+[(${comment.text})]
+[/]
+

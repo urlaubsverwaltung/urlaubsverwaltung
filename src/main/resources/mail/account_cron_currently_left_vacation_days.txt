@@ -1,0 +1,5 @@
+[(#{greeting(${recipientNiceName})})],
+
+[(#{account.vacation_days.this_year(${vacationDaysLeft})})]
+
+[(#{account.vacation_entitlement.information})] [(${baseLinkURL})]web/person/[(${personId})]/overview
