@@ -35,7 +35,6 @@ import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;

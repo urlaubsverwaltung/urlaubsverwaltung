@@ -53,6 +53,7 @@ public class FrameDataProvider implements HandlerInterceptor {
             final String gravatarUrl = user.getGravatarURL();
 
             modelAndView.addObject("version", applicationVersion);
+            modelAndView.addObject("header_referer", request.getHeader("Referer"));modelAndView.addObject("header_referer", request.getHeader("Referer"));
 
             modelAndView.addObject("userFirstName", user.getFirstName());
             modelAndView.addObject("userLastName", user.getLastName());
