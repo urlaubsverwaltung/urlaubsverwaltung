@@ -394,7 +394,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
         final boolean noonTemporaryAllowed = noon.map(AbsencePeriod.RecordInfo::hasStatusTemporaryAllowed).orElse(false);
         if (noonTemporaryAllowed) {
-            return anonymizeMorning ? builder.absenceNoon() : builder.temporaryAllowedAbsenceNoon();
+            return anonymizeNoon ? builder.absenceNoon() : builder.temporaryAllowedAbsenceNoon();
         }
 
         final boolean noonAllowedCancellationRequested = noon.map(AbsencePeriod.RecordInfo::hasStatusAllowedCancellationRequested).orElse(false);
