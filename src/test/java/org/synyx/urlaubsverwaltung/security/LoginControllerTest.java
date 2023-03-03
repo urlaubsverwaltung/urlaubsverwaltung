@@ -21,7 +21,7 @@ class LoginControllerTest {
     @Test
     void ensureLoginHasCorrectVersionAndView() throws Exception {
         perform(get("/login"))
-            .andExpect(view().name("thymeleaf/login/login"));
+            .andExpect(view().name("login/login"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

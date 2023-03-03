@@ -129,7 +129,7 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(model().attribute("selectedDepartments", nullValue()))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", hasSize(1))))))
-            .andExpect(view().name("thymeleaf/absences/absences-overview"));
+            .andExpect(view().name("absences/absences-overview"));
 
         verify(personService, never()).getActivePersons();
     }
@@ -157,7 +157,7 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("visibleDepartments", hasItem(department)))
             .andExpect(model().attribute("selectedDepartments", hasItem(department.getName())))
-            .andExpect(view().name("thymeleaf/absences/absences-overview"));
+            .andExpect(view().name("absences/absences-overview"));
 
         verify(personService).getActivePersons();
     }
@@ -193,7 +193,7 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(model().attribute("selectedDepartments", nullValue()))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
-            .andExpect(view().name("thymeleaf/absences/absences-overview"));
+            .andExpect(view().name("absences/absences-overview"));
     }
 
     @ParameterizedTest
@@ -237,7 +237,7 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", hasSize(1))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
-            .andExpect(view().name("thymeleaf/absences/absences-overview"));
+            .andExpect(view().name("absences/absences-overview"));
     }
 
     @ParameterizedTest
@@ -281,7 +281,7 @@ class AbsenceOverviewViewControllerTest {
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("days", hasSize(YearMonth.now(clock).lengthOfMonth()))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", hasSize(1))))))
             .andExpect(model().attribute("absenceOverview", hasProperty("months", contains(hasProperty("persons", contains(hasProperty("firstName", is("sandra"))))))))
-            .andExpect(view().name("thymeleaf/absences/absences-overview"));
+            .andExpect(view().name("absences/absences-overview"));
     }
 
     @ParameterizedTest
@@ -306,7 +306,7 @@ class AbsenceOverviewViewControllerTest {
         perform(get("/web/absences"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("visibleDepartments", hasItem(department)))
-            .andExpect(view().name("thymeleaf/absences/absences-overview"));
+            .andExpect(view().name("absences/absences-overview"));
     }
 
     @ParameterizedTest

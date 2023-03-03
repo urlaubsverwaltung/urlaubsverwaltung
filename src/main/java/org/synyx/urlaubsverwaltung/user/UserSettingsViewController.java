@@ -58,7 +58,7 @@ class UserSettingsViewController implements HasLaunchpad {
         model.addAttribute("supportedLocales", getSupportedLocales());
         model.addAttribute("supportedThemes", getAvailableThemeDtos(locale));
 
-        return "thymeleaf/user/user-settings";
+        return "user/user-settings";
     }
 
     @PostMapping("/person/{personId}/settings")
@@ -75,7 +75,7 @@ class UserSettingsViewController implements HasLaunchpad {
             model.addAttribute("userSettings", userSettingsDto);
             model.addAttribute("supportedThemes", getAvailableThemeDtos(locale));
             model.addAttribute("supportedLocales", getSupportedLocales());
-            return "thymeleaf/user/user-settings";
+            return "user/user-settings";
         }
 
         final Theme theme = themeNameToTheme(userSettingsDto.getTheme());

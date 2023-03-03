@@ -436,7 +436,7 @@ class PersonsViewControllerTest {
         mockDefaultPageRequest(person);
 
         perform(get("/web/person"))
-            .andExpect(view().name("thymeleaf/person/persons"));
+            .andExpect(view().name("person/persons"));
     }
 
     @Test

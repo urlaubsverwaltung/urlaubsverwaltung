@@ -565,7 +565,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
 
         perform(get("/web/application/new"))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     @Test
@@ -584,7 +584,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(get("/web/application/new"))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     @Test
@@ -764,7 +764,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(model().attribute("errors", instanceOf(Errors.class)))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     @Test
@@ -893,7 +893,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 ))
             )))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     @Test
@@ -914,7 +914,7 @@ class ApplicationForLeaveFormViewControllerTest {
         perform
             .andExpect(status().isOk())
             .andExpect(model().attributeDoesNotExist("holidayReplacement"))
-            .andExpect(view().name("thymeleaf/application/application-form :: replacement-item"))
+            .andExpect(view().name("application/application-form :: replacement-item"))
             .andExpect(content().string(""));
     }
 
@@ -958,7 +958,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 hasProperty("personId", is(1337))
             )))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     @Test
@@ -987,7 +987,7 @@ class ApplicationForLeaveFormViewControllerTest {
             )))
             .andExpect(model().attribute("index", is(2)))
             .andExpect(model().attribute("deleteButtonFormActionValue", is("/web/application/new")))
-            .andExpect(view().name("thymeleaf/application/application-form :: replacement-item"));
+            .andExpect(view().name("application/application-form :: replacement-item"));
     }
 
     @Test
@@ -1017,7 +1017,7 @@ class ApplicationForLeaveFormViewControllerTest {
             )))
             .andExpect(model().attribute("index", is(2)))
             .andExpect(model().attribute("deleteButtonFormActionValue", is("/web/application/7")))
-            .andExpect(view().name("thymeleaf/application/application-form :: replacement-item"));
+            .andExpect(view().name("application/application-form :: replacement-item"));
     }
 
     @ParameterizedTest
@@ -1071,7 +1071,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 ))
             )))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     @Test
@@ -1110,7 +1110,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
                 hasProperty("personId", is(1337))
             )))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     @Test
@@ -1144,7 +1144,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(model().attribute("noHolidaysAccount", is(false)))
             .andExpect(model().attribute("showHalfDayOption", is(true)))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     @Test
@@ -1199,7 +1199,7 @@ class ApplicationForLeaveFormViewControllerTest {
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("noHolidaysAccount", is(false)))
-            .andExpect(view().name("thymeleaf/application/application_form"))
+            .andExpect(view().name("application/application_form"))
             .andExpect(model().attribute("showHalfDayOption", is(false)));
     }
 
@@ -1235,7 +1235,7 @@ class ApplicationForLeaveFormViewControllerTest {
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("noHolidaysAccount", is(false)))
-            .andExpect(view().name("thymeleaf/application/application_form"))
+            .andExpect(view().name("application/application_form"))
             .andExpect(model().attribute("showHalfDayOption", is(true)));
     }
 
@@ -1247,7 +1247,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/application/application-notwaiting"));
+            .andExpect(view().name("application/application-notwaiting"));
     }
 
     @Test
@@ -1261,7 +1261,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/application/application-notwaiting"));
+            .andExpect(view().name("application/application-notwaiting"));
     }
 
     @Test
@@ -1284,7 +1284,7 @@ class ApplicationForLeaveFormViewControllerTest {
         perform(get("/web/application/1/edit"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("noHolidaysAccount", is(true)))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     @Test
@@ -1321,7 +1321,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 ))
             )))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     @Test
@@ -1356,7 +1356,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 ))
             )))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     @Test
@@ -1396,7 +1396,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
                 hasProperty("personId", is(1337))
             )))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     @Test
@@ -1515,7 +1515,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("dayLength", "FULL")
             .param("comment", "comment"))
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/application/application-notwaiting"));
+            .andExpect(view().name("application/application-notwaiting"));
     }
 
     @Test
@@ -1546,7 +1546,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("dayLength", "FULL")
             .param("comment", "comment"))
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/application/application_form"))
+            .andExpect(view().name("application/application_form"))
             .andExpect(model().attribute("showHalfDayOption", is(true)));
     }
 
@@ -1595,7 +1595,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 hasProperty("personId", is(1337)),
                 hasProperty("personId", is(21))
             )))
-            .andExpect(view().name("thymeleaf/application/application_form"));
+            .andExpect(view().name("application/application_form"));
     }
 
     private Person personWithRole(Role... role) {

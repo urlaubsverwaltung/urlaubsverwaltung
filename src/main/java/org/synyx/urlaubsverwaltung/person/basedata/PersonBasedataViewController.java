@@ -46,7 +46,7 @@ public class PersonBasedataViewController implements HasLaunchpad {
 
         model.addAttribute("personBasedata", mapToPersonBasedataDto(personBasedata, person));
 
-        return "thymeleaf/person/person-basedata";
+        return "person/person-basedata";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -55,7 +55,7 @@ public class PersonBasedataViewController implements HasLaunchpad {
                                      @Valid @ModelAttribute("personBasedata") PersonBasedataDto basedataDto, Errors errors, Model model, RedirectAttributes redirectAttributes) {
 
         if (errors.hasErrors()) {
-            return "thymeleaf/person/person-basedata";
+            return "person/person-basedata";
         }
 
         personBasedataService.update(mapToPersonBasedata(basedataDto));

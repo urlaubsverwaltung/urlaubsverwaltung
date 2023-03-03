@@ -83,7 +83,7 @@ public class WorkingTimeViewController implements HasLaunchpad {
 
         fillModel(model, person);
 
-        return "thymeleaf/workingtime/workingtime_form";
+        return "workingtime/workingtime_form";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -99,7 +99,7 @@ public class WorkingTimeViewController implements HasLaunchpad {
         if (errors.hasErrors()) {
             fillModel(model, person);
 
-            return "thymeleaf/workingtime/workingtime_form";
+            return "workingtime/workingtime_form";
         }
 
         workingTimeWriteService.touch(workingTimeForm.getWorkingDays(), workingTimeForm.getValidFrom(), person, workingTimeForm.getFederalState());

@@ -343,7 +343,7 @@ class FrameDataProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"redirect:", "thymeleaf/login"})
+    @ValueSource(strings = {"redirect:", "login"})
     @NullSource
     void postHandleDoNotAddGravatar(String viewName) {
 

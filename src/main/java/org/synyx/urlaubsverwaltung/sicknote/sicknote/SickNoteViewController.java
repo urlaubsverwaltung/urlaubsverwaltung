@@ -135,7 +135,7 @@ class SickNoteViewController implements HasLaunchpad {
 
             model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(sickNote.getPerson()));
 
-            return "thymeleaf/sicknote/sick_note";
+            return "sicknote/sick_note";
         }
 
         throw new AccessDeniedException(format(
@@ -164,7 +164,7 @@ class SickNoteViewController implements HasLaunchpad {
 
         addVacationTypeColorsToModel(model);
 
-        return "thymeleaf/sicknote/sick_note_form";
+        return "sicknote/sick_note_form";
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_ADD')")
@@ -196,7 +196,7 @@ class SickNoteViewController implements HasLaunchpad {
 
             addVacationTypeColorsToModel(model);
 
-            return "thymeleaf/sicknote/sick_note_form";
+            return "sicknote/sick_note_form";
         }
 
         final SickNote updatedSickNote = sickNoteInteractionService.create(sickNote, signedInUser, sickNoteFormDto.getComment());
@@ -227,7 +227,7 @@ class SickNoteViewController implements HasLaunchpad {
 
         addVacationTypeColorsToModel(model);
 
-        return "thymeleaf/sicknote/sick_note_form";
+        return "sicknote/sick_note_form";
     }
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
@@ -251,7 +251,7 @@ class SickNoteViewController implements HasLaunchpad {
 
             addVacationTypeColorsToModel(model);
 
-            return "thymeleaf/sicknote/sick_note_form";
+            return "sicknote/sick_note_form";
         }
 
         final Person signedInUser = personService.getSignedInUser();
@@ -300,7 +300,7 @@ class SickNoteViewController implements HasLaunchpad {
         model.addAttribute("sickNoteConvertForm", new SickNoteConvertForm(sickNote));
         model.addAttribute("vacationTypes", getActiveVacationTypes());
 
-        return "thymeleaf/sicknote/sick_note_convert";
+        return "sicknote/sick_note_convert";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -319,7 +319,7 @@ class SickNoteViewController implements HasLaunchpad {
             model.addAttribute("sickNoteConvertForm", sickNoteConvertForm);
             model.addAttribute("vacationTypes", getActiveVacationTypes());
 
-            return "thymeleaf/sicknote/sick_note_convert";
+            return "sicknote/sick_note_convert";
         }
 
         sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(clock), personService.getSignedInUser());

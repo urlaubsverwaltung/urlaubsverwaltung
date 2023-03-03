@@ -149,7 +149,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         }
 
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
-        return "thymeleaf/application/application_form";
+        return "application/application_form";
     }
 
     @PostMapping(value = {"/application/new", "/application/{applicationId}"}, params = "add-holiday-replacement")
@@ -195,7 +195,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
 
-        return "thymeleaf/application/application_form";
+        return "application/application_form";
     }
 
     @PostMapping(value = {"/application/new/replacements", "/application/{applicationId}/replacements"}, headers = {"X-Requested-With=ajax"})
@@ -228,7 +228,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
             model.addAttribute("deleteButtonFormActionValue", "/web/application/" + applicationForLeaveId);
         }
 
-        return "thymeleaf/application/application-form :: replacement-item";
+        return "application/application-form :: replacement-item";
     }
 
     @PostMapping(value = {"/application/new", "/application/{applicationId}"}, params = "remove-holiday-replacement")
@@ -262,7 +262,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
 
-        return "thymeleaf/application/application_form";
+        return "application/application_form";
     }
 
     @PostMapping("/application")
@@ -293,7 +293,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
             }
 
             LOG.info("new application ({}) has errors: {}", appForm, errors);
-            return "thymeleaf/application/application_form";
+            return "application/application_form";
         }
 
         final Application app = mapToApplication(appForm);
@@ -316,12 +316,12 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
         if (maybeApplication.isEmpty()) {
-            return "thymeleaf/application/application-notwaiting";
+            return "application/application-notwaiting";
         }
 
         final Application application = maybeApplication.get();
         if (!WAITING.equals(application.getStatus())) {
-            return "thymeleaf/application/application-notwaiting";
+            return "application/application-notwaiting";
         }
 
         final Person signedInUser = personService.getSignedInUser();
@@ -345,7 +345,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         model.addAttribute(NO_HOLIDAYS_ACCOUNT, holidaysAccount.isEmpty());
         model.addAttribute("applicationForLeaveForm", applicationForLeaveForm);
 
-        return "thymeleaf/application/application_form";
+        return "application/application_form";
     }
 
     @PostMapping("/application/{applicationId}")
@@ -381,7 +381,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
             );
 
             LOG.debug("edit application ({}) has errors: {}", appForm, errors);
-            return "thymeleaf/application/application_form";
+            return "application/application_form";
         }
 
         final Application editedApplication = merge(application, appForm);
@@ -389,7 +389,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         try {
             savedApplicationForLeave = applicationInteractionService.edit(application, editedApplication, signedInUser, Optional.ofNullable(appForm.getComment()));
         } catch (EditApplicationForLeaveNotAllowedException e) {
-            return "thymeleaf/application/application-notwaiting";
+            return "application/application-notwaiting";
         }
 
         LOG.debug("Edited application with success applied {}", savedApplicationForLeave);

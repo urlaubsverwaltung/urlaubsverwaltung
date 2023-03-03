@@ -65,7 +65,7 @@ class PersonDeleteViewControllerTest {
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("lastOfficeUserCannotBeDeleted", false))
             .andExpect(model().attribute("firstDeleteActionConfirmed", true))
-            .andExpect(view().name("thymeleaf/person/detail-section/action-delete-person :: #frame-delete-person"));
+            .andExpect(view().name("person/detail-section/action-delete-person :: #frame-delete-person"));
 
         verifyNoMoreInteractions(personService);
     }
@@ -102,7 +102,7 @@ class PersonDeleteViewControllerTest {
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("lastOfficeUserCannotBeDeleted", true))
             .andExpect(model().attribute("firstDeleteActionConfirmed", false))
-            .andExpect(view().name("thymeleaf/person/detail-section/action-delete-person :: #frame-delete-person"));
+            .andExpect(view().name("person/detail-section/action-delete-person :: #frame-delete-person"));
 
         verify(personService).numberOfPersonsWithOfficeRoleExcludingPerson(1);
         verifyNoMoreInteractions(personService);
@@ -189,7 +189,7 @@ class PersonDeleteViewControllerTest {
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("firstDeleteActionConfirmed", true))
             .andExpect(model().attribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.mismatch"))
-            .andExpect(view().name("thymeleaf/person/detail-section/action-delete-person :: #frame-delete-person"));
+            .andExpect(view().name("person/detail-section/action-delete-person :: #frame-delete-person"));
 
         verify(personService).getPersonByID(1);
         verifyNoMoreInteractions(personService);
@@ -228,7 +228,7 @@ class PersonDeleteViewControllerTest {
             .andExpect(model().attribute("person", person))
             .andExpect(model().attribute("firstDeleteActionConfirmed", true))
             .andExpect(model().attribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.office"))
-            .andExpect(view().name("thymeleaf/person/detail-section/action-delete-person :: #frame-delete-person"));
+            .andExpect(view().name("person/detail-section/action-delete-person :: #frame-delete-person"));
 
         verify(personService).getPersonByID(1);
         verify(personService).numberOfPersonsWithOfficeRoleExcludingPerson(1);

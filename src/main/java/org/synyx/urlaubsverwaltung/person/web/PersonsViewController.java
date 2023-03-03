@@ -164,7 +164,7 @@ public class PersonsViewController implements HasLaunchpad {
         model.addAttribute("active", active);
         model.addAttribute("query", query);
 
-        return "thymeleaf/person/persons";
+        return "person/persons";
     }
 
     private Page<Person> getRelevantActivePersons(Person signedInUser, PageableSearchQuery personPageableSearchQuery) {

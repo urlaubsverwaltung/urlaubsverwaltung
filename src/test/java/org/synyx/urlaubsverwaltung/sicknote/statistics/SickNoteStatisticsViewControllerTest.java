@@ -59,7 +59,7 @@ class SickNoteStatisticsViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("statistics", sickNoteStatistics))
             .andExpect(model().attribute("currentYear", currentYear))
-            .andExpect(view().name("thymeleaf/sicknote/sick_notes_statistics"));
+            .andExpect(view().name("sicknote/sick_notes_statistics"));
     }
 
     @Test
@@ -78,7 +78,7 @@ class SickNoteStatisticsViewControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attribute("statistics", sickNoteStatistics))
             .andExpect(model().attribute("currentYear", currentYear))
-            .andExpect(view().name("thymeleaf/sicknote/sick_notes_statistics"));
+            .andExpect(view().name("sicknote/sick_notes_statistics"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

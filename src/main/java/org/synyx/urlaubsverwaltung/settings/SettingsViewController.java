@@ -83,7 +83,7 @@ public class SettingsViewController implements HasLaunchpad {
             model.addAttribute("oautherrors", googleOAuthError);
         }
 
-        return "thymeleaf/settings/settings_form";
+        return "settings/settings_form";
     }
 
     @PostMapping
@@ -104,7 +104,7 @@ public class SettingsViewController implements HasLaunchpad {
 
             model.addAttribute("errors", errors);
 
-            return "thymeleaf/settings/settings_form";
+            return "settings/settings_form";
         }
 
         settingsService.save(processGoogleRefreshToken(settings));

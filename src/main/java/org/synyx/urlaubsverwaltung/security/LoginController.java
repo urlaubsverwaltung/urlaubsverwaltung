@@ -10,6 +10,6 @@ public class LoginController {
 
     @GetMapping("")
     public String login() {
-        return "thymeleaf/login/login";
+        return "login/login";
     }
 }

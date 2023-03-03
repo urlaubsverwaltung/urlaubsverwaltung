@@ -108,7 +108,7 @@ class AccountViewControllerTest {
             .andExpect(model().attribute("currentYear", notNullValue()))
             .andExpect(model().attribute("selectedYear", notNullValue()))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("thymeleaf/account/account_form"));
+            .andExpect(view().name("account/account_form"));
     }
 
     @Test
@@ -211,7 +211,7 @@ class AccountViewControllerTest {
         perform(post("/web/person/" + SOME_PERSON_ID + "/account"))
             .andExpect(model().attributeHasErrors("account"))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("thymeleaf/account/account_form"));
+            .andExpect(view().name("account/account_form"));
     }
 
     @Test
@@ -226,7 +226,7 @@ class AccountViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/person/" + SOME_PERSON_ID + "/account"))
-            .andExpect(view().name("thymeleaf/account/account_form"))
+            .andExpect(view().name("account/account_form"))
             .andExpect(model().attributeHasErrors("account"));
     }
 

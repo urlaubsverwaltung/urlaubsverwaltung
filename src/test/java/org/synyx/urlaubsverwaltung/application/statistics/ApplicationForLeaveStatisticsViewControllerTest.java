@@ -88,7 +88,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .param("to", "01.08.2020"))
             .andExpect(model().attribute("errors", "INVALID_PERIOD"))
             .andExpect(model().attributeExists("sortSelect", "statisticsPagination"))
-            .andExpect(view().name("thymeleaf/application/application-statistics"));
+            .andExpect(view().name("application/application-statistics"));
     }
 
     @Test
@@ -119,7 +119,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
             .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", vacationType))
-            .andExpect(view().name("thymeleaf/application/application-statistics"));
+            .andExpect(view().name("application/application-statistics"));
     }
 
     @Test
@@ -184,7 +184,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .andExpect(model().attribute("showPersonnelNumberColumn", true))
             .andExpect(model().attribute("period", filterPeriod))
             .andExpect(model().attribute("vacationTypes", List.of(vacationType)))
-            .andExpect(view().name("thymeleaf/application/application-statistics"));
+            .andExpect(view().name("application/application-statistics"));
     }
 
     @Test

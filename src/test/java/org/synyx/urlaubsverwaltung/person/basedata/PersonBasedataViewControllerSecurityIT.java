@@ -97,7 +97,7 @@ class PersonBasedataViewControllerSecurityIT extends TestContainersBase {
 
         perform(get("/web/person/1/basedata"))
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/person/person-basedata"));
+            .andExpect(view().name("person/person-basedata"));
     }
 
     @Test

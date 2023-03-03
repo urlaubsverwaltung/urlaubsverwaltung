@@ -72,7 +72,7 @@ public class PersonDeleteViewController implements HasLaunchpad {
         model.addAttribute("lastOfficeUserCannotBeDeleted", lastOfficeUserCannotBeDeleted);
         model.addAttribute("firstDeleteActionConfirmed", firstDeleteActionConfirmed);
 
-        return "thymeleaf/person/detail-section/action-delete-person :: #" + turboFrame;
+        return "person/detail-section/action-delete-person :: #" + turboFrame;
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -110,14 +110,14 @@ public class PersonDeleteViewController implements HasLaunchpad {
             model.addAttribute("lastOfficeUserCannotBeDeleted", true);
             model.addAttribute("firstDeleteActionConfirmed", true);
             model.addAttribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.office");
-            return "thymeleaf/person/detail-section/action-delete-person :: #" + turboFrame;
+            return "person/detail-section/action-delete-person :: #" + turboFrame;
         }
 
         if (!deleteConfirmationMatch(personToDelete, personDeleteForm)) {
             model.addAttribute("person", personToDelete);
             model.addAttribute("firstDeleteActionConfirmed", true);
             model.addAttribute("personDeletionConfirmationValidationError", "person.account.dangerzone.delete.confirmation.validation.error.mismatch");
-            return "thymeleaf/person/detail-section/action-delete-person :: #" + turboFrame;
+            return "person/detail-section/action-delete-person :: #" + turboFrame;
         }
 
         return deletePerson(personToDelete, redirectAttributes);

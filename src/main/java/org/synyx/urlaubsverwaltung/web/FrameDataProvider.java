@@ -112,7 +112,7 @@ public class FrameDataProvider implements HandlerInterceptor {
 
         return !viewName.startsWith("forward:")
             && !viewName.startsWith("redirect:")
-            && !viewName.startsWith("thymeleaf/login");
+            && !viewName.startsWith("login");
     }
 
     private boolean popupMenuEnabled(Person signedInUser) {

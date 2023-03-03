@@ -27,10 +27,10 @@ class ErrorControllerTest {
 
     private static Stream<Arguments> errorCodes() {
         return Stream.of(
-            Arguments.of(400, "thymeleaf/error"),
-            Arguments.of(403, "thymeleaf/error/403"),
-            Arguments.of(404, "thymeleaf/error/404"),
-            Arguments.of(500, "thymeleaf/error")
+            Arguments.of(400, "error"),
+            Arguments.of(403, "error/403"),
+            Arguments.of(404, "error/404"),
+            Arguments.of(500, "error")
         );
     }
 

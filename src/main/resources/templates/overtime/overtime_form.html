@@ -176,7 +176,7 @@
                 <div class="form-group is-required">
                   <label th:text="|#{overtime.data.numberOfHours}:|" class="control-label col-md-3" for="hours"></label>
                   <div class="col-md-9">
-                    <th:block th:replace="thymeleaf/overtime/hour-and-minute-input::hour-and-minute-input"></th:block>
+                    <th:block th:replace="overtime/hour-and-minute-input::hour-and-minute-input"></th:block>
                     <div th:if="${overtimeReductionPossible}" class="tw-mt-2">
                       <input type="checkbox" id="overtime-reduce" th:field="*{reduce}" />
                       <label

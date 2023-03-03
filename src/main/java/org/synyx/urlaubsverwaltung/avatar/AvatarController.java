@@ -27,7 +27,7 @@ public class AvatarController {
     public ResponseEntity<String> avatar(@RequestParam(value = "name", defaultValue = UNKNOWN_PERSON) String name, Locale locale) {
 
         final Map<String, Object> model = Map.of("initials", getInitials(name.trim()));
-        final String svg = svgService.createSvg("thymeleaf/svg/avatar", locale, model);
+        final String svg = svgService.createSvg("svg/avatar", locale, model);
 
         return ResponseEntity.ok()
             .cacheControl(CacheControl.maxAge(60, TimeUnit.MINUTES))

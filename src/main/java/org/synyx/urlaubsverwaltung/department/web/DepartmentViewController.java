@@ -43,7 +43,7 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 public class DepartmentViewController implements HasLaunchpad {
 
     private static final String REDIRECT_WEB_DEPARTMENT = "redirect:/web/department/";
-    private static final String DEPARTMENT_DEPARTMENT_FORM = "thymeleaf/department/department_form";
+    private static final String DEPARTMENT_DEPARTMENT_FORM = "department/department_form";
 
     private final DepartmentService departmentService;
     private final PersonService personService;
@@ -71,7 +71,7 @@ public class DepartmentViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("canCreateAndModifyDepartment", signedInUser.hasRole(OFFICE));
 
-        return "thymeleaf/department/department_list";
+        return "department/department_list";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -178,9 +178,9 @@ public class DepartmentViewController implements HasLaunchpad {
         model.addAttribute("turboFrameRequested", turboFrameRequested);
 
         if (turboFrameRequested) {
-            return "thymeleaf/department/department_form::#" + turboFrame;
+            return "department/department_form::#" + turboFrame;
         } else {
-            return "thymeleaf/department/department_form";
+            return "department/department_form";
         }
     }
 

@@ -125,7 +125,7 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("otherApplications", hasSize(0)))
             .andExpect(model().attributeDoesNotExist("applications_cancellation_request"))
             .andExpect(model().attribute("applications_holiday_replacements", hasSize(0)))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -215,7 +215,7 @@ class ApplicationForLeaveViewControllerTest {
             ))
             .andExpect(model().attributeDoesNotExist("applications_cancellation_request"))
             .andExpect(model().attribute("applications_holiday_replacements", hasSize(0)))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -323,7 +323,7 @@ class ApplicationForLeaveViewControllerTest {
                 )
             )))
             .andExpect(model().attribute("applications_holiday_replacements", hasSize(0)))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -420,7 +420,7 @@ class ApplicationForLeaveViewControllerTest {
                 )
             )))
             .andExpect(model().attribute("applications_holiday_replacements", hasSize(0)))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -505,7 +505,7 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("otherApplications", hasItem(hasProperty("person", hasProperty("name", equalTo("Atticus"))))))
             .andExpect(model().attributeDoesNotExist("applications_cancellation_request"))
             .andExpect(model().attribute("applications_holiday_replacements", hasSize(0)))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -608,7 +608,7 @@ class ApplicationForLeaveViewControllerTest {
                 )
             )))
             .andExpect(model().attribute("applications_holiday_replacements", hasSize(0)))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -704,7 +704,7 @@ class ApplicationForLeaveViewControllerTest {
             )))
             .andExpect(model().attributeDoesNotExist("applications_cancellation_request"))
             .andExpect(model().attribute("applications_holiday_replacements", hasSize(0)))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -818,7 +818,7 @@ class ApplicationForLeaveViewControllerTest {
                 )
             )))
             .andExpect(model().attribute("applications_holiday_replacements", hasSize(0)))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -907,7 +907,7 @@ class ApplicationForLeaveViewControllerTest {
                 )
             )))
             .andExpect(model().attributeDoesNotExist("applications_cancellation_request"))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -984,7 +984,7 @@ class ApplicationForLeaveViewControllerTest {
                     )
                 )
             )))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -1033,7 +1033,7 @@ class ApplicationForLeaveViewControllerTest {
                     )
                 )
             )))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -1092,7 +1092,7 @@ class ApplicationForLeaveViewControllerTest {
                 )
             )))
             .andExpect(model().attribute("otherApplications", hasItem(instanceOf(ApplicationForLeaveDto.class))))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -1123,7 +1123,7 @@ class ApplicationForLeaveViewControllerTest {
                     hasProperty("duration", is("35 "))
                 ))
             ))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -1203,7 +1203,7 @@ class ApplicationForLeaveViewControllerTest {
                     hasProperty("rejectAllowed", equalTo(false))
                 )
             )))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -1283,7 +1283,7 @@ class ApplicationForLeaveViewControllerTest {
                     hasProperty("rejectAllowed", equalTo(false))
                 )
             )))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -1326,7 +1326,7 @@ class ApplicationForLeaveViewControllerTest {
                     hasProperty("note", is("awesome, thanks dude!"))
                 )
             )))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @Test
@@ -1380,7 +1380,7 @@ class ApplicationForLeaveViewControllerTest {
                 )
             )))
             .andExpect(model().attributeDoesNotExist("applications_cancellation_request"))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @ParameterizedTest
@@ -1416,7 +1416,7 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("applications_holiday_replacements", contains(
                 hasProperty("pending", is(true))
             )))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     @ParameterizedTest
@@ -1455,7 +1455,7 @@ class ApplicationForLeaveViewControllerTest {
             .andExpect(model().attribute("applications_holiday_replacements", contains(
                 hasProperty("pending", is(false))
             )))
-            .andExpect(view().name("thymeleaf/application/application-overview"));
+            .andExpect(view().name("application/application-overview"));
     }
 
     private static VacationTypeEntity anyVacationType() {

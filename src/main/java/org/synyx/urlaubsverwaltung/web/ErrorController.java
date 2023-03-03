@@ -29,11 +29,11 @@ public class ErrorController extends BasicErrorController {
         final int status = response.getStatus();
 
         if (status == 403) {
-            viewName = "thymeleaf/error/403";
+            viewName = "error/403";
         } else if (status == 404) {
-            viewName = "thymeleaf/error/404";
+            viewName = "error/404";
         } else {
-            viewName = "thymeleaf/error";
+            viewName = "error";
         }
 
         final ModelAndView modelAndView = new ModelAndView(viewName);

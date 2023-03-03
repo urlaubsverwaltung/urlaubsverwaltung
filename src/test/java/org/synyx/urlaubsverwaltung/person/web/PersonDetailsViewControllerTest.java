@@ -184,7 +184,7 @@ class PersonDetailsViewControllerTest {
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
         perform(get("/web/person/1"))
-            .andExpect(view().name("thymeleaf/person/person_detail"));
+            .andExpect(view().name("person/person_detail"));
     }
 
     @Test
@@ -201,7 +201,7 @@ class PersonDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
         perform(get("/web/person/1"))
-            .andExpect(view().name("thymeleaf/person/person_detail"))
+            .andExpect(view().name("person/person_detail"))
             .andExpect(model().attribute("canEditPermissions", true));
     }
 
@@ -219,7 +219,7 @@ class PersonDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
         perform(get("/web/person/1"))
-            .andExpect(view().name("thymeleaf/person/person_detail"))
+            .andExpect(view().name("person/person_detail"))
             .andExpect(model().attribute("canEditDepartments", true));
     }
 
@@ -237,7 +237,7 @@ class PersonDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
         perform(get("/web/person/1"))
-            .andExpect(view().name("thymeleaf/person/person_detail"))
+            .andExpect(view().name("person/person_detail"))
             .andExpect(model().attribute("canEditAccounts", true));
     }
 
@@ -255,7 +255,7 @@ class PersonDetailsViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
         perform(get("/web/person/1"))
-            .andExpect(view().name("thymeleaf/person/person_detail"))
+            .andExpect(view().name("person/person_detail"))
             .andExpect(model().attribute("canEditWorkingtime", true));
     }
 

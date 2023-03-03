@@ -83,7 +83,7 @@ public class AccountViewController implements HasLaunchpad {
 
         addVacationTypeColorsToModel(model);
 
-        return "thymeleaf/account/account_form";
+        return "account/account_form";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -104,7 +104,7 @@ public class AccountViewController implements HasLaunchpad {
 
             addVacationTypeColorsToModel(model);
 
-            return "thymeleaf/account/account_form";
+            return "account/account_form";
         }
 
         final LocalDate validFrom = accountForm.getHolidaysAccountValidFrom();

@@ -75,7 +75,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         prepareModelForOtherCalendarSharePerson(personId, model, signedInUser);
         prepareModelForCompanyCalendar(model, personId, signedInUser);
 
-        return "thymeleaf/calendarsharing/index";
+        return "calendarsharing/index";
     }
 
     @GetMapping("/persons/{personId}/departments/{activeDepartmentId}")
@@ -93,7 +93,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
         prepareModelForOtherCalendarSharePerson(personId, model, signedInUser);
         prepareModelForCompanyCalendar(model, personId, signedInUser);
 
-        return "thymeleaf/calendarsharing/index";
+        return "calendarsharing/index";
     }
 
     private void prepareModelForOtherCalendarSharePerson(int personId, Model model, Person signedInUser) {

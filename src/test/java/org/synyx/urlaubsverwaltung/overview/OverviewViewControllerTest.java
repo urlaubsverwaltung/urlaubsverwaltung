@@ -141,7 +141,7 @@ class OverviewViewControllerTest {
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInUser, person)).thenReturn(false);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
-                .andExpect(view().name("thymeleaf/person/person-overview-reduced"))
+                .andExpect(view().name("person/person-overview-reduced"))
                 .andExpect(model().attribute("departmentsOfPerson", List.of(department)));
 
         verify(personService).getSignedInUser();
@@ -556,7 +556,7 @@ class OverviewViewControllerTest {
 
         resultActions
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/person/person-overview"))
+            .andExpect(view().name("person/person-overview"))
             .andExpect(model().attribute("applications", hasSize(3)))
             .andExpect(model().attribute("sickNotes", hasSize(2)))
             .andExpect(model().attribute("signedInUser", person))

@@ -72,7 +72,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         prepareApplicationModels(model, locale);
         model.addAttribute("activeContent", "application");
 
-        return "thymeleaf/application/application-overview";
+        return "application/application-overview";
     }
 
     @GetMapping("/application/replacement")
@@ -81,7 +81,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         prepareApplicationModels(model, locale);
         model.addAttribute("activeContent", "replacement");
 
-        return "thymeleaf/application/application-overview";
+        return "application/application-overview";
     }
 
     private void prepareApplicationModels(Model model, Locale locale) {

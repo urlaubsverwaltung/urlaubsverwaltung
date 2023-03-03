@@ -105,7 +105,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
             model.addAttribute("period", period);
             model.addAttribute("errors", "INVALID_PERIOD");
             model.addAttribute("statisticsPagination", new PaginationDto<>(new PageImpl<>(List.of(), pageable, 0), pageLinkPrefix));
-            return "thymeleaf/application/application-statistics";
+            return "application/application-statistics";
         }
 
         final Person signedInUser = personService.getSignedInUser();
@@ -136,9 +136,9 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         model.addAttribute("turboFrameRequested", turboFrameRequested);
 
         if (turboFrameRequested) {
-            return "thymeleaf/application/application-statistics::#" + turboFrame;
+            return "application/application-statistics::#" + turboFrame;
         } else {
-            return "thymeleaf/application/application-statistics";
+            return "application/application-statistics";
         }
     }
 

@@ -44,7 +44,7 @@ class SickNoteStatisticsViewController implements HasLaunchpad {
         model.addAttribute("statistics", statistics);
         model.addAttribute("currentYear", Year.now(clock).getValue());
 
-        return "thymeleaf/sicknote/sick_notes_statistics";
+        return "sicknote/sick_notes_statistics";
     }
 
     private Clock getClockOfRequestedYear(Integer requestedYear) {

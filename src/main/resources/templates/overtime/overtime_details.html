@@ -130,13 +130,13 @@
           <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
             <div class="tw-w-full">
               <div class="box tw-mb-5 tw-p-5">
-                <div th:replace="thymeleaf/person/box::person-box(person=${record.person})"></div>
+                <div th:replace="person/box::person-box(person=${record.person})"></div>
               </div>
               <div class="box tw-mb-5 tw-p-5">
-                <div th:replace="thymeleaf/overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})"></div>
+                <div th:replace="overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})"></div>
               </div>
               <div class="box tw-mb-5 tw-p-5">
-                <div th:replace="thymeleaf/overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})"></div>
+                <div th:replace="overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})"></div>
               </div>
             </div>
           </div>

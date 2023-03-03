@@ -86,7 +86,7 @@ class DepartmentViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         perform(get("/web/department"))
-            .andExpect(view().name("thymeleaf/department/department_list"))
+            .andExpect(view().name("department/department_list"))
             .andExpect(model().attribute("canCreateAndModifyDepartment", false));
     }
 
@@ -119,7 +119,7 @@ class DepartmentViewControllerTest {
     void getNewDepartmentFormUsesCorrectView() throws Exception {
 
         perform(get("/web/department/new"))
-            .andExpect(view().name("thymeleaf/department/department_form"));
+            .andExpect(view().name("department/department_form"));
     }
 
     @ParameterizedTest
@@ -145,7 +145,7 @@ class DepartmentViewControllerTest {
             .param("id", "1")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/department/department_form"))
+            .andExpect(view().name("department/department_form"))
             .andExpect(model().attribute("turboFrameRequested", is(false)))
             .andExpect(model().attribute("memberQuery", is(givenQuery)))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -179,7 +179,7 @@ class DepartmentViewControllerTest {
             .param("id", "1")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/department/department_form::#awesome-turbo-frame"))
+            .andExpect(view().name("department/department_form::#awesome-turbo-frame"))
             .andExpect(model().attribute("turboFrameRequested", is(true)))
             .andExpect(model().attribute("memberQuery", is(givenQuery)))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -229,7 +229,7 @@ class DepartmentViewControllerTest {
             .param("secondStageAuthorities", "4")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/department/department_form"))
+            .andExpect(view().name("department/department_form"))
             .andExpect(model().attribute("turboFrameRequested", is(false)))
             .andExpect(model().attribute("memberQuery", is("bruce")))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -286,7 +286,7 @@ class DepartmentViewControllerTest {
             .param("secondStageAuthorities", "4")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/department/department_form::#awesome-turbo-frame"))
+            .andExpect(view().name("department/department_form::#awesome-turbo-frame"))
             .andExpect(model().attribute("turboFrameRequested", is(true)))
             .andExpect(model().attribute("memberQuery", is("bruce")))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -327,7 +327,7 @@ class DepartmentViewControllerTest {
             .param("id", "1")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/department/department_form"))
+            .andExpect(view().name("department/department_form"))
             .andExpect(model().attribute("turboFrameRequested", is(false)))
             .andExpect(model().attribute("memberQuery", is(givenQuery)))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -378,7 +378,7 @@ class DepartmentViewControllerTest {
             .param("secondStageAuthorities", "4")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/department/department_form"))
+            .andExpect(view().name("department/department_form"))
             .andExpect(model().attribute("turboFrameRequested", is(false)))
             .andExpect(model().attribute("memberQuery", is("bruce")))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -418,7 +418,7 @@ class DepartmentViewControllerTest {
             .param("id", "1")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/department/department_form"))
+            .andExpect(view().name("department/department_form"))
             .andExpect(model().attribute("turboFrameRequested", is(false)))
             .andExpect(model().attribute("memberQuery", emptyString()))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -453,7 +453,7 @@ class DepartmentViewControllerTest {
             .param("id", "1")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/department/department_form::#awesome-turbo-frame"))
+            .andExpect(view().name("department/department_form::#awesome-turbo-frame"))
             .andExpect(model().attribute("turboFrameRequested", is(true)))
             .andExpect(model().attribute("memberQuery", is(givenQuery)))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -505,7 +505,7 @@ class DepartmentViewControllerTest {
             .param("secondStageAuthorities", "4")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/department/department_form::#awesome-turbo-frame"))
+            .andExpect(view().name("department/department_form::#awesome-turbo-frame"))
             .andExpect(model().attribute("turboFrameRequested", is(true)))
             .andExpect(model().attribute("memberQuery", is("bruce")))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -545,7 +545,7 @@ class DepartmentViewControllerTest {
             .param("id", "1")
         )
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/department/department_form::#awesome-turbo-frame"))
+            .andExpect(view().name("department/department_form::#awesome-turbo-frame"))
             .andExpect(model().attribute("turboFrameRequested", is(true)))
             .andExpect(model().attribute("memberQuery", emptyString()))
             .andExpect(model().attribute("department", is(expectedDepartmentForm)))
@@ -566,7 +566,7 @@ class DepartmentViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/department"))
-            .andExpect(view().name("thymeleaf/department/department_form"));
+            .andExpect(view().name("department/department_form"));
 
         verify(departmentService, never()).create(any());
     }
@@ -633,7 +633,7 @@ class DepartmentViewControllerTest {
         when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
 
         perform(get("/web/department/1/edit"))
-            .andExpect(view().name("thymeleaf/department/department_form"));
+            .andExpect(view().name("department/department_form"));
     }
 
     @Test
@@ -658,7 +658,7 @@ class DepartmentViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/department/1"))
-            .andExpect(view().name("thymeleaf/department/department_form"));
+            .andExpect(view().name("department/department_form"));
 
         verify(departmentService, never()).update(any());
     }

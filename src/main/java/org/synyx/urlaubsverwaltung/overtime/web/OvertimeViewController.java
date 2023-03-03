@@ -62,7 +62,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 public class OvertimeViewController implements HasLaunchpad {
 
     private static final String SIGNED_IN_USER = "signedInUser";
-    private static final String OVERTIME_OVERTIME_FORM = "thymeleaf/overtime/overtime_form";
+    private static final String OVERTIME_OVERTIME_FORM = "overtime/overtime_form";
 
     private final OvertimeService overtimeService;
     private final PersonService personService;
@@ -140,7 +140,7 @@ public class OvertimeViewController implements HasLaunchpad {
         model.addAttribute("overtimeLeft", overtimeListDto.getOvertimeLeft());
         model.addAttribute("userIsAllowedToWriteOvertime", userIsAllowedToWriteOvertime);
 
-        return "thymeleaf/overtime/overtime_list";
+        return "overtime/overtime_list";
     }
 
     @GetMapping("/overtime/{id}")
@@ -170,7 +170,7 @@ public class OvertimeViewController implements HasLaunchpad {
         model.addAttribute("overtimeLeft", overtimeDetailsDto.getOvertimeLeft());
         model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
 
-        return "thymeleaf/overtime/overtime_details";
+        return "overtime/overtime_details";
     }
 
     @GetMapping("/overtime/new")
