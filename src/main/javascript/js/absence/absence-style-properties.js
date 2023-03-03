@@ -2,6 +2,9 @@ import {
   isPersonalHolidayApprovedFull,
   isPersonalHolidayApprovedMorning,
   isPersonalHolidayApprovedNoon,
+  isPersonalHolidayCancellationRequestedFull,
+  isPersonalHolidayCancellationRequestedMorning,
+  isPersonalHolidayCancellationRequestedNoon,
   isPersonalHolidayTemporaryFull,
   isPersonalHolidayTemporaryMorning,
   isPersonalHolidayTemporaryNoon,
@@ -48,12 +51,15 @@ function getStylePropertiesForDate(absences) {
     isPersonalHolidayWaitingFull(absences) ? propertyFull(colorMorningOrFull) : undefined,
     isPersonalHolidayTemporaryFull(absences) ? propertyFull(colorMorningOrFull) : undefined,
     isPersonalHolidayApprovedFull(absences) ? propertyFull(colorMorningOrFull) : undefined,
+    isPersonalHolidayCancellationRequestedFull(absences) ? propertyFull(colorMorningOrFull) : undefined,
     isPersonalHolidayWaitingMorning(absences) ? propertyMorning(colorMorningOrFull) : undefined,
     isPersonalHolidayTemporaryMorning(absences) ? propertyMorning(colorMorningOrFull) : undefined,
     isPersonalHolidayApprovedMorning(absences) ? propertyMorning(colorMorningOrFull) : undefined,
+    isPersonalHolidayCancellationRequestedMorning(absences) ? propertyMorning(colorMorningOrFull) : undefined,
     isPersonalHolidayWaitingNoon(absences) ? propertyNoon(colorNoon) : undefined,
     isPersonalHolidayTemporaryNoon(absences) ? propertyNoon(colorNoon) : undefined,
     isPersonalHolidayApprovedNoon(absences) ? propertyNoon(colorNoon) : undefined,
+    isPersonalHolidayCancellationRequestedNoon(absences) ? propertyNoon(colorNoon) : undefined,
   ].filter(Boolean);
 }
 

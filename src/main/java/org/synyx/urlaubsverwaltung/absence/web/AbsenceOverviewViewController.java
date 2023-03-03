@@ -382,6 +382,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
             return builder.absenceMorning();
         }
 
+        final boolean morningAllowedCancellationRequested = morning.map(AbsencePeriod.RecordInfo::hasStatusAllowedCancellationRequested).orElse(false);
+        if (morningAllowedCancellationRequested) {
+            return anonymizeMorning ? builder.absenceMorning() : builder.allowedCancellationRequestedAbsenceMorning();
+        }
+
         final boolean noonWaiting = noon.map(AbsencePeriod.RecordInfo::hasStatusWaiting).orElse(false);
         if (noonWaiting) {
             return anonymizeNoon ? builder.absenceNoon() : builder.waitingAbsenceNoon();
@@ -389,7 +394,12 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
         final boolean noonTemporaryAllowed = noon.map(AbsencePeriod.RecordInfo::hasStatusTemporaryAllowed).orElse(false);
         if (noonTemporaryAllowed) {
-            return anonymizeMorning ? builder.absenceNoon() : builder.temporaryAllowedAbsenceNoon();
+            return anonymizeNoon ? builder.absenceNoon() : builder.temporaryAllowedAbsenceNoon();
+        }
+
+        final boolean noonAllowedCancellationRequested = noon.map(AbsencePeriod.RecordInfo::hasStatusAllowedCancellationRequested).orElse(false);
+        if (noonAllowedCancellationRequested) {
+            return anonymizeNoon ? builder.absenceNoon() : builder.allowedCancellationRequestedAbsenceNoon();
         }
 
         return builder.absenceNoon();
@@ -423,6 +433,9 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         final boolean morningTemporaryAllowed = morning.map(AbsencePeriod.RecordInfo::hasStatusTemporaryAllowed).orElse(false);
         final boolean noonTemporaryAllowed = noon.map(AbsencePeriod.RecordInfo::hasStatusTemporaryAllowed).orElse(false);
 
+        final boolean morningAllowedCancellationRequested = morning.map(AbsencePeriod.RecordInfo::hasStatusAllowedCancellationRequested).orElse(false);
+        final boolean noonAllowedCancellationRequested = noon.map(AbsencePeriod.RecordInfo::hasStatusAllowedCancellationRequested).orElse(false);
+
         if (anonymizeAbsenceType) {
             builder = builder.colorFull(ANONYMIZED_ABSENCE_COLOR);
         } else {
@@ -436,6 +449,8 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
             return anonymizeAbsenceType ? builder.absenceFull() : builder.waitingAbsenceFull();
         } else if (morningTemporaryAllowed && noonTemporaryAllowed) {
             return anonymizeAbsenceType ? builder.absenceFull() : builder.temporaryAllowedAbsenceFull();
+        } else if (morningAllowedCancellationRequested && noonAllowedCancellationRequested) {
+            return anonymizeAbsenceType ? builder.absenceFull() : builder.allowedCancellationRequestedAbsenceFull();
         } else if (!morningWaiting && !noonWaiting) {
             return builder.absenceFull();
         }

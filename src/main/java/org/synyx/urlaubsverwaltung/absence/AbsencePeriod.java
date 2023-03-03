@@ -158,6 +158,7 @@ public class AbsencePeriod {
         boolean hasStatusTemporaryAllowed();
         boolean hasStatusWaiting();
         boolean hasStatusAllowed();
+        boolean hasStatusAllowedCancellationRequested();
         Optional<Integer> getVacationTypeId();
         boolean isVisibleToEveryone();
     }
@@ -231,7 +232,11 @@ public class AbsencePeriod {
         }
 
         public boolean hasStatusAllowed() {
-            return hasStatusOneOf(AbsenceStatus.ALLOWED, AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED);
+            return hasStatusOneOf(AbsenceStatus.ALLOWED);
+        }
+
+        public boolean hasStatusAllowedCancellationRequested() {
+            return hasStatusOneOf(AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED);
         }
 
         public Optional<Integer> getVacationTypeId() {

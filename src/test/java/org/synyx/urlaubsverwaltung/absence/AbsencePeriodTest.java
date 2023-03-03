@@ -170,8 +170,15 @@ class AbsencePeriodTest {
     @Test
     void ensureVacationMorningHasStatusAllowed() {
         final Person person = anyPerson();
-        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, ALLOWED, 1, false);
         assertThat(morning.hasStatusAllowed()).isTrue();
+    }
+
+    @Test
+    void ensureVacationMorningHasStatusAllowedCancellationRequested() {
+        final Person person = anyPerson();
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        assertThat(morning.hasStatusAllowedCancellationRequested()).isTrue();
     }
 
     @Test

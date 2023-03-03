@@ -924,6 +924,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -994,6 +997,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1065,6 +1071,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1145,6 +1154,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(true)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1215,6 +1227,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(true)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1286,6 +1301,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(true)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1356,6 +1374,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1421,6 +1445,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1493,6 +1520,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1558,6 +1588,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1628,6 +1661,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1694,6 +1733,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1767,6 +1809,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1832,6 +1877,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(true)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1897,13 +1945,16 @@ class AbsenceOverviewViewControllerTest {
                                 allOf(
                                     hasProperty("absenceFull", is(false)),
                                     hasProperty("absenceMorning", is(false)),
-                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("absenceNoon", is(true)),
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
-                                    hasProperty("temporaryAllowedAbsenceNoon", is(true)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -1969,6 +2020,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(true)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2042,6 +2096,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(false)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2108,6 +2165,9 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("temporaryAllowedAbsenceFull", is(true)),
                                     hasProperty("temporaryAllowedAbsenceMorning", is(false)),
                                     hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2178,6 +2238,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2245,6 +2311,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2313,6 +2385,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2383,6 +2461,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2444,6 +2528,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2512,6 +2602,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2572,6 +2668,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2640,6 +2742,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2701,6 +2809,657 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false)),
+                                    hasProperty("color",
+                                        allOf(
+                                            hasProperty("morning", nullValue()),
+                                            hasProperty("noon", nullValue()),
+                                            hasProperty("full", is(CYAN))
+                                        ))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    // ---
+    // ALLOWED CANCELLATION REQUESTED vacation, privileged user
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureAbsenceMorningCancellationRequestedForPrivilegedPerson(Role role) throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1);
+        vacationType.setColor(ORANGE);
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingAbsenceFull", is(false)),
+                                    hasProperty("waitingAbsenceMorning", is(false)),
+                                    hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(true)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false)),
+                                    hasProperty("color",
+                                        allOf(
+                                            hasProperty("morning", is(ORANGE)),
+                                            hasProperty("noon", nullValue()),
+                                            hasProperty("full", nullValue())
+                                        )
+                                    )
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureAbsenceNoonCancellationRequestedForPrivilegedPerson(Role role) throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1);
+        vacationType.setColor(ORANGE);
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingAbsenceFull", is(false)),
+                                    hasProperty("waitingAbsenceMorning", is(false)),
+                                    hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(true)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false)),
+                                    hasProperty("color",
+                                        allOf(
+                                            hasProperty("morning", nullValue()),
+                                            hasProperty("noon", is(ORANGE)),
+                                            hasProperty("full", nullValue())
+                                        )
+                                    )
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensureAbsenceFullCancellationRequestedForPrivilegedPerson(Role role) throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, role));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1);
+        vacationType.setColor(ORANGE);
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        when(personService.getActivePersons()).thenReturn(List.of(person));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingAbsenceFull", is(false)),
+                                    hasProperty("waitingAbsenceMorning", is(false)),
+                                    hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(true)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false)),
+                                    hasProperty("color",
+                                        allOf(
+                                            hasProperty("morning", nullValue()),
+                                            hasProperty("noon", nullValue()),
+                                            hasProperty("full", is(ORANGE))
+                                        )
+                                    )
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    // allowed cancellation requested vacation, not privileged user
+    @Test
+    void ensureAbsenceMorningCancellationRequestedForNotPrivilegedPerson() throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var signedInUser = new Person();
+        signedInUser.setId(1);
+        signedInUser.setPermissions(List.of(USER));
+        signedInUser.setFirstName("Bruce");
+        signedInUser.setLastName("Springfield");
+        signedInUser.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final var other = new Person();
+        other.setFirstName("Dorie");
+        other.setLastName("Fisch");
+        other.setEmail("dorie@example.org");
+        other.setId(2);
+
+        final var department = department();
+        department.setMembers(List.of(signedInUser, other));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(true)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingAbsenceFull", is(false)),
+                                    hasProperty("waitingAbsenceMorning", is(false)),
+                                    hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false)),
+                                    hasProperty("color",
+                                        allOf(
+                                            hasProperty("morning", is(YELLOW)),
+                                            hasProperty("noon", nullValue()),
+                                            hasProperty("full", nullValue())
+                                        )
+                                    )
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureOwnAbsenceMorningCancellationRequestedForNotPrivilegedPerson() throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, null);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingAbsenceFull", is(false)),
+                                    hasProperty("waitingAbsenceMorning", is(false)),
+                                    hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(true)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false)),
+                                    hasProperty("color",
+                                        allOf(
+                                            hasProperty("morning", is(CYAN)),
+                                            hasProperty("noon", nullValue()),
+                                            hasProperty("full", nullValue())
+                                        )
+                                    )
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureAbsenceNoonCancellationRequestedForNotPrivilegedPerson() throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var signedInUser = new Person();
+        signedInUser.setId(1);
+        signedInUser.setPermissions(List.of(USER));
+        signedInUser.setFirstName("Bruce");
+        signedInUser.setLastName("Springfield");
+        signedInUser.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final var other = new Person();
+        other.setFirstName("Dorie");
+        other.setLastName("Fisch");
+        other.setEmail("dorie@example.org");
+        other.setId(2);
+
+        final var department = department();
+        department.setMembers(List.of(signedInUser, other));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(true)),
+                                    hasProperty("waitingAbsenceFull", is(false)),
+                                    hasProperty("waitingAbsenceMorning", is(false)),
+                                    hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false)),
+                                    hasProperty("color",
+                                        allOf(
+                                            hasProperty("morning", nullValue()),
+                                            hasProperty("noon", is(YELLOW)),
+                                            hasProperty("full", nullValue())
+                                        ))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureOwnAbsenceNoonCancellationRequestedForNotPrivilegedPerson() throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, null, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingAbsenceFull", is(false)),
+                                    hasProperty("waitingAbsenceMorning", is(false)),
+                                    hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(true)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false)),
+                                    hasProperty("color",
+                                        allOf(
+                                            hasProperty("morning", nullValue()),
+                                            hasProperty("noon", is(CYAN)),
+                                            hasProperty("full", nullValue())
+                                        ))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureAbsenceFullCancellationRequestedForNotPrivilegedPerson() throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var signedInUser = new Person();
+        signedInUser.setId(1);
+        signedInUser.setPermissions(List.of(USER));
+        signedInUser.setFirstName("Bruce");
+        signedInUser.setLastName("Springfield");
+        signedInUser.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final var other = new Person();
+        other.setFirstName("Dorie");
+        other.setLastName("Fisch");
+        other.setEmail("dorie@example.org");
+        other.setId(2);
+
+        final var department = department();
+        department.setMembers(List.of(signedInUser, other));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(signedInUser)).thenReturn(List.of(department));
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(other, 1, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(other, 1, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), other, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(signedInUser, other), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(true)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingAbsenceFull", is(false)),
+                                    hasProperty("waitingAbsenceMorning", is(false)),
+                                    hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
+                                    hasProperty("sickNoteFull", is(false)),
+                                    hasProperty("sickNoteMorning", is(false)),
+                                    hasProperty("sickNoteNoon", is(false)),
+                                    hasProperty("color",
+                                        allOf(
+                                            hasProperty("morning", nullValue()),
+                                            hasProperty("noon", nullValue()),
+                                            hasProperty("full", is(YELLOW))
+                                        ))
+                                )
+                            )
+                        ))
+                    ))
+                ))
+            ));
+    }
+
+    @Test
+    void ensureOwnAbsenceFullCancellationRequestedForNotPrivilegedPerson() throws Exception {
+
+        final Settings settings = new Settings();
+        final WorkingTimeSettings workingTimeSettings = new WorkingTimeSettings();
+        settings.setWorkingTimeSettings(workingTimeSettings);
+        when(settingsService.getSettings()).thenReturn(settings);
+        final var person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+        person.setFirstName("Bruce");
+        person.setLastName("Springfield");
+        person.setEmail("springfield@example.org");
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final var department = department();
+        department.setMembers(List.of(person));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(new VacationType(1, true, VacationCategory.OTHER, null, false, VacationTypeColor.CYAN, false)));
+
+        final AbsencePeriod.RecordMorningVacation morning = new AbsencePeriod.RecordMorningVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.RecordNoonVacation noon = new AbsencePeriod.RecordNoonVacation(person, 1, AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED, 1, false);
+        final AbsencePeriod.Record record = new AbsencePeriod.Record(LocalDate.now(clock), person, morning, noon);
+        final AbsencePeriod absencePeriodVacation = new AbsencePeriod(List.of(record));
+
+        final LocalDate firstOfMonth = LocalDate.now(clock).with(TemporalAdjusters.firstDayOfMonth());
+        final LocalDate lastOfMonth = LocalDate.now(clock).with(TemporalAdjusters.lastDayOfMonth());
+        when(absenceService.getOpenAbsences(List.of(person), firstOfMonth, lastOfMonth)).thenReturn(List.of(absencePeriodVacation));
+
+        perform(get("/web/absences").locale(Locale.GERMANY))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("absenceOverview",
+                hasProperty("months", contains(
+                    hasProperty("persons", hasItem(
+                        hasProperty("days", hasItems(
+                            hasProperty("type",
+                                allOf(
+                                    hasProperty("absenceFull", is(false)),
+                                    hasProperty("absenceMorning", is(false)),
+                                    hasProperty("absenceNoon", is(false)),
+                                    hasProperty("waitingAbsenceFull", is(false)),
+                                    hasProperty("waitingAbsenceMorning", is(false)),
+                                    hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(true)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2765,6 +3524,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(true)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2826,6 +3591,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(true)),
@@ -2889,6 +3660,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(true)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -2956,6 +3733,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -3014,6 +3797,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(true)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -3079,6 +3868,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -3138,6 +3933,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(true)),
@@ -3205,6 +4006,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -3264,6 +4071,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(true)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -3338,6 +4151,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(true)),
@@ -3409,6 +4228,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(true)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -3483,6 +4308,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -3552,6 +4383,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(true)),
@@ -3623,6 +4460,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -3692,6 +4535,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(true)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -3762,6 +4611,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(true)),
@@ -3839,6 +4694,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -3909,6 +4770,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(true)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -3980,6 +4847,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -4056,6 +4929,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
@@ -4125,6 +5004,12 @@ class AbsenceOverviewViewControllerTest {
                                     hasProperty("waitingAbsenceFull", is(false)),
                                     hasProperty("waitingAbsenceMorning", is(false)),
                                     hasProperty("waitingAbsenceNoon", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceFull", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceMorning", is(false)),
+                                    hasProperty("temporaryAllowedAbsenceNoon", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceFull", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceMorning", is(false)),
+                                    hasProperty("allowedCancellationRequestedAbsenceNoon", is(false)),
                                     hasProperty("sickNoteFull", is(false)),
                                     hasProperty("sickNoteMorning", is(false)),
                                     hasProperty("sickNoteNoon", is(false)),
