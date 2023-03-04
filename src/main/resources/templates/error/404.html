@@ -1,71 +1,48 @@
 <!DOCTYPE html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <head th:replace="_layout::head(~{::title}, ~{}, ~{})">
     <title th:text="#{errorPage.header.title}"></title>
-
-    <link rel="manifest" th:href="@{/manifest.json}" />
-    <link rel="icon" type="image/png" th:href="@{/favicons/favicon.png}" />
-    <link rel="apple-touch-icon" th:href="@{/favicons/apple-icon.png}" />
-    <link rel="apple-touch-icon" th:href="@{/favicons/apple-icon-57x57.png}" sizes="57x57" />
-    <link rel="apple-touch-icon" th:href="@{/favicons/apple-icon-60x60.png}" sizes="60x60" />
-    <link rel="apple-touch-icon" th:href="@{/favicons/apple-icon-72x72.png}" sizes="72x72" />
-    <link rel="apple-touch-icon" th:href="@{/favicons/apple-icon-76x76.png}" sizes="76x76" />
-    <link rel="apple-touch-icon" th:href="@{/favicons/apple-icon-114x114.png}" sizes="114x114" />
-    <link rel="apple-touch-icon" th:href="@{/favicons/apple-icon-120x120.png}" sizes="120x120" />
-    <link rel="apple-touch-icon" th:href="@{/favicons/apple-icon-128x128.png}" sizes="128x128" />
-    <link rel="apple-touch-icon" th:href="@{/favicons/apple-icon-144x144.png}" sizes="144x144" />
-    <link rel="apple-touch-icon" th:href="@{/favicons/apple-icon-152x152.png}" sizes="152x152" />
-    <link rel="apple-touch-icon" th:href="@{/favicons/apple-icon-180x180.png}" sizes="180x180" />
-    <link rel="apple-touch-icon" th:href="@{/favicons/apple-icon-precomposed.png}" />
-    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicons/favicon-16x16.png}" />
-    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicons/favicon-32x32.png}" />
-    <link rel="icon" type="image/png" sizes="96x96" th:href="@{/favicons/favicon-96x96.png}" />
-    <link rel="icon" type="image/png" sizes="160x160" th:href="@{/favicons/favicon-160x160.png}" />
-    <link rel="icon" type="image/png" sizes="192x192" th:href="@{/favicons/favicon-192x192.png}" />
-    <link rel="icon" type="image/png" sizes="196x196" th:href="@{/favicons/favicon-196x196.png}" />
-    <meta name="msapplication-TileColor" content="#ffffff" />
-    <meta name="msapplication-TileImage" th:content="@{/favicons/ms-icon-144x144.png}" />
-    <meta name="theme-color" content="#ffffff" />
-
-    <link rel="stylesheet" type="text/css" asset:href="common.css" />
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
-
-    <script th:if="${theme eq 'system'}">
-      (function () {
-        let mediaQueryDark = window.matchMedia("(prefers-color-scheme: dark)");
-        if (mediaQueryDark.matches) {
-          document.querySelector("html").classList.add("tw-dark");
-        }
-        try {
-          mediaQueryDark.addEventListener("change", function () {
-            document.querySelector("html").classList.toggle("tw-dark");
-          });
-        } catch (error) {
-          // safari (https://stackoverflow.com/a/60000747)
-          try {
-            mediaQueryDark.addListener(function () {
-              document.querySelector("html").classList.toggle("tw-dark");
-            });
-          } catch (error2) {
-            console.info("could not add mediaQuery listener to toggle theme.", error2);
-          }
-        }
-      })();
-    </script>
   </head>
-  <body>
-    <main class="tw-text-center tw-mt-24">
-      <h1
-        class="tw-text-6xl md:tw-text-10rem tw-leading-normal dark:tw-text-zinc-900"
-        style="background-color: #b2c900"
-        th:text="${status}"
-      ></h1>
-      <p class="md:tw-text-2xl" th:text="#{errorPage.404}"></p>
-      <p class="error-link md:tw-text-xl">
-        <a href="#" th:href="@{/web/overview}" th:text="#{errorPage.back}"></a>
-      </p>
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main th:ref="main">
+      <div class="tw-grow tw-flex tw-justify-center">
+        <div
+          class="tw-w-full tw-max-w-screen-xl tw-flex tw-flex-col lg:tw-flex-row lg:tw-items-start lg:tw-justify-between lg:tw-mt-16"
+        >
+          <div class="tw-px-8 xs:tw-px-16 lg:tw-w-4/5">
+            <h1
+              class="mt-4 xs:tw-mt-8 lg:tw-mt-24 tw-flex tw-flex-col sm:tw-flex-row lg:tw-flex-col sm:tw-items-baseline sm:tw-space-x-2 lg:tw-space-x-0 tw-font-medium tw-text-3xl sm:tw-text-4xl lg:tw-text-5xl"
+            >
+              404&nbsp;
+              <span class="sm:tw-mt-2" th:text="#{error-page.not-found.title}"></span>
+            </h1>
+            <p class="tw-mt-8 tw-text-xl" th:text="#{error-page.not-found.paragraph}"></p>
+            <div
+              class="tw-mt-8 sm:tw-mt-8 tw-text-lg tw-flex tw-flex-col sm:tw-flex-row tw-space-y-4 sm:tw-space-y-0 sm:tw-space-x-2"
+              th:with="previousPageLink=${header_referer}"
+            >
+              <a
+                th:if="${not #strings.isEmpty(previousPageLink)}"
+                href="#"
+                th:href="${previousPageLink}"
+                class="button tw-text-base tw-px-4 tw-py-2"
+                th:text="#{error-page.goto.previous}"
+              ></a>
+              <a href="/" class="button tw-text-base tw-px-4 tw-py-2" th:text="#{error-page.goto.start}"></a>
+            </div>
+          </div>
+          <picture th:if="${theme == 'system'}" class="tw-shrink-0">
+            <source th:srcset="@{/images/404_bear_dark.png}" media="(prefers-color-scheme: dark)" />
+            <img src="#" th:src="@{/images/404_bear.png}" alt="" class="tw-mt-12 lg:tw-mr-16 tw-max-w-full" />
+          </picture>
+          <th:block
+            th:if="${theme != 'system'}"
+            th:with="src=${theme == 'dark' ? '/images/404_bear_dark.png' : '/images/404_bear.png'}"
+          >
+            <img src="#" th:src="@{${src}}" alt="" class="tw-mt-12 lg:tw-mr-16 tw-max-w-full" />
+          </th:block>
+        </div>
+      </div>
     </main>
   </body>
 </html>
