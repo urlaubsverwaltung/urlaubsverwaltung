@@ -31,16 +31,18 @@
               <a href="/" class="button tw-text-base tw-px-4 tw-py-2" th:text="#{error-page.goto.start}"></a>
             </div>
           </div>
-          <picture th:if="${theme == 'system'}" class="tw-shrink-0">
-            <source th:srcset="@{/images/403_bear_dark.png}" media="(prefers-color-scheme: dark)" />
-            <img src="#" th:src="@{/images/403_bear.png}" alt="" class="tw-mt-12 lg:tw-mr-16 tw-max-w-full" />
-          </picture>
-          <th:block
-            th:if="${theme != 'system'}"
-            th:with="src=${theme == 'dark' ? '/images/403_bear_dark.png' : '/images/403_bear.png'}"
-          >
-            <img src="#" th:src="@{${src}}" alt="" class="tw-mt-12 lg:tw-mr-16 tw-max-w-full" />
-          </th:block>
+          <div class="tw-px-8 tw-text-center xs:tw-px-16 sm:tw-text-right">
+            <picture th:if="${theme == 'system'}" class="tw-shrink-0">
+              <source th:srcset="@{/images/403_bear_dark.png}" media="(prefers-color-scheme: dark)" />
+              <img src="#" th:src="@{/images/403_bear.png}" alt="" class="tw-mt-12 lg:tw-mr-16 tw-max-w-full" />
+            </picture>
+            <th:block
+              th:if="${theme != 'system'}"
+              th:with="src=${theme == 'dark' ? '/images/403_bear_dark.png' : '/images/403_bear.png'}"
+            >
+              <img src="#" th:src="@{${src}}" alt="" class="tw-mt-12 lg:tw-mr-16 tw-max-w-full" />
+            </th:block>
+          </div>
         </div>
       </div>
     </main>
