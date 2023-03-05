@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="_layout::head(~{::title}, ~{}, ~{})">
-    <title th:text="#{errorPage.header.title}"></title>
+    <title th:text="#{error-page.common.meta.title}"></title>
   </head>
   <body th:replace="_layout::body(~{::main}, ~{})">
     <main th:fragment="main">
