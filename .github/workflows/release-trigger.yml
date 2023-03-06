@@ -50,7 +50,7 @@ jobs:
           OUTPUT_FOLDER: .chglog/
           FILENAME: ${{ github.event.inputs.releaseVersion }}
       - name: Setup git user
-        uses: fregante/setup-git-user@v1
+        uses: fregante/setup-git-user@v2
       - name: Commit Release Notes
         run: |
           git add .chglog/*.md
