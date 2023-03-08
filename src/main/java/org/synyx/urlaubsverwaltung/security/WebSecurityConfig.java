@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -26,6 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final boolean isOauth2Enabled;
 
     private OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler;
+    private ClientRegistrationRepository clientRegistrationRepository;
 
     public WebSecurityConfig(SecurityConfigurationProperties properties, PersonService personService, SessionService sessionService) {
         isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
@@ -67,9 +69,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authenticated();
 
         if (isOauth2Enabled) {
-            http.oauth2Login().and()
-                .logout()
-                .logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler);
+            http.oauth2Login()
+                .authorizationEndpoint()
+                .authorizationRequestResolver(new LoginHintAwareResolver(clientRegistrationRepository));
+            http.logout().logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler);
         } else {
             http.formLogin()
                 .loginPage("/login").permitAll()
@@ -88,5 +91,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired(required = false)
     public void setOidcClientInitiatedLogoutSuccessHandler(OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler) {
         this.oidcClientInitiatedLogoutSuccessHandler = oidcClientInitiatedLogoutSuccessHandler;
+    }
+
+    @Autowired(required = false)
+    public void setClientRegistrationRepository(ClientRegistrationRepository clientRegistrationRepository) {
+        this.clientRegistrationRepository = clientRegistrationRepository;
     }
 }
