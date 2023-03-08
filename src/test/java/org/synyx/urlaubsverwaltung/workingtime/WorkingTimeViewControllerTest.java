@@ -130,7 +130,7 @@ class WorkingTimeViewControllerTest {
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/workingtime/workingtime_form"));
+            .andExpect(view().name("workingtime/workingtime_form"));
     }
 
     @Test
@@ -153,7 +153,7 @@ class WorkingTimeViewControllerTest {
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(new Person()));
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
-            .andExpect(view().name("thymeleaf/workingtime/workingtime_form"));
+            .andExpect(view().name("workingtime/workingtime_form"));
     }
 
     @Test
@@ -178,7 +178,7 @@ class WorkingTimeViewControllerTest {
 
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
-            .andExpect(view().name("thymeleaf/workingtime/workingtime_form"));
+            .andExpect(view().name("workingtime/workingtime_form"));
 
         verify(workingTimeWriteService, never()).touch(any(), any(), any(), any());
     }

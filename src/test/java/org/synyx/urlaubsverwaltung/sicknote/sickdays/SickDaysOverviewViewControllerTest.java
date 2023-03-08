@@ -99,7 +99,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("today", LocalDate.now(clock)))
             .andExpect(model().attribute("from", givenDate))
             .andExpect(model().attribute("to", LocalDate.of(year, 12, 31)))
-            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
+            .andExpect(view().name("sicknote/sick_days"));
     }
 
     @ParameterizedTest
@@ -116,7 +116,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("today", LocalDate.now(clock)))
             .andExpect(model().attribute("from", LocalDate.of(year, 1, 1)))
             .andExpect(model().attribute("to", givenDate))
-            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
+            .andExpect(view().name("sicknote/sick_days"));
     }
 
     @Test
@@ -131,7 +131,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("today", LocalDate.now(clock)))
             .andExpect(model().attribute("from", LocalDate.of(year, 1, 1)))
             .andExpect(model().attribute("to", LocalDate.of(year, 12, 31)))
-            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
+            .andExpect(view().name("sicknote/sick_days"));
     }
 
     @Test
@@ -256,7 +256,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("to", requestEndDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(requestStartDate))))
             .andExpect(model().attribute("period", hasProperty("endDate", is(requestEndDate))))
-            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
+            .andExpect(view().name("sicknote/sick_days"));
     }
 
     @Test
@@ -290,7 +290,7 @@ class SickDaysOverviewViewControllerTest {
             .andExpect(model().attribute("to", endDate))
             .andExpect(model().attribute("period", hasProperty("startDate", is(startDate))))
             .andExpect(model().attribute("period", hasProperty("endDate", is(endDate))))
-            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
+            .andExpect(view().name("sicknote/sick_days"));
     }
 
     @Test
@@ -318,7 +318,7 @@ class SickDaysOverviewViewControllerTest {
             .param("size", "50")
         )
             .andExpect(model().attribute("showPersonnelNumberColumn", false))
-            .andExpect(view().name("thymeleaf/sicknote/sick_days"));
+            .andExpect(view().name("sicknote/sick_days"));
     }
 
     private Map<LocalDate, DayLength> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, DayLength> dayLengthProvider) {

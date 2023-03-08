@@ -35,7 +35,6 @@ import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
@@ -117,7 +116,7 @@ public class OverviewViewController implements HasLaunchpad {
             model.addAttribute("canAccessAbsenceOverview", "false");
             model.addAttribute("canAccessCalendarShare", "false");
 
-            return "thymeleaf/person/person-overview-reduced";
+            return "person/person-overview-reduced";
         }
 
         final LocalDate now = LocalDate.now(clock);
@@ -143,7 +142,7 @@ public class OverviewViewController implements HasLaunchpad {
         model.addAttribute("canViewSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_VIEW, person) || departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person) || departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person));
         model.addAttribute("canAddSickNoteAnotherUser", signedInUser.hasRole(OFFICE) || isPersonAllowedToExecuteRoleOn(signedInUser, SICK_NOTE_ADD, person));
 
-        return "thymeleaf/person/person-overview";
+        return "person/person-overview";
     }
 
     private void prepareSickNoteList(Person person, int year, Model model) {

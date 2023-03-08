@@ -110,9 +110,9 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
         model.addAttribute("turboFrameRequested", turboFrameRequested);
 
         if (turboFrameRequested) {
-            return "thymeleaf/sicknote/sick_days::#" + turboFrame;
+            return "sicknote/sick_days::#" + turboFrame;
         } else {
-            return "thymeleaf/sicknote/sick_days";
+            return "sicknote/sick_days";
         }
     }
 

@@ -114,7 +114,7 @@ class OvertimeViewControllerTest {
             .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
             .andExpect(model().attribute("person", overtimePerson))
             .andExpect(model().attribute("signedInUser", signedInPerson))
-            .andExpect(view().name("thymeleaf/overtime/overtime_form"));
+            .andExpect(view().name("overtime/overtime_form"));
 
         verify(validator).validate(any(OvertimeForm.class), any(Errors.class));
     }
@@ -143,7 +143,7 @@ class OvertimeViewControllerTest {
 
         perform(post("/web/overtime/5").param("person.id", "1"))
             .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
-            .andExpect(view().name("thymeleaf/overtime/overtime_form"));
+            .andExpect(view().name("overtime/overtime_form"));
     }
 
     @Test
@@ -237,7 +237,7 @@ class OvertimeViewControllerTest {
 
         perform(get("/web/overtime").param("person", "5"))
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/overtime/overtime_list"))
+            .andExpect(view().name("overtime/overtime_list"))
             .andExpect(model().attribute("currentYear", is(Year.now(clock).getValue())))
             .andExpect(model().attribute("selectedYear", is(Year.now(clock).getValue())))
             .andExpect(model().attribute("person", is(person)))
@@ -282,7 +282,7 @@ class OvertimeViewControllerTest {
             .param("person", "5")
             .param("year", "2012"))
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/overtime/overtime_list"))
+            .andExpect(view().name("overtime/overtime_list"))
             .andExpect(model().attribute("currentYear", is(Year.now(clock).getValue())))
             .andExpect(model().attribute("selectedYear", is(2012)))
             .andExpect(model().attribute("person", is(person)))
@@ -339,7 +339,7 @@ class OvertimeViewControllerTest {
 
         perform(get("/web/overtime/2"))
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/overtime/overtime_details"))
+            .andExpect(view().name("overtime/overtime_details"))
             .andExpect(model().attribute("signedInUser", is(overtimePerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
             .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
@@ -385,7 +385,7 @@ class OvertimeViewControllerTest {
         final ResultActions resultActions = perform(get("/web/overtime/new").param("person", "5"));
         resultActions
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/overtime/overtime_form"))
+            .andExpect(view().name("overtime/overtime_form"))
             .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
             .andExpect(model().attribute("person", is(person)))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)))))
@@ -419,7 +419,7 @@ class OvertimeViewControllerTest {
         final ResultActions resultActions = perform(get("/web/overtime/new"));
         resultActions
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/overtime/overtime_form"))
+            .andExpect(view().name("overtime/overtime_form"))
             .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))));
     }
 
@@ -460,7 +460,7 @@ class OvertimeViewControllerTest {
         final ResultActions resultActions = perform(get("/web/overtime/new").param("person", "1"));
         resultActions
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/overtime/overtime_form"))
+            .andExpect(view().name("overtime/overtime_form"))
             .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
             .andExpect(model().attribute("persons", is(activePersons)));
     }
@@ -487,7 +487,7 @@ class OvertimeViewControllerTest {
         final ResultActions resultActions = perform(get("/web/overtime/new").param("person", "1"));
         resultActions
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/overtime/overtime_form"))
+            .andExpect(view().name("overtime/overtime_form"))
             .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
             .andExpect(model().attribute("persons", is(activePersons)));
     }
@@ -511,7 +511,7 @@ class OvertimeViewControllerTest {
         final ResultActions resultActions = perform(get("/web/overtime/2/edit"));
         resultActions
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/overtime/overtime_form"))
+            .andExpect(view().name("overtime/overtime_form"))
             .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
             .andExpect(model().attribute("person", is(overtimePerson)))
             .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)))))
@@ -577,7 +577,7 @@ class OvertimeViewControllerTest {
 
         perform(get("/web/overtime/2/edit"))
             .andExpect(status().isOk())
-            .andExpect(view().name("thymeleaf/overtime/overtime_form"))
+            .andExpect(view().name("overtime/overtime_form"))
             .andExpect(model().attribute("canAddOvertimeForAnotherUser", true));
     }
 
@@ -724,7 +724,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(model().attributeHasFieldErrors("overtime", "hours"))
-            .andExpect(view().name("thymeleaf/overtime/overtime_form"));
+            .andExpect(view().name("overtime/overtime_form"));
     }
 
     @Test
@@ -748,7 +748,7 @@ class OvertimeViewControllerTest {
         resultActions
             .andExpect(status().isOk())
             .andExpect(model().attributeHasFieldErrors("overtime", "minutes"))
-            .andExpect(view().name("thymeleaf/overtime/overtime_form"));
+            .andExpect(view().name("overtime/overtime_form"));
     }
 
     @Test

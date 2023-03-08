@@ -58,7 +58,7 @@ class PersonBasedataViewControllerTest {
             .andExpect(model().attribute("personBasedata", hasProperty("personId", is(1))))
             .andExpect(model().attribute("personBasedata", hasProperty("personnelNumber", is("1337"))))
             .andExpect(model().attribute("personBasedata", hasProperty("additionalInfo", is("Some additional information"))))
-            .andExpect(view().name("thymeleaf/person/person-basedata"));
+            .andExpect(view().name("person/person-basedata"));
     }
 
     @Test
@@ -75,7 +75,7 @@ class PersonBasedataViewControllerTest {
             .andExpect(model().attribute("personBasedata", hasProperty("personId", is(1))))
             .andExpect(model().attribute("personBasedata", hasProperty("personnelNumber", is(""))))
             .andExpect(model().attribute("personBasedata", hasProperty("additionalInfo", is(""))))
-            .andExpect(view().name("thymeleaf/person/person-basedata"));
+            .andExpect(view().name("person/person-basedata"));
     }
 
     @Test
@@ -120,7 +120,7 @@ class PersonBasedataViewControllerTest {
         )
             .andExpect(status().isOk())
             .andExpect(model().attributeHasFieldErrors("personBasedata", "personnelNumber"))
-            .andExpect(view().name("thymeleaf/person/person-basedata"));
+            .andExpect(view().name("person/person-basedata"));
     }
 
     @Test
@@ -140,7 +140,7 @@ class PersonBasedataViewControllerTest {
         )
             .andExpect(status().isOk())
             .andExpect(model().attributeHasFieldErrors("personBasedata", "additionalInfo"))
-            .andExpect(view().name("thymeleaf/person/person-basedata"));
+            .andExpect(view().name("person/person-basedata"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

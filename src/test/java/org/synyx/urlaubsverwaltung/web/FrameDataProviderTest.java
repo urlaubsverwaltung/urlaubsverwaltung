@@ -10,6 +10,8 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -38,7 +40,6 @@ class FrameDataProviderTest {
 
     @Mock
     private PersonService personService;
-
     @Mock
     private SettingsService settingsService;
 
@@ -61,7 +62,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap()).containsEntry("menuGravatarUrl", "https://gravatar.com/avatar/f651d5c5f6f68c5b13f2846da4ea544b");
         assertThat(modelAndView.getModelMap()).containsEntry("userId", 10);
@@ -84,7 +86,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
@@ -121,7 +124,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
@@ -158,7 +162,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
@@ -196,7 +201,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
@@ -232,7 +238,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
@@ -268,7 +275,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
@@ -304,7 +312,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
@@ -336,21 +345,23 @@ class FrameDataProviderTest {
         modelAndView.setViewName("someView");
         modelAndView.getModelMap().addAttribute("signedInUser", person);
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
         assertThat(modelAndView.getModelMap()).containsEntry("menuGravatarUrl", "https://gravatar.com/avatar/f651d5c5f6f68c5b13f2846da4ea544b");
 
         verifyNoMoreInteractions(personService);
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"redirect:", "thymeleaf/login"})
+    @ValueSource(strings = {"redirect:", "login"})
     @NullSource
     void postHandleDoNotAddGravatar(String viewName) {
 
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(viewName);
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
         assertThat(modelAndView.getModelMap().get("menuGravatarUrl")).isNull();
     }
 
@@ -366,7 +377,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
@@ -393,7 +405,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()
@@ -429,7 +442,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModel()).containsEntry(property, propertyValue);
     }
@@ -445,7 +459,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModel()).containsEntry("navigationRequestPopupEnabled", false);
     }
@@ -461,7 +476,8 @@ class FrameDataProviderTest {
         final ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("someView");
 
-        sut.postHandle(null, null, null, modelAndView);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        sut.postHandle(request, null, null, modelAndView);
 
         assertThat(modelAndView.getModelMap().get("navigation"))
             .isNotNull()

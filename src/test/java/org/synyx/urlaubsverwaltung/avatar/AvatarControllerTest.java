@@ -44,7 +44,7 @@ class AvatarControllerTest {
     }, ignoreLeadingAndTrailingWhitespace = false)
     void ensureGeneratesAvatarWithInitials(String name, String expectedInitials) throws Exception {
 
-        when(svgService.createSvg("thymeleaf/svg/avatar", Locale.GERMAN, Map.of("initials", expectedInitials)))
+        when(svgService.createSvg("svg/avatar", Locale.GERMAN, Map.of("initials", expectedInitials)))
             .thenReturn("<svg></svg>");
 
         perform(get("/web/avatar")

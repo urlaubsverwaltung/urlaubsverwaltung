@@ -49,7 +49,7 @@ public class PersonPermissionsViewController implements HasLaunchpad {
         model.addAttribute("departments", departmentService.getManagedDepartmentsOfDepartmentHead(person));
         model.addAttribute("secondStageDepartments", departmentService.getManagedDepartmentsOfSecondStageAuthority(person));
 
-        return "thymeleaf/person/person_permissions";
+        return "person/person_permissions";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -61,7 +61,7 @@ public class PersonPermissionsViewController implements HasLaunchpad {
         validator.validate(personPermissionsDto, errors);
 
         if (errors.hasErrors()) {
-            return "thymeleaf/person/person_permissions";
+            return "person/person_permissions";
         }
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));

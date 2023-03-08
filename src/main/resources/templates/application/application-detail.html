@@ -33,15 +33,13 @@
           th:replace="fragments/section-heading::section-heading(~{::applications-details-heading-body}, ~{::applications-details-heading-actions})"
         >
           <th:block th:ref="applications-details-heading-actions">
-            <th:block th:include="thymeleaf/application/app-sections/action-allow::button"></th:block>
-            <th:block th:include="thymeleaf/application/app-sections/action-reject::button"></th:block>
-            <th:block th:include="thymeleaf/application/app-sections/action-edit::button"></th:block>
-            <th:block th:include="thymeleaf/application/app-sections/action-cancel::button"></th:block>
-            <th:block
-              th:include="thymeleaf/application/app-sections/action-decline-cancellation-request::button"
-            ></th:block>
-            <th:block th:include="thymeleaf/application/app-sections/action-remind::button"></th:block>
-            <th:block th:include="thymeleaf/application/app-sections/action-refer::button"></th:block>
+            <th:block th:include="application/app-sections/action-allow::button"></th:block>
+            <th:block th:include="application/app-sections/action-reject::button"></th:block>
+            <th:block th:include="application/app-sections/action-edit::button"></th:block>
+            <th:block th:include="application/app-sections/action-cancel::button"></th:block>
+            <th:block th:include="application/app-sections/action-decline-cancellation-request::button"></th:block>
+            <th:block th:include="application/app-sections/action-remind::button"></th:block>
+            <th:block th:include="application/app-sections/action-refer::button"></th:block>
             <button th:replace="fragments/print::button"></button>
           </th:block>
           <th:block th:ref="applications-details-heading-body">
@@ -87,37 +85,37 @@
         <div class="actions">
           <th:block
             th:if="${isAllowedToRemindApplication}"
-            th:include="thymeleaf/application/app-sections/action-remind::form"
+            th:include="application/app-sections/action-remind::form"
           ></th:block>
 
           <th:block
             th:if="${isAllowedToAllowWaitingApplication || isAllowedToAllowTemporaryAllowedApplication}"
-            th:include="thymeleaf/application/app-sections/action-allow::form"
+            th:include="application/app-sections/action-allow::form"
           ></th:block>
 
           <th:block
             th:if="${isAllowedToRejectApplication}"
-            th:include="thymeleaf/application/app-sections/action-reject::form"
+            th:include="application/app-sections/action-reject::form"
           ></th:block>
 
           <th:block
             th:if="${isAllowedToReferApplication}"
-            th:include="thymeleaf/application/app-sections/action-refer::form"
+            th:include="application/app-sections/action-refer::form"
           ></th:block>
 
           <th:block
             th:if="${isAllowedToRevokeApplication || isAllowedToCancelApplication || isAllowedToCancelDirectlyApplication || isAllowedToStartCancellationRequest}"
-            th:include="thymeleaf/application/app-sections/action-cancel::form"
+            th:include="application/app-sections/action-cancel::form"
           ></th:block>
 
           <th:block
             th:if="${isAllowedToDeclineCancellationRequest}"
-            th:include="thymeleaf/application/app-sections/action-decline-cancellation-request::form"
+            th:include="application/app-sections/action-decline-cancellation-request::form"
           ></th:block>
         </div>
 
-        <th:block th:include="thymeleaf/application/app-sections/section-info::section"></th:block>
-        <th:block th:include="thymeleaf/application/app-sections/section-workingtime::section"></th:block>
+        <th:block th:include="application/app-sections/section-info::section"></th:block>
+        <th:block th:include="application/app-sections/section-workingtime::section"></th:block>
       </div>
       <div class="print:tw-hidden">
         <div
@@ -135,7 +133,7 @@
           <div class="tw-w-full">
             <div class="box tw-mb-5 tw-p-5">
               <div
-                th:replace="thymeleaf/person/box::person-box-with-departments(person=${app.person}, departments=${departmentsOfPerson})"
+                th:replace="person/box::person-box-with-departments(person=${app.person}, departments=${departmentsOfPerson})"
               ></div>
             </div>
             <div class="box tw-mb-5 tw-p-5">
@@ -236,7 +234,7 @@
         </div>
       </div>
 
-      <div th:replace="thymeleaf/application/app-sections/section-progress::section"></div>
+      <div th:replace="application/app-sections/section-progress::section"></div>
       <div class="print:tw-hidden">
         <div
           th:replace="fragments/section-heading::section-heading(~{::applications-details-department-heading-body}, ~{})"

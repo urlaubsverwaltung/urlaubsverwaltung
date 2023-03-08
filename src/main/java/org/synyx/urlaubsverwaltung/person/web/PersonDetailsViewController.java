@@ -105,6 +105,6 @@ public class PersonDetailsViewController implements HasLaunchpad {
         final Optional<Account> maybeAccount = accountService.getHolidaysAccount(selectedYear, person);
         maybeAccount.ifPresent(account -> model.addAttribute("account", account));
 
-        return "thymeleaf/person/person_detail";
+        return "person/person_detail";
     }
 }

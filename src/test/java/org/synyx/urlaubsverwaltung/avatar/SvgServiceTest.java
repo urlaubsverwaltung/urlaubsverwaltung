@@ -27,7 +27,7 @@ class SvgServiceTest {
 
     @Test
     void ensuresToProcessSvgTemplate() {
-        final String svg = sut.createSvg("thymeleaf/svg/avatar", Locale.GERMAN, Map.of("initials", "TB"));
+        final String svg = sut.createSvg("svg/avatar", Locale.GERMAN, Map.of("initials", "TB"));
         assertThat(svg).isEqualTo("<svg\n" +
             "  class=\"tw-tracking-widest\"\n" +
             "  width=\"42\"\n" +

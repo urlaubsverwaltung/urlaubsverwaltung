@@ -167,7 +167,7 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
         final AbsenceOverviewDto absenceOverview = new AbsenceOverviewDto(months);
         model.addAttribute("absenceOverview", absenceOverview);
 
-        return "thymeleaf/absences/absences-overview";
+        return "absences/absences-overview";
     }
 
     private List<VacationTypeColorDto> prepareVacationTypeColorsForLegend(boolean isSignedInUserAllowedToSeeAbsences, boolean isSignedInUserInOverview, List<VacationType> vacationTypes) {

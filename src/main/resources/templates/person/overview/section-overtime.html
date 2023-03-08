@@ -37,10 +37,10 @@
       <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
         <div class="tw-w-full lg:tw-w-1/3"></div>
         <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
-          <div th:replace="thymeleaf/overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})"></div>
+          <div th:replace="overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})"></div>
         </div>
         <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
-          <div th:replace="thymeleaf/overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})"></div>
+          <div th:replace="overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})"></div>
         </div>
       </div>
     </th:block>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="_layout::head(~{::title}, ~{}, ~{})">
+    <title th:text="#{error-page.common.meta.title}"></title>
+  </head>
+  <body th:replace="_layout::body(~{::main}, ~{})">
+    <main th:ref="main">
+      <div class="tw-grow tw-flex tw-justify-center">
+        <div
+          class="tw-w-full tw-max-w-screen-xl tw-flex tw-flex-col lg:tw-flex-row lg:tw-items-start lg:tw-justify-between lg:tw-mt-16"
+        >
+          <div class="tw-px-8 xs:tw-px-16 lg:tw-w-4/5">
+            <h1
+              class="mt-4 xs:tw-mt-8 lg:tw-mt-24 tw-flex tw-flex-col sm:tw-flex-row lg:tw-flex-col sm:tw-items-baseline sm:tw-space-x-2 lg:tw-space-x-0 tw-font-medium tw-text-3xl sm:tw-text-4xl lg:tw-text-5xl"
+            >
+              404&nbsp;
+              <span class="sm:tw-mt-2" th:text="#{error-page.not-found.title}"></span>
+            </h1>
+            <p class="tw-mt-8 tw-text-xl" th:text="#{error-page.not-found.paragraph}"></p>
+            <div
+              class="tw-mt-8 sm:tw-mt-8 tw-text-lg tw-flex tw-flex-col sm:tw-flex-row tw-space-y-4 sm:tw-space-y-0 sm:tw-space-x-2"
+              th:with="previousPageLink=${header_referer}"
+            >
+              <a
+                th:if="${not #strings.isEmpty(previousPageLink)}"
+                href="#"
+                th:href="${previousPageLink}"
+                class="button tw-text-base tw-px-4 tw-py-2"
+                th:text="#{error-page.goto.previous}"
+              ></a>
+              <a href="/" class="button tw-text-base tw-px-4 tw-py-2" th:text="#{error-page.goto.start}"></a>
+            </div>
+          </div>
+          <picture th:if="${theme == 'system'}" class="tw-shrink-0">
+            <source th:srcset="@{/images/404_bear_dark.png}" media="(prefers-color-scheme: dark)" />
+            <img src="#" th:src="@{/images/404_bear.png}" alt="" class="tw-mt-12 lg:tw-mr-16 tw-max-w-full" />
+          </picture>
+          <th:block
+            th:if="${theme != 'system'}"
+            th:with="src=${theme == 'dark' ? '/images/404_bear_dark.png' : '/images/404_bear.png'}"
+          >
+            <img src="#" th:src="@{${src}}" alt="" class="tw-mt-12 lg:tw-mr-16 tw-max-w-full" />
+          </th:block>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

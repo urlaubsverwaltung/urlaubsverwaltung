@@ -128,7 +128,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         final int year = requestedYear == null ? application.getEndDate().getYear() : requestedYear;
         prepareDetailView(application, year, action, shortcut, model, signedInUser);
 
-        return "thymeleaf/application/application-detail";
+        return "application/application-detail";
     }
 
     /*

@@ -42,23 +42,23 @@
   <body th:replace="_layout::body(~{::main}, ~{})">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
       <div class="tw-mb-12">
-        <div th:replace="thymeleaf/person/overview/section-vacation-days::section"></div>
+        <div th:replace="person/overview/section-vacation-days::section"></div>
       </div>
 
       <div th:if="${settings.overtimeSettings.overtimeActive}" class="tw-mb-12">
-        <div th:replace="thymeleaf/person/overview/section-overtime::section"></div>
+        <div th:replace="person/overview/section-overtime::section"></div>
       </div>
 
       <div class="tw-mb-4 lg:tw-mb-12">
-        <div th:replace="thymeleaf/person/overview/section-calendar::section"></div>
+        <div th:replace="person/overview/section-calendar::section"></div>
       </div>
 
       <div class="tw-mb-12">
-        <div th:replace="thymeleaf/person/overview/section-absences::section"></div>
+        <div th:replace="person/overview/section-absences::section"></div>
       </div>
 
       <th:block th:if="${person.id == signedInUser.id || canViewSickNoteAnotherUser}">
-        <div th:replace="thymeleaf/person/overview/section-sick-note::section"></div>
+        <div th:replace="person/overview/section-sick-note::section"></div>
       </th:block>
     </main>
   </body>
