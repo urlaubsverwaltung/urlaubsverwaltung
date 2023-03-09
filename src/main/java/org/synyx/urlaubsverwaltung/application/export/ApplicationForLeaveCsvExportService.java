@@ -31,9 +31,9 @@ class ApplicationForLeaveCsvExportService implements CsvExportService<Applicatio
     public String fileName(FilterPeriod period, Locale locale) {
         final DateTimeFormatter dateTimeFormatter = ofLocalizedDate(SHORT).withLocale(locale);
         return format("%s_%s_%s_%s.csv",
-            getTranslation(locale, "applications.export").replaceAll(" ", "-"),
-            period.getStartDate().format(dateTimeFormatter).replaceAll("/", "-"),
-            period.getEndDate().format(dateTimeFormatter).replaceAll("/", "-"),
+            getTranslation(locale, "applications.export").replace(" ", "-"),
+            period.getStartDate().format(dateTimeFormatter).replace("/", "-"),
+            period.getEndDate().format(dateTimeFormatter).replace("/", "-"),
             locale.getLanguage());
     }
 
