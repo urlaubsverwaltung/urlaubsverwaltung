@@ -11,7 +11,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -366,7 +365,7 @@ class FrameDataProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(booleans = { true, false })
+    @ValueSource(booleans = {true, false})
     void ensureOvertimeIsSetForOfficeWhenFeatureEnabledAnd(boolean privilegedOnly) {
         mockOvertime(true, privilegedOnly);
 
@@ -394,7 +393,7 @@ class FrameDataProviderTest {
     }
 
     @ParameterizedTest
-    @ValueSource(booleans = { true, false })
+    @ValueSource(booleans = {true, false})
     void ensureOvertimeNotSetForOfficeWhenFeatureDisabledAnd(boolean privilegedOnly) {
         mockOvertime(false, privilegedOnly);
 
@@ -413,9 +412,9 @@ class FrameDataProviderTest {
             .isInstanceOf(NavigationDto.class)
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.getElements()).doesNotContain(
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase")
-                );
+                assertThat(dto.getElements())
+                    .isNotEmpty()
+                    .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"));
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", false);
@@ -484,9 +483,9 @@ class FrameDataProviderTest {
             .isInstanceOf(NavigationDto.class)
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
-                assertThat(dto.getElements()).doesNotContain(
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase")
-                );
+                assertThat(dto.getElements())
+                    .isNotEmpty()
+                    .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"));
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", false);
