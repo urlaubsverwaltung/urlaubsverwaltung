@@ -38,7 +38,7 @@ class PersonNotificationsDtoValidator implements Validator {
     void validateNotifications(PersonNotificationsDto personNotificationsDto, Errors errors) {
 
         final Collection<Role> roles = personService.getSignedInUser().getPermissions();
-        final Collection<MailNotification> notifications = personNotificationsDto.getNotifications();
+        final Collection<MailNotification> notifications = personNotificationsDto.getEmailNotifications();
 
         // TODO
 /*        if (roles != null) {

@@ -43,7 +43,7 @@ public class PersonNotificationsViewController {
         final PersonNotificationsDto personNotificationsDto = new PersonNotificationsDto();
         personNotificationsDto.setId(personId);
         personNotificationsDto.setName(signedInUser.getFirstName());
-        personNotificationsDto.setNotifications(copyOf(signedInUser.getNotifications()));
+        personNotificationsDto.setEmailNotifications(copyOf(signedInUser.getNotifications()));
         personNotificationsDto.setPermissions(mapRoleToPermissionsDto(copyOf(signedInUser.getPermissions())));
         model.addAttribute("personNotificationsDto", personNotificationsDto);
 

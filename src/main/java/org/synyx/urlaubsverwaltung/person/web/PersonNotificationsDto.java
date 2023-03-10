@@ -9,7 +9,7 @@ public class PersonNotificationsDto {
 
     private Integer id;
     private String name;
-    private List<MailNotification> notifications = new ArrayList<>();
+    private List<MailNotification> emailNotifications = new ArrayList<>();
     private List<PersonPermissionsRoleDto> permissions = new ArrayList<>();
 
     public Integer getId() {
@@ -28,12 +28,12 @@ public class PersonNotificationsDto {
         this.name = name;
     }
 
-    public List<MailNotification> getNotifications() {
-        return notifications;
+    public List<MailNotification> getEmailNotifications() {
+        return emailNotifications;
     }
 
-    public void setNotifications(List<MailNotification> notifications) {
-        this.notifications = notifications;
+    public void setEmailNotifications(List<MailNotification> emailNotifications) {
+        this.emailNotifications = emailNotifications;
     }
 
     public List<PersonPermissionsRoleDto> getPermissions() {

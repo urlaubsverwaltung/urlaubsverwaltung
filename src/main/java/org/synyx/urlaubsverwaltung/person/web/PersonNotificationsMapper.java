@@ -9,7 +9,7 @@ final class PersonNotificationsMapper {
     }
 
     static Person merge(Person person, PersonNotificationsDto personNotificationsDto) {
-        person.setNotifications(personNotificationsDto.getNotifications());
+        person.setNotifications(personNotificationsDto.getEmailNotifications());
         return person;
     }
 }
