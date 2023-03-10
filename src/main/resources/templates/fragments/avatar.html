@@ -11,7 +11,7 @@
         th:href="@{/web/person/__${personId}__/overview}"
         th:aria-label="#{nav.avatar-menu.overview.link(${niceName})}"
         class="tw-text-inherit"
-        data-turbo-frame="_top"
+        data-turbo="false"
       >
         <img
           th:if="${url != null}"

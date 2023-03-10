@@ -311,7 +311,7 @@ describe("calendar", () => {
     // note: Date is mocked in calendarTestSetup to return a fixed date value
     const referenceDate = new Date();
     const i18n = (messageKey) => `i18n:${messageKey}`;
-    window.Urlaubsverwaltung.Calendar.init(holidayService, referenceDate, i18n);
+    window.Urlaubsverwaltung.Calendar.init(document.querySelector("#datepicker"), holidayService, referenceDate, i18n);
   }
 
   async function calendarTestSetup() {

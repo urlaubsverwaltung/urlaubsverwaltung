@@ -315,7 +315,7 @@
                   th:text="${sickDaysStatistic.personFirstName}"
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
                   class="icon-link"
-                  data-turbo-frame="_top"
+                  data-turbo="false"
                 ></a>
               </td>
               <td class="hidden-xs">
@@ -323,7 +323,7 @@
                   th:text="${sickDaysStatistic.personLastName}"
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
                   class="icon-link"
-                  data-turbo-frame="_top"
+                  data-turbo="false"
                 ></a>
               </td>
               <td class="visible-xs">
@@ -331,14 +331,14 @@
                   th:text="${sickDaysStatistic.personNiceName}"
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview}"
                   class="icon-link"
-                  data-turbo-frame="_top"
+                  data-turbo="false"
                 ></a>
               </td>
               <td class="hidden-xs">
                 <a
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview#anchorSickNotes}"
                   class="icon-link"
-                  data-turbo-frame="_top"
+                  data-turbo="false"
                 >
                   <div class="tw-flex tw-items-center">
                     <svg th:replace="icon/medkit::svg(className='tw-w-4 tw-h-4')"></svg>
@@ -364,7 +364,7 @@
                 <a
                   th:href="@{/web/person/__${sickDaysStatistic.personId}__/overview#anchorSickNotes}"
                   class="icon-link"
-                  data-turbo-frame="_top"
+                  data-turbo="false"
                 >
                   <div class="tw-flex tw-items-center">
                     <svg th:replace="icon/child::svg(className='tw-w-3 tw-h-3')"></svg>

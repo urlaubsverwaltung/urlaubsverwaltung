@@ -38,7 +38,8 @@ $(document).ready(function () {
       holidayService.fetchPublic(yearOfEndDate),
       holidayService.fetchAbsences(yearOfEndDate),
     ).always(function () {
-      Urlaubsverwaltung.Calendar.init(holidayService, date, i18n);
+      const calendarParentElement = document.querySelector("#datepicker");
+      Urlaubsverwaltung.Calendar.init(calendarParentElement, holidayService, date, i18n);
     });
   }
 
