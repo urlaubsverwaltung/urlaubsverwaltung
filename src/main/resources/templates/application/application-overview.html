@@ -125,7 +125,7 @@
                     th:text="${signedInUser.niceName}"
                     th:href="@{/web/person/__${signedInUser.id}__/overview}"
                     class="icon-link"
-                    data-turbo-frame="_top"
+                    data-turbo="false"
                   ></a>
                 </span>
                 <span class="tw-text-lg lg:tw-text-sm" th:text="#{application.applier.applied}"></span>
@@ -240,7 +240,7 @@
                     th:text="${signedInUser.niceName}"
                     th:href="@{/web/person/__${signedInUser.id}__/overview}"
                     class="icon-link"
-                    data-turbo-frame="_top"
+                    data-turbo="false"
                   />
                 </span>
                 <span class="tw-text-lg lg:tw-text-sm" th:text="#{application.applier.represents}"></span>
@@ -269,7 +269,7 @@
                           th:text="${replacementInfo.person.name}"
                           th:href="@{/web/person/__${replacementInfo.person.id}__/overview}"
                           class="icon-link"
-                          data-turbo-frame="_top"
+                          data-turbo="false"
                         />
                         <th:block th:if="${replacementInfo.person.isInactive}">
                           <span th:data-title="#{person.data.inactive}">
@@ -345,7 +345,7 @@
                     th:text="${otherRequestForLeave.person.name}"
                     th:href="@{/web/person/__${otherRequestForLeave.person.id}__/overview}"
                     class="icon-link"
-                    data-turbo-frame="_top"
+                    data-turbo="false"
                   ></a>
                   <th:block th:if="${otherRequestForLeave.person.isInactive}">
                     <span th:data-title="#{person.data.inactive}">
@@ -480,7 +480,7 @@
                       th:text="${cancellationRequest.person.name}"
                       th:href="@{/web/person/__${cancellationRequest.person.id}__/overview}"
                       class="icon-link"
-                      data-turbo-frame="_top"
+                      data-turbo="false"
                     ></a>
                     <th:block th:if="${cancellationRequest.person.isInactive}">
                       <span th:data-title="#{person.data.inactive}">

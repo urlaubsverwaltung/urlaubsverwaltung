@@ -29,7 +29,7 @@
                   th:text="${comment.person.niceName}"
                   th:href="@{/web/person/__${comment.person.id}__/overview}"
                   class="icon-link"
-                  data-turbo-frame="_top"
+                  data-turbo="false"
                 ></a>
               </td>
               <td th:if="${comment.person == null}" th:text="#{application.progress.deleted-author}"></td>

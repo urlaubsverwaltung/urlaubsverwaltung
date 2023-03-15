@@ -220,7 +220,7 @@
                                 th:text="${person.niceName}"
                                 th:href="@{/web/person/__${person.id}__/overview}"
                                 class="icon-link"
-                                data-turbo-frame="_top"
+                                data-turbo="false"
                               ></a>
                             </p>
                             <div th:if="${isInactive}" class="tw-flex tw-items-center">

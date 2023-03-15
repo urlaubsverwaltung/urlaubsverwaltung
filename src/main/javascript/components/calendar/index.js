@@ -48,8 +48,6 @@ function paramize(parameters) {
   return "?" + new URLSearchParams(parameters).toString();
 }
 
-const datepickerElement = document.querySelector("#datepicker");
-
 const numberOfMonths = 10;
 
 const mouseButtons = {
@@ -469,6 +467,7 @@ const HolidayService = (function () {
 })();
 
 const View = (function () {
+  let rootElement;
   let assert;
   let i18n = () => "";
 
@@ -697,13 +696,17 @@ const View = (function () {
 
   const View = {
     display: function (date) {
-      datepickerElement.innerHTML = renderCalendar(date);
-      datepickerElement.classList.add("unselectable");
+      rootElement.innerHTML = renderCalendar(date);
+      rootElement.classList.add("unselectable");
       tooltip();
     },
 
+    getRootElement() {
+      return rootElement;
+    },
+
     displayNext: function () {
-      const elements = [...datepickerElement.querySelectorAll("." + CSS.month)];
+      const elements = [...rootElement.querySelectorAll("." + CSS.month)];
 
       elements[0]?.remove();
 
@@ -720,7 +723,7 @@ const View = (function () {
     },
 
     displayPrevious: function () {
-      const elements = [...datepickerElement.querySelectorAll("." + CSS.month)];
+      const elements = [...rootElement.querySelectorAll("." + CSS.month)];
 
       elements[elements.length - 1]?.remove();
 
@@ -738,7 +741,8 @@ const View = (function () {
   };
 
   return {
-    create: function (_assert, _i18n) {
+    create: function (_rootElement, _assert, _i18n) {
+      rootElement = _rootElement;
       assert = _assert;
       i18n = _i18n;
       return View;
@@ -765,7 +769,7 @@ const Controller = (function () {
       if (!isValidDate(start) || !isValidDate(end) || !isWithinInterval(dateThis, { start, end })) {
         clearSelection();
 
-        datepickerElement.dataset[DATA.selected] = dateThis;
+        view.getRootElement().dataset[DATA.selected] = dateThis;
 
         selectionFrom(dateThis);
         selectionTo(dateThis);
@@ -779,7 +783,7 @@ const Controller = (function () {
     mouseover: function () {
       if (document.body.classList.contains(CSS.mousedown)) {
         const dateThis = getDateFromElement(this);
-        const dateSelected = new Date(datepickerElement.dataset[DATA.selected]);
+        const dateSelected = new Date(view.getRootElement().dataset[DATA.selected]);
 
         const isThisBefore = isBefore(dateThis, dateSelected);
 
@@ -817,7 +821,7 @@ const Controller = (function () {
 
     clickNext: function () {
       // last month of calendar
-      const monthElement = [...datepickerElement.querySelectorAll("." + CSS.month)][numberOfMonths - 1];
+      const monthElement = [...view.getRootElement().querySelectorAll("." + CSS.month)][numberOfMonths - 1];
 
       const y = monthElement.dataset[DATA.year];
       const m = monthElement.dataset[DATA.month];
@@ -832,7 +836,7 @@ const Controller = (function () {
 
     clickPrevious: function () {
       // first month of calendar
-      const monthElement = [...datepickerElement.querySelectorAll("." + CSS.month)][0];
+      const monthElement = [...view.getRootElement().querySelectorAll("." + CSS.month)][0];
 
       const y = monthElement.dataset[DATA.year];
       const m = monthElement.dataset[DATA.month];
@@ -848,26 +852,26 @@ const Controller = (function () {
 
   function selectionFrom(date) {
     if (date) {
-      datepickerElement.dataset[DATA.selectFrom] = format(date, "yyyy-MM-dd");
+      view.getRootElement().dataset[DATA.selectFrom] = format(date, "yyyy-MM-dd");
       refreshDatepicker();
     } else {
-      const d = datepickerElement.dataset[DATA.selectFrom];
+      const d = view.getRootElement().dataset[DATA.selectFrom];
       return parseISO(d);
     }
   }
 
   function selectionTo(date) {
     if (date) {
-      datepickerElement.dataset[DATA.selectTo] = format(date, "yyyy-MM-dd");
+      view.getRootElement().dataset[DATA.selectTo] = format(date, "yyyy-MM-dd");
       refreshDatepicker();
     } else {
-      return parseISO(datepickerElement.dataset[DATA.selectTo]);
+      return parseISO(view.getRootElement().dataset[DATA.selectTo]);
     }
   }
 
   function clearSelection() {
-    delete datepickerElement.dataset[DATA.selectFrom];
-    delete datepickerElement.dataset[DATA.selectTo];
+    delete view.getRootElement().dataset[DATA.selectFrom];
+    delete view.getRootElement().dataset[DATA.selectTo];
     refreshDatepicker();
   }
 
@@ -912,21 +916,21 @@ const Controller = (function () {
 
   const Controller = {
     bind: function () {
-      datepickerElement.addEventListener("mousedown", function (event) {
+      view.getRootElement().addEventListener("mousedown", function (event) {
         const element = matches(event.target, `.${CSS.day}`);
         if (element) {
           datepickerHandlers.mousedown.call(element, event);
         }
       });
 
-      datepickerElement.addEventListener("mouseover", function (event) {
+      view.getRootElement().addEventListener("mouseover", function (event) {
         const element = matches(event.target, `.${CSS.day}`);
         if (element) {
           datepickerHandlers.mouseover.call(element, event);
         }
       });
 
-      datepickerElement.addEventListener("click", function (event) {
+      view.getRootElement().addEventListener("click", function (event) {
         let element = matches(event.target, `.${CSS.day}`);
         if (element) {
           datepickerHandlers.click.call(element, event);
@@ -949,13 +953,13 @@ const Controller = (function () {
 
       const smScreenQuery = window.matchMedia("(max-width: 640px)");
       if (smScreenQuery.matches) {
-        for (const button of datepickerElement.querySelectorAll("button")) {
+        for (const button of view.getRootElement().querySelectorAll("button")) {
           button.classList.add("button");
         }
       }
 
       smScreenQuery.addEventListener("change", function () {
-        for (const button of datepickerElement.querySelectorAll("button")) {
+        for (const button of view.getRootElement().querySelectorAll("button")) {
           button.classList.toggle("button");
         }
       });
@@ -976,15 +980,15 @@ const Calendar = (function () {
   let date;
 
   return {
-    init: function (holidayService, referenceDate, i18n) {
+    init: function (rootElement, holidayService, referenceDate, i18n) {
       date = referenceDate;
 
-      const a = Assertion.create(holidayService);
-      view = View.create(a, i18n);
-      const c = Controller.create(holidayService, view);
+      const assertions = Assertion.create(holidayService);
+      view = View.create(rootElement, assertions, i18n);
+      const controller = Controller.create(holidayService, view);
 
       view.display(date);
-      c.bind();
+      controller.bind();
     },
   };
 })();
