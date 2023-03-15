@@ -38,7 +38,7 @@
     "@hotwired/turbo": "7.3.0",
     "@ungap/custom-elements": "1.2.0",
     "bootstrap": "3.4.1",
-    "datalist-polyfill": "1.25.0",
+    "datalist-polyfill": "1.25.1",
     "font-awesome": "4.7.0",
     "jquery": "3.6.3",
     "lint-staged": "13.1.2",
