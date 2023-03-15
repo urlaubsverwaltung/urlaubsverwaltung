@@ -192,8 +192,14 @@ uv.workingtime.default-working-days[4]=5
 
 Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkeiten:
 
-* `default`
-    * für lokalen Entwicklungsmodus und [Demodaten-Modus](#demodaten-modus)
+* `oidc`
+    * Authentifizierung via OpenID Connect (OIDC)
+    * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
+      Außerdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
+      die 'Allowed Callback URLs' und ggf. weitere Einstellungen vorgenommen werden.
+    * Es wird erwartet, dass der OIDC Provider im Access Token folgende Attribute enthält: `given_name`, `family_name`, `email`.
+      Die Urlaubsverwaltung fragt deswegen standardmäßig den OIDC Provider mit den Scopes `openid`,`profile` und `email` an.
+      Sollten diese Scopes nicht passen, können sie mit dem Property `uv.security.oidc.scopes` überschrieben werden.
 * `ldap`
     * Authentifizierung via LDAP
     * Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns
@@ -205,15 +211,9 @@ Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkei
     * Authentifizierung via Active Directory
     * Es müssen die Active Directory Domain und LDAP URL konfiguriert
       sein, damit eine Authentifizierung via Active Directory möglich ist.
-* `oidc`
-    * Authentifizierung via OpenID Connect (OIDC)
-    * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
-      Außerdem müssen bei dem gewählten OIDC Provider die 'Allowed Logout URLs',
-      die 'Allowed Callback URLs' und ggf. weitere Einstellungen vorgenommen werden.
-    * Es wird erwartet, dass der OIDC Provider im Access Token folgende Attribute enthält: `given_name`, `family_name`, `email`.
-      Die Urlaubsverwaltung fragt deswegen standardmäßig den OIDC Provider mit den Scopes `openid`,`profile` und `email` an.
-      Sollten diese Scopes nicht passen, können sie mit dem Property `uv.security.oidc.scopes` überschrieben werden.
-
+* `default`
+    * für lokalen Entwicklungsmodus und [Demodaten-Modus](#demodaten-modus)
+    
 Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung und das Pflegen der Einstellungen innerhalb der Anwendung.
 
@@ -349,17 +349,16 @@ java -jar -Dspring.profiles.active=demodata urlaubsverwaltung.jar
 
 Auf diese Weise wird die Anwendung mit einer MariaDB-Datenbankmanagementsystem gestartet und Demodaten generiert.
 
-Die Demodaten enthalten folgende **Benutzer**:
+Die Demodaten enthalten folgende **Benutzer**, ein Passwort wird nicht benötigt:
 
-| Rolle                            | Benutzername           | Passwort |
-| -------------------------        | -------------          | -------- |
-| User                             | user                   | secret   |
-| User & Abteilungsleiter          | departmentHead         | secret   |
-| User & Freigabe-Verantwortlicher | secondStageAuthority   | secret   |
-| User & Chef                      | boss                   | secret   |
-| User & Chef & Office             | office                 | secret   |
-| User & Admin                     | admin                  | secret   |
-
+| Benutzername         | Rolle                            |
+|----------------------|----------------------------------|
+| user                 | User                             |
+| departmentHead       | User & Abteilungsleiter          |
+| secondStageAuthority | User & Freigabe-Verantwortlicher |
+| boss                 | User & Chef                      |
+| office               | User & Office                    |
+| admin                | User & Admin                     |
 
 Möchte man, dass beim Starten der Anwendung keine Demodaten generiert werden, muss die Konfiguration
 
@@ -419,7 +418,7 @@ an. Diese kannst du mit folgendem Befehl installieren:
 git config core.hooksPath '.githooks'
 ```
 
-Die Githooks sind im [.githooks](./.githooks/) Verzeichnis zu finden.
+Die Git-Hooks sind im [.githooks](./.githooks/) Verzeichnis zu finden.
 
 ### Anwendung starten
 
@@ -455,7 +454,7 @@ d.h. Benutzer, Urlaubsanträge und Krankmeldungen. Daher kann man sich in der We
 
 ### Frontend Entwicklung
 
-Die User Experience einiger Seiten wird zur Laufzeit mit JavaScript weiter verbessert.
+Die 'User Experience' einiger Seiten wird zur Laufzeit mit JavaScript weiter verbessert.
 
 Assets sind in `<root>/src/main/javascript` zu finden
 
