@@ -57,6 +57,15 @@ jobs:
           -Ddocker.push.registry=registry.hub.docker.com
           -Ddocker.push.username=${{ secrets.DOCKER_USERNAME }}
           -Ddocker.push.password=${{ secrets.DOCKER_PASSWORD }}
+      - name: Publish docker image to Docker Hub urlaubsverwaltung
+        run: >
+          ./mvnw $MAVEN_CLI_OPTS
+          docker:build
+          docker:push
+          -Ddocker.name=urlaubsverwaltung/urlaubsverwaltung
+          -Ddocker.push.registry=registry.hub.docker.com
+          -Ddocker.push.username=${{ secrets.DOCKER_UV_USERNAME }}
+          -Ddocker.push.password=${{ secrets.DOCKER_UV_TOKEN }}
       - name: Publish docker image to GitHub Container Registry
         run: >
           ./mvnw $MAVEN_CLI_OPTS
