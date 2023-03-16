@@ -73,7 +73,7 @@ spec:
     spec:
       containers:
         - name: urlaubsverwaltung
-          image: synyx/urlaubsverwaltung:3.0.0
+          image: urlaubsverwaltung/urlaubsverwaltung:3.0.0
           ports:
             - containerPort: 8080
           livenessProbe:

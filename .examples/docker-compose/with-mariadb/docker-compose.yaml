@@ -25,7 +25,7 @@ services:
       - '8025:8025'
 
   app:
-    image: synyx/urlaubsverwaltung:latest
+    image: urlaubsverwaltung/urlaubsverwaltung:latest
     ports:
       - '8080:8080'
     environment:
