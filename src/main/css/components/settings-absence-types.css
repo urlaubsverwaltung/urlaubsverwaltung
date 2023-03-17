@@ -7,7 +7,7 @@
   @apply tw-hidden;
   @apply sm:tw-sticky;
   z-index: 1; /* color-picker should not cover the sticky header */
-  top: 3.25rem; /* header height */
+  top: var(--uv-header-height);
   @apply tw-bg-white;
   @apply dark:tw-bg-zinc-900;
   @apply tw-py-1;
@@ -127,7 +127,7 @@
 
 @screen lg {
   .absence-type-list-head {
-    top: 3rem; /* header height */
+    top: var(--uv-header-height);
   }
 
   .absence-type-list-head,
