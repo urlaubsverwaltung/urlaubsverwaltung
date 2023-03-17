@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
+import de.focusshift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -12,16 +14,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
 import static java.lang.String.format;
 import static java.util.List.copyOf;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.merge;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapRoleToPermissionsDto;
 
 @Controller
 @RequestMapping("/web")
-public class PersonNotificationsViewController {
+public class PersonNotificationsViewController implements HasLaunchpad {
 
     private final PersonService personService;
     private final PersonNotificationsDtoValidator validator;
@@ -33,29 +35,32 @@ public class PersonNotificationsViewController {
     }
 
     @GetMapping("/person/{personId}/notifications")
-    public String showPersonPermissionsAndNotifications(@PathVariable("personId") Integer personId, Model model) {
+    @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    public String showPersonNotifications(@PathVariable int personId, Model model) throws UnknownPersonException {
 
-        final Person signedInUser = personService.getSignedInUser();
-        if (!signedInUser.getId().equals(personId)) {
-            throw new ResponseStatusException(NOT_FOUND);
-        }
+        final Person person = personService.getPersonByID(personId)
+            .orElseThrow(() -> new UnknownPersonException(personId));
 
         final PersonNotificationsDto personNotificationsDto = new PersonNotificationsDto();
         personNotificationsDto.setId(personId);
-        personNotificationsDto.setName(signedInUser.getFirstName());
-        personNotificationsDto.setEmailNotifications(copyOf(signedInUser.getNotifications()));
-        personNotificationsDto.setPermissions(mapRoleToPermissionsDto(copyOf(signedInUser.getPermissions())));
+        personNotificationsDto.setName(person.getFirstName());
+        personNotificationsDto.setEmailNotifications(copyOf(person.getNotifications()));
+        personNotificationsDto.setPermissions(mapRoleToPermissionsDto(copyOf(person.getPermissions())));
         model.addAttribute("personNotificationsDto", personNotificationsDto);
 
         return "person/person_notifications";
     }
 
     @PostMapping("/person/{personId}/notifications")
-    public String editPersonPermissionsAndNotifications(@PathVariable("personId") Integer personId,
-                                                        @ModelAttribute PersonNotificationsDto personNotificationsDto, Errors errors) {
+    @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    public String editPersonNotifications(@PathVariable int personId,
+                                          @ModelAttribute PersonNotificationsDto personNotificationsDto,
+                                          Errors errors) throws UnknownPersonException {
 
-        final Person signedInUser = personService.getSignedInUser();
-        if (!signedInUser.getId().equals(personId) || !signedInUser.getId().equals(personNotificationsDto.getId())) {
+        final Person person = personService.getPersonByID(personId)
+            .orElseThrow(() -> new UnknownPersonException(personId));
+
+        if (!person.getId().equals(personNotificationsDto.getId())) {
             throw new ResponseStatusException(NOT_FOUND);
         }
 
@@ -64,7 +69,8 @@ public class PersonNotificationsViewController {
             return "person/person_notifications";
         }
 
-        personService.update(merge(signedInUser, personNotificationsDto));
+        person.setNotifications(personNotificationsDto.getEmailNotifications());
+        personService.update(person);
 
         return format("redirect:/web/person/%s/notifications", personId);
     }
