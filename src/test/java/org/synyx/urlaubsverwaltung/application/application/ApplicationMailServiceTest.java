@@ -44,6 +44,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CONVERTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
@@ -1027,13 +1028,13 @@ class ApplicationMailServiceTest {
     void sendRemindForUpcomingHolidayReplacement() {
 
         final Person holidayReplacement = new Person();
-        holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
+        holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING));
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
         holidayReplacementEntity.setNote("Note");
 
         final Person holidayReplacementTwo = new Person();
-        holidayReplacementTwo.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
+        holidayReplacementTwo.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING));
         final HolidayReplacementEntity holidayReplacementEntityTwo = new HolidayReplacementEntity();
         holidayReplacementEntityTwo.setPerson(holidayReplacementTwo);
         holidayReplacementEntityTwo.setNote("Note 2");
