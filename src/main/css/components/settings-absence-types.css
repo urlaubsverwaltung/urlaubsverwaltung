@@ -27,22 +27,6 @@
   width: 40%;
 }
 
-.absence-type-option-checkbox {
-  width: 1.125rem;
-  height: 1.125rem;
-  appearance: none;
-  @apply tw-border;
-  @apply tw-border-zinc-300;
-  @apply tw-rounded;
-  @apply tw-transition-colors;
-}
-
-.absence-type-option-checkbox:checked {
-  @apply tw-bg-blue-500 !important;
-  @apply tw-border-blue-500 !important;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
-}
-
 @media only screen and (max-width: 639px) {
   .absence-type-list {
     @apply tw-space-y-4;

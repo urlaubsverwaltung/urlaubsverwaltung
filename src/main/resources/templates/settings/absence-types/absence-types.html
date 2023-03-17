@@ -104,7 +104,7 @@
                   type="checkbox"
                   th:field="*{absenceTypeSettings.items[__${loop.index}__].requiresApproval}"
                   th:id="${'absenceType-approval-' + loop.index}"
-                  class="absence-type-option-checkbox"
+                  class="uv-checkbox"
                 />
               </div>
               <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
@@ -118,7 +118,7 @@
                   type="checkbox"
                   th:field="*{absenceTypeSettings.items[__${loop.index}__].visibleToEveryone}"
                   th:id="|absenceType-visible-to-everyone-${loop.index}|"
-                  class="absence-type-option-checkbox"
+                  class="uv-checkbox"
                 />
               </div>
               <div class="tw-flex sm:tw-items-center">
