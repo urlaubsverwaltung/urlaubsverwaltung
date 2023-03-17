@@ -49,7 +49,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REMINDED_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
@@ -2048,11 +2047,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setPermissions(List.of(BOSS));
-        boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REMINDED_MANAGEMENT));
 
         final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@example.org");
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
-        departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REMINDED_MANAGEMENT));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 

@@ -38,7 +38,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REMINDED_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
@@ -777,7 +776,7 @@ class ApplicationMailService {
 
         final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application);
         final Mail mailToAllowAndRemind = Mail.builder()
-            .withRecipient(recipients, NOTIFICATION_EMAIL_APPLICATION_REMINDED_MANAGEMENT)
+            .withRecipient(recipients)
             .withSubject("subject.application.remind")
             .withTemplate("application_remind_to_management", model)
             .build();
