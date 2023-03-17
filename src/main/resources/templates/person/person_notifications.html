@@ -1,108 +1,186 @@
 <!DOCTYPE html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{})">
-    <title th:text="#{person.form.notifications.header.title}"></title>
+  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+    <title th:text="#{person.notifications.meta.title}"></title>
+    <th:block th:ref="scripts">
+      <script defer asset:src="person_notifications.js"></script>
+    </th:block>
   </head>
 
   <body th:replace="_layout::body(~{::main}, ~{})">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
       <div th:replace="fragments/section-heading::section-heading(~{::person-notifications-body}, ~{})">
         <th:block th:ref="person-notifications-body">
-          <h1 th:text="#{person.form.notifications.title}">E-Mail-Benachrichtigungen</h1>
+          <h1 th:text="#{person.notifications.header.title}">E-Mail-Benachrichtigungen</h1>
         </th:block>
       </div>
 
-      <div class="tw-mt-8">
-        <form
-          method="post"
-          th:action="@{/web/person/__${personNotificationsDto.id}__/notifications}"
-          th:object="${personNotificationsDto}"
-          class="form-horizontal"
-        >
-          <input type="hidden" th:field="*{id}" th:value="${id}" />
-          <input type="hidden" th:field="*{name}" th:value="${name}" />
+      <p th:text="#{person.notifications.teaser.text}">
+        Aktiviere oder Deaktiviere E-Mail Benachrichtigungen nach deinem Belieben.
+      </p>
 
-          <div class="form-section tw-mb-16">
-            <p class="alert alert-danger" th:if="${#fields.hasErrors('emailNotifications')}">
-              <th:block th:errors="*{emailNotifications}">notifications errors</th:block>
-            </p>
+      <form
+        method="post"
+        th:action="@{/web/person/__${personNotificationsDto.id}__/notifications}"
+        th:object="${personNotificationsDto}"
+        class="tw-mt-8 form-horizontal"
+      >
+        <input type="hidden" th:field="*{id}" th:value="${id}" />
+        <input type="hidden" th:field="*{name}" th:value="${name}" />
 
-            <div
-              th:if="${#lists.contains(personNotificationsDto.permissions, T(org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto).DEPARTMENT_HEAD)}"
-              class="checkbox tw-pb-2 tw-mb-2"
-            >
-              <strong th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD}" class="tw-mb-2 tw-block"></strong>
-              <label class="tw-leading-snug">
-                <input type="checkbox" th:field="*{emailNotifications}" value="NOTIFICATION_DEPARTMENT_HEAD" />
-                <th:block th:text="#{person.form.notifications.DEPARTMENT_HEAD}" />
+        <div class="list-selectable">
+          <div
+            class="list-selectable__item tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
+          >
+            <span class="checkbox-switch tw-flex tw-items-center tw-gap-2 md:tw-gap-3">
+              <input type="checkbox" id="email-notification-all-input" class="tw-mt-0.5 tw-shrink-0" />
+              <label
+                for="email-notification-all-input"
+                class="tw-m-0 tw-text-base tw-font-normal tw-break-all"
+                th:text="#{person.notifications.all.label}"
+              >
+                Alle E-Mail Benachrichtigungen aktivieren / deaktivieren
               </label>
-            </div>
-
-            <div
-              th:if="${#lists.contains(personNotificationsDto.permissions, T(org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto).SECOND_STAGE_AUTHORITY)}"
-              class="checkbox tw-pb-2 tw-mb-2"
-            >
-              <strong
-                th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY}"
-                class="tw-mb-2 tw-block"
-              ></strong>
-              <label class="tw-leading-snug tw-pb-2">
-                <input type="checkbox" th:field="*{emailNotifications}" value="NOTIFICATION_SECOND_STAGE_AUTHORITY" />
-                <th:block th:text="#{person.form.notifications.SECOND_STAGE_AUTHORITY}" />
-              </label>
-            </div>
-
-            <div
-              th:if="${#lists.contains(personNotificationsDto.permissions, T(org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto).BOSS)}"
-              class="checkbox tw-pb-2 tw-mb-2"
-            >
-              <strong th:text="#{person.form.permissions.roles.BOSS}" class="tw-mb-2 tw-block"></strong>
-              <label class="tw-leading-snug tw-mb-2 tw-block">
-                <input type="radio" th:field="*{emailNotifications}" value="NOTIFICATION_BOSS_ALL" />
-                <th:block th:text="#{person.form.notifications.BOSS.all}" />
-              </label>
-              <label class="tw-leading-snug tw-mb-2 tw-block">
-                <input type="radio" th:field="*{emailNotifications}" value="NOTIFICATION_BOSS_DEPARTMENTS" />
-                <th:block th:text="#{person.form.notifications.BOSS.departments}" />
-              </label>
-              <label class="tw-leading-snug tw-block">
-                <input type="radio" th:field="*{emailNotifications}" value="" />
-                <th:block th:text="#{person.form.notifications.BOSS.none}" />
-              </label>
-            </div>
-
-            <div
-              th:if="${#lists.contains(personNotificationsDto.permissions, T(org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto).OFFICE)}"
-              class="checkbox tw-pb-2 tw-mb-2"
-            >
-              <strong th:text="#{person.form.permissions.roles.OFFICE}" class="tw-mb-2 tw-block"></strong>
-              <label class="tw-leading-snug tw-mb-2 tw-block">
-                <input type="checkbox" th:field="*{emailNotifications}" value="NOTIFICATION_OFFICE" />
-                <th:block th:text="#{person.form.notifications.OFFICE}" />
-              </label>
-              <label class="tw-leading-snug tw-block">
-                <input type="checkbox" th:field="*{emailNotifications}" value="OVERTIME_NOTIFICATION_OFFICE" />
-                <th:block th:text="#{person.form.notifications.OFFICE.overtime}" />
-              </label>
-            </div>
+            </span>
           </div>
+        </div>
 
-          <div class="form-section tw-mb-16">
-            <hr />
-            <button
-              th:text="#{action.save}"
-              class="button-main-green col-xs-12 col-sm-5 col-md-2"
-              type="submit"
-            ></button>
-            <button
-              th:text="#{action.cancel}"
-              type="button"
-              class="button col-xs-12 col-sm-5 col-md-2 pull-right"
-              data-back-button
-            ></button>
+        <div class="form-section tw-mt-8 tw-mb-16">
+          <p class="alert alert-danger" th:if="${#fields.hasErrors('emailNotifications')}">
+            <th:block th:errors="*{emailNotifications}">notifications errors</th:block>
+          </p>
+          <div class="tw-space-y-8">
+            <section>
+              <h2
+                class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+                style="top: var(--uv-header-height)"
+                th:text="#{person.notifications.section.absences.title}"
+              >
+                Abwesenheiten
+              </h2>
+              <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+                <li
+                  th:fragment="email-notification-element(name,label,info)"
+                  th:with="
+                    name=${name ?: ''},
+                    label=${label ?: 'person.notifications.section.absences.all.label'},
+                    info=${info ?: 'person.notifications.section.absences.all.info'},
+                    id=${#strings.randomAlphanumeric(8)}
+                  "
+                  class="list-selectable__item tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
+                  data-enabled="false"
+                >
+                  <div class="md:tw-w-64">
+                    <span
+                      data-list-item-selection-toggle
+                      class="checkbox-switch tw-flex tw-items-center tw-gap-2 md:tw-gap-3"
+                    >
+                      <input type="checkbox" id="input" th:id="${id}" class="tw-m-0 tw-shrink-0" />
+                      <label
+                        for="input"
+                        th:for="${id}"
+                        class="tw-m-0 tw-text-base tw-font-normal"
+                        th:text="${#messages.msg(label)}"
+                      ></label>
+                    </span>
+                  </div>
+                  <div
+                    class="tw-flex-1 tw-flex tw-items-start tw-gap-2 dark:tw-text-zinc-400 md:dark:tw-text-inherit md:tw-items-center"
+                  >
+                    <svg
+                      th:replace="~{icon/info::svg(className='tw-hidden tw-shrink-0 tw-w-4 tw-h-4 md:tw-inline-block')}"
+                    ></svg>
+                    <p class="tw-leading-normal tw-text-sm tw-m-0" th:text="${#messages.msg(info)}"></p>
+                  </div>
+                </li>
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.absences.all-department.label',info='person.notifications.section.absences.all-department.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.absences.applied.label',info='person.notifications.section.absences.applied.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.absences.allowed.label',info='person.notifications.section.absences.allowed.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.absences.temporary-allowed.label',info='person.notifications.section.absences.temporary-allowed.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.absences.revoked.label',info='person.notifications.section.absences.revoked.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.absences.status-changed.label',info='person.notifications.section.absences.status-changed.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.absences.reminded.label',info='person.notifications.section.absences.reminded.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.absences.upcoming.label',info='person.notifications.section.absences.upcoming.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.absences.referred.label',info='person.notifications.section.absences.referred.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.absences.holiday-replacement.label',info='person.notifications.section.absences.holiday-replacement.info')}"
+                ></li>
+              </ul>
+            </section>
+            <section>
+              <h2
+                class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+                style="top: var(--uv-header-height)"
+              >
+                Krankmeldungen
+              </h2>
+              <ul class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-col tw-gap-2">
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.sick-note.payment.all.label',info='person.notifications.section.sick-note.payment.all.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.sick-note.payment.label',info='person.notifications.section.sick-note.payment.info')}"
+                ></li>
+              </ul>
+            </section>
+            <section>
+              <h2
+                class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+                style="top: var(--uv-header-height)"
+              >
+                Überstunden
+              </h2>
+              <ul class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-col tw-gap-2">
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.overtime.all.label',info='person.notifications.section.overtime.all.info')}"
+                ></li>
+              </ul>
+            </section>
+            <section>
+              <h2
+                class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+                style="top: var(--uv-header-height)"
+              >
+                Personen
+              </h2>
+              <ul class="tw-list-none tw-m-0 tw-p-0 tw-flex tw-flex-col tw-gap-2">
+                <li
+                  th:replace="~{::email-notification-element(name='',label='person.notifications.section.persons.added.label',info='person.notifications.section.persons.added.info')}"
+                ></li>
+              </ul>
+            </section>
           </div>
-        </form>
-      </div>
+        </div>
+
+        <div class="tw-mt-24 form-section tw-mb-16">
+          <hr />
+          <button th:text="#{action.save}" class="button-main-green col-xs-12 col-sm-5 col-md-2" type="submit"></button>
+          <button
+            th:text="#{action.cancel}"
+            type="button"
+            class="button col-xs-12 col-sm-5 col-md-2 pull-right"
+            data-back-button
+          ></button>
+        </div>
+      </form>
     </main>
   </body>
 </html>
