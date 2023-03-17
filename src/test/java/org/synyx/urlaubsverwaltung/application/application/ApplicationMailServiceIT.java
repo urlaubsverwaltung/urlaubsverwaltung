@@ -48,7 +48,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REFERRED_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REMINDED_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
@@ -467,7 +466,6 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureCorrectReferMail() throws MessagingException, IOException {
 
         final Person recipient = new Person("recipient", "Muster", "Max", "mustermann@example.org");
-        recipient.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REFERRED_MANAGEMENT));
         final Person sender = new Person("sender", "Grimes", "Rick", "rick@grimes.com");
 
         final Application application = createApplication(recipient);
