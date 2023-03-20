@@ -305,7 +305,11 @@
                   </td>
                   <td class="hidden-xs">
                     <div class="print:tw-hidden">
-                      <a class="action-link" th:href="@{/web/person/{personId} (personId=${person.id})}">
+                      <a
+                        class="action-link"
+                        data-turbo="false"
+                        th:href="@{/web/person/{personId} (personId=${person.id})}"
+                      >
                         <svg th:replace="icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')"></svg>
                         <th:block th:text="#{action.account.title}"></th:block>
                         <span
