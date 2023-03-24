@@ -3,11 +3,10 @@ export class CheckboxAll extends HTMLInputElement {
 
   connectedCallback() {
     const handleChange = (event) => {
-      const thisForm = this.closest("form");
-      const eventTargetForm = event.target.closest("form");
-      if (thisForm === eventTargetForm) {
+      const form = this.closest("form");
+      if (form === event.target.closest("form")) {
         if (this === event.target) {
-          const checkboxes = [...thisForm.querySelectorAll("input[type='checkbox']")];
+          const checkboxes = [...form.querySelectorAll("input[type='checkbox']")];
           for (let checkbox of checkboxes) {
             if (checkbox !== this) {
               checkbox.checked = event.target.checked;
@@ -16,7 +15,7 @@ export class CheckboxAll extends HTMLInputElement {
           }
         } else {
           if (event.target.checked) {
-            const checkboxes = [...thisForm.querySelectorAll("input[type='checkbox']")];
+            const checkboxes = [...form.querySelectorAll("input[type='checkbox']")];
             const allChecked = checkboxes.every((checkbox) => checkbox === this || checkbox.checked);
             if (allChecked) {
               this.checked = true;
