@@ -8,6 +8,7 @@ export class CheckboxAll extends HTMLInputElement {
       for (let checkbox of checkboxes) {
         if (checkbox !== this) {
           checkbox.checked = event.target.checked;
+          checkbox.dispatchEvent(new Event("change", { bubbles: true }));
         }
       }
     };
