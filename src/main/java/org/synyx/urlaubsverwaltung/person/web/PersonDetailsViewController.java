@@ -97,6 +97,7 @@ public class PersonDetailsViewController implements HasLaunchpad {
 
         model.addAttribute("canEditBasedata", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditPermissions", signedInUser.hasRole(OFFICE));
+        model.addAttribute("canEditNotifications", personId.equals(signedInUser.getId()) || signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditDepartments", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditAccounts", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditWorkingtime", signedInUser.hasRole(OFFICE));

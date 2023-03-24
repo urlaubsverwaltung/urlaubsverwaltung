@@ -19,7 +19,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -56,19 +55,33 @@ class PersonNotificationsViewControllerTest {
     }
 
     @Test
-    void showPersonNotificationsUsesPersonsWithGivenPerson() throws Exception {
+    void ensuresThatOnlyVisibleAndActive() throws Exception {
 
         final Person person = personWithId(1);
         person.setFirstName("Hans");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
         person.setPermissions(List.of(USER, OFFICE));
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
 
         perform(get("/web/person/{personId}/notifications", 1))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("id", is(1))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("name", is("Hans"))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("emailNotifications", hasItems(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("permissions", hasItems(PersonPermissionsRoleDto.USER, PersonPermissionsRoleDto.OFFICE))));
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("active", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementDepartment", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementDepartment", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("application", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("application", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("active", is(false)))));
     }
 
     @Test
@@ -95,9 +108,9 @@ class PersonNotificationsViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(personWithoutNotifications));
 
         perform(post("/web/person/{personId}/notifications", 1)
-            .param("id", "1")
-            .param("name", "Hans")
-            .param("emailNotifications", "NOTIFICATION_EMAIL_APPLICATION_APPLIED")
+            .param("personId", "1")
+            .param("application.visible", "true")
+            .param("application.active", "true")
         ).andExpect(redirectedUrl("/web/person/1/notifications"));
 
         final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
@@ -114,7 +127,7 @@ class PersonNotificationsViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/{personId}/notifications", 1)
-            .param("id", "2"))
+            .param("personId", "2"))
             .andExpect(status().isNotFound());
     }
 
@@ -134,14 +147,13 @@ class PersonNotificationsViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/person/{personId}/notifications", 1)
-            .param("id", "1")
-            .param("name", "Hans")
-            .param("emailNotifications", "NOTIFICATION_EMAIL_APPLICATION_APPLIED")
+            .param("personId", "1")
+            .param("application.visible", "true")
+            .param("application.active", "true")
         ).andExpect(view().name("person/person_notifications"));
 
         verify(personService, never()).update(personWithoutNotifications);
     }
-
 
     private static Person personWithId(int personId) {
         final Person person = new Person();

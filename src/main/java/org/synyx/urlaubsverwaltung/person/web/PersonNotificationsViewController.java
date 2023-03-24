@@ -16,10 +16,11 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
+import java.util.Objects;
+
 import static java.lang.String.format;
-import static java.util.List.copyOf;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapRoleToPermissionsDto;
+import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToMailNotifications;
 
 @Controller
 @RequestMapping("/web")
@@ -41,11 +42,11 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
 
-        final PersonNotificationsDto personNotificationsDto = new PersonNotificationsDto();
-        personNotificationsDto.setId(personId);
-        personNotificationsDto.setName(person.getFirstName());
-        personNotificationsDto.setEmailNotifications(copyOf(person.getNotifications()));
-        personNotificationsDto.setPermissions(mapRoleToPermissionsDto(copyOf(person.getPermissions())));
+        final Person signedInUser = personService.getSignedInUser();
+        model.addAttribute("isViewingOwnNotifications", Objects.equals(person.getId(), signedInUser.getId()));
+        model.addAttribute("personNiceName", person.getNiceName());
+
+        final PersonNotificationsDto personNotificationsDto = PersonNotificationsMapper.mapToPersonNotificationsDto(person);
         model.addAttribute("personNotificationsDto", personNotificationsDto);
 
         return "person/person_notifications";
@@ -60,7 +61,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
 
-        if (!person.getId().equals(personNotificationsDto.getId())) {
+        if (!person.getId().equals(personNotificationsDto.getPersonId())) {
             throw new ResponseStatusException(NOT_FOUND);
         }
 
@@ -69,9 +70,10 @@ public class PersonNotificationsViewController implements HasLaunchpad {
             return "person/person_notifications";
         }
 
-        person.setNotifications(personNotificationsDto.getEmailNotifications());
+        person.setNotifications(mapToMailNotifications(personNotificationsDto));
+
         personService.update(person);
 
-        return format("redirect:/web/person/%s/notifications", personId);
+        return format("redirect:/web/person/%s/notifications", person.getId());
     }
 }

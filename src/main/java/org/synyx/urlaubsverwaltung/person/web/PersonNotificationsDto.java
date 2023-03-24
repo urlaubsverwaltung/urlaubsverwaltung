@@ -1,46 +1,101 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
-import org.synyx.urlaubsverwaltung.person.MailNotification;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class PersonNotificationsDto {
 
-    private Integer id;
-    private String name;
-    private List<MailNotification> emailNotifications = new ArrayList<>();
-    private List<PersonPermissionsRoleDto> permissions = new ArrayList<>();
+    private Integer personId;
 
-    public Integer getId() {
-        return id;
+    private boolean all;
+
+    private PersonNotificationDto applicationManagementAll;
+    private PersonNotificationDto applicationManagementDepartment;
+    private PersonNotificationDto application;
+    private PersonNotificationDto applicationUpcoming;
+    private PersonNotificationDto holidayReplacement;
+    private PersonNotificationDto holidayReplacementUpcoming;
+    private PersonNotificationDto personNewManagementAll;
+    private PersonNotificationDto overtimeManagementAll;
+
+    PersonNotificationsDto() {
+        // ok
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public Integer getPersonId() {
+        return personId;
     }
 
-    public String getName() {
-        return name;
+    public void setPersonId(Integer personId) {
+        this.personId = personId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public boolean isAll() {
+        return all;
     }
 
-    public List<MailNotification> getEmailNotifications() {
-        return emailNotifications;
+    public void setAll(boolean all) {
+        this.all = all;
     }
 
-    public void setEmailNotifications(List<MailNotification> emailNotifications) {
-        this.emailNotifications = emailNotifications;
+    public PersonNotificationDto getApplicationManagementAll() {
+        return applicationManagementAll;
     }
 
-    public List<PersonPermissionsRoleDto> getPermissions() {
-        return permissions;
+    public void setApplicationManagementAll(PersonNotificationDto applicationManagementAll) {
+        this.applicationManagementAll = applicationManagementAll;
     }
 
-    public void setPermissions(List<PersonPermissionsRoleDto> permissions) {
-        this.permissions = permissions;
+    public PersonNotificationDto getApplicationManagementDepartment() {
+        return applicationManagementDepartment;
+    }
+
+    public void setApplicationManagementDepartment(PersonNotificationDto applicationManagementDepartment) {
+        this.applicationManagementDepartment = applicationManagementDepartment;
+    }
+
+    public PersonNotificationDto getApplication() {
+        return application;
+    }
+
+    public void setApplication(PersonNotificationDto application) {
+        this.application = application;
+    }
+
+    public PersonNotificationDto getApplicationUpcoming() {
+        return applicationUpcoming;
+    }
+
+    public void setApplicationUpcoming(PersonNotificationDto applicationUpcoming) {
+        this.applicationUpcoming = applicationUpcoming;
+    }
+
+    public PersonNotificationDto getHolidayReplacement() {
+        return holidayReplacement;
+    }
+
+    public void setHolidayReplacement(PersonNotificationDto holidayReplacement) {
+        this.holidayReplacement = holidayReplacement;
+    }
+
+    public PersonNotificationDto getHolidayReplacementUpcoming() {
+        return holidayReplacementUpcoming;
+    }
+
+    public void setHolidayReplacementUpcoming(PersonNotificationDto holidayReplacementUpcoming) {
+        this.holidayReplacementUpcoming = holidayReplacementUpcoming;
+    }
+
+    public PersonNotificationDto getPersonNewManagementAll() {
+        return personNewManagementAll;
+    }
+
+    public void setPersonNewManagementAll(PersonNotificationDto personNewManagementAll) {
+        this.personNewManagementAll = personNewManagementAll;
+    }
+
+    public PersonNotificationDto getOvertimeManagementAll() {
+        return overtimeManagementAll;
+    }
+
+    public void setOvertimeManagementAll(PersonNotificationDto overtimeManagementAll) {
+        this.overtimeManagementAll = overtimeManagementAll;
     }
 }

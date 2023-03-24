@@ -13,10 +13,8 @@
       INSERT INTO person_notifications(person_id, notifications) SELECT DISTINCT person_id, 'NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL' FROM person_notifications WHERE notifications = 'NOTIFICATION_OFFICE' OR notifications = 'NOTIFICATION_BOSS_ALL';
       INSERT INTO person_notifications(person_id, notifications) SELECT DISTINCT person_id, 'NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT' FROM person_notifications WHERE notifications = 'NOTIFICATION_BOSS_DEPARTMENTS' OR notifications = 'NOTIFICATION_DEPARTMENT_HEAD' OR notifications = 'NOTIFICATION_SECOND_STAGE_AUTHORITY';
       INSERT INTO person_notifications(person_id, notifications) SELECT DISTINCT person_id, 'NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL' FROM person_notifications WHERE notifications = 'NOTIFICATION_OFFICE' OR notifications = 'NOTIFICATION_BOSS_ALL';
-      INSERT INTO person_notifications(person_id, notifications) SELECT DISTINCT person_id, 'NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY_MANAGEMENT_ALL' FROM person_notifications WHERE notifications = 'NOTIFICATION_OFFICE' OR notifications = 'NOTIFICATION_BOSS_ALL';
       INSERT INTO person_notifications(person_id, notifications) SELECT DISTINCT person_id, 'NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL' FROM person_notifications WHERE notifications = 'OVERTIME_NOTIFICATION_OFFICE';
 
-      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
       INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_APPLIED' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
       INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_ALLOWED' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
       INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_REVOKED' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
@@ -26,6 +24,7 @@
       INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_EDITED' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
       INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_CONVERTED' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
       INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
+      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
       INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_UPCOMING' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
     </sql>
 

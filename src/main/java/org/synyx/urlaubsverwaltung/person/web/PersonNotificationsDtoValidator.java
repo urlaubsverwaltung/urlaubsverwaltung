@@ -5,18 +5,29 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToMailNotifications;
 
 /**
  * This class validate if the notifications of a {@link PersonNotificationsDto} is filled correctly.
  */
 @Component
 class PersonNotificationsDtoValidator implements Validator {
-
-    private static final String ERROR_NOTIFICATIONS_COMBINATION = "person.form.notifications.error.combination";
 
     private final PersonService personService;
 
@@ -37,23 +48,23 @@ class PersonNotificationsDtoValidator implements Validator {
 
     void validateNotifications(PersonNotificationsDto personNotificationsDto, Errors errors) {
 
-        final Collection<Role> roles = personService.getSignedInUser().getPermissions();
-        final Collection<MailNotification> notifications = personNotificationsDto.getEmailNotifications();
+        final Optional<Person> maybePerson = personService.getPersonByID(personNotificationsDto.getPersonId());
+        if (maybePerson.isEmpty()) {
+            return; // TODO global error
+        }
 
-        // TODO
-/*        if (roles != null) {
-            validateCombinationOfNotificationAndRole(roles, notifications, DEPARTMENT_HEAD, NOTIFICATION_DEPARTMENT_HEAD, errors);
-            validateCombinationOfNotificationAndRole(roles, notifications, SECOND_STAGE_AUTHORITY, NOTIFICATION_SECOND_STAGE_AUTHORITY, errors);
-            validateCombinationOfNotificationAndRole(roles, notifications, BOSS, NOTIFICATION_BOSS_ALL, errors);
-            validateCombinationOfNotificationAndRole(roles, notifications, BOSS, NOTIFICATION_BOSS_DEPARTMENTS, errors);
-            validateCombinationOfNotificationAndRole(roles, notifications, OFFICE, NOTIFICATION_OFFICE, errors);
-            validateCombinationOfNotificationAndRole(roles, notifications, OFFICE, OVERTIME_NOTIFICATION_OFFICE, errors);
-        }*/
+        final Collection<Role> roles = maybePerson.get().getPermissions();
+        final Collection<MailNotification> notifications = mapToMailNotifications(personNotificationsDto);
+
+        validateCombinationOfNotificationAndRole(roles, notifications, List.of(OFFICE, BOSS), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL, errors);
+        validateCombinationOfNotificationAndRole(roles, notifications, List.of(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT, errors);
+        validateCombinationOfNotificationAndRole(roles, notifications, List.of(OFFICE, BOSS), NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL, errors);
+        validateCombinationOfNotificationAndRole(roles, notifications, List.of(OFFICE, BOSS), NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL, errors);
     }
 
-    private void validateCombinationOfNotificationAndRole(Collection<Role> roles, Collection<MailNotification> notifications, Role role, MailNotification notification, Errors errors) {
-        if (notifications.contains(notification) && !roles.contains(role)) {
-            errors.rejectValue("notifications", ERROR_NOTIFICATIONS_COMBINATION);
+    private void validateCombinationOfNotificationAndRole(Collection<Role> personRoles, Collection<MailNotification> notifications, List<Role> expectedRoles, MailNotification notification, Errors errors) {
+        if (notifications.contains(notification) && personRoles.stream().noneMatch(expectedRoles::contains)) {
+            errors.rejectValue("notifications", "error");
         }
     }
 }
