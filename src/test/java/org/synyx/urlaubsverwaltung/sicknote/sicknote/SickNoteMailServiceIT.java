@@ -22,8 +22,6 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
@@ -48,11 +46,9 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
         office.setPermissions(List.of(OFFICE));
-        office.setNotifications(List.of(NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY_MANAGEMENT_ALL));
         personService.create(office);
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setNotifications(List.of(NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY));
 
         final SickNote sickNote = SickNote.builder()
             .id(1)

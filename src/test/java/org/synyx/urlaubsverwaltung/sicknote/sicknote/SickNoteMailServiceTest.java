@@ -29,8 +29,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,11 +56,9 @@ class SickNoteMailServiceTest {
 
         final Person person = new Person();
         person.setUsername("Hulk");
-        person.setNotifications(List.of(NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY));
 
         final Person office = new Person();
         office.setUsername("office");
-        office.setNotifications(List.of(NOTIFICATION_EMAIL_SICKNOTE_END_OF_SICK_PAY_MANAGEMENT_ALL));
         when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(office));
 
         final SickNote sickNoteA = SickNote.builder()
