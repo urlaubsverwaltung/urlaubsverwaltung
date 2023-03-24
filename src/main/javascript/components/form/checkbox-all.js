@@ -3,20 +3,29 @@ export class CheckboxAll extends HTMLInputElement {
 
   connectedCallback() {
     const handleChange = (event) => {
-      const form = this.closest("form");
-      const checkboxes = [...form.querySelectorAll("input[type='checkbox']")];
-      for (let checkbox of checkboxes) {
-        if (checkbox !== this) {
-          checkbox.checked = event.target.checked;
-          checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+      const thisForm = this.closest("form");
+      const eventTargetForm = event.target.closest("form");
+      if (thisForm === eventTargetForm) {
+        if (this === event.target) {
+          const checkboxes = [...thisForm.querySelectorAll("input[type='checkbox']")];
+          for (let checkbox of checkboxes) {
+            if (checkbox !== this) {
+              checkbox.checked = event.target.checked;
+              checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+          }
+        } else {
+          if (!event.target.checked) {
+            this.checked = false;
+          }
         }
       }
     };
 
-    this.addEventListener("change", handleChange);
+    window.addEventListener("change", handleChange);
 
     this.cleanup = () => {
-      this.removeEventListener("change", handleChange);
+      window.removeEventListener("change", handleChange);
     };
   }
 
