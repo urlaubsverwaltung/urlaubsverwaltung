@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.dev;
 
 import org.slf4j.Logger;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import javax.annotation.PostConstruct;
 import java.time.Clock;
@@ -20,15 +21,16 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
+import static org.synyx.urlaubsverwaltung.dev.DemoUser.ADMIN;
 import static org.synyx.urlaubsverwaltung.dev.DemoUser.BOSS;
 import static org.synyx.urlaubsverwaltung.dev.DemoUser.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.dev.DemoUser.OFFICE;
 import static org.synyx.urlaubsverwaltung.dev.DemoUser.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.dev.DemoUser.USER;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.MORNING;
 import static org.synyx.urlaubsverwaltung.period.DayLength.NOON;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
@@ -61,7 +63,7 @@ public class DemoDataCreationService {
 
         LOG.info(">> Demo data creation (uv.development.demodata.create={})", demoDataProperties.isCreate());
 
-        if (personDataProvider.isPersonAlreadyCreated(DemoUser.USER.getUsername())) {
+        if (personDataProvider.isPersonAlreadyCreated(USER.getEmail())) {
             LOG.info("-> Demo data was already created. Abort.");
             return;
         }
@@ -69,23 +71,23 @@ public class DemoDataCreationService {
         LOG.info("-> Starting demo data creation...");
         // Users to be able to SIGN-IN with
         int personnelNumber = 1;
-        final Person user = personDataProvider.createTestPerson(DemoUser.USER, personnelNumber, "Klaus", "Müller", "user@urlaubsverwaltung.cloud");
-        final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD, personnelNumber++, "Thorsten", "Krüger", "departmentHead@urlaubsverwaltung.cloud");
-        final Person boss = personDataProvider.createTestPerson(BOSS, personnelNumber++, "Theresa", "Scherer", "boss@urlaubsverwaltung.cloud");
-        final Person office = personDataProvider.createTestPerson(OFFICE, personnelNumber++, "Marlene", "Muster", "office@urlaubsverwaltung.cloud");
-        final Person secondStageAuthority = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, personnelNumber++, "Juliane", "Huber", "secondStageAuthority@urlaubsverwaltung.cloud");
-        personDataProvider.createTestPerson(DemoUser.ADMIN, personnelNumber++, "Anne", "Roth", "admin@urlaubsverwaltung.cloud");
+        final Person user = personDataProvider.createTestPerson(USER, personnelNumber, "Klaus", "Müller", USER.getEmail());
+        final Person departmentHead = personDataProvider.createTestPerson(DEPARTMENT_HEAD, personnelNumber++, "Thorsten", "Krüger", DEPARTMENT_HEAD.getEmail());
+        final Person boss = personDataProvider.createTestPerson(BOSS, personnelNumber++, "Theresa", "Scherer", BOSS.getEmail());
+        final Person office = personDataProvider.createTestPerson(OFFICE, personnelNumber++, "Marlene", "Muster", OFFICE.getEmail());
+        final Person secondStageAuthority = personDataProvider.createTestPerson(SECOND_STAGE_AUTHORITY, personnelNumber++, "Juliane", "Huber", SECOND_STAGE_AUTHORITY.getEmail());
+        personDataProvider.createTestPerson(ADMIN, personnelNumber++, "Anne", "Roth", ADMIN.getEmail());
 
         // Users
-        final Person hans = personDataProvider.createTestPerson("hdampf", personnelNumber++, "Hans", "Dampf", "dampf@urlaubsverwaltung.cloud", USER);
-        final Person franziska = personDataProvider.createTestPerson("fbaier", personnelNumber++,  "Franziska", "Baier", "baier@urlaubsverwaltung.cloud", USER);
-        final Person elena = personDataProvider.createTestPerson("eschneider", personnelNumber++,  "Elena", "Schneider", "schneider@urlaubsverwaltung.cloud", USER);
-        final Person brigitte = personDataProvider.createTestPerson("bhaendel", personnelNumber++, "Brigitte", "Händel", "haendel@urlaubsverwaltung.cloud", USER);
-        final Person niko = personDataProvider.createTestPerson("nschmidt", personnelNumber++, "Niko", "Schmidt", "schmidt@urlaubsverwaltung.cloud", USER);
+        final Person hans = personDataProvider.createTestPerson("hdampf", personnelNumber++, "Hans", "Dampf", "dampf@urlaubsverwaltung.cloud", Role.USER);
+        final Person franziska = personDataProvider.createTestPerson("fbaier", personnelNumber++,  "Franziska", "Baier", "baier@urlaubsverwaltung.cloud", Role.USER);
+        final Person elena = personDataProvider.createTestPerson("eschneider", personnelNumber++,  "Elena", "Schneider", "schneider@urlaubsverwaltung.cloud", Role.USER);
+        final Person brigitte = personDataProvider.createTestPerson("bhaendel", personnelNumber++, "Brigitte", "Händel", "haendel@urlaubsverwaltung.cloud", Role.USER);
+        final Person niko = personDataProvider.createTestPerson("nschmidt", personnelNumber++, "Niko", "Schmidt", "schmidt@urlaubsverwaltung.cloud", Role.USER);
         personDataProvider.createTestPerson("heinz", personnelNumber, "Holger", "Dieter", "hdieter@urlaubsverwaltung.cloud", INACTIVE);
 
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser())
-            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, i + 42, "Horst", "Aktiv", "hdieter-active@urlaubsverwaltung.cloud", USER));
+            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, i + 42, "Horst", "Aktiv", "hdieter-active@urlaubsverwaltung.cloud", Role.USER));
 
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser())
             .forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, i + 21, "Horst", "Inaktiv", "hdieter-inactive@urlaubsverwaltung.cloud", INACTIVE));

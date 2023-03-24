@@ -61,10 +61,9 @@ class PersonDataProvider {
         this.clock = clock;
     }
 
-    boolean isPersonAlreadyCreated(String username) {
-
-        final Optional<Person> personByUsername = personService.getPersonByUsername(username);
-        return personByUsername.isPresent();
+    boolean isPersonAlreadyCreated(String email) {
+        return personService.getPersonByMailAddress(email)
+            .isPresent();
     }
 
     Person createTestPerson(DemoUser demoUser, int personnelNumber, String firstName, String lastName, String email) {
