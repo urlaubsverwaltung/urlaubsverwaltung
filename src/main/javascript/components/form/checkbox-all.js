@@ -15,7 +15,13 @@ export class CheckboxAll extends HTMLInputElement {
             }
           }
         } else {
-          if (!event.target.checked) {
+          if (event.target.checked) {
+            const checkboxes = [...thisForm.querySelectorAll("input[type='checkbox']")];
+            const allChecked = checkboxes.every((checkbox) => checkbox === this || checkbox.checked);
+            if (allChecked) {
+              this.checked = true;
+            }
+          } else {
             this.checked = false;
           }
         }
