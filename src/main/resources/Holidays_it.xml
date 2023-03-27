@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:Configuration hierarchy="it" description="Italy" xmlns:tns="http://www.example.org/Holiday"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.example.org/Holiday /Holiday.xsd">
+  <tns:Holidays>
+    <tns:Fixed month="JANUARY" day="1" validFrom="1967" descriptionPropertiesKey="NEW_YEAR"/>
+    <tns:Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/>
+    <tns:Fixed month="APRIL" day="25" descriptionPropertiesKey="LIBERATION"/>
+    <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+    <tns:Fixed month="JUNE" day="2" descriptionPropertiesKey="REPUBLIC_DAY"/>
+    <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+    <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+    <tns:Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
+    <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
+    <tns:Fixed month="DECEMBER" day="25" descriptionPropertiesKey="CHRISTMAS"/>
+    <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+    <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
+    <tns:ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
+    <tns:ChristianHoliday type="EASTER_MONDAY" validFrom="1642" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+  </tns:Holidays>
+  <tns:SubConfigurations hierarchy="bz" description="Südtirol">
+    <tns:Holidays>
+      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </tns:Holidays>
+  </tns:SubConfigurations>
+</tns:Configuration>
