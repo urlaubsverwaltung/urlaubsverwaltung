@@ -75,6 +75,47 @@ class WorkingTimeCalendarTest {
     }
 
     @Test
+    void ensureWorkingTimeForApplicationWithStartInDateRange() {
+
+        final LocalDate applicationFrom = LocalDate.of(2023, 3, 31);
+        final LocalDate applicationTo = LocalDate.of(2023, 4, 2);
+        final DateRange marchDateRange = new DateRange(LocalDate.of(2023, 3, 1), LocalDate.of(2023, 3, 31));
+
+
+        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(applicationFrom, applicationTo, date -> DayLength.FULL);
+        final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+
+        final Application application = new Application();
+        application.setStartDate(applicationFrom);
+        application.setEndDate(applicationTo);
+        application.setDayLength(DayLength.FULL);
+
+        final BigDecimal actual = sut.workingTimeInDateRage(application, marchDateRange);
+
+        assertThat(actual).isEqualTo(BigDecimal.valueOf(1));
+    }
+
+    @Test
+    void ensureWorkingTimeForApplicationWithEndInDateRange() {
+
+        final LocalDate applicationFrom = LocalDate.of(2023, 3, 31);
+        final LocalDate applicationTo = LocalDate.of(2023, 4, 2);
+        final DateRange aprilDateRange = new DateRange(LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 30));
+
+        final Map<LocalDate, DayLength> workingTimeByDate = buildWorkingTimeByDate(applicationFrom, applicationTo, date -> DayLength.FULL);
+        final WorkingTimeCalendar sut = new WorkingTimeCalendar(workingTimeByDate);
+
+        final Application application = new Application();
+        application.setStartDate(applicationFrom);
+        application.setEndDate(applicationTo);
+        application.setDayLength(DayLength.FULL);
+
+        final BigDecimal actual = sut.workingTimeInDateRage(application, aprilDateRange);
+
+        assertThat(actual).isEqualTo(BigDecimal.valueOf(2));
+    }
+
+    @Test
     void ensureWorkingTimeForLocalDateWhenWorkingFull() {
         final LocalDate from = LocalDate.of(2022, 8, 1);
         final LocalDate to = LocalDate.of(2022, 8, 31);
