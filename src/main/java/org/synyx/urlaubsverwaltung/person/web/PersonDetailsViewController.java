@@ -30,6 +30,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.web.PersonDetailsBasedataDtoMapper.mapToPersonDetailsBasedataDto;
+import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToPersonNotificationsDto;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapRoleToPermissionsDto;
 
 @Controller
@@ -77,6 +78,8 @@ public class PersonDetailsViewController implements HasLaunchpad {
 
         model.addAttribute("person", person);
         model.addAttribute("permissions", mapRoleToPermissionsDto(List.copyOf(person.getPermissions())));
+
+        model.addAttribute("personNotificationsDto", mapToPersonNotificationsDto(person));
 
         final Optional<PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(person.getId());
         if (basedataByPersonId.isPresent()) {
