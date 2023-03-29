@@ -147,14 +147,17 @@ public class OverviewViewController implements HasLaunchpad {
 
     private void prepareSickNoteList(Person person, int year, Model model) {
 
-        final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, Year.of(year).atDay(1), getLastDayOfYear(year));
+        final LocalDate from = Year.of(year).atDay(1);
+        final LocalDate to = getLastDayOfYear(year);
+
+        final List<SickNote> sickNotes = sickNoteService.getByPersonAndPeriod(person, from, to);
 
         final List<SickNote> sortedSickNotes = sickNotes.stream()
             .sorted(comparing(SickNote::getStartDate).reversed())
             .collect(toList());
         model.addAttribute("sickNotes", sortedSickNotes);
 
-        final SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService);
+        final SickDaysOverview sickDaysOverview = new SickDaysOverview(sickNotes, workDaysCountService, from, to);
         model.addAttribute("sickDaysOverview", sickDaysOverview);
     }
 
