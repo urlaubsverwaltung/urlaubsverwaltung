@@ -148,11 +148,12 @@ class OvertimeServiceImpl implements OvertimeService {
 
         final LocalDate firstDayOfYear = start.with(firstDayOfYear());
         final LocalDate lastDayOfYear = start.with(lastDayOfYear());
-        final List<Overtime> overtimesWithBeginningBetweenStarAndEnd = overtimeRepository.findByPersonIsInAndStartDateBetweenOrderByStartDateDesc(persons, firstDayOfYear, lastDayOfYear);
-        final Map<Person, Duration> yearDurationByPerson = overtimeDurationProRata(overtimesWithBeginningBetweenStarAndEnd, firstDayOfYear, lastDayOfYear);
 
-        final List<Overtime> overtimesWithBeginningBeforeStart = overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, start, end);
-        final Map<Person, Duration> dateRangeDurationByPerson = overtimeDurationProRata(overtimesWithBeginningBeforeStart, start, end);
+        final List<Overtime> overtimesOverall = overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, firstDayOfYear, lastDayOfYear);
+        final Map<Person, Duration> yearDurationByPerson = overtimeDurationProRata(overtimesOverall, firstDayOfYear, lastDayOfYear);
+
+        final List<Overtime> overtimesForDateRange = overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, start, end);
+        final Map<Person, Duration> dateRangeDurationByPerson = overtimeDurationProRata(overtimesForDateRange, start, end);
 
         return persons.stream()
             .map(person -> {
@@ -173,40 +174,53 @@ class OvertimeServiceImpl implements OvertimeService {
     }
 
     private Map<Person, Duration> getOverallOvertimeBeforeYear(Collection<Person> persons, int year) {
-        final LocalDate firstDayOfYear = Year.of(year).atDay(1);
+        final LocalDate lastDayOfLastYear = Year.of(year - 1).atDay(1).with(lastDayOfYear());
 
-        final Map<Person, Duration> totalReductionBeforeYearByPerson = applicationService.getTotalOvertimeReductionOfPersonsBefore(persons, firstDayOfYear);
-        final Map<Person, Double> totalOvertimeBeforeYearByPerson = overtimeRepository.calculateTotalHoursForPersonsAndStartDateIsBefore(persons, firstDayOfYear)
-            .stream()
-            .collect(toMap(OvertimeDurationSum::getPerson, OvertimeDurationSum::getDurationDouble));
+        final Map<Person, Duration> totalReductionBeforeYearByPerson = applicationService.getTotalOvertimeReductionOfPersonUntil(persons, lastDayOfLastYear);
+
+        final List<Overtime> overtimesStartingWithoutRequestedYear = overtimeRepository.findByPersonIsInAndStartDateIsLessThanEqual(persons, lastDayOfLastYear);
+        final Map<Person, Duration> overtimesStartingWithoutRequestedYearByPerson = overtimeDurationBefore(overtimesStartingWithoutRequestedYear, lastDayOfLastYear);
 
         return persons.stream()
             .map(person -> {
                 final Duration totalOvertimeReductionBeforeYear = totalReductionBeforeYearByPerson.getOrDefault(person, ZERO);
-
-                final Double totalOvertimeBeforeYear = totalOvertimeBeforeYearByPerson.getOrDefault(person, 0d);
-                final BigDecimal totalOvertimeBeforeYearMinutes = BigDecimal.valueOf(totalOvertimeBeforeYear).multiply(BigDecimal.valueOf(60));
-                final Duration totalOvertimeBeforeYearDuration = Duration.ofMinutes(totalOvertimeBeforeYearMinutes.longValue());
-
-                final Duration duration = totalOvertimeBeforeYearDuration.minus(totalOvertimeReductionBeforeYear);
-
+                final Duration totalOvertimeBeforeYear = overtimesStartingWithoutRequestedYearByPerson.getOrDefault(person, ZERO);
+                final Duration duration = totalOvertimeBeforeYear.minus(totalOvertimeReductionBeforeYear);
                 return Map.entry(person, duration);
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private Map<Person, Duration> overtimeDurationProRata(List<Overtime> overtimes,LocalDate start, LocalDate end) {
-        final DateRange requestedDateRange = new DateRange(start, end);
+    private Map<Person, Duration> overtimeDurationBefore(List<Overtime> overtimes, LocalDate until) {
         return overtimes.stream()
             .map(overtime -> {
+                final DateRange requestedDateRange = new DateRange(overtime.getStartDate(), until);
                 final DateRange overtimeDateRange = new DateRange(overtime.getStartDate(), overtime.getEndDate());
                 final Duration durationOfOverlap = requestedDateRange.overlap(overtimeDateRange).map(DateRange::duration).orElse(ZERO);
+
                 final BigDecimal secondsProRata = toFormattedDecimal(overtime.getDuration())
                     .divide(toFormattedDecimal(overtimeDateRange.duration()), HALF_EVEN)
                     .multiply(toFormattedDecimal(durationOfOverlap))
                     .setScale(0, HALF_EVEN);
 
-                return Map.entry(overtime.getPerson(), secondsToDuration(secondsProRata));
+                return Map.entry(overtime.getPerson(), DecimalConverter.toDuration(secondsProRata));
+            })
+            .collect(groupingBy(Map.Entry::getKey, reducing(ZERO, Map.Entry::getValue, Duration::plus)));
+    }
+
+    private Map<Person, Duration> overtimeDurationProRata(List<Overtime> overtimes, LocalDate start, LocalDate end) {
+        final DateRange requestedDateRange = new DateRange(start, end);
+        return overtimes.stream()
+            .map(overtime -> {
+                final DateRange overtimeDateRange = new DateRange(overtime.getStartDate(), overtime.getEndDate());
+                final Duration durationOfOverlap = requestedDateRange.overlap(overtimeDateRange).map(DateRange::duration).orElse(ZERO);
+
+                final BigDecimal secondsProRata = toFormattedDecimal(overtime.getDuration())
+                    .divide(toFormattedDecimal(overtimeDateRange.duration()), HALF_EVEN)
+                    .multiply(toFormattedDecimal(durationOfOverlap))
+                    .setScale(0, HALF_EVEN);
+
+                return Map.entry(overtime.getPerson(), DecimalConverter.toDuration(secondsProRata));
             })
             .collect(groupingBy(Map.Entry::getKey, reducing(ZERO, Map.Entry::getValue, Duration::plus)));
     }
@@ -239,10 +253,6 @@ class OvertimeServiceImpl implements OvertimeService {
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private static Duration secondsToDuration(BigDecimal seconds) {
-        return Duration.ofSeconds(seconds.longValue());
-    }
-
     @Override
     public Duration getLeftOvertimeForPerson(Person person, LocalDate start, LocalDate end) {
 
@@ -254,7 +264,8 @@ class OvertimeServiceImpl implements OvertimeService {
                 final Duration durationOfOverlap = dateRangeOfPeriod.overlap(overtimeDateRange).map(DateRange::duration).orElse(ZERO);
                 return toFormattedDecimal(overtime.getDuration())
                     .divide(toFormattedDecimal(overtimeDateRange.duration()), HALF_EVEN)
-                    .multiply(toFormattedDecimal(durationOfOverlap)).setScale(0, HALF_EVEN);
+                    .multiply(toFormattedDecimal(durationOfOverlap))
+                    .setScale(0, HALF_EVEN);
             })
             .map(DecimalConverter::toDuration)
             .reduce(ZERO, Duration::plus);

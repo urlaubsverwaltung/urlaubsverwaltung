@@ -72,6 +72,9 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
     List<Application> findByPersonAndVacationTypeCategoryAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(
         Person person, VacationCategory category, List<ApplicationStatus> statuses, LocalDate start, LocalDate end);
 
+    List<Application> findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
+        Collection<Person> persons, VacationCategory category, List<ApplicationStatus> statuses, LocalDate until);
+
     @Query(
         "SELECT SUM(application.hours) FROM Application application WHERE application.person = :person "
             + "AND application.startDate < :date "
@@ -92,7 +95,4 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
     List<Application> deleteByPerson(Person person);
 
     List<Application> findAllByHolidayReplacements_Person(Person person);
-
-    @Query("SELECT a.person as person, SUM(a.hours) as durationDouble FROM Application a WHERE a.status IN :statuses AND a.vacationType.category = 'OVERTIME' AND a.person IN :persons AND a.startDate < :date GROUP BY a.person")
-    List<ApplicationOvertimeDurationSum> calculateTotalOvertimeReductionOfPersonsBefore(@Param("persons") Collection<Person> persons, @Param("date") LocalDate date, @Param("statuses") List<ApplicationStatus> statuses);
 }

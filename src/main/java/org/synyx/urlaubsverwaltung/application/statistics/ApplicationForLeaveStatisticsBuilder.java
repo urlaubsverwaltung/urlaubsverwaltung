@@ -114,7 +114,7 @@ class ApplicationForLeaveStatisticsBuilder {
             final List<Application> personApplications = applicationsByPerson.getOrDefault(person, List.of());
             for (Application application : personApplications) {
 
-                final BigDecimal workingTime = workingTimeCalendar.workingTime(application);
+                final BigDecimal workingTime = workingTimeCalendar.workingTimeInDateRage(application, dateRange);
                 final ApplicationForLeaveStatistics statistics = statisticsByPerson.get(application.getPerson());
 
                 if (application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED)) {
