@@ -24,7 +24,7 @@ $(document).ready(async function () {
 
   function updateSelectionHints() {
     if (fromDateElement.value && toDateElement.value) {
-      const dayLength = document.querySelector("input[type='radio'][name='dayLength']:checked").value;
+      const dayLength = document.querySelector("input[name='dayLength']").value;
       const startDate = parseISO(fromDateElement.value);
       const toDate = parseISO(toDateElement.value);
 
@@ -59,7 +59,7 @@ $(document).ready(async function () {
     const startDate = parseISO(from);
     const endDate = parseISO(to || from);
 
-    const dayLength = document.querySelector("input[type='radio'][name='dayLength']:checked").value;
+    const dayLength = document.querySelector("input[name='dayLength']").value;
     const personId = getPersonId();
 
     sendGetDaysRequest(apiPrefix, startDate, endDate, dayLength, personId, ".days");
