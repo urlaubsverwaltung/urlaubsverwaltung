@@ -261,7 +261,9 @@
                 </div>
               </th:block>
               <th:block th:ref="person-details-notifications-box-body">
-                <th:block th:include="person/detail-section/person_detail_notifications::section"></th:block>
+                <th:block
+                  th:replace="person/detail-section/person_detail_notifications::section(${personNotificationsDto})"
+                ></th:block>
               </th:block>
             </div>
           </div>
