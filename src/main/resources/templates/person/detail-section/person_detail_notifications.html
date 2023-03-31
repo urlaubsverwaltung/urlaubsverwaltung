@@ -20,6 +20,13 @@
         showPersons=${notifications.personNewManagementAll.active}
       "
     >
+      <p
+        th:if="${!showAbsences and !showOvertime and !showPersons}"
+        th:text="#{person.account.notifications.nothing-active}"
+        class="tw-text-sm"
+      >
+        Keine E-Mail Benachrichtigungen aktiviert.
+      </p>
       <dl aria-labelledby="heading-notification" th:if="${showAbsences or showOvertime or showPersons}">
         <th:block th:if="${showAbsences}">
           <dt
