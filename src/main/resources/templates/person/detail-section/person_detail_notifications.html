@@ -6,7 +6,7 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <dl>
+      <dl aria-labelledby="heading-notification">
         <th:block
           th:if="${
       personNotificationsDto.applicationManagementAll.active ||
