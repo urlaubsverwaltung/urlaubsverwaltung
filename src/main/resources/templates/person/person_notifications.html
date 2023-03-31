@@ -84,45 +84,45 @@
                     active=${active == null ? personNotificationsDto.applicationManagementAll.active : active}
                   "
                 >
-                  <li
-                    th:if="${visible}"
-                    class="list-selectable__item tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
-                    th:data-enabled="${active}"
-                  >
-                    <div class="md:tw-w-64 lg:tw-w-72">
-                      <span
-                        data-list-item-selection-toggle
-                        class="checkbox-switch tw-flex tw-items-center tw-gap-2 md:tw-gap-3"
-                      >
-                        <input
-                          type="checkbox"
-                          id="input"
-                          th:id="${id}"
-                          th:name="${name}"
-                          th:checked="${active}"
-                          class="tw-m-0 tw-shrink-0"
-                          th:aria-describedby="${'info-' + id}"
-                        />
-                        <label
-                          for="input"
-                          th:for="${id}"
-                          class="tw-m-0 tw-text-base tw-font-normal"
-                          th:text="${#messages.msg(label)}"
-                        ></label>
-                      </span>
-                    </div>
-                    <div
-                      class="tw-flex-1 tw-flex tw-items-start tw-gap-2 dark:tw-text-zinc-400 md:dark:tw-text-inherit md:tw-items-center"
+                  <li th:if="${visible}" class="list-selectable__item" th:data-enabled="${active}">
+                    <uv-checkbox-card
+                      class="tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
                     >
-                      <svg
-                        th:replace="~{icon/info::svg(className='tw-hidden tw-shrink-0 tw-w-4 tw-h-4 md:tw-inline-block')}"
-                      ></svg>
-                      <p
-                        th:id="${'info-' + id}"
-                        class="tw-leading-normal tw-text-sm tw-m-0"
-                        th:text="${#messages.msg(info)}"
-                      ></p>
-                    </div>
+                      <div class="md:tw-w-64 lg:tw-w-72">
+                        <span
+                          data-list-item-selection-toggle
+                          class="checkbox-switch tw-flex tw-items-center tw-gap-2 md:tw-gap-3"
+                        >
+                          <input
+                            type="checkbox"
+                            id="input"
+                            th:id="${id}"
+                            th:name="${name}"
+                            th:checked="${active}"
+                            class="tw-m-0 tw-shrink-0"
+                            th:aria-describedby="${'info-' + id}"
+                          />
+                          <label
+                            for="input"
+                            th:for="${id}"
+                            class="tw-m-0 tw-text-base tw-font-normal"
+                            th:text="${#messages.msg(label)}"
+                          ></label>
+                        </span>
+                      </div>
+                      <div
+                        class="tw-flex-1 tw-flex tw-items-start tw-gap-2 dark:tw-text-zinc-400 md:dark:tw-text-inherit md:tw-items-center"
+                      >
+                        <svg
+                          th:replace="~{icon/info::svg(className='tw-hidden tw-shrink-0 tw-w-4 tw-h-4 md:tw-inline-block')}"
+                        ></svg>
+                        <p
+                          th:id="${'info-' + id}"
+                          class="tw-leading-normal tw-text-sm tw-m-0"
+                          th:text="${#messages.msg(info)}"
+                        ></p>
+                      </div>
+                    </uv-checkbox-card>
                   </li>
                 </th:block>
                 <li
