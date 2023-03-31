@@ -9,6 +9,10 @@
 
   <body th:replace="_layout::body(~{::main}, ~{})">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+      <div class="feedback">
+        <p th:if="${success}" th:text="#{settings.action.update.success}" class="alert alert-success"></p>
+      </div>
+
       <div th:replace="fragments/section-heading::section-heading(~{::person-notifications-body}, ~{})">
         <th:block th:ref="person-notifications-body">
           <h1 th:if="${isViewingOwnNotifications}" th:text="#{person.notifications.header.title}">

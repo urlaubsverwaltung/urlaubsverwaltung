@@ -27,6 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -107,11 +108,14 @@ class PersonNotificationsViewControllerTest {
         personWithoutNotifications.setNotifications(List.of());
         when(personService.getPersonByID(1)).thenReturn(Optional.of(personWithoutNotifications));
 
-        perform(post("/web/person/{personId}/notifications", 1)
-            .param("personId", "1")
-            .param("application.visible", "true")
-            .param("application.active", "true")
-        ).andExpect(redirectedUrl("/web/person/1/notifications"));
+        perform(
+            post("/web/person/{personId}/notifications", 1)
+                .param("personId", "1")
+                .param("application.visible", "true")
+                .param("application.active", "true")
+        )
+            .andExpect(redirectedUrl("/web/person/1/notifications"))
+            .andExpect(flash().attribute("success", true));
 
         final ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
         verify(personService).update(personArgumentCaptor.capture());

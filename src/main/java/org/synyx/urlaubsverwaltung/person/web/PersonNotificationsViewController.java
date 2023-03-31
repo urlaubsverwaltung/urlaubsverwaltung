@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
@@ -56,7 +57,8 @@ public class PersonNotificationsViewController implements HasLaunchpad {
     @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String editPersonNotifications(@PathVariable int personId,
                                           @ModelAttribute PersonNotificationsDto personNotificationsDto,
-                                          Errors errors) throws UnknownPersonException {
+                                          Errors errors,
+                                          RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
@@ -73,6 +75,8 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         person.setNotifications(mapToMailNotifications(personNotificationsDto));
 
         personService.update(person);
+
+        redirectAttributes.addFlashAttribute("success", true);
 
         return format("redirect:/web/person/%s/notifications", person.getId());
     }
