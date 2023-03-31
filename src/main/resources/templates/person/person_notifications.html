@@ -101,6 +101,7 @@
                           th:name="${name}"
                           th:checked="${active}"
                           class="tw-m-0 tw-shrink-0"
+                          th:aria-describedby="${'info-' + id}"
                         />
                         <label
                           for="input"
@@ -116,7 +117,11 @@
                       <svg
                         th:replace="~{icon/info::svg(className='tw-hidden tw-shrink-0 tw-w-4 tw-h-4 md:tw-inline-block')}"
                       ></svg>
-                      <p class="tw-leading-normal tw-text-sm tw-m-0" th:text="${#messages.msg(info)}"></p>
+                      <p
+                        th:id="${'info-' + id}"
+                        class="tw-leading-normal tw-text-sm tw-m-0"
+                        th:text="${#messages.msg(info)}"
+                      ></p>
                     </div>
                   </li>
                 </th:block>
