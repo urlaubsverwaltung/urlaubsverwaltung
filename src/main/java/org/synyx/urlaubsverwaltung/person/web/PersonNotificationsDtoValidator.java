@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
+import org.slf4j.Logger;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -13,6 +14,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL;
@@ -28,6 +31,8 @@ import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.m
  */
 @Component
 class PersonNotificationsDtoValidator implements Validator {
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
 
@@ -50,7 +55,9 @@ class PersonNotificationsDtoValidator implements Validator {
 
         final Optional<Person> maybePerson = personService.getPersonByID(personNotificationsDto.getPersonId());
         if (maybePerson.isEmpty()) {
-            return; // TODO global error
+            LOG.warn("Cannot validate persons notification without person with id {}.", personNotificationsDto.getPersonId());
+            errors.reject("error");
+            return;
         }
 
         final Collection<Role> roles = maybePerson.get().getPermissions();
@@ -64,7 +71,7 @@ class PersonNotificationsDtoValidator implements Validator {
 
     private void validateCombinationOfNotificationAndRole(Collection<Role> personRoles, Collection<MailNotification> notifications, List<Role> expectedRoles, MailNotification notification, Errors errors) {
         if (notifications.contains(notification) && personRoles.stream().noneMatch(expectedRoles::contains)) {
-            errors.rejectValue("notifications", "error");
+            errors.reject("error");
         }
     }
 }
