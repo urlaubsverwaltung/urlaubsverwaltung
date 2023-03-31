@@ -140,27 +140,34 @@ class ApplicationServiceImpl implements ApplicationService {
             .reduce(Duration.ZERO, Duration::plus);
     }
 
+    public Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until) {
+
+        final List<ApplicationStatus> waitingAndAllowedStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
+        final Map<Person, Duration> overtimeReductionByPerson = applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, waitingAndAllowedStatus, until).stream()
+            .map(application -> {
+                final DateRange dateRangeOfPeriod = new DateRange(application.getStartDate(), until);
+                final DateRange applicationDateRage = new DateRange(application.getStartDate(), application.getEndDate());
+                final Duration durationOfOverlap = dateRangeOfPeriod.overlap(applicationDateRage).map(DateRange::duration).orElse(Duration.ZERO);
+
+                final Duration overtimeReductionHours = Optional.ofNullable(application.getHours()).orElse(Duration.ZERO);
+
+                final BigDecimal overtimeReduction = toFormattedDecimal(overtimeReductionHours)
+                    .divide(toFormattedDecimal(applicationDateRage.duration()), HALF_EVEN)
+                    .multiply(toFormattedDecimal(durationOfOverlap))
+                    .setScale(0, HALF_EVEN);
+                return Map.entry(application.getPerson(), DecimalConverter.toDuration(overtimeReduction));
+            })
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
+
+        return persons.stream()
+            .map(person -> Map.entry(person, overtimeReductionByPerson.getOrDefault(person, Duration.ZERO)))
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
     @Override
     public Duration getTotalOvertimeReductionOfPersonBefore(Person person, LocalDate date) {
         final BigDecimal overtimeReduction = Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPersonBefore(person, date)).orElse(BigDecimal.ZERO);
         return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
-    }
-
-    @Override
-    public Map<Person, Duration> getTotalOvertimeReductionOfPersonsBefore(Collection<Person> persons, LocalDate date) {
-        final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        final Map<Person, Duration> durationByPerson = applicationRepository.calculateTotalOvertimeReductionOfPersonsBefore(persons, date, statuses).stream()
-            .map(sum -> {
-                final BigDecimal minutes = BigDecimal.valueOf(sum.getDurationDouble()).multiply(BigDecimal.valueOf(60));
-                final Duration duration = Duration.ofMinutes(minutes.longValue());
-                return Map.entry(sum.getPerson(), duration);
-            })
-            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-        // iterate over given persons to create Duration.ZERO entries for persons without overtime reduction applications.
-        return persons.stream()
-            .map(person -> Map.entry(person, durationByPerson.getOrDefault(person, Duration.ZERO)))
-            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override

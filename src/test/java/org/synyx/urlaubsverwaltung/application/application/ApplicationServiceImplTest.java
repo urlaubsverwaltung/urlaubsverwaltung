@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static java.time.Duration.ZERO;
@@ -413,74 +412,86 @@ class ApplicationServiceImplTest {
     }
 
     @Test
-    void ensureGetTotalOvertimeReductionOfPersonsBefore() {
+    void ensureToGetAllPersonsWithZeroDurationIfNoApplicationWasFound() {
 
         final Person batman = new Person();
         batman.setId(1);
-
         final Person robin = new Person();
         robin.setId(2);
-
         final Person alfred = new Person();
         alfred.setId(3);
 
         final List<Person> persons = List.of(batman, robin, alfred);
-        final LocalDate date = LocalDate.of(2022, 8, 30);
+        final LocalDate until = LocalDate.of(2022, 8, 30);
 
-        when(applicationRepository.calculateTotalOvertimeReductionOfPersonsBefore(persons, date, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED)))
-            .thenReturn(List.of(
-                applicationOvertimeDurationSum(batman, 12d),
-                applicationOvertimeDurationSum(robin, 1.5d),
-                applicationOvertimeDurationSum(alfred, 0d)
-            ));
-
-        final Map<Person, Duration> actual = sut.getTotalOvertimeReductionOfPersonsBefore(persons, date);
-
-        assertThat(actual)
-            .containsKeys(batman, robin)
-            .containsEntry(batman, Duration.ofHours(12))
-            .containsEntry(robin, Duration.ofMinutes(90))
-            .containsEntry(alfred, Duration.ofMinutes(0));
-    }
-
-    @Test
-    void ensureGetTotalOvertimeReductionOfPersonsBeforeReturnsDurationZeroForPersonsWithoutOvertimeReduction() {
-
-        final Person batman = new Person();
-        batman.setId(1);
-
-        final Person robin = new Person();
-        robin.setId(2);
-
-        final Person alfred = new Person();
-        alfred.setId(3);
-
-        final List<Person> persons = List.of(batman, robin, alfred);
-        final LocalDate date = LocalDate.of(2022, 8, 30);
-
-        when(applicationRepository.calculateTotalOvertimeReductionOfPersonsBefore(persons, date, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED)))
+        when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(persons, OVERTIME, List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED), until))
             .thenReturn(List.of());
 
-        final Map<Person, Duration> actual = sut.getTotalOvertimeReductionOfPersonsBefore(persons, date);
-
-        assertThat(actual)
-            .containsKeys(batman, robin)
+        assertThat(sut.getTotalOvertimeReductionOfPersonUntil(persons, until))
             .containsEntry(batman, ZERO)
             .containsEntry(robin, ZERO)
             .containsEntry(alfred, ZERO);
     }
 
-    private static ApplicationOvertimeDurationSum applicationOvertimeDurationSum(Person person, Double durationDouble) {
-        return new ApplicationOvertimeDurationSum() {
-            @Override
-            public Person getPerson() {
-                return person;
-            }
+    @Test
+    void ensureToGetCompleteDurationUntilASpecificDate() {
 
-            @Override
-            public Double getDurationDouble() {
-                return durationDouble;
-            }
-        };
+        final Person batman = new Person();
+        batman.setId(1);
+
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setCategory(HOLIDAY);
+
+        final Application application = new Application();
+        application.setPerson(batman);
+        application.setStartDate(LocalDate.of(2022, 8, 10));
+        application.setEndDate(LocalDate.of(2022, 8, 12));
+        application.setStatus(WAITING);
+        application.setVacationType(vacationTypeEntity);
+        application.setHours(Duration.ofHours(10));
+
+        final List<Person> persons = List.of(batman);
+        final LocalDate until = LocalDate.of(2022, 8, 30);
+
+        when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
+            persons,
+            OVERTIME,
+            List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED),
+            until
+        )).thenReturn(List.of(application));
+
+        assertThat(sut.getTotalOvertimeReductionOfPersonUntil(persons, until))
+            .containsEntry(batman, Duration.ofHours(10));
+    }
+
+    @Test
+    void ensureToGetPartialDurationUntilASpecificDate() {
+
+        final Person batman = new Person();
+        batman.setId(1);
+
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setCategory(HOLIDAY);
+
+        final Application application = new Application();
+        application.setPerson(batman);
+        application.setStartDate(LocalDate.of(2022, 8, 10));
+        application.setEndDate(LocalDate.of(2022, 8, 20));
+        application.setStatus(WAITING);
+        application.setVacationType(vacationTypeEntity);
+        application.setHours(Duration.ofHours(10));
+
+        final List<Person> persons = List.of(batman);
+        final LocalDate until = LocalDate.of(2022, 8, 15);
+
+        when(applicationRepository.findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
+            persons,
+            OVERTIME,
+            List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED),
+            until
+        )).thenReturn(List.of(application));
+
+        assertThat(sut.getTotalOvertimeReductionOfPersonUntil(persons, until))
+            .containsEntry(batman, Duration.parse("PT5H27M16S"));
     }
 }

@@ -144,7 +144,7 @@ public final class DateRange implements Iterable<LocalDate> {
             return Duration.ZERO;
         }
 
-        return Duration.ofDays(startDate.until(endDate).getDays()).plusDays(1);
+        return Duration.ofDays(startDate.until(endDate, DAYS)).plusDays(1);
     }
 
 

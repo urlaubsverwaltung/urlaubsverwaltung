@@ -179,6 +179,12 @@ class DateRangeTest {
     }
 
     @Test
+    void ensureThatDateRangeIsCorrectOverMoreThanOneMonth() {
+        final Duration duration = new DateRange(LocalDate.of(2021,7, 12), LocalDate.of(2021,8, 13)).duration();
+        assertThat(duration).isEqualTo(Duration.ofDays(33));
+    }
+
+    @Test
     void dateRangeDurationReturnsOneOnSameDay() {
         final LocalDate date = LocalDate.of(2022, 10, 10);
         final Duration duration = new DateRange(date, date).duration();
