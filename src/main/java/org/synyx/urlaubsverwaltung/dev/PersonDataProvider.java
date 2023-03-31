@@ -15,7 +15,6 @@ import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -28,12 +27,7 @@ import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
  * Provides person demo data.
@@ -60,23 +54,12 @@ class PersonDataProvider {
             .isPresent();
     }
 
-    Person createTestPerson(DemoUser demoUser, int personnelNumber, String firstName, String lastName, String email) {
-
-        final String username = demoUser.getUsername();
-        final Role[] roles = demoUser.getRoles();
-
-        return createTestPerson(username, personnelNumber, firstName, lastName, email, roles);
-    }
-
-    Person createTestPerson(String username, int personnelNumber, String firstName, String lastName, String email, Role... roles) {
+    Person createTestPerson(String username, int personnelNumber, String firstName, String lastName, String email, List<Role> permissions, List<MailNotification> notifications) {
 
         final Optional<Person> personByUsername = personService.getPersonByUsername(username);
         if (personByUsername.isPresent()) {
             return personByUsername.get();
         }
-
-        final List<Role> permissions = asList(roles);
-        final List<MailNotification> notifications = getNotificationsForRoles(permissions);
 
         final Person person = new Person(username, lastName, firstName, email);
         person.setPermissions(permissions);
@@ -104,13 +87,5 @@ class PersonDataProvider {
             null);
 
         return savedPerson;
-    }
-
-    private List<MailNotification> getNotificationsForRoles(List<Role> roles) {
-        final List<MailNotification> notifications = new ArrayList<>();
-        if (roles.contains(DEPARTMENT_HEAD) || roles.contains(SECOND_STAGE_AUTHORITY) || roles.contains(BOSS)) {
-            notifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT);
-        }
-        return notifications;
     }
 }
