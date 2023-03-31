@@ -13,20 +13,17 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createApplication;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypeEntity;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_DEPARTMENTS;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -62,28 +59,38 @@ class ApplicationRecipientServiceTest {
         // given boss all
         final Person bossAll = createPerson("boss", BOSS);
         bossAll.setId(2);
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_BOSS_ALL)).thenReturn(List.of(bossAll));
+        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
+        when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
+
+        // given office all
+        final Person officeAll = createPerson("office", OFFICE);
+        officeAll.setId(2);
+        officeAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(officeAll));
 
         // given boss department
         final Person bossDepartment = createPerson("boss", BOSS);
         bossDepartment.setId(3);
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_BOSS_DEPARTMENTS)).thenReturn(List.of(bossDepartment));
+        bossDepartment.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT));
+        when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossDepartment));
         when(departmentService.getAssignedDepartmentsOfMember(bossDepartment)).thenReturn(List.of(department));
 
         // given department head
         final Person departmentHead = createPerson("departmentHead", DEPARTMENT_HEAD);
         departmentHead.setId(4);
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_DEPARTMENT_HEAD)).thenReturn(List.of(departmentHead));
+        departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT));
+        when(personService.getActivePersonsByRole(DEPARTMENT_HEAD)).thenReturn(List.of(departmentHead));
         when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, normalUser)).thenReturn(true);
 
         // given second stage
         final Person secondStage = createPerson("secondStage", SECOND_STAGE_AUTHORITY);
         secondStage.setId(5);
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_SECOND_STAGE_AUTHORITY)).thenReturn(List.of(secondStage));
+        secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT));
+        when(personService.getActivePersonsByRole(SECOND_STAGE_AUTHORITY)).thenReturn(List.of(secondStage));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStage, normalUser)).thenReturn(true);
 
         final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
-        assertThat(recipientsForAllowAndRemind).containsOnly(bossAll, bossDepartment, departmentHead, secondStage);
+        assertThat(recipientsForAllowAndRemind).containsOnly(officeAll, bossAll, bossDepartment, departmentHead, secondStage);
     }
 
     @Test
@@ -96,10 +103,14 @@ class ApplicationRecipientServiceTest {
         normalUser.setId(1);
         final Application application = getHolidayApplication(normalUser);
 
+        // given office all
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of());
+
         // given boss all
         final Person bossAll = createPerson("boss", BOSS);
         bossAll.setId(2);
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_BOSS_ALL)).thenReturn(List.of(bossAll));
+        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
+        when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
         final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
         assertThat(recipientsForAllowAndRemind).containsOnly(bossAll);
@@ -122,10 +133,14 @@ class ApplicationRecipientServiceTest {
         // given boss all
         final Person bossAll = createPerson("boss", BOSS);
         bossAll.setId(2);
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_BOSS_ALL)).thenReturn(List.of(bossAll));
+        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT));
+        when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
+
+        // given office all
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of());
 
         // given boss department
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_BOSS_DEPARTMENTS)).thenReturn(List.of(bossAll));
+        when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
         when(departmentService.getAssignedDepartmentsOfMember(bossAll)).thenReturn(List.of(department));
 
         final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);

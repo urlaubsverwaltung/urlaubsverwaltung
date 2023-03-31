@@ -15,7 +15,6 @@ import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -28,18 +27,7 @@ import static java.time.DayOfWeek.TUESDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 /**
  * Provides person demo data.
@@ -66,23 +54,12 @@ class PersonDataProvider {
             .isPresent();
     }
 
-    Person createTestPerson(DemoUser demoUser, int personnelNumber, String firstName, String lastName, String email) {
-
-        final String username = demoUser.getUsername();
-        final Role[] roles = demoUser.getRoles();
-
-        return createTestPerson(username, personnelNumber, firstName, lastName, email, roles);
-    }
-
-    Person createTestPerson(String username, int personnelNumber, String firstName, String lastName, String email, Role... roles) {
+    Person createTestPerson(String username, int personnelNumber, String firstName, String lastName, String email, List<Role> permissions, List<MailNotification> notifications) {
 
         final Optional<Person> personByUsername = personService.getPersonByUsername(username);
         if (personByUsername.isPresent()) {
             return personByUsername.get();
         }
-
-        final List<Role> permissions = asList(roles);
-        final List<MailNotification> notifications = getNotificationsForRoles(permissions);
 
         final Person person = new Person(username, lastName, firstName, email);
         person.setPermissions(permissions);
@@ -110,27 +87,5 @@ class PersonDataProvider {
             null);
 
         return savedPerson;
-    }
-
-    private List<MailNotification> getNotificationsForRoles(List<Role> roles) {
-
-        final List<MailNotification> notifications = new ArrayList<>();
-        notifications.add(NOTIFICATION_USER);
-
-        if (roles.contains(DEPARTMENT_HEAD)) {
-            notifications.add(NOTIFICATION_DEPARTMENT_HEAD);
-        }
-        if (roles.contains(SECOND_STAGE_AUTHORITY)) {
-            notifications.add(NOTIFICATION_SECOND_STAGE_AUTHORITY);
-        }
-        if (roles.contains(BOSS)) {
-            notifications.add(NOTIFICATION_BOSS_ALL);
-        }
-        if (roles.contains(OFFICE)) {
-            notifications.add(NOTIFICATION_OFFICE);
-            notifications.add(OVERTIME_NOTIFICATION_OFFICE);
-        }
-
-        return notifications;
     }
 }

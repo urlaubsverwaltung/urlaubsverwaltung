@@ -1,3 +1,74 @@
+.list-selectable {
+  @apply tw-space-y-1;
+}
+
+@media only screen and (max-width: 639px) {
+  .list-selectable {
+    @apply tw-space-y-4;
+  }
+
+  .list-selectable__item {
+    @apply tw-rounded;
+    @apply tw-border;
+    @apply tw-p-2;
+    @apply tw-transition-colors;
+    @apply tw-bg-white;
+    @apply dark:tw-border-zinc-800;
+    @apply dark:tw-bg-zinc-800;
+    @apply dark:tw-bg-opacity-20;
+  }
+
+  .list-selectable__item[data-enabled="true"] {
+    @apply tw-border-blue-100;
+    @apply tw-bg-blue-50;
+    @apply tw-bg-opacity-20;
+    @apply dark:tw-border-zinc-800;
+    @apply dark:tw-bg-zinc-800;
+    @apply dark:tw-bg-opacity-20;
+  }
+}
+
+@screen sm {
+  .list-selectable__item {
+    @apply tw-py-1;
+    @apply tw-px-2;
+    @apply tw-rounded;
+    @apply tw-transition-colors;
+  }
+
+  .list-selectable__item[data-enabled="false"] {
+    @apply tw-text-zinc-500;
+    @apply dark:tw-text-zinc-300;
+  }
+
+  .list-selectable__item[data-enabled="false"]:hover {
+    @apply tw-bg-zinc-100;
+    @apply dark:tw-bg-zinc-800;
+  }
+
+  .list-selectable__item[data-enabled="true"] {
+    @apply tw-text-blue-900;
+    @apply tw-bg-blue-50;
+    @apply dark:tw-text-zinc-300;
+    @apply dark:tw-bg-zinc-800;
+    @apply tw-bg-opacity-75;
+  }
+
+  .list-selectable__item[data-enabled="true"]:hover {
+    @apply tw-bg-blue-100;
+    @apply dark:tw-bg-zinc-700;
+    @apply tw-bg-opacity-70;
+  }
+}
+
+/* bootstrap view breakpoint. list is stretched to full width now */
+@media only screen and (min-width: 992px) {
+  .list-selectable__item {
+    @apply tw-py-1;
+    @apply tw-px-4;
+  }
+}
+
 @screen lg {
   ul.lg\:list--hover > li {
     @apply tw-transition-colors;

@@ -7,7 +7,7 @@
   @apply tw-hidden;
   @apply sm:tw-sticky;
   z-index: 1; /* color-picker should not cover the sticky header */
-  top: 3.25rem; /* header height */
+  top: var(--uv-header-height);
   @apply tw-bg-white;
   @apply dark:tw-bg-zinc-900;
   @apply tw-py-1;
@@ -25,22 +25,6 @@
   @apply tw-block;
   @apply tw-truncate;
   width: 40%;
-}
-
-.absence-type-option-checkbox {
-  width: 1.125rem;
-  height: 1.125rem;
-  appearance: none;
-  @apply tw-border;
-  @apply tw-border-zinc-400;
-  @apply tw-rounded;
-  @apply tw-transition-colors;
-}
-
-.absence-type-option-checkbox:checked {
-  @apply tw-bg-blue-500 !important;
-  @apply tw-border-blue-500 !important;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
 }
 
 @media only screen and (max-width: 639px) {
@@ -75,15 +59,6 @@
 
   .absence-type-list-item[data-enabled="false"] .absence-type-cell-text {
     @apply tw-text-opacity-75;
-  }
-
-  .absence-type-list-item[data-enabled="false"] .absence-type-option-checkbox {
-    @apply tw-border-zinc-300;
-  }
-
-  .absence-type-list-item[data-enabled="false"] .absence-type-option-checkbox:checked {
-    @apply tw-bg-blue-300;
-    @apply tw-border-blue-300;
   }
 }
 
@@ -126,15 +101,6 @@
     @apply tw-bg-opacity-70;
   }
 
-  .absence-type-list-item[data-enabled="false"] .absence-type-option-checkbox {
-    @apply tw-border-zinc-300;
-  }
-
-  .absence-type-list-item[data-enabled="false"] .absence-type-option-checkbox:checked {
-    @apply tw-bg-blue-300;
-    @apply tw-border-blue-300;
-  }
-
   .absence-type-cell-title {
     display: none;
   }
@@ -161,7 +127,7 @@
 
 @screen lg {
   .absence-type-list-head {
-    top: 3rem; /* header height */
+    top: var(--uv-header-height);
   }
 
   .absence-type-list-head,

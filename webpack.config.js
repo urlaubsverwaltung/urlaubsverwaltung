@@ -31,6 +31,7 @@ module.exports = {
     sick_note_convert: `${paths.src}/bundles/sick-note-convert.js`,
     sick_notes: `${paths.src}/bundles/sick-notes.js`,
     person: `${paths.src}/bundles/person.js`,
+    person_notifications: `${paths.src}/bundles/person-notifications.js`,
     persons: `${paths.src}/bundles/persons.js`,
     absences_overview: `${paths.src}/bundles/absences-overview.js`,
     department_form: `${paths.src}/bundles/department-form.js`,

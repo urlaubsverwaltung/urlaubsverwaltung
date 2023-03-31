@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
@@ -25,7 +24,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +38,16 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CONVERTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationMailServiceTest {
@@ -76,6 +83,7 @@ class ApplicationMailServiceTest {
         when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
 
         final Person person = new Person();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
@@ -92,7 +100,8 @@ class ApplicationMailServiceTest {
         final ApplicationComment applicationComment = new ApplicationComment(person, clock);
 
         final Person boss = new Person();
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss));
+        final Person office = new Person();
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss, office));
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -111,8 +120,7 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
         assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
-        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(boss));
-        assertThat(mails.get(1).getMailNotificationRecipients()).hasValue(NOTIFICATION_OFFICE);
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(boss, office));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.allowed.management");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_allowed_to_management");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
@@ -124,6 +132,7 @@ class ApplicationMailServiceTest {
     void sendRejectedNotification() {
 
         final Person person = new Person();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REJECTED));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
@@ -202,6 +211,7 @@ class ApplicationMailServiceTest {
     void sendEditedApplicationNotification() {
 
         final Person recipient = new Person();
+        recipient.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
@@ -232,10 +242,11 @@ class ApplicationMailServiceTest {
     @Test
     void sendDeclinedCancellationRequestApplicationNotification() {
 
-        final Application application = new Application();
         final Person person = new Person();
-        application.setPerson(person);
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
+        final Application application = new Application();
+        application.setPerson(person);
         final ApplicationComment comment = new ApplicationComment(person, clock);
 
         final Map<String, Object> model = new HashMap<>();
@@ -244,14 +255,9 @@ class ApplicationMailServiceTest {
 
         final Person office = new Person();
         office.setId(1);
-        final List<Person> officeWorkers = List.of(office);
-        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(officeWorkers);
-
         final Person relevantPerson = new Person();
         relevantPerson.setId(2);
-        final List<Person> relevantPersons = new ArrayList<>();
-        relevantPersons.add(relevantPerson);
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson, office));
 
         sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
 
@@ -271,8 +277,10 @@ class ApplicationMailServiceTest {
     @Test
     void ensureMailIsSentToAllRecipientsThatHaveAnEmailAddress() {
 
-        final Application application = new Application();
         final Person person = new Person();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
+
+        final Application application = new Application();
         application.setPerson(person);
         final ApplicationComment applicationComment = new ApplicationComment(person, clock);
 
@@ -281,7 +289,7 @@ class ApplicationMailServiceTest {
         model.put("comment", applicationComment);
 
         final List<Person> relevantPersons = List.of(new Person());
-        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(relevantPersons);
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);
 
         sut.sendCancellationRequest(application, applicationComment);
 
@@ -301,6 +309,7 @@ class ApplicationMailServiceTest {
     @Test
     void sendSickNoteConvertedToVacationNotification() {
         final Person person = new Person();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CONVERTED));
 
         final Application application = new Application();
         application.setPerson(person);
@@ -327,6 +336,8 @@ class ApplicationMailServiceTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Person holidayReplacement = new Person();
+        holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
+
         final Person applicant = new Person();
         applicant.setFirstName("Theo");
         applicant.setLastName("Fritz");
@@ -368,6 +379,7 @@ class ApplicationMailServiceTest {
     void notifyHolidayReplacementAboutEdit() {
 
         final Person holidayReplacement = new Person();
+        holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacement);
@@ -403,6 +415,7 @@ class ApplicationMailServiceTest {
     void notifyHolidayReplacementForApply() {
 
         final Person holidayReplacement = new Person();
+        holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacement);
@@ -446,7 +459,9 @@ class ApplicationMailServiceTest {
 
         final Person applicant = new Person();
         applicant.setFirstName("Thomas");
+
         final Person holidayReplacement = new Person();
+        holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacement);
@@ -481,6 +496,7 @@ class ApplicationMailServiceTest {
     void sendConfirmation() {
 
         final Person person = new Person();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
@@ -517,6 +533,7 @@ class ApplicationMailServiceTest {
     void sendConfirmationAllowedDirectly() {
 
         final Person person = new Person();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setRequiresApproval(false);
@@ -554,6 +571,7 @@ class ApplicationMailServiceTest {
     void sendConfirmationAllowedDirectlyByOffice() {
 
         final Person person = new Person();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setRequiresApproval(false);
@@ -638,6 +656,7 @@ class ApplicationMailServiceTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         final Person holidayReplacement = new Person();
+        holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacement);
@@ -675,6 +694,7 @@ class ApplicationMailServiceTest {
     void sendAppliedForLeaveByOfficeNotification() {
 
         final Person person = new Person();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
@@ -755,6 +775,7 @@ class ApplicationMailServiceTest {
         vacationType.setMessageKey("application.data.vacationType.holiday");
 
         final Person person = new Person();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final Application application = new Application();
         application.setStartDate(LocalDate.of(2022, 3, 3));
@@ -788,6 +809,7 @@ class ApplicationMailServiceTest {
     void sendCancelledDirectlyConfirmationByOffice() {
 
         final Person person = new Person();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
@@ -828,6 +850,8 @@ class ApplicationMailServiceTest {
         when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
 
         final Person person = new Person();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
+
         final Person office = new Person();
 
         final Application application = new Application();
@@ -842,11 +866,7 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("comment", comment);
 
-        final List<Person> relevantPersons = new ArrayList<>();
-        relevantPersons.add(person);
-
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);
-        when(applicationRecipientService.getRecipientsWithOfficeNotifications()).thenReturn(List.of(office));
+        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(person, office));
 
         sut.sendCancelledConfirmationByManagement(application, comment);
 
@@ -919,6 +939,7 @@ class ApplicationMailServiceTest {
     void sendTemporaryAllowedNotification() {
 
         final Person person = new Person();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
         final List<Person> recipients = singletonList(person);
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
@@ -971,7 +992,7 @@ class ApplicationMailServiceTest {
     void sendRemindForStartsSoonApplicationsReminderNotification() {
 
         final Person person = new Person();
-        final List<Person> recipients = singletonList(person);
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
@@ -997,22 +1018,23 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.remind.upcoming");
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cron_remind_for_upcoming_application_to_applicant");
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
-        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(recipients);
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.remind.upcoming");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_cron_remind_for_upcoming_application_to_applicant");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
     }
 
-
     @Test
     void sendRemindForUpcomingHolidayReplacement() {
 
         final Person holidayReplacement = new Person();
+        holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING));
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
         holidayReplacementEntity.setNote("Note");
 
         final Person holidayReplacementTwo = new Person();
+        holidayReplacementTwo.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING));
         final HolidayReplacementEntity holidayReplacementEntityTwo = new HolidayReplacementEntity();
         holidayReplacementEntityTwo.setPerson(holidayReplacementTwo);
         holidayReplacementEntityTwo.setNote("Note 2");

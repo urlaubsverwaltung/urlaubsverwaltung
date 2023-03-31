@@ -1,7 +1,5 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
-import org.synyx.urlaubsverwaltung.person.MailNotification;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +13,6 @@ public class PersonPermissionsDto {
     private Boolean isInactive;
 
     private List<PersonPermissionsRoleDto> permissions = new ArrayList<>();
-    private List<MailNotification> notifications = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -68,24 +65,16 @@ public class PersonPermissionsDto {
         this.permissions = permissions;
     }
 
-    public List<MailNotification> getNotifications() {
-        return notifications;
-    }
-
-    public void setNotifications(List<MailNotification> notifications) {
-        this.notifications = notifications;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PersonPermissionsDto that = (PersonPermissionsDto) o;
-        return id.equals(that.id) && permissions.equals(that.permissions) && notifications.equals(that.notifications);
+        return id.equals(that.id) && permissions.equals(that.permissions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, permissions, notifications);
+        return Objects.hash(id, permissions);
     }
 }

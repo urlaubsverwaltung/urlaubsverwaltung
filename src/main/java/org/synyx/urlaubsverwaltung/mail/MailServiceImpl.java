@@ -7,7 +7,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.user.UserSettingsService;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
@@ -34,17 +33,15 @@ class MailServiceImpl implements MailService {
     private final ITemplateEngine emailTemplateEngine;
     private final MailSenderService mailSenderService;
     private final MailProperties mailProperties;
-    private final PersonService personService;
     private final UserSettingsService userSettingsService;
 
     @Autowired
     MailServiceImpl(MessageSource emailMessageSource, ITemplateEngine emailTemplateEngine, MailSenderService mailSenderService,
-                    MailProperties mailProperties, PersonService personService, UserSettingsService userSettingsService) {
+                    MailProperties mailProperties, UserSettingsService userSettingsService) {
         this.emailMessageSource = emailMessageSource;
         this.emailTemplateEngine = emailTemplateEngine;
         this.mailProperties = mailProperties;
         this.mailSenderService = mailSenderService;
-        this.personService = personService;
         this.userSettingsService = userSettingsService;
     }
 
@@ -84,7 +81,6 @@ class MailServiceImpl implements MailService {
     private List<Person> getRecipients(Mail mail) {
 
         final List<Person> recipients = new ArrayList<>();
-        mail.getMailNotificationRecipients().ifPresent(mailNotification -> recipients.addAll(personService.getActivePersonsWithNotificationType(mailNotification)));
         mail.getMailAddressRecipients().ifPresent(recipients::addAll);
 
         if (mail.isSendToTechnicalMail()) {

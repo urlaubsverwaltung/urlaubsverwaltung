@@ -20,7 +20,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -83,7 +82,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
                 lastName,
                 firstName,
                 emailAddress,
-                List.of(NOTIFICATION_USER),
+                List.of(),
                 List.of(USER)
             );
             person = personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);

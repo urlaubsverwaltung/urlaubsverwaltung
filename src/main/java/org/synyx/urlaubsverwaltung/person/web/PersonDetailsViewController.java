@@ -30,6 +30,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.web.PersonDetailsBasedataDtoMapper.mapToPersonDetailsBasedataDto;
+import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToPersonNotificationsDto;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapRoleToPermissionsDto;
 
 @Controller
@@ -78,6 +79,8 @@ public class PersonDetailsViewController implements HasLaunchpad {
         model.addAttribute("person", person);
         model.addAttribute("permissions", mapRoleToPermissionsDto(List.copyOf(person.getPermissions())));
 
+        model.addAttribute("personNotificationsDto", mapToPersonNotificationsDto(person));
+
         final Optional<PersonBasedata> basedataByPersonId = personBasedataService.getBasedataByPersonId(person.getId());
         if (basedataByPersonId.isPresent()) {
             final PersonDetailsBasedataDto personDetailsBasedataDto = mapToPersonDetailsBasedataDto(basedataByPersonId.get());
@@ -97,6 +100,7 @@ public class PersonDetailsViewController implements HasLaunchpad {
 
         model.addAttribute("canEditBasedata", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditPermissions", signedInUser.hasRole(OFFICE));
+        model.addAttribute("canEditNotifications", personId.equals(signedInUser.getId()) || signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditDepartments", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditAccounts", signedInUser.hasRole(OFFICE));
         model.addAttribute("canEditWorkingtime", signedInUser.hasRole(OFFICE));

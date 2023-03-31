@@ -11,22 +11,18 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.user.UserSettingsService;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.OVERTIME_NOTIFICATION_OFFICE;
 
 @ExtendWith(MockitoExtension.class)
 class MailServiceImplTest {
@@ -42,8 +38,6 @@ class MailServiceImplTest {
     @Mock
     private MailProperties mailProperties;
     @Mock
-    private PersonService personService;
-    @Mock
     private UserSettingsService userSettingsService;
 
     @BeforeEach
@@ -53,32 +47,7 @@ class MailServiceImplTest {
         when(mailProperties.getSender()).thenReturn("no-reply@example.org");
         when(mailProperties.getSenderDisplayName()).thenReturn("Urlaubsverwaltung");
         when(mailProperties.getApplicationUrl()).thenReturn("http://localhost:8080");
-        sut = new MailServiceImpl(messageSource, emailTemplateEngine, mailSenderService, mailProperties, personService, userSettingsService);
-    }
-
-    @Test
-    void sendMailToWithNotification() {
-
-        setupMockServletRequest();
-
-        final Person person = new Person();
-        person.setEmail("mail@example.org");
-        when(personService.getActivePersonsWithNotificationType(OVERTIME_NOTIFICATION_OFFICE)).thenReturn(List.of(person));
-
-        final Map<String, Object> model = new HashMap<>();
-        model.put("someModel", "something");
-
-        final String subjectMessageKey = "subject.overtime.created";
-        final String templateName = "overtime_office";
-        final Mail mail = Mail.builder()
-            .withRecipient(OVERTIME_NOTIFICATION_OFFICE)
-            .withSubject(subjectMessageKey)
-            .withTemplate(templateName, model)
-            .build();
-
-        sut.send(mail);
-
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "mail@example.org", "subject", "emailBody");
+        sut = new MailServiceImpl(messageSource, emailTemplateEngine, mailSenderService, mailProperties, userSettingsService);
     }
 
     @Test
@@ -211,15 +180,11 @@ class MailServiceImplTest {
     }
 
     @Test
-    void sendMailToWithNotificationAndPersonsAndAdministrator() {
+    void sendMailToWithPersonsAndAdministrator() {
 
         when(mailProperties.getAdministrator()).thenReturn("admin@example.org");
 
         setupMockServletRequest();
-
-        final Person hans = new Person();
-        hans.setEmail("hans@example.org");
-        when(personService.getActivePersonsWithNotificationType(NOTIFICATION_USER)).thenReturn(List.of(hans));
 
         final Person franz = new Person();
         franz.setEmail("franz@example.org");
@@ -230,14 +195,12 @@ class MailServiceImplTest {
         final Mail mail = Mail.builder()
             .withTechnicalRecipient(true)
             .withRecipient(List.of(franz))
-            .withRecipient(NOTIFICATION_USER)
             .withSubject(subjectMessageKey)
             .withTemplate(templateName, new HashMap<>())
             .build();
 
         sut.send(mail);
 
-        verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "hans@example.org", "subject", "emailBody");
         verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "franz@example.org", "subject", "emailBody");
         verify(mailSenderService).sendEmail("Urlaubsverwaltung <no-reply@example.org>", "admin@example.org", "subject", "emailBody");
     }

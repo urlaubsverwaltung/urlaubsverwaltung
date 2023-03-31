@@ -11,8 +11,7 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -189,20 +188,19 @@ class PersonRepositoryIT extends TestContainersBase {
 
         final Person marlene = new Person("marlene", "Muster", "Marlene", "muster@example.org");
         marlene.setPermissions(List.of(USER, OFFICE, INACTIVE));
-        marlene.setNotifications(List.of(NOTIFICATION_OFFICE));
+        marlene.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
         personService.create(marlene);
 
         final Person peter = new Person("peter", "Muster", "Peter", "peter@example.org");
         peter.setPermissions(List.of(USER, OFFICE));
-        peter.setNotifications(List.of(NOTIFICATION_OFFICE));
+        peter.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
         personService.create(peter);
 
         final Person bettina = new Person("bettina", "Muster", "bettina", "bettina@example.org");
         bettina.setPermissions(List.of(USER));
-        bettina.setNotifications(List.of(NOTIFICATION_USER));
         personService.create(bettina);
 
-        final List<Person> personsWithOfficeRole = sut.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_OFFICE);
+        final List<Person> personsWithOfficeRole = sut.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL);
         assertThat(personsWithOfficeRole).containsExactly(peter);
     }
 
@@ -211,20 +209,20 @@ class PersonRepositoryIT extends TestContainersBase {
 
         final Person xenia = new Person("xenia", "Basta", "xenia", "xenia@example.org");
         xenia.setPermissions(List.of(USER));
-        xenia.setNotifications(List.of(NOTIFICATION_OFFICE));
+        xenia.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
         personService.create(xenia);
 
         final Person peter = new Person("peter", "Muster", "Peter", "peter@example.org");
         peter.setPermissions(List.of(USER));
-        peter.setNotifications(List.of(NOTIFICATION_OFFICE));
+        peter.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
         personService.create(peter);
 
         final Person bettina = new Person("bettina", "Muster", "bettina", "bettina@example.org");
         bettina.setPermissions(List.of(USER));
-        bettina.setNotifications(List.of(NOTIFICATION_OFFICE));
+        bettina.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
         personService.create(bettina);
 
-        final List<Person> personsWithUserRole = sut.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_OFFICE);
+        final List<Person> personsWithUserRole = sut.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL);
         assertThat(personsWithUserRole).containsExactly(bettina, peter, xenia);
     }
 

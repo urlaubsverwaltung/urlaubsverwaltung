@@ -9,15 +9,17 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
 
 @Service
 class PersonMailService {
 
     private final MailService mailService;
+    private final PersonService personService;
 
-    PersonMailService(MailService mailService) {
+    PersonMailService(MailService mailService, PersonService personService) {
         this.mailService = mailService;
+        this.personService = personService;
     }
 
     @Async
@@ -29,7 +31,7 @@ class PersonMailService {
         model.put("personNiceName", event.getPersonNiceName());
 
         final Mail toOffice = Mail.builder()
-            .withRecipient(NOTIFICATION_OFFICE)
+            .withRecipient(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL))
             .withSubject("subject.person.created")
             .withTemplate("person_created_office", model)
             .build();

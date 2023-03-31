@@ -17,11 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.BOSS;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.INACTIVE;
@@ -186,104 +181,6 @@ class PersonPermissionsDtoValidatorTest {
 
         final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
         personPermissionsDto.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
-
-        sut.validatePermissions(personPermissionsDto, errors);
-        verifyNoInteractions(errors);
-    }
-
-    @Test
-    void ensureNoErrorInNotificationsIfPermissionsNotGiven() {
-
-        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(null);
-
-        sut.validateNotifications(personPermissionsDto, errors);
-        verifyNoInteractions(errors);
-    }
-
-    @Test
-    void ensureDepartmentHeadMailNotificationIsOnlyValidIfDepartmentHeadRoleSelected() {
-
-        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(List.of(USER, BOSS));
-        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_DEPARTMENT_HEAD));
-
-        sut.validateNotifications(personPermissionsDto, errors);
-        verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
-    }
-
-    @Test
-    void ensureSecondStageMailNotificationIsOnlyValidIfSecondStageRoleSelected() {
-
-        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(List.of(USER, DEPARTMENT_HEAD));
-        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_SECOND_STAGE_AUTHORITY));
-
-        sut.validateNotifications(personPermissionsDto, errors);
-        verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
-    }
-
-    @Test
-    void ensureBossMailNotificationIsOnlyValidIfBossRoleSelected() {
-
-        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(singletonList(USER));
-        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
-
-        sut.validateNotifications(personPermissionsDto, errors);
-        verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
-    }
-
-    @Test
-    void ensureOfficeMailNotificationIsOnlyValidIfOfficeRoleSelected() {
-
-        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(List.of(USER, BOSS));
-        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL, NOTIFICATION_OFFICE));
-
-        sut.validateNotifications(personPermissionsDto, errors);
-        verify(errors).rejectValue("notifications", "person.form.notifications.error.combination");
-    }
-
-    @Test
-    void ensureValidNotificationSelectionForDepartmentHeadHasNoValidationError() {
-
-        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(List.of(USER, DEPARTMENT_HEAD));
-        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_DEPARTMENT_HEAD));
-
-        sut.validatePermissions(personPermissionsDto, errors);
-        verifyNoInteractions(errors);
-    }
-
-    @Test
-    void ensureValidNotificationSelectionForSecondStageHasNoValidationError() {
-
-        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
-        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_SECOND_STAGE_AUTHORITY));
-
-        sut.validatePermissions(personPermissionsDto, errors);
-        verifyNoInteractions(errors);
-    }
-
-    @Test
-    void ensureValidNotificationSelectionForBossHasNoValidationError() {
-
-        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(List.of(USER, BOSS));
-        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
-
-        sut.validatePermissions(personPermissionsDto, errors);
-        verifyNoInteractions(errors);
-    }
-
-    @Test
-    void ensureValidNotificationSelectionForOfficeHasNoValidationError() {
-
-        final PersonPermissionsDto personPermissionsDto = new PersonPermissionsDto();
-        personPermissionsDto.setPermissions(List.of(USER, OFFICE));
-        personPermissionsDto.setNotifications(List.of(NOTIFICATION_USER, NOTIFICATION_OFFICE));
 
         sut.validatePermissions(personPermissionsDto, errors);
         verifyNoInteractions(errors);

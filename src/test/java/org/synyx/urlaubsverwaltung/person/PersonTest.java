@@ -10,8 +10,10 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -67,16 +69,16 @@ class PersonTest {
     void ensureReturnsTrueIfPersonHasTheGivenNotificationType() {
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setNotifications(Arrays.asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
-        assertThat(person.hasNotificationType(NOTIFICATION_BOSS_ALL)).isTrue();
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
+        assertThat(person.hasNotificationType(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL)).isTrue();
     }
 
     @Test
     void ensureReturnsFalseIfPersonHasNotTheGivenNotificationType() {
 
-        Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setNotifications(singletonList(NOTIFICATION_USER));
-        assertThat(person.hasNotificationType(NOTIFICATION_BOSS_ALL)).isFalse();
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT));
+        assertThat(person.hasNotificationType(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL)).isFalse();
     }
 
     @Test
@@ -113,13 +115,13 @@ class PersonTest {
     void ensureNotificationsAreUnmodifiable() {
 
         List<MailNotification> modifiableList = new ArrayList<>();
-        modifiableList.add(NOTIFICATION_USER);
+        modifiableList.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT);
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setNotifications(modifiableList);
 
         final Collection<MailNotification> notifications = person.getNotifications();
-        assertThatThrownBy(() -> notifications.add(NOTIFICATION_BOSS_ALL)).isInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> notifications.add(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT)).isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test
@@ -159,12 +161,12 @@ class PersonTest {
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
         person.setId(10);
         person.setPermissions(List.of(USER));
-        person.setNotifications(List.of(NOTIFICATION_USER));
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
 
         final String personToString = person.toString();
         assertThat(personToString)
             .isEqualTo("Person{id='10'}")
-            .doesNotContain("Theo", "USER", "NOTIFICATION_USER");
+            .doesNotContain("Theo", "USER", "NOTIFICATION_APPLICATION_MANAGEMENT_ALL");
     }
 
     @Test

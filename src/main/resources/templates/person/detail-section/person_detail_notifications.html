@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>person notifications</title>
+  </head>
+  <body>
+    <th:block
+      th:fragment="section(notifications)"
+      th:with="
+        showAbsences=${
+          notifications.applicationManagementAll.active ||
+          notifications.applicationManagementDepartment.active ||
+          notifications.application.active ||
+          notifications.applicationUpcoming.active ||
+          notifications.holidayReplacement.active ||
+          notifications.holidayReplacementUpcoming.active
+        },
+        showOvertime=${notifications.overtimeManagementAll.active},
+        showPersons=${notifications.personNewManagementAll.active}
+      "
+    >
+      <p
+        th:if="${!showAbsences and !showOvertime and !showPersons}"
+        th:text="#{person.account.notifications.nothing-active}"
+        class="tw-text-sm"
+      >
+        Keine E-Mail Benachrichtigungen aktiviert.
+      </p>
+      <dl aria-labelledby="heading-notification" th:if="${showAbsences or showOvertime or showPersons}">
+        <th:block th:if="${showAbsences}">
+          <dt
+            class="tw-font-medium tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+            th:text="#{person.notifications.section.absences.title}"
+          >
+            Abwesenheiten
+          </dt>
+          <th:block
+            th:fragment="email-notification-element(info,active)"
+            th:with="
+                info=${info ?: 'person.notifications.section.absences.all.info'},
+                active=${active == null ? notifications.applicationManagementAll.active : active}
+              "
+          >
+            <dd class="tw-text-sm tw-mb-2" th:if="${active}" th:text="${#messages.msg(info)}"></dd>
+          </th:block>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.applicationManagementDepartment.active},info='person.notifications.section.absences.all-department.info')}"
+          ></dd>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.application.active},info='person.notifications.section.absences.changed.info')}"
+          ></dd>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.applicationUpcoming.active},info='person.notifications.section.absences.upcoming.info')}"
+          ></dd>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.holidayReplacement.active},info='person.notifications.section.absences.holiday-replacement.info')}"
+          ></dd>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.holidayReplacementUpcoming.active},info='person.notifications.section.absences.holiday-replacement.upcoming.info')}"
+          ></dd>
+        </th:block>
+        <th:block th:if="${showOvertime}">
+          <dt
+            class="tw-font-medium tw-mt-8 tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+            th:text="#{person.notifications.section.overtime.title}"
+          >
+            Überstunden
+          </dt>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.overtimeManagementAll.active},info='person.notifications.section.overtime.all.info')}"
+          ></dd>
+        </th:block>
+        <th:block th:if="${showPersons}">
+          <dt
+            class="tw-font-medium tw-mt-8 tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+            th:text="#{person.notifications.section.persons.title}"
+          >
+            Personen
+          </dt>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.personNewManagementAll.active},info='person.notifications.section.persons.added.info')}"
+          ></dd>
+        </th:block>
+      </dl>
+    </th:block>
+  </body>
+</html>

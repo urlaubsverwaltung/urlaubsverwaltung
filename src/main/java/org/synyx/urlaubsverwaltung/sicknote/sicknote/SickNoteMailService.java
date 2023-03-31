@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
@@ -17,7 +18,7 @@ import java.util.Map;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Service
 class SickNoteMailService {
@@ -27,13 +28,16 @@ class SickNoteMailService {
     private final SettingsService settingsService;
     private final SickNoteService sickNoteService;
     private final MailService mailService;
+    private final PersonService personService;
     private final Clock clock;
 
     @Autowired
-    SickNoteMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService, Clock clock) {
+    SickNoteMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService,
+                        PersonService personService, Clock clock) {
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
         this.mailService = mailService;
+        this.personService = personService;
         this.clock = clock;
     }
 
@@ -73,7 +77,7 @@ class SickNoteMailService {
             mailService.send(toSickNotePerson);
 
             final Mail toOffice = Mail.builder()
-                .withRecipient(NOTIFICATION_OFFICE)
+                .withRecipient(personService.getActivePersonsByRole(OFFICE))
                 .withSubject("subject.sicknote.endOfSickPay.office", sickNote.getPerson().getNiceName())
                 .withTemplate("sicknote_end_of_sick_pay_office", model)
                 .build();

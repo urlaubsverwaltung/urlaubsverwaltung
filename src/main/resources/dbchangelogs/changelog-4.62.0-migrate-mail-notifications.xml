@@ -1,0 +1,50 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="migrate-mail-notifications">
+    <preConditions>
+      <tableExists tableName="person_notifications"/>
+      <tableExists tableName="person_permissions"/>
+    </preConditions>
+
+    <sql>
+      INSERT INTO person_notifications(person_id, notifications) SELECT DISTINCT person_id, 'NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL' FROM person_notifications WHERE notifications = 'NOTIFICATION_OFFICE' OR notifications = 'NOTIFICATION_BOSS_ALL';
+      INSERT INTO person_notifications(person_id, notifications) SELECT DISTINCT person_id, 'NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT' FROM person_notifications WHERE notifications = 'NOTIFICATION_BOSS_DEPARTMENTS' OR notifications = 'NOTIFICATION_DEPARTMENT_HEAD' OR notifications = 'NOTIFICATION_SECOND_STAGE_AUTHORITY';
+      INSERT INTO person_notifications(person_id, notifications) SELECT DISTINCT person_id, 'NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL' FROM person_notifications WHERE notifications = 'NOTIFICATION_OFFICE' OR notifications = 'NOTIFICATION_BOSS_ALL';
+      INSERT INTO person_notifications(person_id, notifications) SELECT DISTINCT person_id, 'NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL' FROM person_notifications WHERE notifications = 'OVERTIME_NOTIFICATION_OFFICE';
+
+      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_APPLIED' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
+      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_ALLOWED' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
+      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_REVOKED' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
+      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_REJECTED' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
+      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
+      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_CANCELLATION' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
+      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_EDITED' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
+      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_CONVERTED' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
+      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
+      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
+      INSERT INTO person_notifications(person_id, notifications) SELECT person_id, 'NOTIFICATION_EMAIL_APPLICATION_UPCOMING' FROM person_permissions perm WHERE perm.permissions = 'USER' OR perm.permissions = 'INACTIVE';
+    </sql>
+
+    <delete tableName="person_notifications">
+      <where>notifications = 'NOTIFICATION_OFFICE'</where>
+    </delete>
+    <delete tableName="person_notifications">
+      <where>notifications = 'NOTIFICATION_BOSS_ALL'</where>
+    </delete>
+    <delete tableName="person_notifications">
+      <where>notifications = 'NOTIFICATION_BOSS_DEPARTMENTS'</where>
+    </delete>
+    <delete tableName="person_notifications">
+      <where>notifications = 'OVERTIME_NOTIFICATION_OFFICE'</where>
+    </delete>
+    <delete tableName="person_notifications">
+      <where>notifications = 'NOTIFICATION_SECOND_STAGE_AUTHORITY'</where>
+    </delete>
+    <delete tableName="person_notifications">
+      <where>notifications = 'NOTIFICATION_DEPARTMENT_HEAD'</where>
+    </delete>
+  </changeSet>
+</databaseChangeLog>

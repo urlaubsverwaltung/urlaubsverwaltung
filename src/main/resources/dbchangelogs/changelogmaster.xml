@@ -114,5 +114,7 @@
   <include file="dbchangelogs/changelog-4.52.0-fk-constraint-sick-note-comment-to-sick-note.xml"/>
   <include file="dbchangelogs/changelog-4.59.0-remove-not-used-columns.xml"/>
   <include file="dbchangelogs/changelog-4.60.0-last-locale-of-user.xml"/>
-  <include file="/dbchangelogs/changelog-4.62.0-drop-person-password.xml"/>
+  <include file="dbchangelogs/changelog-4.62.0-drop-person-password.xml"/>
+  <include file="dbchangelogs/changelog-4.62.0-drop-notification-user.xml"/>
+  <include file="dbchangelogs/changelog-4.62.0-migrate-mail-notifications.xml"/>
 </databaseChangeLog>

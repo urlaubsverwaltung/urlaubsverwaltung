@@ -13,7 +13,6 @@ import java.util.Optional;
 public class Mail {
 
     private final List<Person> mailAddressRecipients;
-    private final MailNotification mailNotificationRecipients;
     private final boolean sendToTechnicalMail;
 
     private final String templateName;
@@ -24,11 +23,10 @@ public class Mail {
 
     private final List<MailAttachment> mailAttachments;
 
-    Mail(List<Person> mailAddressRecipients, MailNotification mailNotificationRecipients, boolean sendToTechnicalMail,
+    Mail(List<Person> mailAddressRecipients, boolean sendToTechnicalMail,
          String templateName, Map<String, Object> templateModel, String subjectMessageKey,
          Object[] subjectMessageArguments, List<MailAttachment> mailAttachments) {
         this.mailAddressRecipients = mailAddressRecipients;
-        this.mailNotificationRecipients = mailNotificationRecipients;
         this.sendToTechnicalMail = sendToTechnicalMail;
         this.templateName = templateName;
         this.templateModel = templateModel;
@@ -39,10 +37,6 @@ public class Mail {
 
     public Optional<List<Person>> getMailAddressRecipients() {
         return Optional.ofNullable(mailAddressRecipients);
-    }
-
-    public Optional<MailNotification> getMailNotificationRecipients() {
-        return Optional.ofNullable(mailNotificationRecipients);
     }
 
     public boolean isSendToTechnicalMail() {
@@ -78,8 +72,7 @@ public class Mail {
      */
     public static class Builder {
 
-        private List<Person> mailAddressRecipients = new ArrayList<>();
-        private MailNotification mailNotificationRecipients;
+        private final List<Person> mailAddressRecipients = new ArrayList<>();
         private boolean sendToTechnicalMail;
 
         private String templateName;
@@ -95,22 +88,24 @@ public class Mail {
             return this;
         }
 
-        public Mail.Builder withRecipient(MailNotification mailNotification) {
-            this.mailNotificationRecipients = mailNotification;
-            return this;
-        }
-
-        public Mail.Builder withRecipient(Person recipient) {
+        public Mail.Builder withRecipient(final Person recipient) {
             withRecipient(List.of(recipient));
             return this;
         }
 
-        public Mail.Builder withRecipient(List<Person> recipients) {
-            if (mailAddressRecipients == null) {
-                mailAddressRecipients = new ArrayList<>();
-            }
+        public Mail.Builder withRecipient(final Person recipient, final MailNotification mailNotification) {
+            withRecipient(List.of(recipient), mailNotification);
+            return this;
+        }
 
-            this.mailAddressRecipients.addAll(recipients);
+        public Mail.Builder withRecipient(final List<Person> recipients) {
+            return withRecipient(recipients, null);
+        }
+
+        public Mail.Builder withRecipient(final List<Person> recipients, final MailNotification mailNotification) {
+            recipients.stream()
+                .filter(person -> mailNotification == null || person.hasNotificationType(mailNotification))
+                .forEachOrdered(mailAddressRecipients::add);
             return this;
         }
 
@@ -136,7 +131,7 @@ public class Mail {
         }
 
         public Mail build() {
-            return new Mail(mailAddressRecipients, mailNotificationRecipients, sendToTechnicalMail,
+            return new Mail(mailAddressRecipients, sendToTechnicalMail,
                 templateName, templateModel, subjectMessageKey, subjectMessageArguments,
                 mailAttachments);
         }

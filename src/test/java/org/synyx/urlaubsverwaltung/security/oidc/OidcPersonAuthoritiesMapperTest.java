@@ -33,7 +33,6 @@ import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SU
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -124,7 +123,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(createdPerson);
+        when(personService.create(uniqueID, familyName, givenName, email, List.of(), List.of(USER))).thenReturn(createdPerson);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
@@ -153,7 +152,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(createdPerson);
+        when(personService.create(uniqueID, familyName, givenName, email, List.of(), List.of(USER))).thenReturn(createdPerson);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
@@ -194,7 +193,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(createdPerson);
+        when(personService.create(uniqueID, familyName, givenName, email, List.of(), List.of(USER))).thenReturn(createdPerson);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
@@ -235,7 +234,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(createdPerson);
+        when(personService.create(uniqueID, familyName, givenName, email, List.of(), List.of(USER))).thenReturn(createdPerson);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
@@ -259,7 +258,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, null, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(createdPerson);
+        when(personService.create(uniqueID, familyName, givenName, null, List.of(), List.of(USER))).thenReturn(createdPerson);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
@@ -289,7 +288,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, null, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(createdPerson);
+        when(personService.create(uniqueID, familyName, givenName, null, List.of(), List.of(USER))).thenReturn(createdPerson);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
@@ -343,7 +342,7 @@ class OidcPersonAuthoritiesMapperTest {
         personForLogin.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(personForLogin);
+        when(personService.create(uniqueID, familyName, givenName, email, List.of(), List.of(USER))).thenReturn(personForLogin);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
@@ -371,7 +370,7 @@ class OidcPersonAuthoritiesMapperTest {
         personForLogin.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, List.of(NOTIFICATION_USER), List.of(USER))).thenReturn(personForLogin);
+        when(personService.create(uniqueID, familyName, givenName, email, List.of(), List.of(USER))).thenReturn(personForLogin);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));

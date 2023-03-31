@@ -19,6 +19,9 @@ public final class AuthenticationHelper {
             username = ((User) principal).getUsername();
         } else if (principal instanceof DefaultOidcUser) {
             username = ((DefaultOidcUser) principal).getIdToken().getSubject();
+        } else if (principal instanceof String) {
+            // happens on local development with default spring login page
+            username = (String) principal;
         }
         return username;
     }
