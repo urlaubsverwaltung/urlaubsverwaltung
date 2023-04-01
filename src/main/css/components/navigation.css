@@ -237,7 +237,7 @@
     @apply tw-no-underline;
     @apply hover:tw-no-underline;
     @apply focus:tw-no-underline;
-    @apply tw-text-base;
+    @apply tw-text-2xl;
     @apply tw-text-gray-700;
     @apply tw-bg-transparent;
     @apply hover:tw-text-black;
@@ -283,6 +283,10 @@
 
     .nav-popup-menu.visible {
       @apply tw-top-full;
+    }
+
+    .nav-popup-menu_link {
+      @apply tw-text-base;
     }
 
     .nav-popup-menu-inner {
