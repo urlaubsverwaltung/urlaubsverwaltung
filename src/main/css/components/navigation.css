@@ -1,9 +1,10 @@
 @layer components {
   .navigation {
-    @apply tw-fixed;
+    @apply tw-sticky;
     @apply tw-top-0;
     @apply tw-w-full;
     @apply tw-z-50;
+    @apply lg:tw-mb-8;
   }
 
   .navigation::before {
@@ -27,12 +28,6 @@
   .navigation-list {
     @apply tw-grid;
     @apply tw-gap-8;
-  }
-
-  .navigation-content-gap {
-    height: 48px;
-    @apply tw-mb-8;
-    @apply lg:tw-mb-12;
   }
 
   .navigation-content-spacer {
