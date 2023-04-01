@@ -281,7 +281,7 @@
               <th:block th:ref="person-details-account-actions">
                 <a
                   th:if="${canEditAccounts}"
-                  th:href="@{/web/person/__${person.id}__/account?year=__${currentYear}__}"
+                  th:href="@{/web/person/__${person.id}__/account?year=__${selectedYear}__}"
                   class="icon-link tw-px-1"
                   aria-hidden="true"
                   th:data-title="#{action.edit}"
