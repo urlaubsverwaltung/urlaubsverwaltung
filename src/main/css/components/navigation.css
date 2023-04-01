@@ -21,7 +21,6 @@
 
   .navigation-inner {
     @apply dark:tw-border-b;
-    @apply lg:dark:tw-border-b-0;
     @apply dark:tw-border-b-zinc-800;
   }
 
@@ -71,12 +70,21 @@
   }
 
   #menu-toggle-checkbox ~ label ~ div .navigation-items {
-    overflow: hidden;
-    transition: max-height 400ms ease-in;
+    position: fixed;
+    top: 100%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0 1.5rem;
+    @apply tw-transition-all;
+    @apply tw-duration-150;
+    @apply tw-bg-white;
+    @apply dark:tw-bg-zinc-900;
   }
+
   #menu-toggle-checkbox:checked ~ label ~ div .navigation-items,
   #menu-toggle-checkbox ~ label ~ div .navigation-items:focus-within {
-    max-height: 90vh !important;
+    top: var(--uv-header-height);
   }
 
   #menu-toggle-checkbox + label > span:first-child {
@@ -252,6 +260,20 @@
   }
 
   @screen xs {
+    #menu-toggle-checkbox ~ label ~ div .navigation-items {
+      @apply tw-bg-transparent;
+      @apply dark:tw-bg-transparent;
+      overflow: hidden;
+      position: static;
+      padding: 0;
+      max-height: 0;
+      transition: max-height 400ms ease-in;
+    }
+    #menu-toggle-checkbox:checked ~ label ~ div .navigation-items,
+    #menu-toggle-checkbox ~ label ~ div .navigation-items:focus-within {
+      max-height: 90vh !important;
+    }
+
     .nav-popup-menu::before {
       content: "";
       border-color: transparent;
@@ -317,6 +339,13 @@
   }
 
   @screen lg {
+    #menu-toggle-checkbox ~ label ~ div .navigation-items {
+      overflow: hidden;
+      position: static;
+      padding: 0;
+      max-height: 100%;
+    }
+
     .navigation-list {
       @apply tw-grid-flow-col;
       grid-template-columns: repeat(auto-fit, minmax(0, min-content));
