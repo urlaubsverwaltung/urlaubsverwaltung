@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import de.focusshift.launchpad.api.HasLaunchpad;
+import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;

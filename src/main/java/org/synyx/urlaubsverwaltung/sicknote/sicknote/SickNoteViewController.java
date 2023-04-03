@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
-import de.focusshift.launchpad.api.HasLaunchpad;
+import de.focus_shift.launchpad.api.HasLaunchpad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;

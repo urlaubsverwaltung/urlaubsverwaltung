@@ -37,6 +37,12 @@
 
   <dependencies>
 
+    <dependency>
+      <groupId>de.focus-shift</groupId>
+      <artifactId>launchpad</artifactId>
+      <version>0.1.0</version>
+    </dependency>
+
     <!-- war -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
