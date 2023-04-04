@@ -637,24 +637,12 @@ class DepartmentViewControllerTest {
     }
 
     @Test
-    void updateDepartmentForUnknownDepartmentIdThrowsUnknownDepartmentException() {
-
-        assertThatThrownBy(() ->
-            perform(post("/web/department/571"))
-        ).hasCauseInstanceOf(UnknownDepartmentException.class);
-    }
-
-    @Test
     void updateDepartmentShowsFormIfValidationFails() throws Exception {
 
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
-
         doAnswer(invocation -> {
-
-            Errors errors = invocation.getArgument(1);
+            final Errors errors = invocation.getArgument(1);
             errors.rejectValue("name", "errors");
             return null;
-
         }).when(validator).validate(any(), any());
 
         perform(post("/web/department/1"))
@@ -666,7 +654,6 @@ class DepartmentViewControllerTest {
     @Test
     void updateDepartmentUpdatesDepartmentCorrectIfValidationSuccessful() throws Exception {
 
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
         when(departmentService.update(any())).thenReturn(new Department());
 
         perform(post("/web/department/1"));
@@ -679,7 +666,6 @@ class DepartmentViewControllerTest {
 
         final Department department = new Department();
         department.setName("department");
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
         when(departmentService.update(any())).thenReturn(department);
 
         perform(post("/web/department/1"))

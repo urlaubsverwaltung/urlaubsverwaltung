@@ -125,12 +125,8 @@ public class DepartmentViewController implements HasLaunchpad {
     @PostMapping("/department/{departmentId}")
     public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
                                    @ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
-                                   Model model, RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
+                                   Model model, RedirectAttributes redirectAttributes) {
 
-        final Department department = departmentService.getDepartmentById(departmentId)
-            .orElseThrow(() -> new UnknownDepartmentException(departmentId));
-
-        departmentForm.setId(department.getId());
         validator.validate(departmentForm, errors);
 
         if (errors.hasErrors()) {
