@@ -130,10 +130,6 @@ public class DepartmentViewController implements HasLaunchpad {
         departmentForm.setId(persistedDepartmentId);
         validator.validate(departmentForm, errors);
 
-        if (errors.hasGlobalErrors()) {
-            model.addAttribute("errors", errors);
-        }
-
         if (returnModelErrorAttributes(departmentForm, errors, model)) {
             return "department/department_form";
         }
