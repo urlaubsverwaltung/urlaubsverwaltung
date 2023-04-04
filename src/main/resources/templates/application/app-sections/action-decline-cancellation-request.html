@@ -24,7 +24,8 @@
     <th:block th:fragment="form">
       <form
         id="decline-cancellation-request"
-        class="form tw-hidden confirm alert alert-danger"
+        class="form confirm alert alert-danger"
+        th:classappend="${action eq 'decline-cancellation-request' ? '' : 'tw-hidden'}"
         method="post"
         th:action="@{/web/application/__${app.id}__/decline-cancellation-request}"
         th:object="${comment}"
