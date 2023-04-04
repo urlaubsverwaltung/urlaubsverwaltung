@@ -42,9 +42,6 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 @RequestMapping(value = "/web")
 public class DepartmentViewController implements HasLaunchpad {
 
-    private static final String REDIRECT_WEB_DEPARTMENT = "redirect:/web/department/";
-    private static final String DEPARTMENT_DEPARTMENT_FORM = "department/department_form";
-
     private final DepartmentService departmentService;
     private final PersonService personService;
     private final DepartmentViewValidator validator;
@@ -83,7 +80,7 @@ public class DepartmentViewController implements HasLaunchpad {
         model.addAttribute("department", new DepartmentForm());
         model.addAttribute("persons", persons);
 
-        return DEPARTMENT_DEPARTMENT_FORM;
+        return "department/department_form";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -94,13 +91,13 @@ public class DepartmentViewController implements HasLaunchpad {
         validator.validate(departmentForm, errors);
 
         if (returnModelErrorAttributes(departmentForm, errors, model)) {
-            return DEPARTMENT_DEPARTMENT_FORM;
+            return "department/department_form";
         }
 
         final Department createdDepartment = departmentService.create(mapToDepartment(departmentForm));
         redirectAttributes.addFlashAttribute("createdDepartmentName", createdDepartment.getName());
 
-        return REDIRECT_WEB_DEPARTMENT;
+        return "redirect:/web/department/";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -118,7 +115,7 @@ public class DepartmentViewController implements HasLaunchpad {
         model.addAttribute("hiddenDepartmentHeads", List.of());
         model.addAttribute("hiddenDepartmentSecondStageAuthorities", List.of());
 
-        return DEPARTMENT_DEPARTMENT_FORM;
+        return "department/department_form";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -138,13 +135,13 @@ public class DepartmentViewController implements HasLaunchpad {
         }
 
         if (returnModelErrorAttributes(departmentForm, errors, model)) {
-            return DEPARTMENT_DEPARTMENT_FORM;
+            return "department/department_form";
         }
 
         final Department updatedDepartment = departmentService.update(mapToDepartment(departmentForm));
         redirectAttributes.addFlashAttribute("updatedDepartmentName", updatedDepartment.getName());
 
-        return REDIRECT_WEB_DEPARTMENT;
+        return "redirect:/web/department/";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -195,7 +192,7 @@ public class DepartmentViewController implements HasLaunchpad {
             redirectAttributes.addFlashAttribute("deletedDepartmentName", department.getName());
         });
 
-        return REDIRECT_WEB_DEPARTMENT;
+        return "redirect:/web/department/";
     }
 
     private boolean returnModelErrorAttributes(DepartmentForm departmentForm, Errors errors, Model model) {
