@@ -172,7 +172,7 @@ class ApplicationForLeaveFormValidatorTest {
 
         verify(errors)
             .reject("application.error.tooFarInThePast",
-                new Object[]{settings.getApplicationSettings().getMaximumMonthsToApplyForLeaveInAdvance()}, null);
+                new Object[]{settings.getApplicationSettings().getMaximumMonthsToApplyForLeaveAfterwards()}, null);
     }
 
     @Test
