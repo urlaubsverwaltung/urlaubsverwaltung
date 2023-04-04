@@ -90,7 +90,10 @@ public class DepartmentViewController implements HasLaunchpad {
 
         validator.validate(departmentForm, errors);
 
-        if (returnModelErrorAttributes(departmentForm, errors, model)) {
+        if (errors.hasErrors()) {
+            final List<Person> persons = getDepartmentMembersAndAllActivePersons(departmentForm.getMembers());
+            model.addAttribute("persons", persons);
+
             return "department/department_form";
         }
 
@@ -109,7 +112,7 @@ public class DepartmentViewController implements HasLaunchpad {
             .orElseThrow(() -> new UnknownDepartmentException(departmentId));
         model.addAttribute("department", mapToDepartmentForm(department));
 
-        final List<Person> persons = getDepartmentMembersAndAllActivePersons(department);
+        final List<Person> persons = getDepartmentMembersAndAllActivePersons(department.getMembers());
         model.addAttribute("persons", persons);
         model.addAttribute("hiddenDepartmentMembers", List.of());
         model.addAttribute("hiddenDepartmentHeads", List.of());
@@ -124,13 +127,16 @@ public class DepartmentViewController implements HasLaunchpad {
                                    @ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
                                    Model model, RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
 
-        final Integer persistedDepartmentId = departmentService.getDepartmentById(departmentId)
-            .orElseThrow(() -> new UnknownDepartmentException(departmentId)).getId();
+        final Department department = departmentService.getDepartmentById(departmentId)
+            .orElseThrow(() -> new UnknownDepartmentException(departmentId));
 
-        departmentForm.setId(persistedDepartmentId);
+        departmentForm.setId(department.getId());
         validator.validate(departmentForm, errors);
 
-        if (returnModelErrorAttributes(departmentForm, errors, model)) {
+        if (errors.hasErrors()) {
+            final List<Person> persons = getDepartmentMembersAndAllActivePersons(departmentForm.getMembers());
+            model.addAttribute("persons", persons);
+
             return "department/department_form";
         }
 
@@ -152,8 +158,9 @@ public class DepartmentViewController implements HasLaunchpad {
         if (departmentId == null) {
             allPersons = personService.getActivePersons();
         } else {
-            final Department department = departmentService.getDepartmentById(departmentId).orElseThrow(() -> new UnknownDepartmentException(departmentId));
-            allPersons = getDepartmentMembersAndAllActivePersons(department);
+            final Department department = departmentService.getDepartmentById(departmentId)
+                .orElseThrow(() -> new UnknownDepartmentException(departmentId));
+            allPersons = getDepartmentMembersAndAllActivePersons(department.getMembers());
         }
 
         final List<Person> persons = hasText(memberQuery)
@@ -191,21 +198,9 @@ public class DepartmentViewController implements HasLaunchpad {
         return "redirect:/web/department/";
     }
 
-    private boolean returnModelErrorAttributes(DepartmentForm departmentForm, Errors errors, Model model) {
-        if (errors.hasErrors()) {
-            model.addAttribute("department", departmentForm);
+    private List<Person> getDepartmentMembersAndAllActivePersons(List<Person> departmentMembers) {
 
-            final List<Person> persons = personService.getActivePersons();
-            model.addAttribute("persons", persons);
-
-            return true;
-        }
-        return false;
-    }
-
-    private List<Person> getDepartmentMembersAndAllActivePersons(Department department) {
-
-        final List<Person> sortedDepartmentMembers = department.getMembers()
+        final List<Person> sortedDepartmentMembers = departmentMembers
             .stream()
             .sorted((o1, o2) -> o1.getNiceName().compareToIgnoreCase(o2.getNiceName()))
             .collect(toList());
