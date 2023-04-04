@@ -1,8 +1,11 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
@@ -11,7 +14,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.account.AccountService;
+import org.synyx.urlaubsverwaltung.account.VacationDaysLeft;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -25,16 +30,27 @@ import org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataService;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Year;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static java.math.BigDecimal.ZERO;
+import static java.math.BigDecimal.valueOf;
+import static java.time.LocalDate.of;
+import static java.time.Month.APRIL;
+import static java.time.Month.DECEMBER;
+import static java.time.Month.JANUARY;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasProperty;
@@ -382,12 +398,12 @@ class PersonsViewControllerTest {
             .andExpect(model().attribute("department", hasProperty("name", is("awesome-department"))))
             .andExpect(model().attribute("personsPagination", hasProperty("page",
                 hasProperty("content", allOf(
-                    hasSize(1),
-                    contains(
-                        hasProperty("firstName", is("John"))
+                        hasSize(1),
+                        contains(
+                            hasProperty("firstName", is("John"))
+                        )
                     )
-                )
-            ))));
+                ))));
     }
 
     @Test
@@ -416,13 +432,13 @@ class PersonsViewControllerTest {
             .andExpect(model().attribute("personsPagination",
                 hasProperty("page",
                     hasProperty("content", allOf(
-                        hasSize(1),
-                        contains(
-                            hasProperty("firstName", is("John"))
+                            hasSize(1),
+                            contains(
+                                hasProperty("firstName", is("John"))
+                            )
                         )
                     )
-                )
-            )));
+                )));
     }
 
     @Test
@@ -652,6 +668,108 @@ class PersonsViewControllerTest {
 
         perform(get("/web/person"))
             .andExpect(model().attribute("showPersonnelNumberColumn", false));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
+        "true,0",
+        "false,5"
+    })
+    void ensuresThatRemainingVacationDaysLeftAreOnlyDisplayedIfTheyDoNotExpire(final boolean doExpire, final BigDecimal remainingVacationDays) throws Exception {
+
+        clock = Clock.fixed(Instant.parse("2022-04-02T06:00:00Z"), ZoneId.of("UTC"));
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+
+        final Person signedInUser = personWithRole(USER, OFFICE);
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        person.setId(2);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(person)));
+
+        final int currentYear = Year.now(clock).getValue();
+        final LocalDate startDate = LocalDate.of(currentYear, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(currentYear, DECEMBER, 31);
+        final LocalDate expiryDate = of(currentYear, APRIL, 1);
+
+        final Account account = new Account(person, startDate, endDate, doExpire, expiryDate, valueOf(30), remainingVacationDays, ZERO, null);
+        account.setActualVacationDays(valueOf(30));
+        when(accountService.getHolidaysAccount(currentYear, person)).thenReturn(Optional.of(account));
+
+        final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
+            .withAnnualVacation(valueOf(30))
+            .withRemainingVacation(valueOf(5))
+            .build();
+        when(vacationDaysService.getVacationDaysLeft(account, Optional.empty())).thenReturn(vacationDaysLeft);
+
+        perform(get("/web/person"))
+            .andExpect(
+                model().attribute("personsPagination",
+                    hasProperty("page",
+                        hasProperty("content",
+                            hasItems(
+                                allOf(
+                                    instanceOf(PersonDto.class),
+                                    hasProperty("lastName", CoreMatchers.is("Wayne")),
+                                    hasProperty("vacationDaysLeftRemaining", CoreMatchers.is(remainingVacationDays.doubleValue()))
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+    }
+
+    @Test
+    void ensuresThatRemainingVacationDaysLeftAreDisplayedIfBeforeExpireDate() throws Exception {
+
+        clock = Clock.fixed(Instant.parse("2022-03-31T06:00:00Z"), ZoneId.of("UTC"));
+        sut = new PersonsViewController(personService, accountService, vacationDaysService, departmentService, personBasedataService, clock);
+
+        final Person signedInUser = personWithRole(USER, OFFICE);
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final Person person = new Person("batman", "Wayne", "Bruce", "batman@example.org");
+        person.setId(2);
+        person.setPermissions(List.of(USER));
+
+        when(personService.getActivePersons(defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(person)));
+
+        final int currentYear = Year.now(clock).getValue();
+        final LocalDate startDate = LocalDate.of(currentYear, JANUARY, 1);
+        final LocalDate endDate = LocalDate.of(currentYear, DECEMBER, 31);
+        final LocalDate expiryDate = of(currentYear, APRIL, 1);
+
+        final Account account = new Account(person, startDate, endDate, true, expiryDate, valueOf(30), valueOf(5), ZERO, null);
+        account.setActualVacationDays(valueOf(30));
+        when(accountService.getHolidaysAccount(currentYear, person)).thenReturn(Optional.of(account));
+
+        final VacationDaysLeft vacationDaysLeft = VacationDaysLeft.builder()
+            .withAnnualVacation(valueOf(30))
+            .withRemainingVacation(valueOf(5))
+            .build();
+        when(vacationDaysService.getVacationDaysLeft(account, Optional.empty())).thenReturn(vacationDaysLeft);
+
+        perform(get("/web/person"))
+            .andExpect(
+                model().attribute("personsPagination",
+                    hasProperty("page",
+                        hasProperty("content",
+                            hasItems(
+                                allOf(
+                                    instanceOf(PersonDto.class),
+                                    hasProperty("lastName", is("Wayne")),
+                                    hasProperty("vacationDaysLeftRemaining", is(5.0d))
+                                )
+                            )
+                        )
+                    )
+                )
+            );
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

@@ -219,16 +219,15 @@ public class PersonsViewController implements HasLaunchpad {
         for (Person person : personPage) {
             final PersonDto.Builder personDtoBuilder = PersonDto.builder();
 
-            final Optional<Account> account = accountService.getHolidaysAccount(year, person);
-            if (account.isPresent()) {
-                final Account holidaysAccount = account.get();
+            final Optional<Account> maybeHolidayAccount = accountService.getHolidaysAccount(year, person);
+            if (maybeHolidayAccount.isPresent()) {
+                final Account holidaysAccount = maybeHolidayAccount.get();
                 final Optional<Account> accountNextYear = accountService.getHolidaysAccount(year + 1, person);
                 final VacationDaysLeft vacationDaysLeft = vacationDaysService.getVacationDaysLeft(holidaysAccount, accountNextYear);
 
-                final boolean beforeExpiryDate = now.isBefore(holidaysAccount.getExpiryDate());
-                final double remainingVacationDays = holidaysAccount.doRemainingVacationDaysExpire() || beforeExpiryDate
-                    ? vacationDaysLeft.getRemainingVacationDays().doubleValue()
-                    : vacationDaysLeft.getRemainingVacationDaysNotExpiring().doubleValue();
+                final boolean doRemainingVacationDaysExpire = holidaysAccount.doRemainingVacationDaysExpire();
+                final LocalDate expiryDate = holidaysAccount.getExpiryDate();
+                final double remainingVacationDays = vacationDaysLeft.getRemainingVacationDaysLeft(now, doRemainingVacationDaysExpire, expiryDate).doubleValue();
 
                 personDtoBuilder
                     .entitlementYear(holidaysAccount.getAnnualVacationDays().doubleValue())
