@@ -10,7 +10,11 @@
         <button
           class="icon-link tw-bg-transparent tw-px-1 tw-py-0 hover:tw-text-red-500"
           th:data-title="#{action.reject}"
-          onclick="document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#reject')?.classList.remove('tw-hidden');"
+          onclick="document.querySelector('#refer')?.classList.add('tw-hidden');
+          document.querySelector('#allow')?.classList.add('tw-hidden');
+          document.querySelector('#cancel')?.classList.add('tw-hidden');
+          document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden');
+          document.querySelector('#reject')?.classList.remove('tw-hidden');"
         >
           <svg th:replace="icon/slash::svg(className='tw-w-5 tw-h-5')"></svg>
           <span class="tw-sr-only" th:text="#{action.reject}"></span>
