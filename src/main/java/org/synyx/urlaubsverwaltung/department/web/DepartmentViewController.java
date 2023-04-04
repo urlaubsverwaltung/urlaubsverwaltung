@@ -47,7 +47,7 @@ public class DepartmentViewController implements HasLaunchpad {
     private final DepartmentViewValidator validator;
 
     @Autowired
-    public DepartmentViewController(DepartmentService departmentService, PersonService personService, DepartmentViewValidator validator) {
+    DepartmentViewController(DepartmentService departmentService, PersonService personService, DepartmentViewValidator validator) {
         this.departmentService = departmentService;
         this.personService = personService;
         this.validator = validator;
