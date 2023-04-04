@@ -61,8 +61,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 @RequestMapping("/web")
 public class OvertimeViewController implements HasLaunchpad {
 
-    private static final String OVERTIME_OVERTIME_FORM = "overtime/overtime_form";
-
     private final OvertimeService overtimeService;
     private final PersonService personService;
     private final OvertimeFormValidator validator;
@@ -154,7 +152,6 @@ public class OvertimeViewController implements HasLaunchpad {
                 signedInUser.getId(), person.getId()));
         }
 
-
         final OvertimeDetailsDto overtimeDetailsDto = OvertimeDetailsMapper.mapToDto(
             overtime,
             overtimeService.getCommentsForOvertime(overtime),
@@ -193,7 +190,7 @@ public class OvertimeViewController implements HasLaunchpad {
         final OvertimeForm overtimeForm = new OvertimeForm();
         prepareModelForCreation(model, signedInUser, person, overtimeForm);
 
-        return OVERTIME_OVERTIME_FORM;
+        return "overtime/overtime_form";
     }
 
     @PostMapping("/overtime")
@@ -212,7 +209,7 @@ public class OvertimeViewController implements HasLaunchpad {
         validator.validate(overtimeForm, errors);
         if (errors.hasErrors()) {
             prepareModelForCreation(model, signedInUser, person, overtimeForm);
-            return OVERTIME_OVERTIME_FORM;
+            return "overtime/overtime_form";
         }
 
         final Overtime overtime = overtimeForm.generateOvertime();
@@ -238,7 +235,7 @@ public class OvertimeViewController implements HasLaunchpad {
 
         prepareModelForEdit(model, signedInUser, person, new OvertimeForm(overtime));
 
-        return OVERTIME_OVERTIME_FORM;
+        return "overtime/overtime_form";
     }
 
     @PostMapping("/overtime/{id}")
@@ -259,7 +256,7 @@ public class OvertimeViewController implements HasLaunchpad {
         validator.validate(overtimeForm, errors);
         if (errors.hasErrors()) {
             prepareModelForEdit(model, signedInUser, person, overtimeForm);
-            return OVERTIME_OVERTIME_FORM;
+            return "overtime/overtime_form";
         }
 
         overtimeForm.updateOvertime(overtime);
