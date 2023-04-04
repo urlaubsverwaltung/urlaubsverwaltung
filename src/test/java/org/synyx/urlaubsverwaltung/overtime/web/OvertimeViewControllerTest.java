@@ -113,7 +113,6 @@ class OvertimeViewControllerTest {
         perform(post("/web/overtime").param("person", "1337"))
             .andExpect(model().attribute("overtime", instanceOf(OvertimeForm.class)))
             .andExpect(model().attribute("person", overtimePerson))
-            .andExpect(model().attribute("signedInUser", signedInPerson))
             .andExpect(view().name("overtime/overtime_form"));
 
         verify(validator).validate(any(OvertimeForm.class), any(Errors.class));
@@ -241,7 +240,6 @@ class OvertimeViewControllerTest {
             .andExpect(model().attribute("currentYear", is(Year.now(clock).getValue())))
             .andExpect(model().attribute("selectedYear", is(Year.now(clock).getValue())))
             .andExpect(model().attribute("person", is(person)))
-            .andExpect(model().attribute("signedInUser", is(signedInPerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
             .andExpect(model().attribute("overtimeTotalLastYear", is(Duration.ZERO)))
             .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
@@ -286,7 +284,6 @@ class OvertimeViewControllerTest {
             .andExpect(model().attribute("currentYear", is(Year.now(clock).getValue())))
             .andExpect(model().attribute("selectedYear", is(2012)))
             .andExpect(model().attribute("person", is(person)))
-            .andExpect(model().attribute("signedInUser", is(signedInPerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
             .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
             .andExpect(model().attribute("overtimeTotalLastYear", is(Duration.ofHours(10))))
@@ -340,7 +337,6 @@ class OvertimeViewControllerTest {
         perform(get("/web/overtime/2"))
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_details"))
-            .andExpect(model().attribute("signedInUser", is(overtimePerson)))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
             .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
             .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)))
@@ -388,8 +384,7 @@ class OvertimeViewControllerTest {
             .andExpect(view().name("overtime/overtime_form"))
             .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
             .andExpect(model().attribute("person", is(person)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)))))
-            .andExpect(model().attribute("signedInUser", is(person)));
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)))));
     }
 
     @Test
@@ -514,8 +509,7 @@ class OvertimeViewControllerTest {
             .andExpect(view().name("overtime/overtime_form"))
             .andExpect(model().attribute("overtime", is(instanceOf(OvertimeForm.class))))
             .andExpect(model().attribute("person", is(overtimePerson)))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)))))
-            .andExpect(model().attribute("signedInUser", is(overtimePerson)));
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, VacationTypeColor.ORANGE)))));
     }
 
     @Test

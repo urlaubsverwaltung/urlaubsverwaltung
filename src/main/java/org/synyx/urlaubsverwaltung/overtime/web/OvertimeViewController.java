@@ -61,7 +61,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 @RequestMapping("/web")
 public class OvertimeViewController implements HasLaunchpad {
 
-    private static final String SIGNED_IN_USER = "signedInUser";
     private static final String OVERTIME_OVERTIME_FORM = "overtime/overtime_form";
 
     private final OvertimeService overtimeService;
@@ -121,7 +120,6 @@ public class OvertimeViewController implements HasLaunchpad {
         model.addAttribute("selectedYear", selectedYear);
 
         model.addAttribute("person", person);
-        model.addAttribute(SIGNED_IN_USER, signedInUser);
 
         final boolean userIsAllowedToWriteOvertime = overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person);
 
@@ -156,7 +154,6 @@ public class OvertimeViewController implements HasLaunchpad {
                 signedInUser.getId(), person.getId()));
         }
 
-        model.addAttribute(SIGNED_IN_USER, signedInUser);
 
         final OvertimeDetailsDto overtimeDetailsDto = OvertimeDetailsMapper.mapToDto(
             overtime,
@@ -290,7 +287,6 @@ public class OvertimeViewController implements HasLaunchpad {
     private void prepareModelForEdit(Model model, Person signedInUser, Person person, OvertimeForm overtimeForm) {
         model.addAttribute("overtime", overtimeForm);
         model.addAttribute("person", person);
-        model.addAttribute(SIGNED_IN_USER, signedInUser);
 
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
 
