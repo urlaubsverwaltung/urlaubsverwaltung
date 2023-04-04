@@ -76,9 +76,8 @@ public class DepartmentViewController implements HasLaunchpad {
     public String newDepartmentForm(Model model) {
 
         final List<Person> persons = personService.getActivePersons();
-
-        model.addAttribute("department", new DepartmentForm());
         model.addAttribute("persons", persons);
+        model.addAttribute("department", new DepartmentForm());
 
         return "department/department_form";
     }
