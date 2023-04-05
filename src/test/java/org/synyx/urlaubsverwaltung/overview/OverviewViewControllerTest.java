@@ -66,6 +66,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.ORANGE;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_ADD;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -287,7 +288,7 @@ class OverviewViewControllerTest {
     }
 
     @Test
-    void showOverviewCanAddApplicationForAnotherUser() throws Exception {
+    void showOverviewCanAddApplicationForAnotherUserIfOffice() throws Exception {
         final Person person = new Person();
         person.setId(1);
         person.setPermissions(List.of(USER, OFFICE));
@@ -295,6 +296,22 @@ class OverviewViewControllerTest {
 
         when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+
+        perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
+            .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
+    }
+
+    @Test
+    void showOverviewCanAddApplicationForAnotherUserOfDepartmentHeadAndApplicationAdd() throws Exception {
+        final Person departmentHead = new Person();
+        departmentHead.setId(1);
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, APPLICATION_ADD));
+        when(personService.getSignedInUser()).thenReturn(departmentHead);
+
+        final Person person = new Person();
+        when(personService.getPersonByID(SOME_PERSON_ID)).thenReturn(Optional.of(person));
+        when(departmentService.isSignedInUserAllowedToAccessPersonData(any(), any())).thenReturn(true);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
 
         perform(get("/web/person/" + SOME_PERSON_ID + "/overview"))
             .andExpect(model().attribute("canAddApplicationForLeaveForAnotherUser", true));
