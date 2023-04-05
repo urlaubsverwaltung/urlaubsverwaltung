@@ -62,10 +62,9 @@ class PersonServiceImplTest {
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Captor
-    private ArgumentCaptor<PersonDisabledEvent> personDisabledEventArgumentCaptor;
-    @Captor
     private ArgumentCaptor<PersonCreatedEvent> personCreatedEventArgumentCaptor;
-    private final ArgumentCaptor<PersonDeletedEvent> personDeletedEventArgumentCaptor = ArgumentCaptor.forClass(PersonDeletedEvent.class);
+    @Captor
+    private ArgumentCaptor<PersonDeletedEvent> personDeletedEventArgumentCaptor;
 
     @BeforeEach
     void setUp() {
@@ -89,28 +88,19 @@ class PersonServiceImplTest {
     @Test
     void ensurePersonCreatedEventIsFired() {
 
-        final Person activePerson = createPerson("my person", USER);
-        activePerson.setId(1);
-
-        when(personRepository.save(activePerson)).thenReturn(activePerson);
-
-        sut.create(activePerson);
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
+        final Person person = sut.create("rick", "Grimes", "Rick", "rick@grimes.de");
 
         verify(applicationEventPublisher).publishEvent(personCreatedEventArgumentCaptor.capture());
-        assertThat(personCreatedEventArgumentCaptor.getValue().getPersonId())
-            .isEqualTo(activePerson.getId());
+        assertThat(personCreatedEventArgumentCaptor.getValue().getUsername()).isEqualTo(person.getUsername());
     }
 
     @Test
     void ensureCreatedPersonHasCorrectAttributes() {
 
-        final Person person = new Person("rick", "Grimes", "Rick", "rick@grimes.de");
-        person.setPermissions(asList(USER, BOSS));
-        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
 
-        when(personRepository.save(person)).thenReturn(person);
-
-        final Person createdPerson = sut.create(person);
+        final Person createdPerson = sut.create("rick", "Grimes", "Rick", "rick@grimes.de", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL), List.of(USER, BOSS));
         assertThat(createdPerson.getUsername()).isEqualTo("rick");
         assertThat(createdPerson.getFirstName()).isEqualTo("Rick");
         assertThat(createdPerson.getLastName()).isEqualTo("Grimes");
@@ -124,28 +114,28 @@ class PersonServiceImplTest {
             .hasSize(2)
             .contains(USER, BOSS);
 
-        verify(accountInteractionService).createDefaultAccount(person);
-        verify(workingTimeWriteService).createDefaultWorkingTime(person);
+        verify(accountInteractionService).createDefaultAccount(any());
+        verify(workingTimeWriteService).createDefaultWorkingTime(any());
     }
 
     @Test
     void ensureCreatedPersonIsPersisted() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personRepository.save(person)).thenReturn(person);
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
 
-        final Person savedPerson = sut.create(person);
-        assertThat(savedPerson).isEqualTo(person);
+        final Person savedPerson = sut.create("muster", "Muster", "Marlene", "muster@example.org");
+        assertThat(savedPerson.getUsername()).isEqualTo("muster");
+        assertThat(savedPerson.getLastName()).isEqualTo("Muster");
+        assertThat(savedPerson.getFirstName()).isEqualTo("Marlene");
+        assertThat(savedPerson.getEmail()).isEqualTo("muster@example.org");
     }
 
     @Test
     void ensureNotificationIsSendForCreatedPerson() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
-        when(personRepository.save(person)).thenReturn(person);
+        when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
 
-        final Person createdPerson = sut.create(person);
+        final Person createdPerson = sut.create("muster", "Muster", "Marlene", "muster@example.org");
 
         verify(applicationEventPublisher).publishEvent(personCreatedEventArgumentCaptor.capture());
 
@@ -178,11 +168,13 @@ class PersonServiceImplTest {
     @Test
     void ensureSaveCallsCorrectDaoMethod() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personRepository.save(person)).thenReturn(person);
+        when(personRepository.save(any())).thenAnswer(returnsFirstArg());
 
-        final Person savedPerson = sut.create(person);
-        assertThat(savedPerson).isEqualTo(person);
+        final Person savedPerson = sut.create("muster", "Muster", "Marlene", "muster@example.org");
+        assertThat(savedPerson.getUsername()).isEqualTo("muster");
+        assertThat(savedPerson.getLastName()).isEqualTo("Muster");
+        assertThat(savedPerson.getFirstName()).isEqualTo("Marlene");
+        assertThat(savedPerson.getEmail()).isEqualTo("muster@example.org");
     }
 
     @Test

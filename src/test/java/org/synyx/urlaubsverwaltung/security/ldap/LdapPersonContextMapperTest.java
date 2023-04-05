@@ -27,7 +27,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -114,13 +113,13 @@ class LdapPersonContextMapperTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(Role.USER));
-        when(personService.create(anyString(), anyString(), anyString(), anyString(), anyList(), anyList())).thenReturn(person);
+        when(personService.create(anyString(), anyString(), anyString(), anyString())).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(any())).then(returnsFirstArg());
 
         sut.mapUserFromContext(context, "murygina", null);
 
         verify(ldapUserMapper).mapFromContext(context);
-        verify(personService).create("peter", "Fox", "Peter", "peter@example.org", DEFAULT_MAIL_NOTIFICATIONS, List.of(USER));
+        verify(personService).create("peter", "Fox", "Peter", "peter@example.org");
     }
 
     @Test
@@ -161,7 +160,7 @@ class LdapPersonContextMapperTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(Role.USER));
-        when(personService.create("mgroehning", null, null, null, DEFAULT_MAIL_NOTIFICATIONS, List.of(USER))).thenReturn(person);
+        when(personService.create("mgroehning", null, null, null)).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(any())).then(returnsFirstArg());
 
         final UserDetails userDetails = sut.mapUserFromContext(context, userNameSignedInWith, emptyList());
@@ -230,7 +229,7 @@ class LdapPersonContextMapperTest {
 
         when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("username", null, null, null, List.of()));
         when(personService.getPersonByUsername("username")).thenReturn(Optional.empty());
-        when(personService.create("username", null, null, null, DEFAULT_MAIL_NOTIFICATIONS, List.of(USER))).thenReturn(person);
+        when(personService.create("username", null, null, null)).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(person)).thenReturn(person);
 
         sut.mapUserFromContext(context, "username", null);

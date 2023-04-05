@@ -13,6 +13,7 @@ class PersonDTOMapper {
     private PersonDTOMapper() {
         // Utility classes should not have public constructors java:S1118
     }
+
     static Person toPerson(PersonDTO personDTO) {
         final Person person = new Person(personDTO.getUsername(), personDTO.getLastName(), personDTO.getFirstName(), personDTO.getEmail());
         person.setId(personDTO.getId());
@@ -32,7 +33,7 @@ class PersonDTOMapper {
             .build();
     }
 
-    private static Set<Role> toRoles(PersonDTO personDTO) {
+    static Set<Role> toRoles(PersonDTO personDTO) {
         if (!personDTO.isEnabled()) {
             return Set.of(Role.INACTIVE);
         }

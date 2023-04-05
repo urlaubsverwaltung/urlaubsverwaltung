@@ -32,7 +32,13 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
 
     @Override
     public PersonDTO create(PersonDTO person) {
-        final Person created = personService.create(toPerson(person));
+        final Person convertedPerson = toPerson(person);
+        final Person created = personService.create(
+            convertedPerson.getUsername(),
+            convertedPerson.getLastName(),
+            convertedPerson.getFirstName(),
+            convertedPerson.getEmail()
+        );
         return toPersonDTO(created);
     }
 

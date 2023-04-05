@@ -30,11 +30,10 @@ class OvertimeRepositoryIT extends TestContainersBase {
     @Test
     void ensureCanPersistOvertime() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person person = personService.create("muster", "Muster", "Marlene", "muster@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
-        final Overtime overtime = new Overtime(savedPerson, now, now.plusDays(2), Duration.ofHours(1));
+        final Overtime overtime = new Overtime(person, now, now.plusDays(2), Duration.ofHours(1));
         assertThat(overtime.getId()).isNull();
 
         sut.save(overtime);
@@ -44,21 +43,18 @@ class OvertimeRepositoryIT extends TestContainersBase {
     @Test
     void ensureCountsTotalHoursCorrectly() {
 
-        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.create(person);
-
-        final Person otherPerson = new Person("freddy", "Gwin", "freddy", "gwin@example.org");
-        final Person savedOtherPerson = personService.create(otherPerson);
+        final Person person = personService.create("sam", "smith", "sam", "smith@example.org");
+        final Person otherPerson = personService.create("freddy", "Gwin", "freddy", "gwin@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
         // Overtime for person
-        sut.save(new Overtime(savedPerson, now, now.plusDays(2), Duration.ofHours(3)));
-        sut.save(new Overtime(savedPerson, now.plusDays(5), now.plusDays(10), Duration.ofMinutes(30)));
-        sut.save(new Overtime(savedPerson, now.minusDays(8), now.minusDays(4), Duration.ofHours(-1)));
+        sut.save(new Overtime(person, now, now.plusDays(2), Duration.ofHours(3)));
+        sut.save(new Overtime(person, now.plusDays(5), now.plusDays(10), Duration.ofMinutes(30)));
+        sut.save(new Overtime(person, now.minusDays(8), now.minusDays(4), Duration.ofHours(-1)));
 
         // Overtime for other person
-        sut.save(new Overtime(savedOtherPerson, now.plusDays(5), now.plusDays(10), Duration.ofHours(5)));
+        sut.save(new Overtime(otherPerson, now.plusDays(5), now.plusDays(10), Duration.ofHours(5)));
 
         final Optional<Double> totalHours = sut.calculateTotalHoursForPerson(person);
         assertThat(totalHours).hasValue(2.5);
@@ -67,20 +63,17 @@ class OvertimeRepositoryIT extends TestContainersBase {
     @Test
     void ensureCalculateTotalHoursForPersons() {
 
-        final Person person = new Person("batman", "Muster", "Marlene", "muster@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person savedPerson = personService.create("batman", "Muster", "Marlene", "muster@example.org");
         sut.save(new Overtime(savedPerson, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(2)));
         sut.save(new Overtime(savedPerson, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(3)));
         sut.save(new Overtime(savedPerson, of(2014, 12, 30), of(2015, 1, 3), Duration.ofHours(1)));
 
-        final Person person2 = new Person("joker", "Muster", "Marlene", "muster@example.org");
-        final Person savedPerson2 = personService.create(person2);
+        final Person savedPerson2 = personService.create("joker", "Muster", "Marlene", "muster@example.org");
         sut.save(new Overtime(savedPerson2, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(1)));
         sut.save(new Overtime(savedPerson2, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(1)));
 
         // should not be in result set
-        final Person person3 = new Person("robin", "Muster", "Marlene", "muster@example.org");
-        final Person savedPerson3 = personService.create(person3);
+        final Person savedPerson3 = personService.create("robin", "Muster", "Marlene", "muster@example.org");
         sut.save(new Overtime(savedPerson3, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(42)));
 
         final List<OvertimeDurationSum> actual = sut.calculateTotalHoursForPersons(List.of(savedPerson, savedPerson2));
@@ -94,8 +87,7 @@ class OvertimeRepositoryIT extends TestContainersBase {
     @Test
     void ensureCalculateTotalHoursForPersonsDoesNotIncludePersonsWithoutOvertimeReduction() {
 
-        final Person person = new Person("joker", "Muster", "Marlene", "muster@example.org");
-        personService.create(person);
+        final Person person = personService.create("joker", "Muster", "Marlene", "muster@example.org");
 
         final List<OvertimeDurationSum> actual = sut.calculateTotalHoursForPersons(List.of(person));
         assertThat(actual).isEmpty();
@@ -104,8 +96,7 @@ class OvertimeRepositoryIT extends TestContainersBase {
     @Test
     void ensureReturnsNullAsTotalOvertimeIfPersonHasNoOvertimeRecords() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        personService.create(person);
+        final Person person = personService.create("muster", "Muster", "Marlene", "muster@example.org");
 
         final Optional<Double> totalHours = sut.calculateTotalHoursForPerson(person);
         assertThat(totalHours).isEmpty();
@@ -114,8 +105,7 @@ class OvertimeRepositoryIT extends TestContainersBase {
     @Test
     void ensureReturnsAllRecordsWithStartOrEndDateInTheGivenYear() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person savedPerson = personService.create("muster", "Muster", "Marlene", "muster@example.org");
 
         // records to find
         sut.save(new Overtime(savedPerson, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(2)));
@@ -137,20 +127,19 @@ class OvertimeRepositoryIT extends TestContainersBase {
     @Test
     void ensureFindByPersonAndStartDateIsBefore() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person person = personService.create("muster", "Muster", "Marlene", "muster@example.org");
 
         // records starting before 2016
-        sut.save(new Overtime(savedPerson, of(2012, 1, 1), of(2012, 1, 3), Duration.ofHours(1)));
-        sut.save(new Overtime(savedPerson, of(2014, 12, 30), of(2015, 1, 3), Duration.ofHours(2)));
-        sut.save(new Overtime(savedPerson, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(3)));
-        sut.save(new Overtime(savedPerson, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(4)));
+        sut.save(new Overtime(person, of(2012, 1, 1), of(2012, 1, 3), Duration.ofHours(1)));
+        sut.save(new Overtime(person, of(2014, 12, 30), of(2015, 1, 3), Duration.ofHours(2)));
+        sut.save(new Overtime(person, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(3)));
+        sut.save(new Overtime(person, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(4)));
 
         // record after or in 2016
-        sut.save(new Overtime(savedPerson, of(2016, 12, 5), of(2016, 12, 31), Duration.ofHours(99)));
-        sut.save(new Overtime(savedPerson, of(2016, 1, 1), of(2016, 1, 1), Duration.ofHours(99)));
+        sut.save(new Overtime(person, of(2016, 12, 5), of(2016, 12, 31), Duration.ofHours(99)));
+        sut.save(new Overtime(person, of(2016, 1, 1), of(2016, 1, 1), Duration.ofHours(99)));
 
-        final List<Overtime> overtimes = sut.findByPersonAndStartDateIsBefore(savedPerson, of(2016, 1, 1));
+        final List<Overtime> overtimes = sut.findByPersonAndStartDateIsBefore(person, of(2016, 1, 1));
         assertThat(overtimes).hasSize(4);
         assertThat(overtimes.get(0).getStartDate()).isEqualTo(of(2012, 1, 1));
         assertThat(overtimes.get(0).getDuration()).isEqualTo(Duration.ofHours(1));
@@ -165,9 +154,9 @@ class OvertimeRepositoryIT extends TestContainersBase {
     @Test
     void ensureFindByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual() {
 
-        final Person person = personService.create(new Person("muster", "Muster", "Marlene", "muster@example.org"));
-        final Person person2 = personService.create(new Person("retsum", "Retsum", "Enelram", "retsum@example.org"));
-        final Person person3 = personService.create(new Person("john", "doe", "john", "john@example.org"));
+        final Person person = personService.create("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person2 = personService.create("retsum", "Retsum", "Enelram", "retsum@example.org");
+        final Person person3 = personService.create("john", "doe", "john", "john@example.org");
 
         final List<Person> persons = List.of(person, person2);
         final LocalDate start = LocalDate.of(2022, 2, 1);

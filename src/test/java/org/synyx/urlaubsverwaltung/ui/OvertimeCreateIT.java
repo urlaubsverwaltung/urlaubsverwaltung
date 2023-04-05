@@ -146,9 +146,7 @@ class OvertimeCreateIT {
     }
 
     private Person createPerson() {
-        final Person person = new Person("dBradley", "Bradley", "Donald", "Donald.Bradley@example.org");
-        person.setPermissions(List.of(USER, OFFICE));
-        final Person savedPerson = personService.create(person);
+        final Person savedPerson = personService.create("dBradley", "Bradley", "Donald", "Donald.Bradley@example.org", List.of(), List.of(USER, OFFICE));
 
         final int currentYear = LocalDate.now().getYear();
         final LocalDate validFrom = LocalDate.of(currentYear - 1, 1, 1);

@@ -39,9 +39,9 @@ class SickNoteCommentEntityRepositoryIT extends TestContainersBase {
 
         final LocalDate now = LocalDate.now(UTC);
 
-        final Person batman = personService.create(new Person("batman", "Wayne", "Bruce", "batman@example.org"));
-        final Person robin = personService.create(new Person("robin", "Grayson", "Dick", "robin@example.org"));
-        final Person alfred = personService.create(new Person("alfred", "Pennyworth", "Alfred", "alfred@example.org"));
+        final Person batman = personService.create("batman", "Wayne", "Bruce", "batman@example.org");
+        final Person robin = personService.create("robin", "Grayson", "Dick", "robin@example.org");
+        final Person alfred = personService.create("alfred", "Pennyworth", "Alfred", "alfred@example.org");
 
         final SickNote sickNoteBatmanOne = sickNoteService.save(SickNote.builder().person(batman).startDate(now.minusDays(10)).endDate(now.minusDays(10)).build());
         final SickNote sickNoteBatmanTwo = sickNoteService.save(SickNote.builder().person(batman).startDate(now.minusDays(5)).endDate(now.minusDays(5)).build());

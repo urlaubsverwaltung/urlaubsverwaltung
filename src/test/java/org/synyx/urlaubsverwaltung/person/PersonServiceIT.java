@@ -60,10 +60,7 @@ class PersonServiceIT extends TestContainersBase {
 
         final LocalDate now = LocalDate.now();
 
-        final Person person = new Person("user", "Muster", "Marlene", "muster@example.org");
-        person.setPermissions(List.of(USER));
-        person.setNotifications(List.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
-        final Person personWithId = personService.create(person);
+        final Person personWithId = personService.create("user", "Muster", "Marlene", "muster@example.org", List.of(MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED), List.of(USER));
         final Integer personId = personWithId.getId();
 
         final PersonBasedata personBasedata = new PersonBasedata(new PersonId(personId), "42", "lala");

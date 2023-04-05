@@ -65,14 +65,12 @@ class PersonServiceExtensionImplTest {
     @Test
     void createHappyPath() {
 
-        final PersonDTO personDTO = anyPersonDTO();
-        final Person createdPerson = anyPerson();
+        final Person createdPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        createdPerson.setId(1);
+        createdPerson.setPermissions(List.of(Role.USER));
+        when(personService.create(any(String.class), any(String.class), any(String.class), any(String.class))).thenReturn(createdPerson);
 
-        when(personService.create(any())).thenReturn(createdPerson);
-
-        final PersonDTO createdDTO = sut.create(personDTO);
-
-        assertThat(createdDTO).isNotNull();
+        final PersonDTO createdDTO = sut.create(anyPersonDTO());
         assertThat(createdDTO.getId()).isOne();
         assertThat(createdDTO.getUsername()).isEqualTo("muster");
         assertThat(createdDTO.getLastName()).isEqualTo("Muster");
@@ -80,14 +78,6 @@ class PersonServiceExtensionImplTest {
         assertThat(createdDTO.getEmail()).isEqualTo("muster@example.org");
         assertThat(createdDTO.getPermissions()).containsOnly(RoleDTO.USER);
         assertThat(createdDTO.isEnabled()).isTrue();
-
-        ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
-        verify(personService).create(personArgumentCaptor.capture());
-
-        final Person value = personArgumentCaptor.getValue();
-        assertThat(value).isNotNull();
-        assertThat(value.getId()).isNull();
-        assertThat(value.getUsername()).isEqualTo("muster");
     }
 
     @Test

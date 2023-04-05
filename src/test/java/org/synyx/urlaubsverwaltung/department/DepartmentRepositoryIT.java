@@ -30,13 +30,8 @@ class DepartmentRepositoryIT extends TestContainersBase {
     @Test
     void ensuresThatManagedMembersOfPersonWithRoleDHAndSSAareFound() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setPermissions(List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
-        final Person savedPerson = personService.create(person);
-
-        final Person memberA = new Person("memberA", "memberA", "memberA", "memberA@example.org");
-        memberA.setPermissions(List.of(USER));
-        final Person savedMemberA = personService.create(memberA);
+        final Person savedPerson = personService.create("muster", "Muster", "Marlene", "muster@example.org", List.of(), List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        final Person savedMemberA = personService.create("memberA", "memberA", "memberA", "memberA@example.org", List.of(), List.of(USER));
 
         final DepartmentMemberEmbeddable departmentMemberEmbeddableA = new DepartmentMemberEmbeddable();
         departmentMemberEmbeddableA.setAccessionDate(Instant.now());
@@ -49,9 +44,7 @@ class DepartmentRepositoryIT extends TestContainersBase {
         departmentA.setDepartmentHeads(List.of(savedPerson));
         final DepartmentEntity savedDepartmentA = sut.save(departmentA);
 
-        final Person memberB = new Person("memberB", "memberB", "memberB", "memberB@example.org");
-        memberB.setPermissions(List.of(USER));
-        final Person savedMemberB = personService.create(memberB);
+        final Person savedMemberB = personService.create("memberB", "memberB", "memberB", "memberB@example.org", List.of(), List.of(USER));
 
         final DepartmentMemberEmbeddable departmentMemberEmbeddableB = new DepartmentMemberEmbeddable();
         departmentMemberEmbeddableB.setAccessionDate(Instant.now());

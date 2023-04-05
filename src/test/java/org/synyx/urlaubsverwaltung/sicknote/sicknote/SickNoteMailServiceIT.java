@@ -44,9 +44,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
     @Test
     void sendEndOfSickPayNotification() throws MessagingException, IOException {
 
-        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(List.of(OFFICE));
-        personService.create(office);
+        final Person office = personService.create("office", "Muster", "Marlene", "office@example.org", List.of(), List.of(OFFICE));
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
 

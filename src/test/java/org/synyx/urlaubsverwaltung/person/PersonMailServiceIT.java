@@ -38,10 +38,14 @@ class PersonMailServiceIT extends TestContainersBase {
         final Person createdPerson = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
         createdPerson.setId(1);
 
-        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(List.of(OFFICE));
-        office.setNotifications(List.of(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL));
-        personService.create(office);
+        final Person office = personService.create(
+            "office",
+            "Muster",
+            "Marlene",
+            "office@example.org",
+            List.of(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL),
+            List.of(OFFICE)
+        );
 
         sut.sendPersonCreationNotification(new PersonCreatedEvent(personService, createdPerson.getId(), createdPerson.getNiceName(), createdPerson.getUsername(), createdPerson.getEmail(), createdPerson.isActive()));
 

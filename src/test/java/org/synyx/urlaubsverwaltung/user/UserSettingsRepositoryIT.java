@@ -27,20 +27,18 @@ class UserSettingsRepositoryIT extends TestContainersBase {
     @Test
     void ensuresToFindUserSettingsByUsername() {
 
-        final Person marlene = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person savedMarlene = personService.create(marlene);
+        final Person marlene = personService.create("muster", "Muster", "Marlene", "muster@example.org");
 
         final UserSettingsEntity userSettingMarlene = new UserSettingsEntity();
-        userSettingMarlene.setPersonId(savedMarlene.getId());
+        userSettingMarlene.setPersonId(marlene.getId());
         userSettingMarlene.setTheme(SYSTEM);
         userSettingMarlene.setLocale(Locale.GERMAN);
         sut.save(userSettingMarlene);
 
-        final Person petra = new Person("petra", "Petra", "Petra", "petra@example.org");
-        final Person savedPetra = personService.create(petra);
+        final Person petra = personService.create("petra", "Petra", "Petra", "petra@example.org");
 
         final UserSettingsEntity userSettingPetra = new UserSettingsEntity();
-        userSettingPetra.setPersonId(savedPetra.getId());
+        userSettingPetra.setPersonId(petra.getId());
         userSettingPetra.setTheme(SYSTEM);
         userSettingPetra.setLocale(Locale.GERMAN);
         sut.save(userSettingPetra);
