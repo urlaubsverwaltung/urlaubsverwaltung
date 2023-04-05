@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.oauth2.core.oidc.StandardClaimAccessor;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
+import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -20,12 +21,37 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CONVERTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+
+    private static final List<MailNotification> DEFAULT_MAIL_NOTIFICATIONS = List.of(
+        NOTIFICATION_EMAIL_APPLICATION_APPLIED,
+        NOTIFICATION_EMAIL_APPLICATION_ALLOWED,
+        NOTIFICATION_EMAIL_APPLICATION_REVOKED,
+        NOTIFICATION_EMAIL_APPLICATION_REJECTED,
+        NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED,
+        NOTIFICATION_EMAIL_APPLICATION_CANCELLATION,
+        NOTIFICATION_EMAIL_APPLICATION_EDITED,
+        NOTIFICATION_EMAIL_APPLICATION_CONVERTED,
+        NOTIFICATION_EMAIL_APPLICATION_UPCOMING,
+        NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT,
+        NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING
+    );
 
     private final PersonService personService;
 
@@ -82,7 +108,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
                 lastName,
                 firstName,
                 emailAddress,
-                List.of(),
+                DEFAULT_MAIL_NOTIFICATIONS,
                 List.of(USER)
             );
             person = personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);

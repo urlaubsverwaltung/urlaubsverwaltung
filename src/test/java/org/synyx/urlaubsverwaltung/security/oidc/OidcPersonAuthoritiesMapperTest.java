@@ -15,6 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
+import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -33,11 +34,36 @@ import static org.springframework.security.oauth2.core.oidc.IdTokenClaimNames.SU
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.EMAIL;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.FAMILY_NAME;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.GIVEN_NAME;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CONVERTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class OidcPersonAuthoritiesMapperTest {
+
+    private static final List<MailNotification> DEFAULT_MAIL_NOTIFICATIONS = List.of(
+        NOTIFICATION_EMAIL_APPLICATION_APPLIED,
+        NOTIFICATION_EMAIL_APPLICATION_ALLOWED,
+        NOTIFICATION_EMAIL_APPLICATION_REVOKED,
+        NOTIFICATION_EMAIL_APPLICATION_REJECTED,
+        NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED,
+        NOTIFICATION_EMAIL_APPLICATION_CANCELLATION,
+        NOTIFICATION_EMAIL_APPLICATION_EDITED,
+        NOTIFICATION_EMAIL_APPLICATION_CONVERTED,
+        NOTIFICATION_EMAIL_APPLICATION_UPCOMING,
+        NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT,
+        NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING
+    );
 
     private OidcPersonAuthoritiesMapper sut;
 
@@ -123,7 +149,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, List.of(), List.of(USER))).thenReturn(createdPerson);
+        when(personService.create(uniqueID, familyName, givenName, email, DEFAULT_MAIL_NOTIFICATIONS, List.of(USER))).thenReturn(createdPerson);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
@@ -152,7 +178,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, List.of(), List.of(USER))).thenReturn(createdPerson);
+        when(personService.create(uniqueID, familyName, givenName, email, DEFAULT_MAIL_NOTIFICATIONS, List.of(USER))).thenReturn(createdPerson);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
@@ -193,7 +219,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, List.of(), List.of(USER))).thenReturn(createdPerson);
+        when(personService.create(uniqueID, familyName, givenName, email, DEFAULT_MAIL_NOTIFICATIONS, List.of(USER))).thenReturn(createdPerson);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
@@ -234,7 +260,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, List.of(), List.of(USER))).thenReturn(createdPerson);
+        when(personService.create(uniqueID, familyName, givenName, email, DEFAULT_MAIL_NOTIFICATIONS, List.of(USER))).thenReturn(createdPerson);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
@@ -258,7 +284,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, null, List.of(), List.of(USER))).thenReturn(createdPerson);
+        when(personService.create(uniqueID, familyName, givenName, null, DEFAULT_MAIL_NOTIFICATIONS, List.of(USER))).thenReturn(createdPerson);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
@@ -288,7 +314,7 @@ class OidcPersonAuthoritiesMapperTest {
         createdPerson.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, null, List.of(), List.of(USER))).thenReturn(createdPerson);
+        when(personService.create(uniqueID, familyName, givenName, null, DEFAULT_MAIL_NOTIFICATIONS, List.of(USER))).thenReturn(createdPerson);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson)).thenReturn(createdPerson);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthorities));
@@ -342,7 +368,7 @@ class OidcPersonAuthoritiesMapperTest {
         personForLogin.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, List.of(), List.of(USER))).thenReturn(personForLogin);
+        when(personService.create(uniqueID, familyName, givenName, email, DEFAULT_MAIL_NOTIFICATIONS, List.of(USER))).thenReturn(personForLogin);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
@@ -370,7 +396,7 @@ class OidcPersonAuthoritiesMapperTest {
         personForLogin.setPermissions(List.of(USER));
 
         when(personService.getPersonByUsername(uniqueID)).thenReturn(Optional.empty());
-        when(personService.create(uniqueID, familyName, givenName, email, List.of(), List.of(USER))).thenReturn(personForLogin);
+        when(personService.create(uniqueID, familyName, givenName, email, DEFAULT_MAIL_NOTIFICATIONS, List.of(USER))).thenReturn(personForLogin);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(personForLogin)).thenReturn(personForLogin);
 
         final Collection<? extends GrantedAuthority> grantedAuthorities = sut.mapAuthorities(List.of(oidcUserAuthority));
