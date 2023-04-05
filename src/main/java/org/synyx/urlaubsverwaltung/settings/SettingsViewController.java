@@ -174,6 +174,7 @@ public class SettingsViewController implements HasLaunchpad {
         settingsDto.setOvertimeSettings(settings.getOvertimeSettings());
         settingsDto.setTimeSettings(settings.getTimeSettings());
         settingsDto.setSickNoteSettings(settings.getSickNoteSettings());
+        settingsDto.setAvatarSettings(settings.getAvatarSettings());
         settingsDto.setCalendarSettings(settings.getCalendarSettings());
 
         return settingsDto;
@@ -188,6 +189,7 @@ public class SettingsViewController implements HasLaunchpad {
         settings.setOvertimeSettings(settingsDto.getOvertimeSettings());
         settings.setTimeSettings(settingsDto.getTimeSettings());
         settings.setSickNoteSettings(settingsDto.getSickNoteSettings());
+        settings.setAvatarSettings(settingsDto.getAvatarSettings());
         settings.setCalendarSettings(settingsDto.getCalendarSettings());
         return settings;
     }

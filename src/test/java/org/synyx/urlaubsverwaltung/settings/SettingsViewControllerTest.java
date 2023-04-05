@@ -22,6 +22,7 @@ import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
 import org.synyx.urlaubsverwaltung.period.DayLength;
+import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
@@ -314,6 +315,27 @@ class SettingsViewControllerTest {
             .andExpect(redirectedUrl("/web/settings"));
     }
 
+    @Test
+    void ensureSavingAvatarSettings() throws Exception {
+
+        when(settingsService.getSettings()).thenReturn(someSettings());
+
+        perform(
+            post("/web/settings")
+                .param("absenceTypeSettings.items[0].id", "10")
+                .param("specialLeaveSettings.specialLeaveSettingsItems[0].id", "11")
+                .param("avatarSettings.gravatarEnabled", "true")
+        ).andExpect(redirectedUrl("/web/settings"));
+
+        final ArgumentCaptor<Settings> settingsArgumentCaptor = ArgumentCaptor.forClass(Settings.class);
+
+        verify(settingsService).save(settingsArgumentCaptor.capture());
+
+        final Settings savedSettings = settingsArgumentCaptor.getValue();
+        final AvatarSettings avatarSettings = savedSettings.getAvatarSettings();
+        assertThat(avatarSettings.isGravatarEnabled()).isTrue();
+    }
+
     private static Settings someSettings() {
         final Settings settings = new Settings();
         settings.setId(1);
@@ -324,6 +346,7 @@ class SettingsViewControllerTest {
         settings.setTimeSettings(new TimeSettings());
         settings.setSickNoteSettings(new SickNoteSettings());
         settings.setCalendarSettings(new CalendarSettings());
+        settings.setAvatarSettings(new AvatarSettings());
         return settings;
     }
 

@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
+import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
@@ -24,6 +25,8 @@ public class SettingsDto {
     private OvertimeSettings overtimeSettings;
     private TimeSettings timeSettings;
     private SickNoteSettings sickNoteSettings;
+
+    private AvatarSettings avatarSettings;
     private CalendarSettings calendarSettings;
 
     public Integer getId() {
@@ -98,6 +101,15 @@ public class SettingsDto {
         this.sickNoteSettings = sickNoteSettings;
     }
 
+
+    public AvatarSettings getAvatarSettings() {
+        return avatarSettings;
+    }
+
+    public void setAvatarSettings(AvatarSettings avatarSettings) {
+        this.avatarSettings = avatarSettings;
+    }
+
     public CalendarSettings getCalendarSettings() {
         return calendarSettings;
     }
@@ -119,6 +131,7 @@ public class SettingsDto {
             && Objects.equals(overtimeSettings, that.overtimeSettings)
             && Objects.equals(timeSettings, that.timeSettings)
             && Objects.equals(sickNoteSettings, that.sickNoteSettings)
+            && Objects.equals(avatarSettings, that.avatarSettings)
             && Objects.equals(calendarSettings, that.calendarSettings)
             && Objects.equals(specialLeaveSettings, that.specialLeaveSettings);
     }
@@ -126,6 +139,6 @@ public class SettingsDto {
     @Override
     public int hashCode() {
         return Objects.hash(id, absenceTypeSettings, applicationSettings, accountSettings, workingTimeSettings,
-            overtimeSettings, timeSettings, sickNoteSettings, calendarSettings, specialLeaveSettings);
+            overtimeSettings, timeSettings, sickNoteSettings, avatarSettings, calendarSettings, specialLeaveSettings);
     }
 }
