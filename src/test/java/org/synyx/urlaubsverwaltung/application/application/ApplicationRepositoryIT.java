@@ -54,8 +54,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureApplicationForLeaveForStatusAndPersonAndWithinDateRange() {
 
-        final Person max = personService.create("muster", "Mustermann", "Max", "mustermann@example.org");
-        final Person marlene = personService.create("person2", "Musterfrau", "Marlene", "musterfrau@example.org");
+        final Person max = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final Person marlene = personService.create("person2", "Marlene", "Musterfrau", "musterfrau@example.org");
         final VacationTypeEntity vacationType = getVacationType(HOLIDAY);
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
@@ -92,7 +92,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureApplicationForLeaveWithEmoji() {
 
-        final Person marlene = personService.create("marlene", "Musterfrau", "Marlene", "musterfrau@example.org");
+        final Person marlene = personService.create("marlene", "Marlene", "Musterfrau", "musterfrau@example.org");
         final VacationTypeEntity vacationType = getVacationType(HOLIDAY);
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
@@ -115,7 +115,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureReturnsNullAsTotalOvertimeReductionIfPersonHasNoApplicationsForLeaveYet() {
 
-        final Person savedPerson = personService.create("muster", "Muster", "Marlene", "muster@example.org");
+        final Person savedPerson = personService.create("muster", "Marlene", "Muster", "muster@example.org");
 
         BigDecimal totalHours = sut.calculateTotalOvertimeReductionOfPerson(savedPerson);
         assertThat(totalHours).isNull();
@@ -124,7 +124,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusIn() {
 
-        final Person savedPerson = personService.create("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -166,7 +166,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInMultipleStatus() {
 
-        final Person savedPerson = personService.create("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -208,7 +208,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInEmptyStatus() {
 
-        final Person savedPerson = personService.create("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -225,8 +225,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInAndPersonIn() {
 
-        final Person savedPerson = personService.create("sam", "smith", "sam", "smith@example.org");
-        final Person savedOtherPerson = personService.create("other sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
+        final Person savedOtherPerson = personService.create("other sam", "sam", "smith", "smith@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -268,8 +268,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInAndPersonInOfOneUser() {
 
-        final Person savedPerson = personService.create("sam", "smith", "sam", "smith@example.org");
-        final Person savedOtherPerson = personService.create("other sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
+        final Person savedOtherPerson = personService.create("other sam", "sam", "smith", "smith@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -311,8 +311,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInAndPersonInNoResult() {
 
-        final Person savedPerson = personService.create("sam", "smith", "sam", "smith@example.org");
-        final Person savedOtherPerson = personService.create("other sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
+        final Person savedOtherPerson = personService.create("other sam", "sam", "smith", "smith@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -348,8 +348,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureCountsTotalOvertimeReductionCorrectly() {
 
-        final Person person = personService.create("sam", "smith", "sam", "smith@example.org");
-        final Person otherPerson = personService.create("freddy", "Gwin", "freddy", "gwin@example.org");
+        final Person person = personService.create("sam", "sam", "smith", "smith@example.org");
+        final Person otherPerson = personService.create("freddy", "freddy", "Gwin", "gwin@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -417,8 +417,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureCountsTotalOvertimeReductionBeforeDateCorrectly() {
 
-        final Person person = personService.create("sam", "smith", "sam", "smith@example.org");
-        final Person otherPerson = personService.create("freddy", "Gwin", "freddy", "gwin@example.org");
+        final Person person = personService.create("sam", "sam", "smith", "smith@example.org");
+        final Person otherPerson = personService.create("freddy", "freddy", "Gwin", "gwin@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -480,8 +480,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByHolidayReplacementAndEndDateIsGreaterThanEqualAndStatusIn() {
 
-        final Person holidayReplacement = personService.create("holly", "holly", "replacement", "holly@example.org");
-        final Person person = personService.create("sam", "smith", "sam", "smith@example.org");
+        final Person holidayReplacement = personService.create("holly", "replacement", "holly", "holly@example.org");
+        final Person person = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
@@ -509,7 +509,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
         sut.save(wrongDateApplication);
 
         // other replacement
-        final Person savedOtherHolidayReplacement = personService.create("other", "other", "holiday", "other@example.org");
+        final Person savedOtherHolidayReplacement = personService.create("other", "holiday", "other", "other@example.org");
         final HolidayReplacementEntity otherHolidayReplacementEntity = new HolidayReplacementEntity();
         otherHolidayReplacementEntity.setPerson(savedOtherHolidayReplacement);
         final Application otherHolidayReplacementApplication = createApplication(person, getVacationType(OVERTIME), from, to, FULL);
@@ -526,7 +526,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInAndStartDateBetweenAndUpcomingApplicationsReminderSendIsNull() {
 
-        final Person savedPerson = personService.create("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         // yesterday
         final LocalDate yesterdayDates = LocalDate.of(2020, 5, 3);
@@ -576,7 +576,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInAndStartDateAndHolidayReplacementsIsNotEmpty() {
 
-        final Person savedPerson = personService.create("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
         holidayReplacement.setPerson(savedPerson);
@@ -646,8 +646,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureFindByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory() {
 
-        final Person max = personService.create("muster", "Mustermann", "Max", "mustermann@example.org");
-        final Person marlene = personService.create("person2", "Musterfrau", "Marlene", "musterfrau@example.org");
+        final Person max = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final Person marlene = personService.create("person2", "Marlene", "Musterfrau", "musterfrau@example.org");
         final VacationTypeEntity overtime = getVacationType(OVERTIME);
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
@@ -687,8 +687,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureFindByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory() {
 
-        final Person max = personService.create("muster", "Mustermann", "Max", "mustermann@example.org");
-        final Person marlene = personService.create("person2", "Musterfrau", "Marlene", "musterfrau@example.org");
+        final Person max = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final Person marlene = personService.create("person2", "Marlene", "Musterfrau", "musterfrau@example.org");
         final VacationTypeEntity overtime = getVacationType(OVERTIME);
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
@@ -728,8 +728,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureFindByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual() {
 
-        final Person max = personService.create("muster", "Mustermann", "Max", "mustermann@example.org");
-        final Person marlene = personService.create("person2", "Musterfrau", "Marlene", "musterfrau@example.org");
+        final Person max = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final Person marlene = personService.create("person2", "Marlene", "Musterfrau", "musterfrau@example.org");
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
         final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
@@ -754,7 +754,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findAllByReplacements_Person() {
 
-        final Person person = personService.create("muster", "Mustermann", "Max", "mustermann@example.org");
+        final Person person = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
 
         Application application = new Application();
         final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();

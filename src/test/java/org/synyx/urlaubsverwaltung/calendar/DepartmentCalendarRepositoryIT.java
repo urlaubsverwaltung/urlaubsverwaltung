@@ -38,7 +38,7 @@ class DepartmentCalendarRepositoryIT extends TestContainersBase {
     @Test
     void ensureUniqueConstraintForDepartmentCalendarWithDifferentPersons() {
 
-        final Person savedPersonOne = personService.create("sam", "smith", "sam", "smith@example.org");
+        final Person savedPersonOne = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final Department department = new Department();
         department.setName("department");
@@ -48,7 +48,7 @@ class DepartmentCalendarRepositoryIT extends TestContainersBase {
         firstDepartmentCalendar.setCalendarPeriod(Period.ofDays(1));
         sut.save(firstDepartmentCalendar);
 
-        final Person savedPersonTwo = personService.create("martin", "scissor", "martin", "martin@example.org");
+        final Person savedPersonTwo = personService.create("martin", "martin", "scissor", "martin@example.org");
 
         final DepartmentCalendar departmentCalendar = new DepartmentCalendar(savedDepartment.getId(), savedPersonTwo);
         departmentCalendar.setCalendarPeriod(Period.ofDays(1));
@@ -60,7 +60,7 @@ class DepartmentCalendarRepositoryIT extends TestContainersBase {
     @Test
     void ensureUniqueConstraintForDepartmentCalendarWithDifferentDepartments() {
 
-        final Person savedPerson = personService.create("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final Department departmentOne = new Department();
         departmentOne.setName("departmentOne");
@@ -84,7 +84,7 @@ class DepartmentCalendarRepositoryIT extends TestContainersBase {
     @Test
     void ensureUniqueConstraintForDepartmentCalendar() {
 
-        final Person savedPerson = personService.create("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final Department department = new Department();
         department.setName("department");
@@ -103,7 +103,7 @@ class DepartmentCalendarRepositoryIT extends TestContainersBase {
     @Test
     void ensuresDeletesDepartmentCalendarOnDepartmentDeletion() {
 
-        final Person savedPerson = personService.create("theodore", "smith", "theodore", "smith@example.org");
+        final Person savedPerson = personService.create("theodore", "theodore", "smith", "smith@example.org");
 
         final Department department = new Department();
         department.setName("department");

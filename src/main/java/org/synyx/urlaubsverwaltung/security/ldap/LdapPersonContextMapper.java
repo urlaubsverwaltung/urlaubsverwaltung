@@ -64,8 +64,7 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
         } else {
             final Person newPerson = personService.create(
                 ldapUsername,
-                ldapLastName,
-                ldapFirstName,
+                ldapFirstName, ldapLastName,
                 ldapEmail
             );
 

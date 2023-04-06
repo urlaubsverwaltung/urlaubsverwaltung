@@ -53,7 +53,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
 
         final OvertimeComment overtimeComment = new OvertimeComment(person, overtime, CREATED, clock);
 
-        final Person office = personService.create("office", "Muster", "Marlene", "office@example.org", List.of(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL), List.of(OFFICE));
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL), List.of(OFFICE));
 
         sut.sendOvertimeNotification(overtime, overtimeComment);
 

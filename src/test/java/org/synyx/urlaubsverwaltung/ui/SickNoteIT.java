@@ -263,7 +263,7 @@ class SickNoteIT {
     }
 
     private Person createPerson() {
-        final Person savedPerson = personService.create("pennyworth", "Pennyworth", "Alfred", "alfred.pennyworth@example.org", List.of(), List.of(USER, OFFICE));
+        final Person savedPerson = personService.create("pennyworth", "Alfred", "Pennyworth", "alfred.pennyworth@example.org", List.of(), List.of(USER, OFFICE));
 
         final LocalDate validFrom = LocalDate.of(2022, 1, 1);
         final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).map(DayOfWeek::getValue).collect(toList());

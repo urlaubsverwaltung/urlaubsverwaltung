@@ -32,7 +32,7 @@ class AccountRepositoryIT extends TestContainersBase {
     @Test
     void ensureUniqueConstraintOfPersonAndValidFrom() {
 
-        final Person person = personService.create("muster", "Muster", "Marlene", "muster@example.org");
+        final Person person = personService.create("muster", "Marlene", "Muster", "muster@example.org");
 
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
@@ -52,7 +52,7 @@ class AccountRepositoryIT extends TestContainersBase {
     @Test
     void ensureFindAccountByYearAndPersons() {
 
-        final Person savedPerson = personService.create("muster", "Muster", "Marlene", "muster@example.org");
+        final Person savedPerson = personService.create("muster", "Marlene", "Muster", "muster@example.org");
 
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
@@ -61,12 +61,12 @@ class AccountRepositoryIT extends TestContainersBase {
         final AccountEntity accountToFind = new AccountEntity(savedPerson, validFrom, validTo, null, expiryDate, TEN, TEN, TEN, "comment");
         final AccountEntity savedAccountToFind = sut.save(accountToFind);
 
-        final Person savedOtherPerson = personService.create("otherPerson", "other", "person", "other@example.org");
+        final Person savedOtherPerson = personService.create("otherPerson", "person", "other", "other@example.org");
         final AccountEntity otherAccountToFind = new AccountEntity(savedOtherPerson, validFrom, validTo, null, expiryDate, TEN, TEN, TEN, "comment");
         final AccountEntity savedOtherAccountToFind = sut.save(otherAccountToFind);
 
         /* Do not find these accounts */
-        final Person savedPersonNotInSearch = personService.create("personNotInSearch", "notInSearch", "person", "notInSearch@example.org");
+        final Person savedPersonNotInSearch = personService.create("personNotInSearch", "person", "notInSearch", "notInSearch@example.org");
         final AccountEntity accountWrongPerson = new AccountEntity(savedPersonNotInSearch, validFrom, validTo, null, expiryDate, TEN, TEN, TEN, "comment");
         sut.save(accountWrongPerson);
 

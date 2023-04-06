@@ -60,7 +60,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Person create(String username, String lastName, String firstName, String email) {
+    public Person create(String username, String firstName, String lastName, String email) {
 
         final List<MailNotification> defaultMailNotifications = List.of(
             NOTIFICATION_EMAIL_APPLICATION_APPLIED,
@@ -80,11 +80,11 @@ class PersonServiceImpl implements PersonService {
             USER
         );
 
-        return create(username, lastName, firstName, email, defaultMailNotifications, defaultPermissions);
+        return create(username, firstName, lastName, email, defaultMailNotifications, defaultPermissions);
     }
 
     @Override
-    public Person create(String username, String lastName, String firstName, String email,
+    public Person create(String username, String firstName, String lastName, String email,
                          List<MailNotification> notifications, List<Role> permissions) {
 
         final Person person = new Person(username, lastName, firstName, email);

@@ -27,12 +27,12 @@ class CompanyCalendarRepositoryIT extends TestContainersBase {
     @Test
     void ensureUniqueConstraintForCompanyCalendarWithDifferentPersons() {
 
-        final Person savedPerson = personService.create("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
         final CompanyCalendar firstCompanyCalendar = new CompanyCalendar(savedPerson);
         firstCompanyCalendar.setCalendarPeriod(Period.ofDays(1));
         sut.save(firstCompanyCalendar);
 
-        final Person savedPersonTwo = personService.create("martin", "scissor", "martin", "martin@example.org");
+        final Person savedPersonTwo = personService.create("martin", "martin", "scissor", "martin@example.org");
         final CompanyCalendar secondCompanyCalendar = new CompanyCalendar(savedPersonTwo);
         secondCompanyCalendar.setCalendarPeriod(Period.ofDays(1));
         sut.save(secondCompanyCalendar);
@@ -43,7 +43,7 @@ class CompanyCalendarRepositoryIT extends TestContainersBase {
     @Test
     void ensureUniqueConstraintForCompanyCalendar() {
 
-        final Person savedPerson = personService.create("sam", "smith", "sam", "smith@example.org");
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final CompanyCalendar firstCompanyCalendar = new CompanyCalendar(savedPerson);
         firstCompanyCalendar.setCalendarPeriod(Period.ofDays(1));

@@ -60,7 +60,7 @@ class PersonDataProvider {
             return personByUsername.get();
         }
 
-        final Person savedPerson = personService.create(username, lastName, firstName, email, notifications, permissions);
+        final Person savedPerson = personService.create(username, firstName, lastName, email, notifications, permissions);
         personBasedataService.update(new PersonBasedata(new PersonId(savedPerson.getId()), String.valueOf(personnelNumber), ""));
 
         final int currentYear = Year.now(clock).getValue();

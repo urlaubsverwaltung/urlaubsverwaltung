@@ -30,7 +30,7 @@ class DepartmentRepositoryIT extends TestContainersBase {
     @Test
     void ensuresThatManagedMembersOfPersonWithRoleDHAndSSAareFound() {
 
-        final Person savedPerson = personService.create("muster", "Muster", "Marlene", "muster@example.org", List.of(), List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
+        final Person savedPerson = personService.create("muster", "Marlene", "Muster", "muster@example.org", List.of(), List.of(USER, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY));
         final Person savedMemberA = personService.create("memberA", "memberA", "memberA", "memberA@example.org", List.of(), List.of(USER));
 
         final DepartmentMemberEmbeddable departmentMemberEmbeddableA = new DepartmentMemberEmbeddable();

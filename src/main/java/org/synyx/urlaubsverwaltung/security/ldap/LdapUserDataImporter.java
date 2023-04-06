@@ -49,7 +49,7 @@ public class LdapUserDataImporter {
                 person.setEmail(email);
                 personService.update(person);
             } else {
-                personService.create(username, lastName, firstName, email);
+                personService.create(username, firstName, lastName, email);
             }
         }
 

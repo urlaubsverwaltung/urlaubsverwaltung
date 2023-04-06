@@ -35,8 +35,8 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
         final Person convertedPerson = toPerson(person);
         final Person created = personService.create(
             convertedPerson.getUsername(),
-            convertedPerson.getLastName(),
             convertedPerson.getFirstName(),
+            convertedPerson.getLastName(),
             convertedPerson.getEmail()
         );
         return toPersonDTO(created);

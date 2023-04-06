@@ -75,7 +75,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
                 throw new DisabledException("User '" + person.getId() + "' has been deactivated");
             }
         } else {
-            final Person createdPerson = personService.create(userUniqueID, lastName, firstName, emailAddress);
+            final Person createdPerson = personService.create(userUniqueID, firstName, lastName, emailAddress);
             person = personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
 

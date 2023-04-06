@@ -216,8 +216,8 @@ class SickNoteRepositoryIT extends TestContainersBase {
     @Test
     void findSickNotesOverlappingWithDateRange() {
 
-        final Person max = personService.create("muster", "Mustermann", "Max", "mustermann@example.org");
-        final Person marlene = personService.create("person2", "Musterfrau", "Marlene", "musterfrau@example.org");
+        final Person max = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final Person marlene = personService.create("person2", "Marlene", "Musterfrau", "musterfrau@example.org");
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
         final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());

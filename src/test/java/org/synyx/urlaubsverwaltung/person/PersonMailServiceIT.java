@@ -40,8 +40,7 @@ class PersonMailServiceIT extends TestContainersBase {
 
         final Person office = personService.create(
             "office",
-            "Muster",
-            "Marlene",
+            "Marlene", "Muster",
             "office@example.org",
             List.of(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL),
             List.of(OFFICE)

@@ -345,7 +345,7 @@ class ApplicationForLeaveCreateIT {
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
         final String username = lastName + UUID.randomUUID().getLeastSignificantBits();
         final String email = String.format("%s.%s@example.org", firstName, lastName);
-        final Person savedPerson = personService.create(username, lastName, firstName, email, List.of(), roles);
+        final Person savedPerson = personService.create(username, firstName, lastName, email, List.of(), roles);
 
         final Year currentYear = Year.now();
         final LocalDate firstDayOfYear = currentYear.atDay(1);

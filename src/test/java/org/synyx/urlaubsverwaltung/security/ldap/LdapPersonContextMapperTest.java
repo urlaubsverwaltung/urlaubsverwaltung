@@ -119,7 +119,7 @@ class LdapPersonContextMapperTest {
         sut.mapUserFromContext(context, "murygina", null);
 
         verify(ldapUserMapper).mapFromContext(context);
-        verify(personService).create("peter", "Fox", "Peter", "peter@example.org");
+        verify(personService).create("peter", "Peter", "Fox", "peter@example.org");
     }
 
     @Test

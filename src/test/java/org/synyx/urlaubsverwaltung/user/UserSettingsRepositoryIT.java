@@ -27,7 +27,7 @@ class UserSettingsRepositoryIT extends TestContainersBase {
     @Test
     void ensuresToFindUserSettingsByUsername() {
 
-        final Person marlene = personService.create("muster", "Muster", "Marlene", "muster@example.org");
+        final Person marlene = personService.create("muster", "Marlene", "Muster", "muster@example.org");
 
         final UserSettingsEntity userSettingMarlene = new UserSettingsEntity();
         userSettingMarlene.setPersonId(marlene.getId());
