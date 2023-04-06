@@ -169,10 +169,7 @@
     @apply tw-duration-150;
     @apply tw-rounded-t-2xl;
     @apply tw-bg-white;
-    @apply tw-backdrop-blur;
-    @apply supports-backdrop-blur:tw-bg-white/[0.95];
     @apply dark:tw-bg-zinc-900;
-    @apply dark:supports-backdrop-blur:tw-bg-zinc-900/[0.95];
   }
 
   .nav-popup-menu.visible {
