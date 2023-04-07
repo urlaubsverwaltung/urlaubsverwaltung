@@ -54,11 +54,6 @@
                 <div class="form-group">
                   <label th:text="|#{department.data.info}:|" class="control-label col-md-3" for="description"></label>
                   <div class="col-md-9">
-                    <small>
-                      <span id="text-description"></span>
-                      <th:block th:text="#{action.comment.maxChars}" />
-                    </small>
-
                     <textarea
                       id="description"
                       rows="3"
@@ -68,6 +63,9 @@
                       onkeyup="count(this.value, 'text-description');"
                       onkeydown="maxChars(this,200); count(this.value, 'text-description');"
                     ></textarea>
+                    <small>
+                      <span id="text-description"></span><th:block th:text="#{action.comment.maxChars}" />
+                    </small>
                     <p
                       class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
                       th:if="${#fields.hasErrors('description')}"

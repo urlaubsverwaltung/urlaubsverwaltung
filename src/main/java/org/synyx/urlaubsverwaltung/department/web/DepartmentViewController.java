@@ -42,15 +42,12 @@ import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
 @RequestMapping(value = "/web")
 public class DepartmentViewController implements HasLaunchpad {
 
-    private static final String REDIRECT_WEB_DEPARTMENT = "redirect:/web/department/";
-    private static final String DEPARTMENT_DEPARTMENT_FORM = "department/department_form";
-
     private final DepartmentService departmentService;
     private final PersonService personService;
     private final DepartmentViewValidator validator;
 
     @Autowired
-    public DepartmentViewController(DepartmentService departmentService, PersonService personService, DepartmentViewValidator validator) {
+    DepartmentViewController(DepartmentService departmentService, PersonService personService, DepartmentViewValidator validator) {
         this.departmentService = departmentService;
         this.personService = personService;
         this.validator = validator;
@@ -79,11 +76,10 @@ public class DepartmentViewController implements HasLaunchpad {
     public String newDepartmentForm(Model model) {
 
         final List<Person> persons = personService.getActivePersons();
-
-        model.addAttribute("department", new DepartmentForm());
         model.addAttribute("persons", persons);
+        model.addAttribute("department", new DepartmentForm());
 
-        return DEPARTMENT_DEPARTMENT_FORM;
+        return "department/department_form";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -93,14 +89,17 @@ public class DepartmentViewController implements HasLaunchpad {
 
         validator.validate(departmentForm, errors);
 
-        if (returnModelErrorAttributes(departmentForm, errors, model)) {
-            return DEPARTMENT_DEPARTMENT_FORM;
+        if (errors.hasErrors()) {
+            final List<Person> persons = getDepartmentMembersAndAllActivePersons(departmentForm.getMembers());
+            model.addAttribute("persons", persons);
+
+            return "department/department_form";
         }
 
         final Department createdDepartment = departmentService.create(mapToDepartment(departmentForm));
         redirectAttributes.addFlashAttribute("createdDepartmentName", createdDepartment.getName());
 
-        return REDIRECT_WEB_DEPARTMENT;
+        return "redirect:/web/department/";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -112,39 +111,34 @@ public class DepartmentViewController implements HasLaunchpad {
             .orElseThrow(() -> new UnknownDepartmentException(departmentId));
         model.addAttribute("department", mapToDepartmentForm(department));
 
-        final List<Person> persons = getDepartmentMembersAndAllActivePersons(department);
+        final List<Person> persons = getDepartmentMembersAndAllActivePersons(department.getMembers());
         model.addAttribute("persons", persons);
         model.addAttribute("hiddenDepartmentMembers", List.of());
         model.addAttribute("hiddenDepartmentHeads", List.of());
         model.addAttribute("hiddenDepartmentSecondStageAuthorities", List.of());
 
-        return DEPARTMENT_DEPARTMENT_FORM;
+        return "department/department_form";
     }
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/department/{departmentId}")
     public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
                                    @ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
-                                   Model model, RedirectAttributes redirectAttributes) throws UnknownDepartmentException {
+                                   Model model, RedirectAttributes redirectAttributes) {
 
-        final Integer persistedDepartmentId = departmentService.getDepartmentById(departmentId)
-            .orElseThrow(() -> new UnknownDepartmentException(departmentId)).getId();
-
-        departmentForm.setId(persistedDepartmentId);
         validator.validate(departmentForm, errors);
 
-        if (errors.hasGlobalErrors()) {
-            model.addAttribute("errors", errors);
-        }
+        if (errors.hasErrors()) {
+            final List<Person> persons = getDepartmentMembersAndAllActivePersons(departmentForm.getMembers());
+            model.addAttribute("persons", persons);
 
-        if (returnModelErrorAttributes(departmentForm, errors, model)) {
-            return DEPARTMENT_DEPARTMENT_FORM;
+            return "department/department_form";
         }
 
         final Department updatedDepartment = departmentService.update(mapToDepartment(departmentForm));
         redirectAttributes.addFlashAttribute("updatedDepartmentName", updatedDepartment.getName());
 
-        return REDIRECT_WEB_DEPARTMENT;
+        return "redirect:/web/department/";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -159,8 +153,9 @@ public class DepartmentViewController implements HasLaunchpad {
         if (departmentId == null) {
             allPersons = personService.getActivePersons();
         } else {
-            final Department department = departmentService.getDepartmentById(departmentId).orElseThrow(() -> new UnknownDepartmentException(departmentId));
-            allPersons = getDepartmentMembersAndAllActivePersons(department);
+            final Department department = departmentService.getDepartmentById(departmentId)
+                .orElseThrow(() -> new UnknownDepartmentException(departmentId));
+            allPersons = getDepartmentMembersAndAllActivePersons(department.getMembers());
         }
 
         final List<Person> persons = hasText(memberQuery)
@@ -195,24 +190,12 @@ public class DepartmentViewController implements HasLaunchpad {
             redirectAttributes.addFlashAttribute("deletedDepartmentName", department.getName());
         });
 
-        return REDIRECT_WEB_DEPARTMENT;
+        return "redirect:/web/department/";
     }
 
-    private boolean returnModelErrorAttributes(DepartmentForm departmentForm, Errors errors, Model model) {
-        if (errors.hasErrors()) {
-            model.addAttribute("department", departmentForm);
+    private List<Person> getDepartmentMembersAndAllActivePersons(List<Person> departmentMembers) {
 
-            final List<Person> persons = personService.getActivePersons();
-            model.addAttribute("persons", persons);
-
-            return true;
-        }
-        return false;
-    }
-
-    private List<Person> getDepartmentMembersAndAllActivePersons(Department department) {
-
-        final List<Person> sortedDepartmentMembers = department.getMembers()
+        final List<Person> sortedDepartmentMembers = departmentMembers
             .stream()
             .sorted((o1, o2) -> o1.getNiceName().compareToIgnoreCase(o2.getNiceName()))
             .collect(toList());
