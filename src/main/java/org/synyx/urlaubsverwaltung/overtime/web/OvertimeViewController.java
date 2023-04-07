@@ -61,9 +61,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 @RequestMapping("/web")
 public class OvertimeViewController implements HasLaunchpad {
 
-    private static final String SIGNED_IN_USER = "signedInUser";
-    private static final String OVERTIME_OVERTIME_FORM = "overtime/overtime_form";
-
     private final OvertimeService overtimeService;
     private final PersonService personService;
     private final OvertimeFormValidator validator;
@@ -121,7 +118,6 @@ public class OvertimeViewController implements HasLaunchpad {
         model.addAttribute("selectedYear", selectedYear);
 
         model.addAttribute("person", person);
-        model.addAttribute(SIGNED_IN_USER, signedInUser);
 
         final boolean userIsAllowedToWriteOvertime = overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person);
 
@@ -155,8 +151,6 @@ public class OvertimeViewController implements HasLaunchpad {
                 "User '%s' has not the correct permissions to see overtime records of user '%s'",
                 signedInUser.getId(), person.getId()));
         }
-
-        model.addAttribute(SIGNED_IN_USER, signedInUser);
 
         final OvertimeDetailsDto overtimeDetailsDto = OvertimeDetailsMapper.mapToDto(
             overtime,
@@ -196,7 +190,7 @@ public class OvertimeViewController implements HasLaunchpad {
         final OvertimeForm overtimeForm = new OvertimeForm();
         prepareModelForCreation(model, signedInUser, person, overtimeForm);
 
-        return OVERTIME_OVERTIME_FORM;
+        return "overtime/overtime_form";
     }
 
     @PostMapping("/overtime")
@@ -215,7 +209,7 @@ public class OvertimeViewController implements HasLaunchpad {
         validator.validate(overtimeForm, errors);
         if (errors.hasErrors()) {
             prepareModelForCreation(model, signedInUser, person, overtimeForm);
-            return OVERTIME_OVERTIME_FORM;
+            return "overtime/overtime_form";
         }
 
         final Overtime overtime = overtimeForm.generateOvertime();
@@ -241,7 +235,7 @@ public class OvertimeViewController implements HasLaunchpad {
 
         prepareModelForEdit(model, signedInUser, person, new OvertimeForm(overtime));
 
-        return OVERTIME_OVERTIME_FORM;
+        return "overtime/overtime_form";
     }
 
     @PostMapping("/overtime/{id}")
@@ -262,7 +256,7 @@ public class OvertimeViewController implements HasLaunchpad {
         validator.validate(overtimeForm, errors);
         if (errors.hasErrors()) {
             prepareModelForEdit(model, signedInUser, person, overtimeForm);
-            return OVERTIME_OVERTIME_FORM;
+            return "overtime/overtime_form";
         }
 
         overtimeForm.updateOvertime(overtime);
@@ -290,7 +284,6 @@ public class OvertimeViewController implements HasLaunchpad {
     private void prepareModelForEdit(Model model, Person signedInUser, Person person, OvertimeForm overtimeForm) {
         model.addAttribute("overtime", overtimeForm);
         model.addAttribute("person", person);
-        model.addAttribute(SIGNED_IN_USER, signedInUser);
 
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
 

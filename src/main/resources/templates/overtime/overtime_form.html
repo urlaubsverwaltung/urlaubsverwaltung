@@ -94,7 +94,7 @@
                 </aside>
               </div>
               <div class="col-md-8 col-md-pull-4">
-                <th:block th:if="${canAddOvertimeForAnotherUser}">
+                <th:block th:if="${canAddOvertimeForAnotherUser && not #lists.isEmpty(persons)}">
                   <div th:if="${overtime.id == null}" class="form-group is-required">
                     <label th:text="|#{overtime.data.person}:|" class="control-label col-md-3" for="person-select">
                     </label>
@@ -124,7 +124,7 @@
                   </div>
                 </th:block>
 
-                <th:block th:if="${not canAddOvertimeForAnotherUser}">
+                <th:block th:if="${not canAddOvertimeForAnotherUser || #lists.isEmpty(persons)}">
                   <input type="hidden" name="person" th:value="${person.id}" />
                 </th:block>
 
