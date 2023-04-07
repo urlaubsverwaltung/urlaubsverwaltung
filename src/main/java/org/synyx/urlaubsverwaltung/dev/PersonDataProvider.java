@@ -50,8 +50,7 @@ class PersonDataProvider {
     }
 
     boolean isPersonAlreadyCreated(String email) {
-        return personService.getPersonByMailAddress(email)
-            .isPresent();
+        return personService.getPersonByMailAddress(email).isPresent();
     }
 
     Person createTestPerson(String username, int personnelNumber, String firstName, String lastName, String email, List<Role> permissions, List<MailNotification> notifications) {
@@ -61,11 +60,8 @@ class PersonDataProvider {
             return personByUsername.get();
         }
 
-        final Person person = new Person(username, lastName, firstName, email);
-        person.setPermissions(permissions);
-        person.setNotifications(notifications);
-        final Person savedPerson = personService.create(person);
-        personBasedataService.update(new PersonBasedata(new PersonId(person.getId()), String.valueOf(personnelNumber), ""));
+        final Person savedPerson = personService.create(username, firstName, lastName, email, notifications, permissions);
+        personBasedataService.update(new PersonBasedata(new PersonId(savedPerson.getId()), String.valueOf(personnelNumber), ""));
 
         final int currentYear = Year.now(clock).getValue();
         final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);

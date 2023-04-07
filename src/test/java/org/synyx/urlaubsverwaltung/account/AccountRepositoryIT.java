@@ -32,19 +32,18 @@ class AccountRepositoryIT extends TestContainersBase {
     @Test
     void ensureUniqueConstraintOfPersonAndValidFrom() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person person = personService.create("muster", "Marlene", "Muster", "muster@example.org");
 
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
-        final AccountEntity accountEntity = new AccountEntity(savedPerson, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
+        final AccountEntity accountEntity = new AccountEntity(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         sut.save(accountEntity);
 
         final LocalDate validFrom2 = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo2 = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expiryDate2 = LocalDate.of(2014, APRIL, 1);
-        final AccountEntity accountEntity2 = new AccountEntity(savedPerson, validFrom2, validTo2, true, expiryDate2, TEN, TEN, TEN, "comment 2");
+        final AccountEntity accountEntity2 = new AccountEntity(person, validFrom2, validTo2, true, expiryDate2, TEN, TEN, TEN, "comment 2");
         assertThatThrownBy(() -> sut.save(accountEntity2))
             .isInstanceOf(DataIntegrityViolationException.class);
     }
@@ -53,8 +52,7 @@ class AccountRepositoryIT extends TestContainersBase {
     @Test
     void ensureFindAccountByYearAndPersons() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person savedPerson = personService.create("muster", "Marlene", "Muster", "muster@example.org");
 
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
@@ -63,14 +61,12 @@ class AccountRepositoryIT extends TestContainersBase {
         final AccountEntity accountToFind = new AccountEntity(savedPerson, validFrom, validTo, null, expiryDate, TEN, TEN, TEN, "comment");
         final AccountEntity savedAccountToFind = sut.save(accountToFind);
 
-        final Person otherPerson = new Person("otherPerson", "other", "person", "other@example.org");
-        final Person savedOtherPerson = personService.create(otherPerson);
+        final Person savedOtherPerson = personService.create("otherPerson", "person", "other", "other@example.org");
         final AccountEntity otherAccountToFind = new AccountEntity(savedOtherPerson, validFrom, validTo, null, expiryDate, TEN, TEN, TEN, "comment");
         final AccountEntity savedOtherAccountToFind = sut.save(otherAccountToFind);
 
         /* Do not find these accounts */
-        final Person personNotInSearch = new Person("personNotInSearch", "notInSearch", "person", "notInSearch@example.org");
-        final Person savedPersonNotInSearch = personService.create(personNotInSearch);
+        final Person savedPersonNotInSearch = personService.create("personNotInSearch", "person", "notInSearch", "notInSearch@example.org");
         final AccountEntity accountWrongPerson = new AccountEntity(savedPersonNotInSearch, validFrom, validTo, null, expiryDate, TEN, TEN, TEN, "comment");
         sut.save(accountWrongPerson);
 

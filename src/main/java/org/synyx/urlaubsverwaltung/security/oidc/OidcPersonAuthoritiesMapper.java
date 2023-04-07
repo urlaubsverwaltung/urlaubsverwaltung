@@ -13,7 +13,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
@@ -21,7 +20,6 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
@@ -77,14 +75,7 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
                 throw new DisabledException("User '" + person.getId() + "' has been deactivated");
             }
         } else {
-            final Person createdPerson = personService.create(
-                userUniqueID,
-                lastName,
-                firstName,
-                emailAddress,
-                List.of(),
-                List.of(USER)
-            );
+            final Person createdPerson = personService.create(userUniqueID, firstName, lastName, emailAddress);
             person = personService.appointAsOfficeUserIfNoOfficeUserPresent(createdPerson);
         }
 

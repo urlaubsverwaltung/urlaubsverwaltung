@@ -13,26 +13,31 @@ import java.util.Optional;
 public interface PersonService {
 
     /**
+     * Create a new person using the given attributes.
+     * <p>
+     * Sets default mail notifications and roles
+     *
+     * @param username  with that the person can sign in
+     * @param firstName of the person
+     * @param lastName  of the person
+     * @param email     address to get mail notifications
+     * @return created person
+     */
+    Person create(String username, String firstName, String lastName, String email);
+
+    /**
      * Create a new person using the given attributes, generating and setting key pair.
      *
      * @param username      with that the person can sign in
-     * @param lastName      of the person
      * @param firstName     of the person
+     * @param lastName      of the person
      * @param email         address to get mail notifications
      * @param notifications contains types of mail notifications the person will get
      * @param permissions   contains the roles of the person
      * @return created person
      */
-    Person create(String username, String lastName, String firstName, String email,
+    Person create(String username, String firstName, String lastName, String email,
                   List<MailNotification> notifications, List<Role> permissions);
-
-    /**
-     * Creates a new person.
-     *
-     * @param person to be created
-     * @return created person
-     */
-    Person create(Person person);
 
     /**
      * Updates the given person.

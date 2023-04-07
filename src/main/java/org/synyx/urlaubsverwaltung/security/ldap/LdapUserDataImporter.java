@@ -11,7 +11,6 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
  * Import person data from configured LDAP or Active Directory.
@@ -50,7 +49,7 @@ public class LdapUserDataImporter {
                 person.setEmail(email);
                 personService.update(person);
             } else {
-                personService.create(username, lastName, firstName, email, List.of(), List.of(USER));
+                personService.create(username, firstName, lastName, email);
             }
         }
 

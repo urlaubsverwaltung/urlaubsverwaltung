@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL;
@@ -53,10 +53,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
 
         final OvertimeComment overtimeComment = new OvertimeComment(person, overtime, CREATED, clock);
 
-        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(singletonList(OFFICE));
-        office.setNotifications(singletonList(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL));
-        personService.create(office);
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL), List.of(OFFICE));
 
         sut.sendOvertimeNotification(overtime, overtimeComment);
 

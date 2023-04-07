@@ -15,13 +15,11 @@ import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
  * Map granted authorities to application roles described in {@link Role}.
@@ -66,11 +64,8 @@ public class LdapPersonContextMapper implements UserDetailsContextMapper {
         } else {
             final Person newPerson = personService.create(
                 ldapUsername,
-                ldapLastName,
-                ldapFirstName,
-                ldapEmail,
-                List.of(),
-                List.of(USER)
+                ldapFirstName, ldapLastName,
+                ldapEmail
             );
 
             person = personService.appointAsOfficeUserIfNoOfficeUserPresent(newPerson);

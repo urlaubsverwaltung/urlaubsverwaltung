@@ -10,6 +10,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
@@ -26,11 +27,21 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CONVERTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -43,6 +54,20 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 class LdapPersonContextMapperTest {
 
     private LdapPersonContextMapper sut;
+
+    private static final List<MailNotification> DEFAULT_MAIL_NOTIFICATIONS = List.of(
+        NOTIFICATION_EMAIL_APPLICATION_APPLIED,
+        NOTIFICATION_EMAIL_APPLICATION_ALLOWED,
+        NOTIFICATION_EMAIL_APPLICATION_REVOKED,
+        NOTIFICATION_EMAIL_APPLICATION_REJECTED,
+        NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED,
+        NOTIFICATION_EMAIL_APPLICATION_CANCELLATION,
+        NOTIFICATION_EMAIL_APPLICATION_EDITED,
+        NOTIFICATION_EMAIL_APPLICATION_CONVERTED,
+        NOTIFICATION_EMAIL_APPLICATION_UPCOMING,
+        NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT,
+        NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING
+    );
 
     @Mock
     private PersonService personService;
@@ -83,18 +108,18 @@ class LdapPersonContextMapperTest {
         when(context.getStringAttributes("cn")).thenReturn(new String[]{"First", "Last"});
         when(context.getStringAttribute(anyString())).thenReturn("Foo");
 
-        when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("murygina", "Aljona", "Murygina", "murygina@synyx.de", List.of()));
+        when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("peter", "Peter", "Fox", "peter@example.org", List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(empty());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(Role.USER));
-        when(personService.create(anyString(), anyString(), anyString(), anyString(), anyList(), anyList())).thenReturn(person);
+        when(personService.create(anyString(), anyString(), anyString(), anyString())).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(any())).then(returnsFirstArg());
 
         sut.mapUserFromContext(context, "murygina", null);
 
         verify(ldapUserMapper).mapFromContext(context);
-        verify(personService).create("murygina", "Murygina", "Aljona", "murygina@synyx.de", List.of(), List.of(USER));
+        verify(personService).create("peter", "Peter", "Fox", "peter@example.org");
     }
 
     @Test
@@ -107,16 +132,16 @@ class LdapPersonContextMapperTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER));
 
-        when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("murygina", "Aljona", "Murygina", "murygina@synyx.de", List.of()));
+        when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("peterfox", "Peter", "Fox", "peter@example.org", List.of()));
         when(personService.getPersonByUsername(anyString())).thenReturn(Optional.of(person));
         when(personService.update(any(Person.class))).thenReturn(person);
 
         sut.mapUserFromContext(context, "murygina", null);
 
         verify(ldapUserMapper).mapFromContext(context);
-        assertThat(person.getEmail()).isEqualTo("murygina@synyx.de");
-        assertThat(person.getFirstName()).isEqualTo("Aljona");
-        assertThat(person.getLastName()).isEqualTo("Murygina");
+        assertThat(person.getEmail()).isEqualTo("peter@example.org");
+        assertThat(person.getFirstName()).isEqualTo("Peter");
+        assertThat(person.getLastName()).isEqualTo("Fox");
         verify(personService).update(person);
     }
 
@@ -135,7 +160,7 @@ class LdapPersonContextMapperTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(Role.USER));
-        when(personService.create("mgroehning", null, null, null, List.of(), List.of(USER))).thenReturn(person);
+        when(personService.create("mgroehning", null, null, null)).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(any())).then(returnsFirstArg());
 
         final UserDetails userDetails = sut.mapUserFromContext(context, userNameSignedInWith, emptyList());
@@ -204,7 +229,7 @@ class LdapPersonContextMapperTest {
 
         when(ldapUserMapper.mapFromContext(context)).thenReturn(new LdapUser("username", null, null, null, List.of()));
         when(personService.getPersonByUsername("username")).thenReturn(Optional.empty());
-        when(personService.create("username", null, null, null, List.of(), List.of(USER))).thenReturn(person);
+        when(personService.create("username", null, null, null)).thenReturn(person);
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(person)).thenReturn(person);
 
         sut.mapUserFromContext(context, "username", null);

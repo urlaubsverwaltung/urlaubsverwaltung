@@ -96,10 +96,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
-        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(singletonList(OFFICE));
-        office.setNotifications(singletonList(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
-        personService.create(office);
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED), List.of(OFFICE));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setPermissions(List.of(BOSS));
@@ -217,10 +214,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
-        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(singletonList(OFFICE));
-        office.setNotifications(singletonList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
-        personService.create(office);
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL), List.of(OFFICE));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setPermissions(singletonList(BOSS));
@@ -309,10 +303,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
 
-        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(singletonList(OFFICE));
-        office.setNotifications(singletonList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
-        personService.create(office);
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL), List.of(OFFICE));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
         boss.setPermissions(singletonList(BOSS));
@@ -511,10 +502,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
-        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(List.of(OFFICE));
-        office.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
-        personService.create(office);
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL), List.of(OFFICE));
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setPerson(office);
@@ -585,10 +573,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
-        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(List.of(OFFICE));
-        office.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
-        personService.create(office);
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL), List.of(OFFICE));
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Bitte stornieren!");
@@ -719,10 +704,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
-        final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
-        office.setPermissions(singletonList(OFFICE));
-        office.setNotifications(singletonList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
-        personService.create(office);
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL), List.of(OFFICE));
 
         final Application application = createApplication(person);
         application.setApplier(office);

@@ -14,7 +14,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class LdapUserDataImporterTest {
@@ -48,7 +47,7 @@ class LdapUserDataImporterTest {
 
         sut.sync();
 
-        verify(personService).create("muster", null, null, null, List.of(), List.of(USER));
+        verify(personService).create("muster", null, null, null);
     }
 
     @Test

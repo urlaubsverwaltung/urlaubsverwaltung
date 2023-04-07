@@ -54,8 +54,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureApplicationForLeaveForStatusAndPersonAndWithinDateRange() {
 
-        final Person max = personService.create(new Person("muster", "Mustermann", "Max", "mustermann@example.org"));
-        final Person marlene = personService.create(new Person("person2", "Musterfrau", "Marlene", "musterfrau@example.org"));
+        final Person max = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final Person marlene = personService.create("person2", "Marlene", "Musterfrau", "musterfrau@example.org");
         final VacationTypeEntity vacationType = getVacationType(HOLIDAY);
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
@@ -92,7 +92,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureApplicationForLeaveWithEmoji() {
 
-        final Person marlene = personService.create(new Person("marlene", "Musterfrau", "Marlene", "musterfrau@example.org"));
+        final Person marlene = personService.create("marlene", "Marlene", "Musterfrau", "musterfrau@example.org");
         final VacationTypeEntity vacationType = getVacationType(HOLIDAY);
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
@@ -115,8 +115,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureReturnsNullAsTotalOvertimeReductionIfPersonHasNoApplicationsForLeaveYet() {
 
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person savedPerson = personService.create("muster", "Marlene", "Muster", "muster@example.org");
 
         BigDecimal totalHours = sut.calculateTotalOvertimeReductionOfPerson(savedPerson);
         assertThat(totalHours).isNull();
@@ -125,8 +124,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusIn() {
 
-        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -168,8 +166,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInMultipleStatus() {
 
-        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -211,8 +208,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInEmptyStatus() {
 
-        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -229,11 +225,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInAndPersonIn() {
 
-        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.create(person);
-
-        final Person otherPerson = new Person("other sam", "smith", "sam", "smith@example.org");
-        final Person savedOtherPerson = personService.create(otherPerson);
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
+        final Person savedOtherPerson = personService.create("other sam", "sam", "smith", "smith@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -275,11 +268,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInAndPersonInOfOneUser() {
 
-        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.create(person);
-
-        final Person otherPerson = new Person("other sam", "smith", "sam", "smith@example.org");
-        final Person savedOtherPerson = personService.create(otherPerson);
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
+        final Person savedOtherPerson = personService.create("other sam", "sam", "smith", "smith@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -321,11 +311,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInAndPersonInNoResult() {
 
-        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.create(person);
-
-        final Person otherPerson = new Person("other sam", "smith", "sam", "smith@example.org");
-        final Person savedOtherPerson = personService.create(otherPerson);
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
+        final Person savedOtherPerson = personService.create("other sam", "sam", "smith", "smith@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
@@ -361,58 +348,55 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureCountsTotalOvertimeReductionCorrectly() {
 
-        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.create(person);
-
-        final Person otherPerson = new Person("freddy", "Gwin", "freddy", "gwin@example.org");
-        final Person savedOtherPerson = personService.create(otherPerson);
+        final Person person = personService.create("sam", "sam", "smith", "smith@example.org");
+        final Person otherPerson = personService.create("freddy", "freddy", "Gwin", "gwin@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
         // Waiting overtime reduction (2.5 hours) ----------------------------------------------------------------------
-        final Application halfDayOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now.plusDays(5), now.plusDays(10), MORNING);
+        final Application halfDayOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now.plusDays(5), now.plusDays(10), MORNING);
         halfDayOvertimeReduction.setHours(Duration.ofMinutes(150));
         halfDayOvertimeReduction.setStatus(WAITING);
         sut.save(halfDayOvertimeReduction);
 
         // Temporary Allowed overtime reduction (8 hours) ------------------------------------------------------------------------
-        Application fullDayTemporaryAllowedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        Application fullDayTemporaryAllowedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         fullDayTemporaryAllowedOvertimeReduction.setHours(Duration.ofHours(8));
         fullDayTemporaryAllowedOvertimeReduction.setStatus(TEMPORARY_ALLOWED);
         sut.save(fullDayTemporaryAllowedOvertimeReduction);
 
         // Allowed overtime reduction (8 hours) ------------------------------------------------------------------------
-        Application fullDayAllowedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        Application fullDayAllowedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         fullDayAllowedOvertimeReduction.setHours(Duration.ofHours(8));
         fullDayAllowedOvertimeReduction.setStatus(ALLOWED);
         sut.save(fullDayAllowedOvertimeReduction);
 
         // Allowed overtime reduction (8 hours) ------------------------------------------------------------------------
-        Application fullDayAllowedCancellationRequestedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        Application fullDayAllowedCancellationRequestedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         fullDayAllowedCancellationRequestedOvertimeReduction.setHours(Duration.ofHours(8));
         fullDayAllowedCancellationRequestedOvertimeReduction.setStatus(ALLOWED_CANCELLATION_REQUESTED);
         sut.save(fullDayAllowedCancellationRequestedOvertimeReduction);
 
         // Cancelled overtime reduction (1 hour) ----------------------------------------------------------------------
-        final Application cancelledOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        final Application cancelledOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         cancelledOvertimeReduction.setHours(Duration.ofHours(1));
         cancelledOvertimeReduction.setStatus(CANCELLED);
         sut.save(cancelledOvertimeReduction);
 
         // Rejected overtime reduction (1 hour) -----------------------------------------------------------------------
-        final Application rejectedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        final Application rejectedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         rejectedOvertimeReduction.setHours(Duration.ofHours(1));
         rejectedOvertimeReduction.setStatus(REJECTED);
         sut.save(rejectedOvertimeReduction);
 
         // Revoked overtime reduction (1 hour) ------------------------------------------------------------------------
-        final Application revokedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
+        final Application revokedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), now, now.plusDays(2), FULL);
         revokedOvertimeReduction.setHours(Duration.ofHours(1));
         revokedOvertimeReduction.setStatus(REVOKED);
         sut.save(revokedOvertimeReduction);
 
         // Holiday with hours set accidentally (1 hour) ---------------------------------------------------------------
-        final Application holiday = createApplication(savedPerson, getVacationType(HOLIDAY), now.minusDays(8), now.minusDays(4), FULL);
+        final Application holiday = createApplication(person, getVacationType(HOLIDAY), now.minusDays(8), now.minusDays(4), FULL);
 
         // NOTE: Holiday should not have hours set, but who knows....
         // More than once heard: "this should never happen" ;)
@@ -420,7 +404,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
         sut.save(holiday);
 
         // Overtime reduction for other person -------------------------------------------------------------------------
-        final Application overtimeReduction = createApplication(savedOtherPerson, getVacationType(OVERTIME), now.plusDays(5), now.plusDays(10), NOON);
+        final Application overtimeReduction = createApplication(otherPerson, getVacationType(OVERTIME), now.plusDays(5), now.plusDays(10), NOON);
         overtimeReduction.setHours(Duration.ofMinutes(150));
         sut.save(overtimeReduction);
 
@@ -433,61 +417,58 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureCountsTotalOvertimeReductionBeforeDateCorrectly() {
 
-        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.create(person);
-
-        final Person otherPerson = new Person("freddy", "Gwin", "freddy", "gwin@example.org");
-        final Person savedOtherPerson = personService.create(otherPerson);
+        final Person person = personService.create("sam", "sam", "smith", "smith@example.org");
+        final Person otherPerson = personService.create("freddy", "freddy", "Gwin", "gwin@example.org");
 
         final LocalDate now = LocalDate.now(UTC);
 
         // Should be in the calculation
-        final Application halfDayWaitingOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(10), MORNING);
+        final Application halfDayWaitingOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(10), MORNING);
         halfDayWaitingOvertimeReduction.setHours(Duration.ofMinutes(150));
         halfDayWaitingOvertimeReduction.setStatus(WAITING);
         sut.save(halfDayWaitingOvertimeReduction);
 
-        Application fullDayTemporaryAllowedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        Application fullDayTemporaryAllowedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
         fullDayTemporaryAllowedOvertimeReduction.setHours(Duration.ofHours(8));
         fullDayTemporaryAllowedOvertimeReduction.setStatus(TEMPORARY_ALLOWED);
         sut.save(fullDayTemporaryAllowedOvertimeReduction);
 
-        Application fullDayAllowedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        Application fullDayAllowedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
         fullDayAllowedOvertimeReduction.setHours(Duration.ofHours(8));
         fullDayAllowedOvertimeReduction.setStatus(ALLOWED);
         sut.save(fullDayAllowedOvertimeReduction);
 
-        Application fullDayAllowedCancellationRequestedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        Application fullDayAllowedCancellationRequestedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
         fullDayAllowedCancellationRequestedOvertimeReduction.setHours(Duration.ofHours(8));
         fullDayAllowedCancellationRequestedOvertimeReduction.setStatus(ALLOWED_CANCELLATION_REQUESTED);
         sut.save(fullDayAllowedCancellationRequestedOvertimeReduction);
 
         // Should NOT be in the calculation
-        final Application cancelledOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        final Application cancelledOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
         cancelledOvertimeReduction.setHours(Duration.ofHours(1));
         cancelledOvertimeReduction.setStatus(CANCELLED);
         sut.save(cancelledOvertimeReduction);
 
-        final Application rejectedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        final Application rejectedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
         rejectedOvertimeReduction.setHours(Duration.ofHours(1));
         rejectedOvertimeReduction.setStatus(REJECTED);
         sut.save(rejectedOvertimeReduction);
 
-        final Application revokedOvertimeReduction = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
+        final Application revokedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
         revokedOvertimeReduction.setHours(Duration.ofHours(1));
         revokedOvertimeReduction.setStatus(REVOKED);
         sut.save(revokedOvertimeReduction);
 
         // NOTE: Holiday should not have hours set, but who knows....More than once heard: "this should never happen" ;)
-        final Application holiday = createApplication(savedPerson, getVacationType(HOLIDAY), LocalDate.of(2021, 12, 31), now.minusDays(4), FULL);
+        final Application holiday = createApplication(person, getVacationType(HOLIDAY), LocalDate.of(2021, 12, 31), now.minusDays(4), FULL);
         holiday.setHours(Duration.ofHours(1));
         sut.save(holiday);
 
-        final Application overtimeReduction = createApplication(savedOtherPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(10), NOON);
+        final Application overtimeReduction = createApplication(otherPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(10), NOON);
         overtimeReduction.setHours(Duration.ofMinutes(150));
         sut.save(overtimeReduction);
 
-        final Application overtimeReductionAfterDate = createApplication(savedPerson, getVacationType(OVERTIME), LocalDate.of(2022, 1, 1), now.plusDays(10), NOON);
+        final Application overtimeReductionAfterDate = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2022, 1, 1), now.plusDays(10), NOON);
         overtimeReductionAfterDate.setHours(Duration.ofMinutes(150));
         sut.save(overtimeReductionAfterDate);
 
@@ -499,25 +480,22 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByHolidayReplacementAndEndDateIsGreaterThanEqualAndStatusIn() {
 
-        final Person holidayReplacement = new Person("holly", "holly", "replacement", "holly@example.org");
-        final Person savedHolidayReplacement = personService.create(holidayReplacement);
-
-        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person holidayReplacement = personService.create("holly", "replacement", "holly", "holly@example.org");
+        final Person person = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
-        holidayReplacementEntity.setPerson(savedHolidayReplacement);
+        holidayReplacementEntity.setPerson(holidayReplacement);
 
         // correct
         final LocalDate from = LocalDate.of(2020, 5, 3);
         final LocalDate to = LocalDate.of(2020, 5, 10);
-        final Application waitingApplication = createApplication(savedPerson, getVacationType(OVERTIME), from, to, FULL);
+        final Application waitingApplication = createApplication(person, getVacationType(OVERTIME), from, to, FULL);
         waitingApplication.setHolidayReplacements(List.of(holidayReplacementEntity));
         waitingApplication.setStatus(WAITING);
         sut.save(waitingApplication);
 
         // other status
-        final Application allowedApplication = createApplication(savedPerson, getVacationType(OVERTIME), from, to, FULL);
+        final Application allowedApplication = createApplication(person, getVacationType(OVERTIME), from, to, FULL);
         allowedApplication.setHolidayReplacements(List.of(holidayReplacementEntity));
         allowedApplication.setStatus(ALLOWED);
         sut.save(allowedApplication);
@@ -525,17 +503,16 @@ class ApplicationRepositoryIT extends TestContainersBase {
         // other date
         final LocalDate otherStartDate = LocalDate.of(2020, 5, 3);
         final LocalDate otherEndDate = LocalDate.of(2020, 5, 4);
-        final Application wrongDateApplication = createApplication(savedPerson, getVacationType(OVERTIME), otherStartDate, otherEndDate, FULL);
+        final Application wrongDateApplication = createApplication(person, getVacationType(OVERTIME), otherStartDate, otherEndDate, FULL);
         wrongDateApplication.setHolidayReplacements(List.of(holidayReplacementEntity));
         wrongDateApplication.setStatus(WAITING);
         sut.save(wrongDateApplication);
 
         // other replacement
-        final Person otherHolidayReplacement = new Person("other", "other", "holiday", "other@example.org");
-        final Person savedOtherHolidayReplacement = personService.create(otherHolidayReplacement);
+        final Person savedOtherHolidayReplacement = personService.create("other", "holiday", "other", "other@example.org");
         final HolidayReplacementEntity otherHolidayReplacementEntity = new HolidayReplacementEntity();
         otherHolidayReplacementEntity.setPerson(savedOtherHolidayReplacement);
-        final Application otherHolidayReplacementApplication = createApplication(savedPerson, getVacationType(OVERTIME), from, to, FULL);
+        final Application otherHolidayReplacementApplication = createApplication(person, getVacationType(OVERTIME), from, to, FULL);
         otherHolidayReplacementApplication.setHolidayReplacements(List.of(otherHolidayReplacementEntity));
         otherHolidayReplacementApplication.setStatus(WAITING);
         sut.save(otherHolidayReplacementApplication);
@@ -549,8 +526,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInAndStartDateBetweenAndUpcomingApplicationsReminderSendIsNull() {
 
-        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         // yesterday
         final LocalDate yesterdayDates = LocalDate.of(2020, 5, 3);
@@ -600,8 +576,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findByStatusInAndStartDateAndHolidayReplacementsIsNotEmpty() {
 
-        final Person person = new Person("sam", "smith", "sam", "smith@example.org");
-        final Person savedPerson = personService.create(person);
+        final Person savedPerson = personService.create("sam", "sam", "smith", "smith@example.org");
 
         final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();
         holidayReplacement.setPerson(savedPerson);
@@ -671,8 +646,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureFindByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory() {
 
-        final Person max = personService.create(new Person("muster", "Mustermann", "Max", "mustermann@example.org"));
-        final Person marlene = personService.create(new Person("person2", "Musterfrau", "Marlene", "musterfrau@example.org"));
+        final Person max = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final Person marlene = personService.create("person2", "Marlene", "Musterfrau", "musterfrau@example.org");
         final VacationTypeEntity overtime = getVacationType(OVERTIME);
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
@@ -712,8 +687,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureFindByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory() {
 
-        final Person max = personService.create(new Person("muster", "Mustermann", "Max", "mustermann@example.org"));
-        final Person marlene = personService.create(new Person("person2", "Musterfrau", "Marlene", "musterfrau@example.org"));
+        final Person max = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final Person marlene = personService.create("person2", "Marlene", "Musterfrau", "musterfrau@example.org");
         final VacationTypeEntity overtime = getVacationType(OVERTIME);
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
@@ -753,8 +728,8 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void ensureFindByPersonInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual() {
 
-        final Person max = personService.create(new Person("muster", "Mustermann", "Max", "mustermann@example.org"));
-        final Person marlene = personService.create(new Person("person2", "Musterfrau", "Marlene", "musterfrau@example.org"));
+        final Person max = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
+        final Person marlene = personService.create("person2", "Marlene", "Musterfrau", "musterfrau@example.org");
 
         final LocalDate askedStartDate = LocalDate.now(UTC).with(firstDayOfMonth());
         final LocalDate askedEndDate = LocalDate.now(UTC).with(lastDayOfMonth());
@@ -779,7 +754,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
     @Test
     void findAllByReplacements_Person() {
 
-        final Person person = personService.create(new Person("muster", "Mustermann", "Max", "mustermann@example.org"));
+        final Person person = personService.create("muster", "Max", "Mustermann", "mustermann@example.org");
 
         Application application = new Application();
         final HolidayReplacementEntity holidayReplacement = new HolidayReplacementEntity();

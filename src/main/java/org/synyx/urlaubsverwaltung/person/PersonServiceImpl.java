@@ -21,8 +21,20 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CONVERTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 /**
  * Implementation for {@link PersonService}.
@@ -48,24 +60,42 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Person create(String username, String lastName, String firstName, String email,
+    public Person create(String username, String firstName, String lastName, String email) {
+
+        final List<MailNotification> defaultMailNotifications = List.of(
+            NOTIFICATION_EMAIL_APPLICATION_APPLIED,
+            NOTIFICATION_EMAIL_APPLICATION_ALLOWED,
+            NOTIFICATION_EMAIL_APPLICATION_REVOKED,
+            NOTIFICATION_EMAIL_APPLICATION_REJECTED,
+            NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED,
+            NOTIFICATION_EMAIL_APPLICATION_CANCELLATION,
+            NOTIFICATION_EMAIL_APPLICATION_EDITED,
+            NOTIFICATION_EMAIL_APPLICATION_CONVERTED,
+            NOTIFICATION_EMAIL_APPLICATION_UPCOMING,
+            NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT,
+            NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING
+        );
+
+        final List<Role> defaultPermissions = List.of(
+            USER
+        );
+
+        return create(username, firstName, lastName, email, defaultMailNotifications, defaultPermissions);
+    }
+
+    @Override
+    public Person create(String username, String firstName, String lastName, String email,
                          List<MailNotification> notifications, List<Role> permissions) {
 
         final Person person = new Person(username, lastName, firstName, email);
         person.setNotifications(notifications);
         person.setPermissions(permissions);
 
-        return create(person);
-    }
-
-    @Override
-    public Person create(Person person) {
-
         final Person createdPerson = personRepository.save(person);
-        LOG.info("Created person: {}", person);
+        LOG.info("Created person: {}", createdPerson);
 
-        accountInteractionService.createDefaultAccount(person);
-        workingTimeWriteService.createDefaultWorkingTime(person);
+        accountInteractionService.createDefaultAccount(createdPerson);
+        workingTimeWriteService.createDefaultWorkingTime(createdPerson);
 
         applicationEventPublisher.publishEvent(toPersonCreatedEvent(createdPerson));
 
