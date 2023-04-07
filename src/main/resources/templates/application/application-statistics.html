@@ -229,8 +229,6 @@
           </div>
         </div>
 
-        <div th:if="${errors}" th:text="#{applications.statistics.error}" class="tw-mt-8 alert alert-danger"></div>
-
         <turbo-frame id="frame-statistics">
           <th:block th:if="${turboFrameRequested}">
             <turbo-stream target="statistics-csv-download-link" action="replace">
@@ -261,6 +259,9 @@
               <template th:insert="::#pagination-size-hint"></template>
             </turbo-stream>
           </th:block>
+
+          <div th:if="${errors}" th:text="#{applications.statistics.error}" class="tw-mt-8 alert alert-danger"></div>
+
           <table
             th:unless="${errors}"
             id="application-statistic-table"
