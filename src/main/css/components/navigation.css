@@ -1,9 +1,10 @@
 @layer components {
   .navigation {
-    @apply tw-fixed;
+    @apply tw-sticky;
     @apply tw-top-0;
     @apply tw-w-full;
     @apply tw-z-50;
+    @apply lg:tw-mb-8;
   }
 
   .navigation::before {
@@ -20,27 +21,12 @@
 
   .navigation-inner {
     @apply dark:tw-border-b;
-    @apply lg:dark:tw-border-b-0;
     @apply dark:tw-border-b-zinc-800;
   }
 
   .navigation-list {
     @apply tw-grid;
     @apply tw-gap-8;
-  }
-
-  @screen lg {
-    .navigation-list {
-      @apply tw-grid-flow-col;
-      grid-template-columns: repeat(auto-fit, minmax(0, min-content));
-      max-width: 100%;
-    }
-  }
-
-  .navigation-content-gap {
-    height: 48px;
-    @apply tw-mb-8;
-    @apply lg:tw-mb-12;
   }
 
   .navigation-content-spacer {
@@ -84,12 +70,21 @@
   }
 
   #menu-toggle-checkbox ~ label ~ div .navigation-items {
-    overflow: hidden;
-    transition: max-height 400ms ease-in;
+    position: fixed;
+    top: 100%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0 1.5rem;
+    @apply tw-transition-all;
+    @apply tw-duration-150;
+    @apply tw-bg-white;
+    @apply dark:tw-bg-zinc-900;
   }
+
   #menu-toggle-checkbox:checked ~ label ~ div .navigation-items,
   #menu-toggle-checkbox ~ label ~ div .navigation-items:focus-within {
-    max-height: 90vh !important;
+    top: var(--uv-header-height);
   }
 
   #menu-toggle-checkbox + label > span:first-child {
@@ -165,31 +160,20 @@
   }
 
   .nav-popup-menu {
-    @apply tw-scale-0;
     position: fixed;
+    top: 100%;
     bottom: 0;
     left: 0;
     right: 0;
     @apply tw-transition-all;
     @apply tw-duration-150;
-
+    @apply tw-rounded-t-2xl;
     @apply tw-bg-white;
-    @apply tw-backdrop-blur;
-    @apply supports-backdrop-blur:tw-bg-white/[0.95];
     @apply dark:tw-bg-zinc-900;
-    @apply dark:supports-backdrop-blur:tw-bg-zinc-900/[0.95];
   }
 
   .nav-popup-menu.visible {
-    @apply tw-scale-100;
-    @apply tw-rounded-t-2xl;
-  }
-
-  /* screen xs */
-  @media screen and (max-width: 481px) {
-    .nav-popup-menu.visible {
-      height: calc(100vh - 4rem);
-    }
+    top: var(--uv-header-height);
   }
 
   .nav-popup-menu-inner {
@@ -226,64 +210,6 @@
     height: 100%;
   }
 
-  @screen xs {
-    .nav-popup-menu::before {
-      content: "";
-      border-color: transparent;
-      border-width: 8px;
-      @apply tw-border-b-gray-200;
-      position: absolute;
-      top: -17px;
-      @apply tw-right-6;
-      @apply dark:tw-border-b-neutral-600;
-    }
-
-    .nav-popup-menu {
-      @apply tw-transition-transform;
-      @apply tw-origin-top-right;
-      @apply tw-scale-0;
-      @apply tw-border;
-      @apply tw-border-gray-200;
-      @apply tw-shadow-xl;
-      @apply tw-mt-3;
-      @apply tw-z-50;
-      @apply tw-absolute;
-      @apply tw-left-auto;
-      @apply tw-right-0;
-      @apply tw-bottom-auto;
-      @apply tw-top-full;
-      @apply tw-rounded-2xl;
-      @apply dark:tw-border-zinc-800;
-      @apply dark:tw-shadow-none;
-    }
-
-    .nav-popup-menu-inner {
-      max-height: 75vh;
-      @apply tw-w-auto;
-      @apply tw-h-auto;
-      @apply tw-rounded-2xl;
-    }
-
-    .nav-popup-menu-inner ul li:first-of-type .nav-popup-menu_link {
-      @apply tw-rounded-t-2xl;
-    }
-
-    .nav-popup-menu-inner ul li:last-of-type .nav-popup-menu_link {
-      @apply tw-rounded-b-2xl;
-    }
-
-    .nav-popup-menu-inner ul li[role="separator"] {
-      @apply tw-border-t;
-      @apply tw-border-gray-200;
-      @apply dark:tw-border-zinc-700;
-    }
-
-    .nav-popup-menu.visible,
-    .nav-popup-menu:focus-within {
-      @apply tw-scale-100;
-    }
-  }
-
   .nav-popup-menu-button {
     @apply tw-text-zinc-700;
     @apply hover:tw-text-zinc-700;
@@ -316,7 +242,7 @@
     @apply tw-no-underline;
     @apply hover:tw-no-underline;
     @apply focus:tw-no-underline;
-    @apply tw-text-base;
+    @apply tw-text-2xl;
     @apply tw-text-gray-700;
     @apply tw-bg-transparent;
     @apply hover:tw-text-black;
@@ -328,5 +254,99 @@
     @apply dark:focus:tw-text-zinc-200;
     @apply dark:hover:tw-bg-slate-800;
     @apply dark:focus:tw-bg-slate-800;
+  }
+
+  @screen xs {
+    #menu-toggle-checkbox ~ label ~ div .navigation-items {
+      @apply tw-bg-transparent;
+      @apply dark:tw-bg-transparent;
+      overflow: hidden;
+      position: static;
+      padding: 0;
+      max-height: 0;
+      transition: max-height 400ms ease-in;
+    }
+    #menu-toggle-checkbox:checked ~ label ~ div .navigation-items,
+    #menu-toggle-checkbox ~ label ~ div .navigation-items:focus-within {
+      max-height: 90vh !important;
+    }
+
+    .nav-popup-menu::before {
+      content: "";
+      border-color: transparent;
+      border-width: 8px;
+      @apply tw-border-b-gray-200;
+      position: absolute;
+      top: -17px;
+      @apply tw-right-6;
+      @apply dark:tw-border-b-neutral-600;
+    }
+
+    .nav-popup-menu {
+      @apply tw-transition-transform;
+      @apply tw-origin-top-right;
+      @apply tw-scale-0;
+      @apply tw-border;
+      @apply tw-border-gray-200;
+      @apply tw-shadow-xl;
+      @apply tw-mt-3;
+      @apply tw-z-50;
+      @apply tw-absolute;
+      @apply tw-left-auto;
+      @apply tw-right-0;
+      @apply tw-bottom-auto;
+      @apply tw-rounded-2xl;
+      @apply dark:tw-border-zinc-800;
+      @apply dark:tw-shadow-none;
+    }
+
+    .nav-popup-menu.visible {
+      @apply tw-top-full;
+    }
+
+    .nav-popup-menu_link {
+      @apply tw-text-base;
+    }
+
+    .nav-popup-menu-inner {
+      max-height: 75vh;
+      @apply tw-w-auto;
+      @apply tw-h-auto;
+      @apply tw-rounded-2xl;
+    }
+
+    .nav-popup-menu-inner ul li:first-of-type .nav-popup-menu_link {
+      @apply tw-rounded-t-2xl;
+    }
+
+    .nav-popup-menu-inner ul li:last-of-type .nav-popup-menu_link {
+      @apply tw-rounded-b-2xl;
+    }
+
+    .nav-popup-menu-inner ul li[role="separator"] {
+      @apply tw-border-t;
+      @apply tw-border-gray-200;
+      @apply dark:tw-border-zinc-700;
+    }
+
+    .nav-popup-menu.visible,
+    .nav-popup-menu:focus-within {
+      @apply tw-scale-100;
+    }
+  }
+
+  @screen lg {
+    #menu-toggle-checkbox ~ label ~ div .navigation-items {
+      overflow: hidden;
+      position: static;
+      padding: 0;
+      max-height: 100%;
+    }
+
+    .navigation-list {
+      @apply tw-grid-flow-col;
+      grid-template-columns: repeat(auto-fit, minmax(0, min-content));
+      max-width: 100%;
+    }
   }
 }

@@ -32,7 +32,7 @@
               </a>
             </div>
             <div
-              class="tw-grow tw-w-full tw-flex navigation-items tw-max-h-0 lg:tw-max-h-full"
+              class="navigation-items tw-grow tw-w-full"
               th:classappend="${#lists.size(navigation.elements) > 6 ? 'tw-max-w-7xl' : 'tw-max-w-6xl'}"
             >
               <ul class="navigation-list tw-list-none tw-m-0 tw-px-0 tw-py-8 lg:tw-py-3 lg:tw-px-2 xl:tw-px-0">
@@ -96,7 +96,7 @@
                               ></svg>
                             </a>
                           </li>
-                          <li th:if="${navigationSickNoteAddAccess}">
+                          <li th:if="${navigationSickNoteAddAccess}" class="tw-mt-4 xs:tw-mt-1">
                             <a
                               href="#"
                               th:replace="~{::nav-popup-menu-link(href=@{/web/sicknote/new}, icon=~{::menu-add-sicknote-icon}, text=#{nav.add.sicknote}, dataTestId='quick-add-new-sicknote')}"
@@ -107,7 +107,7 @@
                               ></svg>
                             </a>
                           </li>
-                          <li th:if="${navigationOvertimeItemEnabled}">
+                          <li th:if="${navigationOvertimeItemEnabled}" class="tw-mt-4 xs:tw-mt-1">
                             <a
                               href="#"
                               th:replace="~{::nav-popup-menu-link(href=@{/web/overtime/new}, icon=~{::menu-add-overtime-icon}, text=#{nav.add.overtime}, dataTestId='quick-add-new-overtime')}"
@@ -185,7 +185,7 @@
                       </div>
                       <div class="nav-popup-menu-inner__content">
                         <ul class="tw-list-none tw-m-0 tw-p-0">
-                          <li class="tw-mb-1">
+                          <li class="">
                             <a
                               href="#"
                               th:replace="~{::nav-popup-menu-link-external(href=${menuHelpUrl}, icon=~{::menu-help-icon}, text=#{nav.help.title})}"
@@ -196,7 +196,7 @@
                               ></svg>
                             </a>
                           </li>
-                          <li class="tw-mb-1">
+                          <li class="tw-mt-4 xs:tw-mt-1">
                             <a
                               href="#"
                               th:replace="~{::nav-popup-menu-link(href=@{/web/person/{userId}(userId=${userId})}, icon=~{::menu-person-icon}, text=#{nav.account.title})}"
@@ -207,7 +207,7 @@
                               ></svg>
                             </a>
                           </li>
-                          <li class="tw-mb-1">
+                          <li class="tw-mt-4 xs:tw-mt-1">
                             <a
                               href="#"
                               th:replace="::nav-popup-menu-link(href=@{/web/person/{userId}/notifications(userId=${userId})}, icon=~{::menu-notifications-icon}, text=#{nav.notifications.title})"
@@ -218,7 +218,7 @@
                               ></svg>
                             </a>
                           </li>
-                          <li class="tw-mb-1">
+                          <li class="tw-mt-4 xs:tw-mt-1">
                             <a
                               href="#"
                               th:replace="~{::nav-popup-menu-link(href=@{/web/person/{userId}/settings(userId=${userId})}, icon=~{::menu-user-settings-icon}, text=#{nav.user-settings.title})}"
@@ -229,7 +229,7 @@
                               ></svg>
                             </a>
                           </li>
-                          <li role="separator"></li>
+                          <li class="tw-mt-4 xs:tw-mt-1" role="separator"></li>
                           <li>
                             <form action="#" th:action="@{/logout}" method="POST" class="tw-ml-auto tw-w-full">
                               <button type="submit" class="nav-popup-menu_link tw-rounded-b-2xl" data-test-id="logout">
@@ -256,7 +256,6 @@
           </div>
         </nav>
       </div>
-      <div class="navigation-content-gap"></div>
     </th:block>
 
     <a
