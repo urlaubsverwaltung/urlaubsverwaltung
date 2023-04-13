@@ -11,10 +11,14 @@
         </th:block>
       </div>
 
-      <div class="row">
-        <aside class="col-md-4 col-md-push-8">
-          <p class="help-block tw-text-sm">
-            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
+      <div>
+        <aside
+          class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none tw-pt-2 md:tw-pt-0 tw-text-sm"
+        >
+          <div>
+            <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+          </div>
+          <p>
             <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.1}" />
             <a
               class="tw-inline-flex tw-items-center"
@@ -28,31 +32,21 @@
             <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.3}" />
           </p>
         </aside>
-        <div class="col-md-8 col-md-pull-4">
-          <div class="form-group is-required">
-            <label class="control-label col-md-4" for="avatarSettings.gravatarEnabled.activation.true">
-              <th:block th:text="|#{settings.avatar.gravatarEnabled.activation}:|" />
-            </label>
-            <div class="col-md-8 radio">
-              <label class="halves">
-                <input
-                  type="radio"
-                  id="avatarSettings.gravatarEnabled.activation.true"
-                  th:field="*{avatarSettings.gravatarEnabled}"
-                  value="true"
-                />
-                <th:block th:text="#{settings.avatar.gravatarEnabled.activation.true}" />
+
+        <div class="tw-flex" th:data-enabled="${settings.avatarSettings.gravatarEnabled}">
+          <div class="tw-flex sm:tw-items-center tw-ml-2">
+            <span class="checkbox-switch">
+              <input type="checkbox" th:field="*{avatarSettings.gravatarEnabled}" id="avatarSettings-gravatarEnabled" />
+              <label
+                th:text="#{settings.avatar.gravatarEnabled.activation}"
+                for="avatarSettings-gravatarEnabled"
+                class="tw-sr-only"
+              >
               </label>
-              <label class="halves">
-                <input
-                  type="radio"
-                  id="avatarSettings.gravatarEnabled.activation.false"
-                  th:field="*{avatarSettings.gravatarEnabled}"
-                  value="false"
-                />
-                <th:block th:text="#{settings.avatar.gravatarEnabled.activation.false}" />
-              </label>
-            </div>
+            </span>
+          </div>
+          <div class="tw-flex sm:tw-items-center tw-ml-2 sm:tw-overflow-hidden">
+            <span th:text="#{settings.avatar.gravatarEnabled.activation}" class="sm:tw-truncate"></span>
           </div>
         </div>
       </div>
