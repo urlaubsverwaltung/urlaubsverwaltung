@@ -17,6 +17,8 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.user.pagination.UserPaginationSettings;
 import org.synyx.urlaubsverwaltung.user.pagination.UserPaginationSettingsSupplier;
 
+import static java.lang.Integer.parseInt;
+
 /**
  * Extends springs default {@linkplain PageableHandlerMethodArgumentResolver} with {@linkplain UserPaginationSettings}
  * as fallback values.
@@ -44,16 +46,16 @@ class PageableUserAwareArgumentResolver extends PageableHandlerMethodArgumentRes
         final Pageable pageable = super.resolveArgument(methodParameter, mavContainer, webRequest, binderFactory);
 
         final Person signedInUser = personService.getSignedInUser();
-        final UserPaginationSettings userPaginationSettings = userPaginationSettingsSupplier.getUserPaginationSettings(new PersonId(signedInUser.getId()));
         final String pageSizeParameter = webRequest.getParameter(getParameterNameToUse(getSizeParameterName(), methodParameter));
 
         if (pageSizeParameter == null) {
             // note that this overrides possible @PageableDefault(size) annotations.
-            final int defaultPageSize = userPaginationSettings.getDefaultPageSize();
+            final int defaultPageSize = userPaginationSettingsSupplier
+                .getUserPaginationSettings(new PersonId(signedInUser.getId()))
+                .getDefaultPageSize();
             return PageRequest.of(pageable.getPageNumber(), defaultPageSize, pageable.getSort());
         } else {
-            final int newValue = Integer.parseInt(pageSizeParameter);
-            applicationEventPublisher.publishEvent(new PageableDefaultSizeChangedEvent(new PersonId(signedInUser.getId()), newValue));
+            applicationEventPublisher.publishEvent(new PageableDefaultSizeChangedEvent(new PersonId(signedInUser.getId()), parseInt(pageSizeParameter)));
         }
 
         return pageable;
