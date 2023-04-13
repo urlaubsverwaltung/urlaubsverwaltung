@@ -37,11 +37,6 @@ class PageableUserAwareArgumentResolver extends PageableHandlerMethodArgumentRes
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    @Override
-    public boolean supportsParameter(MethodParameter methodParameter) {
-        return super.supportsParameter(methodParameter);
-    }
-
     @NonNull
     @Override
     public Pageable resolveArgument(@NonNull MethodParameter methodParameter, @Nullable ModelAndViewContainer mavContainer, @NonNull NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) {
