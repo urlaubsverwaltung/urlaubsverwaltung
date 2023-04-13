@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
 import java.util.Optional;
@@ -26,7 +27,10 @@ class UserPaginationSettingsServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new UserPaginationSettingsService(repository, DEFAULT_PAGE_SIZE);
+        final SpringDataWebProperties dataWebProperties = new SpringDataWebProperties();
+        dataWebProperties.getPageable().setDefaultPageSize(DEFAULT_PAGE_SIZE);
+
+        sut = new UserPaginationSettingsService(repository, dataWebProperties);
     }
 
     @Test
