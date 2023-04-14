@@ -16,7 +16,7 @@
         <img
           th:if="${url != null}"
           src="#"
-          th:src="${url}"
+          th:src="${gravatarEnabled ? url : '#'}"
           alt=""
           class="gravatar gravatar--medium tw-rounded-full tw-block"
           th:classappend="${className}"
@@ -30,7 +30,7 @@
       <img
         th:if="${url != null && personId == null}"
         src="#"
-        th:src="${url}"
+        th:src="${gravatarEnabled ? url : '#'}"
         alt=""
         class="gravatar gravatar--medium tw-rounded-full"
         th:classappend="${className}"

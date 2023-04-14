@@ -65,6 +65,7 @@ public class FrameDataProvider implements HandlerInterceptor {
             modelAndView.addObject("navigationRequestPopupEnabled", popupMenuEnabled(user));
             modelAndView.addObject("navigationSickNoteAddAccess", user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_ADD));
             modelAndView.addObject("navigationOvertimeItemEnabled", overtimeEnabled(user));
+            modelAndView.addObject("gravatarEnabled", settingsService.getSettings().getAvatarSettings().isGravatarEnabled());
         }
     }
 

@@ -69,6 +69,11 @@
                 <th:block th:if="${hasErrors}">*</th:block>
               </a>
             </li>
+            <li role="presentation">
+              <a href="#avatar" aria-controls="avatar" role="tab" data-toggle="tab">
+                <th:block th:text="#{settings.tabs.avatar}" />
+              </a>
+            </li>
             <li th:with="hasErrors=${#fields.hasErrors('calendarSettings.*')}" role="presentation">
               <a
                 href="#calendar"
@@ -123,6 +128,12 @@
               </div>
               <div class="form-section tw-mb-8">
                 <div th:replace="settings/public-holidays/overtime::section"></div>
+              </div>
+            </div>
+
+            <div class="tab-pane" id="avatar">
+              <div class="form-section tw-mb-8">
+                <div th:replace="settings/avatar/avatar::section"></div>
               </div>
             </div>
 

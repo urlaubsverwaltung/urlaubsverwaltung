@@ -5,6 +5,7 @@ import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeSettings;
+import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
@@ -31,8 +32,11 @@ public class Settings {
     private TimeSettings timeSettings;
     private SickNoteSettings sickNoteSettings;
 
+    private AvatarSettings avatarSettings;
+
     @Deprecated(since = "4.0.0", forRemoval = true)
     private CalendarSettings calendarSettings;
+
 
     public Integer getId() {
         return id;
@@ -129,6 +133,14 @@ public class Settings {
 
     public void setSickNoteSettings(SickNoteSettings sickNoteSettings) {
         this.sickNoteSettings = sickNoteSettings;
+    }
+
+    public AvatarSettings getAvatarSettings() {
+        return avatarSettings;
+    }
+
+    public void setAvatarSettings(AvatarSettings avatarSettings) {
+        this.avatarSettings = avatarSettings;
     }
 
     @Override
