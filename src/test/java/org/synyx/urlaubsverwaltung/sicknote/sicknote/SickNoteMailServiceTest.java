@@ -82,7 +82,7 @@ class SickNoteMailServiceTest {
         final Map<String, Object> modelA = new HashMap<>();
         modelA.put("maximumSickPayDays", 5);
         modelA.put("endOfSickPayDays", LocalDate.of(2022, 4, 5));
-        modelA.put("sickPayDaysEndedDaysAgo", 4);
+        modelA.put("sickPayDaysEndedDaysAgo", 4L);
         modelA.put("sickNotePayFrom", sickNoteA.getStartDate());
         modelA.put("sickNotePayTo", LocalDate.of(2022, 4, 5));
         modelA.put("sickNote", sickNoteA);
@@ -90,7 +90,7 @@ class SickNoteMailServiceTest {
         final Map<String, Object> modelB = new HashMap<>();
         modelB.put("maximumSickPayDays", 5);
         modelB.put("endOfSickPayDays", LocalDate.of(2022, 4, 14));
-        modelB.put("sickPayDaysEndedDaysAgo", 13);
+        modelB.put("sickPayDaysEndedDaysAgo", 13L);
         modelB.put("sickNotePayFrom", sickNoteB.getStartDate());
         modelB.put("sickNotePayTo", LocalDate.of(2022, 4, 14));
         modelB.put("sickNote", sickNoteB);
