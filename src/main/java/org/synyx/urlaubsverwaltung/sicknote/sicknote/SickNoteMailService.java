@@ -11,6 +11,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ class SickNoteMailService {
             final LocalDate lastDayOfSickPayDays = sickNote.getStartDate()
                 .plus(maximumSickPayDays.longValue(), DAYS)
                 .minusDays(1);
-            final int sickPayDaysEndedDaysAgo = LocalDate.now(clock).until(lastDayOfSickPayDays).getDays();
+            final long sickPayDaysEndedDaysAgo = LocalDate.now(clock).until(lastDayOfSickPayDays, DAYS);
 
             final Map<String, Object> model = new HashMap<>();
             model.put("maximumSickPayDays", maximumSickPayDays);
