@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.person.web;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -11,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
 import java.util.List;
@@ -35,6 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -61,6 +66,179 @@ class PersonNotificationsViewControllerTest {
         final Person person = personWithId(1);
         person.setFirstName("Hans");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("active", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChangesForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChangesForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("active", is(false)))));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void ensuresThatOnlyVisibleAndActiveForDepartmentManagersWithoutSpecialPermissions(final Role role) throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setNotifications(List.of());
+        person.setPermissions(List.of(USER, role));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChangesForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChangesForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("active", is(false)))));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void ensuresThatOnlyVisibleAndActiveForDepartmentManagersWithoutSpecialPermissionCancellationRequested(final Role role) throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setNotifications(List.of());
+        person.setPermissions(List.of(USER, role, APPLICATION_CANCELLATION_REQUESTED));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChangesForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChangesForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("active", is(false)))));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS"})
+    void ensuresThatOnlyVisibleAndActiveForBoss(final Role role) throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setNotifications(List.of());
+        person.setPermissions(List.of(USER, role));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChangesForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChangesForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("active", is(false)))));
+    }
+
+    @Test
+    void ensuresThatOnlyVisibleAndActiveForBossWithSpecialPermissionCancellationRequested() throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setNotifications(List.of());
+        person.setPermissions(List.of(USER, BOSS, APPLICATION_CANCELLATION_REQUESTED));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChangesForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChangesForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("active", is(false)))));
+    }
+
+    @Test
+    void ensuresThatOnlyVisibleAndActiveForOffice() throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setNotifications(List.of());
         person.setPermissions(List.of(USER, OFFICE));
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
@@ -68,11 +246,15 @@ class PersonNotificationsViewControllerTest {
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("visible", is(true)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("active", is(true)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementDepartment", hasProperty("visible", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementDepartment", hasProperty("active", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("application", hasProperty("visible", is(true)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("application", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationManagementAll", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChangesForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChangesForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationWaitingReminderForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationCancellationRequestedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedAndChanges", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationUpcoming", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacement", hasProperty("visible", is(true)))))
@@ -111,8 +293,8 @@ class PersonNotificationsViewControllerTest {
         perform(
             post("/web/person/{personId}/notifications", 1)
                 .param("personId", "1")
-                .param("application.visible", "true")
-                .param("application.active", "true")
+                .param("applicationAppliedAndChanges.visible", "true")
+                .param("applicationAppliedAndChanges.active", "true")
         )
             .andExpect(redirectedUrl("/web/person/1/notifications"))
             .andExpect(flash().attribute("success", true));

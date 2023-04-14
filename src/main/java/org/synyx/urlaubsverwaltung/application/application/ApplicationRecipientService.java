@@ -11,10 +11,10 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -33,30 +33,46 @@ class ApplicationRecipientService {
     }
 
     /**
-     * Get all second stage authorities that must be notified about the given temporary allowed application.
+     * Returns all responsible managers of the given person.
+     * Managers are:
+     * <ul>
+     *     <li>bosses</li>
+     *     <li>department heads</li>
+     *     <li>second stage authorities.</li>
+     * </ul>
      *
-     * @param application that has been allowed temporary
-     * @return list of recipients for the given temporary allowed application
+     * @param personOfInterest person to get managers from
+     * @return list of all responsible managers
      */
-    List<Person> getRecipientsForTemporaryAllow(Application application) {
-        return getResponsibleSecondStageAuthorities(application.getPerson(), List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT));
+    List<Person> getResponsibleManagersOf(Person personOfInterest) {
+        final List<Person> managementDepartmentPersons = new ArrayList<>();
+        if (departmentsAvailable()) {
+            managementDepartmentPersons.addAll(getResponsibleDepartmentHeads(personOfInterest));
+            managementDepartmentPersons.addAll(getResponsibleSecondStageAuthorities(personOfInterest));
+        }
+
+        final List<Person> bosses = personService.getActivePersonsByRole(BOSS);
+        return Stream.concat(managementDepartmentPersons.stream(), bosses.stream())
+            .distinct()
+            .collect(toList());
     }
 
     /**
      * Returns a list of recipients of interest for a given person based on
      * <ul>
-     *     <li>is Office and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL} or one of the given mail notifications is active</li>
-     *     <li>is Boss and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL}</li>
-     *     <li>is responsible Department Head and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT}</li>
-     *     <li>is responsible Department Head and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT}</li>
-     *     <li>is Boss in the same Department and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT}</li>
+     *     <li>is Office and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL} or the given mail notification is active</li>
+     *     <li>is Boss and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL} or the given mail notification is active</li>
+     *     <li>is responsible Department Head and the given mail notification is active</li>
+     *     <li>is responsible Second Stage Authority and the given mail notification is active</li>
+     *     <li>is Boss in the same Department and the given mail notification is active</li>
      * </ul>
      *
      * @param personOfInterest person to get recipients from
+     * @param mailNotification given notification that one of must be active
      * @return list of recipients of interest
      */
-    List<Person> getRecipientsOfInterest(Person personOfInterest) {
-        return getRecipientsOfInterest(personOfInterest, List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT));
+    List<Person> getRecipientsOfInterest(Person personOfInterest, MailNotification mailNotification) {
+        return getRecipientsOfInterest(personOfInterest, List.of(mailNotification));
     }
 
     /**
@@ -75,45 +91,59 @@ class ApplicationRecipientService {
      */
     List<Person> getRecipientsOfInterest(Person personOfInterest, List<MailNotification> mailNotifications) {
 
-        final List<Person> recipientsOfInterest = new ArrayList<>();
-        recipientsOfInterest.addAll(getOfficesWithApplicationManagementAllNotification(mailNotifications));
-        recipientsOfInterest.addAll(getBossWithApplicationManagementAllNotification(mailNotifications));
+        final List<Person> recipientsOfInterestForAll = new ArrayList<>();
+        recipientsOfInterestForAll.addAll(getOfficesWithApplicationManagementAllNotification(mailNotifications));
+        recipientsOfInterestForAll.addAll(getBossWithApplicationManagementAllNotification(mailNotifications));
 
-        final long numberOfDepartments = departmentService.getNumberOfDepartments();
-        if (numberOfDepartments > 0) {
-            recipientsOfInterest.addAll(getResponsibleSecondStageAuthorities(personOfInterest, mailNotifications));
-            recipientsOfInterest.addAll(getResponsibleDepartmentHeads(personOfInterest, mailNotifications));
-            recipientsOfInterest.addAll(getBossesWithDepartmentApplicationManagementNotification(personOfInterest, mailNotifications));
+        Stream<Person> managementDepartmentPersons = Stream.of();
+        if (departmentsAvailable()) {
+            final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
+            recipientsOfInterestForDepartment.addAll(getResponsibleDepartmentHeads(personOfInterest));
+            recipientsOfInterestForDepartment.addAll(getResponsibleSecondStageAuthorities(personOfInterest));
+            recipientsOfInterestForDepartment.addAll(getBossesWithDepartmentApplicationManagementNotification(personOfInterest));
+
+            managementDepartmentPersons = recipientsOfInterestForDepartment.stream()
+                .distinct()
+                .filter(containsAny(mailNotifications));
         }
 
-        return recipientsOfInterest.stream()
+        return Stream.concat(recipientsOfInterestForAll.stream(), managementDepartmentPersons)
             .distinct()
             .collect(toList());
     }
 
-    private List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest, List<MailNotification> concerningMailNotifications) {
+    /**
+     * Get all responsible second stage authorities that must be notified and
+     * have the given mail notification activated
+     *
+     * @param personOfInterest to retrieve the responsible second stage authorities from
+     * @return list of responsible second stage authorities
+     */
+    List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest, MailNotification mailNotification) {
+        return getResponsibleSecondStageAuthorities(personOfInterest).stream()
+            .filter(containsAny(List.of(mailNotification)))
+            .collect(toList());
+    }
+
+    private List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest) {
         return personService.getActivePersonsByRole(SECOND_STAGE_AUTHORITY)
             .stream()
-            .filter(containsAny(concerningMailNotifications))
             .filter(secondStageAuthority -> departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, personOfInterest))
             .filter(without(personOfInterest))
             .collect(toList());
     }
 
-    private List<Person> getResponsibleDepartmentHeads(Person personOfInterest, List<MailNotification> concerningMailNotifications) {
+    private List<Person> getResponsibleDepartmentHeads(Person personOfInterest) {
         return personService.getActivePersonsByRole(DEPARTMENT_HEAD)
             .stream()
-            .filter(containsAny(concerningMailNotifications))
             .filter(departmentHead -> departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, personOfInterest))
             .filter(without(personOfInterest))
             .collect(toList());
     }
 
-    private List<Person> getBossesWithDepartmentApplicationManagementNotification(Person personOfInterest, List<MailNotification> concerningMailNotifications) {
+    private List<Person> getBossesWithDepartmentApplicationManagementNotification(Person personOfInterest) {
         final List<Department> applicationPersonDepartments = departmentService.getAssignedDepartmentsOfMember(personOfInterest);
-
         return personService.getActivePersonsByRole(BOSS).stream()
-            .filter(containsAny(concerningMailNotifications))
             .filter(boss -> {
                 final List<Department> bossDepartments = departmentService.getAssignedDepartmentsOfMember(boss);
                 return applicationPersonDepartments.stream().anyMatch(bossDepartments::contains);
@@ -139,5 +169,9 @@ class ApplicationRecipientService {
 
     private static Predicate<Person> containsAny(List<MailNotification> concerningMailNotifications) {
         return person -> person.getNotifications().stream().anyMatch(concerningMailNotifications::contains);
+    }
+
+    private boolean departmentsAvailable() {
+        return departmentService.getNumberOfDepartments() > 0;
     }
 }

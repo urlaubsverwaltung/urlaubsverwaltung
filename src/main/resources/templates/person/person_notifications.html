@@ -84,7 +84,7 @@
                     active=${active == null ? personNotificationsDto.applicationManagementAll.active : active}
                   "
                 >
-                  <li th:if="${visible}" class="list-selectable__item" th:data-enabled="${active}">
+                  <li th:if="${visible}" class="list-selectable__item" th:classappend="${additionalClasses}" th:data-enabled="${active}">
                     <uv-checkbox-card
                       class="tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
                     >
@@ -126,10 +126,7 @@
                   </li>
                 </th:block>
                 <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationManagementDepartment.visible},active=${personNotificationsDto.applicationManagementDepartment.active},name='applicationManagementDepartment.active',label='person.notifications.section.absences.all-department.label',info='person.notifications.section.absences.all-department.info')}"
-                ></li>
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.application.visible},active=${personNotificationsDto.application.active},name='application.active', label='person.notifications.section.absences.changed.label',info='person.notifications.section.absences.changed.info')}"
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationAppliedAndChanges.visible},active=${personNotificationsDto.applicationAppliedAndChanges.active},name='applicationAppliedAndChanges.active', label='person.notifications.section.absences.changed.label',info='person.notifications.section.absences.changed.info')}"
                 ></li>
                 <li
                   th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationUpcoming.visible},active=${personNotificationsDto.applicationUpcoming.active},name='applicationUpcoming.active',label='person.notifications.section.absences.upcoming.label',info='person.notifications.section.absences.upcoming.info')}"
@@ -139,6 +136,15 @@
                 ></li>
                 <li
                   th:replace="~{::email-notification-element(visible=${personNotificationsDto.holidayReplacementUpcoming.visible},active=${personNotificationsDto.holidayReplacementUpcoming.active},name='holidayReplacementUpcoming.active',label='person.notifications.section.absences.holiday-replacement.upcoming.label',info='person.notifications.section.absences.holiday-replacement.upcoming.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationAppliedAndChangesForManagement.visible},active=${personNotificationsDto.applicationAppliedAndChangesForManagement.active},name='applicationAppliedAndChangesForManagement.active',label='person.notifications.section.absences.changed.management.label',info='person.notifications.section.absences.changed.management.info',additionalClasses='tw-mt-6')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationWaitingReminderForManagement.visible},active=${personNotificationsDto.applicationWaitingReminderForManagement.active},name='applicationWaitingReminderForManagement.active',label='person.notifications.section.absences.waiting-reminder.management.label',info='person.notifications.section.absences.waiting-reminder.management.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationCancellationRequestedForManagement.visible},active=${personNotificationsDto.applicationCancellationRequestedForManagement.active},name='applicationCancellationRequestedForManagement.active',label='person.notifications.section.absences.cancellation-requested.management.label',info='person.notifications.section.absences.cancellation-requested.management.info')}"
                 ></li>
               </ul>
             </section>

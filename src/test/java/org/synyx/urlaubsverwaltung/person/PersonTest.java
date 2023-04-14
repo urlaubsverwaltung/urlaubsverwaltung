@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -77,7 +77,7 @@ class PersonTest {
     void ensureReturnsFalseIfPersonHasNotTheGivenNotificationType() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT));
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
         assertThat(person.hasNotificationType(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL)).isFalse();
     }
 
@@ -115,7 +115,7 @@ class PersonTest {
     void ensureNotificationsAreUnmodifiable() {
 
         List<MailNotification> modifiableList = new ArrayList<>();
-        modifiableList.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT);
+        modifiableList.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
 
         Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setNotifications(modifiableList);

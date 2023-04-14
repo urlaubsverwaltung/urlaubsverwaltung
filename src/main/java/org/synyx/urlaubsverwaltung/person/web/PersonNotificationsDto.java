@@ -7,8 +7,10 @@ public class PersonNotificationsDto {
     private boolean all;
 
     private PersonNotificationDto applicationManagementAll;
-    private PersonNotificationDto applicationManagementDepartment;
-    private PersonNotificationDto application;
+    private PersonNotificationDto applicationAppliedAndChangesForManagement;
+    private PersonNotificationDto applicationWaitingReminderForManagement;
+    private PersonNotificationDto applicationCancellationRequestedForManagement;
+    private PersonNotificationDto applicationAppliedAndChanges;
     private PersonNotificationDto applicationUpcoming;
     private PersonNotificationDto holidayReplacement;
     private PersonNotificationDto holidayReplacementUpcoming;
@@ -43,20 +45,36 @@ public class PersonNotificationsDto {
         this.applicationManagementAll = applicationManagementAll;
     }
 
-    public PersonNotificationDto getApplicationManagementDepartment() {
-        return applicationManagementDepartment;
+    public PersonNotificationDto getApplicationAppliedAndChangesForManagement() {
+        return applicationAppliedAndChangesForManagement;
     }
 
-    public void setApplicationManagementDepartment(PersonNotificationDto applicationManagementDepartment) {
-        this.applicationManagementDepartment = applicationManagementDepartment;
+    public void setApplicationAppliedAndChangesForManagement(PersonNotificationDto applicationAppliedAndChangesForManagement) {
+        this.applicationAppliedAndChangesForManagement = applicationAppliedAndChangesForManagement;
     }
 
-    public PersonNotificationDto getApplication() {
-        return application;
+    public PersonNotificationDto getApplicationWaitingReminderForManagement() {
+        return applicationWaitingReminderForManagement;
     }
 
-    public void setApplication(PersonNotificationDto application) {
-        this.application = application;
+    public void setApplicationWaitingReminderForManagement(PersonNotificationDto applicationWaitingReminderForManagement) {
+        this.applicationWaitingReminderForManagement = applicationWaitingReminderForManagement;
+    }
+
+    public PersonNotificationDto getApplicationCancellationRequestedForManagement() {
+        return applicationCancellationRequestedForManagement;
+    }
+
+    public void setApplicationCancellationRequestedForManagement(PersonNotificationDto applicationCancellationRequestedForManagement) {
+        this.applicationCancellationRequestedForManagement = applicationCancellationRequestedForManagement;
+    }
+
+    public PersonNotificationDto getApplicationAppliedAndChanges() {
+        return applicationAppliedAndChanges;
+    }
+
+    public void setApplicationAppliedAndChanges(PersonNotificationDto applicationAppliedAndChanges) {
+        this.applicationAppliedAndChanges = applicationAppliedAndChanges;
     }
 
     public PersonNotificationDto getApplicationUpcoming() {

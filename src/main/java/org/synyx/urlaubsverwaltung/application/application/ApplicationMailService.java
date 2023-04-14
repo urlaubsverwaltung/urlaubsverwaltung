@@ -38,6 +38,13 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
@@ -95,7 +102,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // Inform all person of interest like boss or department head that the application for leave has been allowed
-        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application.getPerson());
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED);
         final Mail mailToRelevantRecipients = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.allowed.management", application.getPerson().getNiceName())
@@ -129,7 +136,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // send reject information to the management
-        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application.getPerson());
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED);
         final Mail mailToRelevantRecipients = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.rejected_information")
@@ -209,7 +216,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // send cancelled cancellation request information to the office and relevant persons
-        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application.getPerson());
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION);
         final Mail mailToOffice = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancellationRequest.declined.management")
@@ -241,7 +248,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // send reject information to the office or boss, dh or ssa with APPLICATION_CANCELLATION_REQUESTED
-        final List<Person> recipientsOfInterest = applicationRecipientService.getRecipientsOfInterest(application.getPerson());
+        final List<Person> recipientsOfInterest = applicationRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION);
         final Mail mailToOffice = Mail.builder()
             .withRecipient(recipientsOfInterest)
             .withSubject("subject.application.cancellationRequest")
@@ -337,7 +344,7 @@ class ApplicationMailService {
         model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
-        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application.getPerson());
+        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED);
         final Mail mailToAllowAndRemind = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.allowedDirectly.boss", application.getPerson().getNiceName())
@@ -561,7 +568,7 @@ class ApplicationMailService {
         }
 
         // send reject information to all other relevant persons
-        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application.getPerson());
+        final List<Person> relevantRecipientsToInform = applicationRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED);
         final Mail mailToRelevantPersons = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.revoked.management")
@@ -587,7 +594,7 @@ class ApplicationMailService {
         model.put(DAY_LENGTH, application.getDayLength().name());
         model.put(COMMENT, comment);
 
-        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application.getPerson());
+        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION);
         final Mail mailToAllowAndRemind = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.cancelledDirectly.information.recipients_of_interest", application.getPerson().getNiceName())
@@ -677,7 +684,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // send cancelled by office information to all other relevant persons
-        final List<Person> recipientsOfInterest = applicationRecipientService.getRecipientsOfInterest(application.getPerson());
+        final List<Person> recipientsOfInterest = applicationRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION);
         final Mail mailToRelevantPersons = Mail.builder()
             .withRecipient(recipientsOfInterest)
             .withSubject("subject.application.cancelled.management")
@@ -709,7 +716,7 @@ class ApplicationMailService {
         model.put(COMMENT, comment);
         model.put("departmentVacations", applicationsForLeave);
 
-        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application.getPerson());
+        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         final Mail mailToAllowAndRemind = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.applied.boss", application.getPerson().getNiceName())
@@ -753,7 +760,8 @@ class ApplicationMailService {
         modelSecondStage.put(COMMENT, comment);
         modelSecondStage.put("departmentVacations", applicationsForLeave);
 
-        final List<Person> recipients = applicationRecipientService.getRecipientsForTemporaryAllow(application);
+        // TODO
+        final List<Person> recipients = applicationRecipientService.getResponsibleSecondStageAuthorities(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED);
         final Mail mailToTemporaryAllow = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.temporaryAllowed.secondStage")
@@ -775,7 +783,7 @@ class ApplicationMailService {
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
 
-        final List<Person> recipients = applicationRecipientService.getRecipientsOfInterest(application.getPerson());
+        final List<Person> recipients = applicationRecipientService.getResponsibleManagersOf(application.getPerson());
         final Mail mailToAllowAndRemind = Mail.builder()
             .withRecipient(recipients)
             .withSubject("subject.application.remind")
@@ -837,8 +845,8 @@ class ApplicationMailService {
          *
          * See: http://stackoverflow.com/questions/33086686/java-8-stream-collect-and-group-by-objects-that-map-to-multiple-keys
          */
-        Map<Person, List<Application>> applicationsPerRecipient = waitingApplications.stream()
-            .flatMap(application -> applicationRecipientService.getRecipientsOfInterest(application.getPerson()).stream()
+        final Map<Person, List<Application>> applicationsPerRecipient = waitingApplications.stream()
+            .flatMap(application -> applicationRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER).stream()
                 .map(person -> new AbstractMap.SimpleEntry<>(person, application)))
             .collect(groupingBy(Map.Entry::getKey, mapping(Map.Entry::getValue, toList())));
 

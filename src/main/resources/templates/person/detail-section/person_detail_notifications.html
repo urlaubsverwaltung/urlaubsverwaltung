@@ -10,8 +10,10 @@
       th:with="
         showAbsences=${
           notifications.applicationManagementAll.active ||
-          notifications.applicationManagementDepartment.active ||
-          notifications.application.active ||
+          notifications.applicationAppliedAndChangesForManagement.active ||
+          notifications.applicationWaitingReminderForManagement.active ||
+          notifications.applicationCancellationRequestedForManagement.active ||
+          notifications.applicationAppliedAndChanges.active ||
           notifications.applicationUpcoming.active ||
           notifications.holidayReplacement.active ||
           notifications.holidayReplacementUpcoming.active
@@ -45,10 +47,16 @@
             <dd class="tw-text-sm tw-mb-2" th:if="${active}" th:text="${#messages.msg(info)}"></dd>
           </th:block>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.applicationManagementDepartment.active},info='person.notifications.section.absences.all-department.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.applicationAppliedAndChangesForManagement.active},info='person.notifications.section.absences.changed.management.info')}"
           ></dd>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.application.active},info='person.notifications.section.absences.changed.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.applicationWaitingReminderForManagement.active},info='notifications.section.absences.waiting-reminder.management.info')}"
+          ></dd>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.applicationCancellationRequestedForManagement.active},info='person.notifications.section.absences.cancellation-requested.management.info')}"
+          ></dd>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.applicationAppliedAndChanges.active},info='person.notifications.section.absences.changed.info')}"
           ></dd>
           <dd
             th:replace="~{::email-notification-element(active=${notifications.applicationUpcoming.active},info='person.notifications.section.absences.upcoming.info')}"
