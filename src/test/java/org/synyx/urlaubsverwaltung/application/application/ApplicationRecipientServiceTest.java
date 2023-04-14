@@ -89,7 +89,7 @@ class ApplicationRecipientServiceTest {
         when(personService.getActivePersonsByRole(SECOND_STAGE_AUTHORITY)).thenReturn(List.of(secondStage));
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStage, normalUser)).thenReturn(true);
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application.getPerson());
         assertThat(recipientsForAllowAndRemind).containsOnly(officeAll, bossAll, bossDepartment, departmentHead, secondStage);
     }
 
@@ -112,7 +112,7 @@ class ApplicationRecipientServiceTest {
         bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application.getPerson());
         assertThat(recipientsForAllowAndRemind).containsOnly(bossAll);
     }
 
@@ -143,7 +143,7 @@ class ApplicationRecipientServiceTest {
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
         when(departmentService.getAssignedDepartmentsOfMember(bossAll)).thenReturn(List.of(department));
 
-        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application);
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(application.getPerson());
         assertThat(recipientsForAllowAndRemind).containsOnly(bossAll);
     }
 

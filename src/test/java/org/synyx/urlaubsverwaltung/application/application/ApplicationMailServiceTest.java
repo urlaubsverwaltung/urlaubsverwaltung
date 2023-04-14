@@ -101,7 +101,7 @@ class ApplicationMailServiceTest {
 
         final Person boss = new Person();
         final Person office = new Person();
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss, office));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(boss, office));
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -154,7 +154,7 @@ class ApplicationMailServiceTest {
         model.put("dayLength", "FULL");
         model.put("comment", applicationComment);
 
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(person));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(person));
 
         sut.sendRejectedNotification(application, applicationComment);
 
@@ -257,7 +257,7 @@ class ApplicationMailServiceTest {
         office.setId(1);
         final Person relevantPerson = new Person();
         relevantPerson.setId(2);
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson, office));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(relevantPerson, office));
 
         sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
 
@@ -289,7 +289,7 @@ class ApplicationMailServiceTest {
         model.put("comment", applicationComment);
 
         final List<Person> relevantPersons = List.of(new Person());
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(relevantPersons);
 
         sut.sendCancellationRequest(application, applicationComment);
 
@@ -626,7 +626,7 @@ class ApplicationMailServiceTest {
         application.setStatus(WAITING);
 
         final List<Person> recipients = singletonList(person);
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(recipients);
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(recipients);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
 
@@ -747,7 +747,7 @@ class ApplicationMailServiceTest {
         model.put("comment", comment);
 
         final Person recipientOfInterest = new Person();
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(recipientOfInterest));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(recipientOfInterest));
 
         sut.sendCancelledDirectlyToManagement(application, comment);
 
@@ -866,7 +866,7 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("comment", comment);
 
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(person, office));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(person, office));
 
         sut.sendCancelledConfirmationByManagement(application, comment);
 
@@ -907,7 +907,7 @@ class ApplicationMailServiceTest {
         application.setStatus(WAITING);
 
         final List<Person> recipients = singletonList(person);
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(recipients);
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(recipients);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
 

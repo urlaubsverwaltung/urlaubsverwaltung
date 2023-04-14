@@ -110,7 +110,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(boss, clock);
         comment.setText("OK, Urlaub kann genommen werden");
 
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss, office));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(boss, office));
 
         sut.sendAllowedNotification(application, comment);
 
@@ -232,7 +232,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(boss, clock);
         comment.setText("OK, Urlaub kann genommen werden");
 
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(office));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(office));
 
         sut.sendAllowedNotification(application, comment);
 
@@ -324,7 +324,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(boss, clock);
         comment.setText("OK, Urlaub kann genommen werden");
 
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(office));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(office));
 
         sut.sendAllowedNotification(application, comment);
 
@@ -403,7 +403,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setBoss(boss);
 
         final Person departmentHead = new Person("departmentHead", "Head", "Department", "dh@example.org");
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss, departmentHead));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(boss, departmentHead));
 
         sut.sendRejectedNotification(application, comment);
 
@@ -514,7 +514,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2020, 5, 29));
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson, office));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(relevantPerson, office));
 
         sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
 
@@ -582,7 +582,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setStartDate(LocalDate.of(2020, 5, 29));
         application.setEndDate(LocalDate.of(2020, 5, 29));
 
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(office));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(office));
 
         sut.sendCancellationRequest(application, comment);
 
@@ -756,7 +756,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(relevantPerson));
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("OK, Urlaub kann genommen werden");
@@ -1291,7 +1291,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Wrong date - revoked");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(relevantPerson));
 
         sut.sendRevokedNotifications(application, comment);
 
@@ -1341,7 +1341,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Wrong information - revoked");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(relevantPerson));
 
         sut.sendRevokedNotifications(application, comment);
 
@@ -1392,7 +1392,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Cancelled");
 
         final Person recipientOfInterest = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(recipientOfInterest));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(recipientOfInterest));
 
         sut.sendCancelledDirectlyToManagement(application, comment);
 
@@ -1532,7 +1532,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Geht leider nicht");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson, office));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(relevantPerson, office));
 
         sut.sendCancelledConfirmationByManagement(application, comment);
 
@@ -1591,7 +1591,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(person);
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, departmentHead));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(asList(boss, departmentHead));
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
@@ -1630,7 +1630,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(secondStage);
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(secondStage, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, departmentHead));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(asList(boss, departmentHead));
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
@@ -1665,7 +1665,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = createApplication(departmentHead);
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(departmentHead, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, secondStage));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(asList(boss, secondStage));
 
         sut.sendAppliedNotificationToManagement(application, comment);
 
@@ -1708,7 +1708,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(boss));
 
         sut.sendAppliedNotificationToManagement(application, new ApplicationComment(clock));
 
@@ -1763,7 +1763,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setHolidayReplacements(List.of(holidayReplacementOneEntity, holidayReplacementTwoEntity));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(List.of(boss));
 
         sut.sendAppliedNotificationToManagement(application, new ApplicationComment(clock));
 
@@ -2041,7 +2041,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Application application = createApplication(person);
 
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(asList(boss, departmentHead));
+        when(applicationRecipientService.getRecipientsOfInterest(application.getPerson())).thenReturn(asList(boss, departmentHead));
 
         sut.sendRemindNotificationToManagement(application);
 
@@ -2085,9 +2085,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person departmentHeadA = new Person("headAC", "Wurst", "Heinz", "headAC@example.org");
         final Person departmentHeadB = new Person("headB", "Mustermann", "Michel", "headB@example.org");
 
-        when(applicationRecipientService.getRecipientsOfInterest(applicationA)).thenReturn(asList(boss, departmentHeadA));
-        when(applicationRecipientService.getRecipientsOfInterest(applicationB)).thenReturn(asList(boss, departmentHeadB));
-        when(applicationRecipientService.getRecipientsOfInterest(applicationC)).thenReturn(asList(boss, departmentHeadA));
+        when(applicationRecipientService.getRecipientsOfInterest(applicationA.getPerson())).thenReturn(asList(boss, departmentHeadA));
+        when(applicationRecipientService.getRecipientsOfInterest(applicationB.getPerson())).thenReturn(asList(boss, departmentHeadB));
+        when(applicationRecipientService.getRecipientsOfInterest(applicationC.getPerson())).thenReturn(asList(boss, departmentHeadA));
 
         sut.sendRemindForWaitingApplicationsReminderNotification(asList(applicationA, applicationB, applicationC));
 
