@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.application.application;
+package org.synyx.urlaubsverwaltung.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,30 +21,19 @@ import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 
 @Service
-class ApplicationRecipientService {
+class MailRecipientServiceImpl implements MailRecipientService {
 
     private final PersonService personService;
     private final DepartmentService departmentService;
 
     @Autowired
-    ApplicationRecipientService(PersonService personService, DepartmentService departmentService) {
+    MailRecipientServiceImpl(PersonService personService, DepartmentService departmentService) {
         this.personService = personService;
         this.departmentService = departmentService;
     }
 
-    /**
-     * Returns all responsible managers of the given person.
-     * Managers are:
-     * <ul>
-     *     <li>bosses</li>
-     *     <li>department heads</li>
-     *     <li>second stage authorities.</li>
-     * </ul>
-     *
-     * @param personOfInterest person to get managers from
-     * @return list of all responsible managers
-     */
-    List<Person> getResponsibleManagersOf(Person personOfInterest) {
+    @Override
+    public List<Person> getResponsibleManagersOf(Person personOfInterest) {
         final List<Person> managementDepartmentPersons = new ArrayList<>();
         if (departmentsAvailable()) {
             managementDepartmentPersons.addAll(getResponsibleDepartmentHeads(personOfInterest));
@@ -57,39 +46,13 @@ class ApplicationRecipientService {
             .collect(toList());
     }
 
-    /**
-     * Returns a list of recipients of interest for a given person based on
-     * <ul>
-     *     <li>is Office and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL} or the given mail notification is active</li>
-     *     <li>is Boss and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL} or the given mail notification is active</li>
-     *     <li>is responsible Department Head and the given mail notification is active</li>
-     *     <li>is responsible Second Stage Authority and the given mail notification is active</li>
-     *     <li>is Boss in the same Department and the given mail notification is active</li>
-     * </ul>
-     *
-     * @param personOfInterest person to get recipients from
-     * @param mailNotification given notification that one of must be active
-     * @return list of recipients of interest
-     */
-    List<Person> getRecipientsOfInterest(Person personOfInterest, MailNotification mailNotification) {
+    @Override
+    public List<Person> getRecipientsOfInterest(Person personOfInterest, MailNotification mailNotification) {
         return getRecipientsOfInterest(personOfInterest, List.of(mailNotification));
     }
 
-    /**
-     * Returns a list of recipients of interest for a given person based on
-     * <ul>
-     *     <li>is Office and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL} or one of the given mail notifications is active</li>
-     *     <li>is Boss and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL} or one of the given mail notifications is active</li>
-     *     <li>is responsible Department Head and one of the given mail notifications is active</li>
-     *     <li>is responsible Second Stage Authority and one of the given mail notifications is active</li>
-     *     <li>is Boss in the same Department and one of the given mail notifications is active</li>
-     * </ul>
-     *
-     * @param personOfInterest  person to get recipients from
-     * @param mailNotifications given notifications that one of must be active
-     * @return list of recipients of interest
-     */
-    List<Person> getRecipientsOfInterest(Person personOfInterest, List<MailNotification> mailNotifications) {
+    @Override
+    public List<Person> getRecipientsOfInterest(Person personOfInterest, List<MailNotification> mailNotifications) {
 
         final List<Person> recipientsOfInterestForAll = new ArrayList<>();
         recipientsOfInterestForAll.addAll(getOfficesWithApplicationManagementAllNotification(mailNotifications));
@@ -112,14 +75,8 @@ class ApplicationRecipientService {
             .collect(toList());
     }
 
-    /**
-     * Get all responsible second stage authorities that must be notified and
-     * have the given mail notification activated
-     *
-     * @param personOfInterest to retrieve the responsible second stage authorities from
-     * @return list of responsible second stage authorities
-     */
-    List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest, MailNotification mailNotification) {
+    @Override
+    public List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest, MailNotification mailNotification) {
         return getResponsibleSecondStageAuthorities(personOfInterest).stream()
             .filter(containsAny(List.of(mailNotification)))
             .collect(toList());
