@@ -35,121 +35,117 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 final class PersonNotificationsMapper {
 
     private PersonNotificationsMapper() {
+        // ok
     }
 
     static List<MailNotification> mapToMailNotifications(PersonNotificationsDto personNotificationsDto) {
 
         final List<MailNotification> mailNotifications = new ArrayList<>();
+        addIfActive(mailNotifications, personNotificationsDto.getApplicationManagementAll(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL);
+        addIfActive(mailNotifications, personNotificationsDto.getPersonNewManagementAll(), NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL);
+        addIfActive(mailNotifications, personNotificationsDto.getOvertimeManagementAll(), NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL);
 
-        if (personNotificationsDto.getApplicationManagementAll() != null && personNotificationsDto.getApplicationManagementAll().isActive()) {
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL);
-        }
-        if (personNotificationsDto.getPersonNewManagementAll() != null && personNotificationsDto.getPersonNewManagementAll().isActive()) {
-            mailNotifications.add(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL);
-        }
-        if (personNotificationsDto.getOvertimeManagementAll() != null && personNotificationsDto.getOvertimeManagementAll().isActive()) {
-            mailNotifications.add(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL);
-        }
+        addIfActive(mailNotifications, personNotificationsDto.getApplicationAppliedForManagement(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
+        addIfActive(mailNotifications, personNotificationsDto.getApplicationAdaptedForManagement(), List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED));
+        addIfActive(mailNotifications, personNotificationsDto.getApplicationCancellationForManagement(), List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
+        addIfActive(mailNotifications, personNotificationsDto.getApplicationAllowedForManagement(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED);
+        addIfActive(mailNotifications, personNotificationsDto.getApplicationTemporaryAllowedForManagement(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED);
+        addIfActive(mailNotifications, personNotificationsDto.getApplicationWaitingReminderForManagement(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER);
+        addIfActive(mailNotifications, personNotificationsDto.getApplicationCancellationRequestedForManagement(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED);
 
-        if (personNotificationsDto.getApplicationAppliedAndChangesForManagement() != null && personNotificationsDto.getApplicationAppliedAndChangesForManagement().isActive()) {
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED);
-        }
-        if (personNotificationsDto.getApplicationWaitingReminderForManagement() != null && personNotificationsDto.getApplicationWaitingReminderForManagement().isActive()) {
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER);
-        }
-        if (personNotificationsDto.getApplicationCancellationRequestedForManagement() != null && personNotificationsDto.getApplicationCancellationRequestedForManagement().isActive()) {
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED);
-        }
-
-        if (personNotificationsDto.getApplicationAppliedAndChanges() != null && personNotificationsDto.getApplicationAppliedAndChanges().isActive()) {
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_APPLIED);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_ALLOWED);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_REVOKED);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_REJECTED);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_EDITED);
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_CONVERTED);
-        }
-        if (personNotificationsDto.getApplicationUpcoming() != null && personNotificationsDto.getApplicationUpcoming().isActive()) {
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_UPCOMING);
-        }
-        if (personNotificationsDto.getHolidayReplacement() != null && personNotificationsDto.getHolidayReplacement().isActive()) {
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT);
-        }
-        if (personNotificationsDto.getHolidayReplacementUpcoming() != null && personNotificationsDto.getHolidayReplacementUpcoming().isActive()) {
-            mailNotifications.add(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING);
-        }
+        final List<MailNotification> notificationEmailApplications = List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED,
+            NOTIFICATION_EMAIL_APPLICATION_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_REVOKED, NOTIFICATION_EMAIL_APPLICATION_REJECTED,
+            NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_CANCELLATION, NOTIFICATION_EMAIL_APPLICATION_EDITED,
+            NOTIFICATION_EMAIL_APPLICATION_CONVERTED);
+        addIfActive(mailNotifications, personNotificationsDto.getApplicationAppliedAndChanges(), notificationEmailApplications);
+        addIfActive(mailNotifications, personNotificationsDto.getApplicationUpcoming(), NOTIFICATION_EMAIL_APPLICATION_UPCOMING);
+        addIfActive(mailNotifications, personNotificationsDto.getHolidayReplacement(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT);
+        addIfActive(mailNotifications, personNotificationsDto.getHolidayReplacementUpcoming(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING);
 
         return mailNotifications;
     }
 
     static PersonNotificationsDto mapToPersonNotificationsDto(Person person) {
 
-        final List<MailNotification> mailNotifications = new ArrayList<>(person.getNotifications());
+        final boolean isBossOrOffice = person.hasRole(Role.BOSS) || person.hasRole(Role.OFFICE);
+        final boolean isBossOrDHOrSSA = person.hasRole(Role.BOSS) || person.hasRole(Role.DEPARTMENT_HEAD) || person.hasRole(Role.SECOND_STAGE_AUTHORITY);
+
+        final List<MailNotification> activePersonMailNotifications = new ArrayList<>(person.getNotifications());
 
         final PersonNotificationsDto personNotificationsDto = new PersonNotificationsDto();
-
-        for (MailNotification mailNotification : MailNotification.values()) {
-            switch (mailNotification) {
+        for (MailNotification mailNotificationToCheck : MailNotification.values()) {
+            switch (mailNotificationToCheck) {
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL: {
                     personNotificationsDto.setApplicationManagementAll(new PersonNotificationDto(
-                        person.hasRole(Role.BOSS) || person.hasRole(Role.OFFICE),
-                        mailNotifications.contains(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL)
+                        isBossOrOffice,
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL: {
                     personNotificationsDto.setPersonNewManagementAll(new PersonNotificationDto(
-                        person.hasRole(Role.BOSS) || person.hasRole(Role.OFFICE),
-                        mailNotifications.contains(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL)
+                        isBossOrOffice,
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL: {
                     personNotificationsDto.setOvertimeManagementAll(new PersonNotificationDto(
-                        person.hasRole(Role.BOSS) || person.hasRole(Role.OFFICE),
-                        mailNotifications.contains(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL)
+                        isBossOrOffice,
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
 
-                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED:
-                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED:
-                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED:
-                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED:
-                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED:
-                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION:
+                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED: {
+                    personNotificationsDto.setApplicationAppliedForManagement(new PersonNotificationDto(
+                        isBossOrDHOrSSA,
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
+                    ));
+                    break;
+                }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED:
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED: {
-                    final List<MailNotification> notificationEmailApplicationsManagement = List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED,
-                        NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED,
-                        NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION,
-                        NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED);
-                    personNotificationsDto.setApplicationAppliedAndChangesForManagement(new PersonNotificationDto(
-                        person.hasRole(Role.BOSS) || person.hasRole(Role.DEPARTMENT_HEAD) || person.hasRole(Role.SECOND_STAGE_AUTHORITY),
-                        mailNotifications.stream().anyMatch(notificationEmailApplicationsManagement::contains)
+                    personNotificationsDto.setApplicationAdaptedForManagement(new PersonNotificationDto(
+                        isBossOrDHOrSSA,
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
+                    ));
+                    break;
+                }
+                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED:
+                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED:
+                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION: {
+                    personNotificationsDto.setApplicationCancellationForManagement(new PersonNotificationDto(
+                        isBossOrDHOrSSA,
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
+                    ));
+                    break;
+                }
+                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED: {
+                    personNotificationsDto.setApplicationAllowedForManagement(new PersonNotificationDto(
+                        isBossOrDHOrSSA,
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
+                    ));
+                    break;
+                }
+                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED: {
+                    personNotificationsDto.setApplicationTemporaryAllowedForManagement(new PersonNotificationDto(
+                        isBossOrDHOrSSA,
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER: {
                     personNotificationsDto.setApplicationWaitingReminderForManagement(new PersonNotificationDto(
-                        person.hasRole(Role.BOSS) || person.hasRole(Role.DEPARTMENT_HEAD) || person.hasRole(Role.SECOND_STAGE_AUTHORITY),
-                        mailNotifications.contains(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)
+                        isBossOrDHOrSSA,
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED: {
                     personNotificationsDto.setApplicationCancellationRequestedForManagement(new PersonNotificationDto(
-                        person.hasRole(Role.OFFICE) || ((person.hasRole(Role.BOSS) || person.hasRole(Role.DEPARTMENT_HEAD) || person.hasRole(Role.SECOND_STAGE_AUTHORITY)) && person.hasRole(Role.APPLICATION_CANCELLATION_REQUESTED)),
-                        mailNotifications.contains(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)
+                        person.hasRole(Role.OFFICE) || ((isBossOrDHOrSSA) && person.hasRole(Role.APPLICATION_CANCELLATION_REQUESTED)),
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
@@ -162,34 +158,30 @@ final class PersonNotificationsMapper {
                 case NOTIFICATION_EMAIL_APPLICATION_CANCELLATION:
                 case NOTIFICATION_EMAIL_APPLICATION_EDITED:
                 case NOTIFICATION_EMAIL_APPLICATION_CONVERTED: {
-                    final List<MailNotification> notificationEmailApplications = List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED,
-                        NOTIFICATION_EMAIL_APPLICATION_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_REVOKED, NOTIFICATION_EMAIL_APPLICATION_REJECTED,
-                        NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_CANCELLATION, NOTIFICATION_EMAIL_APPLICATION_EDITED,
-                        NOTIFICATION_EMAIL_APPLICATION_CONVERTED);
                     personNotificationsDto.setApplicationAppliedAndChanges(new PersonNotificationDto(
                         true,
-                        mailNotifications.stream().anyMatch(notificationEmailApplications::contains)
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_UPCOMING: {
                     personNotificationsDto.setApplicationUpcoming(new PersonNotificationDto(
                         true,
-                        mailNotifications.contains(NOTIFICATION_EMAIL_APPLICATION_UPCOMING)
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT: {
                     personNotificationsDto.setHolidayReplacement(new PersonNotificationDto(
                         true,
-                        mailNotifications.contains(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT)
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING: {
                     personNotificationsDto.setHolidayReplacementUpcoming(new PersonNotificationDto(
                         true,
-                        mailNotifications.contains(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING)
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
@@ -200,7 +192,11 @@ final class PersonNotificationsMapper {
             personNotificationsDto.getApplicationManagementAll(),
             personNotificationsDto.getPersonNewManagementAll(),
             personNotificationsDto.getOvertimeManagementAll(),
-            personNotificationsDto.getApplicationAppliedAndChangesForManagement(),
+            personNotificationsDto.getApplicationAppliedForManagement(),
+            personNotificationsDto.getApplicationAdaptedForManagement(),
+            personNotificationsDto.getApplicationCancellationForManagement(),
+            personNotificationsDto.getApplicationAllowedForManagement(),
+            personNotificationsDto.getApplicationTemporaryAllowedForManagement(),
             personNotificationsDto.getApplicationWaitingReminderForManagement(),
             personNotificationsDto.getApplicationCancellationRequestedForManagement(),
             personNotificationsDto.getApplicationAppliedAndChanges(),
@@ -216,5 +212,15 @@ final class PersonNotificationsMapper {
         personNotificationsDto.setPersonId(person.getId());
 
         return personNotificationsDto;
+    }
+
+    private static void addIfActive(List<MailNotification> activatedMailNotifications, PersonNotificationDto personNotificationDto, MailNotification mailNotification) {
+        addIfActive(activatedMailNotifications, personNotificationDto, List.of(mailNotification));
+    }
+
+    private static void addIfActive(List<MailNotification> activatedMailNotifications, PersonNotificationDto personNotificationDto, List<MailNotification> mailNotifications) {
+        if (personNotificationDto != null && personNotificationDto.isActive()) {
+            activatedMailNotifications.addAll(mailNotifications);
+        }
     }
 }

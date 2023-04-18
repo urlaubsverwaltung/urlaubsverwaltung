@@ -7,7 +7,11 @@ public class PersonNotificationsDto {
     private boolean all;
 
     private PersonNotificationDto applicationManagementAll;
-    private PersonNotificationDto applicationAppliedAndChangesForManagement;
+    private PersonNotificationDto applicationAppliedForManagement;
+    private PersonNotificationDto applicationTemporaryAllowedForManagement;
+    private PersonNotificationDto applicationAllowedForManagement;
+    private PersonNotificationDto applicationCancellationForManagement;
+    private PersonNotificationDto applicationAdaptedForManagement;
     private PersonNotificationDto applicationWaitingReminderForManagement;
     private PersonNotificationDto applicationCancellationRequestedForManagement;
     private PersonNotificationDto applicationAppliedAndChanges;
@@ -45,12 +49,44 @@ public class PersonNotificationsDto {
         this.applicationManagementAll = applicationManagementAll;
     }
 
-    public PersonNotificationDto getApplicationAppliedAndChangesForManagement() {
-        return applicationAppliedAndChangesForManagement;
+    public PersonNotificationDto getApplicationAppliedForManagement() {
+        return applicationAppliedForManagement;
     }
 
-    public void setApplicationAppliedAndChangesForManagement(PersonNotificationDto applicationAppliedAndChangesForManagement) {
-        this.applicationAppliedAndChangesForManagement = applicationAppliedAndChangesForManagement;
+    public void setApplicationAppliedForManagement(PersonNotificationDto applicationAppliedForManagement) {
+        this.applicationAppliedForManagement = applicationAppliedForManagement;
+    }
+
+    public PersonNotificationDto getApplicationTemporaryAllowedForManagement() {
+        return applicationTemporaryAllowedForManagement;
+    }
+
+    public void setApplicationTemporaryAllowedForManagement(PersonNotificationDto applicationTemporaryAllowedForManagement) {
+        this.applicationTemporaryAllowedForManagement = applicationTemporaryAllowedForManagement;
+    }
+
+    public PersonNotificationDto getApplicationAllowedForManagement() {
+        return applicationAllowedForManagement;
+    }
+
+    public void setApplicationAllowedForManagement(PersonNotificationDto applicationAllowedForManagement) {
+        this.applicationAllowedForManagement = applicationAllowedForManagement;
+    }
+
+    public PersonNotificationDto getApplicationCancellationForManagement() {
+        return applicationCancellationForManagement;
+    }
+
+    public void setApplicationCancellationForManagement(PersonNotificationDto applicationCancellationForManagement) {
+        this.applicationCancellationForManagement = applicationCancellationForManagement;
+    }
+
+    public PersonNotificationDto getApplicationAdaptedForManagement() {
+        return applicationAdaptedForManagement;
+    }
+
+    public void setApplicationAdaptedForManagement(PersonNotificationDto applicationAdaptedForManagement) {
+        this.applicationAdaptedForManagement = applicationAdaptedForManagement;
     }
 
     public PersonNotificationDto getApplicationWaitingReminderForManagement() {

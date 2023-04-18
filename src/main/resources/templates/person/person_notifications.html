@@ -84,7 +84,12 @@
                     active=${active == null ? personNotificationsDto.applicationManagementAll.active : active}
                   "
                 >
-                  <li th:if="${visible}" class="list-selectable__item" th:classappend="${additionalClasses}" th:data-enabled="${active}">
+                  <li
+                    th:if="${visible}"
+                    class="list-selectable__item"
+                    th:classappend="${additionalClasses}"
+                    th:data-enabled="${active}"
+                  >
                     <uv-checkbox-card
                       class="tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
                     >
@@ -137,11 +142,25 @@
                 <li
                   th:replace="~{::email-notification-element(visible=${personNotificationsDto.holidayReplacementUpcoming.visible},active=${personNotificationsDto.holidayReplacementUpcoming.active},name='holidayReplacementUpcoming.active',label='person.notifications.section.absences.holiday-replacement.upcoming.label',info='person.notifications.section.absences.holiday-replacement.upcoming.info')}"
                 ></li>
+
                 <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationAppliedAndChangesForManagement.visible},active=${personNotificationsDto.applicationAppliedAndChangesForManagement.active},name='applicationAppliedAndChangesForManagement.active',label='person.notifications.section.absences.changed.management.label',info='person.notifications.section.absences.changed.management.info',additionalClasses='tw-mt-6')}"
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationAppliedForManagement.visible},active=${personNotificationsDto.applicationAppliedForManagement.active},name='applicationAppliedForManagement.active',label='person.notifications.section.absences.applied.management.label',info='person.notifications.section.absences.applied.management.info',additionalClasses='tw-mt-6')}"
                 ></li>
                 <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationWaitingReminderForManagement.visible},active=${personNotificationsDto.applicationWaitingReminderForManagement.active},name='applicationWaitingReminderForManagement.active',label='person.notifications.section.absences.waiting-reminder.management.label',info='person.notifications.section.absences.waiting-reminder.management.info')}"
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationTemporaryAllowedForManagement.visible},active=${personNotificationsDto.applicationTemporaryAllowedForManagement.active},name='applicationTemporaryAllowedForManagement.active',label='person.notifications.section.absences.temporary-allowed.management.label',info='person.notifications.section.absences.temporary-allowed.management.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationAllowedForManagement.visible},active=${personNotificationsDto.applicationAllowedForManagement.active},name='applicationAllowedForManagement.active',label='person.notifications.section.absences.allowed.management.label',info='person.notifications.section.absences.allowed.management.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationCancellationForManagement.visible},active=${personNotificationsDto.applicationCancellationForManagement.active},name='applicationCancellationForManagement.active',label='person.notifications.section.absences.cancellation.management.label',info='person.notifications.section.absences.cancellation.management.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationAdaptedForManagement.visible},active=${personNotificationsDto.applicationAdaptedForManagement.active},name='applicationAdaptedForManagement.active',label='person.notifications.section.absences.adapted.management.label',info='person.notifications.section.absences.adapted.management.info')}"
+                ></li>
+
+                <li
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationWaitingReminderForManagement.visible},active=${personNotificationsDto.applicationWaitingReminderForManagement.active},name='applicationWaitingReminderForManagement.active',label='person.notifications.section.absences.waiting-reminder.management.label',info='person.notifications.section.absences.waiting-reminder.management.info',additionalClasses='tw-mt-6')}"
                 ></li>
                 <li
                   th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationCancellationRequestedForManagement.visible},active=${personNotificationsDto.applicationCancellationRequestedForManagement.active},name='applicationCancellationRequestedForManagement.active',label='person.notifications.section.absences.cancellation-requested.management.label',info='person.notifications.section.absences.cancellation-requested.management.info')}"
