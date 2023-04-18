@@ -761,12 +761,11 @@ class ApplicationMailService {
         modelSecondStage.put(COMMENT, comment);
         modelSecondStage.put("departmentVacations", applicationsForLeave);
 
-        // TODO
-        final List<Person> recipients = mailRecipientService.getResponsibleSecondStageAuthorities(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED);
+        final List<Person> recipients = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED);
         final Mail mailToTemporaryAllow = Mail.builder()
             .withRecipient(recipients)
-            .withSubject("subject.application.temporaryAllowed.secondStage")
-            .withTemplate("application_temporary_allowed_to_second_stage_authority", modelSecondStage)
+            .withSubject("subject.application.temporaryAllowed.management")
+            .withTemplate("application_temporary_allowed_to_management", modelSecondStage)
             .build();
         mailService.send(mailToTemporaryAllow);
     }

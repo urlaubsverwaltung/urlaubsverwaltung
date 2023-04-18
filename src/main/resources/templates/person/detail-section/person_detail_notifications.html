@@ -8,6 +8,12 @@
     <th:block
       th:with="
         showAbsences=${
+          notifications.applicationAppliedAndChanges.active ||
+          notifications.applicationUpcoming.active ||
+          notifications.holidayReplacement.active ||
+          notifications.holidayReplacementUpcoming.active
+        },
+        showAbsencesManagement=${
           notifications.applicationManagementAll.active ||
           notifications.applicationAppliedForManagement.active ||
           notifications.applicationTemporaryAllowedForManagement.active ||
@@ -15,11 +21,7 @@
           notifications.applicationCancellationForManagement.active ||
           notifications.applicationAdaptedForManagement.active ||
           notifications.applicationWaitingReminderForManagement.active ||
-          notifications.applicationCancellationRequestedForManagement.active ||
-          notifications.applicationAppliedAndChanges.active ||
-          notifications.applicationUpcoming.active ||
-          notifications.holidayReplacement.active ||
-          notifications.holidayReplacementUpcoming.active
+          notifications.applicationCancellationRequestedForManagement.active
         },
         showOvertime=${notifications.overtimeManagementAll.active},
         showPersons=${notifications.personNewManagementAll.active}
@@ -33,55 +35,63 @@
       >
         Keine E-Mail Benachrichtigungen aktiviert.
       </p>
-      <dl aria-labelledby="heading-notification" th:if="${showAbsences or showOvertime or showPersons}">
+      <dl aria-labelledby="heading-notification" th:if="${showAbsences or showAbsencesManagement or showOvertime or showPersons}">
         <th:block th:if="${showAbsences}">
           <dt
             class="tw-font-medium tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
             th:text="#{person.notifications.section.absences.title}"
           >
-            Abwesenheiten
+            Meine Abwesenheiten
           </dt>
           <th:block
             th:fragment="email-notification-element(info,active)"
             th:with="
-                info=${info ?: 'person.notifications.section.absences.all.info'},
-                active=${active == null ? notifications.applicationManagementAll.active : active}
+                info=${info ?: 'person.notifications.section.absences.changed.label'},
+                active=${active == null ? notifications.applicationAppliedAndChanges.active : active}
               "
           >
-            <dd class="tw-text-sm tw-mb-2" th:if="${active}" th:text="${#messages.msg(info)}"></dd>
+            <dd class="tw-text-sm tw-mb-1" th:if="${active}" th:text="${#messages.msg(info)}"></dd>
           </th:block>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.applicationAppliedForManagement.active},info='person.notifications.section.absences.applied.management.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.applicationUpcoming.active},info='person.notifications.section.absences.upcoming.label')}"
           ></dd>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.applicationTemporaryAllowedForManagement.active},info='person.notifications.section.absences.temporary-allowed.management.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.holidayReplacement.active},info='person.notifications.section.absences.holiday-replacement.label')}"
           ></dd>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.applicationAllowedForManagement.active},info='person.notifications.section.absences.allowed.management.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.holidayReplacementUpcoming.active},info='person.notifications.section.absences.holiday-replacement.upcoming.label')}"
+          ></dd>
+        </th:block>
+        <th:block th:if="${showAbsencesManagement}">
+          <dt
+            class="tw-font-medium tw-mt-8 tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+            th:text="#{person.notifications.section.absences.management.title}"
+          >
+            Abwesenheiten meiner Kollegen
+          </dt>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.applicationManagementAll.active},info='person.notifications.section.absences.all.label')}"
           ></dd>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.applicationCancellationForManagement.active},info='person.notifications.section.absences.cancellation.management.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.applicationAppliedForManagement.active},info='person.notifications.section.absences.applied.management.label')}"
           ></dd>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.applicationAdaptedForManagement.active},info='person.notifications.section.absences.adapted.management.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.applicationTemporaryAllowedForManagement.active},info='person.notifications.section.absences.temporary-allowed.management.label')}"
           ></dd>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.applicationWaitingReminderForManagement.active},info='person.notifications.section.absences.waiting-reminder.management.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.applicationAllowedForManagement.active},info='person.notifications.section.absences.allowed.management.label')}"
           ></dd>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.applicationCancellationRequestedForManagement.active},info='person.notifications.section.absences.cancellation-requested.management.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.applicationCancellationForManagement.active},info='person.notifications.section.absences.cancellation.management.label')}"
           ></dd>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.applicationAppliedAndChanges.active},info='person.notifications.section.absences.changed.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.applicationAdaptedForManagement.active},info='person.notifications.section.absences.adapted.management.label')}"
           ></dd>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.applicationUpcoming.active},info='person.notifications.section.absences.upcoming.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.applicationWaitingReminderForManagement.active},info='person.notifications.section.absences.waiting-reminder.management.label')}"
           ></dd>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.holidayReplacement.active},info='person.notifications.section.absences.holiday-replacement.info')}"
-          ></dd>
-          <dd
-            th:replace="~{::email-notification-element(active=${notifications.holidayReplacementUpcoming.active},info='person.notifications.section.absences.holiday-replacement.upcoming.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.applicationCancellationRequestedForManagement.active},info='person.notifications.section.absences.cancellation-requested.management.label')}"
           ></dd>
         </th:block>
         <th:block th:if="${showOvertime}">
@@ -92,7 +102,7 @@
             Überstunden
           </dt>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.overtimeManagementAll.active},info='person.notifications.section.overtime.all.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.overtimeManagementAll.active},info='person.notifications.section.overtime.all.label')}"
           ></dd>
         </th:block>
         <th:block th:if="${showPersons}">
@@ -103,7 +113,7 @@
             Personen
           </dt>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.personNewManagementAll.active},info='person.notifications.section.persons.added.info')}"
+            th:replace="~{::email-notification-element(active=${notifications.personNewManagementAll.active},info='person.notifications.section.persons.added.label')}"
           ></dd>
         </th:block>
       </dl>

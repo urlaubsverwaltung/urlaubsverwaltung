@@ -204,33 +204,4 @@ class MailRecipientServiceImplTest {
         final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         assertThat(recipientsForAllowAndRemind).containsOnly(bossAll);
     }
-
-    @Test
-    void ensureToReturnResponsibleSecondStageAuthoritiesFilteredByMailNotification() {
-
-        // given user application
-        final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
-        normalUser.setId(1);
-        normalUser.setPermissions(List.of(USER));
-
-        // given second stage
-        final Person secondStage = new Person("secondStage", "secondStage", "secondStage", "secondStage@example.org");
-        secondStage.setId(6);
-        secondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
-        secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStage, normalUser)).thenReturn(true);
-
-        final Person secondStageWithoutMailtNotification = new Person("secondStage", "secondStage", "secondStage", "secondStage@example.org");
-        secondStageWithoutMailtNotification.setId(7);
-        secondStageWithoutMailtNotification.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
-        secondStageWithoutMailtNotification.setNotifications(List.of());
-        when(departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageWithoutMailtNotification, normalUser)).thenReturn(true);
-
-        when(personService.getActivePersonsByRole(SECOND_STAGE_AUTHORITY)).thenReturn(List.of(secondStage, secondStageWithoutMailtNotification));
-
-        final List<Person> recipientsForAllowAndRemind = sut.getResponsibleSecondStageAuthorities(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
-        assertThat(recipientsForAllowAndRemind)
-            .doesNotContain(secondStageWithoutMailtNotification)
-            .containsOnly(secondStage);
-    }
 }

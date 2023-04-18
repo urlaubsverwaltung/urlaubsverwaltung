@@ -1837,7 +1837,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2021, Month.APRIL, 16));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(singletonList(application));
-        when(mailRecipientService.getResponsibleSecondStageAuthorities(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(singletonList(secondStage));
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(singletonList(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
@@ -1925,7 +1925,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate()))
             .thenReturn(singletonList(application));
 
-        when(mailRecipientService.getResponsibleSecondStageAuthorities(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(singletonList(secondStage));
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(singletonList(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
@@ -2005,7 +2005,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate()))
             .thenReturn(singletonList(application));
 
-        when(mailRecipientService.getResponsibleSecondStageAuthorities(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(singletonList(secondStage));
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(singletonList(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);
 

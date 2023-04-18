@@ -75,13 +75,6 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .collect(toList());
     }
 
-    @Override
-    public List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest, MailNotification mailNotification) {
-        return getResponsibleSecondStageAuthorities(personOfInterest).stream()
-            .filter(containsAny(List.of(mailNotification)))
-            .collect(toList());
-    }
-
     private List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest) {
         return personService.getActivePersonsByRole(SECOND_STAGE_AUTHORITY)
             .stream()

@@ -52,13 +52,4 @@ public interface MailRecipientService {
      * @return list of recipients of interest
      */
     List<Person> getRecipientsOfInterest(Person personOfInterest, List<MailNotification> mailNotifications);
-
-    /**
-     * Get all responsible second stage authorities that must be notified and
-     * have the given mail notification activated
-     *
-     * @param personOfInterest to retrieve the responsible second stage authorities from
-     * @return list of responsible second stage authorities
-     */
-    List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest, MailNotification mailNotification);
 }

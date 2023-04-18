@@ -961,7 +961,7 @@ class ApplicationMailServiceTest {
         application.setStartDate(LocalDate.of(2020, 12, 1));
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(WAITING);
-        when(mailRecipientService.getResponsibleSecondStageAuthorities(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(recipients);
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(recipients);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
 
@@ -991,8 +991,8 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_temporary_allowed_to_applicant");
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(recipients);
-        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.temporaryAllowed.secondStage");
-        assertThat(mails.get(1).getTemplateName()).isEqualTo("application_temporary_allowed_to_second_stage_authority");
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.temporaryAllowed.management");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("application_temporary_allowed_to_management");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelSecondStage);
     }
 
