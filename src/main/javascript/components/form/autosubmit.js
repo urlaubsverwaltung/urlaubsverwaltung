@@ -33,18 +33,30 @@ export function initAutosubmit() {
   });
 
   document.addEventListener("change", function (event) {
-    if (event.defaultPrevented) {
+    const { defaultPrevented, target } = event;
+    if (defaultPrevented || noTextInput(target)) {
+      // `change` is not of interest for text inputs which are triggered by `keyup`
       return;
     }
 
-    const { autoSubmit = "" } = event.target.dataset;
-    if (autoSubmit && !event.target.matches("input") && !event.target.matches("textarea")) {
-      const button = document.querySelector("#" + autoSubmit);
-      if (button) {
-        button.closest("form").requestSubmit(button);
-      }
+    const { autoSubmit = "" } = target.dataset;
+    const element = autoSubmit ? document.querySelector("#" + autoSubmit) : target.closest("form");
+    if (element instanceof HTMLFormElement) {
+      element.requestSubmit();
+    } else {
+      element.closest("form").requestSubmit(element);
     }
   });
+}
+
+function noTextInput(element) {
+  return [
+    "input[type='text']",
+    "input[type='mail']",
+    "input[type='search']",
+    "input[type='password']",
+    "textarea",
+  ].some((selector) => element.matches(selector));
 }
 
 const whitespaceKeys = new Set(["Enter", "Tab", "Alt"]);

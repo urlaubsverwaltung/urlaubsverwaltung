@@ -3,15 +3,19 @@
   <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
     <title th:text="#{person.notifications.meta.title}"></title>
     <th:block th:ref="scripts">
+      <script defer asset:src="npm.hotwired.js"></script>
+      <script defer asset:src="app_statistics~department_form~person_notifications~persons~sick_notes.js"></script>
       <script defer asset:src="person_notifications.js"></script>
     </th:block>
   </head>
 
   <body th:replace="_layout::body(~{::main}, ~{})">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
-      <div class="feedback">
-        <p th:if="${success}" th:text="#{settings.action.update.success}" class="alert alert-success"></p>
-      </div>
+      <turbo-frame id="frame-feedback" data-turbo-action="replace">
+        <div class="feedback">
+          <p th:if="${success}" th:text="#{settings.action.update.success}" class="alert alert-success"></p>
+        </div>
+      </turbo-frame>
 
       <div th:replace="fragments/section-heading::section-heading(~{::person-notifications-body}, ~{})">
         <th:block th:ref="person-notifications-body">
@@ -36,6 +40,8 @@
         th:action="@{/web/person/__${personNotificationsDto.personId}__/notifications}"
         th:object="${personNotificationsDto}"
         class="tw-mt-8 form-horizontal"
+        data-turbo="true"
+        data-turbo-frame="frame-feedback"
       >
         <input type="hidden" th:field="*{personId}" />
 
@@ -101,6 +107,7 @@
                             th:checked="${active}"
                             class="tw-m-0 tw-shrink-0"
                             th:aria-describedby="${'info-' + id}"
+                            data-auto-submit
                           />
                           <label
                             for="input"
@@ -199,16 +206,22 @@
           </div>
         </div>
 
-        <div class="tw-mt-24 form-section tw-mb-16">
-          <hr />
-          <button th:text="#{action.save}" class="button-main-green col-xs-12 col-sm-5 col-md-2" type="submit"></button>
-          <button
-            th:text="#{action.cancel}"
-            type="button"
-            class="button col-xs-12 col-sm-5 col-md-2 pull-right"
-            data-back-button
-          ></button>
-        </div>
+        <noscript>
+          <div class="tw-mt-24 form-section tw-mb-16">
+            <hr />
+            <button
+              th:text="#{action.save}"
+              class="button-main-green col-xs-12 col-sm-5 col-md-2"
+              type="submit"
+            ></button>
+            <button
+              th:text="#{action.cancel}"
+              type="button"
+              class="button col-xs-12 col-sm-5 col-md-2 pull-right"
+              data-back-button
+            ></button>
+          </div>
+        </noscript>
       </form>
     </main>
   </body>
