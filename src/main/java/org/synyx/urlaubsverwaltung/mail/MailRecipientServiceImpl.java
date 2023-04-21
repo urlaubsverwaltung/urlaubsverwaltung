@@ -13,7 +13,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -91,13 +90,13 @@ class MailRecipientServiceImpl implements MailRecipientService {
 
     private List<Person> getBossWithApplicationManagementAllNotification(List<MailNotification> concerningMailNotifications) {
         return personService.getActivePersonsByRole(BOSS).stream()
-            .filter(boss -> boss.getNotifications().contains(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL) || boss.getNotifications().stream().anyMatch(concerningMailNotifications::contains))
+            .filter(boss -> boss.getNotifications().stream().anyMatch(concerningMailNotifications::contains))
             .collect(toList());
     }
 
     private List<Person> getOfficesWithApplicationManagementAllNotification(List<MailNotification> concerningMailNotifications) {
         return personService.getActivePersonsByRole(OFFICE).stream()
-            .filter(office -> office.getNotifications().contains(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL) || office.getNotifications().stream().anyMatch(concerningMailNotifications::contains))
+            .filter(office -> office.getNotifications().stream().anyMatch(concerningMailNotifications::contains))
             .collect(toList());
     }
 

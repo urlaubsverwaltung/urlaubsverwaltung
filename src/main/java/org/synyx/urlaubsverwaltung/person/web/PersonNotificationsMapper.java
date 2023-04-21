@@ -14,7 +14,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
@@ -41,7 +40,6 @@ final class PersonNotificationsMapper {
     static List<MailNotification> mapToMailNotifications(PersonNotificationsDto personNotificationsDto) {
 
         final List<MailNotification> mailNotifications = new ArrayList<>();
-        addIfActive(mailNotifications, personNotificationsDto.getApplicationManagementAll(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL);
         addIfActive(mailNotifications, personNotificationsDto.getPersonNewManagementAll(), NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL);
         addIfActive(mailNotifications, personNotificationsDto.getOvertimeManagementAll(), NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL);
 
@@ -75,13 +73,6 @@ final class PersonNotificationsMapper {
         final PersonNotificationsDto personNotificationsDto = new PersonNotificationsDto();
         for (MailNotification mailNotificationToCheck : MailNotification.values()) {
             switch (mailNotificationToCheck) {
-                case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL: {
-                    personNotificationsDto.setApplicationManagementAll(new PersonNotificationDto(
-                        isBossOrOffice,
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
-                    break;
-                }
                 case NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL: {
                     personNotificationsDto.setPersonNewManagementAll(new PersonNotificationDto(
                         isBossOrOffice,
@@ -189,7 +180,6 @@ final class PersonNotificationsMapper {
         }
 
         final List<PersonNotificationDto> dtoNotifications = List.of(
-            personNotificationsDto.getApplicationManagementAll(),
             personNotificationsDto.getPersonNewManagementAll(),
             personNotificationsDto.getOvertimeManagementAll(),
             personNotificationsDto.getApplicationAppliedForManagement(),

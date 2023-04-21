@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
@@ -75,7 +74,6 @@ class PersonNotificationsDtoValidator implements Validator {
 
         final List<Role> officeOrBoss = List.of(OFFICE, BOSS);
         final List<Role> bossOrDHOrSSA = List.of(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
-        validateCombinationOfNotificationAndRole(roles, notifications, officeOrBoss, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL, errors);
         validateCombinationOfNotificationAndRole(roles, notifications, officeOrBoss, NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL, errors);
         validateCombinationOfNotificationAndRole(roles, notifications, officeOrBoss, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL, errors);
         validateCombinationOfNotificationAndRole(roles, notifications, bossOrDHOrSSA, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, errors);

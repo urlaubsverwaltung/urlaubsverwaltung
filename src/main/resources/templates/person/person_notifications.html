@@ -84,11 +84,7 @@
                     active=${active == null ? personNotificationsDto.applicationAppliedAndChanges.active : active}
                   "
                 >
-                  <li
-                    th:if="${visible}"
-                    class="list-selectable__item"
-                    th:data-enabled="${active}"
-                  >
+                  <li th:if="${visible}" class="list-selectable__item" th:data-enabled="${active}">
                     <uv-checkbox-card
                       class="tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
                     >
@@ -149,9 +145,6 @@
                 Abwesenheiten von Kollegen
               </h2>
               <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationManagementAll.visible},active=${personNotificationsDto.applicationManagementAll.active},name='applicationManagementAll.active', label='person.notifications.section.absences.all.label',info='person.notifications.section.absences.all.info')}"
-                ></li>
                 <li
                   th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationAppliedForManagement.visible},active=${personNotificationsDto.applicationAppliedForManagement.active},name='applicationAppliedForManagement.active',label='person.notifications.section.absences.applied.management.label',info='person.notifications.section.absences.applied.management.info')}"
                 ></li>

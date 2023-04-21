@@ -6,7 +6,6 @@ public class PersonNotificationsDto {
 
     private boolean all;
 
-    private PersonNotificationDto applicationManagementAll;
     private PersonNotificationDto applicationAppliedForManagement;
     private PersonNotificationDto applicationTemporaryAllowedForManagement;
     private PersonNotificationDto applicationAllowedForManagement;
@@ -39,14 +38,6 @@ public class PersonNotificationsDto {
 
     public void setAll(boolean all) {
         this.all = all;
-    }
-
-    public PersonNotificationDto getApplicationManagementAll() {
-        return applicationManagementAll;
-    }
-
-    public void setApplicationManagementAll(PersonNotificationDto applicationManagementAll) {
-        this.applicationManagementAll = applicationManagementAll;
     }
 
     public PersonNotificationDto getApplicationAppliedForManagement() {

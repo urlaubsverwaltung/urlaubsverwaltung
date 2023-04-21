@@ -11,7 +11,7 @@ import org.synyx.urlaubsverwaltung.TestContainersBase;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -119,22 +119,22 @@ class PersonRepositoryIT extends TestContainersBase {
     @Test
     void ensureFindByPersonByPermissionsNotContainingAndContainingNotification() {
 
-        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL), List.of(USER, OFFICE, INACTIVE));
+        personService.create("marlene", "Marlene", "Muster", "muster@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER, OFFICE, INACTIVE));
         personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(), List.of(USER));
-        final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL), List.of(USER, OFFICE));
+        final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER, OFFICE));
 
-        final List<Person> personsWithOfficeRole = sut.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL);
+        final List<Person> personsWithOfficeRole = sut.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         assertThat(personsWithOfficeRole).containsExactly(peter);
     }
 
     @Test
     void ensureFindByPersonByPermissionsContainingAndContainingNotificationsOrderingIsCorrect() {
 
-        final Person xenia = personService.create("xenia", "xenia", "Basta", "xenia@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL), List.of(USER));
-        final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL), List.of(USER));
-        final Person bettina = personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL), List.of(USER));
+        final Person xenia = personService.create("xenia", "xenia", "Basta", "xenia@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER));
+        final Person peter = personService.create("peter", "Peter", "Muster", "peter@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER));
+        final Person bettina = personService.create("bettina", "bettina", "Muster", "bettina@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER));
 
-        final List<Person> personsWithUserRole = sut.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL);
+        final List<Person> personsWithUserRole = sut.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         assertThat(personsWithUserRole).containsExactly(bettina, peter, xenia);
     }
 

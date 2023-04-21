@@ -24,8 +24,8 @@ public interface MailRecipientService {
     /**
      * Returns a list of recipients of interest for a given person based on
      * <ul>
-     *     <li>is Office and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL} or the given mail notification is active</li>
-     *     <li>is Boss and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL} or the given mail notification is active</li>
+     *     <li>is Office and the given mail notification is active</li>
+     *     <li>is Boss and the given mail notification is active</li>
      *     <li>is responsible Department Head and the given mail notification is active</li>
      *     <li>is responsible Second Stage Authority and the given mail notification is active</li>
      *     <li>is Boss in the same Department and the given mail notification is active</li>
@@ -40,8 +40,8 @@ public interface MailRecipientService {
     /**
      * Returns a list of recipients of interest for a given person based on
      * <ul>
-     *     <li>is Office and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL} or one of the given mail notifications is active</li>
-     *     <li>is Boss and {@link MailNotification#NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL} or one of the given mail notifications is active</li>
+     *     <li>is Office and one of the given mail notifications is active</li>
+     *     <li>is Boss and one of the given mail notifications is active</li>
      *     <li>is responsible Department Head and one of the given mail notifications is active</li>
      *     <li>is responsible Second Stage Authority and one of the given mail notifications is active</li>
      *     <li>is Boss in the same Department and one of the given mail notifications is active</li>

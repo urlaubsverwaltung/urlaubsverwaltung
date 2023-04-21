@@ -14,7 +14,6 @@
           notifications.holidayReplacementUpcoming.active
         },
         showAbsencesManagement=${
-          notifications.applicationManagementAll.active ||
           notifications.applicationAppliedForManagement.active ||
           notifications.applicationTemporaryAllowedForManagement.active ||
           notifications.applicationAllowedForManagement.active ||
@@ -35,7 +34,10 @@
       >
         Keine E-Mail Benachrichtigungen aktiviert.
       </p>
-      <dl aria-labelledby="heading-notification" th:if="${showAbsences or showAbsencesManagement or showOvertime or showPersons}">
+      <dl
+        aria-labelledby="heading-notification"
+        th:if="${showAbsences or showAbsencesManagement or showOvertime or showPersons}"
+      >
         <th:block th:if="${showAbsences}">
           <dt
             class="tw-font-medium tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
@@ -69,9 +71,6 @@
           >
             Abwesenheiten meiner Kollegen
           </dt>
-          <dd
-            th:replace="~{::email-notification-element(active=${notifications.applicationManagementAll.active},info='person.notifications.section.absences.all.label')}"
-          ></dd>
           <dd
             th:replace="~{::email-notification-element(active=${notifications.applicationAppliedForManagement.active},info='person.notifications.section.absences.applied.management.label')}"
           ></dd>

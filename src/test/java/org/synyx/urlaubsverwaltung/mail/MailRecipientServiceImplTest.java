@@ -15,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -102,14 +101,14 @@ class MailRecipientServiceImplTest {
         final Person officeAll = new Person("office", "office", "office", "office@example.org");
         officeAll.setId(3);
         officeAll.setPermissions(List.of(USER, OFFICE));
-        officeAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
+        officeAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
         when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(officeAll));
 
         // given boss all
         final Person bossAll = new Person("boss", "boss", "boss", "boss@example.org");
         bossAll.setId(2);
         bossAll.setPermissions(List.of(USER, BOSS));
-        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
+        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
         // given department head
@@ -156,7 +155,7 @@ class MailRecipientServiceImplTest {
         // given boss all
         final Person bossAll = new Person("boss", "boss", "boss", "boss@example.org");
         bossAll.setId(2);
-        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
+        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
         final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
@@ -175,7 +174,7 @@ class MailRecipientServiceImplTest {
         // given boss all
         final Person bossAll = new Person("boss", "boss", "boss", "boss@example.org");
         bossAll.setId(2);
-        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+        bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
         // given office all
