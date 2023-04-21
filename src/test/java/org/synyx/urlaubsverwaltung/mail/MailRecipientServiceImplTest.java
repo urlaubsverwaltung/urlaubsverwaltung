@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -94,14 +93,10 @@ class MailRecipientServiceImplTest {
 
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final Department department = new Department();
-        department.setId(1);
-
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
         normalUser.setId(1);
         normalUser.setPermissions(List.of(USER));
-        when(departmentService.getAssignedDepartmentsOfMember(normalUser)).thenReturn(List.of(department));
 
         // given office all
         final Person officeAll = new Person("office", "office", "office", "office@example.org");
@@ -115,14 +110,7 @@ class MailRecipientServiceImplTest {
         bossAll.setId(2);
         bossAll.setPermissions(List.of(USER, BOSS));
         bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
-
-        // given boss department
-        final Person bossDepartment = new Person("boss", "boss", "boss", "boss@example.org");
-        bossDepartment.setId(4);
-        bossDepartment.setPermissions(List.of(USER, BOSS));
-        bossDepartment.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
-        when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll)).thenReturn(List.of(bossDepartment));
-        when(departmentService.getAssignedDepartmentsOfMember(bossDepartment)).thenReturn(List.of(department));
+        when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
         // given department head
         final Person departmentHead = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
@@ -150,7 +138,7 @@ class MailRecipientServiceImplTest {
         final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         assertThat(recipientsForAllowAndRemind)
             .doesNotContain(secondStageWithoutMailtNotification)
-            .containsOnly(officeAll, bossAll, bossDepartment, departmentHead, secondStage);
+            .containsOnly(officeAll, bossAll, departmentHead, secondStage);
     }
 
     @Test
@@ -180,13 +168,9 @@ class MailRecipientServiceImplTest {
 
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final Department department = new Department();
-        department.setId(1);
-
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
         normalUser.setId(1);
-        when(departmentService.getAssignedDepartmentsOfMember(normalUser)).thenReturn(List.of(department));
 
         // given boss all
         final Person bossAll = new Person("boss", "boss", "boss", "boss@example.org");
@@ -196,10 +180,6 @@ class MailRecipientServiceImplTest {
 
         // given office all
         when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of());
-
-        // given boss department
-        when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
-        when(departmentService.getAssignedDepartmentsOfMember(bossAll)).thenReturn(List.of(department));
 
         final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         assertThat(recipientsForAllowAndRemind).containsOnly(bossAll);

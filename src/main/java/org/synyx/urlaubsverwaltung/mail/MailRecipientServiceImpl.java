@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -63,7 +62,6 @@ class MailRecipientServiceImpl implements MailRecipientService {
             final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
             recipientsOfInterestForDepartment.addAll(getResponsibleDepartmentHeads(personOfInterest));
             recipientsOfInterestForDepartment.addAll(getResponsibleSecondStageAuthorities(personOfInterest));
-            recipientsOfInterestForDepartment.addAll(getBossesWithDepartmentApplicationManagementNotification(personOfInterest));
 
             managementDepartmentPersons = recipientsOfInterestForDepartment.stream()
                 .distinct()
@@ -88,16 +86,6 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .stream()
             .filter(departmentHead -> departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, personOfInterest))
             .filter(without(personOfInterest))
-            .collect(toList());
-    }
-
-    private List<Person> getBossesWithDepartmentApplicationManagementNotification(Person personOfInterest) {
-        final List<Department> applicationPersonDepartments = departmentService.getAssignedDepartmentsOfMember(personOfInterest);
-        return personService.getActivePersonsByRole(BOSS).stream()
-            .filter(boss -> {
-                final List<Department> bossDepartments = departmentService.getAssignedDepartmentsOfMember(boss);
-                return applicationPersonDepartments.stream().anyMatch(bossDepartments::contains);
-            })
             .collect(toList());
     }
 
