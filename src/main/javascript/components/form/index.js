@@ -1,1 +1,1 @@
-import "./autosubmit";
+export * from "./autosubmit";
