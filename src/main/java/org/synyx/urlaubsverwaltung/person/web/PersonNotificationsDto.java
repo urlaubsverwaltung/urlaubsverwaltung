@@ -18,7 +18,8 @@ public class PersonNotificationsDto {
     private PersonNotificationDto holidayReplacement;
     private PersonNotificationDto holidayReplacementUpcoming;
     private PersonNotificationDto personNewManagementAll;
-    private PersonNotificationDto overtimeManagementAll;
+    private PersonNotificationDto overtimeAppliedForManagement;
+    private PersonNotificationDto overtimeApplied;
 
     PersonNotificationsDto() {
         // ok
@@ -136,11 +137,19 @@ public class PersonNotificationsDto {
         this.personNewManagementAll = personNewManagementAll;
     }
 
-    public PersonNotificationDto getOvertimeManagementAll() {
-        return overtimeManagementAll;
+    public PersonNotificationDto getOvertimeAppliedForManagement() {
+        return overtimeAppliedForManagement;
     }
 
-    public void setOvertimeManagementAll(PersonNotificationDto overtimeManagementAll) {
-        this.overtimeManagementAll = overtimeManagementAll;
+    public void setOvertimeAppliedForManagement(PersonNotificationDto overtimeAppliedForManagement) {
+        this.overtimeAppliedForManagement = overtimeAppliedForManagement;
+    }
+
+    public PersonNotificationDto getOvertimeApplied() {
+        return overtimeApplied;
+    }
+
+    public void setOvertimeApplied(PersonNotificationDto overtimeApplied) {
+        this.overtimeApplied = overtimeApplied;
     }
 }

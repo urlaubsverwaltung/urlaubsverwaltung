@@ -22,13 +22,14 @@
           notifications.applicationWaitingReminderForManagement.active ||
           notifications.applicationCancellationRequestedForManagement.active
         },
-        showOvertime=${notifications.overtimeManagementAll.active},
+        showOvertime=${notifications.overtimeApplied.active},
+        showOvertimeManagement=${notifications.overtimeAppliedForManagement.active},
         showPersons=${notifications.personNewManagementAll.active}
       "
       th:fragment="section(notifications)"
     >
       <p
-        th:if="${!showAbsences and !showOvertime and !showPersons}"
+        th:if="${!showAbsences and !showAbsencesManagement and !showOvertime and !showOvertimeManagement and !showPersons}"
         th:text="#{person.account.notifications.nothing-active}"
         class="tw-text-sm"
       >
@@ -36,7 +37,7 @@
       </p>
       <dl
         aria-labelledby="heading-notification"
-        th:if="${showAbsences or showAbsencesManagement or showOvertime or showPersons}"
+        th:if="${showAbsences or showAbsencesManagement or showOvertime or showOvertimeManagement or showPersons}"
       >
         <th:block th:if="${showAbsences}">
           <dt
@@ -101,7 +102,18 @@
             Überstunden
           </dt>
           <dd
-            th:replace="~{::email-notification-element(active=${notifications.overtimeManagementAll.active},info='person.notifications.section.overtime.all.label')}"
+            th:replace="~{::email-notification-element(active=${notifications.overtimeApplied.active},info='person.notifications.section.overtime.applied.label')}"
+          ></dd>
+        </th:block>
+        <th:block th:if="${showOvertimeManagement}">
+          <dt
+            class="tw-font-medium tw-mt-8 tw-mb-2 tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+            th:text="#{person.notifications.section.overtime.management.title}"
+          >
+            Überstunden meiner Kolleg:innen
+          </dt>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.overtimeAppliedForManagement.active},info='person.notifications.section.overtime.applied.management.label')}"
           ></dd>
         </th:block>
         <th:block th:if="${showPersons}">

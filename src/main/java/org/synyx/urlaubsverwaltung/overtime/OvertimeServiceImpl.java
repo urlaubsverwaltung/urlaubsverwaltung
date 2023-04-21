@@ -91,7 +91,13 @@ class OvertimeServiceImpl implements OvertimeService {
         comment.ifPresent(overtimeComment::setText);
         final OvertimeComment savedOvertimeComment = overtimeCommentRepository.save(overtimeComment);
 
-        overtimeMailService.sendOvertimeNotification(savedOvertime, savedOvertimeComment);
+        if (author.equals(overtime.getPerson())) {
+            overtimeMailService.sendOvertimeNotificationToApplicantFromApplicant(savedOvertime, savedOvertimeComment);
+        } else {
+            overtimeMailService.sendOvertimeNotificationToApplicantFromManagement(savedOvertime, savedOvertimeComment, author);
+        }
+
+        overtimeMailService.sendOvertimeNotificationToManagement(savedOvertime, savedOvertimeComment);
         LOG.info("{} overtime record: {}", isNewOvertime ? "Created" : "Updated", savedOvertime);
 
         return savedOvertime;

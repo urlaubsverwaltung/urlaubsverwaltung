@@ -96,8 +96,10 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("visible", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("visible", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("active", is(false)))));
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("visible", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
 
     @ParameterizedTest
@@ -137,8 +139,10 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("visible", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("visible", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("active", is(false)))));
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
 
     @ParameterizedTest
@@ -178,8 +182,10 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("visible", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("visible", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("active", is(false)))));
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
 
     @ParameterizedTest
@@ -219,8 +225,10 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("visible", is(true)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("active", is(false)))));
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
 
     @Test
@@ -259,8 +267,10 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("visible", is(true)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("active", is(false)))));
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
 
     @Test
@@ -299,8 +309,10 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("holidayReplacementUpcoming", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("visible", is(true)))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeManagementAll", hasProperty("active", is(false)))));
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
 
     @Test

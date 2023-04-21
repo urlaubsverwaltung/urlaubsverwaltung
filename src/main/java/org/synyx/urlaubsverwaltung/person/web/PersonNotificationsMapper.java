@@ -28,7 +28,8 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
 
 final class PersonNotificationsMapper {
@@ -41,7 +42,6 @@ final class PersonNotificationsMapper {
 
         final List<MailNotification> mailNotifications = new ArrayList<>();
         addIfActive(mailNotifications, personNotificationsDto.getPersonNewManagementAll(), NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL);
-        addIfActive(mailNotifications, personNotificationsDto.getOvertimeManagementAll(), NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL);
 
         addIfActive(mailNotifications, personNotificationsDto.getApplicationAppliedForManagement(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         addIfActive(mailNotifications, personNotificationsDto.getApplicationAdaptedForManagement(), List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED));
@@ -60,6 +60,9 @@ final class PersonNotificationsMapper {
         addIfActive(mailNotifications, personNotificationsDto.getHolidayReplacement(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT);
         addIfActive(mailNotifications, personNotificationsDto.getHolidayReplacementUpcoming(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING);
 
+        addIfActive(mailNotifications, personNotificationsDto.getOvertimeAppliedForManagement(), NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
+        addIfActive(mailNotifications, personNotificationsDto.getOvertimeApplied(), NOTIFICATION_EMAIL_OVERTIME_APPLIED);
+
         return mailNotifications;
     }
 
@@ -67,6 +70,7 @@ final class PersonNotificationsMapper {
 
         final boolean isBossOrOffice = person.hasRole(Role.BOSS) || person.hasRole(Role.OFFICE);
         final boolean isBossOrDHOrSSA = person.hasRole(Role.BOSS) || person.hasRole(Role.DEPARTMENT_HEAD) || person.hasRole(Role.SECOND_STAGE_AUTHORITY);
+        final boolean isOfficeOrBossOrDHOrSSA = person.hasRole(Role.OFFICE) || isBossOrDHOrSSA;
 
         final List<MailNotification> activePersonMailNotifications = new ArrayList<>(person.getNotifications());
 
@@ -75,13 +79,6 @@ final class PersonNotificationsMapper {
             switch (mailNotificationToCheck) {
                 case NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL: {
                     personNotificationsDto.setPersonNewManagementAll(new PersonNotificationDto(
-                        isBossOrOffice,
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
-                    break;
-                }
-                case NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL: {
-                    personNotificationsDto.setOvertimeManagementAll(new PersonNotificationDto(
                         isBossOrOffice,
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
@@ -176,12 +173,26 @@ final class PersonNotificationsMapper {
                     ));
                     break;
                 }
+
+                case NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED: {
+                    personNotificationsDto.setOvertimeAppliedForManagement(new PersonNotificationDto(
+                        isOfficeOrBossOrDHOrSSA,
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
+                    ));
+                    break;
+                }
+                case NOTIFICATION_EMAIL_OVERTIME_APPLIED: {
+                    personNotificationsDto.setOvertimeApplied(new PersonNotificationDto(
+                        true,
+                        activePersonMailNotifications.contains(mailNotificationToCheck)
+                    ));
+                    break;
+                }
             }
         }
 
         final List<PersonNotificationDto> dtoNotifications = List.of(
             personNotificationsDto.getPersonNewManagementAll(),
-            personNotificationsDto.getOvertimeManagementAll(),
             personNotificationsDto.getApplicationAppliedForManagement(),
             personNotificationsDto.getApplicationAdaptedForManagement(),
             personNotificationsDto.getApplicationCancellationForManagement(),
@@ -192,7 +203,9 @@ final class PersonNotificationsMapper {
             personNotificationsDto.getApplicationAppliedAndChanges(),
             personNotificationsDto.getApplicationUpcoming(),
             personNotificationsDto.getHolidayReplacement(),
-            personNotificationsDto.getHolidayReplacementUpcoming()
+            personNotificationsDto.getHolidayReplacementUpcoming(),
+            personNotificationsDto.getOvertimeAppliedForManagement(),
+            personNotificationsDto.getOvertimeApplied()
         );
 
         final long visibleCount = dtoNotifications.stream().filter(PersonNotificationDto::isVisible).count();
