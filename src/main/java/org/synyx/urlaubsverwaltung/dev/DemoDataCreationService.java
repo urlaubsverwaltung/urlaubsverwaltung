@@ -34,7 +34,15 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
@@ -79,7 +87,7 @@ public class DemoDataCreationService {
 
         LOG.info("-> Starting demo data creation...");
 
-        final List<MailNotification> notifications = List.of(
+        final List<MailNotification> personNotifications = List.of(
             NOTIFICATION_EMAIL_APPLICATION_APPLIED,
             NOTIFICATION_EMAIL_APPLICATION_ALLOWED,
             NOTIFICATION_EMAIL_APPLICATION_REVOKED,
@@ -92,26 +100,39 @@ public class DemoDataCreationService {
             NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT,
             NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING
         );
-        final List<MailNotification> notificationsWithManagementDepartment = Stream.concat(notifications.stream(), Stream.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT)).collect(toList());
 
-        final Person user = personDataProvider.createTestPerson("user", 1, "Klaus", "Müller", "user@urlaubsverwaltung.cloud", List.of(Role.USER), notifications);
+        final List<MailNotification> managementNotifications = List.of(
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER
+        );
+
+        final List<MailNotification> notificationsWithManagementDepartment = Stream.concat(personNotifications.stream(), managementNotifications.stream()).collect(toList());
+
+        final Person user = personDataProvider.createTestPerson("user", 1, "Klaus", "Müller", "user@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications);
         final Person departmentHead = personDataProvider.createTestPerson("departmentHead", 2, "Thorsten", "Krüger", "departmentHead@urlaubsverwaltung.cloud", List.of(Role.USER, Role.DEPARTMENT_HEAD), notificationsWithManagementDepartment);
         final Person secondStageAuthority = personDataProvider.createTestPerson("secondStageAuthority", 3, "Juliane", "Huber", "secondStageAuthority@urlaubsverwaltung.cloud", List.of(Role.USER, Role.SECOND_STAGE_AUTHORITY), notificationsWithManagementDepartment);
-        final Person boss = personDataProvider.createTestPerson("boss", 4, "Theresa", "Scherer", "boss@urlaubsverwaltung.cloud", List.of(Role.USER, Role.BOSS), notifications);
-        final Person office = personDataProvider.createTestPerson("office", 5, "Marlene", "Muster", "office@urlaubsverwaltung.cloud", List.of(Role.USER, Role.OFFICE), notifications);
+        final Person boss = personDataProvider.createTestPerson("boss", 4, "Theresa", "Scherer", "boss@urlaubsverwaltung.cloud", List.of(Role.USER, Role.BOSS), personNotifications);
+        final Person office = personDataProvider.createTestPerson("office", 5, "Marlene", "Muster", "office@urlaubsverwaltung.cloud", List.of(Role.USER, Role.OFFICE), personNotifications);
         personDataProvider.createTestPerson("admin", 6, "Anne", "Roth", "admin@urlaubsverwaltung.cloud", List.of(Role.USER, Role.ADMIN), List.of());
 
         // Users
         int personnelNumber = 100;
-        final Person hans = personDataProvider.createTestPerson("hdampf", personnelNumber++, "Hans", "Dampf", "dampf@urlaubsverwaltung.cloud", List.of(Role.USER), notifications);
-        final Person franziska = personDataProvider.createTestPerson("fbaier", personnelNumber++, "Franziska", "Baier", "baier@urlaubsverwaltung.cloud", List.of(Role.USER), notifications);
-        final Person elena = personDataProvider.createTestPerson("eschneider", personnelNumber++, "Elena", "Schneider", "schneider@urlaubsverwaltung.cloud", List.of(Role.USER), notifications);
-        final Person brigitte = personDataProvider.createTestPerson("bhaendel", personnelNumber++, "Brigitte", "Händel", "haendel@urlaubsverwaltung.cloud", List.of(Role.USER), notifications);
-        final Person niko = personDataProvider.createTestPerson("nschmidt", personnelNumber++, "Niko", "Schmidt", "schmidt@urlaubsverwaltung.cloud", List.of(Role.USER), notifications);
+        final Person hans = personDataProvider.createTestPerson("hdampf", personnelNumber++, "Hans", "Dampf", "dampf@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications);
+        final Person franziska = personDataProvider.createTestPerson("fbaier", personnelNumber++, "Franziska", "Baier", "baier@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications);
+        final Person elena = personDataProvider.createTestPerson("eschneider", personnelNumber++, "Elena", "Schneider", "schneider@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications);
+        final Person brigitte = personDataProvider.createTestPerson("bhaendel", personnelNumber++, "Brigitte", "Händel", "haendel@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications);
+        final Person niko = personDataProvider.createTestPerson("nschmidt", personnelNumber++, "Niko", "Schmidt", "schmidt@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications);
         personDataProvider.createTestPerson("heinz", personnelNumber, "Holger", "Dieter", "hdieter@urlaubsverwaltung.cloud", List.of(INACTIVE), List.of());
 
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser())
-            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, i + 42, "Horst", "Aktiv", "hdieter-active@urlaubsverwaltung.cloud", List.of(Role.USER), notifications));
+            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, i + 42, "Horst", "Aktiv", "hdieter-active@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications));
 
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser())
             .forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, i + 21, "Horst", "Inaktiv", "hdieter-inactive@urlaubsverwaltung.cloud", List.of(INACTIVE), List.of()));

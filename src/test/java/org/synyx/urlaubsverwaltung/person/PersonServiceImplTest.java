@@ -38,8 +38,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -100,7 +100,7 @@ class PersonServiceImplTest {
 
         when(personRepository.save(any(Person.class))).thenAnswer(returnsFirstArg());
 
-        final Person createdPerson = sut.create("rick", "Rick", "Grimes", "rick@grimes.de", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL), List.of(USER, BOSS));
+        final Person createdPerson = sut.create("rick", "Rick", "Grimes", "rick@grimes.de", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED), List.of(USER, BOSS));
         assertThat(createdPerson.getUsername()).isEqualTo("rick");
         assertThat(createdPerson.getFirstName()).isEqualTo("Rick");
         assertThat(createdPerson.getLastName()).isEqualTo("Grimes");
@@ -108,7 +108,7 @@ class PersonServiceImplTest {
 
         assertThat(createdPerson.getNotifications())
             .hasSize(1)
-            .contains(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL);
+            .contains(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
 
         assertThat(createdPerson.getPermissions())
             .hasSize(2)
@@ -273,15 +273,15 @@ class PersonServiceImplTest {
 
         final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
         boss.setPermissions(asList(USER, BOSS));
-        boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL));
+        boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
         office.setPermissions(asList(USER, BOSS, OFFICE));
-        office.setNotifications(asList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_DEPARTMENT));
+        office.setNotifications(asList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
-        when(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL)).thenReturn(List.of(boss, office));
+        when(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss, office));
 
-        final List<Person> filteredList = sut.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALL);
+        final List<Person> filteredList = sut.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         assertThat(filteredList)
             .hasSize(2)
             .contains(boss)

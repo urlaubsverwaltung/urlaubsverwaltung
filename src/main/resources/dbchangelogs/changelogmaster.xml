@@ -120,4 +120,5 @@
   <include file="dbchangelogs/changelog-4.64.0-application-settings-apply-for-leave-afterwards.xml"/>
   <include file="dbchangelogs/changelog-4.65.0-add-user-pagination-settings.xml"/>
   <include file="dbchangelogs/changelog-4.65.0-add-avatar-settings.xml"/>
+  <include file="dbchangelogs/changelog-4.65.0-migrate-mail-notification-department-management.xml"/>
 </databaseChangeLog>

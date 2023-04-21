@@ -15,6 +15,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.calendar.ICalService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.Settings;
@@ -45,6 +46,11 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
@@ -59,7 +65,7 @@ class ApplicationMailServiceTest {
     @Mock
     private DepartmentService departmentService;
     @Mock
-    private ApplicationRecipientService applicationRecipientService;
+    private MailRecipientService mailRecipientService;
     @Mock
     private ICalService iCalService;
     @Mock
@@ -69,7 +75,7 @@ class ApplicationMailServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationMailService(mailService, departmentService, applicationRecipientService, iCalService, settingsService, clock);
+        sut = new ApplicationMailService(mailService, departmentService, mailRecipientService, iCalService, settingsService, clock);
     }
 
     @Test
@@ -101,7 +107,8 @@ class ApplicationMailServiceTest {
 
         final Person boss = new Person();
         final Person office = new Person();
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(boss, office));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED))
+            .thenReturn(List.of(boss, office));
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
@@ -154,7 +161,7 @@ class ApplicationMailServiceTest {
         model.put("dayLength", "FULL");
         model.put("comment", applicationComment);
 
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(person));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED)).thenReturn(List.of(person));
 
         sut.sendRejectedNotification(application, applicationComment);
 
@@ -257,7 +264,7 @@ class ApplicationMailServiceTest {
         office.setId(1);
         final Person relevantPerson = new Person();
         relevantPerson.setId(2);
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(relevantPerson, office));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(relevantPerson, office));
 
         sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
 
@@ -289,7 +296,7 @@ class ApplicationMailServiceTest {
         model.put("comment", applicationComment);
 
         final List<Person> relevantPersons = List.of(new Person());
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(relevantPersons);
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(relevantPersons);
 
         sut.sendCancellationRequest(application, applicationComment);
 
@@ -626,7 +633,7 @@ class ApplicationMailServiceTest {
         application.setStatus(WAITING);
 
         final List<Person> recipients = singletonList(person);
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(recipients);
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(recipients);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
 
@@ -747,7 +754,8 @@ class ApplicationMailServiceTest {
         model.put("comment", comment);
 
         final Person recipientOfInterest = new Person();
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(recipientOfInterest));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION))
+            .thenReturn(List.of(recipientOfInterest));
 
         sut.sendCancelledDirectlyToManagement(application, comment);
 
@@ -866,7 +874,8 @@ class ApplicationMailServiceTest {
         model.put("application", application);
         model.put("comment", comment);
 
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(List.of(person, office));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION))
+            .thenReturn(List.of(person, office));
 
         sut.sendCancelledConfirmationByManagement(application, comment);
 
@@ -907,7 +916,7 @@ class ApplicationMailServiceTest {
         application.setStatus(WAITING);
 
         final List<Person> recipients = singletonList(person);
-        when(applicationRecipientService.getRecipientsOfInterest(application)).thenReturn(recipients);
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(recipients);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
 
@@ -934,12 +943,11 @@ class ApplicationMailServiceTest {
         assertThat(mail.getTemplateModel()).isEqualTo(model);
     }
 
-
     @Test
     void sendTemporaryAllowedNotification() {
 
         final Person person = new Person();
-        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
         final List<Person> recipients = singletonList(person);
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
@@ -953,7 +961,7 @@ class ApplicationMailServiceTest {
         application.setStartDate(LocalDate.of(2020, 12, 1));
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(WAITING);
-        when(applicationRecipientService.getRecipientsForTemporaryAllow(application)).thenReturn(recipients);
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(recipients);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
 
@@ -983,8 +991,8 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_temporary_allowed_to_applicant");
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(recipients);
-        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.temporaryAllowed.secondStage");
-        assertThat(mails.get(1).getTemplateName()).isEqualTo("application_temporary_allowed_to_second_stage_authority");
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.temporaryAllowed.management");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("application_temporary_allowed_to_management");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelSecondStage);
     }
 
