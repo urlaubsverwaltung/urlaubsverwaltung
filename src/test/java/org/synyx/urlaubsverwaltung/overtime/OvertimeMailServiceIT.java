@@ -24,6 +24,7 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.synyx.urlaubsverwaltung.overtime.OvertimeCommentAction.CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -86,7 +87,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
     void ensureApplicantWithOvertimeNotificationGetMailIfOvertimeRecordedFromManagement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_APPLIED));
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT));
 
         final Person author = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(), List.of(USER, OFFICE));
 

@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,7 +73,7 @@ class OvertimeMailServiceTest {
         final Person author = new Person("author", "author", "author", "author@example.org");
 
         final Person person = new Person("submitter", "submitter", "submitter", "submitter@example.org");
-        person.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_APPLIED));
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT));
 
         final Overtime overtime = new Overtime();
         overtime.setPerson(person);

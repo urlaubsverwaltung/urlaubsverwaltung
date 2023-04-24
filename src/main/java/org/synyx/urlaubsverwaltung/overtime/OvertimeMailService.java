@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 
 @Service
@@ -51,7 +52,7 @@ class OvertimeMailService {
         );
 
         final Mail toPerson = Mail.builder()
-            .withRecipient(overtime.getPerson(), NOTIFICATION_EMAIL_OVERTIME_APPLIED)
+            .withRecipient(overtime.getPerson(), NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT)
             .withSubject("subject.overtime.created.applicant_from_management")
             .withTemplate("overtime_to_applicant_from_management", model)
             .build();

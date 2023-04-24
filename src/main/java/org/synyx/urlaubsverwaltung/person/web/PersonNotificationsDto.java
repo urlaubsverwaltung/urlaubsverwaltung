@@ -19,6 +19,7 @@ public class PersonNotificationsDto {
     private PersonNotificationDto holidayReplacementUpcoming;
     private PersonNotificationDto personNewManagementAll;
     private PersonNotificationDto overtimeAppliedForManagement;
+    private PersonNotificationDto overtimeAppliedByManagement;
     private PersonNotificationDto overtimeApplied;
 
     PersonNotificationsDto() {
@@ -143,6 +144,14 @@ public class PersonNotificationsDto {
 
     public void setOvertimeAppliedForManagement(PersonNotificationDto overtimeAppliedForManagement) {
         this.overtimeAppliedForManagement = overtimeAppliedForManagement;
+    }
+
+    public PersonNotificationDto getOvertimeAppliedByManagement() {
+        return overtimeAppliedByManagement;
+    }
+
+    public void setOvertimeAppliedByManagement(PersonNotificationDto overtimeAppliedByManagement) {
+        this.overtimeAppliedByManagement = overtimeAppliedByManagement;
     }
 
     public PersonNotificationDto getOvertimeApplied() {

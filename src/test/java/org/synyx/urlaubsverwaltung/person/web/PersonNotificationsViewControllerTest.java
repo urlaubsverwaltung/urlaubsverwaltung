@@ -98,6 +98,8 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("visible", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
@@ -141,6 +143,8 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
@@ -184,6 +188,8 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
@@ -227,6 +233,8 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
@@ -269,6 +277,8 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
@@ -311,6 +321,8 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personNewManagementAll", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedForManagement", hasProperty("active", is(false)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("visible", is(true)))))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeAppliedByManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }

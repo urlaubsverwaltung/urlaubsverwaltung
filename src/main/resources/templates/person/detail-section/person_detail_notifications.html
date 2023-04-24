@@ -22,7 +22,10 @@
           notifications.applicationWaitingReminderForManagement.active ||
           notifications.applicationCancellationRequestedForManagement.active
         },
-        showOvertime=${notifications.overtimeApplied.active},
+        showOvertime=${
+          notifications.overtimeApplied.active ||
+          notifications.overtimeAppliedByManagement.active
+        },
         showOvertimeManagement=${notifications.overtimeAppliedForManagement.active},
         showPersons=${notifications.personNewManagementAll.active}
       "
@@ -103,6 +106,9 @@
           </dt>
           <dd
             th:replace="~{::email-notification-element(active=${notifications.overtimeApplied.active},info='person.notifications.section.overtime.applied.label')}"
+          ></dd>
+          <dd
+            th:replace="~{::email-notification-element(active=${notifications.overtimeAppliedByManagement.active},info='person.notifications.section.overtime.applied.by_management.label')}"
           ></dd>
         </th:block>
         <th:block th:if="${showOvertimeManagement}">

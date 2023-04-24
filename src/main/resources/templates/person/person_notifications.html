@@ -143,7 +143,17 @@
                 ></li>
               </ul>
             </section>
-            <section>
+            <section
+              th:if="${
+                  personNotificationsDto.applicationAppliedForManagement.visible ||
+                  personNotificationsDto.applicationTemporaryAllowedForManagement.visible ||
+                  personNotificationsDto.applicationAllowedForManagement.visible ||
+                  personNotificationsDto.applicationCancellationForManagement.visible ||
+                  personNotificationsDto.applicationAdaptedForManagement.visible ||
+                  personNotificationsDto.applicationWaitingReminderForManagement.visible ||
+                  personNotificationsDto.applicationCancellationRequestedForManagement.visible
+                }"
+            >
               <h2
                 class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
                 style="top: var(--uv-header-height)"
@@ -175,7 +185,7 @@
                 ></li>
               </ul>
             </section>
-            <section th:if="${personNotificationsDto.overtimeApplied.visible}">
+            <section>
               <h2
                 class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
                 style="top: var(--uv-header-height)"
@@ -186,6 +196,9 @@
               <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
                 <li
                   th:replace="~{::email-notification-element(visible=${personNotificationsDto.overtimeApplied.visible},active=${personNotificationsDto.overtimeApplied.active},name='overtimeApplied.active',label='person.notifications.section.overtime.applied.label',info='person.notifications.section.overtime.applied.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.overtimeAppliedByManagement.visible},active=${personNotificationsDto.overtimeAppliedByManagement.active},name='overtimeAppliedByManagement.active',label='person.notifications.section.overtime.applied.by_management.label',info='person.notifications.section.overtime.applied.by_management.info')}"
                 ></li>
               </ul>
             </section>
