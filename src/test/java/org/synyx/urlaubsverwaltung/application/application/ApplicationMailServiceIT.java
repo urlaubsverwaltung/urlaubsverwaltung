@@ -2163,7 +2163,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of boss email
         assertThat(msgBoss.getContent()).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "die folgenden 4 Abwesenheiten warten auf Bearbeitung:" + EMAIL_LINE_BREAK +
+            "die folgenden 4 Abwesenheiten warten auf deine Bearbeitung:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Anträge von Max Mahler:" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 20.04.2022 bis 21.04.2022, ganztägig. https://localhost:8080/web/application/1" + EMAIL_LINE_BREAK +
@@ -2187,7 +2187,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of boss email
         assertThat(msgDepartmentHeadA.getContent()).isEqualTo("Hallo Heinz Wurst," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "die folgenden 3 Abwesenheiten warten auf Bearbeitung:" + EMAIL_LINE_BREAK +
+            "die folgenden 3 Abwesenheiten warten auf deine Bearbeitung:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Anträge von Max Mahler:" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 20.04.2022 bis 21.04.2022, ganztägig. https://localhost:8080/web/application/1" + EMAIL_LINE_BREAK +
@@ -2208,7 +2208,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of boss email
         assertThat(msgDepartmentHeadB.getContent()).isEqualTo("Hallo Michel Mustermann," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "die folgende Abwesenheit wartet auf Bearbeitung:" + EMAIL_LINE_BREAK +
+            "die folgende Abwesenheit wartet auf deine Bearbeitung:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Antrag von Frederik Förster:" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 24.12.2023 bis 31.12.2023, ganztägig. https://localhost:8080/web/application/2" + EMAIL_LINE_BREAK +
