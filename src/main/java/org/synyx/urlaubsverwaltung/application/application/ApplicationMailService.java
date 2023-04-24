@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
@@ -852,19 +853,20 @@ class ApplicationMailService {
 
         for (Map.Entry<Person, List<Application>> entry : applicationsPerRecipient.entrySet()) {
 
-            List<Application> applications = entry.getValue();
-            Person recipient = entry.getKey();
+            final Map<Person, List<Application>> applicationsByPerson = entry.getValue().stream()
+                .collect(groupingBy(Application::getPerson));
 
-            Map<String, Object> model = new HashMap<>();
-            model.put("applicationList", applications);
-            model.put(RECIPIENT, recipient);
+            final Person recipient = entry.getKey();
+            final Map<String, Object> model = Map.of(
+                "applicationsByPerson", applicationsByPerson,
+                RECIPIENT, recipient
+            );
 
             final Mail mailToRemindForWaiting = Mail.builder()
                 .withRecipient(recipient)
                 .withSubject("subject.application.cronRemind")
                 .withTemplate("application_remind_cron_to_management", model)
                 .build();
-
             mailService.send(mailToRemindForWaiting);
         }
     }
