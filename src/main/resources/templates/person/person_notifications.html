@@ -13,7 +13,8 @@
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
       <turbo-frame id="frame-feedback" data-turbo-action="replace">
         <div class="feedback">
-          <p th:if="${success}" th:text="#{settings.action.update.success}" class="alert alert-success"></p>
+          <p th:if="${success}" th:text="#{person.notifications.update.success}" class="alert alert-success"></p>
+          <p th:if="${error}" th:text="#{person.notifications.update.error}" class="alert alert-danger"></p>
         </div>
       </turbo-frame>
 

@@ -394,9 +394,11 @@ class PersonNotificationsViewControllerTest {
 
         perform(post("/web/person/{personId}/notifications", 1)
             .param("personId", "1")
-            .param("application.visible", "true")
-            .param("application.active", "true")
-        ).andExpect(view().name("person/person_notifications"));
+            .param("applicationAppliedAndChanges.visible", "true")
+            .param("applicationAppliedAndChanges.active", "true")
+        )
+            .andExpect(model().attribute("error", true))
+            .andExpect(view().name("person/person_notifications"));
 
         verify(personService, never()).update(personWithoutNotifications);
     }

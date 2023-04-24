@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import org.slf4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -20,12 +22,17 @@ import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import java.util.Objects;
 
 import static java.lang.String.format;
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToMailNotifications;
+import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToPersonNotificationsDto;
 
 @Controller
 @RequestMapping("/web")
 public class PersonNotificationsViewController implements HasLaunchpad {
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonService personService;
     private final PersonNotificationsDtoValidator validator;
@@ -47,7 +54,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         model.addAttribute("isViewingOwnNotifications", Objects.equals(person.getId(), signedInUser.getId()));
         model.addAttribute("personNiceName", person.getNiceName());
 
-        final PersonNotificationsDto personNotificationsDto = PersonNotificationsMapper.mapToPersonNotificationsDto(person);
+        final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(person);
         model.addAttribute("personNotificationsDto", personNotificationsDto);
 
         return "person/person_notifications";
@@ -56,24 +63,30 @@ public class PersonNotificationsViewController implements HasLaunchpad {
     @PostMapping("/person/{personId}/notifications")
     @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String editPersonNotifications(@PathVariable int personId,
-                                          @ModelAttribute PersonNotificationsDto personNotificationsDto,
+                                          @ModelAttribute PersonNotificationsDto newPersonNotificationsDto,
                                           Errors errors,
+                                          Model model,
                                           RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
 
-        if (!person.getId().equals(personNotificationsDto.getPersonId())) {
+        if (!person.getId().equals(newPersonNotificationsDto.getPersonId())) {
             throw new ResponseStatusException(NOT_FOUND);
         }
 
-        validator.validate(personNotificationsDto, errors);
+        validator.validate(newPersonNotificationsDto, errors);
         if (errors.hasErrors()) {
+            LOG.error("Could not save e-mail-notifications of user {}", person.getId());
+
+            final PersonNotificationsDto mergedPersonNotificationsDto = new PersonNotificationsDto();
+            BeanUtils.copyProperties(mapToPersonNotificationsDto(person), mergedPersonNotificationsDto);
+            model.addAttribute("personNotificationsDto", mergedPersonNotificationsDto);
+            model.addAttribute("error", true);
             return "person/person_notifications";
         }
 
-        person.setNotifications(mapToMailNotifications(personNotificationsDto));
-
+        person.setNotifications(mapToMailNotifications(newPersonNotificationsDto));
         personService.update(person);
 
         redirectAttributes.addFlashAttribute("success", true);
