@@ -14,10 +14,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonMailService;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.security.SessionService;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.person.Role.ADMIN;
+import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapRoleToPermissionsDto;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.mapToPersonPermissionsDto;
 import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsMapper.merge;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_OFFICE;
@@ -28,14 +39,17 @@ public class PersonPermissionsViewController implements HasLaunchpad {
 
     private final PersonService personService;
     private final DepartmentService departmentService;
+    private final PersonMailService personMailService;
     private final PersonPermissionsDtoValidator validator;
     private final SessionService sessionService;
 
     @Autowired
     public PersonPermissionsViewController(PersonService personService, DepartmentService departmentService,
-                                           PersonPermissionsDtoValidator validator, SessionService sessionService) {
+                                           PersonMailService personMailService, PersonPermissionsDtoValidator validator,
+                                           SessionService sessionService) {
         this.personService = personService;
         this.departmentService = departmentService;
+        this.personMailService = personMailService;
         this.validator = validator;
         this.sessionService = sessionService;
     }
@@ -65,11 +79,30 @@ public class PersonPermissionsViewController implements HasLaunchpad {
         }
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
-        personService.update(merge(person, personPermissionsDto));
+        final Collection<Role> oldRoles = person.getPermissions();
+        final Person updatedPerson = personService.update(merge(person, personPermissionsDto));
 
-        sessionService.markSessionToReloadAuthorities(person.getUsername());
+        final List<Role> addedPermissions = calculateAddedPermissions(oldRoles, updatedPerson);
+        if (!addedPermissions.isEmpty()) {
+            personMailService.sendPersonGainedMorePermissionsNotification(updatedPerson, mapRoleToPermissionsDto(addedPermissions));
+        }
+
+        sessionService.markSessionToReloadAuthorities(updatedPerson.getUsername());
 
         redirectAttributes.addFlashAttribute("updateSuccess", true);
-        return "redirect:/web/person/" + personId;
+        return "redirect:/web/person/" + updatedPerson.getId();
+    }
+
+    private static List<Role> calculateAddedPermissions(Collection<Role> oldRoles, Person updatedPerson) {
+        return updatedPerson.getPermissions().stream()
+            .filter(role -> !oldRoles.contains(role))
+            .filter(role(INACTIVE))
+            .filter(role(USER))
+            .filter(role(ADMIN))
+            .collect(toList());
+    }
+
+    private static Predicate<Role> role(final Role role) {
+        return addedRole -> addedRole != role;
     }
 }

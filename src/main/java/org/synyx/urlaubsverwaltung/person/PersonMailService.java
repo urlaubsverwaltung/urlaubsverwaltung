@@ -5,14 +5,16 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.Mail;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
 
 @Service
-class PersonMailService {
+public class PersonMailService {
 
     private final MailService mailService;
     private final PersonService personService;
@@ -37,5 +39,20 @@ class PersonMailService {
             .build();
 
         mailService.send(toOffice);
+    }
+
+    public void sendPersonGainedMorePermissionsNotification(Person person, List<PersonPermissionsRoleDto> addedPermissions) {
+
+        final Map<String, Object> model = Map.of(
+            "person", person,
+            "addedPermissions", addedPermissions
+        );
+
+        final Mail toPerson = Mail.builder()
+            .withRecipient(person)
+            .withSubject("subject.person.gained-permissions")
+            .withTemplate("person_gained_permissions", model)
+            .build();
+        mailService.send(toPerson);
     }
 }

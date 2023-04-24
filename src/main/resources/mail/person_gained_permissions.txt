@@ -1,0 +1,9 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{person.gained_permissions})]
+[# th:each="addedPermission : ${addedPermissions}"]
+- [(#{|person.gained_permissions.permissions.__${addedPermission}__|})]
+[/]
+[(#{person.gained_permissions.notifications(|${baseLinkURL}web/person/${person.id}/notifications|)})]
+
+[(#{person.gained_permissions.account(|${baseLinkURL}web/person/${person.id}|)})]
