@@ -31,7 +31,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
     private final PersonNotificationsDtoValidator validator;
 
     @Autowired
-    public PersonNotificationsViewController(PersonService personService, PersonNotificationsDtoValidator validator) {
+    PersonNotificationsViewController(PersonService personService, PersonNotificationsDtoValidator validator) {
         this.personService = personService;
         this.validator = validator;
     }
