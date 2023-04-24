@@ -62,7 +62,6 @@ class ApplicationMailService {
     private static final String CALENDAR_ICS = "calendar.ics";
     private static final String HOLIDAY_REPLACEMENT = "holidayReplacement";
     private static final String HOLIDAY_REPLACEMENT_NOTE = "holidayReplacementNote";
-    private static final String RECIPIENT = "recipient";
 
     private final MailService mailService;
     private final DepartmentService departmentService;
@@ -160,7 +159,6 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(RECIPIENT, recipient);
         model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
         model.put(DAY_LENGTH, application.getDayLength().name());
         model.put("sender", sender);
@@ -186,7 +184,6 @@ class ApplicationMailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put(APPLICATION, application);
-        model.put(RECIPIENT, recipient);
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(recipient, NOTIFICATION_EMAIL_APPLICATION_EDITED)
@@ -858,8 +855,7 @@ class ApplicationMailService {
 
             final Person recipient = entry.getKey();
             final Map<String, Object> model = Map.of(
-                "applicationsByPerson", applicationsByPerson,
-                RECIPIENT, recipient
+                "applicationsByPerson", applicationsByPerson
             );
 
             final Mail mailToRemindForWaiting = Mail.builder()

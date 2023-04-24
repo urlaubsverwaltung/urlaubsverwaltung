@@ -198,7 +198,6 @@ class ApplicationMailServiceTest {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("recipient", recipient);
         model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
         model.put("dayLength", "FULL");
         model.put("sender", sender);
@@ -233,7 +232,6 @@ class ApplicationMailServiceTest {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("recipient", recipient);
 
         sut.sendEditedNotification(application, recipient);
 
