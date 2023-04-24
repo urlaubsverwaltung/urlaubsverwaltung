@@ -32,7 +32,8 @@ public class PersonPermissionsViewController implements HasLaunchpad {
     private final SessionService sessionService;
 
     @Autowired
-    public PersonPermissionsViewController(PersonService personService, DepartmentService departmentService, PersonPermissionsDtoValidator validator, SessionService sessionService) {
+    public PersonPermissionsViewController(PersonService personService, DepartmentService departmentService,
+                                           PersonPermissionsDtoValidator validator, SessionService sessionService) {
         this.personService = personService;
         this.departmentService = departmentService;
         this.validator = validator;
@@ -41,7 +42,7 @@ public class PersonPermissionsViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/permissions")
-    public String showPersonPermissionsAndNotifications(@PathVariable("personId") Integer personId, Model model) throws UnknownPersonException {
+    public String showPersonPermissions(@PathVariable("personId") Integer personId, Model model) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
@@ -54,12 +55,11 @@ public class PersonPermissionsViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/permissions")
-    public String editPersonPermissionsAndNotifications(@PathVariable("personId") Integer personId,
-                                                        @ModelAttribute("person") PersonPermissionsDto personPermissionsDto, Errors errors,
-                                                        RedirectAttributes redirectAttributes) throws UnknownPersonException {
+    public String editPersonPermissions(@PathVariable("personId") Integer personId,
+                                        @ModelAttribute("person") PersonPermissionsDto personPermissionsDto, Errors errors,
+                                        RedirectAttributes redirectAttributes) throws UnknownPersonException {
 
         validator.validate(personPermissionsDto, errors);
-
         if (errors.hasErrors()) {
             return "person/person_permissions";
         }
