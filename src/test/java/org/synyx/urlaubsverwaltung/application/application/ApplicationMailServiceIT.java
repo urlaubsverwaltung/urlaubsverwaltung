@@ -146,16 +146,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msgUser.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgUser.getAllRecipients()[0]);
         assertThat(readPlainContent(msgUser)).isEqualTo("Hallo Lieschen Mueller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Hugo Boss:" + EMAIL_LINE_BREAK +
             "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Grund:               " + EMAIL_LINE_BREAK +
@@ -171,16 +171,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "folgende Abwesenheit von Lieschen Mueller wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Hugo Boss:" + EMAIL_LINE_BREAK +
             "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -197,16 +197,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msgBoss.getSubject()).isEqualTo("Neue genehmigte Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msgBoss.getAllRecipients()[0]);
         assertThat(readPlainContent(msgBoss)).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "folgende Abwesenheit von Lieschen Mueller wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Hugo Boss:" + EMAIL_LINE_BREAK +
             "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -260,16 +260,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msgUser.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgUser.getAllRecipients()[0]);
         assertThat(readPlainContent(msgUser)).isEqualTo("Hallo Lieschen Mueller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Hugo Boss:" + EMAIL_LINE_BREAK +
             "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Grund:               " + EMAIL_LINE_BREAK +
@@ -285,16 +285,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "folgende Abwesenheit von Lieschen Mueller wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Hugo Boss:" + EMAIL_LINE_BREAK +
             "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -352,16 +352,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msgUser.getSubject()).isEqualTo("Deine Abwesenheit wurde genehmigt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgUser.getAllRecipients()[0]);
         assertThat(readPlainContent(msgUser)).isEqualTo("Hallo Lieschen Mueller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Hugo Boss:" + EMAIL_LINE_BREAK +
             "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Grund:               " + EMAIL_LINE_BREAK +
@@ -377,16 +377,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msgOffice.getSubject()).isEqualTo("Neue genehmigte Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(readPlainContent(msgOffice)).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "folgende Abwesenheit von Lieschen Mueller wurde von Hugo Boss genehmigt." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Hugo Boss:" + EMAIL_LINE_BREAK +
             "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -492,14 +492,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         final String content = (String) msg.getContent();
         assertThat(content).isEqualTo("Hallo Max Muster," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Rick Grimes bittet dich um Hilfe bei der Bearbeitung eines Antrags von Max Muster." + EMAIL_LINE_BREAK +
             "Bitte kümmere dich um die Bearbeitung dieses Antrags oder halte ggf. nochmals Rücksprache mit Rick Grimes." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Max Muster" + EMAIL_LINE_BREAK +
             "    Zeitraum:            20.05.2022 bis 29.05.2022, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -664,9 +664,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of email
         assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Marlene Muster hat deine Krankmeldung vom 02.02.2023 bis 04.02.2023 zu Urlaub umgewandelt." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234");
     }
 
@@ -695,16 +695,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(contentUser.getSubject()).isEqualTo("Deine Abwesenheit wurde erstellt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(contentUser.getAllRecipients()[0]);
         assertThat(contentUser.getContent()).isEqualTo("Hallo Lieschen Mueller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "dein Abwesenheitsantrag wurde erfolgreich erstellt." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Lieschen Mueller:" + EMAIL_LINE_BREAK +
             "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Grund:               " + EMAIL_LINE_BREAK +
@@ -741,16 +741,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(contentUser.getSubject()).isEqualTo("Eine Abwesenheit wurde für dich erstellt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(contentUser.getAllRecipients()[0]);
         assertThat(contentUser.getContent()).isEqualTo("Hallo Lieschen Mueller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Marlene Muster hat eine Abwesenheit für dich erstellt." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Lieschen Mueller:" + EMAIL_LINE_BREAK +
             "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -788,16 +788,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(contentRelevantPerson.getSubject()).isEqualTo("Neue Abwesenheit wurde von Lieschen Mueller erstellt");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(contentRelevantPerson.getAllRecipients()[0]);
         assertThat(contentRelevantPerson.getContent()).isEqualTo("Hallo Relevant Person," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "es wurde eine neue Abwesenheit erstellt (diese muss nicht genehmigt werden)." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Lieschen Mueller:" + EMAIL_LINE_BREAK +
             "OK, Urlaub kann genommen werden" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Mueller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -835,13 +835,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of email
         assertThat(readPlainContent(msg)).isEqualTo("Hallo Mar Teria," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "eine Abwesenheit von Lieschen Müller wurde erstellt und" + EMAIL_LINE_BREAK +
             "du wurdest für den Zeitraum vom 18.12.2020 bis 18.12.2020, ganztägig als Vertretung eingetragen." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Notiz von Lieschen Müller an dich:" + EMAIL_LINE_BREAK +
             "Eine Nachricht an die Vertretung" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement" + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachments = getAttachments(msg);
@@ -1079,16 +1079,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "deine Abwesenheit wurde erfolgreich eingereicht." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
             "Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Grund:               " + EMAIL_LINE_BREAK +
@@ -1132,16 +1132,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "deine Abwesenheit wurde erfolgreich eingereicht." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
             "Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Grund:               " + EMAIL_LINE_BREAK +
@@ -1219,16 +1219,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Marlene Muster hat eine Abwesenheit für dich gestellt." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
             "Habe das mal für dich beantragt" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Grund:               " + EMAIL_LINE_BREAK +
@@ -1275,16 +1275,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Marlene Muster hat eine Abwesenheit für dich gestellt." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
             "Habe das mal für dich beantragt" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Grund:               " + EMAIL_LINE_BREAK +
@@ -1423,16 +1423,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getSubject()).isEqualTo("Eine Abwesenheit von Lieschen Müller wurde storniert");
         assertThat(new InternetAddress(recipientOfInterest.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(msg.getContent()).isEqualTo("Hallo Relevant Person," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "die Abwesenheit von Lieschen Müller vom 16.04.2021 bis zum 16.04.2021 wurde von Lieschen Müller storniert." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
             "Cancelled" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Grund:               " + EMAIL_LINE_BREAK +
@@ -1466,16 +1466,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getSubject()).isEqualTo("Deine Abwesenheit wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
         assertThat(readPlainContent(msg)).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde erfolgreich storniert." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
             "Wrong information - cancelled" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Grund:               " + EMAIL_LINE_BREAK +
@@ -1516,16 +1516,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "deine Abwesenheit vom 16.04.2021 bis zum 16.04.2021 wurde von Office Person erfolgreich storniert." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Office Person:" + EMAIL_LINE_BREAK +
             "Wrong information - cancelled" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
             "    Grund:               " + EMAIL_LINE_BREAK +
@@ -1744,13 +1744,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         Message message = messages[0];
         assertThat(message.getContent()).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "es liegt ein neuer zu genehmigender Antrag vor." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -1758,9 +1758,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
     }
 
@@ -1800,13 +1800,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Message message = messages[0];
         assertThat(message.getContent()).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "es liegt ein neuer zu genehmigender Antrag vor." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -1814,9 +1814,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
     }
 
@@ -1859,12 +1859,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of user email
         String contentUser = (String) msg.getContent();
         assertThat(contentUser).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "deine am 12.04.2021 gestellte Abwesenheit von 16.04.2021 bis 16.04.2021, ganztägig wurde vorläufig genehmigt." + EMAIL_LINE_BREAK +
             "Bitte beachte, dass diese von einem entsprechenden Verantwortlichen freigegeben werden muss." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Kai Schmitt:" + EMAIL_LINE_BREAK +
             "OK, spricht von meiner Seite aus nix dagegen");
 
@@ -1875,18 +1875,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of office email
         assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "es liegt eine neue zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Die Abwesenheit wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Kai Schmitt:" + EMAIL_LINE_BREAK +
             "OK, spricht von meiner Seite aus nix dagegen" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -1894,9 +1894,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
     }
 
@@ -1951,18 +1951,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of office email
         assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "es liegt eine neue zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Die Abwesenheit wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Kai Schmitt:" + EMAIL_LINE_BREAK +
             "OK, spricht von meiner Seite aus nix dagegen" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -1970,9 +1970,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
     }
 
@@ -2031,18 +2031,18 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of office email
         assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "es liegt eine neue zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Die Abwesenheit wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Kommentar von Kai Schmitt:" + EMAIL_LINE_BREAK +
             "OK, spricht von meiner Seite aus nix dagegen" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
             "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
@@ -2050,9 +2050,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
     }
 
@@ -2162,24 +2162,24 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of boss email
         assertThat(msgBoss.getContent()).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "die folgenden Abwesenheiten warten auf Bearbeitung:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Anträge von Max Mahler:" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 20.04.2022 bis 21.04.2022, ganztägig." + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 16.05.2021 bis 16.05.2021, ganztägig." + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/4" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Antrag von Frederik Förster:" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 24.12.2023 bis 31.12.2023, ganztägig." + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/2" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Antrag von Peter Schuster:" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 30.11.2021 bis 30.11.2021, ganztägig." + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/3" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Überblick aller wartenden Abwesenheitsanträge findest du unter https://localhost:8080/web/application#waiting-requests"
         );
 
@@ -2190,20 +2190,20 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of boss email
         assertThat(msgDepartmentHeadA.getContent()).isEqualTo("Hallo Heinz Wurst," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "die folgenden Abwesenheiten warten auf Bearbeitung:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Anträge von Max Mahler:" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 20.04.2022 bis 21.04.2022, ganztägig." + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/1" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 16.05.2021 bis 16.05.2021, ganztägig." + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/4" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Antrag von Peter Schuster:" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 30.11.2021 bis 30.11.2021, ganztägig." + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/3" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Überblick aller wartenden Abwesenheitsanträge findest du unter https://localhost:8080/web/application#waiting-requests"
         );
 
@@ -2214,14 +2214,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // check content of boss email
         assertThat(msgDepartmentHeadB.getContent()).isEqualTo("Hallo Michel Mustermann," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "die folgenden Abwesenheiten warten auf Bearbeitung:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Antrag von Frederik Förster:" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 24.12.2023 bis 31.12.2023, ganztägig." + EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/application/2" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Überblick aller wartenden Abwesenheitsanträge findest du unter https://localhost:8080/web/application#waiting-requests"
         );
     }
@@ -2282,16 +2282,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "heute beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "- replacement holiday" + EMAIL_LINE_BREAK +
                 "  \"Some notes\"" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "Da du vom 01.01.2022 bis zum 01.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
         );
@@ -2326,13 +2326,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "- replacement holiday" + EMAIL_LINE_BREAK +
                 "  \"Some notes\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
@@ -2369,13 +2369,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "in 2 Tagen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "- replacement holiday" + EMAIL_LINE_BREAK +
                 "  \"Some notes\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
@@ -2406,13 +2406,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "heute beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "Da du vom 01.01.2022 bis zum 01.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
         );
@@ -2438,16 +2438,15 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
         );
@@ -2475,13 +2474,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "in 30 Tagen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "Da du vom 31.01.2022 bis zum 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
         );
@@ -2509,13 +2508,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "in 30 Tagen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "Da du vom 31.01.2022 bis zum 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
         );
@@ -2549,16 +2548,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
         );
@@ -2596,9 +2595,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
@@ -2643,13 +2642,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 "  \"Hey Alfred, denke bitte an Pinguin, danke dir!\"" + EMAIL_LINE_BREAK +
                 "- Robin" + EMAIL_LINE_BREAK +
@@ -2664,11 +2663,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 "  \"Hey Alfred, denke bitte an Pinguin, danke dir!\"" + EMAIL_LINE_BREAK +
                 "- Robin" + EMAIL_LINE_BREAK +
@@ -2714,11 +2713,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "- Robin" + EMAIL_LINE_BREAK +
@@ -2757,16 +2756,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         // check content of email
         assertThat(msg.getContent()).isEqualTo(
             "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "in 30 Tagen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "- replacement holiday" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
-                "" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
                 "Da du vom 31.01.2022 bis zum 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
                 "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
         );
