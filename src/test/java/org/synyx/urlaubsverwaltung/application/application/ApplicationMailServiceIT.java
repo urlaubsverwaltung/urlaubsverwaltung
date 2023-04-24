@@ -2143,7 +2143,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         when(mailRecipientService.getRecipientsOfInterest(personB, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadB));
         when(mailRecipientService.getRecipientsOfInterest(personC, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadA));
 
-        sut.sendRemindForWaitingApplicationsReminderNotification(asList(applicationA, applicationAA, applicationB, applicationC));
+        sut.sendRemindForWaitingApplicationsReminderNotification(asList(applicationAA, applicationA, applicationB, applicationC));
 
         // were all emails sent?
         final MimeMessage[] bossInbox = greenMail.getReceivedMessagesForDomain(boss.getEmail());

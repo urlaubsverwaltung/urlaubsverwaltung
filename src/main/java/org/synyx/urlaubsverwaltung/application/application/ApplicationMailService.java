@@ -852,6 +852,7 @@ class ApplicationMailService {
 
             final int numberOfApplications = entry.getValue().size();
             final Map<Person, List<Application>> applicationsByPerson = entry.getValue().stream()
+                .sorted(comparing(Application::getStartDate).reversed())
                 .collect(groupingBy(Application::getPerson));
 
             final Map<String, Object> model = Map.of(
