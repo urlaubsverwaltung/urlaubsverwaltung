@@ -2157,13 +2157,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // get email boss
         final Message msgBoss = bossInbox[0];
-        assertThat(msgBoss.getSubject()).isEqualTo("Erinnerung für wartende zu genehmigende Abwesenheiten");
+        assertThat(msgBoss.getSubject()).isEqualTo("Erinnerung für 4 wartende zu genehmigende Abwesenheiten");
         assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msgBoss.getAllRecipients()[0]);
 
         // check content of boss email
         assertThat(msgBoss.getContent()).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "die folgenden Abwesenheiten warten auf Bearbeitung:" + EMAIL_LINE_BREAK +
+            "die folgenden 4 Abwesenheiten warten auf Bearbeitung:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Anträge von Max Mahler:" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 20.04.2022 bis 21.04.2022, ganztägig." + EMAIL_LINE_BREAK +
@@ -2185,13 +2185,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // get email department head A
         final Message msgDepartmentHeadA = departmentHeadAInbox[0];
-        assertThat(msgDepartmentHeadA.getSubject()).isEqualTo("Erinnerung für wartende zu genehmigende Abwesenheiten");
+        assertThat(msgDepartmentHeadA.getSubject()).isEqualTo("Erinnerung für 3 wartende zu genehmigende Abwesenheiten");
         assertThat(new InternetAddress(departmentHeadA.getEmail())).isEqualTo(msgDepartmentHeadA.getAllRecipients()[0]);
 
         // check content of boss email
         assertThat(msgDepartmentHeadA.getContent()).isEqualTo("Hallo Heinz Wurst," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "die folgenden Abwesenheiten warten auf Bearbeitung:" + EMAIL_LINE_BREAK +
+            "die folgenden 3 Abwesenheiten warten auf Bearbeitung:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Anträge von Max Mahler:" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 20.04.2022 bis 21.04.2022, ganztägig." + EMAIL_LINE_BREAK +
@@ -2209,13 +2209,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // get email department head A
         final Message msgDepartmentHeadB = departmentHeadBInbox[0];
-        assertThat(msgDepartmentHeadB.getSubject()).isEqualTo("Erinnerung für wartende zu genehmigende Abwesenheiten");
+        assertThat(msgDepartmentHeadB.getSubject()).isEqualTo("Erinnerung für eine wartende zu genehmigende Abwesenheit");
         assertThat(new InternetAddress(departmentHeadB.getEmail())).isEqualTo(msgDepartmentHeadB.getAllRecipients()[0]);
 
         // check content of boss email
         assertThat(msgDepartmentHeadB.getContent()).isEqualTo("Hallo Michel Mustermann," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "die folgenden Abwesenheiten warten auf Bearbeitung:" + EMAIL_LINE_BREAK +
+            "die folgende Abwesenheit wartet auf Bearbeitung:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Antrag von Frederik Förster:" + EMAIL_LINE_BREAK +
             "  Erholungsurlaub vom 24.12.2023 bis 31.12.2023, ganztägig." + EMAIL_LINE_BREAK +

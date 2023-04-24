@@ -850,17 +850,19 @@ class ApplicationMailService {
 
         for (Map.Entry<Person, List<Application>> entry : applicationsPerRecipient.entrySet()) {
 
+            final int numberOfApplications = entry.getValue().size();
             final Map<Person, List<Application>> applicationsByPerson = entry.getValue().stream()
                 .collect(groupingBy(Application::getPerson));
 
-            final Person recipient = entry.getKey();
             final Map<String, Object> model = Map.of(
-                "applicationsByPerson", applicationsByPerson
+                "applicationsByPerson", applicationsByPerson,
+                "numberOfApplications", numberOfApplications
             );
 
+            final Person recipient = entry.getKey();
             final Mail mailToRemindForWaiting = Mail.builder()
                 .withRecipient(recipient)
-                .withSubject("subject.application.cronRemind")
+                .withSubject("subject.application.cronRemind", numberOfApplications)
                 .withTemplate("application_remind_cron_to_management", model)
                 .build();
             mailService.send(mailToRemindForWaiting);
