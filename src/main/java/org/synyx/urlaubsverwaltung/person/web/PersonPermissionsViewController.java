@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.ADMIN;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
@@ -95,7 +96,7 @@ public class PersonPermissionsViewController implements HasLaunchpad {
 
     private static List<Role> calculateAddedPermissions(Collection<Role> oldRoles, Person updatedPerson) {
         return updatedPerson.getPermissions().stream()
-            .filter(role -> !oldRoles.contains(role))
+            .filter(not(oldRoles::contains))
             .filter(role(INACTIVE).and(role(USER)).and(role(ADMIN)))
             .collect(toList());
     }
