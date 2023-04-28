@@ -16,8 +16,8 @@ We will support the following version with security fixes.
 
 ## Reporting a Vulnerability
 
-Please send an email to [info@urlaubsverwaltung.cloud](mailto:info@urlaubsverwaltung.cloud)
-instead of raising a security vulnerability issue here.
+Please open a report of a security vulnerability via
+[Report a security vulnerability](https://github.com/urlaubsverwaltung/urlaubsverwaltung/security/advisories/new)
 
 So we can disclose it responsibly.
 

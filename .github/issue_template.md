@@ -13,7 +13,8 @@ Have you already checked the [FAQ](https://github.com/urlaubsverwaltung/urlaubsv
   
 - Security Vulnerability
   STOP!! Please don't raise security vulnerabilities here.
-  Please send a email to info@urlaubsverwaltung.cloud  to learn how to disclose them responsibly.
+  Please open a report of a security vulnerability via
+  [Report a security vulnerability](https://github.com/urlaubsverwaltung/urlaubsverwaltung/security/advisories/new)
 
 - With an Immediate Pull Request
   An issue will be closed as a duplicate of the immediate pull request,

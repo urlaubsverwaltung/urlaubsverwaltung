@@ -8,8 +8,9 @@ Please look for other issues or pull requests which already work on this topic. 
 # Security Vulnerabilities
 
 🛑 STOP! 🛑 If your contribution fixes a security vulnerability, please do not submit it.
-Instead, please write an E-Mail to info@urlaubsverwaltung.cloud with all the information
-to recreate the security vulnerability.
+Instead, please open a report of a security vulnerability via
+[Report a security vulnerability](https://github.com/urlaubsverwaltung/urlaubsverwaltung/security/advisories/new)
+
 
 # Describing Your Changes
 

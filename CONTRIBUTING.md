@@ -23,8 +23,8 @@ Have you already checked the [FAQ](https://github.com/urlaubsverwaltung/urlaubsv
 
 If you think you have found a security vulnerability in the Urlaubsverwaltung please *DO NOT*
 disclose it publicly until we've had a chance to fix it. Please *don't report security
-vulnerabilities using GitHub issues*, instead head over to info@urlaubsverwaltung.cloud and
-learn how to disclose them responsibly.
+vulnerabilities using GitHub issues*, instead open a report of a security vulnerability
+via [Report a security vulnerability](https://github.com/urlaubsverwaltung/urlaubsverwaltung/security/advisories/new)
 
 
 ## Pull Request Contribution
