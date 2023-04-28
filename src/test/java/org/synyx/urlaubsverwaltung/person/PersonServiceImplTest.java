@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
+import org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto;
 import org.synyx.urlaubsverwaltung.search.PageableSearchQuery;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 
@@ -35,6 +36,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
@@ -43,6 +45,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto.SECOND_STAGE_AUTHORITY;
 
 @ExtendWith(MockitoExtension.class)
 class PersonServiceImplTest {
@@ -51,6 +55,8 @@ class PersonServiceImplTest {
 
     @Mock
     private PersonRepository personRepository;
+    @Mock
+    private PersonMailService personMailService;
     @Mock
     private AccountInteractionService accountInteractionService;
     @Mock
@@ -67,7 +73,7 @@ class PersonServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sut = new PersonServiceImpl(personRepository, accountInteractionService, workingTimeWriteService, applicationEventPublisher);
+        sut = new PersonServiceImpl(personRepository, personMailService, accountInteractionService, workingTimeWriteService, applicationEventPublisher);
     }
 
     @AfterEach
@@ -242,6 +248,55 @@ class PersonServiceImplTest {
         person.setId(null);
         assertThatIllegalArgumentException()
             .isThrownBy(() -> sut.update(person));
+    }
+
+    @Test
+    void ensureUpdatePermissionsThrowsUnknownPersonException() {
+
+        when(personRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> sut.updatePermissions(new PersonId(1L), List.of()))
+            .isInstanceOf(UnknownPersonException.class);
+    }
+
+    @Test
+    void ensureUpdatePermissionsToSendNotificationOnGainedNewPermissions() throws Exception {
+
+        final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(Role.USER, Role.OFFICE));
+
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+        when(personRepository.save(any(Person.class))).thenReturn(person);
+
+        sut.updatePermissions(new PersonId(1L), List.of(Role.USER, Role.OFFICE, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
+
+        final ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
+        @SuppressWarnings("unchecked")
+        final ArgumentCaptor<List<PersonPermissionsRoleDto>> permissionsCaptor = ArgumentCaptor.forClass(List.class);
+
+        verify(personMailService).sendPersonGainedMorePermissionsNotification(personCaptor.capture(), permissionsCaptor.capture());
+
+        final Person captorPerson = personCaptor.getValue();
+        assertThat(captorPerson).isEqualTo(person);
+
+        final List<PersonPermissionsRoleDto> captorPermissions = permissionsCaptor.getValue();
+        assertThat(captorPermissions).containsExactly(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+    }
+
+    @Test
+    void ensureNotToSendNotificationOnRemovedPermissions() throws Exception {
+
+        final Person person = new Person("username", "Meier", "Nina", "nina@example.org");
+        person.setId(1L);
+        person.setPermissions(List.of(USER, OFFICE, Role.DEPARTMENT_HEAD, Role.SECOND_STAGE_AUTHORITY));
+
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+        when(personRepository.save(any(Person.class))).thenReturn(person);
+
+        sut.updatePermissions(new PersonId(1L), List.of(USER, OFFICE));
+
+        verifyNoInteractions(personMailService);
     }
 
     @Test
