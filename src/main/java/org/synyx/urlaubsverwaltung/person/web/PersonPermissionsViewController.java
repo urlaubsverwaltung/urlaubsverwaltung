@@ -96,9 +96,7 @@ public class PersonPermissionsViewController implements HasLaunchpad {
     private static List<Role> calculateAddedPermissions(Collection<Role> oldRoles, Person updatedPerson) {
         return updatedPerson.getPermissions().stream()
             .filter(role -> !oldRoles.contains(role))
-            .filter(role(INACTIVE))
-            .filter(role(USER))
-            .filter(role(ADMIN))
+            .filter(role(INACTIVE).and(role(USER)).and(role(ADMIN)))
             .collect(toList());
     }
 
