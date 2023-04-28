@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -71,13 +70,13 @@ class OvertimeMailServiceIT extends TestContainersBase {
 
         // check content of email
         assertThat(msg.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "es wurden für Lieschen Müller Überstunden erfasst." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "für Lieschen Müller wurden Überstunden eingetragen." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/overtime/1" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zu den Überstunden:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +
             "    Zeitraum:    16.04.2020 - 23.04.2020" + EMAIL_LINE_BREAK +
             "    Dauer:       55 Std. 12 Min.");
@@ -110,13 +109,13 @@ class OvertimeMailServiceIT extends TestContainersBase {
 
         // check content of email
         assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "es wurden für dich von Marlene Muster Überstunden erfasst." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Marlene Muster hat für dich Überstunden eingetragen." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/overtime/1" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zu den Überstunden:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:    16.04.2020 - 23.04.2020" + EMAIL_LINE_BREAK +
             "    Dauer:       55 Std. 12 Min.");
     }
@@ -145,13 +144,13 @@ class OvertimeMailServiceIT extends TestContainersBase {
 
         // check content of email
         assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "du hast folgende Überstunden erfasst." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "du hast folgende Überstunden eingetragen." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/overtime/1" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zu den Überstunden:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Zeitraum:    16.04.2020 - 23.04.2020" + EMAIL_LINE_BREAK +
             "    Dauer:       55 Std. 12 Min.");
     }
