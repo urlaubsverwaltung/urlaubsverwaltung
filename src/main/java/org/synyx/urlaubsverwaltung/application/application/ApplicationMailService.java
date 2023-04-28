@@ -22,10 +22,10 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.AbstractMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
@@ -61,7 +61,6 @@ class ApplicationMailService {
     private static final String CALENDAR_ICS = "calendar.ics";
     private static final String HOLIDAY_REPLACEMENT = "holidayReplacement";
     private static final String HOLIDAY_REPLACEMENT_NOTE = "holidayReplacementNote";
-    private static final String RECIPIENT = "recipient";
 
     private final MailService mailService;
     private final DepartmentService departmentService;
@@ -87,11 +86,12 @@ class ApplicationMailService {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, application.getPerson());
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put(COMMENT, applicationComment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, applicationComment
+        );
 
         // Inform user that the application for leave has been allowed
         final Mail mailToApplicant = Mail.builder()
@@ -122,11 +122,12 @@ class ApplicationMailService {
     @Async
     void sendRejectedNotification(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, comment
+        );
 
         // send reject information to the applicant
         final Mail mailToApplicant = Mail.builder()
@@ -157,12 +158,12 @@ class ApplicationMailService {
     @Async
     void sendReferredToManagementNotification(Application application, Person recipient, Person sender) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(RECIPIENT, recipient);
-        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put("sender", sender);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            "sender", sender
+        );
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(recipient)
@@ -183,9 +184,7 @@ class ApplicationMailService {
     @Async
     void sendEditedNotification(Application application, Person recipient) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(RECIPIENT, recipient);
+        final Map<String, Object> model = Map.of(APPLICATION, application);
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(recipient, NOTIFICATION_EMAIL_APPLICATION_EDITED)
@@ -204,9 +203,10 @@ class ApplicationMailService {
     @Async
     void sendDeclinedCancellationRequestApplicationNotification(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            COMMENT, comment
+        );
 
         // send mail to applicant
         final Mail mailToApplicant = Mail.builder()
@@ -236,9 +236,10 @@ class ApplicationMailService {
     @Async
     void sendCancellationRequest(Application application, ApplicationComment createdComment) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(COMMENT, createdComment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            COMMENT, createdComment
+        );
 
         // send mail to applicant
         final Mail mailToApplicant = Mail.builder()
@@ -266,8 +267,7 @@ class ApplicationMailService {
     @Async
     void sendSickNoteConvertedToVacationNotification(Application application) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
+        final Map<String, Object> model = Map.of(APPLICATION, application);
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_CONVERTED)
@@ -288,11 +288,12 @@ class ApplicationMailService {
     @Async
     void sendConfirmationAllowedDirectly(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, comment
+        );
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_ALLOWED)
@@ -313,11 +314,12 @@ class ApplicationMailService {
     @Async
     void sendConfirmationAllowedDirectlyByManagement(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, comment
+        );
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_ALLOWED)
@@ -339,11 +341,12 @@ class ApplicationMailService {
     @Async
     void sendDirectlyAllowedNotificationToManagement(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, comment
+        );
 
         final List<Person> recipients = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED);
         final Mail mailToAllowAndRemind = Mail.builder()
@@ -368,11 +371,12 @@ class ApplicationMailService {
 
         final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
-        model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
-        model.put(DAY_LENGTH, application.getDayLength().name());
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
+            HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote(),
+            DAY_LENGTH, application.getDayLength().name()
+        );
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT)
@@ -394,11 +398,12 @@ class ApplicationMailService {
     @Async
     void notifyHolidayReplacementForApply(HolidayReplacementEntity holidayReplacement, Application application) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
-        model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
-        model.put(DAY_LENGTH, application.getDayLength().name());
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
+            HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote(),
+            DAY_LENGTH, application.getDayLength().name()
+        );
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT)
@@ -421,11 +426,12 @@ class ApplicationMailService {
 
         final ByteArrayResource calendarFile = generateCalendar(application, AbsenceType.HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
-        model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
-        model.put(DAY_LENGTH, application.getDayLength().name());
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
+            HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote(),
+            DAY_LENGTH, application.getDayLength().name()
+        );
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT)
@@ -449,10 +455,11 @@ class ApplicationMailService {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, holidayReplacement.getPerson());
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
-        model.put(DAY_LENGTH, application.getDayLength().name());
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
+            DAY_LENGTH, application.getDayLength().name()
+        );
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT)
@@ -474,11 +481,12 @@ class ApplicationMailService {
     @Async
     void notifyHolidayReplacementAboutEdit(HolidayReplacementEntity holidayReplacement, Application application) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(HOLIDAY_REPLACEMENT, holidayReplacement.getPerson());
-        model.put(HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote());
-        model.put(DAY_LENGTH, application.getDayLength().name());
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            HOLIDAY_REPLACEMENT, holidayReplacement.getPerson(),
+            HOLIDAY_REPLACEMENT_NOTE, holidayReplacement.getNote(),
+            DAY_LENGTH, application.getDayLength().name()
+        );
 
         final Mail mailToReplacement = Mail.builder()
             .withRecipient(holidayReplacement.getPerson(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT)
@@ -499,11 +507,12 @@ class ApplicationMailService {
     @Async
     void sendAppliedNotification(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, comment
+        );
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_APPLIED)
@@ -524,11 +533,12 @@ class ApplicationMailService {
     @Async
     void sendAppliedByManagementNotification(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, comment
+        );
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_APPLIED)
@@ -548,9 +558,10 @@ class ApplicationMailService {
     @Async
     void sendRevokedNotifications(Application application, ApplicationComment comment) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            COMMENT, comment
+        );
 
         if (application.getPerson().equals(application.getCanceller())) {
             final Mail mailToApplicant = Mail.builder()
@@ -589,11 +600,12 @@ class ApplicationMailService {
     @Async
     void sendCancelledDirectlyToManagement(Application application, ApplicationComment comment) {
 
-        final Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, comment
+        );
 
         final List<Person> recipients = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION);
         final Mail mailToAllowAndRemind = Mail.builder()
@@ -617,11 +629,12 @@ class ApplicationMailService {
         final Person recipient = application.getPerson();
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, recipient);
 
-        final Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, comment
+        );
 
         // send cancelled by office information to the applicant
         final Mail mailToApplicant = Mail.builder()
@@ -644,11 +657,12 @@ class ApplicationMailService {
     @Async
     void sendCancelledDirectlyConfirmationByManagement(Application application, ApplicationComment comment) {
 
-        final Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, comment
+        );
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_CANCELLATION)
@@ -670,9 +684,10 @@ class ApplicationMailService {
 
         final ByteArrayResource calendarFile = generateCalendar(application, DEFAULT, CANCELLED, application.getPerson());
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            COMMENT, comment
+        );
 
         // send cancelled by office information to the applicant
         final Mail mailToApplicant = Mail.builder()
@@ -710,12 +725,13 @@ class ApplicationMailService {
         final List<Application> applicationsForLeave =
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(), application.getStartDate(), application.getEndDate());
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put(COMMENT, comment);
-        model.put("departmentVacations", applicationsForLeave);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, comment,
+            "departmentVacations", applicationsForLeave
+        );
 
         final List<Person> recipients = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         final Mail mailToAllowAndRemind = Mail.builder()
@@ -738,10 +754,11 @@ class ApplicationMailService {
     void sendTemporaryAllowedNotification(Application application, ApplicationComment comment) {
 
         // Inform user that the application for leave has been allowed temporary
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
-        model.put(DAY_LENGTH, application.getDayLength().name());
-        model.put(COMMENT, comment);
+        final Map<String, Object> model = Map.of(
+            APPLICATION, application,
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, comment
+        );
 
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED)
@@ -754,12 +771,13 @@ class ApplicationMailService {
         final List<Application> applicationsForLeave =
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(), application.getStartDate(), application.getEndDate());
 
-        Map<String, Object> modelSecondStage = new HashMap<>();
-        modelSecondStage.put(APPLICATION, application);
-        modelSecondStage.put(VACATION_TYPE, application.getVacationType().getMessageKey());
-        modelSecondStage.put(DAY_LENGTH, application.getDayLength().name());
-        modelSecondStage.put(COMMENT, comment);
-        modelSecondStage.put("departmentVacations", applicationsForLeave);
+        final Map<String, Object> modelSecondStage = Map.of(
+            APPLICATION, application,
+            VACATION_TYPE, application.getVacationType().getMessageKey(),
+            DAY_LENGTH, application.getDayLength().name(),
+            COMMENT, comment,
+            "departmentVacations", applicationsForLeave
+        );
 
         final List<Person> recipients = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED);
         final Mail mailToTemporaryAllow = Mail.builder()
@@ -780,8 +798,7 @@ class ApplicationMailService {
     @Async
     void sendRemindNotificationToManagement(Application application) {
 
-        Map<String, Object> model = new HashMap<>();
-        model.put(APPLICATION, application);
+        final Map<String, Object> model = Map.of(APPLICATION, application);
 
         final List<Person> recipients = mailRecipientService.getResponsibleManagersOf(application.getPerson());
         final Mail mailToAllowAndRemind = Mail.builder()
@@ -795,9 +812,11 @@ class ApplicationMailService {
     @Async
     void sendRemindForUpcomingApplicationsReminderNotification(List<Application> applications) {
         for (Application application : applications) {
-            final Map<String, Object> model = new HashMap<>();
-            model.put(APPLICATION, application);
-            model.put("daysBeforeUpcomingApplication", ChronoUnit.DAYS.between(LocalDate.now(clock), application.getStartDate()));
+
+            final Map<String, Object> model = Map.of(
+                APPLICATION, application,
+                "daysBeforeUpcomingApplication", ChronoUnit.DAYS.between(LocalDate.now(clock), application.getStartDate())
+            );
 
             final Mail mailToUpcomingApplicationsPersons = Mail.builder()
                 .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_UPCOMING)
@@ -813,10 +832,11 @@ class ApplicationMailService {
         for (Application application : applications) {
             for (HolidayReplacementEntity holidayReplacement : application.getHolidayReplacements()) {
 
-                final Map<String, Object> model = new HashMap<>();
-                model.put(APPLICATION, application);
-                model.put("daysBeforeUpcomingHolidayReplacement", ChronoUnit.DAYS.between(LocalDate.now(clock), application.getStartDate()));
-                model.put("replacementNote", holidayReplacement.getNote());
+                final Map<String, Object> model = Map.of(
+                    APPLICATION, application,
+                    "daysBeforeUpcomingHolidayReplacement", ChronoUnit.DAYS.between(LocalDate.now(clock), application.getStartDate()),
+                    "replacementNote", holidayReplacement.getNote()
+                );
 
                 final Mail mailToUpcomingHolidayReplacement = Mail.builder()
                     .withRecipient(holidayReplacement.getPerson(), NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING)
@@ -852,19 +872,22 @@ class ApplicationMailService {
 
         for (Map.Entry<Person, List<Application>> entry : applicationsPerRecipient.entrySet()) {
 
-            List<Application> applications = entry.getValue();
-            Person recipient = entry.getKey();
+            final int numberOfApplications = entry.getValue().size();
+            final Map<Person, List<Application>> applicationsByPerson = entry.getValue().stream()
+                .sorted(comparing(Application::getStartDate).reversed())
+                .collect(groupingBy(Application::getPerson));
 
-            Map<String, Object> model = new HashMap<>();
-            model.put("applicationList", applications);
-            model.put(RECIPIENT, recipient);
+            final Map<String, Object> model = Map.of(
+                "applicationsByPerson", applicationsByPerson,
+                "numberOfApplications", numberOfApplications
+            );
 
+            final Person recipient = entry.getKey();
             final Mail mailToRemindForWaiting = Mail.builder()
                 .withRecipient(recipient)
-                .withSubject("subject.application.cronRemind")
+                .withSubject("subject.application.cronRemind", numberOfApplications)
                 .withTemplate("application_remind_cron_to_management", model)
                 .build();
-
             mailService.send(mailToRemindForWaiting);
         }
     }

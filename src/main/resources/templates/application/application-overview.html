@@ -316,7 +316,7 @@
         th:replace="~{fragments/section-heading::section-heading(~{::other-applications-heading-body}, ~{::other-applications-heading-actions})}"
       >
         <th:block th:ref="other-applications-heading-body">
-          <h2 class="tw-text-xl tw-font-medium" th:text="#{applications.other.waiting}"></h2>
+          <h2 class="tw-text-xl tw-font-medium" id="waiting-requests" th:text="#{applications.other.waiting}"></h2>
         </th:block>
       </div>
 
