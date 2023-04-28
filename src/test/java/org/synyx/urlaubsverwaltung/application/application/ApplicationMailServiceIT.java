@@ -2884,6 +2884,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
+        holidayReplacementEntity.setNote("");
         application.setHolidayReplacements(List.of(holidayReplacementEntity));
 
         sut.sendRemindForUpcomingHolidayReplacement(List.of(application));
