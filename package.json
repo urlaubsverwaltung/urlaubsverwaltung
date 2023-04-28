@@ -41,7 +41,7 @@
     "datalist-polyfill": "1.25.1",
     "font-awesome": "4.7.0",
     "jquery": "3.6.4",
-    "lint-staged": "13.2.1",
+    "lint-staged": "13.2.2",
     "postcss-loader": "4.3.0",
     "tablesorter": "2.31.3",
     "timepicker": "1.14.0",
