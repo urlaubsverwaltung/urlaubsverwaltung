@@ -106,54 +106,6 @@
             </div>
           </div>
 
-          <div class="md:tw-col-start-1 md:tw-row-start-3 md:tw-row-span-2">
-            <div
-              th:replace="fragments/section-heading::section-heading(~{::person-details-permissions-body}, ~{::person-details-permissions-actions})"
-            >
-              <th:block th:ref="person-details-permissions-body">
-                <h2 th:text="#{person.account.permissions.title}">Berechtigungen</h2>
-              </th:block>
-              <th:block th:ref="person-details-permissions-actions">
-                <a
-                  th:if="${canEditPermissions}"
-                  th:href="@{/web/person/__${person.id}__/permissions}"
-                  class="icon-link tw-px-1"
-                  aria-hidden="true"
-                  th:data-title="#{action.edit}"
-                >
-                  <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5')"></svg>
-                  <span th:text="#{action.edit}" class="tw-sr-only"></span>
-                </a>
-              </th:block>
-            </div>
-            <div
-              th:replace="fragments/box::box-with-icon(~{::person-details-permissions-box-icon}, ~{::person-details-permissions-box-body})"
-            >
-              <th:block th:ref="person-details-permissions-box-icon">
-                <div
-                  th:replace="fragments/rounded::block(content=~{::person-details-permissions-box-icon-rounded}, className='tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-zinc-900')"
-                >
-                  <th:block th:ref="person-details-permissions-box-icon-rounded">
-                    <svg th:replace="icon/key::svg(className='tw-w-8 tw-h-8')" />
-                  </th:block>
-                </div>
-              </th:block>
-              <th:block th:ref="person-details-permissions-box-body">
-                <dl th:each="role, loop : ${permissions}" class="tw-m-0">
-                  <dt
-                    th:with="permissionMessageKey=|person.form.permissions.roles.${role}|"
-                    th:text="#{__${permissionMessageKey}__}"
-                    class="tw-mb-2 tw-font-medium"
-                  ></dt>
-                  <dd
-                    th:text="#{'person.form.permissions.roles.' + ${role} + '.description'(${person.niceName})}"
-                    th:class="|tw-text-sm ${not loop.last ? 'tw-mb-8' : ''}|"
-                  ></dd>
-                </dl>
-              </th:block>
-            </div>
-          </div>
-
           <div class="md:tw-col-start-1 md:tw-row-start-2">
             <div
               th:replace="fragments/section-heading::section-heading(~{::person-details-departments-body}, ~{::person-details-departments-actions})"
@@ -224,6 +176,54 @@
                     <th:block th:unless="${canEditDepartments}" th:text="${department.name}" />
                   </li>
                 </ul>
+              </th:block>
+            </div>
+          </div>
+
+          <div class="md:tw-col-start-1 md:tw-row-start-3">
+            <div
+              th:replace="fragments/section-heading::section-heading(~{::person-details-permissions-body}, ~{::person-details-permissions-actions})"
+            >
+              <th:block th:ref="person-details-permissions-body">
+                <h2 th:text="#{person.account.permissions.title}">Berechtigungen</h2>
+              </th:block>
+              <th:block th:ref="person-details-permissions-actions">
+                <a
+                  th:if="${canEditPermissions}"
+                  th:href="@{/web/person/__${person.id}__/permissions}"
+                  class="icon-link tw-px-1"
+                  aria-hidden="true"
+                  th:data-title="#{action.edit}"
+                >
+                  <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5')"></svg>
+                  <span th:text="#{action.edit}" class="tw-sr-only"></span>
+                </a>
+              </th:block>
+            </div>
+            <div
+              th:replace="fragments/box::box-with-icon(~{::person-details-permissions-box-icon}, ~{::person-details-permissions-box-body})"
+            >
+              <th:block th:ref="person-details-permissions-box-icon">
+                <div
+                  th:replace="fragments/rounded::block(content=~{::person-details-permissions-box-icon-rounded}, className='tw-bg-blue-400 tw-text-white dark:tw-bg-sky-500 dark:tw-text-zinc-900')"
+                >
+                  <th:block th:ref="person-details-permissions-box-icon-rounded">
+                    <svg th:replace="icon/key::svg(className='tw-w-8 tw-h-8')" />
+                  </th:block>
+                </div>
+              </th:block>
+              <th:block th:ref="person-details-permissions-box-body">
+                <dl th:each="role, loop : ${permissions}" class="tw-m-0">
+                  <dt
+                    th:with="permissionMessageKey=|person.form.permissions.roles.${role}|"
+                    th:text="#{__${permissionMessageKey}__}"
+                    class="tw-mb-2 tw-font-medium"
+                  ></dt>
+                  <dd
+                    th:text="#{'person.form.permissions.roles.' + ${role} + '.description'(${person.niceName})}"
+                    th:class="|tw-text-sm ${not loop.last ? 'tw-mb-8' : ''}|"
+                  ></dd>
+                </dl>
               </th:block>
             </div>
           </div>
