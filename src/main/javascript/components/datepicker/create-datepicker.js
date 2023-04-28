@@ -238,7 +238,10 @@ function waitForDatePickerHydration(rootElement) {
         }
       }
     });
-    observer.observe(rootElement, { attributes: true });
+    observer.observe(rootElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
   });
 }
 
