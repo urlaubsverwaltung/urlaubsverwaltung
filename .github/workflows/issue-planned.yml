@@ -6,7 +6,7 @@ on:
 
 jobs:
   apply-label:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: sleep 20s
         run: sleep 20

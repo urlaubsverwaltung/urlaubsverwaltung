@@ -6,7 +6,7 @@ on:
 
 jobs:
   apply-label:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/github-script@v6
         name: Add label 'status new' to issue when demilestoned
