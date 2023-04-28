@@ -6,6 +6,8 @@ const urlPrefix = ""; // not required, no absences are fetched since we have no 
 createDatepicker("#from-date-input", { urlPrefix, getPersonId });
 createDatepicker("#to-date-input", { urlPrefix, getPersonId });
 
+// close `<details-dropdown>` on advancing client side navigation.
+// (it's visible as long as response is loading)
 document.addEventListener("turbo:submit-end", function (event) {
   if (event.target.matches("#form-date-from-to")) {
     event.target.querySelector("[is=uv-details-dropdown]").open = false;
