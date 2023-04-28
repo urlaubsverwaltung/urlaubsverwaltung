@@ -88,12 +88,12 @@
                   <dd
                     th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.personnelNumber)}"
                     th:text="${personBasedata.personnelNumber}"
-                    class="tw-text-sm tw-mb-8 tw-text-ellipsis tw-overflow-hidden"
+                    class="tw-text-sm tw-text-ellipsis tw-overflow-hidden"
                   ></dd>
                   <dt
                     th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.additionalInformation)}"
                     th:text="#{person.account.basedata.additionalInformation}"
-                    class="tw-mb-2 tw-font-medium dark:tw-text-zinc-400"
+                    class="tw-mb-2 tw-mt-4 tw-font-medium dark:tw-text-zinc-400"
                   ></dt>
                   <dd
                     th:if="${personBasedata != null && not #strings.isEmpty(personBasedata.additionalInformation)}"
