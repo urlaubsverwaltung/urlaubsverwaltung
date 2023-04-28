@@ -1,0 +1,20 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+  <changeSet author="schneider" id="migrate-mail-notification-overtime">
+
+    <preConditions>
+      <tableExists tableName="person_notifications"/>
+    </preConditions>
+
+    <sql>
+      INSERT INTO person_notifications(person_id, notifications) SELECT DISTINCT person_id, 'NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED' FROM person_notifications WHERE notifications = 'NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL';
+    </sql>
+
+    <delete tableName="person_notifications">
+      <where>notifications = 'NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL'</where>
+    </delete>
+  </changeSet>
+</databaseChangeLog>

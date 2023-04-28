@@ -13,7 +13,8 @@
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
       <turbo-frame id="frame-feedback" data-turbo-action="replace">
         <div class="feedback">
-          <p th:if="${success}" th:text="#{settings.action.update.success}" class="alert alert-success"></p>
+          <p th:if="${success}" th:text="#{person.notifications.update.success}" class="alert alert-success"></p>
+          <p th:if="${error}" th:text="#{person.notifications.update.error}" class="alert alert-danger"></p>
         </div>
       </turbo-frame>
 
@@ -143,7 +144,17 @@
                 ></li>
               </ul>
             </section>
-            <section>
+            <section
+              th:if="${
+                  personNotificationsDto.applicationAppliedForManagement.visible ||
+                  personNotificationsDto.applicationTemporaryAllowedForManagement.visible ||
+                  personNotificationsDto.applicationAllowedForManagement.visible ||
+                  personNotificationsDto.applicationCancellationForManagement.visible ||
+                  personNotificationsDto.applicationAdaptedForManagement.visible ||
+                  personNotificationsDto.applicationWaitingReminderForManagement.visible ||
+                  personNotificationsDto.applicationCancellationRequestedForManagement.visible
+                }"
+            >
               <h2
                 class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
                 style="top: var(--uv-header-height)"
@@ -175,17 +186,34 @@
                 ></li>
               </ul>
             </section>
-            <section th:if="${personNotificationsDto.overtimeManagementAll.visible}">
+            <section>
               <h2
                 class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
                 style="top: var(--uv-header-height)"
                 th:text="#{person.notifications.section.overtime.title}"
               >
-                Überstunden
+                Meine Überstunden
               </h2>
               <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
                 <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.overtimeManagementAll.visible},active=${personNotificationsDto.overtimeManagementAll.active},name='overtimeManagementAll.active',label='person.notifications.section.overtime.all.label',info='person.notifications.section.overtime.all.info')}"
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.overtimeApplied.visible},active=${personNotificationsDto.overtimeApplied.active},name='overtimeApplied.active',label='person.notifications.section.overtime.applied.label',info='person.notifications.section.overtime.applied.info')}"
+                ></li>
+                <li
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.overtimeAppliedByManagement.visible},active=${personNotificationsDto.overtimeAppliedByManagement.active},name='overtimeAppliedByManagement.active',label='person.notifications.section.overtime.applied.by_management.label',info='person.notifications.section.overtime.applied.by_management.info')}"
+                ></li>
+              </ul>
+            </section>
+            <section th:if="${personNotificationsDto.overtimeAppliedForManagement.visible}">
+              <h2
+                class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+                style="top: var(--uv-header-height)"
+                th:text="#{person.notifications.section.overtime.management.title}"
+              >
+                Überstunden meiner Kolleg:innen
+              </h2>
+              <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+                <li
+                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.overtimeAppliedForManagement.visible},active=${personNotificationsDto.overtimeAppliedForManagement.active},name='overtimeAppliedForManagement.active',label='person.notifications.section.overtime.applied.management.label',info='person.notifications.section.overtime.applied.management.info')}"
                 ></li>
               </ul>
             </section>

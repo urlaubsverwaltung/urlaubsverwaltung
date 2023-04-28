@@ -41,6 +41,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -97,7 +98,9 @@ class OvertimeServiceImplTest {
     void ensureRecordingOvertimeSendsNotification() {
 
         final Person author = new Person();
+
         final Overtime overtime = new Overtime();
+        overtime.setPerson(author);
         when(overtimeRepository.save(overtime)).thenReturn(overtime);
 
         final OvertimeComment overtimeComment = new OvertimeComment();
@@ -105,7 +108,32 @@ class OvertimeServiceImplTest {
 
         sut.record(overtime, Optional.of("Foo Bar"), author);
 
-        verify(overtimeMailService).sendOvertimeNotification(overtime, overtimeComment);
+        verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
+        verify(overtimeMailService).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
+        verify(overtimeMailService).sendOvertimeNotificationToManagement(overtime, overtimeComment);
+    }
+
+    @Test
+    void ensureRecordingOvertimeSendsNotificationFromManagement() {
+
+        final Person author = new Person();
+        author.setId(1);
+
+        final Person person = new Person();
+        person.setId(2);
+
+        final Overtime overtime = new Overtime();
+        overtime.setPerson(person);
+        when(overtimeRepository.save(overtime)).thenReturn(overtime);
+
+        final OvertimeComment overtimeComment = new OvertimeComment();
+        when(overtimeCommentRepository.save(any())).thenReturn(overtimeComment);
+
+        sut.record(overtime, Optional.of("Foo Bar"), author);
+
+        verify(overtimeMailService, never()).sendOvertimeNotificationToApplicantFromApplicant(overtime, overtimeComment);
+        verify(overtimeMailService).sendOvertimeNotificationToApplicantFromManagement(overtime, overtimeComment, author);
+        verify(overtimeMailService).sendOvertimeNotificationToManagement(overtime, overtimeComment);
     }
 
     @Test
@@ -492,7 +520,7 @@ class OvertimeServiceImplTest {
         when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from.with(firstDayOfYear()), to.with(lastDayOfYear())))
             .thenReturn(List.of(overtimeOne, overtimeOneOne, overtimeTwo, overtimeThree));
         when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to))
-            .thenReturn(List.of(overtimeOne,overtimeTwo));
+            .thenReturn(List.of(overtimeOne, overtimeTwo));
 
         final List<Application> applications = List.of();
 

@@ -1,6 +1,6 @@
 [(#{greeting(${recipient.niceName})})],
 
-[(#{overtime.added})]
+[(#{overtime.added_to_applicant})]
 
     [(${baseLinkURL})]web/overtime/[(${overtime.id})]
 [# th:if="${not #strings.isEmpty(comment.text)}"]
@@ -9,6 +9,5 @@
 [/]
 [(#{overtime.information.title})]
 
-    [(${rightPadder.rightPad('__#{absence.information.person}__',__#{overtime.information.max_length}__)})] [(${overtime.person.niceName})]
     [(${rightPadder.rightPad('__#{absence.information.period}__',__#{overtime.information.max_length}__)})] [(${#temporals.format(overtime.startDate, "dd.MM.yyyy")})] - [(${#temporals.format(overtime.endDate, "dd.MM.yyyy")})]
     [(${rightPadder.rightPad('__#{overtime.information.duration}__',__#{overtime.information.max_length}__)})] [(${overtimeDurationHours})] [(${overtimeDurationMinutes})]

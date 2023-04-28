@@ -26,7 +26,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -72,10 +72,9 @@ class PersonNotificationsDtoValidator implements Validator {
         final Collection<Role> roles = person.getPermissions();
         final Collection<MailNotification> notifications = mapToMailNotifications(personNotificationsDto);
 
-        final List<Role> officeOrBoss = List.of(OFFICE, BOSS);
+        validateCombinationOfNotificationAndRole(roles, notifications, List.of(OFFICE, BOSS), NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL, errors);
+
         final List<Role> bossOrDHOrSSA = List.of(BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
-        validateCombinationOfNotificationAndRole(roles, notifications, officeOrBoss, NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL, errors);
-        validateCombinationOfNotificationAndRole(roles, notifications, officeOrBoss, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL, errors);
         validateCombinationOfNotificationAndRole(roles, notifications, bossOrDHOrSSA, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, errors);
         validateCombinationOfNotificationAndRole(roles, notifications, bossOrDHOrSSA, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED, errors);
         validateCombinationOfNotificationAndRole(roles, notifications, bossOrDHOrSSA, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED, errors);
@@ -85,6 +84,9 @@ class PersonNotificationsDtoValidator implements Validator {
         validateCombinationOfNotificationAndRole(roles, notifications, bossOrDHOrSSA, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED, errors);
         validateCombinationOfNotificationAndRole(roles, notifications, bossOrDHOrSSA, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED, errors);
         validateCombinationOfNotificationAndRole(roles, notifications, bossOrDHOrSSA, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER, errors);
+
+        final List<Role> officeOrBossOrDHOrSSA = List.of(OFFICE, BOSS, DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY);
+        validateCombinationOfNotificationAndRole(roles, notifications, officeOrBossOrDHOrSSA, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED, errors);
 
         final boolean cannotHaveNotificationManagementCancellationRequested = !person.hasRole(OFFICE) &&
             ((person.hasRole(BOSS) || person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY)) && !person.hasRole(Role.APPLICATION_CANCELLATION_REQUESTED));

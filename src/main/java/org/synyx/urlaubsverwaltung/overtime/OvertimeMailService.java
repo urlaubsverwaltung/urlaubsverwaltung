@@ -2,39 +2,79 @@ package org.synyx.urlaubsverwaltung.overtime;
 
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
-import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 
 @Service
 class OvertimeMailService {
 
     private final MailService mailService;
-    private final PersonService personService;
+    private final MailRecipientService mailRecipientService;
 
-    OvertimeMailService(MailService mailService, PersonService personService) {
+    OvertimeMailService(MailService mailService, MailRecipientService mailRecipientService) {
         this.mailService = mailService;
-        this.personService = personService;
+        this.mailRecipientService = mailRecipientService;
     }
 
-    void sendOvertimeNotification(Overtime overtime, OvertimeComment overtimeComment) {
+    void sendOvertimeNotificationToApplicantFromApplicant(Overtime overtime, OvertimeComment overtimeComment) {
 
-        final Map<String, Object> model = new HashMap<>();
-        model.put("overtime", overtime);
-        model.put("overtimeDurationHours", overtime.getDuration().toHours() + " Std.");
-        model.put("overtimeDurationMinutes", overtime.getDuration().toMinutesPart() + " Min.");
-        model.put("comment", overtimeComment);
+        final Map<String, Object> model = Map.of(
+            "overtime", overtime,
+            "overtimeDurationHours", overtime.getDuration().toHours() + " Std.",
+            "overtimeDurationMinutes", overtime.getDuration().toMinutesPart() + " Min.",
+            "comment", overtimeComment
+        );
 
-        final Mail toOffice = Mail.builder()
-            .withRecipient(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_ALL))
-            .withSubject("subject.overtime.created")
-            .withTemplate("overtime_office", model)
+        final Mail toPerson = Mail.builder()
+            .withRecipient(overtime.getPerson(), NOTIFICATION_EMAIL_OVERTIME_APPLIED)
+            .withSubject("subject.overtime.created.applicant")
+            .withTemplate("overtime_to_applicant_from_applicant", model)
             .build();
+        mailService.send(toPerson);
+    }
 
-        mailService.send(toOffice);
+    void sendOvertimeNotificationToApplicantFromManagement(Overtime overtime, OvertimeComment overtimeComment, Person author) {
+
+        final Map<String, Object> model = Map.of(
+            "overtime", overtime,
+            "overtimeDurationHours", overtime.getDuration().toHours() + " Std.",
+            "overtimeDurationMinutes", overtime.getDuration().toMinutesPart() + " Min.",
+            "comment", overtimeComment,
+            "author", author
+        );
+
+        final Mail toPerson = Mail.builder()
+            .withRecipient(overtime.getPerson(), NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT)
+            .withSubject("subject.overtime.created.applicant_from_management")
+            .withTemplate("overtime_to_applicant_from_management", model)
+            .build();
+        mailService.send(toPerson);
+    }
+
+    void sendOvertimeNotificationToManagement(Overtime overtime, OvertimeComment overtimeComment) {
+
+        final Map<String, Object> model = Map.of(
+            "overtime", overtime,
+            "overtimeDurationHours", overtime.getDuration().toHours() + " Std.",
+            "overtimeDurationMinutes", overtime.getDuration().toMinutesPart() + " Min.",
+            "comment", overtimeComment
+        );
+
+        // send overtime to all interested managers
+        final List<Person> relevantRecipientsToInform = mailRecipientService.getRecipientsOfInterest(overtime.getPerson(), NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
+        final Mail mailToRelevantPersons = Mail.builder()
+            .withRecipient(relevantRecipientsToInform)
+            .withSubject("subject.overtime.created.management", overtime.getPerson().getNiceName())
+            .withTemplate("overtime_to_management", model)
+            .build();
+        mailService.send(mailToRelevantPersons);
     }
 }
