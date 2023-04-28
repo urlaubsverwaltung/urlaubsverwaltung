@@ -81,7 +81,7 @@ describe("create-datepicker", () => {
     expect(datepicker.classList).toContain("bar");
   });
 
-  test("assigns original 'name' attribute to the visible input element", async () => {
+  test("assigns original 'name' attribute to <duet-date-picker>", async () => {
     document.body.innerHTML = `
       <input name="start-date" />
     `;
@@ -90,10 +90,7 @@ describe("create-datepicker", () => {
     const getPersonId = () => 42;
 
     const datepicker = await createDatepicker("input", { urlPrefix, getPersonId });
-
-    const actualElement = datepicker.querySelector('input[name="start-date"]');
-    expect(actualElement.getAttribute("type")).not.toBe("hidden");
-    expect(actualElement.getAttribute("placeholder")).toBe("placeholder-message");
+    expect(datepicker.getAttribute("name")).toBe("start-date");
   });
 
   test("fails to render with preset date value but missing iso-value", async () => {

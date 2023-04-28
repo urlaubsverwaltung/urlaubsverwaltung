@@ -6,26 +6,27 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-import static java.time.format.DateTimeFormatter.ISO_DATE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO_DATE;
 
 public class SickNoteFormDto {
 
     private Integer id;
     private Person person;
     private SickNoteType sickNoteType;
-    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate startDate;
-    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate endDate;
     private DayLength dayLength = FULL;
-    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate aubStartDate;
-    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate aubEndDate;
     private String comment;
 
@@ -54,7 +55,7 @@ public class SickNoteFormDto {
     }
 
     public String getStartDateIsoValue() {
-        return startDate == null ? "" : startDate.format(ISO_DATE);
+        return startDate == null ? "" : startDate.format(DateTimeFormatter.ISO_DATE);
     }
 
     public LocalDate getStartDate() {
@@ -66,7 +67,7 @@ public class SickNoteFormDto {
     }
 
     public String getEndDateIsoValue() {
-        return endDate == null ? "" : endDate.format(ISO_DATE);
+        return endDate == null ? "" : endDate.format(DateTimeFormatter.ISO_DATE);
     }
 
     public LocalDate getEndDate() {
@@ -90,7 +91,7 @@ public class SickNoteFormDto {
     }
 
     public String getAubStartDateIsoValue() {
-        return aubStartDate == null ? "" : aubStartDate.format(ISO_DATE);
+        return aubStartDate == null ? "" : aubStartDate.format(DateTimeFormatter.ISO_DATE);
     }
 
     public void setAubStartDate(LocalDate aubStartDate) {
@@ -102,7 +103,7 @@ public class SickNoteFormDto {
     }
 
     public String getAubEndDateIsoValue() {
-        return aubEndDate == null ? "" : aubEndDate.format(ISO_DATE);
+        return aubEndDate == null ? "" : aubEndDate.format(DateTimeFormatter.ISO_DATE);
     }
 
     public void setAubEndDate(LocalDate aubEndDate) {

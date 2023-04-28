@@ -590,11 +590,12 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void postNewApplicationForSamePersonIsOk() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person person = personWithRole(USER);
         person.setId(1);
         when(personService.getSignedInUser()).thenReturn(person);
+
+        when(applicationInteractionService.directAllow(any(Application.class), any(Person.class), any(Optional.class)))
+            .thenReturn(new Application());
 
         perform(post("/web/application")
             .param("person.id", "1")
@@ -603,7 +604,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("vacationType.category", "HOLIDAY")
             .param("dayLength", "FULL")
         )
-            .andExpect(status().isOk());
+            .andExpect(status().is3xxRedirection());
     }
 
     @Test
@@ -661,11 +662,12 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void postNewApplicationForAsDHForMemberWithApplicationAddRightIsOk() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person signedInUser = personWithRole(USER, DEPARTMENT_HEAD, APPLICATION_ADD);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(eq(signedInUser), any(Person.class))).thenReturn(true);
+
+        when(applicationInteractionService.directAllow(any(Application.class), any(Person.class), any(Optional.class)))
+            .thenReturn(new Application());
 
         perform(post("/web/application")
             .param("person.id", "1")
@@ -673,7 +675,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("endDate", "2022-11-03")
             .param("vacationType.category", "HOLIDAY")
             .param("dayLength", "FULL")
-        ).andExpect(status().isOk());
+        ).andExpect(status().is3xxRedirection());
     }
 
     @Test
@@ -714,11 +716,12 @@ class ApplicationForLeaveFormViewControllerTest {
     @Test
     void postNewApplicationForAsSSAForMemberWithApplicationAddRightIsOk() throws Exception {
 
-        when(settingsService.getSettings()).thenReturn(new Settings());
-
         final Person signedInUser = personWithRole(USER, SECOND_STAGE_AUTHORITY, APPLICATION_ADD);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(eq(signedInUser), any(Person.class))).thenReturn(true);
+
+        when(applicationInteractionService.directAllow(any(Application.class), any(Person.class), any(Optional.class)))
+            .thenReturn(new Application());
 
         perform(post("/web/application")
             .param("person.id", "1")
@@ -726,7 +729,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("endDate", "2022-11-03")
             .param("vacationType.category", "HOLIDAY")
             .param("dayLength", "FULL")
-        ).andExpect(status().isOk());
+        ).andExpect(status().is3xxRedirection());
     }
 
     @Test

@@ -5,19 +5,20 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static java.time.format.DateTimeFormatter.ISO_DATE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO_DATE;
 
 public class WorkingTimeForm {
 
-    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate validFrom;
     private List<Integer> workingDays = new ArrayList<>();
     private FederalState federalState;
@@ -46,7 +47,7 @@ public class WorkingTimeForm {
             return "";
         }
 
-        return validFrom.format(ISO_DATE);
+        return validFrom.format(DateTimeFormatter.ISO_DATE);
     }
 
     public LocalDate getValidFrom() {

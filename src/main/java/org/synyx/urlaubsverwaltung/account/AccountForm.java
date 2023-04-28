@@ -5,25 +5,26 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
 
 import static java.time.Month.APRIL;
-import static java.time.format.DateTimeFormatter.ISO_DATE;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.DD_MM_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO_DATE;
 
 public class AccountForm {
 
     private int holidaysAccountYear;
-    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate holidaysAccountValidFrom;
-    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate holidaysAccountValidTo;
     private boolean overrideVacationDaysExpire;
     private Boolean doRemainingVacationDaysExpireLocally;
     private boolean doRemainingVacationDaysExpireGlobally;
-    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate expiryDate;
     private BigDecimal annualVacationDays;
     private BigDecimal actualVacationDays;
@@ -71,7 +72,7 @@ public class AccountForm {
             return "";
         }
 
-        return holidaysAccountValidFrom.format(ISO_DATE);
+        return holidaysAccountValidFrom.format(DateTimeFormatter.ISO_DATE);
     }
 
     public LocalDate getHolidaysAccountValidFrom() {
@@ -87,7 +88,7 @@ public class AccountForm {
             return "";
         }
 
-        return holidaysAccountValidTo.format(ISO_DATE);
+        return holidaysAccountValidTo.format(DateTimeFormatter.ISO_DATE);
     }
 
     public LocalDate getHolidaysAccountValidTo() {
@@ -131,7 +132,7 @@ public class AccountForm {
             return "";
         }
 
-        return expiryDate.format(ISO_DATE);
+        return expiryDate.format(DateTimeFormatter.ISO_DATE);
     }
 
     public LocalDate getExpiryDate() {
