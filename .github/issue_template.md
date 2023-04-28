@@ -8,9 +8,6 @@ Please look for other issues or pull requests which already work on this topic. 
 Have you already checked the [FAQ](https://github.com/urlaubsverwaltung/urlaubsverwaltung/wiki)?
 
 # 🙅 Issue
-- Question
-  Feel free to ask us questions and please label them with 'type: question'
-  
 - Security Vulnerability
   STOP!! Please don't raise security vulnerabilities here.
   Please open a report of a security vulnerability via

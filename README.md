@@ -26,8 +26,8 @@ Dann steige über unsere [Landingpage] direkt in das [Demo-System](https://urlau
 ## FAQ
 
 Für Fragen, die bei der Benutzung der Urlaubsverwaltung aufkommen, gibt es ein [Hilfe](https://urlaubsverwaltung.cloud/hilfe/).  
-Sollte dieser Fragenkatalog nicht weiterhelfen, kannst du gerne [ein neues Issue](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/new/choose)
-vom Typ "Question" erstellen.
+Sollte dieser Fragenkatalog nicht weiterhelfen, kannst du gerne
+[ein neue Q&A](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/new?category=q-a) erstellen.
 
 
 ## 🎉 Version 5.x 
@@ -384,9 +384,7 @@ Folgende Systeme sind erreichbar unter `localhost`
 
 Wenn du uns bei der **Entwicklung** der Urlaubsverwaltung **unterstützen** möchtest,
 dann schau dir die [Contributing to Urlaubsverwaltung](./CONTRIBUTING.md) Referenz und die folgenden
-Abschnitte an. Bei Fragen kannst du gerne [ein neues Issue](https://github.com/urlaubsverwaltung/urlaubsverwaltung/issues/new/choose)
-vom Typ "Question" erstellen.
-
+Abschnitte an. Bei Fragen kannst du gerne [ein neue Q&A](https://github.com/urlaubsverwaltung/urlaubsverwaltung/discussions/new?category=q-a) erstellen.
 
 ### Voraussetzungen
 
