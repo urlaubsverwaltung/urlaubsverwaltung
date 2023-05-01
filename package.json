@@ -60,7 +60,7 @@
     "concurrently": "8.0.1",
     "cross-env": "7.0.3",
     "css-loader": "5.2.7",
-    "cssnano": "6.0.0",
+    "cssnano": "6.0.1",
     "date-fns": "2.29.3",
     "eslint": "8.39.0",
     "eslint-config-prettier": "8.8.0",
