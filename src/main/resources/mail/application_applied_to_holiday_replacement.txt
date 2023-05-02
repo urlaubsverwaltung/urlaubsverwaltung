@@ -7,3 +7,6 @@
 [(${holidayReplacementNote})][/]
 
 [(#{application.applied.to_holiday_replacement.third})] [(${baseLinkURL})]web/application/replacement
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

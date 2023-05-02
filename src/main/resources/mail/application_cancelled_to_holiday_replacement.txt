@@ -5,3 +5,6 @@
 [(#{application.cancelled.to_holiday_replacement.third})]
 
 [(#{application.cancelled.to_holiday_replacement.fourth})] [(${baseLinkURL})]web/application/replacement
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

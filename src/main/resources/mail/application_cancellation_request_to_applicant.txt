@@ -9,3 +9,6 @@
 [/]
 
 [(#{application.cancellation_request.to_applicant.overview})] [(${baseLinkURL})]web/application#cancellation-requests
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

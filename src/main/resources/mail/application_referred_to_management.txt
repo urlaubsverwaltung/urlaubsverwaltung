@@ -15,3 +15,6 @@
     [(${rightPadder.rightPad('__#{absence.information.address}__',__#{absence.information.max_length}__)})] [(${#strings.trim(application.address)})]
     [(${rightPadder.rightPad('__#{absence.information.date}__',__#{absence.information.max_length}__)})] [(${#temporals.format(application.applicationDate, "dd.MM.yyyy")})]
     [(${rightPadder.rightPad('__#{absence.information.referred_from}__',__#{absence.information.max_length}__)})] [(${sender.niceName})]
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

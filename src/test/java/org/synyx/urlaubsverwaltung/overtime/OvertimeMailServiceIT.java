@@ -48,6 +48,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
     void ensureManagerWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
+        person.setId(1);
 
         final LocalDate startDate = LocalDate.of(2020, 4, 16);
         final LocalDate endDate = LocalDate.of(2020, 4, 23);
@@ -79,13 +80,17 @@ class OvertimeMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "    Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +
             "    Zeitraum:    16.04.2020 - 23.04.2020" + EMAIL_LINE_BREAK +
-            "    Dauer:       55 Std. 12 Min.");
+            "    Dauer:       55 Std. 12 Min." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + office.getId() + "/notifications anpassen.");
     }
 
     @Test
     void ensureApplicantWithOvertimeNotificationGetMailIfOvertimeRecordedFromManagement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT));
 
         final Person author = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(), List.of(USER, OFFICE));
@@ -117,7 +122,10 @@ class OvertimeMailServiceIT extends TestContainersBase {
             "Informationen zu den Überstunden:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "    Zeitraum:    16.04.2020 - 23.04.2020" + EMAIL_LINE_BREAK +
-            "    Dauer:       55 Std. 12 Min.");
+            "    Dauer:       55 Std. 12 Min." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
@@ -152,6 +160,9 @@ class OvertimeMailServiceIT extends TestContainersBase {
             "Informationen zu den Überstunden:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "    Zeitraum:    16.04.2020 - 23.04.2020" + EMAIL_LINE_BREAK +
-            "    Dauer:       55 Std. 12 Min.");
+            "    Dauer:       55 Std. 12 Min." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + author.getId() + "/notifications anpassen.");
     }
 }

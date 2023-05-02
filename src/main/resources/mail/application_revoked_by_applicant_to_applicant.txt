@@ -7,3 +7,5 @@
 [(#{application.revoked.by_applicant_to_applicant.reason})]
 [(${comment.text})]
 [/]
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

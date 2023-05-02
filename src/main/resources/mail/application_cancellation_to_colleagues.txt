@@ -5,3 +5,6 @@
     [(#{absence.information.period})] [(${#temporals.format(application.startDate, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(application.endDate, "dd.MM.yyyy")})], [(#{__${application.dayLength.name}__})]
 
 [(#{application.cancelled.to_colleagues.overview})]: [(${baseLinkURL})]web/absences
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

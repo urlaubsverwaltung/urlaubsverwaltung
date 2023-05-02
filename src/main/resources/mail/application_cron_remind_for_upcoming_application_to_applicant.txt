@@ -11,3 +11,6 @@
 
 [(#{application.upcoming_application_to_applicant.note.first(${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")})})]
 [(#{application.upcoming_application_to_applicant.note.second})]
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
