@@ -39,12 +39,14 @@ export function initAutosubmit() {
       return;
     }
 
-    const { autoSubmit = "" } = target.dataset;
-    const element = autoSubmit ? document.querySelector("#" + autoSubmit) : target.closest("form");
-    if (element instanceof HTMLFormElement) {
-      element.requestSubmit();
-    } else {
-      element.closest("form").requestSubmit(element);
+    if ("autoSubmit" in target.dataset) {
+      const { autoSubmit = "" } = target.dataset;
+      const element = autoSubmit ? document.querySelector("#" + autoSubmit) : target.closest("form");
+      if (element instanceof HTMLFormElement) {
+        element.requestSubmit();
+      } else {
+        element.closest("form").requestSubmit(element);
+      }
     }
   });
 }
