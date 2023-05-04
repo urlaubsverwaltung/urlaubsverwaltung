@@ -73,18 +73,18 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
         final String content = (String) msgUser.getContent();
         assertThat(content).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "dein Anspruch auf Lohnfortzahlung von 42 Tagen endete am 14.03.2022." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/sicknote/1" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Krankmeldung:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:                  Lieschen Müller" + EMAIL_LINE_BREAK +
             "    Zeitraum:                     01.02.2022 bis 01.04.2022" + EMAIL_LINE_BREAK +
             "    Anspruch auf Lohnfortzahlung: 01.02.2022 bis 14.03.2022" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Hinweis:" + EMAIL_LINE_BREAK +
             "Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal 42 Tage" + EMAIL_LINE_BREAK +
             "(fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage)." + EMAIL_LINE_BREAK +
@@ -97,18 +97,18 @@ class SickNoteMailServiceIT extends TestContainersBase {
         // check content of office email
         final String contentOfficeMail = (String) msgOffice.getContent();
         assertThat(contentOfficeMail).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "der Anspruch auf Lohnfortzahlung von Lieschen Müller von 42 Tagen endete am 14.03.2022." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    https://localhost:8080/web/sicknote/1" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Informationen zur Krankmeldung:" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "    Mitarbeiter:                  Lieschen Müller" + EMAIL_LINE_BREAK +
             "    Zeitraum:                     01.02.2022 bis 01.04.2022" + EMAIL_LINE_BREAK +
             "    Anspruch auf Lohnfortzahlung: 01.02.2022 bis 14.03.2022" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
             "Hinweis:" + EMAIL_LINE_BREAK +
             "Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal 42 Tage" + EMAIL_LINE_BREAK +
             "(fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage)." + EMAIL_LINE_BREAK +

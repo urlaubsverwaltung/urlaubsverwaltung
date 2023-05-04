@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
@@ -28,12 +29,16 @@ interface SickNoteRepository extends CrudRepository<SickNoteEntity, Integer> {
     // NOTE: Only needed to send email after certain duration of a sick note
     @Query("SELECT x " +
         "FROM SickNoteEntity x " +
-        "WHERE DATEDIFF(x.endDate, x.startDate) + 1 > ?1 " +
-        "AND ?3 >= ADDDATE(x.startDate, (?1 - ?2 - 1)) " +
+        "WHERE DATEDIFF(x.endDate, x.startDate) + 1 > :maximumSickPayDays " +
+        "AND :today >= ADDDATE(x.startDate, (:maximumSickPayDays - :daysBeforeEndOfSickPayNotification - 1)) " +
         "AND x.status = 'ACTIVE' " +
-        "AND (x.endOfSickPayNotificationSend IS NULL OR x.lastEdited > x.endOfSickPayNotificationSend)"
+        "AND x.endOfSickPayNotificationSend IS NULL"
     )
-    List<SickNoteEntity> findSickNotesToNotifyForSickPayEnd(int maximumSickPayDays, int daysBeforeEndOfSickPayNotification, LocalDate today);
+    List<SickNoteEntity> findSickNotesToNotifyForSickPayEnd(
+        @Param("maximumSickPayDays") int maximumSickPayDays,
+        @Param("daysBeforeEndOfSickPayNotification") int daysBeforeEndOfSickPayNotification,
+        @Param("today") LocalDate today
+    );
 
     List<SickNoteEntity> findByStatusInAndEndDateGreaterThanEqual(List<SickNoteStatus> openSickNoteStatuses, LocalDate since);
 
