@@ -189,12 +189,8 @@ class SickNoteRepositoryIT extends TestContainersBase {
     }
 
     @Test
-    void findSickNoteIfCurrentEditStateNotNotifiedBefore() {
+    void ensureNotToSendMailIfSickNoteIsEditedButMailWasSent() {
 
-        // lohnfortzahlung from 01.02.2022 until 14.03.2022
-        // 7 days before notification on 07.03.2022
-        // and was not already sent
-        // --> sick note will be found
         final LocalDate startDate = LocalDate.of(2022, 2, 1);
         final LocalDate endDate = LocalDate.of(2022, 3, 15);
 
@@ -208,9 +204,7 @@ class SickNoteRepositoryIT extends TestContainersBase {
         final LocalDate today = LocalDate.of(2022, 3, 7);
 
         final List<SickNoteEntity> sickNotes = sickNoteRepository.findSickNotesToNotifyForSickPayEnd(maximumSickPayDays, daysBeforeEndOfSickPayNotification, today);
-        assertThat(sickNotes)
-            .hasSize(1)
-            .contains(sickNote);
+        assertThat(sickNotes).isEmpty();
     }
 
     @Test

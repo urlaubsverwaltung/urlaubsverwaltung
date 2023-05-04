@@ -32,7 +32,7 @@ interface SickNoteRepository extends CrudRepository<SickNoteEntity, Integer> {
         "WHERE DATEDIFF(x.endDate, x.startDate) + 1 > :maximumSickPayDays " +
         "AND :today >= ADDDATE(x.startDate, (:maximumSickPayDays - :daysBeforeEndOfSickPayNotification - 1)) " +
         "AND x.status = 'ACTIVE' " +
-        "AND (x.endOfSickPayNotificationSend IS NULL OR x.lastEdited > x.endOfSickPayNotificationSend)"
+        "AND x.endOfSickPayNotificationSend IS NULL"
     )
     List<SickNoteEntity> findSickNotesToNotifyForSickPayEnd(
         @Param("maximumSickPayDays") int maximumSickPayDays,
