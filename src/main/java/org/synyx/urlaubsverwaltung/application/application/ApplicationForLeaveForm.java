@@ -21,6 +21,7 @@ import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.D_M_YYYY;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.HH_MM;
 import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.HH_MM_SS;
+import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO_DATE;
 
 /**
  * View class representing an application for leave.
@@ -31,13 +32,13 @@ public class ApplicationForLeaveForm {
     private Person person;
 
     // period: date and time
-    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate startDate;
 
     @DateTimeFormat(pattern = HH_MM, fallbackPatterns = HH_MM_SS)
     private LocalTime startTime;
 
-    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY})
+    @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
     private LocalDate endDate;
 
     @DateTimeFormat(pattern = HH_MM, fallbackPatterns = HH_MM_SS)

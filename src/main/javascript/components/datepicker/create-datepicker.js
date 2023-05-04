@@ -6,6 +6,7 @@ import { mutation } from "./mutation";
 import { createDatepickerLocalization } from "./locale";
 import { addDatepickerCssClassesToNode, removeDatepickerCssClassesFromNode } from "./datepicker-css-classes";
 import { addAbsenceTypeStyleToNode, isNoWorkday, removeAbsenceTypeStyleFromNode } from "../../js/absence";
+import { onTurboBeforeRenderRestore } from "../../js/turbo";
 import "@duetds/date-picker/dist/collection/themes/default.css";
 import "./datepicker.css";
 import "../calendar/calendar.css";
@@ -15,11 +16,83 @@ defineCustomElements(window);
 
 const noop = () => {};
 
-export async function createDatepicker(selector, { urlPrefix, getPersonId, onSelect = noop }) {
+// there has to be made some considerations for window.history handling (navigating backwards)
+// use case:
+// - web page renders
+// - `<duet-date-picker>` component hydrates
+// - `<duet-date-picker>` shows date xx.xx.xxxx
+// - user selects date yy.yy.yyyy
+//   - `<form>` is submitted
+//   - response received
+//   - current page snapshot is created (cache for client side history navigation)
+//   - history.pushState() is invoked
+//   - new page will be rendered
+// - user navigates back with history.back()
+//
+// client side routing (with `hotwire/turbo` in our case) results in:
+// - rendering the cached page.
+//   this cached page already includes the html of the hydrated `duet-date-picker` instead of the server side rendered `input[date]` element.
+//   - `<duet-date-picker>` hydrates again. because the lib is implemented like this.
+//   - `<duet-date-picker>` contains two `input[date]` elements...
+//
+// to workaround the "duplicated hydration", we're going to remove all children of `<duet-date-picker>` :shrug:
+//
+
+// fallback values when the URL does not provide one on history.popstate.
+const initialValues = new Map();
+// date-picker configuration stuff required for rehydration on history.popstate
+const optionsByName = new Map();
+
+onTurboBeforeRenderRestore(function (event) {
+  const { newBody } = event.detail;
+
+  for (const duetDatePicker of newBody.querySelectorAll("duet-date-picker")) {
+    // remove all children which are rendered again by <duet-date-picker> stencil implementation.
+    // otherwise there would be two `input[date]`.
+    while (duetDatePicker.firstElementChild) {
+      duetDatePicker.firstElementChild.remove();
+    }
+
+    // after history.popstate we have to update the value to match the URL or initial one.
+    // the cached turbo snapshot does not contain the "previous" value but the already changed one.
+    // (form submit and rendering happens on submit-click AFTER selecting a date. snapshot is created on form submit.)
+    const name = duetDatePicker.getAttribute("name");
+    const value = new URLSearchParams(window.location.search).get(name) ?? initialValues.get(name) ?? "";
+    duetDatePicker.setAttribute("value", value);
+
+    waitForDatePickerHydration(duetDatePicker).then(() => {
+      hydrateDatepicker(duetDatePicker, optionsByName.get(name));
+    });
+  }
+});
+
+export async function createDatepicker(selector, options) {
   const { localisation } = window.uv.datepicker;
   const { dateAdapter, dateFormatShort } = createDatepickerLocalization({ locale: localisation.locale });
 
   const duetDateElement = await replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, localisation);
+
+  const optionsWithDuetConfig = {
+    ...options,
+    dateFormatShort,
+    dateAdapter,
+    localisation,
+  };
+
+  // cache configuration for possible history.popstate handling
+  const name = duetDateElement.getAttribute("name");
+  optionsByName.set(name, optionsWithDuetConfig);
+
+  hydrateDatepicker(duetDateElement, optionsWithDuetConfig);
+
+  return duetDateElement;
+}
+
+function hydrateDatepicker(duetDateElement, options) {
+  const { urlPrefix, getPersonId, onSelect = noop, dateFormatShort, dateAdapter, localisation } = options;
+
+  duetDateElement.dateAdapter = dateAdapter;
+  duetDateElement.localization = localisation;
 
   mutation(duetDateElement.querySelector(".duet-date__input"))
     .attributeChanged(["readonly"])
@@ -108,21 +181,27 @@ export async function createDatepicker(selector, { urlPrefix, getPersonId, onSel
 
   monthElement.addEventListener("change", showAbsences);
   yearElement.addEventListener("change", showAbsences);
-
-  return duetDateElement;
 }
 
-async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, localization) {
+async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, localisation) {
   const dateElement = document.querySelector(selector);
   const duetDateElement = document.createElement("duet-date-picker");
 
   duetDateElement.dateAdapter = dateAdapter;
-  duetDateElement.localization = localization;
+  duetDateElement.localization = localisation;
+
+  const name = dateElement.getAttribute("name");
+  const value = dateElement.dataset.isoValue || "";
 
   duetDateElement.setAttribute("style", "--duet-radius=0");
   duetDateElement.setAttribute("class", dateElement.getAttribute("class"));
-  duetDateElement.setAttribute("value", dateElement.dataset.isoValue || "");
   duetDateElement.setAttribute("identifier", dateElement.getAttribute("id"));
+  duetDateElement.setAttribute("name", name);
+  duetDateElement.setAttribute("value", value);
+
+  // cache initial value as fallback for history.popstate handling.
+  // first it is looked at the URL. If there is no value set for `name` then this initial value is used.
+  initialValues.set(name, value);
 
   if (dateElement.getAttribute("readonly")) {
     duetDateElement.setAttribute("readonly", "");
@@ -140,12 +219,7 @@ async function replaceNativeDateInputWithDuetDatePicker(selector, dateAdapter, l
 
   await waitForDatePickerHydration(duetDateElement);
 
-  // name attribute must be set to the actual visible input element
-  // the backend handles the raw user input for progressive enhancement reasons.
-  // (german locale is 'dd.MM.yyyy', while english locale would be 'yyyy/MM/dd' for instance)
   const duetDateInputElement = duetDateElement.querySelector("input.duet-date__input");
-  duetDateInputElement.setAttribute("name", dateElement.getAttribute("name"));
-
   for (const [key, value] of Object.entries(dateElement.dataset)) {
     duetDateInputElement.dataset[key] = value;
   }
@@ -164,7 +238,10 @@ function waitForDatePickerHydration(rootElement) {
         }
       }
     });
-    observer.observe(rootElement, { attributes: true });
+    observer.observe(rootElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
   });
 }
 
