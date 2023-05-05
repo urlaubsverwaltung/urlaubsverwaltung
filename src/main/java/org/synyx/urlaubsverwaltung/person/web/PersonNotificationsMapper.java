@@ -4,7 +4,7 @@ import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -75,7 +75,7 @@ final class PersonNotificationsMapper {
         final List<MailNotification> activePersonMailNotifications = new ArrayList<>(person.getNotifications());
         final PersonNotificationsDto personNotificationsDto = new PersonNotificationsDto();
 
-        final Map<MailNotification, Consumer<PersonNotificationDto>> setterByNotification = new HashMap<>();
+        final Map<MailNotification, Consumer<PersonNotificationDto>> setterByNotification = new EnumMap<>(MailNotification.class);
         setterByNotification.put(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL, personNotificationsDto::setPersonNewManagementAll);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, personNotificationsDto::setApplicationAppliedForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED, personNotificationsDto::setApplicationAdaptedForManagement);
