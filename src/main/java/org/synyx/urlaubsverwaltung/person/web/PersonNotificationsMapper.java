@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.person.web;
 
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,65 +73,45 @@ final class PersonNotificationsMapper {
 
         final PersonNotificationsDto personNotificationsDto = new PersonNotificationsDto();
         for (MailNotification mailNotificationToCheck : MailNotification.values()) {
+
+            final boolean isVisible = mailNotificationToCheck.isValidWith(person.getPermissions());
+            final boolean isActive = activePersonMailNotifications.contains(mailNotificationToCheck);
+
             switch (mailNotificationToCheck) {
                 case NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL: {
-                    personNotificationsDto.setPersonNewManagementAll(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setPersonNewManagementAll(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
 
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED: {
-                    personNotificationsDto.setApplicationAppliedForManagement(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setApplicationAppliedForManagement(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED:
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED: {
-                    personNotificationsDto.setApplicationAdaptedForManagement(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setApplicationAdaptedForManagement(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED:
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED:
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION: {
-                    personNotificationsDto.setApplicationCancellationForManagement(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setApplicationCancellationForManagement(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED: {
-                    personNotificationsDto.setApplicationAllowedForManagement(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setApplicationAllowedForManagement(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED: {
-                    personNotificationsDto.setApplicationTemporaryAllowedForManagement(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setApplicationTemporaryAllowedForManagement(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER: {
-                    personNotificationsDto.setApplicationWaitingReminderForManagement(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setApplicationWaitingReminderForManagement(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED: {
-                    personNotificationsDto.setApplicationCancellationRequestedForManagement(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setApplicationCancellationRequestedForManagement(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
 
@@ -144,53 +123,32 @@ final class PersonNotificationsMapper {
                 case NOTIFICATION_EMAIL_APPLICATION_CANCELLATION:
                 case NOTIFICATION_EMAIL_APPLICATION_EDITED:
                 case NOTIFICATION_EMAIL_APPLICATION_CONVERTED: {
-                    personNotificationsDto.setApplicationAppliedAndChanges(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setApplicationAppliedAndChanges(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_UPCOMING: {
-                    personNotificationsDto.setApplicationUpcoming(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setApplicationUpcoming(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT: {
-                    personNotificationsDto.setHolidayReplacement(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setHolidayReplacement(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING: {
-                    personNotificationsDto.setHolidayReplacementUpcoming(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setHolidayReplacementUpcoming(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
 
                 case NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED: {
-                    personNotificationsDto.setOvertimeAppliedForManagement(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setOvertimeAppliedForManagement(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
                 case NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT: {
-                    personNotificationsDto.setOvertimeAppliedByManagement(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setOvertimeAppliedByManagement(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
                 case NOTIFICATION_EMAIL_OVERTIME_APPLIED: {
-                    personNotificationsDto.setOvertimeApplied(new PersonNotificationDto(
-                        mailNotificationToCheck.isValidWith(person.getPermissions()),
-                        activePersonMailNotifications.contains(mailNotificationToCheck)
-                    ));
+                    personNotificationsDto.setOvertimeApplied(new PersonNotificationDto(isVisible, isActive));
                     break;
                 }
             }
