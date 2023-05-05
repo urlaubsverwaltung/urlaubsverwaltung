@@ -70,10 +70,6 @@ final class PersonNotificationsMapper {
 
     static PersonNotificationsDto mapToPersonNotificationsDto(Person person) {
 
-        final boolean isBossOrOffice = person.hasRole(Role.BOSS) || person.hasRole(Role.OFFICE);
-        final boolean isBossOrDHOrSSA = person.hasRole(Role.BOSS) || person.hasRole(Role.DEPARTMENT_HEAD) || person.hasRole(Role.SECOND_STAGE_AUTHORITY);
-        final boolean isOfficeOrBossOrDHOrSSA = person.hasRole(Role.OFFICE) || isBossOrDHOrSSA;
-
         final List<MailNotification> activePersonMailNotifications = new ArrayList<>(person.getNotifications());
 
         final PersonNotificationsDto personNotificationsDto = new PersonNotificationsDto();
@@ -81,7 +77,7 @@ final class PersonNotificationsMapper {
             switch (mailNotificationToCheck) {
                 case NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL: {
                     personNotificationsDto.setPersonNewManagementAll(new PersonNotificationDto(
-                        isBossOrOffice,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
@@ -89,7 +85,7 @@ final class PersonNotificationsMapper {
 
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED: {
                     personNotificationsDto.setApplicationAppliedForManagement(new PersonNotificationDto(
-                        isBossOrDHOrSSA,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
@@ -97,7 +93,7 @@ final class PersonNotificationsMapper {
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED:
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED: {
                     personNotificationsDto.setApplicationAdaptedForManagement(new PersonNotificationDto(
-                        isBossOrDHOrSSA,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
@@ -106,35 +102,35 @@ final class PersonNotificationsMapper {
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED:
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION: {
                     personNotificationsDto.setApplicationCancellationForManagement(new PersonNotificationDto(
-                        isBossOrDHOrSSA,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED: {
                     personNotificationsDto.setApplicationAllowedForManagement(new PersonNotificationDto(
-                        isBossOrDHOrSSA,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED: {
                     personNotificationsDto.setApplicationTemporaryAllowedForManagement(new PersonNotificationDto(
-                        isBossOrDHOrSSA,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER: {
                     personNotificationsDto.setApplicationWaitingReminderForManagement(new PersonNotificationDto(
-                        isBossOrDHOrSSA,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED: {
                     personNotificationsDto.setApplicationCancellationRequestedForManagement(new PersonNotificationDto(
-                        person.hasRole(Role.OFFICE) || ((isBossOrDHOrSSA) && person.hasRole(Role.APPLICATION_CANCELLATION_REQUESTED)),
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
@@ -149,28 +145,28 @@ final class PersonNotificationsMapper {
                 case NOTIFICATION_EMAIL_APPLICATION_EDITED:
                 case NOTIFICATION_EMAIL_APPLICATION_CONVERTED: {
                     personNotificationsDto.setApplicationAppliedAndChanges(new PersonNotificationDto(
-                        true,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_UPCOMING: {
                     personNotificationsDto.setApplicationUpcoming(new PersonNotificationDto(
-                        true,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT: {
                     personNotificationsDto.setHolidayReplacement(new PersonNotificationDto(
-                        true,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING: {
                     personNotificationsDto.setHolidayReplacementUpcoming(new PersonNotificationDto(
-                        true,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
@@ -178,21 +174,21 @@ final class PersonNotificationsMapper {
 
                 case NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED: {
                     personNotificationsDto.setOvertimeAppliedForManagement(new PersonNotificationDto(
-                        isOfficeOrBossOrDHOrSSA,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT: {
                     personNotificationsDto.setOvertimeAppliedByManagement(new PersonNotificationDto(
-                        true,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
                 }
                 case NOTIFICATION_EMAIL_OVERTIME_APPLIED: {
                     personNotificationsDto.setOvertimeApplied(new PersonNotificationDto(
-                        true,
+                        mailNotificationToCheck.isValidWith(person.getPermissions()),
                         activePersonMailNotifications.contains(mailNotificationToCheck)
                     ));
                     break;
