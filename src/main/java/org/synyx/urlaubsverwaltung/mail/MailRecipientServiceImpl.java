@@ -17,6 +17,7 @@ import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Service
 class MailRecipientServiceImpl implements MailRecipientService {
@@ -46,25 +47,30 @@ class MailRecipientServiceImpl implements MailRecipientService {
 
     @Override
     public List<Person> getRecipientsOfInterest(Person personOfInterest, MailNotification mailNotification) {
-        return getRecipientsOfInterest(personOfInterest, List.of(mailNotification));
-    }
-
-    @Override
-    public List<Person> getRecipientsOfInterest(Person personOfInterest, List<MailNotification> mailNotifications) {
 
         final List<Person> recipientsOfInterestForAll = new ArrayList<>();
-        recipientsOfInterestForAll.addAll(getOfficesWithApplicationManagementAllNotification(mailNotifications));
-        recipientsOfInterestForAll.addAll(getBossWithApplicationManagementAllNotification(mailNotifications));
+        if (mailNotification.isValidWith(List.of(USER, OFFICE))) {
+            recipientsOfInterestForAll.addAll(getOfficesWithApplicationManagementAllNotification(mailNotification));
+        }
+
+        if (mailNotification.isValidWith(List.of(USER, BOSS))) {
+            recipientsOfInterestForAll.addAll(getBossWithApplicationManagementAllNotification(mailNotification));
+        }
 
         Stream<Person> managementDepartmentPersons = Stream.of();
         if (departmentsAvailable()) {
             final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
-            recipientsOfInterestForDepartment.addAll(getResponsibleDepartmentHeads(personOfInterest));
-            recipientsOfInterestForDepartment.addAll(getResponsibleSecondStageAuthorities(personOfInterest));
+            if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD))) {
+                recipientsOfInterestForDepartment.addAll(getResponsibleDepartmentHeads(personOfInterest));
+            }
+
+            if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY))) {
+                recipientsOfInterestForDepartment.addAll(getResponsibleSecondStageAuthorities(personOfInterest));
+            }
 
             managementDepartmentPersons = recipientsOfInterestForDepartment.stream()
                 .distinct()
-                .filter(containsAny(mailNotifications));
+                .filter(person -> person.getNotifications().contains(mailNotification));
         }
 
         return Stream.concat(recipientsOfInterestForAll.stream(), managementDepartmentPersons)
@@ -88,24 +94,20 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .collect(toList());
     }
 
-    private List<Person> getBossWithApplicationManagementAllNotification(List<MailNotification> concerningMailNotifications) {
+    private List<Person> getBossWithApplicationManagementAllNotification(MailNotification concerningMailNotification) {
         return personService.getActivePersonsByRole(BOSS).stream()
-            .filter(boss -> boss.getNotifications().stream().anyMatch(concerningMailNotifications::contains))
+            .filter(boss -> boss.getNotifications().contains(concerningMailNotification))
             .collect(toList());
     }
 
-    private List<Person> getOfficesWithApplicationManagementAllNotification(List<MailNotification> concerningMailNotifications) {
+    private List<Person> getOfficesWithApplicationManagementAllNotification(MailNotification concerningMailNotification) {
         return personService.getActivePersonsByRole(OFFICE).stream()
-            .filter(office -> office.getNotifications().stream().anyMatch(concerningMailNotifications::contains))
+            .filter(office -> office.getNotifications().contains(concerningMailNotification))
             .collect(toList());
     }
 
     private static Predicate<Person> without(Person personOfInterest) {
         return person -> !person.equals(personOfInterest);
-    }
-
-    private static Predicate<Person> containsAny(List<MailNotification> concerningMailNotifications) {
-        return person -> person.getNotifications().stream().anyMatch(concerningMailNotifications::contains);
     }
 
     private boolean departmentsAvailable() {

@@ -36,20 +36,4 @@ public interface MailRecipientService {
      * @return list of recipients of interest
      */
     List<Person> getRecipientsOfInterest(Person personOfInterest, MailNotification mailNotification);
-
-    /**
-     * Returns a list of recipients of interest for a given person based on
-     * <ul>
-     *     <li>is Office and one of the given mail notifications is active</li>
-     *     <li>is Boss and one of the given mail notifications is active</li>
-     *     <li>is responsible Department Head and one of the given mail notifications is active</li>
-     *     <li>is responsible Second Stage Authority and one of the given mail notifications is active</li>
-     *     <li>is Boss in the same Department and one of the given mail notifications is active</li>
-     * </ul>
-     *
-     * @param personOfInterest  person to get recipients from
-     * @param mailNotifications given notifications that one of must be active
-     * @return list of recipients of interest
-     */
-    List<Person> getRecipientsOfInterest(Person personOfInterest, List<MailNotification> mailNotifications);
 }
