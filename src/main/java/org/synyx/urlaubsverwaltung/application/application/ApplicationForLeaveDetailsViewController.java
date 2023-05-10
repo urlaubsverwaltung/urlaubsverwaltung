@@ -44,6 +44,8 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
+import static java.util.function.Predicate.isEqual;
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToAllowTemporaryAllowedApplication;
@@ -473,7 +475,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
     private List<Person> getResponsibleManagersOf(Person personOfInterest, Person signedInUser) {
         return responsiblePersonService.getResponsibleManagersOf(personOfInterest)
             .stream()
-            .filter(person -> !person.equals(signedInUser))
+            .filter(not(isEqual(signedInUser)))
             .collect(toList());
     }
 }
