@@ -35,14 +35,18 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToAllowTemporaryAllowedApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToAllowWaitingApplication;
@@ -57,7 +61,6 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationFor
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToStartCancellationRequest;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -199,21 +202,22 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
 
         final String referUsername = referredPerson.getUsername();
-        final Person recipient = personService.getPersonByUsername(referUsername)
+        final Person personToRefer = personService.getPersonByUsername(referUsername)
             .orElseThrow(() -> new UnknownPersonException(referUsername));
 
-        final Person person = application.getPerson();
+        final Person personOfApplication = application.getPerson();
         final Person signedInUser = personService.getSignedInUser();
 
-        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
-        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, personOfApplication);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, personOfApplication);
         final boolean allowedToReferApplication = isAllowedToReferApplication(application, signedInUser, isDepartmentHead, isSecondStageAuthority);
-        if (!allowedToReferApplication) {
+        final List<Person> responsibleManagersOf = getResponsibleManagersOf(personOfApplication, signedInUser);
+        if (!allowedToReferApplication || !responsibleManagersOf.contains(personToRefer)) {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to refer application for " +
                 "leave to user '%s'", signedInUser.getId(), referUsername));
         }
 
-        applicationInteractionService.refer(application, recipient, signedInUser);
+        applicationInteractionService.refer(application, personToRefer, signedInUser);
         redirectAttributes.addFlashAttribute("referSuccess", true);
         return REDIRECT_WEB_APPLICATION + applicationId;
     }
@@ -393,16 +397,6 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         model.addAttribute("comments", comments);
         model.addAttribute("lastComment", comments.get(comments.size() - 1));
 
-        // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
-        boolean isNotYetAllowed = application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED);
-        boolean isPrivilegedUser = signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(DEPARTMENT_HEAD)
-            || signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
-
-        if (isNotYetAllowed && isPrivilegedUser) {
-            model.addAttribute("bosses", personService.getActivePersonsByRole(BOSS));
-            model.addAttribute("referredPerson", new ReferredPerson());
-        }
-
         // APPLICATION FOR LEAVE
         model.addAttribute("app", new ApplicationForLeave(application, workDaysCountService));
 
@@ -457,7 +451,13 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
 
         model.addAttribute("isAllowedToEditApplication", isAllowedToEditApplication(application, signedInUser));
         model.addAttribute("isAllowedToRemindApplication", isAllowedToRemindApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
-        model.addAttribute("isAllowedToReferApplication", isAllowedToReferApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
+
+        final boolean allowedToReferApplication = isAllowedToReferApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
+        model.addAttribute("isAllowedToReferApplication", allowedToReferApplication);
+        if (allowedToReferApplication) {
+            model.addAttribute("availablePersonsToRefer", getResponsibleManagersOf(application.getPerson(), signedInUser));
+            model.addAttribute("referredPerson", new ReferredPerson());
+        }
 
         model.addAttribute("isDepartmentHeadOfPerson", isDepartmentHeadOfPerson);
         model.addAttribute("isSecondStageAuthorityOfPerson", isSecondStageAuthorityOfPerson);
@@ -469,5 +469,48 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         model.addAttribute("currentYear", Year.now(clock).getValue());
         model.addAttribute("action", requireNonNullElse(action, ""));
         model.addAttribute("shortcut", shortcut);
+    }
+
+    /**
+     * TODO DUPLICATED with MailRecipientServiceImpl
+     * @param personOfInterest
+     * @return
+     */
+    private List<Person> getResponsibleManagersOf(Person personOfInterest, Person signedInUser) {
+        final List<Person> managementDepartmentPersons = new ArrayList<>();
+        if (departmentsAvailable()) {
+            managementDepartmentPersons.addAll(getResponsibleDepartmentHeads(personOfInterest));
+            managementDepartmentPersons.addAll(getResponsibleSecondStageAuthorities(personOfInterest));
+        }
+
+        final List<Person> bosses = personService.getActivePersonsByRole(BOSS);
+        return Stream.concat(managementDepartmentPersons.stream(), bosses.stream())
+            .filter(without(signedInUser))
+            .distinct()
+            .collect(toList());
+    }
+
+    private List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest) {
+        return personService.getActivePersonsByRole(SECOND_STAGE_AUTHORITY)
+            .stream()
+            .filter(secondStageAuthority -> departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, personOfInterest))
+            .filter(without(personOfInterest))
+            .collect(toList());
+    }
+
+    private List<Person> getResponsibleDepartmentHeads(Person personOfInterest) {
+        return personService.getActivePersonsByRole(DEPARTMENT_HEAD)
+            .stream()
+            .filter(departmentHead -> departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, personOfInterest))
+            .filter(without(personOfInterest))
+            .collect(toList());
+    }
+
+    private static Predicate<Person> without(Person personOfInterest) {
+        return person -> !person.equals(personOfInterest);
+    }
+
+    private boolean departmentsAvailable() {
+        return departmentService.getNumberOfDepartments() > 0;
     }
 }
