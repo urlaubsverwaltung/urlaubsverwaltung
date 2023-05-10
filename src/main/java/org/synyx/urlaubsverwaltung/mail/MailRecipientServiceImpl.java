@@ -6,10 +6,10 @@ import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.ResponsiblePersonService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -22,27 +22,20 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @Service
 class MailRecipientServiceImpl implements MailRecipientService {
 
+    private final ResponsiblePersonService responsiblePersonService;
     private final PersonService personService;
     private final DepartmentService departmentService;
 
     @Autowired
-    MailRecipientServiceImpl(PersonService personService, DepartmentService departmentService) {
+    MailRecipientServiceImpl(ResponsiblePersonService responsiblePersonService, PersonService personService, DepartmentService departmentService) {
+        this.responsiblePersonService = responsiblePersonService;
         this.personService = personService;
         this.departmentService = departmentService;
     }
 
     @Override
     public List<Person> getResponsibleManagersOf(Person personOfInterest) {
-        final List<Person> managementDepartmentPersons = new ArrayList<>();
-        if (departmentsAvailable()) {
-            managementDepartmentPersons.addAll(getResponsibleDepartmentHeads(personOfInterest));
-            managementDepartmentPersons.addAll(getResponsibleSecondStageAuthorities(personOfInterest));
-        }
-
-        final List<Person> bosses = personService.getActivePersonsByRole(BOSS);
-        return Stream.concat(managementDepartmentPersons.stream(), bosses.stream())
-            .distinct()
-            .collect(toList());
+        return responsiblePersonService.getResponsibleManagersOf(personOfInterest);
     }
 
     @Override
@@ -61,11 +54,11 @@ class MailRecipientServiceImpl implements MailRecipientService {
         if (departmentsAvailable()) {
             final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
             if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD))) {
-                recipientsOfInterestForDepartment.addAll(getResponsibleDepartmentHeads(personOfInterest));
+                recipientsOfInterestForDepartment.addAll(responsiblePersonService.getResponsibleDepartmentHeads(personOfInterest));
             }
 
             if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY))) {
-                recipientsOfInterestForDepartment.addAll(getResponsibleSecondStageAuthorities(personOfInterest));
+                recipientsOfInterestForDepartment.addAll(responsiblePersonService.getResponsibleSecondStageAuthorities(personOfInterest));
             }
 
             managementDepartmentPersons = recipientsOfInterestForDepartment.stream()
@@ -75,22 +68,6 @@ class MailRecipientServiceImpl implements MailRecipientService {
 
         return Stream.concat(recipientsOfInterestForAll.stream(), managementDepartmentPersons)
             .distinct()
-            .collect(toList());
-    }
-
-    private List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest) {
-        return personService.getActivePersonsByRole(SECOND_STAGE_AUTHORITY)
-            .stream()
-            .filter(secondStageAuthority -> departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, personOfInterest))
-            .filter(without(personOfInterest))
-            .collect(toList());
-    }
-
-    private List<Person> getResponsibleDepartmentHeads(Person personOfInterest) {
-        return personService.getActivePersonsByRole(DEPARTMENT_HEAD)
-            .stream()
-            .filter(departmentHead -> departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, personOfInterest))
-            .filter(without(personOfInterest))
             .collect(toList());
     }
 
@@ -104,10 +81,6 @@ class MailRecipientServiceImpl implements MailRecipientService {
         return personService.getActivePersonsByRole(OFFICE).stream()
             .filter(office -> office.getNotifications().contains(concerningMailNotification))
             .collect(toList());
-    }
-
-    private static Predicate<Person> without(Person personOfInterest) {
-        return person -> !person.equals(personOfInterest);
     }
 
     private boolean departmentsAvailable() {

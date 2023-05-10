@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidat
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.ResponsiblePersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
@@ -35,13 +36,10 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
@@ -62,9 +60,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationFor
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
@@ -79,6 +75,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
     private static final String ATTRIBUTE_ERRORS = "errors";
 
     private final PersonService personService;
+    private final ResponsiblePersonService responsiblePersonService;
     private final AccountService accountService;
     private final ApplicationService applicationService;
     private final ApplicationInteractionService applicationInteractionService;
@@ -92,6 +89,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
 
     @Autowired
     ApplicationForLeaveDetailsViewController(VacationDaysService vacationDaysService, PersonService personService,
+                                             ResponsiblePersonService responsiblePersonService,
                                              AccountService accountService, ApplicationService applicationService,
                                              ApplicationInteractionService applicationInteractionService,
                                              ApplicationCommentService commentService, WorkDaysCountService workDaysCountService,
@@ -99,6 +97,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
                                              DepartmentService departmentService, WorkingTimeService workingTimeService, Clock clock) {
         this.vacationDaysService = vacationDaysService;
         this.personService = personService;
+        this.responsiblePersonService = responsiblePersonService;
         this.accountService = accountService;
         this.applicationService = applicationService;
         this.applicationInteractionService = applicationInteractionService;
@@ -471,46 +470,10 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         model.addAttribute("shortcut", shortcut);
     }
 
-    /**
-     * TODO DUPLICATED with MailRecipientServiceImpl
-     * @param personOfInterest
-     * @return
-     */
     private List<Person> getResponsibleManagersOf(Person personOfInterest, Person signedInUser) {
-        final List<Person> managementDepartmentPersons = new ArrayList<>();
-        if (departmentsAvailable()) {
-            managementDepartmentPersons.addAll(getResponsibleDepartmentHeads(personOfInterest));
-            managementDepartmentPersons.addAll(getResponsibleSecondStageAuthorities(personOfInterest));
-        }
-
-        final List<Person> bosses = personService.getActivePersonsByRole(BOSS);
-        return Stream.concat(managementDepartmentPersons.stream(), bosses.stream())
-            .filter(without(signedInUser))
-            .distinct()
-            .collect(toList());
-    }
-
-    private List<Person> getResponsibleSecondStageAuthorities(Person personOfInterest) {
-        return personService.getActivePersonsByRole(SECOND_STAGE_AUTHORITY)
+        return responsiblePersonService.getResponsibleManagersOf(personOfInterest)
             .stream()
-            .filter(secondStageAuthority -> departmentService.isSecondStageAuthorityAllowedToManagePerson(secondStageAuthority, personOfInterest))
-            .filter(without(personOfInterest))
+            .filter(person -> !person.equals(signedInUser))
             .collect(toList());
-    }
-
-    private List<Person> getResponsibleDepartmentHeads(Person personOfInterest) {
-        return personService.getActivePersonsByRole(DEPARTMENT_HEAD)
-            .stream()
-            .filter(departmentHead -> departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, personOfInterest))
-            .filter(without(personOfInterest))
-            .collect(toList());
-    }
-
-    private static Predicate<Person> without(Person personOfInterest) {
-        return person -> !person.equals(personOfInterest);
-    }
-
-    private boolean departmentsAvailable() {
-        return departmentService.getNumberOfDepartments() > 0;
     }
 }

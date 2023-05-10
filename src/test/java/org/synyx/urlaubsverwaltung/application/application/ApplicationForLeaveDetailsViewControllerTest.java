@@ -19,6 +19,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.ResponsiblePersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
@@ -69,6 +70,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
     @Mock
     private PersonService personService;
     @Mock
+    private ResponsiblePersonService responsiblePersonService;
+    @Mock
     private AccountService accountService;
     @Mock
     private ApplicationService applicationService;
@@ -91,8 +94,9 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new ApplicationForLeaveDetailsViewController(vacationDaysService, personService, accountService, applicationService,
-            applicationInteractionService, commentService, workDaysCountService, commentValidator, departmentService, workingTimeService, clock);
+        sut = new ApplicationForLeaveDetailsViewController(vacationDaysService, personService, responsiblePersonService,
+            accountService, applicationService, applicationInteractionService, commentService, workDaysCountService,
+            commentValidator, departmentService, workingTimeService, clock);
     }
 
     @Test
@@ -492,10 +496,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(false);
 
-        // recipient person is department head and allowed to manage application person
-        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(personService.getActivePersonsByRole(DEPARTMENT_HEAD)).thenReturn(List.of(recipientPerson));
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(recipientPerson, applicationPerson)).thenReturn(true);
+        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(recipientPerson));
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
@@ -515,12 +516,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        // recipient person is department head and allowed to manage application person
-        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(personService.getActivePersonsByRole(DEPARTMENT_HEAD)).thenReturn(List.of(recipientPerson));
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(recipientPerson, signedInPerson)).thenReturn(true);
-
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, signedInPerson)).thenReturn(false);
+        when(responsiblePersonService.getResponsibleManagersOf(signedInPerson)).thenReturn(List.of(recipientPerson));
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
@@ -542,10 +538,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(true);
 
-        // recipient person is department head and allowed to manage application person
-        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(personService.getActivePersonsByRole(DEPARTMENT_HEAD)).thenReturn(List.of(recipientPerson));
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(recipientPerson, applicationPerson)).thenReturn(true);
+        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(recipientPerson));
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
@@ -567,12 +560,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(true);
 
-        // recipient person is department head and allowed to manage application person
-        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(personService.getActivePersonsByRole(DEPARTMENT_HEAD)).thenReturn(List.of(recipientPerson));
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(recipientPerson, applicationPerson)).thenReturn(true);
-
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(false);
+        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(recipientPerson));
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
@@ -594,12 +582,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(true);
 
-        // recipient person is department head and allowed to manage application person
-        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
-        when(personService.getActivePersonsByRole(DEPARTMENT_HEAD)).thenReturn(List.of(recipientPerson));
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(recipientPerson, applicationPerson)).thenReturn(true);
-
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(false);
+        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(recipientPerson));
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
