@@ -67,6 +67,7 @@
               id="email-notification-all-input"
               class="tw-mt-0.5 tw-shrink-0"
               is="uv-checkbox-all"
+              data-ignore="email-notification-department-restriction-input"
               th:checked="*{all}"
             />
             <label
@@ -77,6 +78,47 @@
               Alle E-Mail Benachrichtigungen aktivieren / deaktivieren
             </label>
           </span>
+        </div>
+        <div
+          class="list-selectable__item tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
+        >
+          <div class="tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16">
+            <div class="md:tw-w-64 lg:tw-w-72">
+              <span class="checkbox-switch tw-flex tw-items-center tw-gap-2 md:tw-gap-3">
+                <input
+                  type="checkbox"
+                  id="email-notification-department-restriction-input"
+                  class="tw-mt-0.5 tw-shrink-0"
+                  aria-describedby="info-email-notification-department-restriction-input"
+                  data-auto-submit
+                />
+                <span>
+                  <label
+                    for="email-notification-department-restriction-input"
+                    class="tw-m-0 tw-text-base tw-font-normal"
+                    th:text="#{person.notifications.departments.restriction.label}"
+                  >
+                    nur meine Abteilungen
+                  </label>
+                </span>
+              </span>
+            </div>
+            <div
+              class="tw-flex-1 tw-flex tw-items-start tw-gap-2 dark:tw-text-zinc-400 md:dark:tw-text-inherit md:tw-items-center"
+            >
+              <svg
+                th:replace="~{icon/info::svg(className='tw-hidden tw-shrink-0 tw-w-4 tw-h-4 md:tw-inline-block')}"
+              ></svg>
+              <p
+                id="info-email-notification-department-restriction-input"
+                class="tw-leading-normal tw-text-sm tw-m-0"
+                th:text="#{person.notifications.departments.restriction.info}"
+              >
+                Grenze deine aktivierten Benachrichtigungen auf den Kreis deiner Abteilungen ein. Ansonsten erhälst du
+                die aktivierten Benachrichtigungen über die komplette Organisation hinweg.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

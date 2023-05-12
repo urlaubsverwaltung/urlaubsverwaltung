@@ -3,12 +3,18 @@ export class CheckboxAll extends HTMLInputElement {
 
   connectedCallback() {
     const handleChange = (event) => {
+      const ignore = this.dataset.ignore ?? "";
       const form = this.closest("form");
+
+      if (event.target.getAttribute("id") === ignore) {
+        return;
+      }
+
       if (form === event.target.closest("form")) {
         if (this === event.target) {
           const checkboxes = [...form.querySelectorAll("input[type='checkbox']")];
           for (let checkbox of checkboxes) {
-            if (checkbox !== this) {
+            if (checkbox !== this && checkbox.getAttribute("id") !== ignore) {
               checkbox.checked = event.target.checked;
               checkbox.dispatchEvent(new Event("change", { bubbles: true }));
             }
