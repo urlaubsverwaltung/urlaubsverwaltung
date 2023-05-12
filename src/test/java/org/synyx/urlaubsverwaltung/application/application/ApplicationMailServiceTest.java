@@ -40,6 +40,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
@@ -833,23 +834,37 @@ class ApplicationMailServiceTest {
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
 
-        final Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
-        model.put("dayLength", "FULL");
-        model.put("comment", comment);
+        final Person colleague = new Person();
+        colleague.setId(3);
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION))
+            .thenReturn(List.of(colleague));
 
         sut.sendCancelledDirectlyConfirmationByApplicant(application, comment);
 
+        final Map<String, Object> model = Map.of(
+            "application", application,
+            "vacationTypeMessageKey", "application.data.vacationType.holiday",
+            "dayLength", "FULL",
+            "comment", comment
+        );
+
+        final Map<String, Object> modelColleagues = Map.of("application", application);
+
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
-        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
-        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.cancelledDirectly.user");
-        assertThat(mail.getTemplateName()).isEqualTo("application_cancelled_directly_confirmation_by_applicant_to_applicant");
-        assertThat(mail.getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
-        assertThat(mail.getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
-        assertThat(mail.getTemplateModel()).isEqualTo(model);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancelledDirectly.user");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cancelled_directly_confirmation_by_applicant_to_applicant");
+        assertThat(mails.get(0).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
+        assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(colleague));
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.absence.cancellation.to_colleagues");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("application_cancellation_to_colleagues");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelColleagues);
+        assertThat(mails.get(1).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
+        assertThat(mails.get(1).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
     }
 
     @Test
@@ -869,21 +884,33 @@ class ApplicationMailServiceTest {
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
 
-        final Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
-        model.put("vacationTypeMessageKey", "application.data.vacationType.holiday");
-        model.put("dayLength", "FULL");
-        model.put("comment", comment);
+        final Person colleague = new Person();
+        colleague.setId(3);
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION))
+            .thenReturn(List.of(colleague));
 
         sut.sendCancelledDirectlyConfirmationByManagement(application, comment);
 
+        final Map<String, Object> model = Map.of(
+            "application", application,
+            "vacationTypeMessageKey", "application.data.vacationType.holiday",
+            "dayLength", "FULL",
+            "comment", comment
+        );
+
+        final Map<String, Object> modelColleagues = Map.of("application", application);
+
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
-        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
-        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.cancelledDirectly.management");
-        assertThat(mail.getTemplateName()).isEqualTo("application_cancelled_directly_confirmation_by_management_to_applicant");
-        assertThat(mail.getTemplateModel()).isEqualTo(model);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancelledDirectly.management");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cancelled_directly_confirmation_by_management_to_applicant");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(colleague));
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.absence.cancellation.to_colleagues");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("application_cancellation_to_colleagues");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelColleagues);
     }
 
     @Test

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
@@ -68,7 +69,7 @@ final class PersonNotificationsMapper {
         addIfActive(mailNotifications, personNotificationsDto.getOvertimeAppliedByManagement(), NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT);
         addIfActive(mailNotifications, personNotificationsDto.getOvertimeApplied(), NOTIFICATION_EMAIL_OVERTIME_APPLIED);
 
-        addIfActive(mailNotifications, personNotificationsDto.getAbsenceForColleagues(), List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
+        addIfActive(mailNotifications, personNotificationsDto.getAbsenceForColleagues(), List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED, NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION));
 
         return mailNotifications;
     }
@@ -105,6 +106,7 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT, personNotificationsDto::setOvertimeAppliedByManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED, personNotificationsDto::setOvertimeApplied);
         setterByNotification.put(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED, personNotificationsDto::setAbsenceForColleagues);
+        setterByNotification.put(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION, personNotificationsDto::setAbsenceForColleagues);
 
         for (MailNotification mailNotificationToCheck : MailNotification.values()) {
             final boolean isVisible = mailNotificationToCheck.isValidWith(person.getPermissions());

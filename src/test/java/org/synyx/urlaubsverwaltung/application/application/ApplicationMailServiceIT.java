@@ -46,6 +46,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypeEntity;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
@@ -1523,6 +1524,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Wrong information - cancelled");
 
+        final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION));
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
+
         sut.sendCancelledDirectlyConfirmationByApplicant(application, comment);
 
         // was email sent to applicant
@@ -1552,6 +1557,24 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final List<DataSource> attachmentsRelevantPerson = getAttachments(msg);
         assertThat(attachmentsRelevantPerson.get(0).getName()).contains("calendar.ics");
+
+        // check email colleague
+        final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
+        assertThat(inboxColleague.length).isOne();
+
+        final MimeMessage msgColleague = inboxColleague[0];
+        assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde storniert");
+        assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(msgColleague.getAllRecipients()[0]);
+        assertThat(readPlainContent(msgColleague)).isEqualTo("Hallo colleague colleague," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Müller wurde storniert:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK);
+
+        final List<DataSource> attachmentsColleague = getAttachments(msgColleague);
+        assertThat(attachmentsColleague.get(0).getName()).contains("calendar.ics");
     }
 
     @Test
@@ -1571,6 +1594,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final ApplicationComment comment = new ApplicationComment(office, clock);
         comment.setText("Wrong information - cancelled");
+
+        final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION));
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
         sut.sendCancelledDirectlyConfirmationByManagement(application, comment);
 
@@ -1599,6 +1626,21 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    16.04.2021");
+
+        // check email colleague
+        final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
+        assertThat(inboxColleague.length).isOne();
+
+        final MimeMessage msgColleague = inboxColleague[0];
+        assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde storniert");
+        assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(msgColleague.getAllRecipients()[0]);
+        assertThat(msgColleague.getContent()).isEqualTo("Hallo colleague colleague," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Müller wurde storniert:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences");
     }
 
     @Test
