@@ -50,6 +50,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED;
 
 @Service
 class ApplicationMailService {
@@ -111,6 +112,17 @@ class ApplicationMailService {
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
         mailService.send(mailToRelevantRecipients);
+
+        // Inform colleagues of applicant which are in same department
+        final Map<String, Object> modelColleagues = Map.of(APPLICATION, application);
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED);
+        final Mail mailToRelevantColleagues = Mail.builder()
+                .withRecipient(relevantColleaguesToInform)
+                .withSubject("subject.absence.allowed.to_colleagues", application.getPerson().getNiceName())
+                .withTemplate("application_allowed_to_colleagues", modelColleagues)
+                .withAttachment(CALENDAR_ICS, calendarFile)
+                .build();
+        mailService.send(mailToRelevantColleagues);
     }
 
     /**
@@ -294,14 +306,22 @@ class ApplicationMailService {
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
-
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_ALLOWED)
             .withSubject("subject.application.allowedDirectly.user")
             .withTemplate("application_allowed_directly_to_applicant", model)
             .build();
-
         mailService.send(mailToApplicant);
+
+        // Inform colleagues of applicant which are in same department
+        final Map<String, Object> modelColleagues = Map.of(APPLICATION, application);
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED);
+        final Mail mailToRelevantColleagues = Mail.builder()
+            .withRecipient(relevantColleaguesToInform)
+            .withSubject("subject.absence.allowed.to_colleagues", application.getPerson().getNiceName())
+            .withTemplate("application_allowed_to_colleagues", modelColleagues)
+            .build();
+        mailService.send(mailToRelevantColleagues);
     }
 
     /**
@@ -320,14 +340,22 @@ class ApplicationMailService {
             DAY_LENGTH, application.getDayLength().name(),
             COMMENT, comment
         );
-
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_ALLOWED)
             .withSubject("subject.application.allowedDirectly.management")
             .withTemplate("application_allowed_directly_by_management_to_applicant", model)
             .build();
-
         mailService.send(mailToApplicant);
+
+        // Inform colleagues of applicant which are in same department
+        final Map<String, Object> modelColleagues = Map.of(APPLICATION, application);
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED);
+        final Mail mailToRelevantColleagues = Mail.builder()
+            .withRecipient(relevantColleaguesToInform)
+            .withSubject("subject.absence.allowed.to_colleagues", application.getPerson().getNiceName())
+            .withTemplate("application_allowed_to_colleagues", modelColleagues)
+            .build();
+        mailService.send(mailToRelevantColleagues);
     }
 
     /**

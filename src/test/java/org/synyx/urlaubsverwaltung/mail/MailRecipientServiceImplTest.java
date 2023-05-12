@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
@@ -203,5 +205,35 @@ class MailRecipientServiceImplTest {
 
         sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         verify(personService, never()).getActivePersonsByRole(role);
+    }
+
+    @Test
+    void ensureToGetAllActiveColleaguesWithoutDHAndSSA() {
+
+        final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
+        normalUser.setPermissions(List.of(USER));
+        normalUser.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
+        normalUser.setId(1);
+
+        final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setPermissions(List.of(USER));
+        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
+        colleague.setId(4);
+
+        final Person departmentHead = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
+        departmentHead.setId(2);
+
+        final Person secondStageAuthority = new Person("secondStageAuthority", "secondStageAuthority", "secondStageAuthority", "secondStageAuthority@example.org");
+        secondStageAuthority.setId(1);
+
+        final Department department = new Department();
+        department.setMembers(List.of(normalUser, colleague, departmentHead));
+        department.setDepartmentHeads(List.of(departmentHead));
+        department.setSecondStageAuthorities(List.of(secondStageAuthority));
+
+        when(departmentService.getAssignedDepartmentsOfMember(normalUser)).thenReturn(List.of(department));
+
+        final List<Person> colleagues = sut.getColleagues(normalUser, NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED);
+        assertThat(colleagues).containsExactly(colleague);
     }
 }

@@ -64,6 +64,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -102,7 +103,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePerson() throws Exception {
+    void ensureNotificationAboutAllowedApplicationIsSentToApplicantManagementAndColleague() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
@@ -124,17 +125,24 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(boss, office));
 
+        final Person colleague = new Person("colleague", "Dampf", "Hans", "dampf@example.org");
+        colleague.setId(42);
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
+
         sut.sendAllowedNotification(application, comment);
 
         // were both emails sent?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inboxOffice).hasSize(1);
+        assertThat(inboxOffice.length).isOne();
 
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxUser.length).isOne();
 
         final MimeMessage[] inboxBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
         assertThat(inboxBoss.length).isOne();
+
+        final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
+        assertThat(inboxColleague.length).isOne();
 
         // check email user attributes
         final MimeMessage msg = inboxUser[0];
@@ -192,7 +200,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
         assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
 
-        // check email office attributes
+        // check email management attributes
         final MimeMessage msgBoss = inboxBoss[0];
         assertThat(msgBoss.getSubject()).isEqualTo("Neue genehmigte Abwesenheit von Lieschen Mueller");
         assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msgBoss.getAllRecipients()[0]);
@@ -217,6 +225,21 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final List<DataSource> attachmentsBoss = getAttachments(msgBoss);
         assertThat(attachmentsBoss.get(0).getName()).contains("calendar.ics");
+
+        // check email colleague
+        final MimeMessage msgColleague = inboxColleague[0];
+        assertThat(msgColleague.getSubject()).isEqualTo("Neue Abwesenheit von Lieschen Mueller");
+        assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(msgColleague.getAllRecipients()[0]);
+        assertThat(readPlainContent(msgColleague)).isEqualTo("Hallo Hans Dampf," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Mueller wurde erstellt:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK);
+
+        final List<DataSource> attachmentsColleague = getAttachments(msgColleague);
+        assertThat(attachmentsColleague.get(0).getName()).contains("calendar.ics");
     }
 
     @Test
@@ -691,13 +714,16 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("OK, Urlaub kann genommen werden");
 
+        final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
+
         sut.sendConfirmationAllowedDirectly(application, comment);
 
-        // email sent?
+        // email sent to applicant
         final MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxUser.length).isOne();
 
-        // check content of user email
         final Message contentUser = inboxUser[0];
         assertThat(contentUser.getSubject()).isEqualTo("Deine Abwesenheit wurde erstellt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(contentUser.getAllRecipients()[0]);
@@ -718,6 +744,21 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
+
+        // email sent to colleague
+        final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
+        assertThat(inboxColleague.length).isOne();
+
+        final Message contentColleague = inboxColleague[0];
+        assertThat(contentColleague.getSubject()).isEqualTo("Neue Abwesenheit von Lieschen Mueller");
+        assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(contentColleague.getAllRecipients()[0]);
+        assertThat(contentColleague.getContent()).isEqualTo("Hallo colleague colleague," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Mueller wurde erstellt:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences");
     }
 
     @Test
@@ -736,6 +777,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("OK, Urlaub kann genommen werden");
+
+        final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
         sut.sendConfirmationAllowedDirectlyByManagement(application, comment);
 
@@ -765,6 +810,21 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    12.04.2021");
+
+        // email sent to colleague
+        final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
+        assertThat(inboxColleague.length).isOne();
+
+        final Message contentColleague = inboxColleague[0];
+        assertThat(contentColleague.getSubject()).isEqualTo("Neue Abwesenheit von Lieschen Mueller");
+        assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(contentColleague.getAllRecipients()[0]);
+        assertThat(contentColleague.getContent()).isEqualTo("Hallo colleague colleague," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Mueller wurde erstellt:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences");
     }
 
     @Test

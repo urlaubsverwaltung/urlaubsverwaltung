@@ -30,6 +30,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
@@ -67,6 +68,8 @@ final class PersonNotificationsMapper {
         addIfActive(mailNotifications, personNotificationsDto.getOvertimeAppliedByManagement(), NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT);
         addIfActive(mailNotifications, personNotificationsDto.getOvertimeApplied(), NOTIFICATION_EMAIL_OVERTIME_APPLIED);
 
+        addIfActive(mailNotifications, personNotificationsDto.getAbsenceForColleagues(), List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
+
         return mailNotifications;
     }
 
@@ -101,6 +104,7 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED, personNotificationsDto::setOvertimeAppliedForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT, personNotificationsDto::setOvertimeAppliedByManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED, personNotificationsDto::setOvertimeApplied);
+        setterByNotification.put(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED, personNotificationsDto::setAbsenceForColleagues);
 
         for (MailNotification mailNotificationToCheck : MailNotification.values()) {
             final boolean isVisible = mailNotificationToCheck.isValidWith(person.getPermissions());
@@ -123,7 +127,8 @@ final class PersonNotificationsMapper {
             personNotificationsDto.getHolidayReplacementUpcoming(),
             personNotificationsDto.getOvertimeAppliedForManagement(),
             personNotificationsDto.getOvertimeAppliedByManagement(),
-            personNotificationsDto.getOvertimeApplied()
+            personNotificationsDto.getOvertimeApplied(),
+            personNotificationsDto.getAbsenceForColleagues()
         );
 
         final long visibleCount = dtoNotifications.stream().filter(PersonNotificationDto::isVisible).count();
