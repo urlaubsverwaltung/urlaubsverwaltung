@@ -20,6 +20,7 @@ import java.util.Map;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
@@ -107,6 +108,26 @@ class SickNoteMailService {
             .withRecipient(relevantColleaguesToInform)
             .withSubject("subject.sicknote.created.to_colleagues", sickNote.getPerson().getNiceName())
             .withTemplate("sick_note_created_to_colleagues", modelColleagues)
+            .build();
+        mailService.send(mailToRelevantColleagues);
+    }
+
+    /**
+     * Sends information about an anonym sick note to the colleagues
+     * to inform them about an absence
+     *
+     * @param sickNote that has been created
+     */
+    @Async
+    void sendCancelToColleagues(SickNote sickNote) {
+
+        // Inform colleagues of applicant which are in same department
+        final Map<String, Object> modelColleagues = Map.of("sickNote", sickNote);
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED);
+        final Mail mailToRelevantColleagues = Mail.builder()
+            .withRecipient(relevantColleaguesToInform)
+            .withSubject("subject.sicknote.cancel.to_colleagues", sickNote.getPerson().getNiceName())
+            .withTemplate("sick_note_cancel_to_colleagues", modelColleagues)
             .build();
         mailService.send(mailToRelevantColleagues);
     }

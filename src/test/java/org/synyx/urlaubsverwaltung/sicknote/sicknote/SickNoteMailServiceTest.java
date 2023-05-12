@@ -31,6 +31,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -138,7 +139,7 @@ class SickNoteMailServiceTest {
     }
 
     @Test
-    void ensureSendSickNoteAppliedToColleagues() {
+    void ensureSendSickNoteCreatedToColleagues() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
@@ -164,6 +165,36 @@ class SickNoteMailServiceTest {
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
         assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.created.to_colleagues");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_to_colleagues");
+        assertThat(mail.getTemplateModel()).isEqualTo(Map.of("sickNote", sickNote));
+    }
+
+    @Test
+    void ensureSendSickNoteCancelToColleagues() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+
+        final SickNote sickNote = SickNote.builder()
+            .id(2)
+            .person(person)
+            .startDate(LocalDate.of(2022, 4, 10))
+            .endDate(LocalDate.of(2022, 4, 20))
+            .build();
+
+        final Person colleague = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        colleague.setId(1);
+        colleague.setPermissions(Set.of(USER));
+        colleague.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED));
+        when(mailRecipientService.getColleagues(person, NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED)).thenReturn(List.of(colleague));
+
+        sut.sendCancelToColleagues(sickNote);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.cancel.to_colleagues");
+        assertThat(mail.getTemplateName()).isEqualTo("sick_note_cancel_to_colleagues");
         assertThat(mail.getTemplateModel()).isEqualTo(Map.of("sickNote", sickNote));
     }
 

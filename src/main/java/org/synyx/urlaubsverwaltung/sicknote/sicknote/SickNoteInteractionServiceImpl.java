@@ -140,6 +140,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(savedSickNote, SickNoteCommentAction.CANCELLED, canceller);
 
+        sickNoteMailService.sendCancelToColleagues(sickNote);
+
         final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(savedSickNote.getId(), SICKNOTE);
         if (absenceMapping.isPresent()) {
             calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());

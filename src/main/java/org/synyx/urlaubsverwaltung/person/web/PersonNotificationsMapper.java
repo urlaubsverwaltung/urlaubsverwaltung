@@ -36,6 +36,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 
 final class PersonNotificationsMapper {
@@ -70,7 +71,9 @@ final class PersonNotificationsMapper {
         addIfActive(mailNotifications, personNotificationsDto.getOvertimeAppliedByManagement(), NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT);
         addIfActive(mailNotifications, personNotificationsDto.getOvertimeApplied(), NOTIFICATION_EMAIL_OVERTIME_APPLIED);
 
-        addIfActive(mailNotifications, personNotificationsDto.getAbsenceForColleagues(), List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED, NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION, NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED));
+        final List<MailNotification> notificationEmailAbsenceColleagues = List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED, NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION,
+            NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED, NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED);
+        addIfActive(mailNotifications, personNotificationsDto.getAbsenceForColleagues(), notificationEmailAbsenceColleagues);
 
         return mailNotifications;
     }
@@ -109,6 +112,7 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED, personNotificationsDto::setAbsenceForColleagues);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED, personNotificationsDto::setAbsenceForColleagues);
 
         for (MailNotification mailNotificationToCheck : MailNotification.values()) {
             final boolean isVisible = mailNotificationToCheck.isValidWith(person.getPermissions());
