@@ -9,7 +9,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.notification.UserNotificationSettings;
+import org.synyx.urlaubsverwaltung.notification.UserNotificationSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
@@ -37,6 +40,9 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
     @MockBean
     private PersonService personService;
 
+    @MockBean
+    private UserNotificationSettingsService userNotificationSettingsService;
+
     @Test
     @WithMockUser(authorities = "USER", username = "user")
     void personNotificationAsSameUserIsOk() throws Exception {
@@ -47,6 +53,9 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
 
         perform(get("/web/person/1/notifications"))
             .andExpect(status().isOk());
@@ -62,6 +71,9 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
 
         perform(get("/web/person/1/notifications"))
             .andExpect(status().isOk());

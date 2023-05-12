@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.notification.UserNotificationSettings;
+import org.synyx.urlaubsverwaltung.notification.UserNotificationSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 
@@ -41,11 +44,13 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
     private final PersonService personService;
     private final PersonNotificationsDtoValidator validator;
+    private final UserNotificationSettingsService userNotificationSettingsService;
 
     @Autowired
-    PersonNotificationsViewController(PersonService personService, PersonNotificationsDtoValidator validator) {
+    PersonNotificationsViewController(PersonService personService, PersonNotificationsDtoValidator validator, UserNotificationSettingsService userNotificationSettingsService) {
         this.personService = personService;
         this.validator = validator;
+        this.userNotificationSettingsService = userNotificationSettingsService;
     }
 
     @GetMapping("/person/{personId}/notifications")
@@ -70,6 +75,10 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         model.addAttribute("personNiceName", person.getNiceName());
 
         final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(person);
+
+        final UserNotificationSettings notificationSettings = userNotificationSettingsService.findNotificationSettings(new PersonId(person.getId()));
+        personNotificationsDto.setRestrictToDepartments(notificationSettings.isRestrictToDepartments());
+
         model.addAttribute("personNotificationsDto", personNotificationsDto);
 
         if (isDepartmentSection) {
@@ -135,7 +144,9 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         }
 
         person.setNotifications(mapToMailNotifications(newPersonNotificationsDto));
+
         personService.update(person);
+        userNotificationSettingsService.updateNotificationSettings(new PersonId(person.getId()), newPersonNotificationsDto.isRestrictToDepartments());
 
         redirectAttributes.addFlashAttribute("success", true);
 

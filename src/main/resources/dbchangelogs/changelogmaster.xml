@@ -122,4 +122,5 @@
   <include file="dbchangelogs/changelog-4.65.0-add-avatar-settings.xml"/>
   <include file="dbchangelogs/changelog-4.65.0-migrate-mail-notification-department-management.xml"/>
   <include file="dbchangelogs/changelog-4.65.0-migrate-mail-notification-overtime.xml"/>
+  <include file="dbchangelogs/changelog-4.66.0-add-user-notification-settings.xml"/>
 </databaseChangeLog>
