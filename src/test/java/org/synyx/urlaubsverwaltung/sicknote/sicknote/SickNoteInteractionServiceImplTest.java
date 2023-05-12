@@ -58,6 +58,8 @@ class SickNoteInteractionServiceImplTest {
     @Mock
     private ApplicationInteractionService applicationInteractionService;
     @Mock
+    private SickNoteMailService sickNoteMailService;
+    @Mock
     private CalendarSyncService calendarSyncService;
     @Mock
     private AbsenceMappingService absenceMappingService;
@@ -162,6 +164,26 @@ class SickNoteInteractionServiceImplTest {
         final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
         verify(sickNoteService).save(captor.capture());
         assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
+    }
+
+    @Test
+    void ensureCreatingSickNoteSendCreatedNotification() {
+
+        when(sickNoteService.save(any())).then(returnsFirstArg());
+
+        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(42)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC))
+            .dayLength(DayLength.FULL)
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .build();
+
+        sut.create(sickNote, creator);
+
+        verify(sickNoteMailService).sendCreatedToColleagues(sickNote);
     }
 
     @Test

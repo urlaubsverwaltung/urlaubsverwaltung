@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -22,6 +23,7 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +31,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @ExtendWith(MockitoExtension.class)
 class SickNoteMailServiceTest {
@@ -43,12 +47,14 @@ class SickNoteMailServiceTest {
     @Mock
     private PersonService personService;
     @Mock
+    private MailRecipientService mailRecipientService;
+    @Mock
     private MailService mailService;
 
     @BeforeEach
     void setUp() {
         final Clock fixedClock = Clock.fixed(Instant.parse("2022-04-01T00:00:00.00Z"), ZoneId.of("UTC"));
-        sut = new SickNoteMailService(settingsService, sickNoteService, mailService, personService, fixedClock);
+        sut = new SickNoteMailService(settingsService, sickNoteService, mailService, personService, mailRecipientService, fixedClock);
     }
 
     @Test
@@ -129,6 +135,36 @@ class SickNoteMailServiceTest {
 
         sut.sendEndOfSickPayNotification();
         verifyNoInteractions(mailService);
+    }
+
+    @Test
+    void ensureSendSickNoteAppliedToColleagues() {
+
+        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
+
+        final SickNote sickNote = SickNote.builder()
+            .id(2)
+            .person(person)
+            .startDate(LocalDate.of(2022, 4, 10))
+            .endDate(LocalDate.of(2022, 4, 20))
+            .build();
+
+        final Person colleague = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        colleague.setId(1);
+        colleague.setPermissions(Set.of(USER));
+        colleague.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED));
+        when(mailRecipientService.getColleagues(person, NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED)).thenReturn(List.of(colleague));
+
+        sut.sendCreatedToColleagues(sickNote);
+
+        final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
+        verify(mailService).send(argument.capture());
+        final Mail mail = argument.getValue();
+        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.created.to_colleagues");
+        assertThat(mail.getTemplateName()).isEqualTo("sick_note_created_to_colleagues");
+        assertThat(mail.getTemplateModel()).isEqualTo(Map.of("sickNote", sickNote));
     }
 
     private void prepareSettingsWithRemindForWaitingApplications(Boolean isActive) {

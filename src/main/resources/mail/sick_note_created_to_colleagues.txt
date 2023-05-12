@@ -1,0 +1,7 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{sick_note.created.to_colleagues(${sickNote.person.niceName})})]
+
+    [(#{absence.information.period})] [(${#temporals.format(sickNote.startDate, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(sickNote.endDate, "dd.MM.yyyy")})], [(#{__${sickNote.dayLength.name}__})]
+
+[(#{sick_note.created.to_colleagues.overview})]: [(${baseLinkURL})]web/absences
