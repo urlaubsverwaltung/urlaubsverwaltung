@@ -25,6 +25,11 @@ import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToMailNotifications;
 import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToPersonNotificationsDto;
 
@@ -33,6 +38,10 @@ import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.m
 public class PersonNotificationsViewController implements HasLaunchpad {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
+
+    public static final String ACTIVE_CONTENT = "activeContent";
+    public static final String ACTIVE_CONTENT_SELF = "self";
+    public static final String ACTIVE_CONTENT_DEPARTMENTS = "departments";
 
     private final PersonService personService;
     private final PersonNotificationsDtoValidator validator;
@@ -46,6 +55,16 @@ public class PersonNotificationsViewController implements HasLaunchpad {
     @GetMapping("/person/{personId}/notifications")
     @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
     public String showPersonNotifications(@PathVariable int personId, Model model) throws UnknownPersonException {
+        return showNotifications(false, personId, model);
+    }
+
+    @GetMapping("/person/{personId}/notifications/departments")
+    @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    public String showDepartmentNotifications(@PathVariable int personId, Model model) throws UnknownPersonException {
+        return showNotifications(true, personId, model);
+    }
+
+    private String showNotifications(boolean isDepartmentSection, int personId, Model model) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
@@ -57,16 +76,42 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(person);
         model.addAttribute("personNotificationsDto", personNotificationsDto);
 
+        model.addAttribute("showDepartments", person.hasRole(BOSS) || person.hasRole(OFFICE) || person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY));
+
+        if (isDepartmentSection) {
+            model.addAttribute("formFragment", "person/notifications/departments::form");
+            model.addAttribute(ACTIVE_CONTENT, ACTIVE_CONTENT_DEPARTMENTS);
+        } else {
+            model.addAttribute("formFragment", "person/notifications/self::form");
+            model.addAttribute(ACTIVE_CONTENT, ACTIVE_CONTENT_SELF);
+        }
+
         return "person/person_notifications";
     }
 
     @PostMapping("/person/{personId}/notifications")
     @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String editPersonNotifications(@PathVariable int personId,
-                                          @ModelAttribute PersonNotificationsDto newPersonNotificationsDto,
-                                          Errors errors,
-                                          Model model,
-                                          RedirectAttributes redirectAttributes) throws UnknownPersonException {
+    public String editSelfNotifications(@PathVariable int personId,
+                                        @ModelAttribute PersonNotificationsDto newPersonNotificationsDto,
+                                        Errors errors,
+                                        Model model,
+                                        RedirectAttributes redirectAttributes) throws UnknownPersonException {
+        return editNotifications(false, personId, newPersonNotificationsDto, errors, model, redirectAttributes, ACTIVE_CONTENT_SELF);
+    }
+
+    @PostMapping("/person/{personId}/notifications/departments")
+    @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
+    public String editDepartmentsNotifications(@PathVariable int personId,
+                                               @ModelAttribute PersonNotificationsDto newPersonNotificationsDto,
+                                               Errors errors,
+                                               Model model,
+                                               RedirectAttributes redirectAttributes) throws UnknownPersonException {
+        return editNotifications(true, personId, newPersonNotificationsDto, errors, model, redirectAttributes, ACTIVE_CONTENT_DEPARTMENTS);
+    }
+
+
+    private String editNotifications(boolean isDepartmentSection, int personId, PersonNotificationsDto newPersonNotificationsDto, Errors errors,
+                                     Model model, RedirectAttributes redirectAttributes, String section) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
@@ -83,6 +128,17 @@ public class PersonNotificationsViewController implements HasLaunchpad {
             BeanUtils.copyProperties(mapToPersonNotificationsDto(person), mergedPersonNotificationsDto);
             model.addAttribute("personNotificationsDto", mergedPersonNotificationsDto);
             model.addAttribute("error", true);
+
+            model.addAttribute("showDepartments", person.hasRole(BOSS) || person.hasRole(OFFICE) || person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY));
+
+            if (isDepartmentSection) {
+                model.addAttribute("formFragment", "person/notifications/departments::form");
+                model.addAttribute(ACTIVE_CONTENT, ACTIVE_CONTENT_DEPARTMENTS);
+            } else {
+                model.addAttribute("formFragment", "person/notifications/self::form");
+                model.addAttribute(ACTIVE_CONTENT, ACTIVE_CONTENT_SELF);
+            }
+
             return "person/person_notifications";
         }
 
@@ -91,6 +147,10 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
         redirectAttributes.addFlashAttribute("success", true);
 
-        return format("redirect:/web/person/%s/notifications", person.getId());
+        if (hasText(section) && !section.equals(ACTIVE_CONTENT_SELF)) {
+            return format("redirect:/web/person/%s/notifications/%s", person.getId(), section);
+        } else {
+            return format("redirect:/web/person/%s/notifications", person.getId());
+        }
     }
 }

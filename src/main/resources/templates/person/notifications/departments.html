@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <form
+      th:fragment="form"
+      method="post"
+      th:action="@{/web/person/__${personNotificationsDto.personId}__/notifications/departments}"
+      th:object="${personNotificationsDto}"
+      class="tw-mt-8 form-horizontal"
+      data-turbo="true"
+      data-turbo-frame="frame-feedback"
+    >
+      <input type="hidden" th:field="*{personId}" />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.applicationAppliedAndChanges.active}"
+        name="applicationAppliedAndChanges.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.applicationUpcoming.active}"
+        name="applicationUpcoming.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.holidayReplacement.active}"
+        name="holidayReplacement.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.holidayReplacementUpcoming.active}"
+        name="holidayReplacementUpcoming.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.overtimeApplied.active}"
+        name="overtimeApplied.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.overtimeAppliedByManagement.active}"
+        name="overtimeAppliedByManagement.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.personNewManagementAll.active}"
+        name="personNewManagementAll.active"
+        value="on"
+      />
+
+      <div class="list-selectable">
+        <div
+          class="list-selectable__item tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
+        >
+          <span class="checkbox-switch tw-flex tw-items-center tw-gap-2 md:tw-gap-3">
+            <input
+              type="checkbox"
+              id="email-notification-all-input"
+              class="tw-mt-0.5 tw-shrink-0"
+              is="uv-checkbox-all"
+              th:checked="*{all}"
+            />
+            <label
+              for="email-notification-all-input"
+              class="tw-m-0 tw-text-base tw-font-normal tw-break-all"
+              th:text="#{person.notifications.all.label}"
+            >
+              Alle E-Mail Benachrichtigungen aktivieren / deaktivieren
+            </label>
+          </span>
+        </div>
+      </div>
+
+      <div class="form-section tw-mt-8 tw-mb-16">
+        <div class="tw-space-y-8">
+          <section
+            th:if="${
+                personNotificationsDto.applicationAppliedForManagement.visible ||
+                personNotificationsDto.applicationTemporaryAllowedForManagement.visible ||
+                personNotificationsDto.applicationAllowedForManagement.visible ||
+                personNotificationsDto.applicationCancellationForManagement.visible ||
+                personNotificationsDto.applicationAdaptedForManagement.visible ||
+                personNotificationsDto.applicationWaitingReminderForManagement.visible ||
+                personNotificationsDto.applicationCancellationRequestedForManagement.visible
+              }"
+          >
+            <h2
+              class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+              style="top: var(--uv-header-height)"
+              th:text="#{person.notifications.section.absences.management.title}"
+            >
+              Abwesenheiten meiner Kolleg:innen
+            </h2>
+            <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationAppliedForManagement.visible},active=${personNotificationsDto.applicationAppliedForManagement.active},name='applicationAppliedForManagement.active',label='person.notifications.section.absences.applied.management.label',info='person.notifications.section.absences.applied.management.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationTemporaryAllowedForManagement.visible},active=${personNotificationsDto.applicationTemporaryAllowedForManagement.active},name='applicationTemporaryAllowedForManagement.active',label='person.notifications.section.absences.temporary-allowed.management.label',info='person.notifications.section.absences.temporary-allowed.management.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationAllowedForManagement.visible},active=${personNotificationsDto.applicationAllowedForManagement.active},name='applicationAllowedForManagement.active',label='person.notifications.section.absences.allowed.management.label',info='person.notifications.section.absences.allowed.management.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationCancellationForManagement.visible},active=${personNotificationsDto.applicationCancellationForManagement.active},name='applicationCancellationForManagement.active',label='person.notifications.section.absences.cancellation.management.label',info='person.notifications.section.absences.cancellation.management.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationAdaptedForManagement.visible},active=${personNotificationsDto.applicationAdaptedForManagement.active},name='applicationAdaptedForManagement.active',label='person.notifications.section.absences.adapted.management.label',info='person.notifications.section.absences.adapted.management.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationWaitingReminderForManagement.visible},active=${personNotificationsDto.applicationWaitingReminderForManagement.active},name='applicationWaitingReminderForManagement.active',label='person.notifications.section.absences.waiting-reminder.management.label',info='person.notifications.section.absences.waiting-reminder.management.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationCancellationRequestedForManagement.visible},active=${personNotificationsDto.applicationCancellationRequestedForManagement.active},name='applicationCancellationRequestedForManagement.active',label='person.notifications.section.absences.cancellation-requested.management.label',info='person.notifications.section.absences.cancellation-requested.management.info')}"
+              ></li>
+            </ul>
+          </section>
+          <section th:if="${personNotificationsDto.overtimeAppliedForManagement.visible}">
+            <h2
+              class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+              style="top: var(--uv-header-height)"
+              th:text="#{person.notifications.section.overtime.management.title}"
+            >
+              Überstunden meiner Kolleg:innen
+            </h2>
+            <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.overtimeAppliedForManagement.visible},active=${personNotificationsDto.overtimeAppliedForManagement.active},name='overtimeAppliedForManagement.active',label='person.notifications.section.overtime.applied.management.label',info='person.notifications.section.overtime.applied.management.info')}"
+              ></li>
+            </ul>
+          </section>
+        </div>
+      </div>
+
+      <noscript>
+        <div class="tw-mt-24 form-section tw-mb-16">
+          <hr />
+          <button th:text="#{action.save}" class="button-main-green col-xs-12 col-sm-5 col-md-2" type="submit"></button>
+          <button
+            th:text="#{action.cancel}"
+            type="button"
+            class="button col-xs-12 col-sm-5 col-md-2 pull-right"
+            data-back-button
+          ></button>
+        </div>
+      </noscript>
+    </form>
+  </body>
+</html>
