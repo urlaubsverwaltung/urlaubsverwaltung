@@ -40,9 +40,9 @@
           >
             <th:block th:fragment="action-refer-person-select-options">
               <option
-                th:each="boss : ${bosses}"
-                th:value="${boss.username}"
-                th:text="|${boss.firstName} ${boss.lastName}|"
+                th:each="personToRefer : ${availablePersonsToRefer}"
+                th:value="${personToRefer.username}"
+                th:text="|${personToRefer.firstName} ${personToRefer.lastName}|"
               ></option>
             </th:block>
           </select>

@@ -26,6 +26,7 @@ import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidat
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.ResponsiblePersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.workingtime.WorkDaysCountService;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTime;
@@ -43,6 +44,9 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNullElse;
+import static java.util.function.Predicate.isEqual;
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToAllowTemporaryAllowedApplication;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToAllowWaitingApplication;
@@ -57,11 +61,8 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationFor
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToStartCancellationRequest;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
@@ -76,6 +77,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
     private static final String ATTRIBUTE_ERRORS = "errors";
 
     private final PersonService personService;
+    private final ResponsiblePersonService responsiblePersonService;
     private final AccountService accountService;
     private final ApplicationService applicationService;
     private final ApplicationInteractionService applicationInteractionService;
@@ -89,6 +91,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
 
     @Autowired
     ApplicationForLeaveDetailsViewController(VacationDaysService vacationDaysService, PersonService personService,
+                                             ResponsiblePersonService responsiblePersonService,
                                              AccountService accountService, ApplicationService applicationService,
                                              ApplicationInteractionService applicationInteractionService,
                                              ApplicationCommentService commentService, WorkDaysCountService workDaysCountService,
@@ -96,6 +99,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
                                              DepartmentService departmentService, WorkingTimeService workingTimeService, Clock clock) {
         this.vacationDaysService = vacationDaysService;
         this.personService = personService;
+        this.responsiblePersonService = responsiblePersonService;
         this.accountService = accountService;
         this.applicationService = applicationService;
         this.applicationInteractionService = applicationInteractionService;
@@ -199,21 +203,22 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
             .orElseThrow(() -> new UnknownApplicationForLeaveException(applicationId));
 
         final String referUsername = referredPerson.getUsername();
-        final Person recipient = personService.getPersonByUsername(referUsername)
+        final Person personToRefer = personService.getPersonByUsername(referUsername)
             .orElseThrow(() -> new UnknownPersonException(referUsername));
 
-        final Person person = application.getPerson();
+        final Person personOfApplication = application.getPerson();
         final Person signedInUser = personService.getSignedInUser();
 
-        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
-        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
+        final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, personOfApplication);
+        final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, personOfApplication);
         final boolean allowedToReferApplication = isAllowedToReferApplication(application, signedInUser, isDepartmentHead, isSecondStageAuthority);
-        if (!allowedToReferApplication) {
+        final List<Person> responsibleManagersOf = getResponsibleManagersOf(personOfApplication, signedInUser);
+        if (!allowedToReferApplication || !responsibleManagersOf.contains(personToRefer)) {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to refer application for " +
                 "leave to user '%s'", signedInUser.getId(), referUsername));
         }
 
-        applicationInteractionService.refer(application, recipient, signedInUser);
+        applicationInteractionService.refer(application, personToRefer, signedInUser);
         redirectAttributes.addFlashAttribute("referSuccess", true);
         return REDIRECT_WEB_APPLICATION + applicationId;
     }
@@ -393,16 +398,6 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         model.addAttribute("comments", comments);
         model.addAttribute("lastComment", comments.get(comments.size() - 1));
 
-        // SPECIAL ATTRIBUTES FOR BOSSES / DEPARTMENT HEADS
-        boolean isNotYetAllowed = application.hasStatus(WAITING) || application.hasStatus(TEMPORARY_ALLOWED);
-        boolean isPrivilegedUser = signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE) || signedInUser.hasRole(DEPARTMENT_HEAD)
-            || signedInUser.hasRole(SECOND_STAGE_AUTHORITY);
-
-        if (isNotYetAllowed && isPrivilegedUser) {
-            model.addAttribute("bosses", personService.getActivePersonsByRole(BOSS));
-            model.addAttribute("referredPerson", new ReferredPerson());
-        }
-
         // APPLICATION FOR LEAVE
         model.addAttribute("app", new ApplicationForLeave(application, workDaysCountService));
 
@@ -457,7 +452,13 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
 
         model.addAttribute("isAllowedToEditApplication", isAllowedToEditApplication(application, signedInUser));
         model.addAttribute("isAllowedToRemindApplication", isAllowedToRemindApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
-        model.addAttribute("isAllowedToReferApplication", isAllowedToReferApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
+
+        final boolean allowedToReferApplication = isAllowedToReferApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
+        model.addAttribute("isAllowedToReferApplication", allowedToReferApplication);
+        if (allowedToReferApplication) {
+            model.addAttribute("availablePersonsToRefer", getResponsibleManagersOf(application.getPerson(), signedInUser));
+            model.addAttribute("referredPerson", new ReferredPerson());
+        }
 
         model.addAttribute("isDepartmentHeadOfPerson", isDepartmentHeadOfPerson);
         model.addAttribute("isSecondStageAuthorityOfPerson", isSecondStageAuthorityOfPerson);
@@ -469,5 +470,12 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         model.addAttribute("currentYear", Year.now(clock).getValue());
         model.addAttribute("action", requireNonNullElse(action, ""));
         model.addAttribute("shortcut", shortcut);
+    }
+
+    private List<Person> getResponsibleManagersOf(Person personOfInterest, Person signedInUser) {
+        return responsiblePersonService.getResponsibleManagersOf(personOfInterest)
+            .stream()
+            .filter(not(isEqual(signedInUser)))
+            .collect(toList());
     }
 }
