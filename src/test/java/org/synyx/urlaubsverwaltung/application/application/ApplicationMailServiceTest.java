@@ -40,7 +40,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
@@ -836,7 +836,7 @@ class ApplicationMailServiceTest {
 
         final Person colleague = new Person();
         colleague.setId(3);
-        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION))
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION))
             .thenReturn(List.of(colleague));
 
         sut.sendCancelledDirectlyConfirmationByApplicant(application, comment);
@@ -886,7 +886,7 @@ class ApplicationMailServiceTest {
 
         final Person colleague = new Person();
         colleague.setId(3);
-        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION))
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION))
             .thenReturn(List.of(colleague));
 
         sut.sendCancelledDirectlyConfirmationByManagement(application, comment);
@@ -914,7 +914,7 @@ class ApplicationMailServiceTest {
     }
 
     @Test
-    void sendCancelledByOfficeNotification() {
+    void sendCancelledConfirmationByManagement() {
 
         final Settings settings = new Settings();
         settings.setTimeSettings(new TimeSettings());
@@ -943,10 +943,15 @@ class ApplicationMailServiceTest {
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION))
             .thenReturn(List.of(person, office));
 
+        final Person colleague = new Person();
+        colleague.setId(3);
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION))
+            .thenReturn(List.of(colleague));
+
         sut.sendCancelledConfirmationByManagement(application, comment);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService, times(2)).send(argument.capture());
+        verify(mailService, times(3)).send(argument.capture());
         final List<Mail> mails = argument.getAllValues();
         assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
         assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.user");
@@ -960,6 +965,12 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(model);
         assertThat(mails.get(1).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
         assertThat(mails.get(1).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
+        assertThat(mails.get(2).getMailAddressRecipients()).hasValue(List.of(colleague));
+        assertThat(mails.get(2).getSubjectMessageKey()).isEqualTo("subject.absence.cancellation.to_colleagues");
+        assertThat(mails.get(2).getTemplateName()).isEqualTo("application_cancellation_to_colleagues");
+        assertThat(mails.get(2).getTemplateModel()).isEqualTo(Map.of("application", application));
+        assertThat(mails.get(2).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
+        assertThat(mails.get(2).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
     }
 
     @Test

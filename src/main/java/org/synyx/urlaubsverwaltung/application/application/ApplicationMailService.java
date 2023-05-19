@@ -32,7 +32,7 @@ import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
@@ -676,7 +676,7 @@ class ApplicationMailService {
 
         // Inform colleagues of applicant which are in same department
         final Map<String, Object> modelColleagues = Map.of(APPLICATION, application);
-        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION);
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
             .withSubject("subject.absence.cancellation.to_colleagues", application.getPerson().getNiceName())
@@ -711,7 +711,7 @@ class ApplicationMailService {
 
         // Inform colleagues of applicant which are in same department
         final Map<String, Object> modelColleagues = Map.of(APPLICATION, application);
-        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION);
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
             .withSubject("subject.absence.cancellation.to_colleagues", application.getPerson().getNiceName())
@@ -743,7 +743,6 @@ class ApplicationMailService {
             .withTemplate("application_cancelled_by_management_to_applicant", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
-
         mailService.send(mailToApplicant);
 
         // send cancelled by office information to all other relevant persons
@@ -754,8 +753,18 @@ class ApplicationMailService {
             .withTemplate("application_cancelled_by_management_to_management", model)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
-
         mailService.send(mailToRelevantPersons);
+
+        // Inform colleagues of applicant which are in same department
+        final Map<String, Object> modelColleagues = Map.of(APPLICATION, application);
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
+        final Mail mailToRelevantColleagues = Mail.builder()
+            .withRecipient(relevantColleaguesToInform)
+            .withSubject("subject.absence.cancellation.to_colleagues", application.getPerson().getNiceName())
+            .withTemplate("application_cancellation_to_colleagues", modelColleagues)
+            .withAttachment(CALENDAR_ICS, calendarFile)
+            .build();
+        mailService.send(mailToRelevantColleagues);
     }
 
     /**

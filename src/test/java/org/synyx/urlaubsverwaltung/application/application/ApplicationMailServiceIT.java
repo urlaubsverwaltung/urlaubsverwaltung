@@ -46,7 +46,7 @@ import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createVacationTypeEntity;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
@@ -1525,8 +1525,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Wrong information - cancelled");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
-        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION));
-        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
+        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION));
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
         sut.sendCancelledDirectlyConfirmationByApplicant(application, comment);
 
@@ -1596,8 +1596,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Wrong information - cancelled");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
-        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION));
-        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
+        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION));
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
         sut.sendCancelledDirectlyConfirmationByManagement(application, comment);
 
@@ -1664,6 +1664,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(relevantPerson, office));
 
+        final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setId(42);
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
+
         sut.sendCancelledConfirmationByManagement(application, comment);
 
         // was email sent to applicant?
@@ -1674,12 +1678,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde storniert");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
-        String content = readPlainContent(msg);
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("Marlene Muster hat einen deine Abwesenheit storniert.");
-        assertThat(content).contains(comment.getText());
-        assertThat(content).contains(comment.getPerson().getNiceName());
-        assertThat(content).contains("/web/application/1234");
+        assertThat(readPlainContent(msg)).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Marlene Muster hat einen deine Abwesenheit storniert." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
+            "Geht leider nicht" + EMAIL_LINE_BREAK + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachments = getAttachments(msg);
         assertThat(attachments.get(0).getName()).contains("calendar.ics");
@@ -1692,15 +1698,37 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vom Office storniert");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
 
-        String contentRelevantPerson = readPlainContent(msgRelevantPerson);
-        assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
-        assertThat(contentRelevantPerson).contains("Marlene Muster hat die Abwesenheit von Lieschen Müller vom 29.05.2020 storniert.");
-        assertThat(contentRelevantPerson).contains(comment.getText());
-        assertThat(contentRelevantPerson).contains(comment.getPerson().getNiceName());
-        assertThat(contentRelevantPerson).contains("/web/application/1234");
+        assertThat(readPlainContent(msgRelevantPerson)).isEqualTo("Hallo Relevant Person," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Marlene Muster hat die Abwesenheit von Lieschen Müller vom 29.05.2020 storniert." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
+            "Geht leider nicht" + EMAIL_LINE_BREAK + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsRelevantPerson = getAttachments(msgRelevantPerson);
         assertThat(attachmentsRelevantPerson.get(0).getName()).contains("calendar.ics");
+
+        // was email sent to colleague?
+        MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
+        assertThat(inboxColleague.length).isOne();
+
+        MimeMessage msgColleague = inboxColleague[0];
+        assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde storniert");
+        assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(msgColleague.getAllRecipients()[0]);
+
+        assertThat(readPlainContent(msgColleague)).isEqualTo("Hallo colleague colleague," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Müller wurde storniert:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Zeitraum: 19.05.2023 bis 19.05.2023, ganztägig" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" +
+            EMAIL_LINE_BREAK);
+
+        final List<DataSource> attachmentsColleague = getAttachments(msgColleague);
+        assertThat(attachmentsColleague.get(0).getName()).contains("calendar.ics");
     }
 
     @Test
