@@ -208,7 +208,7 @@ class MailRecipientServiceImplTest {
     }
 
     @Test
-    void ensureToGetAllActiveColleaguesWithoutDHAndSSA() {
+    void ensureToGetAllActiveColleaguesWithDepartmentsWithoutDHAndSSA() {
 
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
         normalUser.setPermissions(List.of(USER));
@@ -232,6 +232,32 @@ class MailRecipientServiceImplTest {
         department.setSecondStageAuthorities(List.of(secondStageAuthority));
 
         when(departmentService.getAssignedDepartmentsOfMember(normalUser)).thenReturn(List.of(department));
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        final List<Person> colleagues = sut.getColleagues(normalUser, NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED);
+        assertThat(colleagues).containsExactly(colleague);
+    }
+
+    @Test
+    void ensureToGetAllActiveColleaguesWithoutDepartments() {
+
+        final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
+        normalUser.setPermissions(List.of(USER));
+        normalUser.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
+        normalUser.setId(1);
+
+        final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setPermissions(List.of(USER));
+        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
+        colleague.setId(4);
+
+        final Person colleagueWithoutMailNotification = new Person("colleagueWithoutMailNotification", "colleagueWithoutMailNotification", "colleagueWithoutMailNotification", "colleagueWithoutMailNotification@example.org");
+        colleagueWithoutMailNotification.setPermissions(List.of(USER));
+        colleagueWithoutMailNotification.setNotifications(List.of());
+        colleagueWithoutMailNotification.setId(5);
+
+        when(personService.getActivePersons()).thenReturn(List.of(normalUser, colleague, colleagueWithoutMailNotification));
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
         final List<Person> colleagues = sut.getColleagues(normalUser, NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED);
         assertThat(colleagues).containsExactly(colleague);

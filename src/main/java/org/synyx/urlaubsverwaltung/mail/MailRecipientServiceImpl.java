@@ -75,6 +75,14 @@ class MailRecipientServiceImpl implements MailRecipientService {
 
     @Override
     public List<Person> getColleagues(Person personOfInterest, MailNotification mailNotification) {
+
+        if (!departmentsAvailable()) {
+            return personService.getActivePersons().stream()
+                .filter(person -> person.getNotifications().contains(mailNotification))
+                .filter(not(isEqual(personOfInterest)))
+                .collect(toList());
+        }
+
         return departmentService.getAssignedDepartmentsOfMember(personOfInterest).stream()
             .flatMap(department -> department.getMembers().stream()
                 .filter(Person::isActive)
