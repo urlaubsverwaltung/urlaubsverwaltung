@@ -62,6 +62,12 @@
         name="overtimeAppliedForManagement.active"
         value="on"
       />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.absenceForColleagues.active}"
+        name="absenceForColleagues.active"
+        value="on"
+      />
 
       <div class="list-selectable">
         <div

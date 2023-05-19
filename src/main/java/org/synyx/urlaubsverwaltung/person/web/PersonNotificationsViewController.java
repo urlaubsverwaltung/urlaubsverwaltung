@@ -26,10 +26,6 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
-import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToMailNotifications;
 import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToPersonNotificationsDto;
 
@@ -75,8 +71,6 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
         final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(person);
         model.addAttribute("personNotificationsDto", personNotificationsDto);
-
-        model.addAttribute("showDepartments", person.hasRole(BOSS) || person.hasRole(OFFICE) || person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY));
 
         if (isDepartmentSection) {
             model.addAttribute("formFragment", "person/notifications/departments::form");
@@ -128,8 +122,6 @@ public class PersonNotificationsViewController implements HasLaunchpad {
             BeanUtils.copyProperties(mapToPersonNotificationsDto(person), mergedPersonNotificationsDto);
             model.addAttribute("personNotificationsDto", mergedPersonNotificationsDto);
             model.addAttribute("error", true);
-
-            model.addAttribute("showDepartments", person.hasRole(BOSS) || person.hasRole(OFFICE) || person.hasRole(DEPARTMENT_HEAD) || person.hasRole(SECOND_STAGE_AUTHORITY));
 
             if (isDepartmentSection) {
                 model.addAttribute("formFragment", "person/notifications/departments::form");

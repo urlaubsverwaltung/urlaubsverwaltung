@@ -90,7 +90,8 @@
                 personNotificationsDto.applicationCancellationForManagement.visible ||
                 personNotificationsDto.applicationAdaptedForManagement.visible ||
                 personNotificationsDto.applicationWaitingReminderForManagement.visible ||
-                personNotificationsDto.applicationCancellationRequestedForManagement.visible
+                personNotificationsDto.applicationCancellationRequestedForManagement.visible ||
+                personNotificationsDto.absenceForColleagues.visible
               }"
           >
             <h2
@@ -101,6 +102,9 @@
               Abwesenheiten meiner Kolleg:innen
             </h2>
             <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.absenceForColleagues.visible},active=${personNotificationsDto.absenceForColleagues.active},name='absenceForColleagues.active',label='person.notifications.section.absences.colleagues.label',info='person.notifications.section.absences.colleagues.info')}"
+              ></li>
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationAppliedForManagement.visible},active=${personNotificationsDto.applicationAppliedForManagement.active},name='applicationAppliedForManagement.active',label='person.notifications.section.absences.applied.management.label',info='person.notifications.section.absences.applied.management.info')}"
               ></li>
