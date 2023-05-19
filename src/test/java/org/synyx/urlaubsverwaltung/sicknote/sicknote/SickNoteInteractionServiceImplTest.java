@@ -1,12 +1,13 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationInteractionService;
@@ -22,6 +23,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentAction;
 import org.synyx.urlaubsverwaltung.sicknote.comment.SickNoteCommentService;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +48,7 @@ import static org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingType
 @ExtendWith(MockitoExtension.class)
 class SickNoteInteractionServiceImplTest {
 
+    @InjectMocks
     private SickNoteInteractionServiceImpl sut;
 
     @Mock
@@ -60,12 +63,9 @@ class SickNoteInteractionServiceImplTest {
     private AbsenceMappingService absenceMappingService;
     @Mock
     private SettingsService settingsService;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
-    @BeforeEach
-    void setUp() {
-        sut = new SickNoteInteractionServiceImpl(sickNoteService, commentService, applicationInteractionService, calendarSyncService,
-            absenceMappingService, settingsService);
-    }
 
     @Test
     void ensureCreatedSickNoteIsPersisted() {
@@ -96,6 +96,13 @@ class SickNoteInteractionServiceImplTest {
         final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
         verify(sickNoteService).save(captor.capture());
         assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
+
+        final ArgumentCaptor<SickNoteCreatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteCreatedEvent.class);
+        verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
+        final SickNoteCreatedEvent sickNoteCreatedEvent = eventCaptor.getValue();
+        assertThat(sickNoteCreatedEvent.getSickNote()).isEqualTo(createdSickNote);
+        assertThat(sickNoteCreatedEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(sickNoteCreatedEvent.getId()).isNotNull();
     }
 
     @Test
@@ -187,6 +194,13 @@ class SickNoteInteractionServiceImplTest {
         final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
         verify(sickNoteService).save(captor.capture());
         assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.ACTIVE);
+
+        final ArgumentCaptor<SickNoteUpdatedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteUpdatedEvent.class);
+        verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
+        final SickNoteUpdatedEvent sickNoteUpdatedEvent = eventCaptor.getValue();
+        assertThat(sickNoteUpdatedEvent.getSickNote()).isEqualTo(sickNote);
+        assertThat(sickNoteUpdatedEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(sickNoteUpdatedEvent.getId()).isNotNull();
     }
 
     @Test
@@ -218,6 +232,13 @@ class SickNoteInteractionServiceImplTest {
         final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
         verify(sickNoteService).save(captor.capture());
         assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.CANCELLED);
+
+        final ArgumentCaptor<SickNoteCancelledEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteCancelledEvent.class);
+        verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
+        final SickNoteCancelledEvent sickNoteCancelledEvent = eventCaptor.getValue();
+        assertThat(sickNoteCancelledEvent.getSickNote()).isEqualTo(cancelledSickNote);
+        assertThat(sickNoteCancelledEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(sickNoteCancelledEvent.getId()).isNotNull();
     }
 
     @Test
@@ -286,6 +307,14 @@ class SickNoteInteractionServiceImplTest {
         final ArgumentCaptor<SickNote> captor = ArgumentCaptor.forClass(SickNote.class);
         verify(sickNoteService).save(captor.capture());
         assertThat(captor.getValue().getStatus()).isEqualTo(SickNoteStatus.CONVERTED_TO_VACATION);
+
+        final ArgumentCaptor<SickNoteToApplicationConvertedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteToApplicationConvertedEvent.class);
+        verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
+        final SickNoteToApplicationConvertedEvent sickNoteToApplicationConvertedEvent = eventCaptor.getValue();
+        assertThat(sickNoteToApplicationConvertedEvent.getSickNote()).isEqualTo(convertedSickNote);
+        assertThat(sickNoteToApplicationConvertedEvent.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(sickNoteToApplicationConvertedEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(sickNoteToApplicationConvertedEvent.getId()).isNotNull();
     }
 
     @Test
@@ -359,5 +388,23 @@ class SickNoteInteractionServiceImplTest {
         verify(absenceMappingService).getAbsenceByIdAndType(42, SICKNOTE);
         verify(absenceMappingService).delete(absenceMapping);
         verify(calendarSyncService).deleteAbsence("eventId");
+    }
+
+    @Test
+    void ensureSickNoteDeletedEventsArePublishedWhenPersonIsDeleted() {
+        final Person person = new Person();
+        person.setId(42);
+
+        final SickNote sickNote = SickNote.builder().id(42).build();
+        when(sickNoteService.deleteAllByPerson(person)).thenReturn(List.of(sickNote));
+
+        sut.deleteAll(new PersonDeletedEvent(person));
+
+        final ArgumentCaptor<SickNoteDeletedEvent> eventCaptor = ArgumentCaptor.forClass(SickNoteDeletedEvent.class);
+        verify(applicationEventPublisher).publishEvent(eventCaptor.capture());
+        final SickNoteDeletedEvent sickNoteDeletedEvent = eventCaptor.getValue();
+        assertThat(sickNoteDeletedEvent.getSickNote()).isEqualTo(sickNote);
+        assertThat(sickNoteDeletedEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(sickNoteDeletedEvent.getId()).isNotNull();
     }
 }

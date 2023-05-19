@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,11 +47,13 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
     private final SettingsService settingsService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     SickNoteInteractionServiceImpl(SickNoteService sickNoteService, SickNoteCommentService commentService,
                                    ApplicationInteractionService applicationInteractionService, CalendarSyncService calendarSyncService,
-                                   AbsenceMappingService absenceMappingService, SettingsService settingsService) {
+                                   AbsenceMappingService absenceMappingService, SettingsService settingsService,
+                                   ApplicationEventPublisher applicationEventPublisher) {
 
         this.sickNoteService = sickNoteService;
         this.commentService = commentService;
@@ -58,6 +61,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
         this.settingsService = settingsService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -75,6 +79,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         updateCalendar(updatedSickNote);
 
+        applicationEventPublisher.publishEvent(SickNoteCreatedEvent.of(sickNote));
+
         return updatedSickNote;
     }
 
@@ -86,6 +92,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(updatedSickNote, EDITED, editor, comment);
         updateAbsence(updatedSickNote);
+
+        applicationEventPublisher.publishEvent(SickNoteUpdatedEvent.of(sickNote));
 
         return updatedSickNote;
     }
@@ -114,6 +122,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
             }
         }
 
+        applicationEventPublisher.publishEvent(SickNoteToApplicationConvertedEvent.of(sickNote, application));
+
         return updatedSickNote;
     }
 
@@ -131,6 +141,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
             absenceMappingService.delete(absenceMapping.get());
         }
 
+        applicationEventPublisher.publishEvent(SickNoteCancelledEvent.of(sickNote));
         return savedSickNote;
     }
 
@@ -152,6 +163,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
                 absenceMappingService.delete(absenceMapping);
             })
         );
+
+        deletedSickNotes.forEach(sickNote -> applicationEventPublisher.publishEvent(SickNoteDeletedEvent.of(sickNote)));
         sickNoteService.deleteSickNoteApplier(personToBeDeleted);
     }
 
