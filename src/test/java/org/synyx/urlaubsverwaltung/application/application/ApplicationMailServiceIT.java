@@ -65,7 +65,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -128,7 +128,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Person colleague = new Person("colleague", "Dampf", "Hans", "dampf@example.org");
         colleague.setId(42);
-        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
         sut.sendAllowedNotification(application, comment);
 
@@ -716,8 +716,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("OK, Urlaub kann genommen werden");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
-        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
-        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
+        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
         sut.sendConfirmationAllowedDirectly(application, comment);
 
@@ -780,8 +780,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("OK, Urlaub kann genommen werden");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
-        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
-        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
+        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
         sut.sendConfirmationAllowedDirectlyByManagement(application, comment);
 

@@ -51,7 +51,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED;
 
 @Service
 class ApplicationMailService {
@@ -116,7 +116,7 @@ class ApplicationMailService {
 
         // Inform colleagues of applicant which are in same department
         final Map<String, Object> modelColleagues = Map.of(APPLICATION, application);
-        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED);
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         final Mail mailToRelevantColleagues = Mail.builder()
                 .withRecipient(relevantColleaguesToInform)
                 .withSubject("subject.absence.allowed.to_colleagues", application.getPerson().getNiceName())
@@ -316,7 +316,7 @@ class ApplicationMailService {
 
         // Inform colleagues of applicant which are in same department
         final Map<String, Object> modelColleagues = Map.of(APPLICATION, application);
-        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED);
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
             .withSubject("subject.absence.allowed.to_colleagues", application.getPerson().getNiceName())
@@ -350,7 +350,7 @@ class ApplicationMailService {
 
         // Inform colleagues of applicant which are in same department
         final Map<String, Object> modelColleagues = Map.of(APPLICATION, application);
-        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED);
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
             .withSubject("subject.absence.allowed.to_colleagues", application.getPerson().getNiceName())

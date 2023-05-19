@@ -39,7 +39,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
@@ -117,7 +117,7 @@ class ApplicationMailServiceTest {
 
         final Person colleague = new Person();
         colleague.setId(3);
-        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED))
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED))
             .thenReturn(List.of(colleague));
 
         sut.sendAllowedNotification(application, applicationComment);
@@ -577,7 +577,7 @@ class ApplicationMailServiceTest {
 
         final Person colleague = new Person();
         colleague.setId(3);
-        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED))
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED))
             .thenReturn(List.of(colleague));
 
         sut.sendConfirmationAllowedDirectly(application, comment);
@@ -626,7 +626,7 @@ class ApplicationMailServiceTest {
 
         final Person colleague = new Person();
         colleague.setId(3);
-        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED))
+        when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED))
             .thenReturn(List.of(colleague));
 
         sut.sendConfirmationAllowedDirectlyByManagement(application, comment);

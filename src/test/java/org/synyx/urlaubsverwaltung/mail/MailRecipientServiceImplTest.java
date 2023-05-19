@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
@@ -212,12 +212,12 @@ class MailRecipientServiceImplTest {
 
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
         normalUser.setPermissions(List.of(USER));
-        normalUser.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
+        normalUser.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
         normalUser.setId(1);
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
         colleague.setPermissions(List.of(USER));
-        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
+        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
         colleague.setId(4);
 
         final Person departmentHead = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
@@ -234,7 +234,7 @@ class MailRecipientServiceImplTest {
         when(departmentService.getAssignedDepartmentsOfMember(normalUser)).thenReturn(List.of(department));
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);
 
-        final List<Person> colleagues = sut.getColleagues(normalUser, NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED);
+        final List<Person> colleagues = sut.getColleagues(normalUser, NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         assertThat(colleagues).containsExactly(colleague);
     }
 
@@ -243,12 +243,12 @@ class MailRecipientServiceImplTest {
 
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
         normalUser.setPermissions(List.of(USER));
-        normalUser.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
+        normalUser.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
         normalUser.setId(1);
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
         colleague.setPermissions(List.of(USER));
-        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED));
+        colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
         colleague.setId(4);
 
         final Person colleagueWithoutMailNotification = new Person("colleagueWithoutMailNotification", "colleagueWithoutMailNotification", "colleagueWithoutMailNotification", "colleagueWithoutMailNotification@example.org");
@@ -259,7 +259,7 @@ class MailRecipientServiceImplTest {
         when(personService.getActivePersons()).thenReturn(List.of(normalUser, colleague, colleagueWithoutMailNotification));
         when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
-        final List<Person> colleagues = sut.getColleagues(normalUser, NOTIFICATION_EMAIL_ABSENCE_COLLEAGUES_ALLOWED);
+        final List<Person> colleagues = sut.getColleagues(normalUser, NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         assertThat(colleagues).containsExactly(colleague);
     }
 }
