@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +66,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     private final TimeSettings timeSettings;
     private final DepartmentService departmentService;
     private final Clock clock;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     ApplicationInteractionServiceImpl(ApplicationService applicationService,
@@ -74,7 +76,8 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
                                       CalendarSyncService calendarSyncService,
                                       AbsenceMappingService absenceMappingService,
                                       SettingsService settingsService,
-                                      DepartmentService departmentService, Clock clock) {
+                                      DepartmentService departmentService, Clock clock,
+                                      ApplicationEventPublisher applicationEventPublisher) {
 
         this.applicationService = applicationService;
         this.commentService = commentService;
@@ -85,6 +88,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         this.timeSettings = settingsService.getSettings().getTimeSettings();
         this.departmentService = departmentService;
         this.clock = clock;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -135,6 +139,8 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             calendarSyncService.addAbsence(absence)
                 .ifPresent(eventId -> absenceMappingService.create(savedApplication.getId(), VACATION, eventId));
         }
+
+        applicationEventPublisher.publishEvent(ApplicationAppliedEvent.of(savedApplication));
         return savedApplication;
     }
 
@@ -211,6 +217,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             calendarSyncService.addAbsence(absence)
                 .ifPresent(eventId -> absenceMappingService.create(savedApplication.getId(), VACATION, eventId));
         }
+        applicationEventPublisher.publishEvent(ApplicationAllowedEvent.of(savedApplication));
         return savedApplication;
     }
 
@@ -237,6 +244,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
         applicationMailService.sendTemporaryAllowedNotification(savedApplication, createdComment);
 
+        applicationEventPublisher.publishEvent(ApplicationAllowedTemporarilyEvent.of(savedApplication));
         return savedApplication;
     }
 
@@ -264,6 +272,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             applicationMailService.notifyHolidayReplacementAllow(holidayReplacement, savedApplication);
         }
 
+        applicationEventPublisher.publishEvent(ApplicationAllowedEvent.of(savedApplication));
         return savedApplication;
     }
 
@@ -293,6 +302,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             absenceMappingService.delete(absenceMapping.get());
         }
 
+        applicationEventPublisher.publishEvent(ApplicationRejectedEvent.of(savedApplication));
         return application;
     }
 
@@ -356,6 +366,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         // TODO - wann brachen wir das? Nur wenn die category HOLIDAY ist?
         accountInteractionService.updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
 
+        applicationEventPublisher.publishEvent(ApplicationCancelledEvent.of(savedApplication));
         return savedApplication;
     }
 
@@ -371,6 +382,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
             applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
         }
+        applicationEventPublisher.publishEvent(ApplicationRevokedEvent.of(savedApplication));
     }
 
 
@@ -394,6 +406,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             for (HolidayReplacementEntity holidayReplacement : savedApplication.getHolidayReplacements()) {
                 applicationMailService.notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
             }
+            applicationEventPublisher.publishEvent(ApplicationCancelledEvent.of(savedApplication));
         } else {
             /*
              * Users cannot cancel already allowed applications directly.
@@ -408,6 +421,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
             final ApplicationComment createdComment = commentService.create(savedApplication, CANCEL_REQUESTED, comment, canceller);
             applicationMailService.sendCancellationRequest(savedApplication, createdComment);
+            applicationEventPublisher.publishEvent(ApplicationCancellationRequestedEvent.of(savedApplication));
         }
     }
 
@@ -428,6 +442,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
 
         applicationMailService.sendDeclinedCancellationRequestApplicationNotification(savedApplication, applicationComment);
 
+        applicationEventPublisher.publishEvent(ApplicationDeclinedCancellationRequestEvent.of(savedApplication));
         return savedApplication;
     }
 
@@ -443,6 +458,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         commentService.create(savedApplication, ApplicationCommentAction.CONVERTED, Optional.empty(), creator);
         applicationMailService.sendSickNoteConvertedToVacationNotification(savedApplication);
 
+        applicationEventPublisher.publishEvent(ApplicationCreatedFromSickNoteEvent.of(savedApplication));
         return savedApplication;
     }
 
@@ -524,6 +540,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             applicationMailService.notifyHolidayReplacementAboutCancellation(replacement, savedEditedApplication);
         }
 
+        applicationEventPublisher.publishEvent(ApplicationUpdatedEvent.of(savedEditedApplication));
         return savedEditedApplication;
     }
 
@@ -549,6 +566,10 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
         );
 
         applicationService.deleteInteractionWithApplications(personToBeDeleted);
+
+        deletedApplications.stream()
+            .map(ApplicationDeletedEvent::of)
+            .forEach(applicationEventPublisher::publishEvent);
     }
 
     private List<HolidayReplacementEntity> replacementAdded(Application oldApplication, Application savedEditedApplication) {

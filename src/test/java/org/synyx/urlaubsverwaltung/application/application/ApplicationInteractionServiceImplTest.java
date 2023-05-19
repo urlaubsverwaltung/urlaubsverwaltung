@@ -3,9 +3,11 @@ package org.synyx.urlaubsverwaltung.application.application;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.synyx.urlaubsverwaltung.TestDataCreator;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
@@ -26,6 +28,7 @@ import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -93,6 +96,8 @@ class ApplicationInteractionServiceImplTest {
     private SettingsService settingsService;
     @Mock
     private DepartmentService departmentService;
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private final Clock clock = Clock.systemUTC();
 
@@ -104,7 +109,7 @@ class ApplicationInteractionServiceImplTest {
         when(settingsService.getSettings()).thenReturn(settings);
 
         sut = new ApplicationInteractionServiceImpl(applicationService, commentService, accountInteractionService,
-            applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService, clock);
+            applicationMailService, calendarSyncService, absenceMappingService, settingsService, departmentService, clock, applicationEventPublisher);
     }
 
     // APPLY FOR LEAVE -------------------------------------------------------------------------------------------------
@@ -130,6 +135,13 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(applicationForLeave, ApplicationCommentAction.APPLIED, comment, applier);
+
+        ArgumentCaptor<ApplicationAppliedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationAppliedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationAppliedEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -240,6 +252,13 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService, never()).sendConfirmationAllowedDirectlyByManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).sendDirectlyAllowedNotificationToManagement(any(Application.class), any(ApplicationComment.class));
         verify(applicationMailService).notifyHolidayReplacementAboutDirectlyAllowedApplication(any(HolidayReplacementEntity.class), any(Application.class));
+
+        ArgumentCaptor<ApplicationAllowedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationAllowedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationAllowedEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -322,6 +341,13 @@ class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, boss);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
+
+        ArgumentCaptor<ApplicationAllowedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationAllowedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationAllowedEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -451,6 +477,13 @@ class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.TEMPORARY_ALLOWED, comment, departmentHead);
         assertNoCalendarSyncOccurs();
         assertTemporaryAllowedNotificationIsSent(applicationForLeave);
+
+        ArgumentCaptor<ApplicationAllowedTemporarilyEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationAllowedTemporarilyEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationAllowedTemporarilyEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -523,6 +556,13 @@ class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStage);
         assertNoCalendarSyncIsExecuted();
         assertAllowedNotificationIsSent(applicationForLeave);
+
+        ArgumentCaptor<ApplicationAllowedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationAllowedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationAllowedEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -598,6 +638,13 @@ class ApplicationInteractionServiceImplTest {
         assertApplicationForLeaveAndCommentAreSaved(applicationForLeave, ApplicationCommentAction.ALLOWED, comment, secondStageAuthority);
         assertAllowedNotificationIsSent(applicationForLeave);
         verifyNoInteractions(calendarSyncService);
+
+        ArgumentCaptor<ApplicationAllowedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationAllowedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationAllowedEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -759,6 +806,13 @@ class ApplicationInteractionServiceImplTest {
 
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(applicationForLeave, ApplicationCommentAction.REJECTED, comment, boss);
+
+        ArgumentCaptor<ApplicationRejectedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationRejectedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationRejectedEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -824,6 +878,13 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.isFormerlyAllowed()).isFalse();
 
         verify(applicationMailService).sendRevokedNotifications(applicationForLeave, applicationComment);
+
+        ArgumentCaptor<ApplicationRevokedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationRevokedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationRevokedEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -866,6 +927,13 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationService).save(applicationForLeave);
         verify(commentService).create(applicationForLeave, CANCEL_REQUESTED, comment, person);
         verify(applicationMailService).sendCancellationRequest(eq(applicationForLeave), any(ApplicationComment.class));
+
+        ArgumentCaptor<ApplicationCancellationRequestedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationCancellationRequestedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationCancellationRequestedEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -891,6 +959,13 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.isFormerlyAllowed()).isTrue();
 
         verify(applicationMailService).sendCancelledConfirmationByManagement(applicationForLeave, applicationComment);
+
+        ArgumentCaptor<ApplicationCancelledEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationCancelledEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationCancelledEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -1031,6 +1106,13 @@ class ApplicationInteractionServiceImplTest {
         verify(applicationMailService).notifyHolidayReplacementAboutCancellation(holidayReplacement, savedApplication);
 
         verify(accountInteractionService).updateRemainingVacationDays(savedApplication.getStartDate().getYear(), person);
+
+        ArgumentCaptor<ApplicationCancelledEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationCancelledEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationCancelledEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -1091,6 +1173,13 @@ class ApplicationInteractionServiceImplTest {
         assertThat(application.getStatus()).isEqualTo(ALLOWED);
 
         verify(applicationMailService).sendDeclinedCancellationRequestApplicationNotification(application, applicationComment);
+
+        ArgumentCaptor<ApplicationDeclinedCancellationRequestEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationDeclinedCancellationRequestEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationDeclinedCancellationRequestEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -1142,6 +1231,13 @@ class ApplicationInteractionServiceImplTest {
         assertThat(applicationForLeave.getStatus()).isEqualTo(ALLOWED);
         assertThat(applicationForLeave.getApplier()).isEqualTo(creator);
         assertThat(applicationForLeave.getPerson()).isEqualTo(person);
+
+        ArgumentCaptor<ApplicationCreatedFromSickNoteEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationCreatedFromSickNoteEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationCreatedFromSickNoteEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(applicationForLeave);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     // REMIND ----------------------------------------------------------------------------------------------------------
@@ -1252,6 +1348,13 @@ class ApplicationInteractionServiceImplTest {
         verify(commentService).create(editedApplication, EDITED, comment, person);
         verify(applicationMailService).sendEditedNotification(editedApplication, person);
         verifyNoMoreInteractions(applicationMailService);
+
+        ArgumentCaptor<ApplicationUpdatedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationUpdatedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationUpdatedEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(editedApplication);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     @Test
@@ -1459,6 +1562,27 @@ class ApplicationInteractionServiceImplTest {
         verify(absenceMappingService).getAbsenceByIdAndType(42, VACATION);
         verify(absenceMappingService).delete(absenceMapping);
         verify(calendarSyncService).deleteAbsence("eventId");
+    }
+
+    @Test
+    void ensureApplicationDeletedEventsArePublishedWhenPersonIsDeleted() {
+
+        final Person person = new Person();
+        final int personId = 42;
+        person.setId(personId);
+
+        final Application application = new Application();
+        application.setId(42);
+        when(applicationService.deleteApplicationsByPerson(person)).thenReturn(List.of(application));
+
+        sut.deleteAllByPerson(new PersonDeletedEvent(person));
+
+        ArgumentCaptor<ApplicationDeletedEvent> argumentCaptor = ArgumentCaptor.forClass(ApplicationDeletedEvent.class);
+        verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+        final ApplicationDeletedEvent event = argumentCaptor.getValue();
+        assertThat(event.getApplication()).isEqualTo(application);
+        assertThat(event.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+        assertThat(event.getId()).isNotNull();
     }
 
     private void assertApplicationForLeaveHasChangedStatus(Application applicationForLeave, ApplicationStatus status,
