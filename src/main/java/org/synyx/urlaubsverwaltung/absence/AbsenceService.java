@@ -17,6 +17,7 @@ public interface AbsenceService {
      * @return list of all matching absences
      */
     List<AbsencePeriod> getOpenAbsences(Person person, LocalDate start, LocalDate end);
+    List<AbsencePeriod> getClosedAbsences(Person person, LocalDate start, LocalDate end);
 
     /**
      * Get all open absences for the given persons and date range.
@@ -28,6 +29,7 @@ public interface AbsenceService {
      * @return list of all matching absences
      */
     List<AbsencePeriod> getOpenAbsences(List<Person> persons, LocalDate start, LocalDate end);
+    List<AbsencePeriod> getClosedAbsences(List<Person> persons, LocalDate start, LocalDate end);
 
     /**
      * Get absences from a list of persons

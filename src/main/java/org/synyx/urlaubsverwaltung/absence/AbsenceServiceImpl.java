@@ -27,9 +27,13 @@ import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
+
 
 @Service
 public class AbsenceServiceImpl implements AbsenceService {
@@ -53,6 +57,30 @@ public class AbsenceServiceImpl implements AbsenceService {
         this.sickNoteService = sickNoteService;
         this.settingsService = settingsService;
         this.workingTimeCalendarService = workingTimeCalendarService;
+    }
+
+    @Override
+    public List<AbsencePeriod> getClosedAbsences(Person person, LocalDate start, LocalDate end) {
+        return getClosedAbsences(List.of(person), start, end);
+    }
+
+    @Override
+    public List<AbsencePeriod> getClosedAbsences(List<Person> persons, LocalDate start, LocalDate end) {
+
+        final DateRange askedDateRange = new DateRange(start, end);
+
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, askedDateRange);
+
+        List<ApplicationStatus> closedAppStatus = List.of(REJECTED, CANCELLED, REVOKED);
+
+        final List<Application> closedApplications = applicationService.getForStatesAndPerson(closedAppStatus, persons, start, end);
+        final List<AbsencePeriod> applicationAbsences = generateAbsencePeriodFromApplication(closedApplications, askedDateRange, workingTimeCalendarByPerson::get);
+
+        List<SickNoteStatus> closedSickNoteStatus = List.of(SickNoteStatus.CONVERTED_TO_VACATION, SickNoteStatus.CANCELLED);
+        final List<SickNote> closedSickNotes = sickNoteService.getForStatesAndPerson(closedSickNoteStatus, persons, start, end);
+        final List<AbsencePeriod> sickNoteAbsences = generateAbsencePeriodFromSickNotes(closedSickNotes, askedDateRange, workingTimeCalendarByPerson::get);
+
+        return Stream.concat(applicationAbsences.stream(), sickNoteAbsences.stream()).collect(toList());
     }
 
     @Override
