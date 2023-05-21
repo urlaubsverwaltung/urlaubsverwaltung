@@ -4,6 +4,7 @@ import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonCreatedEventD
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonDeletedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonDisabledEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonUpdatedEventDTO;
+import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,9 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 class PersonEventHandlerExtensionTest {
 
     @Mock
+    private TenantSupplier tenantSupplier;
+
+    @Mock
     private PersonService personService;
 
     @Mock
@@ -55,6 +59,7 @@ class PersonEventHandlerExtensionTest {
 
     @BeforeEach
     void setup() {
+        clearInvocations(tenantSupplier);
         clearInvocations(personService);
         clearInvocations(applicationEventPublisher);
     }
@@ -72,17 +77,20 @@ class PersonEventHandlerExtensionTest {
             final PersonCreatedEvent event = new PersonCreatedEvent("source?", person.getId(), person.getNiceName(), person.getUsername(), person.getEmail(), person.isActive());
 
             when(personService.getPersonByUsername(any())).thenReturn(Optional.of(person));
+            when(tenantSupplier.get()).thenReturn("default");
 
             sut.on(event);
 
             verify(personService).getPersonByUsername(person.getUsername());
             verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
+            verify(tenantSupplier).get();
 
             final PersonCreatedEventDTO result = argumentCaptor.getValue();
 
             assertThat(result).isNotNull();
             assertThat(result.getId()).isNotNull();
             assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+            assertThat(result.getTenantId()).isEqualTo("default");
             assertThat(result.getPersonId()).isEqualTo(person.getId());
             assertThat(result.getUsername()).isEqualTo(person.getUsername());
             assertThat(result.getLastName()).isEqualTo(person.getLastName());
@@ -100,6 +108,7 @@ class PersonEventHandlerExtensionTest {
 
             verify(personService).getPersonByUsername("muster");
             verifyNoInteractions(applicationEventPublisher);
+            verifyNoInteractions(tenantSupplier);
         }
     }
 
@@ -116,10 +125,12 @@ class PersonEventHandlerExtensionTest {
             final PersonUpdatedEvent event = new PersonUpdatedEvent("source?", person.getId(), person.getNiceName(), person.getUsername(), person.getEmail(), person.isActive());
 
             when(personService.getPersonByUsername(any())).thenReturn(Optional.of(person));
+            when(tenantSupplier.get()).thenReturn("default");
 
             sut.on(event);
 
             verify(personService).getPersonByUsername(person.getUsername());
+            verify(tenantSupplier).get();
             verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
 
             final PersonUpdatedEventDTO result = argumentCaptor.getValue();
@@ -127,6 +138,7 @@ class PersonEventHandlerExtensionTest {
             assertThat(result).isNotNull();
             assertThat(result.getId()).isNotNull();
             assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+            assertThat(result.getTenantId()).isEqualTo("default");
             assertThat(result.getPersonId()).isEqualTo(person.getId());
             assertThat(result.getUsername()).isEqualTo(person.getUsername());
             assertThat(result.getLastName()).isEqualTo(person.getLastName());
@@ -144,6 +156,7 @@ class PersonEventHandlerExtensionTest {
 
             verify(personService).getPersonByUsername("muster");
             verifyNoInteractions(applicationEventPublisher);
+            verifyNoInteractions(tenantSupplier);
         }
     }
 
@@ -160,10 +173,12 @@ class PersonEventHandlerExtensionTest {
             final PersonDisabledEvent event = new PersonDisabledEvent("source?", person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
 
             when(personService.getPersonByUsername(any())).thenReturn(Optional.of(person));
+            when(tenantSupplier.get()).thenReturn("default");
 
             sut.on(event);
 
             verify(personService).getPersonByUsername(person.getUsername());
+            verify(tenantSupplier).get();
             verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
 
             final PersonDisabledEventDTO result = argumentCaptor.getValue();
@@ -171,6 +186,7 @@ class PersonEventHandlerExtensionTest {
             assertThat(result).isNotNull();
             assertThat(result.getId()).isNotNull();
             assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+            assertThat(result.getTenantId()).isEqualTo("default");
             assertThat(result.getPersonId()).isEqualTo(person.getId());
             assertThat(result.getUsername()).isEqualTo(person.getUsername());
             assertThat(result.getLastName()).isEqualTo(person.getLastName());
@@ -188,6 +204,7 @@ class PersonEventHandlerExtensionTest {
 
             verify(personService).getPersonByUsername("muster");
             verifyNoInteractions(applicationEventPublisher);
+            verifyNoInteractions(tenantSupplier);
         }
     }
 
@@ -203,9 +220,12 @@ class PersonEventHandlerExtensionTest {
             final Person person = anyPerson();
             final PersonDeletedEvent event = new PersonDeletedEvent(person);
 
+            when(tenantSupplier.get()).thenReturn("default");
+
             sut.on(event);
 
             verifyNoInteractions(personService);
+            verify(tenantSupplier).get();
             verify(applicationEventPublisher).publishEvent(argumentCaptor.capture());
 
             final PersonDeletedEventDTO result = argumentCaptor.getValue();
@@ -213,6 +233,7 @@ class PersonEventHandlerExtensionTest {
             assertThat(result).isNotNull();
             assertThat(result.getId()).isNotNull();
             assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
+            assertThat(result.getTenantId()).isEqualTo("default");
             assertThat(result.getPersonId()).isEqualTo(person.getId());
             assertThat(result.getUsername()).isEqualTo(person.getUsername());
             assertThat(result.getLastName()).isEqualTo(person.getLastName());
