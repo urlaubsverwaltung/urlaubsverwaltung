@@ -58,6 +58,8 @@ class SickNoteInteractionServiceImplTest {
     @Mock
     private ApplicationInteractionService applicationInteractionService;
     @Mock
+    private SickNoteMailService sickNoteMailService;
+    @Mock
     private CalendarSyncService calendarSyncService;
     @Mock
     private AbsenceMappingService absenceMappingService;
@@ -165,6 +167,26 @@ class SickNoteInteractionServiceImplTest {
     }
 
     @Test
+    void ensureCreatingSickNoteSendCreatedNotification() {
+
+        when(sickNoteService.save(any())).then(returnsFirstArg());
+
+        final Person creator = new Person("creator", "Senior", "Creator", "creator@example.org");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(42)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC))
+            .dayLength(DayLength.FULL)
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .build();
+
+        sut.create(sickNote, creator);
+
+        verify(sickNoteMailService).sendCreatedToColleagues(sickNote);
+    }
+
+    @Test
     void ensureUpdatedSickHasComment() {
 
         when(calendarSyncService.isRealProviderConfigured()).thenReturn(true);
@@ -263,6 +285,26 @@ class SickNoteInteractionServiceImplTest {
         verify(absenceMappingService).getAbsenceByIdAndType(anyInt(), eq(SICKNOTE));
         verify(calendarSyncService).deleteAbsence(anyString());
         verify(absenceMappingService).delete(any(AbsenceMapping.class));
+    }
+
+    @Test
+    void ensureCancellingSickNoteSendCancelNotification() {
+
+        when(sickNoteService.save(any())).then(returnsFirstArg());
+
+        final Person canceller = new Person("canceller", "Senior", "Canceller", "canceller@example.org");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(42)
+            .startDate(LocalDate.now(UTC))
+            .endDate(LocalDate.now(UTC))
+            .dayLength(DayLength.FULL)
+            .person(new Person("muster", "Muster", "Marlene", "muster@example.org"))
+            .build();
+
+        sut.cancel(sickNote, canceller);
+
+        verify(sickNoteMailService).sendCancelToColleagues(sickNote);
     }
 
     @Test

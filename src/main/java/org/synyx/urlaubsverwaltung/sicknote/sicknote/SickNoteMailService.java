@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.mail.Mail;
+import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.mail.MailService;
+import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -18,6 +20,8 @@ import java.util.Map;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 
 @Service
@@ -29,15 +33,17 @@ class SickNoteMailService {
     private final SickNoteService sickNoteService;
     private final MailService mailService;
     private final PersonService personService;
+    private final MailRecipientService mailRecipientService;
     private final Clock clock;
 
     @Autowired
     SickNoteMailService(SettingsService settingsService, SickNoteService sickNoteService, MailService mailService,
-                        PersonService personService, Clock clock) {
+                        PersonService personService, MailRecipientService mailRecipientService, Clock clock) {
         this.settingsService = settingsService;
         this.sickNoteService = sickNoteService;
         this.mailService = mailService;
         this.personService = personService;
+        this.mailRecipientService = mailRecipientService;
         this.clock = clock;
     }
 
@@ -84,5 +90,45 @@ class SickNoteMailService {
             mailService.send(toOffice);
             sickNoteService.setEndOfSickPayNotificationSend(sickNote);
         }
+    }
+
+    /**
+     * Sends information about an anonym sick note to the colleagues
+     * to inform them about an absence
+     *
+     * @param sickNote that has been created
+     */
+    @Async
+    void sendCreatedToColleagues(SickNote sickNote) {
+
+        // Inform colleagues of applicant which are in same department
+        final Map<String, Object> modelColleagues = Map.of("sickNote", sickNote);
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED);
+        final Mail mailToRelevantColleagues = Mail.builder()
+            .withRecipient(relevantColleaguesToInform)
+            .withSubject("subject.sicknote.created.to_colleagues", sickNote.getPerson().getNiceName())
+            .withTemplate("sick_note_created_to_colleagues", modelColleagues)
+            .build();
+        mailService.send(mailToRelevantColleagues);
+    }
+
+    /**
+     * Sends information about an anonym sick note to the colleagues
+     * to inform them about an absence
+     *
+     * @param sickNote that has been created
+     */
+    @Async
+    void sendCancelToColleagues(SickNote sickNote) {
+
+        // Inform colleagues of applicant which are in same department
+        final Map<String, Object> modelColleagues = Map.of("sickNote", sickNote);
+        final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED);
+        final Mail mailToRelevantColleagues = Mail.builder()
+            .withRecipient(relevantColleaguesToInform)
+            .withSubject("subject.sicknote.cancelled.to_colleagues", sickNote.getPerson().getNiceName())
+            .withTemplate("sick_note_cancel_to_colleagues", modelColleagues)
+            .build();
+        mailService.send(mailToRelevantColleagues);
     }
 }

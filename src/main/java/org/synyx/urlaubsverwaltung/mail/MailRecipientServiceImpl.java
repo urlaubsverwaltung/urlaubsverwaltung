@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.util.function.Predicate.isEqual;
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -67,6 +69,27 @@ class MailRecipientServiceImpl implements MailRecipientService {
         }
 
         return Stream.concat(recipientsOfInterestForAll.stream(), managementDepartmentPersons)
+            .distinct()
+            .collect(toList());
+    }
+
+    @Override
+    public List<Person> getColleagues(Person personOfInterest, MailNotification mailNotification) {
+
+        if (!departmentsAvailable()) {
+            return personService.getActivePersons().stream()
+                .filter(person -> person.getNotifications().contains(mailNotification))
+                .filter(not(isEqual(personOfInterest)))
+                .collect(toList());
+        }
+
+        return departmentService.getAssignedDepartmentsOfMember(personOfInterest).stream()
+            .flatMap(department -> department.getMembers().stream()
+                .filter(Person::isActive)
+                .filter(person -> person.getNotifications().contains(mailNotification))
+                .filter(person -> !department.getDepartmentHeads().contains(person))
+                .filter(person -> !department.getSecondStageAuthorities().contains(person)))
+            .filter(not(isEqual(personOfInterest)))
             .distinct()
             .collect(toList());
     }

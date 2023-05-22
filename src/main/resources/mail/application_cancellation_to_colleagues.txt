@@ -1,0 +1,7 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{application.cancelled.to_colleagues(${application.person.niceName})})]
+
+    [(#{absence.information.period})] [(${#temporals.format(application.startDate, "dd.MM.yyyy")})] [(#{until})] [(${#temporals.format(application.endDate, "dd.MM.yyyy")})], [(#{__${application.dayLength.name}__})]
+
+[(#{application.cancelled.to_colleagues.overview})]: [(${baseLinkURL})]web/absences

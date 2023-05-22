@@ -44,6 +44,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     private final SickNoteService sickNoteService;
     private final SickNoteCommentService commentService;
     private final ApplicationInteractionService applicationInteractionService;
+    private final SickNoteMailService sickNoteMailService;
     private final CalendarSyncService calendarSyncService;
     private final AbsenceMappingService absenceMappingService;
     private final SettingsService settingsService;
@@ -51,13 +52,15 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
     @Autowired
     SickNoteInteractionServiceImpl(SickNoteService sickNoteService, SickNoteCommentService commentService,
-                                   ApplicationInteractionService applicationInteractionService, CalendarSyncService calendarSyncService,
-                                   AbsenceMappingService absenceMappingService, SettingsService settingsService,
+                                   ApplicationInteractionService applicationInteractionService, SickNoteMailService sickNoteMailService,
+                                   CalendarSyncService calendarSyncService, AbsenceMappingService absenceMappingService,
+                                   SettingsService settingsService,
                                    ApplicationEventPublisher applicationEventPublisher) {
 
         this.sickNoteService = sickNoteService;
         this.commentService = commentService;
         this.applicationInteractionService = applicationInteractionService;
+        this.sickNoteMailService = sickNoteMailService;
         this.calendarSyncService = calendarSyncService;
         this.absenceMappingService = absenceMappingService;
         this.settingsService = settingsService;
@@ -76,6 +79,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(updatedSickNote, SickNoteCommentAction.CREATED, applier, comment);
         LOG.info("Created sick note: {}", updatedSickNote);
+
+        sickNoteMailService.sendCreatedToColleagues(sickNote);
 
         updateCalendar(updatedSickNote);
 
@@ -134,6 +139,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         LOG.info("Cancelled sick note: {}", savedSickNote);
 
         commentService.create(savedSickNote, SickNoteCommentAction.CANCELLED, canceller);
+
+        sickNoteMailService.sendCancelToColleagues(sickNote);
 
         final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(savedSickNote.getId(), SICKNOTE);
         if (absenceMapping.isPresent()) {

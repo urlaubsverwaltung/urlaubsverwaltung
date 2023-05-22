@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
+import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
@@ -22,7 +24,10 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
@@ -34,10 +39,12 @@ class SickNoteMailServiceIT extends TestContainersBase {
     static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Autowired
-    private SickNoteMailService sickNoteMailService;
+    private SickNoteMailService sut;
     @Autowired
     private PersonService personService;
 
+    @MockBean
+    private MailRecipientService mailRecipientService;
     @MockBean
     private SickNoteService sickNoteService;
 
@@ -58,7 +65,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
         final List<SickNote> sickNotes = List.of(sickNote);
         when(sickNoteService.getSickNotesReachingEndOfSickPay()).thenReturn(sickNotes);
 
-        sickNoteMailService.sendEndOfSickPayNotification();
+        sut.sendEndOfSickPayNotification();
 
         // Where both mails sent?
         final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
@@ -115,5 +122,76 @@ class SickNoteMailServiceIT extends TestContainersBase {
             "Danach wird für gesetzlich Krankenversicherte in der Regel Krankengeld von der Krankenkasse gezahlt.");
 
         verify(sickNoteService).setEndOfSickPayNotificationSend(sickNote);
+    }
+
+    @Test
+    void sendSickNoteCreatedToColleagues() throws MessagingException, IOException {
+
+        final Person colleague = personService.create("colleague", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED), List.of(USER));
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1)
+            .person(person)
+            .startDate(LocalDate.of(2022, 2, 1))
+            .endDate(LocalDate.of(2022, 4, 1))
+            .dayLength(DayLength.FULL)
+            .build();
+
+        when(mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED))
+            .thenReturn(List.of(colleague));
+
+        sut.sendCreatedToColleagues(sickNote);
+
+        // check email of colleague
+        final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
+        assertThat(inboxColleague).hasSize(1);
+
+        final Message msgColleague = inboxColleague[0];
+        assertThat(msgColleague.getSubject()).isEqualTo("Neue Abwesenheit von Lieschen Müller");
+        assertThat(msgColleague.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Müller wurde erstellt:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Zeitraum: 01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences");
+    }
+
+
+    @Test
+    void sendSickNoteCancelToColleagues() throws MessagingException, IOException {
+
+        final Person colleague = personService.create("colleague", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED), List.of(USER));
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1)
+            .person(person)
+            .startDate(LocalDate.of(2022, 2, 1))
+            .endDate(LocalDate.of(2022, 4, 1))
+            .dayLength(DayLength.FULL)
+            .build();
+
+        when(mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED))
+            .thenReturn(List.of(colleague));
+
+        sut.sendCancelToColleagues(sickNote);
+
+        // check email of colleague
+        final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
+        assertThat(inboxColleague).hasSize(1);
+
+        final Message msgColleague = inboxColleague[0];
+        assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde zurückgenommen");
+        assertThat(msgColleague.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Müller wurde zurückgenommen:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Zeitraum: 01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences");
     }
 }

@@ -21,6 +21,7 @@ public class PersonNotificationsDto {
     private PersonNotificationDto overtimeAppliedForManagement;
     private PersonNotificationDto overtimeAppliedByManagement;
     private PersonNotificationDto overtimeApplied;
+    private PersonNotificationDto absenceForColleagues;
 
     PersonNotificationsDto() {
         // ok
@@ -65,11 +66,9 @@ public class PersonNotificationsDto {
     public void setApplicationAllowedForManagement(PersonNotificationDto applicationAllowedForManagement) {
         this.applicationAllowedForManagement = applicationAllowedForManagement;
     }
-
     public PersonNotificationDto getApplicationCancellationForManagement() {
         return applicationCancellationForManagement;
     }
-
     public void setApplicationCancellationForManagement(PersonNotificationDto applicationCancellationForManagement) {
         this.applicationCancellationForManagement = applicationCancellationForManagement;
     }
@@ -160,5 +159,13 @@ public class PersonNotificationsDto {
 
     public void setOvertimeApplied(PersonNotificationDto overtimeApplied) {
         this.overtimeApplied = overtimeApplied;
+    }
+
+    public PersonNotificationDto getAbsenceForColleagues() {
+        return absenceForColleagues;
+    }
+
+    public void setAbsenceForColleagues(PersonNotificationDto absenceForColleagues) {
+        this.absenceForColleagues = absenceForColleagues;
     }
 }

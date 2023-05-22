@@ -36,221 +36,46 @@
         Aktiviere oder Deaktiviere E-Mail Benachrichtigungen nach deinem Belieben.
       </p>
 
-      <form
-        method="post"
-        th:action="@{/web/person/__${personNotificationsDto.personId}__/notifications}"
-        th:object="${personNotificationsDto}"
-        class="tw-mt-8 form-horizontal"
-        data-turbo="true"
-        data-turbo-frame="frame-feedback"
-      >
-        <input type="hidden" th:field="*{personId}" />
-
-        <div class="list-selectable">
-          <div
-            class="list-selectable__item tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
-          >
-            <span class="checkbox-switch tw-flex tw-items-center tw-gap-2 md:tw-gap-3">
-              <input
-                type="checkbox"
-                id="email-notification-all-input"
-                class="tw-mt-0.5 tw-shrink-0"
-                is="uv-checkbox-all"
-                th:checked="*{all}"
-              />
-              <label
-                for="email-notification-all-input"
-                class="tw-m-0 tw-text-base tw-font-normal tw-break-all"
-                th:text="#{person.notifications.all.label}"
-              >
-                Alle E-Mail Benachrichtigungen aktivieren / deaktivieren
-              </label>
-            </span>
-          </div>
-        </div>
-
-        <div class="form-section tw-mt-8 tw-mb-16">
-          <div class="tw-space-y-8">
-            <section>
-              <h2
-                class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
-                style="top: var(--uv-header-height)"
-                th:text="#{person.notifications.section.absences.title}"
-              >
-                Meine Abwesenheiten
-              </h2>
-              <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
-                <th:block
-                  th:fragment="email-notification-element(name,label,info,visible,active)"
-                  th:with="
-                    name=${name ?: 'applicationAppliedAndChanges.active'},
-                    label=${label ?: 'person.notifications.section.absences.changed.label'},
-                    info=${info ?: 'person.notifications.section.absences.changed.info'},
-                    id=${#strings.randomAlphanumeric(8)},
-                    visible=${visible == null ? personNotificationsDto.applicationAppliedAndChanges.visible : visible},
-                    active=${active == null ? personNotificationsDto.applicationAppliedAndChanges.active : active}
-                  "
-                >
-                  <li th:if="${visible}" class="list-selectable__item" th:data-enabled="${active}">
-                    <uv-checkbox-card
-                      class="tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
-                    >
-                      <div class="md:tw-w-64 lg:tw-w-72">
-                        <span
-                          data-list-item-selection-toggle
-                          class="checkbox-switch tw-flex tw-items-center tw-gap-2 md:tw-gap-3"
-                        >
-                          <input
-                            type="checkbox"
-                            id="input"
-                            th:id="${id}"
-                            th:name="${name}"
-                            th:checked="${active}"
-                            class="tw-m-0 tw-shrink-0"
-                            th:aria-describedby="${'info-' + id}"
-                            data-auto-submit
-                          />
-                          <label
-                            for="input"
-                            th:for="${id}"
-                            class="tw-m-0 tw-text-base tw-font-normal"
-                            th:text="${#messages.msg(label)}"
-                          ></label>
-                        </span>
-                      </div>
-                      <div
-                        class="tw-flex-1 tw-flex tw-items-start tw-gap-2 dark:tw-text-zinc-400 md:dark:tw-text-inherit md:tw-items-center"
-                      >
-                        <svg
-                          th:replace="~{icon/info::svg(className='tw-hidden tw-shrink-0 tw-w-4 tw-h-4 md:tw-inline-block')}"
-                        ></svg>
-                        <p
-                          th:id="${'info-' + id}"
-                          class="tw-leading-normal tw-text-sm tw-m-0"
-                          th:text="${#messages.msg(info)}"
-                        ></p>
-                      </div>
-                    </uv-checkbox-card>
-                  </li>
-                </th:block>
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationUpcoming.visible},active=${personNotificationsDto.applicationUpcoming.active},name='applicationUpcoming.active',label='person.notifications.section.absences.upcoming.label',info='person.notifications.section.absences.upcoming.info')}"
-                ></li>
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.holidayReplacement.visible},active=${personNotificationsDto.holidayReplacement.active},name='holidayReplacement.active',label='person.notifications.section.absences.holiday-replacement.label',info='person.notifications.section.absences.holiday-replacement.info')}"
-                ></li>
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.holidayReplacementUpcoming.visible},active=${personNotificationsDto.holidayReplacementUpcoming.active},name='holidayReplacementUpcoming.active',label='person.notifications.section.absences.holiday-replacement.upcoming.label',info='person.notifications.section.absences.holiday-replacement.upcoming.info')}"
-                ></li>
-              </ul>
-            </section>
-            <section
-              th:if="${
-                  personNotificationsDto.applicationAppliedForManagement.visible ||
-                  personNotificationsDto.applicationTemporaryAllowedForManagement.visible ||
-                  personNotificationsDto.applicationAllowedForManagement.visible ||
-                  personNotificationsDto.applicationCancellationForManagement.visible ||
-                  personNotificationsDto.applicationAdaptedForManagement.visible ||
-                  personNotificationsDto.applicationWaitingReminderForManagement.visible ||
-                  personNotificationsDto.applicationCancellationRequestedForManagement.visible
-                }"
+      <div class="tw-mt-8">
+        <div
+          th:replace="fragments/section-heading::section-heading-paddingless(~{::person-notifications-navigation-body}, ~{})"
+        >
+          <th:block th:ref="person-notifications-navigation-body">
+            <ul
+              class="tw-m-0 tw-p-0 tw-list-none tw-flex tw-flex-col xs:tw-flex-row tw-gap-2 xs:tw-gap-8 tw-mb-2 xs:tw-mb-0"
             >
-              <h2
-                class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
-                style="top: var(--uv-header-height)"
-                th:text="#{person.notifications.section.absences.management.title}"
+              <li
+                class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
+                th:classappend="${activeContent == 'self' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
               >
-                Abwesenheiten meiner Kolleg:innen
-              </h2>
-              <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationAppliedForManagement.visible},active=${personNotificationsDto.applicationAppliedForManagement.active},name='applicationAppliedForManagement.active',label='person.notifications.section.absences.applied.management.label',info='person.notifications.section.absences.applied.management.info')}"
-                ></li>
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationTemporaryAllowedForManagement.visible},active=${personNotificationsDto.applicationTemporaryAllowedForManagement.active},name='applicationTemporaryAllowedForManagement.active',label='person.notifications.section.absences.temporary-allowed.management.label',info='person.notifications.section.absences.temporary-allowed.management.info')}"
-                ></li>
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationAllowedForManagement.visible},active=${personNotificationsDto.applicationAllowedForManagement.active},name='applicationAllowedForManagement.active',label='person.notifications.section.absences.allowed.management.label',info='person.notifications.section.absences.allowed.management.info')}"
-                ></li>
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationCancellationForManagement.visible},active=${personNotificationsDto.applicationCancellationForManagement.active},name='applicationCancellationForManagement.active',label='person.notifications.section.absences.cancellation.management.label',info='person.notifications.section.absences.cancellation.management.info')}"
-                ></li>
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationAdaptedForManagement.visible},active=${personNotificationsDto.applicationAdaptedForManagement.active},name='applicationAdaptedForManagement.active',label='person.notifications.section.absences.adapted.management.label',info='person.notifications.section.absences.adapted.management.info')}"
-                ></li>
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationWaitingReminderForManagement.visible},active=${personNotificationsDto.applicationWaitingReminderForManagement.active},name='applicationWaitingReminderForManagement.active',label='person.notifications.section.absences.waiting-reminder.management.label',info='person.notifications.section.absences.waiting-reminder.management.info')}"
-                ></li>
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.applicationCancellationRequestedForManagement.visible},active=${personNotificationsDto.applicationCancellationRequestedForManagement.active},name='applicationCancellationRequestedForManagement.active',label='person.notifications.section.absences.cancellation-requested.management.label',info='person.notifications.section.absences.cancellation-requested.management.info')}"
-                ></li>
-              </ul>
-            </section>
-            <section>
-              <h2
-                class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
-                style="top: var(--uv-header-height)"
-                th:text="#{person.notifications.section.overtime.title}"
+                <a
+                  href="#"
+                  th:href="@{/web/person/{userId}/notifications(userId=${userId})}"
+                  class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
+                  th:classappend="${activeContent == 'self' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
+                >
+                  Persönlich
+                </a>
+              </li>
+              <li
+                class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
+                th:classappend="${activeContent == 'departments' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
               >
-                Meine Überstunden
-              </h2>
-              <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.overtimeApplied.visible},active=${personNotificationsDto.overtimeApplied.active},name='overtimeApplied.active',label='person.notifications.section.overtime.applied.label',info='person.notifications.section.overtime.applied.info')}"
-                ></li>
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.overtimeAppliedByManagement.visible},active=${personNotificationsDto.overtimeAppliedByManagement.active},name='overtimeAppliedByManagement.active',label='person.notifications.section.overtime.applied.by_management.label',info='person.notifications.section.overtime.applied.by_management.info')}"
-                ></li>
-              </ul>
-            </section>
-            <section th:if="${personNotificationsDto.overtimeAppliedForManagement.visible}">
-              <h2
-                class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
-                style="top: var(--uv-header-height)"
-                th:text="#{person.notifications.section.overtime.management.title}"
-              >
-                Überstunden meiner Kolleg:innen
-              </h2>
-              <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.overtimeAppliedForManagement.visible},active=${personNotificationsDto.overtimeAppliedForManagement.active},name='overtimeAppliedForManagement.active',label='person.notifications.section.overtime.applied.management.label',info='person.notifications.section.overtime.applied.management.info')}"
-                ></li>
-              </ul>
-            </section>
-            <section th:if="${personNotificationsDto.personNewManagementAll.visible}">
-              <h2
-                class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
-                style="top: var(--uv-header-height)"
-                th:text="#{person.notifications.section.persons.title}"
-              >
-                Personen
-              </h2>
-              <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
-                <li
-                  th:replace="~{::email-notification-element(visible=${personNotificationsDto.personNewManagementAll.visible},active=${personNotificationsDto.personNewManagementAll.active},name='personNewManagementAll.active',label='person.notifications.section.persons.added.label',info='person.notifications.section.persons.added.info')}"
-                ></li>
-              </ul>
-            </section>
-          </div>
+                <a
+                  href="#"
+                  th:href="@{/web/person/{userId}/notifications/departments(userId=${userId})}"
+                  class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
+                  th:classappend="${activeContent == 'departments' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
+                >
+                  Abteilungen
+                </a>
+              </li>
+            </ul>
+          </th:block>
         </div>
+      </div>
 
-        <noscript>
-          <div class="tw-mt-24 form-section tw-mb-16">
-            <hr />
-            <button
-              th:text="#{action.save}"
-              class="button-main-green col-xs-12 col-sm-5 col-md-2"
-              type="submit"
-            ></button>
-            <button
-              th:text="#{action.cancel}"
-              type="button"
-              class="button col-xs-12 col-sm-5 col-md-2 pull-right"
-              data-back-button
-            ></button>
-          </div>
-        </noscript>
-      </form>
+      <div th:replace="~{__${formFragment}__}"></div>
     </main>
   </body>
 </html>

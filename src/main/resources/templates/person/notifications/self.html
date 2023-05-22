@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <form
+      th:fragment="form"
+      method="post"
+      th:action="@{/web/person/__${personNotificationsDto.personId}__/notifications}"
+      th:object="${personNotificationsDto}"
+      class="tw-mt-8 form-horizontal"
+      data-turbo="true"
+      data-turbo-frame="frame-feedback"
+    >
+      <input type="hidden" th:field="*{personId}" />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.applicationAppliedForManagement.active}"
+        name="applicationAppliedForManagement.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.applicationTemporaryAllowedForManagement.active}"
+        name="applicationTemporaryAllowedForManagement.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.applicationAllowedForManagement.active}"
+        name="applicationAllowedForManagement.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.applicationCancellationForManagement.active}"
+        name="applicationCancellationForManagement.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.applicationAdaptedForManagement.active}"
+        name="applicationAdaptedForManagement.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.applicationWaitingReminderForManagement.active}"
+        name="applicationWaitingReminderForManagement.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.applicationCancellationRequestedForManagement.active}"
+        name="applicationCancellationRequestedForManagement.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.overtimeAppliedForManagement.active}"
+        name="overtimeAppliedForManagement.active"
+        value="on"
+      />
+      <input
+        type="hidden"
+        th:if="${personNotificationsDto.absenceForColleagues.active}"
+        name="absenceForColleagues.active"
+        value="on"
+      />
+
+      <div class="list-selectable">
+        <div
+          class="list-selectable__item tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
+        >
+          <span class="checkbox-switch tw-flex tw-items-center tw-gap-2 md:tw-gap-3">
+            <input
+              type="checkbox"
+              id="email-notification-all-input"
+              class="tw-mt-0.5 tw-shrink-0"
+              is="uv-checkbox-all"
+              th:checked="*{all}"
+            />
+            <label
+              for="email-notification-all-input"
+              class="tw-m-0 tw-text-base tw-font-normal tw-break-all"
+              th:text="#{person.notifications.all.label}"
+            >
+              Alle E-Mail Benachrichtigungen aktivieren / deaktivieren
+            </label>
+          </span>
+        </div>
+      </div>
+
+      <div class="form-section tw-mt-8 tw-mb-16">
+        <div class="tw-space-y-8">
+          <section>
+            <h2
+              class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+              style="top: var(--uv-header-height)"
+              th:text="#{person.notifications.section.absences.title}"
+            >
+              Meine Abwesenheiten
+            </h2>
+            <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationAppliedAndChanges.visible},active=${personNotificationsDto.applicationAppliedAndChanges.active},name='applicationAppliedAndChanges.active',label='person.notifications.section.absences.changed.label',info='person.notifications.section.absences.changed.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.applicationUpcoming.visible},active=${personNotificationsDto.applicationUpcoming.active},name='applicationUpcoming.active',label='person.notifications.section.absences.upcoming.label',info='person.notifications.section.absences.upcoming.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.holidayReplacement.visible},active=${personNotificationsDto.holidayReplacement.active},name='holidayReplacement.active',label='person.notifications.section.absences.holiday-replacement.label',info='person.notifications.section.absences.holiday-replacement.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.holidayReplacementUpcoming.visible},active=${personNotificationsDto.holidayReplacementUpcoming.active},name='holidayReplacementUpcoming.active',label='person.notifications.section.absences.holiday-replacement.upcoming.label',info='person.notifications.section.absences.holiday-replacement.upcoming.info')}"
+              ></li>
+            </ul>
+          </section>
+          <section>
+            <h2
+              class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+              style="top: var(--uv-header-height)"
+              th:text="#{person.notifications.section.overtime.title}"
+            >
+              Meine Überstunden
+            </h2>
+            <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.overtimeApplied.visible},active=${personNotificationsDto.overtimeApplied.active},name='overtimeApplied.active',label='person.notifications.section.overtime.applied.label',info='person.notifications.section.overtime.applied.info')}"
+              ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.overtimeAppliedByManagement.visible},active=${personNotificationsDto.overtimeAppliedByManagement.active},name='overtimeAppliedByManagement.active',label='person.notifications.section.overtime.applied.by_management.label',info='person.notifications.section.overtime.applied.by_management.info')}"
+              ></li>
+            </ul>
+          </section>
+          <section th:if="${personNotificationsDto.personNewManagementAll.visible}">
+            <h2
+              class="tw-sticky tw-text-lg tw-border-b tw-bg-white dark:tw-bg-zinc-900 dark:tw-py-0.5"
+              style="top: var(--uv-header-height)"
+              th:text="#{person.notifications.section.persons.title}"
+            >
+              Personen
+            </h2>
+            <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.personNewManagementAll.visible},active=${personNotificationsDto.personNewManagementAll.active},name='personNewManagementAll.active',label='person.notifications.section.persons.added.label',info='person.notifications.section.persons.added.info')}"
+              ></li>
+            </ul>
+          </section>
+        </div>
+      </div>
+
+      <noscript>
+        <div class="tw-mt-24 form-section tw-mb-16">
+          <hr />
+          <button th:text="#{action.save}" class="button-main-green col-xs-12 col-sm-5 col-md-2" type="submit"></button>
+          <button
+            th:text="#{action.cancel}"
+            type="button"
+            class="button col-xs-12 col-sm-5 col-md-2 pull-right"
+            data-back-button
+          ></button>
+        </div>
+      </noscript>
+    </form>
+  </body>
+</html>
