@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 class CalendarMailServiceIT extends TestContainersBase {
 
     @RegisterExtension
-    public final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Autowired
     private CalendarMailService sut;

@@ -37,7 +37,7 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
     private static final String EMAIL_LINE_BREAK = "\r\n";
 
     @RegisterExtension
-    public final GreenMailExtension greenMail = new GreenMailExtension(SMTP_IMAP);
+    static final GreenMailExtension greenMail = new GreenMailExtension(SMTP_IMAP);
 
     @MockBean
     private PersonService personService;

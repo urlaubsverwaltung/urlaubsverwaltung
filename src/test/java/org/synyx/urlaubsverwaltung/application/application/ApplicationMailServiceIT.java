@@ -77,7 +77,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     private static final String EMAIL_LINE_BREAK = "\r\n";
 
     @RegisterExtension
-    public final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Autowired
     private ApplicationMailService sut;
@@ -1618,20 +1618,63 @@ class ApplicationMailServiceIT extends TestContainersBase {
         sut.sendAppliedNotificationToManagement(application, comment);
 
         // was email sent to boss?
-        MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        final MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
         assertThat(inboxOfBoss.length).isOne();
 
+        final Message msgBoss = inboxOfBoss[0];
+        assertThat(msgBoss.getSubject()).isEqualTo("Neue zu genehmigende Abwesenheit für Lieschen Müller eingereicht");
+        assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msgBoss.getAllRecipients()[0]);
+        assertThat(msgBoss.getContent()).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "es liegt ein neuer zu genehmigender Antrag vor." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
+            "Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            22.05.2023 bis 22.05.2023, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    22.05.2023" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "    " + EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 22.05.2023 bis 22.05.2023" + EMAIL_LINE_BREAK +
+            "    ");
+
         // was email sent to department head?
-        MimeMessage[] inboxOfDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
+        final MimeMessage[] inboxOfDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
         assertThat(inboxOfDepartmentHead.length).isOne();
-
-        // get email
-        Message msgBoss = inboxOfBoss[0];
-        Message msgDepartmentHead = inboxOfDepartmentHead[0];
-
-        verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
-        verifyNotificationAboutNewApplication(departmentHead, msgDepartmentHead, application.getPerson().getNiceName(),
-            comment);
+        final Message msgDepartmentHead = inboxOfDepartmentHead[0];
+        assertThat(msgDepartmentHead.getContent()).isEqualTo("Hallo Senior Kopf," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "es liegt ein neuer zu genehmigender Antrag vor." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
+            "Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            22.05.2023 bis 22.05.2023, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    22.05.2023" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "    " + EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 22.05.2023 bis 22.05.2023" + EMAIL_LINE_BREAK +
+            "    ");
     }
 
     @Test
@@ -1659,16 +1702,65 @@ class ApplicationMailServiceIT extends TestContainersBase {
         sut.sendAppliedNotificationToManagement(application, comment);
 
         // was email sent to boss?
-        MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        final MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
         assertThat(inboxOfBoss.length).isOne();
+        final Message msgBoss = inboxOfBoss[0];
+
+        assertThat(msgBoss.getSubject()).isEqualTo("Neue zu genehmigende Abwesenheit für Kai Schmitt eingereicht");
+        assertThat(new InternetAddress(boss.getEmail())).isEqualTo(msgBoss.getAllRecipients()[0]);
+        assertThat(msgBoss.getContent()).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "es liegt ein neuer zu genehmigender Antrag vor." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Kai Schmitt:" + EMAIL_LINE_BREAK +
+            "Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Kai Schmitt" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            22.05.2023 bis 22.05.2023, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    22.05.2023" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "    " + EMAIL_LINE_BREAK +
+            "    Kai Schmitt: 22.05.2023 bis 22.05.2023" + EMAIL_LINE_BREAK +
+            "    ");
 
         // no email sent to department head
-        MimeMessage[] inboxOfDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
+        final MimeMessage[] inboxOfDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
+        final Message msgDepartmentHead = inboxOfDepartmentHead[0];
+        assertThat(msgDepartmentHead.getSubject()).isEqualTo("Neue zu genehmigende Abwesenheit für Kai Schmitt eingereicht");
+        assertThat(new InternetAddress(departmentHead.getEmail())).isEqualTo(msgDepartmentHead.getAllRecipients()[0]);
         assertThat(inboxOfDepartmentHead.length).isOne();
-
-        // get email
-        Message msgBoss = inboxOfBoss[0];
-        verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
+        assertThat(msgDepartmentHead.getContent()).isEqualTo("Hallo Senior Kopf," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "es liegt ein neuer zu genehmigender Antrag vor." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Kai Schmitt:" + EMAIL_LINE_BREAK +
+            "Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Kai Schmitt" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            22.05.2023 bis 22.05.2023, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    22.05.2023" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "    " + EMAIL_LINE_BREAK +
+            "    Kai Schmitt: 22.05.2023 bis 22.05.2023" + EMAIL_LINE_BREAK +
+            "    ");
     }
 
     @Test
@@ -1696,20 +1788,173 @@ class ApplicationMailServiceIT extends TestContainersBase {
         sut.sendAppliedNotificationToManagement(application, comment);
 
         // was email sent to boss?
-        MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        final MimeMessage[] inboxOfBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
         assertThat(inboxOfBoss.length).isOne();
+        final Message msgBoss = inboxOfBoss[0];
+        assertThat(msgBoss.getContent()).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "es liegt ein neuer zu genehmigender Antrag vor." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Senior Kopf:" + EMAIL_LINE_BREAK +
+            "Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Senior Kopf" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            22.05.2023 bis 22.05.2023, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    22.05.2023" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "    " + EMAIL_LINE_BREAK +
+            "    Senior Kopf: 22.05.2023 bis 22.05.2023" + EMAIL_LINE_BREAK +
+            "    ");
 
         // was email sent to secondary stage?
-        MimeMessage[] inboxOfSecondaryStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
+        final MimeMessage[] inboxOfSecondaryStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
         assertThat(inboxOfSecondaryStage.length).isOne();
+        final Message msgSecondaryStage = inboxOfSecondaryStage[0];
+        assertThat(msgSecondaryStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "es liegt ein neuer zu genehmigender Antrag vor." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Senior Kopf:" + EMAIL_LINE_BREAK +
+            "Hätte gerne Urlaub" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Senior Kopf" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            22.05.2023 bis 22.05.2023, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    22.05.2023" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "    " + EMAIL_LINE_BREAK +
+            "    Senior Kopf: 22.05.2023 bis 22.05.2023" + EMAIL_LINE_BREAK +
+            "    ");
+    }
 
-        // get email
-        Message msgBoss = inboxOfBoss[0];
-        Message msgSecondaryStage = inboxOfSecondaryStage[0];
+    @Test
+    void ensureNotificationAboutNewApplicationWithoutOverlappingVacations() throws MessagingException, IOException {
 
-        verifyNotificationAboutNewApplication(boss, msgBoss, application.getPerson().getNiceName(), comment);
-        verifyNotificationAboutNewApplication(secondStage, msgSecondaryStage, application.getPerson().getNiceName(),
-            comment);
+        final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+
+        final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setPermissions(singletonList(BOSS));
+        boss.setNotifications(singletonList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+
+        final Person person = new Person("lieschen", "Müller", "Lieschen", "mueller@example.org");
+        person.setPermissions(singletonList(USER));
+
+        final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, APRIL, 12));
+        application.setStartDate(LocalDate.of(2021, APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, APRIL, 16));
+
+        final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
+        holidayReplacementEntity.setPerson(holidayReplacement);
+
+        application.setHolidayReplacements(List.of(holidayReplacementEntity));
+
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of());
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
+
+        sut.sendAppliedNotificationToManagement(application, new ApplicationComment(clock));
+
+        MimeMessage[] messages = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        assertThat(messages.length).isOne();
+
+        Message message = messages[0];
+        assertThat(message.getContent()).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "es liegt ein neuer zu genehmigender Antrag vor." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "    " + EMAIL_LINE_BREAK +
+            "    Keine"
+        );
+    }
+
+    @Test
+    void ensureNotificationAboutNewApplicationWithMultipleOverlappingVacations() throws MessagingException, IOException {
+
+        final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
+
+        final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setPermissions(singletonList(BOSS));
+        boss.setNotifications(singletonList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+
+        final Person person = new Person("lieschen", "Müller", "Lieschen", "mueller@example.org");
+        person.setPermissions(singletonList(USER));
+
+        final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, APRIL, 12));
+        application.setStartDate(LocalDate.of(2021, APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, APRIL, 16));
+
+        final Application applicationSecond = createApplication(person);
+        applicationSecond.setApplicationDate(LocalDate.of(2021, APRIL, 12));
+        applicationSecond.setStartDate(LocalDate.of(2021, APRIL, 17));
+        applicationSecond.setEndDate(LocalDate.of(2021, APRIL, 17));
+
+        final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
+        holidayReplacementEntity.setPerson(holidayReplacement);
+
+        application.setHolidayReplacements(List.of(holidayReplacementEntity));
+
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application, applicationSecond));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(List.of(boss));
+
+        sut.sendAppliedNotificationToManagement(application, new ApplicationComment(clock));
+
+        MimeMessage[] messages = greenMail.getReceivedMessagesForDomain(boss.getEmail());
+        assertThat(messages.length).isOne();
+
+        Message message = messages[0];
+        assertThat(message.getContent()).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "es liegt ein neuer zu genehmigender Antrag vor." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "    " + EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 17.04.2021 bis 17.04.2021" + EMAIL_LINE_BREAK +
+            "    "
+        );
     }
 
     @Test
@@ -1760,8 +2005,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
+            "    " + EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
+            "    ");
     }
 
     @Test
@@ -1816,8 +2062,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
+            "    " + EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
+            "    ");
     }
 
     @Test
@@ -1896,8 +2143,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
+            "    " + EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
+            "    ");
     }
 
     @Test
@@ -1972,8 +2220,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
+            "    " + EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
+            "    ");
     }
 
     @Test
@@ -2052,8 +2301,150 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "    " + EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021"+ EMAIL_LINE_BREAK +
+            "    ");
+    }
+
+    @Test
+    void ensureNotificationAboutTemporaryAllowedApplicationWithMultipleOverlappingVacations() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
+
+        final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
+        secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+        secondStage.setNotifications(singletonList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
+
+        final ApplicationComment comment = new ApplicationComment(secondStage, clock);
+        comment.setText("OK, spricht von meiner Seite aus nix dagegen");
+
+        final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, APRIL, 12));
+        application.setStartDate(LocalDate.of(2021, APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, APRIL, 16));
+
+        final Application applicationSecond = createApplication(person);
+        applicationSecond.setApplicationDate(LocalDate.of(2021, APRIL, 12));
+        applicationSecond.setStartDate(LocalDate.of(2021, APRIL, 17));
+        applicationSecond.setEndDate(LocalDate.of(2021, APRIL, 17));
+
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application, applicationSecond));
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(singletonList(secondStage));
+
+        sut.sendTemporaryAllowedNotification(application, comment);
+
+        // were both emails sent?
+        MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
+        assertThat(inboxSecondStage.length).isOne();
+
+        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxUser.length).isOne();
+
+        // get email user
+        Message msg = inboxUser[0];
+        assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // get email office
+        final Message msgSecondStage = inboxSecondStage[0];
+        assertThat(msgSecondStage.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
+        assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
+
+        // check content of office email
+        assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "    Lieschen Müller: 16.04.2021 bis 16.04.2021");
+            "es liegt eine neue zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Die Abwesenheit wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Kai Schmitt:" + EMAIL_LINE_BREAK +
+            "OK, spricht von meiner Seite aus nix dagegen" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "    " + EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021"+ EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 17.04.2021 bis 17.04.2021"+ EMAIL_LINE_BREAK +
+            "    ");
+    }
+
+    @Test
+    void ensureNotificationAboutTemporaryAllowedApplicationWithoutOverlappingVacations() throws MessagingException, IOException {
+
+        final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
+
+        final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
+        secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
+        secondStage.setNotifications(singletonList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
+
+        final ApplicationComment comment = new ApplicationComment(secondStage, clock);
+        comment.setText("OK, spricht von meiner Seite aus nix dagegen");
+
+        final Application application = createApplication(person);
+        application.setApplicationDate(LocalDate.of(2021, APRIL, 12));
+        application.setStartDate(LocalDate.of(2021, APRIL, 16));
+        application.setEndDate(LocalDate.of(2021, APRIL, 16));
+
+        when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of());
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(singletonList(secondStage));
+
+        sut.sendTemporaryAllowedNotification(application, comment);
+
+        // were both emails sent?
+        MimeMessage[] inboxSecondStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
+        assertThat(inboxSecondStage.length).isOne();
+
+        MimeMessage[] inboxUser = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxUser.length).isOne();
+
+        // get email user
+        Message msg = inboxUser[0];
+        assertThat(msg.getSubject()).isEqualTo("Deine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+
+        // get email office
+        final Message msgSecondStage = inboxSecondStage[0];
+        assertThat(msgSecondStage.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde vorläufig genehmigt");
+        assertThat(new InternetAddress(secondStage.getEmail())).isEqualTo(msgSecondStage.getAllRecipients()[0]);
+
+        // check content of office email
+        assertThat(msgSecondStage.getContent()).isEqualTo("Hallo Kai Schmitt," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "es liegt eine neue zu genehmigende Abwesenheit vor." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Die Abwesenheit wurde bereits vorläufig genehmigt und muss nun noch endgültig freigegeben werden." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Kai Schmitt:" + EMAIL_LINE_BREAK +
+            "OK, spricht von meiner Seite aus nix dagegen" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Abwesenheit:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Mitarbeiter:         Lieschen Müller" + EMAIL_LINE_BREAK +
+            "    Zeitraum:            16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Abwesenheit: Erholungsurlaub" + EMAIL_LINE_BREAK +
+            "    Grund:               " + EMAIL_LINE_BREAK +
+            "    Vertretung:          " + EMAIL_LINE_BREAK +
+            "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
+            "    " + EMAIL_LINE_BREAK +
+            "    Keine");
     }
 
     @Test
@@ -2904,26 +3295,6 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).doesNotContain("Notiz:");
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
         assertThat(content).contains("/web/application/replacement");
-    }
-
-    private void verifyNotificationAboutNewApplication(Person recipient, Message msg, String niceName,
-                                                       ApplicationComment comment) throws MessagingException, IOException {
-
-        // check subject
-        assertThat(msg.getSubject()).isEqualTo("Neue zu genehmigende Abwesenheit für " + niceName + " eingereicht");
-
-        // check from and recipient
-        assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
-        // check content of email
-        String contentDepartmentHead = (String) msg.getContent();
-        assertThat(contentDepartmentHead).contains("Hallo " + recipient.getNiceName());
-        assertThat(contentDepartmentHead).contains(niceName);
-        assertThat(contentDepartmentHead).contains("Erholungsurlaub");
-        assertThat(contentDepartmentHead).contains("es liegt ein neuer zu genehmigender Antrag vor");
-        assertThat(contentDepartmentHead).contains("/web/application/1234");
-        assertThat(contentDepartmentHead).contains(comment.getText());
-        assertThat(contentDepartmentHead).contains(comment.getPerson().getNiceName());
     }
 
     private Application createApplication(Person person) {

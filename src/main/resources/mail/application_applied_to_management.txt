@@ -18,5 +18,6 @@
     [(${rightPadder.rightPad('__#{absence.information.date}__',__#{absence.information.max_length}__)})] [(${#temporals.format(application.applicationDate, 'dd.MM.yyyy')})]
 
 [(#{application.applied.to_management.overlapping_absence})]
-
-    [# th:each="vacation : ${departmentVacations}"][(${vacation.person.niceName})]: [(#{days_range(${#temporals.format(vacation.startDate, "dd.MM.yyyy")},${#temporals.format(vacation.endDate, "dd.MM.yyyy")})})][/][# th:if="${#lists.isEmpty(departmentVacations)}"][(#{application.applied.to_management.overlapping_absence.none})][/]
+    [# th:each="vacation : ${departmentVacations}"]
+    [(${vacation.person.niceName})]: [(#{days_range(${#temporals.format(vacation.startDate, "dd.MM.yyyy")},${#temporals.format(vacation.endDate, "dd.MM.yyyy")})})][/]
+    [# th:if="${#lists.isEmpty(departmentVacations)}"][(#{application.applied.to_management.overlapping_absence.none})][/]
