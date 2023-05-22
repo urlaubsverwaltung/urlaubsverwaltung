@@ -431,40 +431,42 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Lieschen Müller");
-        assertThat(content).contains("wurde leider von Hugo Boss abgelehnt");
-        assertThat(content).contains("/web/application/1234");
-        assertThat(content).contains(comment.getText());
-        assertThat(content).contains(comment.getPerson().getNiceName());
+        assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "dein am 22.05.2023 gestellte Abwesenheit wurde leider von Hugo Boss abgelehnt." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Begründung:" + EMAIL_LINE_BREAK +
+            "Geht leider nicht zu dem Zeitraum" + EMAIL_LINE_BREAK);
 
         // was email sent to boss
         MimeMessage[] inboxBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
         assertThat(inboxBoss.length).isOne();
-
         Message msgBoss = inboxBoss[0];
         assertThat(msgBoss.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde abgelehnt");
-
-        String contentBoss = (String) msgBoss.getContent();
-        assertThat(contentBoss).contains("Hallo Hugo Boss");
-        assertThat(contentBoss).contains("der von Lieschen Müller am");
-        assertThat(contentBoss).contains("gestellte Antrag wurde von Hugo Boss abgelehnt");
-        assertThat(contentBoss).contains(comment.getText());
-        assertThat(contentBoss).contains(comment.getPerson().getNiceName());
+        assertThat(msgBoss.getContent()).isEqualTo("Hallo Hugo Boss," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "der von Lieschen Müller am 22.05.2023 gestellte Antrag wurde von Hugo Boss abgelehnt." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Begründung:" + EMAIL_LINE_BREAK +
+            "Geht leider nicht zu dem Zeitraum" + EMAIL_LINE_BREAK);
 
         // was email sent to departmentHead
         MimeMessage[] inboxDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
         assertThat(inboxDepartmentHead.length).isOne();
-
         Message msgDepartmentHead = inboxDepartmentHead[0];
         assertThat(msgDepartmentHead.getSubject()).isEqualTo("Eine zu genehmigende Abwesenheit wurde abgelehnt");
-
-        String contentDepartmentHead = (String) msgDepartmentHead.getContent();
-        assertThat(contentDepartmentHead).contains("Hallo Department Head");
-        assertThat(contentDepartmentHead).contains("der von Lieschen Müller am");
-        assertThat(contentDepartmentHead).contains("gestellte Antrag wurde von Hugo Boss abgelehnt");
-        assertThat(contentDepartmentHead).contains(comment.getText());
-        assertThat(contentDepartmentHead).contains(comment.getPerson().getNiceName());
+        assertThat(msgDepartmentHead.getContent()).isEqualTo("Hallo Department Head," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "der von Lieschen Müller am 22.05.2023 gestellte Antrag wurde von Hugo Boss abgelehnt." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Begründung:" + EMAIL_LINE_BREAK +
+            "Geht leider nicht zu dem Zeitraum" + EMAIL_LINE_BREAK);
     }
 
     @Test
@@ -556,14 +558,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Message msg = inboxOffice[0];
         assertThat(msg.getSubject()).contains("Stornierungsantrag abgelehnt");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
-        final String contentOffice = (String) msg.getContent();
-        assertThat(contentOffice).contains("Hallo Marlene Muster");
-        assertThat(contentOffice).contains("der Stornierungsantrag von Lieschen Müller der genehmigten Abwesenheit vom");
-        assertThat(contentOffice).contains("29.05.2020 bis 29.05.2020 wurde abgelehnt.");
-        assertThat(contentPerson).contains("Kommentar von Marlene Muster:");
-        assertThat(contentPerson).contains("Stornierung abgelehnt!");
-        assertThat(contentOffice).contains("/web/application/1234");
+        assertThat(msg.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "der Stornierungsantrag von Lieschen Müller der genehmigten Abwesenheit vom 29.05.2020 bis 29.05.2020 wurde abgelehnt." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Marlene Muster:" + EMAIL_LINE_BREAK +
+            "Stornierung abgelehnt!" + EMAIL_LINE_BREAK);
 
         // was email sent to relevant person
         MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
@@ -572,14 +574,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
         Message msgRelevantPerson = inboxRelevantPerson[0];
         assertThat(msgRelevantPerson.getSubject()).isEqualTo("Stornierungsantrag abgelehnt");
         assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
-
-        String contentRelevantPerson = (String) msgRelevantPerson.getContent();
-        assertThat(contentRelevantPerson).contains("Hallo Relevant Person");
-        assertThat(contentRelevantPerson).contains("der Stornierungsantrag von Lieschen Müller der genehmigten Abwesenheit vom");
-        assertThat(contentRelevantPerson).contains("29.05.2020 bis 29.05.2020 wurde abgelehnt.");
-        assertThat(contentRelevantPerson).contains("Kommentar von Marlene Muster:");
-        assertThat(contentRelevantPerson).contains("Stornierung abgelehnt!");
-        assertThat(contentRelevantPerson).contains("/web/application/1234");
+        assertThat(msgRelevantPerson.getContent()).isEqualTo("Hallo Relevant Person," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "der Stornierungsantrag von Lieschen Müller der genehmigten Abwesenheit vom 29.05.2020 bis 29.05.2020 wurde abgelehnt." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Marlene Muster:" + EMAIL_LINE_BREAK +
+            "Stornierung abgelehnt!" + EMAIL_LINE_BREAK);
     }
 
     @Test
@@ -605,32 +607,37 @@ class ApplicationMailServiceIT extends TestContainersBase {
         MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
         assertThat(inboxPerson.length).isOne();
 
-        Message msgPerson = inboxPerson[0];
+        final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).contains("Stornierung wurde beantragt");
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgPerson.getAllRecipients()[0]);
-
-        String contentPerson = (String) msgPerson.getContent();
-        assertThat(contentPerson).contains("Hallo Lieschen Müller");
-        assertThat(contentPerson).contains("dein Antrag zum Stornieren deines bereits genehmigten Antrags ");
-        assertThat(contentPerson).contains("29.05.2020 bis 29.05.2020 wurde eingereicht.");
-        assertThat(contentPerson).contains("/web/application/1234");
-        assertThat(contentPerson).contains("Überblick deiner offenen Stornierungsanträge findest du unter ");
-        assertThat(contentPerson).contains("/web/application#cancellation-requests");
+        assertThat(msgPerson.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "dein Antrag zum Stornieren deines bereits genehmigten Antrags vom 29.05.2020 bis 29.05.2020 wurde eingereicht." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
+            "Bitte stornieren!" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK + EMAIL_LINE_BREAK +
+            "Überblick deiner offenen Stornierungsanträge findest du unter https://localhost:8080/web/application#cancellation-requests");
 
         // send mail to all relevant persons?
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
         assertThat(inbox).hasSize(1);
 
-        final Message msg = inbox[0];
-        assertThat(msg.getSubject()).isEqualTo("Ein Benutzer beantragt die Stornierung einer genehmigten Abwesenheit");
-        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
-        String contentOffice = (String) msg.getContent();
-        assertThat(contentOffice).contains("Hallo Marlene Muster");
-        assertThat(contentOffice).contains("möchte die bereits genehmigte Abwesenheit vom");
-        assertThat(contentOffice).contains("/web/application/1234");
-        assertThat(contentOffice).contains("Überblick aller offenen Stornierungsanträge findest du unter");
-        assertThat(contentOffice).contains("/web/application#cancellation-requests");
+        final Message msgOffice = inbox[0];
+        assertThat(msgOffice.getSubject()).isEqualTo("Ein Benutzer beantragt die Stornierung einer genehmigten Abwesenheit");
+        assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
+        assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Lieschen Müller möchte die bereits genehmigte Abwesenheit vom 29.05.2020 bis 29.05.2020 stornieren." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
+            "Bitte stornieren!" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK + EMAIL_LINE_BREAK +
+            "Überblick aller offenen Stornierungsanträge findest du unter https://localhost:8080/web/application#cancellation-requests");
     }
 
     @Test
@@ -2302,7 +2309,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
-            "    Lieschen Müller: 16.04.2021 bis 16.04.2021"+ EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
             "    ");
     }
 
@@ -2375,8 +2382,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
-            "    Lieschen Müller: 16.04.2021 bis 16.04.2021"+ EMAIL_LINE_BREAK +
-            "    Lieschen Müller: 17.04.2021 bis 17.04.2021"+ EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
+            "    Lieschen Müller: 17.04.2021 bis 17.04.2021" + EMAIL_LINE_BREAK +
             "    ");
     }
 
