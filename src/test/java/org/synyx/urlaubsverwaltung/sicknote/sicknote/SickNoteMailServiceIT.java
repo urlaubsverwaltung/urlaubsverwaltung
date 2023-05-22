@@ -185,10 +185,10 @@ class SickNoteMailServiceIT extends TestContainersBase {
         assertThat(inboxColleague).hasSize(1);
 
         final Message msgColleague = inboxColleague[0];
-        assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde storniert");
+        assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde zurückgenommen");
         assertThat(msgColleague.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "eine Abwesenheit von Lieschen Müller wurde storniert:" + EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Müller wurde zurückgenommen:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "    Zeitraum: 01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +

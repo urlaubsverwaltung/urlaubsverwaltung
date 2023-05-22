@@ -1562,11 +1562,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxColleague.length).isOne();
 
         final MimeMessage msgColleague = inboxColleague[0];
-        assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde storniert");
+        assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde zurückgenommen");
         assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(msgColleague.getAllRecipients()[0]);
         assertThat(readPlainContent(msgColleague)).isEqualTo("Hallo colleague colleague," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "eine Abwesenheit von Lieschen Müller wurde storniert:" + EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Müller wurde zurückgenommen:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "    Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
@@ -1631,11 +1631,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxColleague.length).isOne();
 
         final MimeMessage msgColleague = inboxColleague[0];
-        assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde storniert");
+        assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde zurückgenommen");
         assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(msgColleague.getAllRecipients()[0]);
         assertThat(msgColleague.getContent()).isEqualTo("Hallo colleague colleague," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "eine Abwesenheit von Lieschen Müller wurde storniert:" + EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Müller wurde zurückgenommen:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "    Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
@@ -1654,6 +1654,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         final Application application = createApplication(person);
         application.setApplicationDate(LocalDate.of(2020, 5, 29));
+        application.setStartDate(LocalDate.of(2020, 6, 15));
+        application.setEndDate(LocalDate.of(2020, 6, 15));
         application.setCanceller(office);
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
@@ -1714,14 +1716,14 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(inboxColleague.length).isOne();
 
         MimeMessage msgColleague = inboxColleague[0];
-        assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde storniert");
+        assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde zurückgenommen");
         assertThat(new InternetAddress(colleague.getEmail())).isEqualTo(msgColleague.getAllRecipients()[0]);
 
         assertThat(readPlainContent(msgColleague)).isEqualTo("Hallo colleague colleague," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "eine Abwesenheit von Lieschen Müller wurde storniert:" + EMAIL_LINE_BREAK +
+            "eine Abwesenheit von Lieschen Müller wurde zurückgenommen:" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "    Zeitraum: 19.05.2023 bis 19.05.2023, ganztägig" + EMAIL_LINE_BREAK +
+            "    Zeitraum: 15.06.2020 bis 15.06.2020, ganztägig" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" +
             EMAIL_LINE_BREAK);
