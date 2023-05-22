@@ -1988,11 +1988,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setPermissions(singletonList(BOSS));
-        boss.setNotifications(singletonList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+        boss.setPermissions(List.of(BOSS));
+        boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person person = new Person("lieschen", "Müller", "Lieschen", "mueller@example.org");
-        person.setPermissions(singletonList(USER));
+        person.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setApplicationDate(LocalDate.of(2021, APRIL, 12));
@@ -2041,11 +2041,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
-        boss.setPermissions(singletonList(BOSS));
-        boss.setNotifications(singletonList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
+        boss.setPermissions(List.of(BOSS));
+        boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person person = new Person("lieschen", "Müller", "Lieschen", "mueller@example.org");
-        person.setPermissions(singletonList(USER));
+        person.setPermissions(List.of(USER));
 
         final Application application = createApplication(person);
         application.setApplicationDate(LocalDate.of(2021, APRIL, 12));
@@ -2451,8 +2451,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
-        secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
-        secondStage.setNotifications(singletonList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
+        secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
         final ApplicationComment comment = new ApplicationComment(secondStage, clock);
         comment.setText("OK, spricht von meiner Seite aus nix dagegen");
@@ -2468,7 +2468,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         applicationSecond.setEndDate(LocalDate.of(2021, APRIL, 17));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application, applicationSecond));
-        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(singletonList(secondStage));
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
@@ -2525,8 +2525,8 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
-        secondStage.setPermissions(singletonList(SECOND_STAGE_AUTHORITY));
-        secondStage.setNotifications(singletonList(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
+        secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
+        secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
         final ApplicationComment comment = new ApplicationComment(secondStage, clock);
         comment.setText("OK, spricht von meiner Seite aus nix dagegen");
@@ -2537,7 +2537,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2021, APRIL, 16));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of());
-        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(singletonList(secondStage));
+        when(mailRecipientService.getRecipientsOfInterest(person, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED)).thenReturn(List.of(secondStage));
 
         sut.sendTemporaryAllowedNotification(application, comment);
 
