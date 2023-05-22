@@ -119,7 +119,7 @@ class ApplicationMailService {
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         final Mail mailToRelevantColleagues = Mail.builder()
                 .withRecipient(relevantColleaguesToInform)
-                .withSubject("subject.absence.allowed.to_colleagues", application.getPerson().getNiceName())
+                .withSubject("subject.application.allowed.to_colleagues", application.getPerson().getNiceName())
                 .withTemplate("application_allowed_to_colleagues", modelColleagues)
                 .withAttachment(CALENDAR_ICS, calendarFile)
                 .build();
@@ -319,7 +319,7 @@ class ApplicationMailService {
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
-            .withSubject("subject.absence.allowed.to_colleagues", application.getPerson().getNiceName())
+            .withSubject("subject.application.allowed.to_colleagues", application.getPerson().getNiceName())
             .withTemplate("application_allowed_to_colleagues", modelColleagues)
             .build();
         mailService.send(mailToRelevantColleagues);
@@ -353,7 +353,7 @@ class ApplicationMailService {
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
-            .withSubject("subject.absence.allowed.to_colleagues", application.getPerson().getNiceName())
+            .withSubject("subject.application.allowed.to_colleagues", application.getPerson().getNiceName())
             .withTemplate("application_allowed_to_colleagues", modelColleagues)
             .build();
         mailService.send(mailToRelevantColleagues);
@@ -679,7 +679,7 @@ class ApplicationMailService {
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
-            .withSubject("subject.absence.cancellation.to_colleagues", application.getPerson().getNiceName())
+            .withSubject("subject.application.cancellation.to_colleagues", application.getPerson().getNiceName())
             .withTemplate("application_cancellation_to_colleagues", modelColleagues)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
@@ -714,7 +714,7 @@ class ApplicationMailService {
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
-            .withSubject("subject.absence.cancellation.to_colleagues", application.getPerson().getNiceName())
+            .withSubject("subject.application.cancellation.to_colleagues", application.getPerson().getNiceName())
             .withTemplate("application_cancellation_to_colleagues", modelColleagues)
             .build();
         mailService.send(mailToRelevantColleagues);
@@ -760,7 +760,7 @@ class ApplicationMailService {
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
-            .withSubject("subject.absence.cancellation.to_colleagues", application.getPerson().getNiceName())
+            .withSubject("subject.application.cancellation.to_colleagues", application.getPerson().getNiceName())
             .withTemplate("application_cancellation_to_colleagues", modelColleagues)
             .withAttachment(CALENDAR_ICS, calendarFile)
             .build();
