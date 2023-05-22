@@ -61,8 +61,11 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationFor
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationForLeavePermissionEvaluator.isAllowedToStartCancellationRequest;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_BOSS_OR_DEPARTMENT_HEAD_OR_SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.security.SecurityRules.IS_PRIVILEGED_USER;
 
@@ -212,7 +215,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, personOfApplication);
         final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, personOfApplication);
         final boolean allowedToReferApplication = isAllowedToReferApplication(application, signedInUser, isDepartmentHead, isSecondStageAuthority);
-        final List<Person> responsibleManagersOf = getResponsibleManagersOf(personOfApplication, signedInUser);
+        final List<Person> responsibleManagersOf = getPossibleManagersToRefer(personOfApplication, signedInUser, application);
         if (!allowedToReferApplication || !responsibleManagersOf.contains(personToRefer)) {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to refer application for " +
                 "leave to user '%s'", signedInUser.getId(), referUsername));
@@ -456,7 +459,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         final boolean allowedToReferApplication = isAllowedToReferApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson);
         model.addAttribute("isAllowedToReferApplication", allowedToReferApplication);
         if (allowedToReferApplication) {
-            model.addAttribute("availablePersonsToRefer", getResponsibleManagersOf(application.getPerson(), signedInUser));
+            model.addAttribute("availablePersonsToRefer", getPossibleManagersToRefer(application.getPerson(), signedInUser, application));
             model.addAttribute("referredPerson", new ReferredPerson());
         }
 
@@ -472,10 +475,11 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         model.addAttribute("shortcut", shortcut);
     }
 
-    private List<Person> getResponsibleManagersOf(Person personOfInterest, Person signedInUser) {
+    private List<Person> getPossibleManagersToRefer(Person personOfInterest, Person signedInUser, Application application) {
         return responsiblePersonService.getResponsibleManagersOf(personOfInterest)
             .stream()
             .filter(not(isEqual(signedInUser)))
+            .filter(person -> person.hasRole(BOSS) || person.hasRole(SECOND_STAGE_AUTHORITY) || (person.hasRole(DEPARTMENT_HEAD) && application.hasStatus(WAITING)))
             .collect(toList());
     }
 }
