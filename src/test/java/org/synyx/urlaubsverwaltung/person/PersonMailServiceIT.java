@@ -31,7 +31,7 @@ class PersonMailServiceIT extends TestContainersBase {
     private static final String EMAIL_LINE_BREAK = "\r\n";
 
     @RegisterExtension
-    public final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
+    static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
     @Autowired
     private PersonMailService sut;
