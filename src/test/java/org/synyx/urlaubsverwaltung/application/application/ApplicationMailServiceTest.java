@@ -860,7 +860,7 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(colleague));
-        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancellation.to_colleagues");
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.to_colleagues");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_cancellation_to_colleagues");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelColleagues);
         assertThat(mails.get(1).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
@@ -908,7 +908,7 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(0).getTemplateName()).isEqualTo("application_cancelled_directly_confirmation_by_management_to_applicant");
         assertThat(mails.get(0).getTemplateModel()).isEqualTo(model);
         assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(colleague));
-        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancellation.to_colleagues");
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.to_colleagues");
         assertThat(mails.get(1).getTemplateName()).isEqualTo("application_cancellation_to_colleagues");
         assertThat(mails.get(1).getTemplateModel()).isEqualTo(modelColleagues);
     }
@@ -966,7 +966,7 @@ class ApplicationMailServiceTest {
         assertThat(mails.get(1).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);
         assertThat(mails.get(1).getMailAttachments().get().get(0).getName()).isEqualTo("calendar.ics");
         assertThat(mails.get(2).getMailAddressRecipients()).hasValue(List.of(colleague));
-        assertThat(mails.get(2).getSubjectMessageKey()).isEqualTo("subject.application.cancellation.to_colleagues");
+        assertThat(mails.get(2).getSubjectMessageKey()).isEqualTo("subject.application.cancelled.to_colleagues");
         assertThat(mails.get(2).getTemplateName()).isEqualTo("application_cancellation_to_colleagues");
         assertThat(mails.get(2).getTemplateModel()).isEqualTo(Map.of("application", application));
         assertThat(mails.get(2).getMailAttachments().get().get(0).getContent()).isEqualTo(attachment);

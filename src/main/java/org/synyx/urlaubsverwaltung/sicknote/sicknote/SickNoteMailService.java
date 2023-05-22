@@ -126,7 +126,7 @@ class SickNoteMailService {
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED);
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(relevantColleaguesToInform)
-            .withSubject("subject.sicknote.cancel.to_colleagues", sickNote.getPerson().getNiceName())
+            .withSubject("subject.sicknote.cancelled.to_colleagues", sickNote.getPerson().getNiceName())
             .withTemplate("sick_note_cancel_to_colleagues", modelColleagues)
             .build();
         mailService.send(mailToRelevantColleagues);

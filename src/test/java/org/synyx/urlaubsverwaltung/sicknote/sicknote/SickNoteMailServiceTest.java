@@ -193,7 +193,7 @@ class SickNoteMailServiceTest {
         verify(mailService).send(argument.capture());
         final Mail mail = argument.getValue();
         assertThat(mail.getMailAddressRecipients()).hasValue(List.of(sickNote.getPerson()));
-        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.cancel.to_colleagues");
+        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.cancelled.to_colleagues");
         assertThat(mail.getTemplateName()).isEqualTo("sick_note_cancel_to_colleagues");
         assertThat(mail.getTemplateModel()).isEqualTo(Map.of("sickNote", sickNote));
     }
