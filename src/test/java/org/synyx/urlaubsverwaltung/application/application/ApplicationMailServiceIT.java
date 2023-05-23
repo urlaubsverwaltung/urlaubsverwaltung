@@ -436,6 +436,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Geht leider nicht zu dem Zeitraum");
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2023, 5, 22));
+        application.setEndDate(LocalDate.of(2023, 5, 22));
+        application.setApplicationDate(LocalDate.of(2023, 5, 22));
         application.setBoss(boss);
 
         final Person departmentHead = new Person("departmentHead", "Head", "Department", "dh@example.org");
@@ -1749,6 +1752,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Hätte gerne Urlaub");
 
         final Application application = createApplication(person);
+        application.setStartDate(LocalDate.of(2023, 5, 22));
+        application.setEndDate(LocalDate.of(2023, 5, 22));
+        application.setApplicationDate(LocalDate.of(2023, 5, 22));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, departmentHead));
@@ -1833,6 +1839,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Hätte gerne Urlaub");
 
         final Application application = createApplication(secondStage);
+        application.setStartDate(LocalDate.of(2023, 5, 22));
+        application.setEndDate(LocalDate.of(2023, 5, 22));
+        application.setApplicationDate(LocalDate.of(2023, 5, 22));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(secondStage, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, departmentHead));
@@ -1919,6 +1928,9 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Hätte gerne Urlaub");
 
         final Application application = createApplication(departmentHead);
+        application.setStartDate(LocalDate.of(2023, 5, 22));
+        application.setEndDate(LocalDate.of(2023, 5, 22));
+        application.setApplicationDate(LocalDate.of(2023, 5, 22));
 
         when(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(departmentHead, application.getStartDate(), application.getEndDate())).thenReturn(List.of(application));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED)).thenReturn(asList(boss, secondStage));
