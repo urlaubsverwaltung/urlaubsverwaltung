@@ -35,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -488,63 +489,91 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         final Person signedInPerson = personWithRole(BOSS);
         final Person applicationPerson = somePerson();
-        final Person recipientPerson = somePerson();
+        final Person boss = somePerson();
+        boss.setPermissions(List.of(USER, BOSS));
         final Application application = applicationOfPerson(applicationPerson);
 
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
-        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(boss));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(false);
 
-        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(recipientPerson));
+        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(boss));
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
 
-        verify(applicationInteractionService).refer(application, recipientPerson, signedInPerson);
+        verify(applicationInteractionService).refer(application, boss, signedInPerson);
     }
 
     @Test
     void referOwnApplicationAccessibleForRoleBoss() throws Exception {
 
         final Person signedInPerson = personWithRole(BOSS);
-        final Person recipientPerson = somePerson();
+        final Person boss = somePerson();
+        boss.setPermissions(List.of(USER, BOSS));
         final Application application = applicationOfPerson(signedInPerson);
 
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
-        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(boss));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        when(responsiblePersonService.getResponsibleManagersOf(signedInPerson)).thenReturn(List.of(recipientPerson));
+        when(responsiblePersonService.getResponsibleManagersOf(signedInPerson)).thenReturn(List.of(boss));
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
 
-        verify(applicationInteractionService).refer(application, recipientPerson, signedInPerson);
+        verify(applicationInteractionService).refer(application, boss, signedInPerson);
     }
 
     @Test
-    void referApplicationAccessibleForRoleDepartmentHead() throws Exception {
+    void referApplicationAccessibleForRoleDepartmentHeadAndWaiting() throws Exception {
 
-        final Person signedInPerson = personWithRole(DEPARTMENT_HEAD);
+        final Person signedInPerson = personWithRole(BOSS);
         final Person applicationPerson = somePerson();
-        final Person recipientPerson = somePerson();
+        final Person departmentHead = somePerson();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         final Application application = applicationOfPerson(applicationPerson);
+        application.setStatus(WAITING);
 
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
-        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(departmentHead));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(true);
 
-        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(recipientPerson));
+        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(departmentHead));
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
 
-        verify(applicationInteractionService).refer(application, recipientPerson, signedInPerson);
+        verify(applicationInteractionService).refer(application, departmentHead, signedInPerson);
+    }
+
+    @Test
+    void ensuresToNotReferApplicationAccessibleForRoleDepartmentHeadAndTemporaryAllowed() {
+
+        final Person signedInPerson = personWithRole(DEPARTMENT_HEAD);
+        final Person applicationPerson = somePerson();
+        final Person departmentHead = somePerson();
+        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+        final Application application = applicationOfPerson(applicationPerson);
+        application.setStatus(TEMPORARY_ALLOWED);
+
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(departmentHead));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+        when(departmentService.isDepartmentHeadAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(true);
+
+        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(departmentHead));
+
+        assertThatThrownBy(() ->
+            perform(post("/web/application/" + APPLICATION_ID + "/refer"))
+        ).hasCauseInstanceOf(AccessDeniedException.class);
+
+        verify(applicationInteractionService, never()).refer(application, departmentHead, signedInPerson);
     }
 
     @Test
@@ -552,21 +581,22 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         final Person signedInPerson = personWithRole(SECOND_STAGE_AUTHORITY);
         final Person applicationPerson = somePerson();
-        final Person recipientPerson = somePerson();
+        final Person boss = somePerson();
+        boss.setPermissions(List.of(USER, BOSS));
         final Application application = applicationOfPerson(applicationPerson);
 
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
-        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(boss));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(true);
 
-        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(recipientPerson));
+        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(boss));
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
 
-        verify(applicationInteractionService).refer(application, recipientPerson, signedInPerson);
+        verify(applicationInteractionService).refer(application, boss, signedInPerson);
     }
 
     @Test
@@ -574,21 +604,22 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
         final Person signedInPerson = personWithRole(OFFICE);
         final Person applicationPerson = somePerson();
-        final Person recipientPerson = somePerson();
+        final Person boss = somePerson();
+        boss.setPermissions(List.of(USER, BOSS));
         final Application application = applicationOfPerson(applicationPerson);
 
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
-        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(recipientPerson));
+        when(personService.getPersonByUsername(any())).thenReturn(Optional.of(boss));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInPerson, applicationPerson)).thenReturn(true);
 
-        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(recipientPerson));
+        when(responsiblePersonService.getResponsibleManagersOf(applicationPerson)).thenReturn(List.of(boss));
 
         perform(post("/web/application/" + APPLICATION_ID + "/refer"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
 
-        verify(applicationInteractionService).refer(application, recipientPerson, signedInPerson);
+        verify(applicationInteractionService).refer(application, boss, signedInPerson);
     }
 
     @Test
