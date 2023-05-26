@@ -14,60 +14,15 @@
       data-turbo-frame="frame-feedback"
     >
       <input type="hidden" th:field="*{personId}" />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.applicationAppliedForManagement.active}"
-        name="applicationAppliedForManagement.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.applicationTemporaryAllowedForManagement.active}"
-        name="applicationTemporaryAllowedForManagement.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.applicationAllowedForManagement.active}"
-        name="applicationAllowedForManagement.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.applicationCancellationForManagement.active}"
-        name="applicationCancellationForManagement.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.applicationAdaptedForManagement.active}"
-        name="applicationAdaptedForManagement.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.applicationWaitingReminderForManagement.active}"
-        name="applicationWaitingReminderForManagement.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.applicationCancellationRequestedForManagement.active}"
-        name="applicationCancellationRequestedForManagement.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.overtimeAppliedForManagement.active}"
-        name="overtimeAppliedForManagement.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.absenceForColleagues.active}"
-        name="absenceForColleagues.active"
-        value="on"
-      />
+      <input type="hidden" th:field="*{applicationAppliedForManagement.active}" />
+      <input type="hidden" th:field="*{applicationTemporaryAllowedForManagement.active}" />
+      <input type="hidden" th:field="*{applicationAllowedForManagement.active}" />
+      <input type="hidden" th:field="*{applicationCancellationForManagement.active}" />
+      <input type="hidden" th:field="*{applicationAdaptedForManagement.active}" />
+      <input type="hidden" th:field="*{applicationWaitingReminderForManagement.active}" />
+      <input type="hidden" th:field="*{applicationCancellationRequestedForManagement.active}" />
+      <input type="hidden" th:field="*{overtimeAppliedForManagement.active}" />
+      <input type="hidden" th:field="*{absenceForColleagues.active}" />
 
       <div class="list-selectable">
         <div

@@ -34,48 +34,13 @@
         </p>
       </div>
       <input type="hidden" th:field="*{personId}" />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.applicationAppliedAndChanges.active}"
-        name="applicationAppliedAndChanges.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.applicationUpcoming.active}"
-        name="applicationUpcoming.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.holidayReplacement.active}"
-        name="holidayReplacement.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.holidayReplacementUpcoming.active}"
-        name="holidayReplacementUpcoming.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.overtimeApplied.active}"
-        name="overtimeApplied.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.overtimeAppliedByManagement.active}"
-        name="overtimeAppliedByManagement.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.personNewManagementAll.active}"
-        name="personNewManagementAll.active"
-        value="on"
-      />
+      <input type="hidden" th:field="*{applicationAppliedAndChanges.active}" />
+      <input type="hidden" th:field="*{applicationUpcoming.active}" />
+      <input type="hidden" th:field="*{holidayReplacement.active}" />
+      <input type="hidden" th:field="*{holidayReplacementUpcoming.active}" />
+      <input type="hidden" th:field="*{overtimeApplied.active}" />
+      <input type="hidden" th:field="*{overtimeAppliedByManagement.active}" />
+      <input type="hidden" th:field="*{personNewManagementAll.active}" />
 
       <div class="list-selectable">
         <div
