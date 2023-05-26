@@ -50,7 +50,7 @@
               >
                 <a
                   href="#"
-                  th:href="@{/web/person/{userId}/notifications(userId=${userId})}"
+                  th:href="@{/web/person/{userId}/notifications(userId=${personNotificationsDto.personId})}"
                   class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
                   th:classappend="${activeContent == 'self' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
                   th:text="#{person.notifications.navigation.personal}"
@@ -65,7 +65,7 @@
               >
                 <a
                   href="#"
-                  th:href="@{/web/person/{userId}/notifications/departments(userId=${userId})}"
+                  th:href="@{/web/person/{userId}/notifications/departments(userId=${personNotificationsDto.personId})}"
                   class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
                   th:classappend="${activeContent == 'departments' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
                   th:text="#{person.notifications.navigation.departments}"
