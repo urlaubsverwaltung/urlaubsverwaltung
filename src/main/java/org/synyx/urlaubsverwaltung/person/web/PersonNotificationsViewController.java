@@ -80,18 +80,22 @@ public class PersonNotificationsViewController implements HasLaunchpad {
             .orElseThrow(() -> new UnknownPersonException(personId));
 
         final Person signedInUser = personService.getSignedInUser();
-        model.addAttribute("isViewingOwnNotifications", Objects.equals(person.getId(), signedInUser.getId()));
-        model.addAttribute("personNiceName", person.getNiceName());
+        final List<Department> personDepartments = departmentService.getDepartmentsPersonHasAccessTo(person);
 
-        final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(person);
+        if (isDepartmentSection && personDepartments.isEmpty()) {
+            final String message = format("department page requested but there are no departments person=%s has access to", person.getId());
+            throw new ResponseStatusException(NOT_FOUND, message);
+        }
 
         final UserNotificationSettings notificationSettings = userNotificationSettingsService.findNotificationSettings(new PersonId(person.getId()));
+
+        final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(person);
         personNotificationsDto.setRestrictToDepartments(notificationSettings.isRestrictToDepartments());
 
-        final List<Department> signedInUserDepartments = departmentService.getDepartmentsPersonHasAccessTo(signedInUser);
-
+        model.addAttribute("isViewingOwnNotifications", Objects.equals(person.getId(), signedInUser.getId()));
+        model.addAttribute("personNiceName", person.getNiceName());
         model.addAttribute("personNotificationsDto", personNotificationsDto);
-        model.addAttribute("showDepartmentsTab", !signedInUserDepartments.isEmpty());
+        model.addAttribute("showDepartmentsTab", !personDepartments.isEmpty());
 
         if (isDepartmentSection) {
             model.addAttribute("formFragment", "person/notifications/departments::form");

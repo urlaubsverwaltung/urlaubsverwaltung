@@ -72,11 +72,15 @@ class PersonNotificationsViewControllerTest {
     @Test
     void ensurePersonalAndDepartmentNavigationIsHiddenWhenThereAreNoAssignedDepartments() throws Exception {
 
+        final Person signedInPerson = personWithId(42);
+        signedInPerson.setFirstName("Office");
+        signedInPerson.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
         final Person person = personWithId(1);
         person.setFirstName("Hans");
         person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        when(personService.getSignedInUser()).thenReturn(person);
 
         final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
@@ -84,17 +88,22 @@ class PersonNotificationsViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of());
 
         perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(status().isOk())
             .andExpect(model().attribute("showDepartmentsTab", is(false)));
     }
 
     @Test
     void ensurePersonalAndDepartmentNavigationIsVisibleWhenThereAreAssignedDepartments() throws Exception {
 
+        final Person signedInPerson = personWithId(42);
+        signedInPerson.setFirstName("Office");
+        signedInPerson.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
         final Person person = personWithId(1);
         person.setFirstName("Hans");
         person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        when(personService.getSignedInUser()).thenReturn(person);
 
         final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
@@ -102,7 +111,23 @@ class PersonNotificationsViewControllerTest {
         when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(new Department()));
 
         perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(status().isOk())
             .andExpect(model().attribute("showDepartmentsTab", is(true)));
+    }
+
+    @Test
+    void ensureGetDepartmentPageIsNotFoundWhenUserHasNoAccessToAnyDepartment() throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of());
+
+        perform(get("/web/person/{personId}/notifications/departments", 1))
+            .andExpect(status().isNotFound());
     }
 
     @Test
