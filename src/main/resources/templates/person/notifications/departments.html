@@ -18,8 +18,19 @@
         class="tw-flex tw-items-center tw-gap-1.5 tw-mb-8 tw-text-yellow-600 dark:tw-text-amber-300"
       >
         <svg th:replace="icon/info::svg(className='tw-w-5 tw-h-5')"></svg>
-        <p class="tw-m-0" th:text="#{person.notifications.no-assigned-departments.info(${personNiceName})}">
-          Max Mustermann ist keinen Abteilungen zugeordnet und erhält daher keine Benachrichtigungen.
+        <p class="tw-m-0">
+          <th:block
+            th:if="${userId eq personNotificationsDto.personId}"
+            th:text="#{person.notifications.no-assigned-departments.info.myself(${personNiceName})}"
+          >
+            Du bist keinen Abteilungen zugeordnet und erhältst daher keine Benachrichtigungen.
+          </th:block>
+          <th:block
+            th:if="${not (userId eq personNotificationsDto.personId)}"
+            th:text="#{person.notifications.no-assigned-departments.info(${personNiceName})}"
+          >
+            Max Mustermann ist keinen Abteilungen zugeordnet und erhält daher keine Benachrichtigungen.
+          </th:block>
         </p>
       </div>
       <input type="hidden" th:field="*{personId}" />
