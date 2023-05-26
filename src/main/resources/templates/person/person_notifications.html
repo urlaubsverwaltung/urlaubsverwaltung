@@ -36,7 +36,7 @@
         Aktiviere oder Deaktiviere E-Mail Benachrichtigungen nach deinem Belieben.
       </p>
 
-      <div class="tw-mt-8">
+      <div th:if="${showDepartmentsTab}" class="tw-mt-8">
         <div
           th:replace="fragments/section-heading::section-heading-paddingless(~{::person-notifications-navigation-body}, ~{})"
         >

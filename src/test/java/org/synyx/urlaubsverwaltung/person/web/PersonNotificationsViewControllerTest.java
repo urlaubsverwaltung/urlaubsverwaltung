@@ -11,6 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.notification.UserNotificationSettings;
 import org.synyx.urlaubsverwaltung.notification.UserNotificationSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -59,10 +61,48 @@ class PersonNotificationsViewControllerTest {
     private PersonNotificationsDtoValidator validator;
     @Mock
     private UserNotificationSettingsService userNotificationSettingsService;
+    @Mock
+    private DepartmentService departmentService;
 
     @BeforeEach
     void setUp() {
-        sut = new PersonNotificationsViewController(personService, validator, userNotificationSettingsService);
+        sut = new PersonNotificationsViewController(personService, validator, userNotificationSettingsService, departmentService);
+    }
+
+    @Test
+    void ensurePersonalAndDepartmentNavigationIsHiddenWhenThereAreNoAssignedDepartments() throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
+
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of());
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("showDepartmentsTab", is(false)));
+    }
+
+    @Test
+    void ensurePersonalAndDepartmentNavigationIsVisibleWhenThereAreAssignedDepartments() throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
+
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(new Department()));
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("showDepartmentsTab", is(true)));
     }
 
     @Test
