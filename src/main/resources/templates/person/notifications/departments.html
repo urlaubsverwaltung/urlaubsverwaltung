@@ -100,6 +100,7 @@
           </span>
         </div>
         <div
+          th:if="${personNotificationsDto.restrictToDepartments.visible}"
           class="list-selectable__item tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
         >
           <div class="tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16">
@@ -110,7 +111,7 @@
                   id="email-notification-department-restriction-input"
                   name="restrictToDepartments"
                   class="tw-mt-0.5 tw-shrink-0"
-                  th:checked="*{restrictToDepartments}"
+                  th:field="*{restrictToDepartments.active}"
                   aria-describedby="info-email-notification-department-restriction-input"
                   data-auto-submit
                 />
@@ -142,6 +143,11 @@
             </div>
           </div>
         </div>
+        <input
+          th:if="${not personNotificationsDto.restrictToDepartments.visible}"
+          type="hidden"
+          th:field="*{restrictToDepartments.active}"
+        />
       </div>
 
       <div class="form-section tw-mt-8 tw-mb-16">

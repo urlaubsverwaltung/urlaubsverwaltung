@@ -28,6 +28,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -167,7 +168,12 @@ class PersonNotificationsViewControllerTest {
 
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("restrictToDepartments", is(true))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(false)),
+                    hasProperty("active", is(true))
+                ))
+            ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(false)))))
@@ -216,7 +222,12 @@ class PersonNotificationsViewControllerTest {
 
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("restrictToDepartments", is(false))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(false)),
+                    hasProperty("active", is(false))
+                ))
+            ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(true)))))
@@ -265,7 +276,12 @@ class PersonNotificationsViewControllerTest {
 
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("restrictToDepartments", is(false))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(false)),
+                    hasProperty("active", is(false))
+                ))
+            ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(true)))))
@@ -314,7 +330,12 @@ class PersonNotificationsViewControllerTest {
 
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("restrictToDepartments", is(false))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(true)),
+                    hasProperty("active", is(false))
+                ))
+            ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(true)))))
@@ -347,6 +368,54 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
 
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensuresRestrictToDepartmentsIsVisibleForRole(final Role role) throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setNotifications(List.of());
+        person.setPermissions(List.of(USER, role));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(true)),
+                    hasProperty("active", is(false))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void ensuresRestrictToDepartmentsIsNotVisibleForRole(final Role role) throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setNotifications(List.of());
+        person.setPermissions(List.of(USER, role));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(false)),
+                    hasProperty("active", is(false))
+                ))
+            ));
+    }
+
     @Test
     void ensuresThatOnlyVisibleAndActiveForBossWithSpecialPermissionCancellationRequested() throws Exception {
 
@@ -362,7 +431,12 @@ class PersonNotificationsViewControllerTest {
 
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("restrictToDepartments", is(false))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(true)),
+                    hasProperty("active", is(false))
+                ))
+            ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(true)))))
@@ -410,7 +484,12 @@ class PersonNotificationsViewControllerTest {
 
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
-            .andExpect(model().attribute("personNotificationsDto", hasProperty("restrictToDepartments", is(false))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(true)),
+                    hasProperty("active", is(false))
+                ))
+            ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(false)))))
@@ -469,6 +548,7 @@ class PersonNotificationsViewControllerTest {
         perform(
             post("/web/person/{personId}/notifications", 1)
                 .param("personId", "1")
+                .param("restrictToDepartments.active", "false")
                 .param("applicationAppliedAndChanges.visible", "true")
                 .param("applicationAppliedAndChanges.active", "true")
         )
@@ -495,7 +575,7 @@ class PersonNotificationsViewControllerTest {
         perform(
             post("/web/person/{personId}/notifications", 1)
                 .param("personId", "1")
-                .param("restrictToDepartments", "true")
+                .param("restrictToDepartments.active", "true")
                 .param("applicationAppliedAndChanges.visible", "true")
                 .param("applicationAppliedAndChanges.active", "true")
         )

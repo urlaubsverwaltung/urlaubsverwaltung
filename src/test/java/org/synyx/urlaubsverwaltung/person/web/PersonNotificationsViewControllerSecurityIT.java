@@ -128,7 +128,25 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
 
         perform(post("/web/person/1/notifications")
             .with(csrf())
-            .param("id", "1").param("name", "user")
+            .param("id", "1")
+            .param("name", "user")
+            .param("restrictToDepartments.active", "false")
+            .param("applicationAppliedForManagement.active", "false")
+            .param("applicationTemporaryAllowedForManagement.active", "false")
+            .param("applicationAllowedForManagement.active", "false")
+            .param("applicationCancellationForManagement.active", "false")
+            .param("applicationAdaptedForManagement.active", "false")
+            .param("applicationWaitingReminderForManagement.active", "false")
+            .param("applicationCancellationRequestedForManagement.active", "false")
+            .param("applicationAppliedAndChanges.active", "false")
+            .param("applicationUpcoming.active", "false")
+            .param("holidayReplacement.active", "false")
+            .param("holidayReplacementUpcoming.active", "false")
+            .param("personNewManagementAll.active", "false")
+            .param("overtimeAppliedForManagement.active", "false")
+            .param("overtimeAppliedByManagement.active", "false")
+            .param("overtimeApplied.active", "false")
+            .param("absenceForColleagues.active", "false")
         )
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/person/1/notifications"));
@@ -142,6 +160,7 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
         person.setId(1);
         person.setUsername("user");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
+        person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final Person office = new Person();
@@ -152,7 +171,25 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
 
         perform(post("/web/person/1/notifications")
             .with(csrf())
-            .param("id", "1").param("name", "user")
+            .param("id", "1")
+            .param("name", "user")
+            .param("restrictToDepartments.active", "false")
+            .param("applicationAppliedForManagement.active", "false")
+            .param("applicationTemporaryAllowedForManagement.active", "false")
+            .param("applicationAllowedForManagement.active", "false")
+            .param("applicationCancellationForManagement.active", "false")
+            .param("applicationAdaptedForManagement.active", "false")
+            .param("applicationWaitingReminderForManagement.active", "false")
+            .param("applicationCancellationRequestedForManagement.active", "false")
+            .param("applicationAppliedAndChanges.active", "false")
+            .param("applicationUpcoming.active", "false")
+            .param("holidayReplacement.active", "false")
+            .param("holidayReplacementUpcoming.active", "false")
+            .param("personNewManagementAll.active", "false")
+            .param("overtimeAppliedForManagement.active", "false")
+            .param("overtimeAppliedByManagement.active", "false")
+            .param("overtimeApplied.active", "false")
+            .param("absenceForColleagues.active", "false")
         )
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/person/1/notifications"));

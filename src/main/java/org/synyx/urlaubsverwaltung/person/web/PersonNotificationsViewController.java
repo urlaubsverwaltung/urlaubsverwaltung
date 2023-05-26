@@ -32,6 +32,8 @@ import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.util.StringUtils.hasText;
+import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToMailNotifications;
 import static org.synyx.urlaubsverwaltung.person.web.PersonNotificationsMapper.mapToPersonNotificationsDto;
 
@@ -86,7 +88,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         final UserNotificationSettings notificationSettings = userNotificationSettingsService.findNotificationSettings(new PersonId(person.getId()));
 
         final PersonNotificationsDto personNotificationsDto = mapToPersonNotificationsDto(person);
-        personNotificationsDto.setRestrictToDepartments(notificationSettings.isRestrictToDepartments());
+        personNotificationsDto.setRestrictToDepartments(new PersonNotificationDto(person.hasAnyRole(OFFICE, BOSS), notificationSettings.isRestrictToDepartments()));
 
         model.addAttribute("isViewingOwnNotifications", Objects.equals(person.getId(), signedInUser.getId()));
         model.addAttribute("personNiceName", person.getNiceName());
@@ -159,7 +161,9 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         person.setNotifications(mapToMailNotifications(newPersonNotificationsDto));
 
         personService.update(person);
-        userNotificationSettingsService.updateNotificationSettings(new PersonId(person.getId()), newPersonNotificationsDto.isRestrictToDepartments());
+
+        final boolean restrictToDepartments = newPersonNotificationsDto.getRestrictToDepartments().isActive();
+        userNotificationSettingsService.updateNotificationSettings(new PersonId(person.getId()), restrictToDepartments);
 
         redirectAttributes.addFlashAttribute("success", true);
 

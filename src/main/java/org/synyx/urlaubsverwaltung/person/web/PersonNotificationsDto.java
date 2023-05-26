@@ -5,7 +5,7 @@ public class PersonNotificationsDto {
     private Integer personId;
 
     private boolean all;
-    private boolean restrictToDepartments;
+    private PersonNotificationDto restrictToDepartments;
 
     private PersonNotificationDto applicationAppliedForManagement;
     private PersonNotificationDto applicationTemporaryAllowedForManagement;
@@ -44,11 +44,11 @@ public class PersonNotificationsDto {
         this.all = all;
     }
 
-    public boolean isRestrictToDepartments() {
+    public PersonNotificationDto getRestrictToDepartments() {
         return restrictToDepartments;
     }
 
-    public void setRestrictToDepartments(boolean restrictToDepartments) {
+    public void setRestrictToDepartments(PersonNotificationDto restrictToDepartments) {
         this.restrictToDepartments = restrictToDepartments;
     }
 
