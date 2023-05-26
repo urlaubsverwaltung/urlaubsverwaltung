@@ -8,3 +8,5 @@
 [(#{application.revoked.to_management.reason})]
 [(${comment.text})]
 [/]
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

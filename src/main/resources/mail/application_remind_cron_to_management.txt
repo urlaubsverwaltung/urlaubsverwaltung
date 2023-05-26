@@ -7,3 +7,6 @@
 [/][/]
 
 [(#{application.remind.cron_to_management.overview})] [(${baseLinkURL})]web/application#waiting-requests
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

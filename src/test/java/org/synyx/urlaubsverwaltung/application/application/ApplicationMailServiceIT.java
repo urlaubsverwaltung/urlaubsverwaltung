@@ -106,11 +106,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutAllowedApplicationIsSentToApplicantManagementAndColleague() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        person.setId(3);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED), List.of(OFFICE));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setId(2);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED));
 
@@ -169,7 +171,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/3/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsUser = getAttachments(msgUser);
         assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
@@ -195,7 +200,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + office.getId() + "/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
         assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
@@ -221,7 +229,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsBoss = getAttachments(msgBoss);
         assertThat(attachmentsBoss.get(0).getName()).contains("calendar.ics");
@@ -236,7 +247,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "    Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK);
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/42/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsColleague = getAttachments(msgColleague);
         assertThat(attachmentsColleague.get(0).getName()).contains("calendar.ics");
@@ -246,6 +260,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePersonWithOneReplacement() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
@@ -298,7 +313,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsUser = getAttachments(msgUser);
         assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
@@ -324,7 +342,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + office.getId() + "/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
         assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
@@ -334,6 +355,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutAllowedApplicationIsSentToOfficeAndThePersonWithMultipleReplacements() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
@@ -390,7 +412,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsUser = getAttachments(msgUser);
         assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
@@ -416,7 +441,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + office.getId() + "/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
         assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
@@ -426,9 +454,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutRejectedApplicationIsSentToApplierAndRelevantPersons() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REJECTED));
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setId(2);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED));
 
@@ -442,6 +472,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setBoss(boss);
 
         final Person departmentHead = new Person("departmentHead", "Head", "Department", "dh@example.org");
+        departmentHead.setId(3);
         departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED)).thenReturn(List.of(boss, departmentHead));
 
@@ -464,7 +495,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Begründung:" + EMAIL_LINE_BREAK +
-            "Geht leider nicht zu dem Zeitraum" + EMAIL_LINE_BREAK);
+            "Geht leider nicht zu dem Zeitraum" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
 
         // was email sent to boss
         MimeMessage[] inboxBoss = greenMail.getReceivedMessagesForDomain(boss.getEmail());
@@ -478,7 +512,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Begründung:" + EMAIL_LINE_BREAK +
-            "Geht leider nicht zu dem Zeitraum" + EMAIL_LINE_BREAK);
+            "Geht leider nicht zu dem Zeitraum" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.");
 
         // was email sent to departmentHead
         MimeMessage[] inboxDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
@@ -492,13 +529,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Begründung:" + EMAIL_LINE_BREAK +
-            "Geht leider nicht zu dem Zeitraum" + EMAIL_LINE_BREAK);
+            "Geht leider nicht zu dem Zeitraum" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/3/notifications anpassen.");
     }
 
     @Test
     void ensureCorrectReferMail() throws MessagingException, IOException {
 
         final Person recipient = new Person("recipient", "Muster", "Max", "mustermann@example.org");
+        recipient.setId(1);
         final Person sender = new Person("sender", "Grimes", "Rick", "rick@grimes.com");
 
         final Application application = createApplication(recipient);
@@ -535,13 +576,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
             "    Erstellungsdatum:    19.05.2022" + EMAIL_LINE_BREAK +
-            "    Weitergeleitet von:  Rick Grimes");
+            "    Weitergeleitet von:  Rick Grimes" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
     void sendDeclinedCancellationRequestApplicationNotification() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(10);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION), List.of(OFFICE));
@@ -556,6 +601,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2020, 5, 29));
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
+        relevantPerson.setId(2);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(relevantPerson, office));
 
@@ -591,7 +637,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Kommentar von Marlene Muster:" + EMAIL_LINE_BREAK +
-            "Stornierung abgelehnt!" + EMAIL_LINE_BREAK);
+            "Stornierung abgelehnt!" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + office.getId() + "/notifications anpassen.");
 
         // was email sent to relevant person
         MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
@@ -607,13 +656,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Kommentar von Marlene Muster:" + EMAIL_LINE_BREAK +
-            "Stornierung abgelehnt!" + EMAIL_LINE_BREAK);
+            "Stornierung abgelehnt!" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.");
     }
 
     @Test
     void ensureApplicantAndOfficeGetsMailAboutCancellationRequest() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION), List.of(OFFICE));
@@ -645,7 +698,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
             "Bitte stornieren!" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK + EMAIL_LINE_BREAK +
-            "Überblick deiner offenen Stornierungsanträge findest du unter https://localhost:8080/web/application#cancellation-requests");
+            "Überblick deiner offenen Stornierungsanträge findest du unter https://localhost:8080/web/application#cancellation-requests" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
 
         // send mail to all relevant persons?
         final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
@@ -663,13 +719,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
             "Bitte stornieren!" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK + EMAIL_LINE_BREAK +
-            "Überblick aller offenen Stornierungsanträge findest du unter https://localhost:8080/web/application#cancellation-requests");
+            "Überblick aller offenen Stornierungsanträge findest du unter https://localhost:8080/web/application#cancellation-requests" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + office.getId() + "/notifications anpassen.");
     }
 
     @Test
     void ensurePersonGetsMailIfApplicationForLeaveHasBeenConvertedToSickNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CONVERTED));
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
@@ -700,13 +760,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Marlene Muster hat deine Krankmeldung vom 02.02.2023 bis 04.02.2023 zu Urlaub umgewandelt." + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "    https://localhost:8080/web/application/1234");
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
     void ensureNotificationAboutConfirmationAllowedDirectlySent() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final Application application = createApplication(person);
@@ -718,6 +782,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("OK, Urlaub kann genommen werden");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setId(2);
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
@@ -746,7 +811,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021");
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
 
         // email sent to colleague
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
@@ -761,13 +829,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "    Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences");
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.");
     }
 
     @Test
     void ensureConfirmationAllowedDirectlyByOfficeSent() throws Exception {
 
         final Person person = new Person("user", "Mueller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION), List.of(OFFICE));
@@ -782,6 +854,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("OK, Urlaub kann genommen werden");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setId(2);
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED)).thenReturn(List.of(colleague));
 
@@ -812,7 +885,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021");
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
 
         // email sent to colleague
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
@@ -827,7 +903,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "    Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences");
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.");
     }
 
     @Test
@@ -841,6 +920,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2021, APRIL, 16));
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
+        relevantPerson.setId(1);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED)).thenReturn(List.of(relevantPerson));
 
@@ -874,7 +954,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021");
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
@@ -886,6 +969,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setEndDate(LocalDate.of(2020, 12, 18));
 
         final Person holidayReplacement = new Person("replacement", "Teria", "Mar", "replacement@example.org");
+        holidayReplacement.setId(1);
         holidayReplacement.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT));
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
         replacementEntity.setPerson(holidayReplacement);
@@ -912,7 +996,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Notiz von Lieschen Müller an dich:" + EMAIL_LINE_BREAK +
             "Eine Nachricht an die Vertretung" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement" + EMAIL_LINE_BREAK);
+            "Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter https://localhost:8080/web/application/replacement" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachments = getAttachments(msg);
         assertThat(attachments.get(0).getName()).contains("calendar.ics");
@@ -1123,6 +1210,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPersonWithOneReplacement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
@@ -1164,13 +1252,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021");
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
     void ensureAfterApplyingForLeaveAConfirmationNotificationIsSentToPersonWithMultipleReplacements() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
@@ -1217,7 +1309,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021");
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
@@ -1258,12 +1353,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPersonWithOneReplacement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
-
 
         final Application application = createApplication(person);
         application.setApplicationDate(LocalDate.of(2021, APRIL, 12));
@@ -1304,13 +1399,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021");
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
     void ensurePersonGetsANotificationIfAnOfficeMemberAppliedForLeaveForThisPersonWithMultipleReplacements() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
@@ -1360,7 +1459,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          Alfred Pennyworth, Robin" + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    12.04.2021");
+            "    Erstellungsdatum:    12.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
@@ -1480,6 +1582,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Cancelled");
 
         final Person recipientOfInterest = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
+        recipientOfInterest.setId(1);
         recipientOfInterest.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(recipientOfInterest));
 
@@ -1508,13 +1611,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    16.04.2021");
+            "    Erstellungsdatum:    16.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
     void ensureApplicantReceivesNotificationsIfApplicantCancel() throws Exception {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final Application application = createApplication(person);
@@ -1527,6 +1634,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Wrong information - cancelled");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setId(2);
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
@@ -1555,7 +1663,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    16.04.2021" + EMAIL_LINE_BREAK);
+            "    Erstellungsdatum:    16.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsRelevantPerson = getAttachments(msg);
         assertThat(attachmentsRelevantPerson.get(0).getName()).contains("calendar.ics");
@@ -1573,7 +1684,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "    Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK);
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsColleague = getAttachments(msgColleague);
         assertThat(attachmentsColleague.get(0).getName()).contains("calendar.ics");
@@ -1584,6 +1698,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final Application application = createApplication(person);
@@ -1598,6 +1713,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Wrong information - cancelled");
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
+        colleague.setId(2);
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION));
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION)).thenReturn(List.of(colleague));
 
@@ -1627,7 +1743,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    Grund:               " + EMAIL_LINE_BREAK +
             "    Vertretung:          " + EMAIL_LINE_BREAK +
             "    Anschrift/Telefon:   " + EMAIL_LINE_BREAK +
-            "    Erstellungsdatum:    16.04.2021");
+            "    Erstellungsdatum:    16.04.2021" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
 
         // check email colleague
         final MimeMessage[] inboxColleague = greenMail.getReceivedMessagesForDomain(colleague.getEmail());
@@ -1642,13 +1761,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "    Zeitraum: 16.04.2021 bis 16.04.2021, ganztägig" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences");
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.");
     }
 
     @Test
     void ensurePersonGetsANotificationIfOfficeCancelledOneOfHisApplications() throws Exception {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
         final Person office = new Person("office", "Muster", "Marlene", "office@example.org");
@@ -1665,6 +1788,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         comment.setText("Geht leider nicht");
 
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
+        relevantPerson.setId(2);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(relevantPerson, office));
 
@@ -1689,7 +1813,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
-            "Geht leider nicht" + EMAIL_LINE_BREAK + EMAIL_LINE_BREAK);
+            "Geht leider nicht" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachments = getAttachments(msg);
         assertThat(attachments.get(0).getName()).contains("calendar.ics");
@@ -1709,7 +1836,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Kommentar von Lieschen Müller:" + EMAIL_LINE_BREAK +
-            "Geht leider nicht" + EMAIL_LINE_BREAK + EMAIL_LINE_BREAK);
+            "Geht leider nicht" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsRelevantPerson = getAttachments(msgRelevantPerson);
         assertThat(attachmentsRelevantPerson.get(0).getName()).contains("calendar.ics");
@@ -1728,8 +1858,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "    Zeitraum: 15.06.2020 bis 15.06.2020, ganztägig" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" +
-            EMAIL_LINE_BREAK);
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/42/notifications anpassen." + EMAIL_LINE_BREAK);
 
         final List<DataSource> attachmentsColleague = getAttachments(msgColleague);
         assertThat(attachmentsColleague.get(0).getName()).contains("calendar.ics");
@@ -1739,10 +1871,12 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensureNotificationAboutNewApplicationIsSentToBossesAndDepartmentHeads() throws MessagingException, IOException {
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setId(1);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@example.org");
+        departmentHead.setId(2);
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
         departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -1790,7 +1924,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
             "    Lieschen Müller: 22.05.2023 bis 22.05.2023" + EMAIL_LINE_BREAK +
-            "    ");
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
 
         // was email sent to department head?
         final MimeMessage[] inboxOfDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
@@ -1818,13 +1955,17 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
             "    Lieschen Müller: 22.05.2023 bis 22.05.2023" + EMAIL_LINE_BREAK +
-            "    ");
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.");
     }
 
     @Test
     void ensureNotificationAboutNewApplicationOfSecondStageAuthorityIsSentToBosses() throws MessagingException, IOException {
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setId(1);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -1832,6 +1973,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
 
         final Person departmentHead = new Person("departmentHead", "Kopf", "Senior", "head@example.org");
+        departmentHead.setId(2);
         departmentHead.setPermissions(List.of(DEPARTMENT_HEAD));
         departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -1877,7 +2019,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
             "    Kai Schmitt: 22.05.2023 bis 22.05.2023" + EMAIL_LINE_BREAK +
-            "    ");
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
 
         // no email sent to department head
         final MimeMessage[] inboxOfDepartmentHead = greenMail.getReceivedMessagesForDomain(departmentHead.getEmail());
@@ -1907,17 +2052,22 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
             "    Kai Schmitt: 22.05.2023 bis 22.05.2023" + EMAIL_LINE_BREAK +
-            "    ");
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.");
     }
 
     @Test
     void ensureNotificationAboutNewApplicationOfDepartmentHeadIsSentToSecondaryStageAuthority() throws MessagingException, IOException {
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setId(1);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
+        secondStage.setId(2);
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -1963,7 +2113,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
             "    Senior Kopf: 22.05.2023 bis 22.05.2023" + EMAIL_LINE_BREAK +
-            "    ");
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
 
         // was email sent to secondary stage?
         final MimeMessage[] inboxOfSecondaryStage = greenMail.getReceivedMessagesForDomain(secondStage.getEmail());
@@ -1991,7 +2144,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
             "    Senior Kopf: 22.05.2023 bis 22.05.2023" + EMAIL_LINE_BREAK +
-            "    ");
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.");
     }
 
     @Test
@@ -2000,6 +2156,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setId(1);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -2043,7 +2200,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
-            "    Keine"
+            "    Keine" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -2053,6 +2213,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setId(1);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -2103,7 +2264,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    " + EMAIL_LINE_BREAK +
             "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
             "    Lieschen Müller: 17.04.2021 bis 17.04.2021" + EMAIL_LINE_BREAK +
-            "    "
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -2113,6 +2277,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setId(1);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -2157,7 +2322,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
             "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
-            "    ");
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
@@ -2167,6 +2335,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
 
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setId(1);
         boss.setPermissions(List.of(BOSS));
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
@@ -2214,7 +2383,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
             "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
-            "    ");
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
@@ -2222,9 +2394,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
+        secondStage.setId(2);
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
@@ -2263,7 +2437,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Kommentar von Kai Schmitt:" + EMAIL_LINE_BREAK +
-            "OK, spricht von meiner Seite aus nix dagegen");
+            "OK, spricht von meiner Seite aus nix dagegen" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
 
         // get email office
         Message msgSecondStage = inboxSecondStage[0];
@@ -2295,7 +2472,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
             "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
-            "    ");
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.");
     }
 
     @Test
@@ -2307,6 +2487,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
+        secondStage.setId(1);
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
@@ -2372,7 +2553,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
             "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
-            "    ");
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
@@ -2385,6 +2569,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
+        secondStage.setId(1);
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
@@ -2453,7 +2638,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
             "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
-            "    ");
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
@@ -2463,6 +2651,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
+        secondStage.setId(1);
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
@@ -2527,7 +2716,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "    " + EMAIL_LINE_BREAK +
             "    Lieschen Müller: 16.04.2021 bis 16.04.2021" + EMAIL_LINE_BREAK +
             "    Lieschen Müller: 17.04.2021 bis 17.04.2021" + EMAIL_LINE_BREAK +
-            "    ");
+            "    " + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
@@ -2537,6 +2729,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED));
 
         final Person secondStage = new Person("manager", "Schmitt", "Kai", "manager@example.org");
+        secondStage.setId(1);
         secondStage.setPermissions(List.of(SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
 
@@ -2594,7 +2787,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Überschneidende Abwesenheiten in der Abteilung des Antragsstellers:" + EMAIL_LINE_BREAK +
             "    " + EMAIL_LINE_BREAK +
-            "    Keine");
+            "    Keine" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
     }
 
     @Test
@@ -2674,10 +2870,13 @@ class ApplicationMailServiceIT extends TestContainersBase {
 
         // DEPARTMENT HEADs
         final Person boss = new Person("boss", "Boss", "Hugo", "boss@example.org");
+        boss.setId(1);
         boss.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
         final Person departmentHeadA = new Person("headAC", "Wurst", "Heinz", "headAC@example.org");
+        departmentHeadA.setId(2);
         departmentHeadA.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
         final Person departmentHeadB = new Person("headB", "Mustermann", "Michel", "headB@example.org");
+        departmentHeadB.setId(3);
         departmentHeadB.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER));
 
         when(mailRecipientService.getRecipientsOfInterest(personA, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER)).thenReturn(asList(boss, departmentHeadA));
@@ -2717,7 +2916,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "  Erholungsurlaub vom 30.11.2021 bis 30.11.2021, ganztägig. https://localhost:8080/web/application/3" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Überblick aller wartenden Abwesenheitsanträge findest du unter https://localhost:8080/web/application#waiting-requests"
+            "Überblick aller wartenden Abwesenheitsanträge findest du unter https://localhost:8080/web/application#waiting-requests" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
 
         // get email department head A
@@ -2738,7 +2940,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "  Erholungsurlaub vom 30.11.2021 bis 30.11.2021, ganztägig. https://localhost:8080/web/application/3" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Überblick aller wartenden Abwesenheitsanträge findest du unter https://localhost:8080/web/application#waiting-requests"
+            "Überblick aller wartenden Abwesenheitsanträge findest du unter https://localhost:8080/web/application#waiting-requests" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen."
         );
 
         // get email department head A
@@ -2755,7 +2960,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "  Erholungsurlaub vom 24.12.2023 bis 31.12.2023, ganztägig. https://localhost:8080/web/application/2" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Überblick aller wartenden Abwesenheitsanträge findest du unter https://localhost:8080/web/application#waiting-requests"
+            "Überblick aller wartenden Abwesenheitsanträge findest du unter https://localhost:8080/web/application#waiting-requests" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/3/notifications anpassen."
         );
     }
 
@@ -2790,6 +2998,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationToday() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
@@ -2826,7 +3035,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "  \"Some notes\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 01.01.2022 bis zum 01.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -2834,6 +3046,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplication() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
@@ -2870,7 +3083,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "  \"Some notes\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -2878,6 +3094,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationMoreThanOneDay() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
@@ -2913,7 +3130,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "  \"Some notes\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 03.01.2022 bis zum 03.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -2921,6 +3141,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacementToday() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.now(clock));
@@ -2947,7 +3168,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 01.01.2022 bis zum 01.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -2955,6 +3179,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacementTomorrow() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.now(clock).plusDays(1));
@@ -2981,7 +3206,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -2989,6 +3217,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, Month.JANUARY, 31));
@@ -3015,7 +3244,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 31.01.2022 bis zum 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -3023,6 +3255,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithoutReplacementWithMoreThanOneDay() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Application application = createApplication(person);
         application.setStartDate(LocalDate.of(2022, Month.JANUARY, 31));
@@ -3049,7 +3282,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 31.01.2022 bis zum 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -3057,6 +3293,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithOneReplacementWithoutNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
@@ -3092,7 +3329,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -3100,6 +3340,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithOneReplacementWithNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
 
@@ -3137,7 +3378,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "  \"Hey Alfred, denke bitte an Pinguin, danke dir!\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -3145,6 +3389,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithMultipleReplacementsWithoutNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
@@ -3188,26 +3433,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 "  \"Uffbasse Rob. Ich sehe dich.\"" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
-        );
-
-        // check content of email
-        assertThat(msg.getContent()).isEqualTo(
-            "Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "morgen beginnt deine Abwesenheit" + EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
-                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
-                EMAIL_LINE_BREAK +
-                "und du wirst vertreten durch:" + EMAIL_LINE_BREAK +
-                EMAIL_LINE_BREAK +
-                "- Alfred Pennyworth" + EMAIL_LINE_BREAK +
-                "  \"Hey Alfred, denke bitte an Pinguin, danke dir!\"" + EMAIL_LINE_BREAK +
-                "- Robin" + EMAIL_LINE_BREAK +
-                "  \"Uffbasse Rob. Ich sehe dich.\"" + EMAIL_LINE_BREAK +
-                EMAIL_LINE_BREAK +
-                "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -3215,6 +3444,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithMultipleReplacementsWithNote() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacementOne = new Person("pennyworth", "Pennyworth", "Alfred", "pennyworth@example.org");
         final Person holidayReplacementTwo = new Person("rob", "", "Robin", "robin@example.org");
@@ -3257,7 +3487,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 02.01.2022 bis zum 02.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 
@@ -3265,6 +3498,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
     void ensurePersonGetsANotificationForUpcomingApplicationWithReplacementWithoutNoteWithMoreThanOneDay() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+        person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
         final Person holidayReplacement = new Person("holidayReplacement", "holiday", "replacement", "holidayreplacement@example.org");
 
@@ -3300,7 +3534,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
                 EMAIL_LINE_BREAK +
                 EMAIL_LINE_BREAK +
                 "Da du vom 31.01.2022 bis zum 31.01.2022 nicht anwesend bist, denke bitte an die Übergabe." + EMAIL_LINE_BREAK +
-                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc."
+                "Dazu gehören z.B. Abwesenheitsnotiz, E-Mail- & Telefon-Weiterleitung, Zeiterfassung, etc." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
         );
     }
 

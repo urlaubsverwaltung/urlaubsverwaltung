@@ -156,7 +156,10 @@ class SickNoteMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "    Zeitraum: 01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences");
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + colleague.getId() + "/notifications anpassen.");
     }
 
 
@@ -192,6 +195,9 @@ class SickNoteMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "    Zeitraum: 01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
-            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences");
+            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + colleague.getId() + "/notifications anpassen.");
     }
 }

@@ -7,3 +7,5 @@
 [(#{comment.by(${comment.person.niceName})})]
 [(${comment.text})]
 [/]
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

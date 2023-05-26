@@ -16,3 +16,6 @@
     [(${rightPadder.rightPad('__#{absence.information.holiday_replacement}__',__#{absence.information.max_length}__)})] [# th:each="replacement, iterStat : ${application.holidayReplacements}"][# th:utext="!${iterStat.last} ? ${replacement.person.niceName} + ', ': ${replacement.person.niceName}" /][/]
     [(${rightPadder.rightPad('__#{absence.information.address}__',__#{absence.information.max_length}__)})] [(${#strings.trim(application.address)})]
     [(${rightPadder.rightPad('__#{absence.information.date}__',__#{absence.information.max_length}__)})] [(${#temporals.format(application.applicationDate, 'dd.MM.yyyy')})]
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

@@ -21,3 +21,6 @@
     [# th:each="vacation : ${departmentVacations}"]
     [(${vacation.person.niceName})]: [(#{days_range(${#temporals.format(vacation.startDate, "dd.MM.yyyy")},${#temporals.format(vacation.endDate, "dd.MM.yyyy")})})][/]
     [# th:if="${#lists.isEmpty(departmentVacations)}"][(#{application.applied.to_management.overlapping_absence.none})][/]
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

@@ -12,3 +12,6 @@
     [(${rightPadder.rightPad('__#{absence.information.person}__',__#{overtime.information.max_length}__)})] [(${overtime.person.niceName})]
     [(${rightPadder.rightPad('__#{absence.information.period}__',__#{overtime.information.max_length}__)})] [(${#temporals.format(overtime.startDate, "dd.MM.yyyy")})] - [(${#temporals.format(overtime.endDate, "dd.MM.yyyy")})]
     [(${rightPadder.rightPad('__#{overtime.information.duration}__',__#{overtime.information.max_length}__)})] [(${overtimeDurationHours})] [(${overtimeDurationMinutes})]
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

@@ -3,3 +3,6 @@
 [(#{sick_note.converted(${application.applier.niceName},${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")})})]
 
     [(${baseLinkURL})]web/application/[(${application.id})]
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

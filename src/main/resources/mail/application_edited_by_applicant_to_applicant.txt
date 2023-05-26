@@ -3,3 +3,6 @@
 [(#{application.edited.by_applicant_to_applicant(${application.person.niceName})})]
 
     [(${baseLinkURL})]web/application/[(${application.id})]
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
