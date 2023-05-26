@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.synyx.urlaubsverwaltung.application.application.Application;
-import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Instant;
 import java.util.UUID;
