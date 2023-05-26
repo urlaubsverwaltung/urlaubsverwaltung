@@ -2158,6 +2158,182 @@ class DepartmentServiceImplTest {
         assertThat(argument.getValue().getSecondStageAuthorities()).containsExactly(other);
     }
 
+    @Test
+    void ensureDepartmentMatchFalse() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+
+        final Person otherPerson = new Person();
+        otherPerson.setId(2);
+        otherPerson.setPermissions(List.of(USER));
+
+        final DepartmentMemberEmbeddable memberEmbeddable = new DepartmentMemberEmbeddable();
+        memberEmbeddable.setPerson(person);
+
+        final DepartmentMemberEmbeddable otherMemberEmbeddable = new DepartmentMemberEmbeddable();
+        otherMemberEmbeddable.setPerson(otherPerson);
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(memberEmbeddable));
+
+        final DepartmentEntity otherDepartmentEntity = new DepartmentEntity();
+        otherDepartmentEntity.setId(2);
+        otherDepartmentEntity.setMembers(List.of(otherMemberEmbeddable));
+
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(departmentEntity));
+        when(departmentRepository.findByMembersPerson(otherPerson)).thenReturn(List.of(otherDepartmentEntity));
+
+        final boolean actual = sut.hasDepartmentMatch(person, otherPerson);
+        assertThat(actual).isFalse();
+    }
+
+    @Test
+    void ensureDepartmentMatchWhenBothAreMembers() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+
+        final Person otherPerson = new Person();
+        otherPerson.setId(2);
+        otherPerson.setPermissions(List.of(USER));
+
+        final DepartmentMemberEmbeddable memberEmbeddable = new DepartmentMemberEmbeddable();
+        memberEmbeddable.setPerson(person);
+
+        final DepartmentMemberEmbeddable otherMemberEmbeddable = new DepartmentMemberEmbeddable();
+        otherMemberEmbeddable.setPerson(otherPerson);
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(memberEmbeddable, otherMemberEmbeddable));
+
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(departmentEntity));
+        when(departmentRepository.findByMembersPerson(otherPerson)).thenReturn(List.of(departmentEntity));
+
+        final boolean actual = sut.hasDepartmentMatch(person, otherPerson);
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    void ensureDepartmentMatchWhenPersonIsDepartmentHeadOfOtherPersonButNotMember() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+        final Person otherPerson = new Person();
+        otherPerson.setId(2);
+        otherPerson.setPermissions(List.of(USER));
+
+        final DepartmentMemberEmbeddable otherMemberEmbeddable = new DepartmentMemberEmbeddable();
+        otherMemberEmbeddable.setPerson(otherPerson);
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(otherMemberEmbeddable));
+        departmentEntity.setDepartmentHeads(List.of(person));
+
+        when(departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person))
+            .thenReturn(List.of(departmentEntity));
+
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of());
+        when(departmentRepository.findByMembersPerson(otherPerson)).thenReturn(List.of(departmentEntity));
+
+        final boolean actual = sut.hasDepartmentMatch(person, otherPerson);
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    void ensureDepartmentMatchWhenPersonIsSecondStageAuthorityOfOtherPersonButNotMember() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
+        final Person otherPerson = new Person();
+        otherPerson.setId(2);
+        otherPerson.setPermissions(List.of(USER));
+
+        final DepartmentMemberEmbeddable otherMemberEmbeddable = new DepartmentMemberEmbeddable();
+        otherMemberEmbeddable.setPerson(otherPerson);
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(otherMemberEmbeddable));
+        departmentEntity.setSecondStageAuthorities(List.of(person));
+
+        when(departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person))
+            .thenReturn(List.of(departmentEntity));
+
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of());
+        when(departmentRepository.findByMembersPerson(otherPerson)).thenReturn(List.of(departmentEntity));
+
+        final boolean actual = sut.hasDepartmentMatch(person, otherPerson);
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    void ensureDepartmentMatchWhenOtherPersonIsDepartmentHeadOfPersonButNotMember() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+
+        final Person otherPerson = new Person();
+        otherPerson.setId(2);
+        otherPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD));
+
+        final DepartmentMemberEmbeddable memberEmbeddable = new DepartmentMemberEmbeddable();
+        memberEmbeddable.setPerson(person);
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(memberEmbeddable));
+        departmentEntity.setDepartmentHeads(List.of(otherPerson));
+
+        when(departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(otherPerson, otherPerson))
+            .thenReturn(List.of(departmentEntity));
+
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(departmentEntity));
+        when(departmentRepository.findByMembersPerson(otherPerson)).thenReturn(List.of());
+
+        final boolean actual = sut.hasDepartmentMatch(person, otherPerson);
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    void ensureDepartmentMatchWhenOtherPersonIsSecondStageAuthorityOfPersonButNotMember() {
+
+        final Person person = new Person();
+        person.setId(1);
+        person.setPermissions(List.of(USER));
+
+        final Person otherPerson = new Person();
+        otherPerson.setId(2);
+        otherPerson.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
+
+        final DepartmentMemberEmbeddable memberEmbeddable = new DepartmentMemberEmbeddable();
+        memberEmbeddable.setPerson(person);
+
+        final DepartmentEntity departmentEntity = new DepartmentEntity();
+        departmentEntity.setId(1);
+        departmentEntity.setMembers(List.of(memberEmbeddable));
+        departmentEntity.setSecondStageAuthorities(List.of(otherPerson));
+
+        when(departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(otherPerson, otherPerson))
+            .thenReturn(List.of(departmentEntity));
+
+        when(departmentRepository.findByMembersPerson(person)).thenReturn(List.of(departmentEntity));
+        when(departmentRepository.findByMembersPerson(otherPerson)).thenReturn(List.of());
+
+        final boolean actual = sut.hasDepartmentMatch(person, otherPerson);
+        assertThat(actual).isTrue();
+    }
+
     private static PageableSearchQuery defaultPersonSearchQuery() {
         return new PageableSearchQuery(defaultPageRequest(), "");
     }

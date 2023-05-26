@@ -3,18 +3,25 @@ package org.synyx.urlaubsverwaltung.mail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.notification.UserNotificationSettings;
+import org.synyx.urlaubsverwaltung.notification.UserNotificationSettingsService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.ResponsiblePersonService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static java.util.function.Function.identity;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
@@ -27,12 +34,16 @@ class MailRecipientServiceImpl implements MailRecipientService {
     private final ResponsiblePersonService responsiblePersonService;
     private final PersonService personService;
     private final DepartmentService departmentService;
+    private final UserNotificationSettingsService userNotificationSettingsService;
 
     @Autowired
-    MailRecipientServiceImpl(ResponsiblePersonService responsiblePersonService, PersonService personService, DepartmentService departmentService) {
+    MailRecipientServiceImpl(ResponsiblePersonService responsiblePersonService, PersonService personService,
+                             DepartmentService departmentService, UserNotificationSettingsService userNotificationSettingsService) {
+
         this.responsiblePersonService = responsiblePersonService;
         this.personService = personService;
         this.departmentService = departmentService;
+        this.userNotificationSettingsService = userNotificationSettingsService;
     }
 
     @Override
@@ -43,33 +54,27 @@ class MailRecipientServiceImpl implements MailRecipientService {
     @Override
     public List<Person> getRecipientsOfInterest(Person personOfInterest, MailNotification mailNotification) {
 
-        final List<Person> recipientsOfInterestForAll = new ArrayList<>();
+        final List<Person> officeAndBosses = new ArrayList<>();
         if (mailNotification.isValidWith(List.of(USER, OFFICE))) {
-            recipientsOfInterestForAll.addAll(getOfficesWithApplicationManagementAllNotification(mailNotification));
+            officeAndBosses.addAll(getOfficesWithApplicationManagementAllNotification(mailNotification));
         }
-
         if (mailNotification.isValidWith(List.of(USER, BOSS))) {
-            recipientsOfInterestForAll.addAll(getBossWithApplicationManagementAllNotification(mailNotification));
+            officeAndBosses.addAll(getBossWithApplicationManagementAllNotification(mailNotification));
         }
 
-        Stream<Person> managementDepartmentPersons = Stream.of();
-        if (departmentsAvailable()) {
-            final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
-            if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD))) {
-                recipientsOfInterestForDepartment.addAll(responsiblePersonService.getResponsibleDepartmentHeads(personOfInterest));
-            }
+        final List<Person> interestedOfficeAndBosses = getOfficeBossWithDepartmentMatch(personOfInterest, officeAndBosses);
 
-            if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY))) {
-                recipientsOfInterestForDepartment.addAll(responsiblePersonService.getResponsibleSecondStageAuthorities(personOfInterest));
-            }
-
-            managementDepartmentPersons = recipientsOfInterestForDepartment.stream()
-                .distinct()
-                .filter(person -> person.getNotifications().contains(mailNotification));
+        final List<Person> recipientsOfInterestForDepartment = new ArrayList<>();
+        if (mailNotification.isValidWith(List.of(USER, DEPARTMENT_HEAD))) {
+            recipientsOfInterestForDepartment.addAll(responsiblePersonService.getResponsibleDepartmentHeads(personOfInterest));
+        }
+        if (mailNotification.isValidWith(List.of(USER, SECOND_STAGE_AUTHORITY))) {
+            recipientsOfInterestForDepartment.addAll(responsiblePersonService.getResponsibleSecondStageAuthorities(personOfInterest));
         }
 
-        return Stream.concat(recipientsOfInterestForAll.stream(), managementDepartmentPersons)
+        return Stream.concat(interestedOfficeAndBosses.stream(), recipientsOfInterestForDepartment.stream())
             .distinct()
+            .filter(recipient -> recipient.getNotifications().contains(mailNotification))
             .collect(toList());
     }
 
@@ -91,6 +96,29 @@ class MailRecipientServiceImpl implements MailRecipientService {
                 .filter(person -> !department.getSecondStageAuthorities().contains(person)))
             .filter(not(isEqual(personOfInterest)))
             .distinct()
+            .collect(toList());
+    }
+
+    private List<Person> getOfficeBossWithDepartmentMatch(Person personOfInterest, List<Person> officeAndBosses) {
+
+        if (!departmentsAvailable()) {
+            return officeAndBosses;
+        }
+
+        final Map<PersonId, Person> byPersonId = officeAndBosses.stream().collect(toMap(person -> new PersonId(person.getId()), identity()));
+        final List<PersonId> officeBossIds = officeAndBosses.stream().map(Person::getId).map(PersonId::new).collect(toList());
+        final Function<PersonId, Boolean> departmentMatch = (personId) -> departmentService.hasDepartmentMatch(byPersonId.get(personId), personOfInterest);
+
+        final List<PersonId> notInterestedIds = userNotificationSettingsService.findNotificationSettings(officeBossIds)
+            .values()
+            .stream()
+            .filter(UserNotificationSettings::isRestrictToDepartments)
+            .map(UserNotificationSettings::getPersonId)
+            .filter(not(departmentMatch::apply))
+            .collect(toList());
+
+        return officeAndBosses.stream()
+            .filter(not(person -> notInterestedIds.contains(new PersonId(person.getId()))))
             .collect(toList());
     }
 

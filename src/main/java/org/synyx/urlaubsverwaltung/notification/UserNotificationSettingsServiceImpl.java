@@ -3,6 +3,17 @@ package org.synyx.urlaubsverwaltung.notification;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import static java.util.function.Function.identity;
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
 @Service
 class UserNotificationSettingsServiceImpl implements UserNotificationSettingsService {
 
@@ -19,6 +30,23 @@ class UserNotificationSettingsServiceImpl implements UserNotificationSettingsSer
     }
 
     @Override
+    public Map<PersonId, UserNotificationSettings> findNotificationSettings(Collection<PersonId> personIds) {
+
+        final List<Integer> personIdValues = personIds.stream().map(PersonId::getValue).collect(toList());
+
+        final Map<PersonId, UserNotificationSettings> notificationsByPerson = iterableToStream(repository.findAllById(personIdValues))
+            .map(UserNotificationSettingsServiceImpl::toNotification)
+            .collect(toMap(UserNotificationSettings::getPersonId, identity()));
+
+        final Stream<UserNotificationSettings> defaultNotificationSettings = personIds.stream()
+            .filter(not(notificationsByPerson::containsKey))
+            .map(UserNotificationSettingsServiceImpl::defaultNotificationSettings);
+
+        return Stream.concat(notificationsByPerson.values().stream(), defaultNotificationSettings)
+            .collect(toMap(UserNotificationSettings::getPersonId, identity()));
+    }
+
+    @Override
     public UserNotificationSettings updateNotificationSettings(PersonId personId, boolean restrictToDepartments) {
 
         final UserNotificationSettingsEntity entity = new UserNotificationSettingsEntity();
@@ -26,6 +54,10 @@ class UserNotificationSettingsServiceImpl implements UserNotificationSettingsSer
         entity.setRestrictToDepartments(restrictToDepartments);
 
         return toNotification(repository.save(entity));
+    }
+
+    private static <T> Stream<T> iterableToStream(Iterable<T> iterable) {
+        return StreamSupport.stream(iterable.spliterator(), false);
     }
 
     private static UserNotificationSettings defaultNotificationSettings(PersonId personId) {

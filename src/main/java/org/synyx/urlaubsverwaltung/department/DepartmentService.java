@@ -259,4 +259,15 @@ public interface DepartmentService {
      * @return a map of personId mapped to department names
      */
     Map<PersonId, List<String>> getDepartmentNamesByMembers(List<Person> persons);
+
+    /**
+     * Checks whether two persons are in the same department or not or one person of both is
+     * {@linkplain org.synyx.urlaubsverwaltung.person.Role#DEPARTMENT_HEAD} or {@linkplain org.synyx.urlaubsverwaltung.person.Role#SECOND_STAGE_AUTHORITY}
+     * of the other person.
+     *
+     * @param person a person
+     * @param otherPerson another person
+     * @return {@code true} when the persons have a department match, {@code false} otherwise
+     */
+    boolean hasDepartmentMatch(Person person, Person otherPerson);
 }
