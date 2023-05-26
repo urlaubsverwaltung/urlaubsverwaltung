@@ -80,12 +80,8 @@ public class PersonNotificationsViewController implements HasLaunchpad {
             .orElseThrow(() -> new UnknownPersonException(personId));
 
         final Person signedInUser = personService.getSignedInUser();
-        final List<Department> personDepartments = departmentService.getDepartmentsPersonHasAccessTo(person);
-
-        if (isDepartmentSection && personDepartments.isEmpty()) {
-            final String message = format("department page requested but there are no departments person=%s has access to", person.getId());
-            throw new ResponseStatusException(NOT_FOUND, message);
-        }
+        final long numberOfDepartments = departmentService.getNumberOfDepartments();
+        final List<Department> personDepartments = numberOfDepartments == 0 ? List.of() : departmentService.getDepartmentsPersonHasAccessTo(person);
 
         final UserNotificationSettings notificationSettings = userNotificationSettingsService.findNotificationSettings(new PersonId(person.getId()));
 
@@ -95,7 +91,8 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         model.addAttribute("isViewingOwnNotifications", Objects.equals(person.getId(), signedInUser.getId()));
         model.addAttribute("personNiceName", person.getNiceName());
         model.addAttribute("personNotificationsDto", personNotificationsDto);
-        model.addAttribute("showDepartmentsTab", !personDepartments.isEmpty());
+        model.addAttribute("departmentsAvailable", numberOfDepartments != 0);
+        model.addAttribute("personAssignedToDepartments", !personDepartments.isEmpty());
 
         if (isDepartmentSection) {
             model.addAttribute("formFragment", "person/notifications/departments::form");

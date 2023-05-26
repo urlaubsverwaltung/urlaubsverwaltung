@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -32,6 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -69,8 +71,9 @@ class PersonNotificationsViewControllerTest {
         sut = new PersonNotificationsViewController(personService, validator, userNotificationSettingsService, departmentService);
     }
 
-    @Test
-    void ensurePersonalAndDepartmentNavigationIsHiddenWhenThereAreNoAssignedDepartments() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/person/{personId}/notifications", "/web/person/{personId}/notifications/departments"})
+    void ensureModelAttributesWhenThereAreNoDepartments(String givenUrl) throws Exception {
 
         final Person signedInPerson = personWithId(42);
         signedInPerson.setFirstName("Office");
@@ -85,15 +88,19 @@ class PersonNotificationsViewControllerTest {
         final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
 
-        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of());
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
-        perform(get("/web/person/{personId}/notifications", 1))
+        perform(get(givenUrl, 1))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("showDepartmentsTab", is(false)));
+            .andExpect(model().attribute("departmentsAvailable", is(false)))
+            .andExpect(model().attribute("personAssignedToDepartments", is(false)));
+
+        verifyNoMoreInteractions(departmentService);
     }
 
-    @Test
-    void ensurePersonalAndDepartmentNavigationIsVisibleWhenThereAreAssignedDepartments() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/person/{personId}/notifications", "/web/person/{personId}/notifications/departments"})
+    void ensureModelAttributesWhenThereAreDepartmentsAndPersonHasAssignedDepartments(String givenUrl) throws Exception {
 
         final Person signedInPerson = personWithId(42);
         signedInPerson.setFirstName("Office");
@@ -108,26 +115,41 @@ class PersonNotificationsViewControllerTest {
         final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
 
+        when(departmentService.getNumberOfDepartments()).thenReturn(4L);
         when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(new Department()));
 
-        perform(get("/web/person/{personId}/notifications", 1))
+        perform(get(givenUrl, 1))
             .andExpect(status().isOk())
-            .andExpect(model().attribute("showDepartmentsTab", is(true)));
+            .andExpect(model().attribute("departmentsAvailable", is(true)))
+            .andExpect(model().attribute("personAssignedToDepartments", is(true)));
+
+        verifyNoMoreInteractions(departmentService);
     }
 
-    @Test
-    void ensureGetDepartmentPageIsNotFoundWhenUserHasNoAccessToAnyDepartment() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/person/{personId}/notifications", "/web/person/{personId}/notifications/departments"})
+    void ensureModelAttributesWhenThereAreDepartmentsButPersonHasNoAssignedDepartments(String givenUrl) throws Exception {
+
+        final Person signedInPerson = personWithId(42);
+        signedInPerson.setFirstName("Office");
+        signedInPerson.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Person person = personWithId(1);
         person.setFirstName("Hans");
         person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        when(personService.getSignedInUser()).thenReturn(person);
 
+        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(4L);
         when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of());
 
-        perform(get("/web/person/{personId}/notifications/departments", 1))
-            .andExpect(status().isNotFound());
+        perform(get(givenUrl, 1))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("departmentsAvailable", is(true)))
+            .andExpect(model().attribute("personAssignedToDepartments", is(false)));
     }
 
     @Test
