@@ -53,6 +53,7 @@
                   th:href="@{/web/person/{userId}/notifications(userId=${userId})}"
                   class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
                   th:classappend="${activeContent == 'self' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
+                  data-turbo="true"
                 >
                   Persönlich
                 </a>
@@ -66,6 +67,7 @@
                   th:href="@{/web/person/{userId}/notifications/departments(userId=${userId})}"
                   class="tw-text-xl tw-font-medium tw-no-underline hover:tw-text-black-almost dark:hover:tw-text-zinc-200"
                   th:classappend="${activeContent == 'departments' ? 'tw-text-black-almost dark:tw-text-zinc-200' : 'tw-text-zinc-400 dark:tw-text-zinc-500'}"
+                  data-turbo="true"
                 >
                   Abteilungen
                 </a>
