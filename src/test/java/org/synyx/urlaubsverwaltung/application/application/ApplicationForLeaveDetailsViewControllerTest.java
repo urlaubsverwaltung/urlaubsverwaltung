@@ -418,9 +418,22 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationInteractionService.allow(any(), any(), any())).thenReturn(allowedApplication());
 
         perform(post("/web/application/" + APPLICATION_ID + "/allow")
-            .param("redirect", "/some/url"))
+            .param("redirect", "/web/application/"))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/some/url"));
+            .andExpect(redirectedUrl("/web/application/"));
+    }
+
+    @Test
+    void allowApplicationRedirectsNotToRedirectUrlIfNotChecked() throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(BOSS));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+        when(applicationInteractionService.allow(any(), any(), any())).thenReturn(allowedApplication());
+
+        perform(post("/web/application/" + APPLICATION_ID + "/allow")
+            .param("redirect", "/web/hijacked/"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/57"));
     }
 
     @Test
@@ -745,9 +758,21 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
 
         perform(post("/web/application/" + APPLICATION_ID + "/reject")
-            .param("redirect", "/some/url"))
+            .param("redirect", "/web/application/"))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/some/url"));
+            .andExpect(redirectedUrl("/web/application/"));
+    }
+
+    @Test
+    void rejectApplicationRedirectNotToUrlIfNotChecked() throws Exception {
+
+        when(personService.getSignedInUser()).thenReturn(personWithRole(BOSS));
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
+
+        perform(post("/web/application/" + APPLICATION_ID + "/reject")
+            .param("redirect", "/web/hijacked/"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/57"));
     }
 
     @Test
