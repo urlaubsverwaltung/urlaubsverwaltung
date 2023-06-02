@@ -14,7 +14,10 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
+import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
+import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
+import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 
@@ -185,6 +188,24 @@ class PersonTest {
             .isNotEqualTo(personTwo)
             .isNotEqualTo(new Object())
             .isNotEqualTo(null);
+    }
+
+    @Test
+    void ensureHasAnyRoleIsTrue() {
+        final Person personOne = new Person();
+        personOne.setPermissions(List.of(DEPARTMENT_HEAD, BOSS));
+        personOne.setId(1);
+
+        assertThat(personOne.hasAnyRole(DEPARTMENT_HEAD)).isTrue();
+    }
+
+    @Test
+    void ensureHasAnyRoleFalse() {
+        final Person personOne = new Person();
+        personOne.setPermissions(List.of(SECOND_STAGE_AUTHORITY, OFFICE));
+        personOne.setId(1);
+
+        assertThat(personOne.hasAnyRole(DEPARTMENT_HEAD)).isFalse();
     }
 
     @Test
