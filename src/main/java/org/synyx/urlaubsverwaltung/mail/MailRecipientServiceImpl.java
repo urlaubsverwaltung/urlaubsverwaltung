@@ -81,7 +81,7 @@ class MailRecipientServiceImpl implements MailRecipientService {
     @Override
     public List<Person> getColleagues(Person personOfInterest, MailNotification mailNotification) {
 
-        if (!departmentsAvailable()) {
+        if (noDepartmentsAvailable()) {
             return personService.getActivePersons().stream()
                 .filter(person -> person.getNotifications().contains(mailNotification))
                 .filter(not(isEqual(personOfInterest)))
@@ -101,7 +101,7 @@ class MailRecipientServiceImpl implements MailRecipientService {
 
     private List<Person> getOfficeBossWithDepartmentMatch(Person personOfInterest, List<Person> officeAndBosses) {
 
-        if (!departmentsAvailable()) {
+        if (noDepartmentsAvailable()) {
             return officeAndBosses;
         }
 
@@ -109,9 +109,7 @@ class MailRecipientServiceImpl implements MailRecipientService {
         final List<PersonId> officeBossIds = officeAndBosses.stream().map(Person::getId).map(PersonId::new).collect(toList());
         final Predicate<PersonId> departmentMatch = personId -> departmentService.hasDepartmentMatch(byPersonId.get(personId), personOfInterest);
 
-        final List<PersonId> notInterestedIds = userNotificationSettingsService.findNotificationSettings(officeBossIds)
-            .values()
-            .stream()
+        final List<PersonId> notInterestedIds = userNotificationSettingsService.findNotificationSettings(officeBossIds).values().stream()
             .filter(UserNotificationSettings::isRestrictToDepartments)
             .map(UserNotificationSettings::getPersonId)
             .filter(not(departmentMatch))
@@ -134,7 +132,7 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .collect(toList());
     }
 
-    private boolean departmentsAvailable() {
-        return departmentService.getNumberOfDepartments() > 0;
+    private boolean noDepartmentsAvailable() {
+        return departmentService.getNumberOfDepartments() <= 0;
     }
 }
