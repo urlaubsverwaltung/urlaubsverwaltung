@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
@@ -34,7 +33,7 @@ class UserNotificationSettingsServiceImpl implements UserNotificationSettingsSer
 
         final List<Integer> personIdValues = personIds.stream().map(PersonId::getValue).collect(toList());
 
-        final Map<PersonId, UserNotificationSettings> notificationsByPerson = iterableToStream(repository.findAllById(personIdValues))
+        final Map<PersonId, UserNotificationSettings> notificationsByPerson = repository.findAllById(personIdValues).stream()
             .map(UserNotificationSettingsServiceImpl::toNotification)
             .collect(toMap(UserNotificationSettings::getPersonId, identity()));
 
@@ -54,10 +53,6 @@ class UserNotificationSettingsServiceImpl implements UserNotificationSettingsSer
         entity.setRestrictToDepartments(restrictToDepartments);
 
         return toNotification(repository.save(entity));
-    }
-
-    private static <T> Stream<T> iterableToStream(Iterable<T> iterable) {
-        return StreamSupport.stream(iterable.spliterator(), false);
     }
 
     private static UserNotificationSettings defaultNotificationSettings(PersonId personId) {
