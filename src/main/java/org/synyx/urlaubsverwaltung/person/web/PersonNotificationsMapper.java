@@ -101,6 +101,7 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT, personNotificationsDto::setHolidayReplacement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING, personNotificationsDto::setHolidayReplacementUpcoming);
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED, personNotificationsDto::setOvertimeApplied);
+        setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT, personNotificationsDto::setOvertimeAppliedByManagement);
 
         // department notifications
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, personNotificationsDto::setApplicationAppliedForManagement);
@@ -114,7 +115,6 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER, personNotificationsDto::setApplicationWaitingReminderForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED, personNotificationsDto::setApplicationCancellationRequestedForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED, personNotificationsDto::setOvertimeAppliedForManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT, personNotificationsDto::setOvertimeAppliedByManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED, personNotificationsDto::setAbsenceForColleagues);
