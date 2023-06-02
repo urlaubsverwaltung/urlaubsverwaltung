@@ -4,7 +4,15 @@ public class PersonNotificationsDto {
 
     private Integer personId;
 
-    private boolean all;
+    /**
+     * Whether all personal related notifications are active or not.
+     */
+    private boolean allPersonal;
+    /**
+     * Whether all department related notifications are active or not.
+     */
+    private boolean allDepartment;
+
     private PersonNotificationDto restrictToDepartments;
 
     private PersonNotificationDto applicationAppliedForManagement;
@@ -36,12 +44,20 @@ public class PersonNotificationsDto {
         this.personId = personId;
     }
 
-    public boolean isAll() {
-        return all;
+    public boolean isAllPersonal() {
+        return allPersonal;
     }
 
-    public void setAll(boolean all) {
-        this.all = all;
+    public void setAllPersonal(boolean all) {
+        this.allPersonal = all;
+    }
+
+    public boolean isAllDepartment() {
+        return allDepartment;
+    }
+
+    public void setAllDepartment(boolean allDepartment) {
+        this.allDepartment = allDepartment;
     }
 
     public PersonNotificationDto getRestrictToDepartments() {

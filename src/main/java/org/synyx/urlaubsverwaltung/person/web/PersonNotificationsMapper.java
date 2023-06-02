@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION;
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CONVERTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
@@ -84,17 +86,9 @@ final class PersonNotificationsMapper {
         final PersonNotificationsDto personNotificationsDto = new PersonNotificationsDto();
 
         final Map<MailNotification, Consumer<PersonNotificationDto>> setterByNotification = new EnumMap<>(MailNotification.class);
+
+        // personal notifications
         setterByNotification.put(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL, personNotificationsDto::setPersonNewManagementAll);
-        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, personNotificationsDto::setApplicationAppliedForManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED, personNotificationsDto::setApplicationAdaptedForManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED, personNotificationsDto::setApplicationAdaptedForManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED, personNotificationsDto::setApplicationCancellationForManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED, personNotificationsDto::setApplicationCancellationForManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION, personNotificationsDto::setApplicationCancellationForManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED, personNotificationsDto::setApplicationAllowedForManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED, personNotificationsDto::setApplicationTemporaryAllowedForManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER, personNotificationsDto::setApplicationWaitingReminderForManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED, personNotificationsDto::setApplicationCancellationRequestedForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_APPLIED, personNotificationsDto::setApplicationAppliedAndChanges);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_ALLOWED, personNotificationsDto::setApplicationAppliedAndChanges);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_REVOKED, personNotificationsDto::setApplicationAppliedAndChanges);
@@ -106,22 +100,71 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_UPCOMING, personNotificationsDto::setApplicationUpcoming);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT, personNotificationsDto::setHolidayReplacement);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING, personNotificationsDto::setHolidayReplacementUpcoming);
+        setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED, personNotificationsDto::setOvertimeApplied);
+
+        // department notifications
+        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, personNotificationsDto::setApplicationAppliedForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED, personNotificationsDto::setApplicationAdaptedForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED, personNotificationsDto::setApplicationAdaptedForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED, personNotificationsDto::setApplicationCancellationForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED, personNotificationsDto::setApplicationCancellationForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION, personNotificationsDto::setApplicationCancellationForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED, personNotificationsDto::setApplicationAllowedForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED, personNotificationsDto::setApplicationTemporaryAllowedForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER, personNotificationsDto::setApplicationWaitingReminderForManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED, personNotificationsDto::setApplicationCancellationRequestedForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED, personNotificationsDto::setOvertimeAppliedForManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT, personNotificationsDto::setOvertimeAppliedByManagement);
-        setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED, personNotificationsDto::setOvertimeApplied);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED, personNotificationsDto::setAbsenceForColleagues);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED, personNotificationsDto::setAbsenceForColleagues);
 
         for (MailNotification mailNotificationToCheck : MailNotification.values()) {
+            final boolean departmentRelated = mailNotificationToCheck.isDepartmentRelated();
             final boolean isVisible = mailNotificationToCheck.isValidWith(person.getPermissions());
             final boolean isActive = activePersonMailNotifications.contains(mailNotificationToCheck);
-            setterByNotification.get(mailNotificationToCheck).accept(new PersonNotificationDto(isVisible, isActive));
+            setterByNotification.get(mailNotificationToCheck).accept(new PersonNotificationDtoDepartmentAware(departmentRelated, isVisible, isActive));
         }
 
-        final List<PersonNotificationDto> dtoNotifications = List.of(
+        final boolean isPersonalAll = isPersonalAllChecked(personNotificationsDto);
+        personNotificationsDto.setAllPersonal(isPersonalAll);
+
+        final boolean isDepartmentAll = isDepartmentAllChecked(personNotificationsDto);
+        personNotificationsDto.setAllDepartment(isDepartmentAll);
+
+        personNotificationsDto.setPersonId(person.getId());
+
+        return personNotificationsDto;
+    }
+
+    private static boolean isPersonalAllChecked(PersonNotificationsDto personNotificationsDto) {
+
+        final List<PersonNotificationDto> dtoPersonalNotifications = List.of(
             personNotificationsDto.getPersonNewManagementAll(),
+            personNotificationsDto.getApplicationAppliedAndChanges(),
+            personNotificationsDto.getApplicationUpcoming(),
+            personNotificationsDto.getHolidayReplacement(),
+            personNotificationsDto.getHolidayReplacementUpcoming(),
+            personNotificationsDto.getOvertimeAppliedByManagement(),
+            personNotificationsDto.getOvertimeApplied()
+        );
+
+        final List<PersonNotificationDtoDepartmentAware> visiblePersonal = dtoPersonalNotifications.stream()
+            .map(PersonNotificationDtoDepartmentAware.class::cast)
+            .filter(not(PersonNotificationDtoDepartmentAware::isDepartmentAware))
+            .filter(PersonNotificationDto::isVisible)
+            .collect(toList());
+
+        final long visiblePersonalCount = visiblePersonal.size();
+        final long activePersonalCount = visiblePersonal.stream().filter(PersonNotificationDto::isActive).count();
+
+        return visiblePersonalCount == activePersonalCount;
+    }
+
+    private static boolean isDepartmentAllChecked(PersonNotificationsDto personNotificationsDto) {
+
+        final List<PersonNotificationDto> dtoDepartmentNotifications = List.of(
             personNotificationsDto.getApplicationAppliedForManagement(),
             personNotificationsDto.getApplicationAdaptedForManagement(),
             personNotificationsDto.getApplicationCancellationForManagement(),
@@ -129,23 +172,20 @@ final class PersonNotificationsMapper {
             personNotificationsDto.getApplicationTemporaryAllowedForManagement(),
             personNotificationsDto.getApplicationWaitingReminderForManagement(),
             personNotificationsDto.getApplicationCancellationRequestedForManagement(),
-            personNotificationsDto.getApplicationAppliedAndChanges(),
-            personNotificationsDto.getApplicationUpcoming(),
-            personNotificationsDto.getHolidayReplacement(),
-            personNotificationsDto.getHolidayReplacementUpcoming(),
             personNotificationsDto.getOvertimeAppliedForManagement(),
-            personNotificationsDto.getOvertimeAppliedByManagement(),
-            personNotificationsDto.getOvertimeApplied(),
             personNotificationsDto.getAbsenceForColleagues()
         );
 
-        final long visibleCount = dtoNotifications.stream().filter(PersonNotificationDto::isVisible).count();
-        final long activeCount = dtoNotifications.stream().filter(PersonNotificationDto::isVisible).filter(PersonNotificationDto::isActive).count();
-        personNotificationsDto.setAll(visibleCount == activeCount);
+        final List<PersonNotificationDtoDepartmentAware> visibleDepartment = dtoDepartmentNotifications.stream()
+            .map(PersonNotificationDtoDepartmentAware.class::cast)
+            .filter(PersonNotificationDtoDepartmentAware::isDepartmentAware)
+            .filter(PersonNotificationDto::isVisible)
+            .collect(toList());
 
-        personNotificationsDto.setPersonId(person.getId());
+        final long visibleDepartmentCount = visibleDepartment.size();
+        final long activeDepartmentCount = visibleDepartment.stream().filter(PersonNotificationDto::isActive).count();
 
-        return personNotificationsDto;
+        return visibleDepartmentCount == activeDepartmentCount;
     }
 
     private static void addIfActive(List<MailNotification> activatedMailNotifications, PersonNotificationDto personNotificationDto, MailNotification mailNotification) {
@@ -155,6 +195,22 @@ final class PersonNotificationsMapper {
     private static void addIfActive(List<MailNotification> activatedMailNotifications, PersonNotificationDto personNotificationDto, List<MailNotification> mailNotifications) {
         if (personNotificationDto != null && personNotificationDto.isActive()) {
             activatedMailNotifications.addAll(mailNotifications);
+        }
+    }
+
+    /**
+     * Internal {@link PersonNotificationDto} to be able to calculate number of personal and department related notifications.
+     */
+    private static class PersonNotificationDtoDepartmentAware extends PersonNotificationDto {
+        private final boolean departmentAware;
+
+        private PersonNotificationDtoDepartmentAware(boolean departmentAware, boolean visible, boolean active) {
+            super(visible, active);
+            this.departmentAware = departmentAware;
+        }
+
+        public boolean isDepartmentAware() {
+            return departmentAware;
         }
     }
 }
