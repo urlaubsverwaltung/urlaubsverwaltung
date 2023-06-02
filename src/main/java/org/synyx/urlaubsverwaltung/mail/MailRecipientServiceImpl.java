@@ -14,7 +14,7 @@ import org.synyx.urlaubsverwaltung.person.ResponsiblePersonService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.function.Function.identity;
@@ -107,14 +107,14 @@ class MailRecipientServiceImpl implements MailRecipientService {
 
         final Map<PersonId, Person> byPersonId = officeAndBosses.stream().collect(toMap(person -> new PersonId(person.getId()), identity()));
         final List<PersonId> officeBossIds = officeAndBosses.stream().map(Person::getId).map(PersonId::new).collect(toList());
-        final Function<PersonId, Boolean> departmentMatch = (personId) -> departmentService.hasDepartmentMatch(byPersonId.get(personId), personOfInterest);
+        final Predicate<PersonId> departmentMatch = personId -> departmentService.hasDepartmentMatch(byPersonId.get(personId), personOfInterest);
 
         final List<PersonId> notInterestedIds = userNotificationSettingsService.findNotificationSettings(officeBossIds)
             .values()
             .stream()
             .filter(UserNotificationSettings::isRestrictToDepartments)
             .map(UserNotificationSettings::getPersonId)
-            .filter(not(departmentMatch::apply))
+            .filter(not(departmentMatch))
             .collect(toList());
 
         return officeAndBosses.stream()
