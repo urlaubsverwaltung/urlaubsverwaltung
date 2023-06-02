@@ -5,13 +5,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.validation.Errors;
+import org.synyx.urlaubsverwaltung.department.Department;
+import org.synyx.urlaubsverwaltung.department.DepartmentService;
+import org.synyx.urlaubsverwaltung.notification.UserNotificationSettings;
+import org.synyx.urlaubsverwaltung.notification.UserNotificationSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
@@ -22,11 +28,13 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -54,10 +62,95 @@ class PersonNotificationsViewControllerTest {
     private PersonService personService;
     @Mock
     private PersonNotificationsDtoValidator validator;
+    @Mock
+    private UserNotificationSettingsService userNotificationSettingsService;
+    @Mock
+    private DepartmentService departmentService;
 
     @BeforeEach
     void setUp() {
-        sut = new PersonNotificationsViewController(personService, validator);
+        sut = new PersonNotificationsViewController(personService, validator, userNotificationSettingsService, departmentService);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/person/{personId}/notifications", "/web/person/{personId}/notifications/departments"})
+    void ensureModelAttributesWhenThereAreNoDepartments(String givenUrl) throws Exception {
+
+        final Person signedInPerson = personWithId(42);
+        signedInPerson.setFirstName("Office");
+        signedInPerson.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
+
+        perform(get(givenUrl, 1))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("departmentsAvailable", is(false)))
+            .andExpect(model().attribute("personAssignedToDepartments", is(false)));
+
+        verifyNoMoreInteractions(departmentService);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/person/{personId}/notifications", "/web/person/{personId}/notifications/departments"})
+    void ensureModelAttributesWhenThereAreDepartmentsAndPersonHasAssignedDepartments(String givenUrl) throws Exception {
+
+        final Person signedInPerson = personWithId(42);
+        signedInPerson.setFirstName("Office");
+        signedInPerson.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(4L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of(new Department()));
+
+        perform(get(givenUrl, 1))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("departmentsAvailable", is(true)))
+            .andExpect(model().attribute("personAssignedToDepartments", is(true)));
+
+        verifyNoMoreInteractions(departmentService);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/web/person/{personId}/notifications", "/web/person/{personId}/notifications/departments"})
+    void ensureModelAttributesWhenThereAreDepartmentsButPersonHasNoAssignedDepartments(String givenUrl) throws Exception {
+
+        final Person signedInPerson = personWithId(42);
+        signedInPerson.setFirstName("Office");
+        signedInPerson.setPermissions(List.of(USER, OFFICE));
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setPermissions(List.of(USER));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+
+        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(4L);
+        when(departmentService.getDepartmentsPersonHasAccessTo(person)).thenReturn(List.of());
+
+        perform(get(givenUrl, 1))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("departmentsAvailable", is(true)))
+            .andExpect(model().attribute("personAssignedToDepartments", is(false)));
     }
 
     @Test
@@ -70,8 +163,17 @@ class PersonNotificationsViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
+        final UserNotificationSettings userNotificationSettings = new UserNotificationSettings(new PersonId(1), true);
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1))).thenReturn(userNotificationSettings);
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(false)),
+                    hasProperty("active", is(true))
+                ))
+            ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(false)))))
@@ -115,8 +217,17 @@ class PersonNotificationsViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(false)),
+                    hasProperty("active", is(false))
+                ))
+            ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(true)))))
@@ -160,8 +271,17 @@ class PersonNotificationsViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(false)),
+                    hasProperty("active", is(false))
+                ))
+            ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(true)))))
@@ -205,8 +325,17 @@ class PersonNotificationsViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(true)),
+                    hasProperty("active", is(false))
+                ))
+            ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(true)))))
@@ -239,6 +368,54 @@ class PersonNotificationsViewControllerTest {
             .andExpect(model().attribute("personNotificationsDto", hasProperty("overtimeApplied", hasProperty("active", is(false)))));
     }
 
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"BOSS", "OFFICE"})
+    void ensuresRestrictToDepartmentsIsVisibleForRole(final Role role) throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setNotifications(List.of());
+        person.setPermissions(List.of(USER, role));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(true)),
+                    hasProperty("active", is(false))
+                ))
+            ));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = Role.class, names = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void ensuresRestrictToDepartmentsIsNotVisibleForRole(final Role role) throws Exception {
+
+        final Person person = personWithId(1);
+        person.setFirstName("Hans");
+        person.setNotifications(List.of());
+        person.setPermissions(List.of(USER, role));
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getSignedInUser()).thenReturn(person);
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+
+        perform(get("/web/person/{personId}/notifications", 1))
+            .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(false)),
+                    hasProperty("active", is(false))
+                ))
+            ));
+    }
+
     @Test
     void ensuresThatOnlyVisibleAndActiveForBossWithSpecialPermissionCancellationRequested() throws Exception {
 
@@ -249,8 +426,17 @@ class PersonNotificationsViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(true)),
+                    hasProperty("active", is(false))
+                ))
+            ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(true)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(true)))))
@@ -293,8 +479,17 @@ class PersonNotificationsViewControllerTest {
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
+
         perform(get("/web/person/{personId}/notifications", 1))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("personId", is(1))))
+            .andExpect(model().attribute("personNotificationsDto",
+                hasProperty("restrictToDepartments", allOf(
+                    hasProperty("visible", is(true)),
+                    hasProperty("active", is(false))
+                ))
+            ))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("visible", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationAppliedForManagement", hasProperty("active", is(false)))))
             .andExpect(model().attribute("personNotificationsDto", hasProperty("applicationTemporaryAllowedForManagement", hasProperty("visible", is(false)))))
@@ -353,6 +548,7 @@ class PersonNotificationsViewControllerTest {
         perform(
             post("/web/person/{personId}/notifications", 1)
                 .param("personId", "1")
+                .param("restrictToDepartments.active", "false")
                 .param("applicationAppliedAndChanges.visible", "true")
                 .param("applicationAppliedAndChanges.active", "true")
         )
@@ -363,6 +559,30 @@ class PersonNotificationsViewControllerTest {
         verify(personService).update(personArgumentCaptor.capture());
         final Person savedPerson = personArgumentCaptor.getValue();
         assertThat(savedPerson.getNotifications()).contains(NOTIFICATION_EMAIL_APPLICATION_APPLIED);
+
+        verify(userNotificationSettingsService).updateNotificationSettings(new PersonId(1), false);
+    }
+
+    @Test
+    void ensuresWhenEditingPersonNotificationsThatItWillUpdateNotificationSettings() throws Exception {
+
+        final Person personWithoutNotifications = new Person();
+        personWithoutNotifications.setId(1);
+        personWithoutNotifications.setFirstName("Hans");
+        personWithoutNotifications.setNotifications(List.of());
+        when(personService.getPersonByID(1)).thenReturn(Optional.of(personWithoutNotifications));
+
+        perform(
+            post("/web/person/{personId}/notifications", 1)
+                .param("personId", "1")
+                .param("restrictToDepartments.active", "true")
+                .param("applicationAppliedAndChanges.visible", "true")
+                .param("applicationAppliedAndChanges.active", "true")
+        )
+            .andExpect(redirectedUrl("/web/person/1/notifications"))
+            .andExpect(flash().attribute("success", true));
+
+        verify(userNotificationSettingsService).updateNotificationSettings(new PersonId(1), true);
     }
 
     @Test

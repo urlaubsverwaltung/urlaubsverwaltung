@@ -13,49 +13,34 @@
       data-turbo="true"
       data-turbo-frame="frame-feedback"
     >
+      <div
+        th:if="${departmentsAvailable and not personAssignedToDepartments}"
+        class="tw-flex tw-items-center tw-gap-1.5 tw-mb-8 tw-text-yellow-600 dark:tw-text-amber-300"
+      >
+        <svg th:replace="icon/info::svg(className='tw-w-5 tw-h-5')"></svg>
+        <p class="tw-m-0">
+          <th:block
+            th:if="${userId eq personNotificationsDto.personId}"
+            th:text="#{person.notifications.no-assigned-departments.info.myself(${personNiceName})}"
+          >
+            Du bist keinen Abteilungen zugeordnet und erhältst daher keine Benachrichtigungen.
+          </th:block>
+          <th:block
+            th:if="${not (userId eq personNotificationsDto.personId)}"
+            th:text="#{person.notifications.no-assigned-departments.info(${personNiceName})}"
+          >
+            Max Mustermann ist keinen Abteilungen zugeordnet und erhält daher keine Benachrichtigungen.
+          </th:block>
+        </p>
+      </div>
       <input type="hidden" th:field="*{personId}" />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.applicationAppliedAndChanges.active}"
-        name="applicationAppliedAndChanges.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.applicationUpcoming.active}"
-        name="applicationUpcoming.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.holidayReplacement.active}"
-        name="holidayReplacement.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.holidayReplacementUpcoming.active}"
-        name="holidayReplacementUpcoming.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.overtimeApplied.active}"
-        name="overtimeApplied.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.overtimeAppliedByManagement.active}"
-        name="overtimeAppliedByManagement.active"
-        value="on"
-      />
-      <input
-        type="hidden"
-        th:if="${personNotificationsDto.personNewManagementAll.active}"
-        name="personNewManagementAll.active"
-        value="on"
-      />
+      <input type="hidden" th:field="*{applicationAppliedAndChanges.active}" />
+      <input type="hidden" th:field="*{applicationUpcoming.active}" />
+      <input type="hidden" th:field="*{holidayReplacement.active}" />
+      <input type="hidden" th:field="*{holidayReplacementUpcoming.active}" />
+      <input type="hidden" th:field="*{overtimeApplied.active}" />
+      <input type="hidden" th:field="*{overtimeAppliedByManagement.active}" />
+      <input type="hidden" th:field="*{personNewManagementAll.active}" />
 
       <div class="list-selectable">
         <div
@@ -67,7 +52,8 @@
               id="email-notification-all-input"
               class="tw-mt-0.5 tw-shrink-0"
               is="uv-checkbox-all"
-              th:checked="*{all}"
+              data-ignore="email-notification-department-restriction-input"
+              th:checked="*{allDepartment}"
             />
             <label
               for="email-notification-all-input"
@@ -78,6 +64,55 @@
             </label>
           </span>
         </div>
+        <div
+          th:if="${personNotificationsDto.restrictToDepartments.visible}"
+          class="list-selectable__item tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16"
+        >
+          <div class="tw-flex tw-flex-col tw-gap-2 md:tw-flex-row md:tw-items-center md:tw-gap-4 xl:tw-gap-16">
+            <div class="md:tw-w-64 lg:tw-w-72">
+              <span class="checkbox-switch tw-flex tw-items-center tw-gap-2 md:tw-gap-3">
+                <input
+                  type="checkbox"
+                  id="email-notification-department-restriction-input"
+                  name="restrictToDepartments"
+                  class="tw-mt-0.5 tw-shrink-0"
+                  th:field="*{restrictToDepartments.active}"
+                  aria-describedby="info-email-notification-department-restriction-input"
+                  data-auto-submit
+                />
+                <span>
+                  <label
+                    for="email-notification-department-restriction-input"
+                    class="tw-m-0 tw-text-base tw-font-normal"
+                    th:text="#{person.notifications.departments.restriction.label}"
+                  >
+                    nur meine Abteilungen
+                  </label>
+                </span>
+              </span>
+            </div>
+            <div
+              class="tw-flex-1 tw-flex tw-items-start tw-gap-2 dark:tw-text-zinc-400 md:dark:tw-text-inherit md:tw-items-center"
+            >
+              <svg
+                th:replace="~{icon/info::svg(className='tw-hidden tw-shrink-0 tw-w-4 tw-h-4 md:tw-inline-block')}"
+              ></svg>
+              <p
+                id="info-email-notification-department-restriction-input"
+                class="tw-leading-normal tw-text-sm tw-m-0"
+                th:text="#{person.notifications.departments.restriction.info}"
+              >
+                Grenze deine aktivierten Benachrichtigungen auf den Kreis deiner Abteilungen ein. Ansonsten erhälst du
+                die aktivierten Benachrichtigungen über die komplette Organisation hinweg.
+              </p>
+            </div>
+          </div>
+        </div>
+        <input
+          th:if="${not personNotificationsDto.restrictToDepartments.visible}"
+          type="hidden"
+          th:field="*{restrictToDepartments.active}"
+        />
       </div>
 
       <div class="form-section tw-mt-8 tw-mb-16">

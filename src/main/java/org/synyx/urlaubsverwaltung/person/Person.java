@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableCollection;
@@ -107,8 +108,11 @@ public class Person {
     }
 
     public boolean hasRole(final Role role) {
-        return getPermissions().stream()
-            .anyMatch(permission -> permission.equals(role));
+        return hasAnyRole(role);
+    }
+
+    public boolean hasAnyRole(final Role... role) {
+        return Stream.of(role).anyMatch(getPermissions()::contains);
     }
 
     public boolean isInactive() {

@@ -9,7 +9,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
+import org.synyx.urlaubsverwaltung.notification.UserNotificationSettings;
+import org.synyx.urlaubsverwaltung.notification.UserNotificationSettingsService;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
 import java.util.List;
@@ -37,6 +40,9 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
     @MockBean
     private PersonService personService;
 
+    @MockBean
+    private UserNotificationSettingsService userNotificationSettingsService;
+
     @Test
     @WithMockUser(authorities = "USER", username = "user")
     void personNotificationAsSameUserIsOk() throws Exception {
@@ -47,6 +53,9 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
 
         perform(get("/web/person/1/notifications"))
             .andExpect(status().isOk());
@@ -62,6 +71,9 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
+
+        when(userNotificationSettingsService.findNotificationSettings(new PersonId(1)))
+            .thenReturn(new UserNotificationSettings(new PersonId(1), false));
 
         perform(get("/web/person/1/notifications"))
             .andExpect(status().isOk());
@@ -116,7 +128,25 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
 
         perform(post("/web/person/1/notifications")
             .with(csrf())
-            .param("id", "1").param("name", "user")
+            .param("id", "1")
+            .param("name", "user")
+            .param("restrictToDepartments.active", "false")
+            .param("applicationAppliedForManagement.active", "false")
+            .param("applicationTemporaryAllowedForManagement.active", "false")
+            .param("applicationAllowedForManagement.active", "false")
+            .param("applicationCancellationForManagement.active", "false")
+            .param("applicationAdaptedForManagement.active", "false")
+            .param("applicationWaitingReminderForManagement.active", "false")
+            .param("applicationCancellationRequestedForManagement.active", "false")
+            .param("applicationAppliedAndChanges.active", "false")
+            .param("applicationUpcoming.active", "false")
+            .param("holidayReplacement.active", "false")
+            .param("holidayReplacementUpcoming.active", "false")
+            .param("personNewManagementAll.active", "false")
+            .param("overtimeAppliedForManagement.active", "false")
+            .param("overtimeAppliedByManagement.active", "false")
+            .param("overtimeApplied.active", "false")
+            .param("absenceForColleagues.active", "false")
         )
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/person/1/notifications"));
@@ -130,6 +160,7 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
         person.setId(1);
         person.setUsername("user");
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
+        person.setPermissions(List.of(USER));
         when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
 
         final Person office = new Person();
@@ -140,7 +171,25 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
 
         perform(post("/web/person/1/notifications")
             .with(csrf())
-            .param("id", "1").param("name", "user")
+            .param("id", "1")
+            .param("name", "user")
+            .param("restrictToDepartments.active", "false")
+            .param("applicationAppliedForManagement.active", "false")
+            .param("applicationTemporaryAllowedForManagement.active", "false")
+            .param("applicationAllowedForManagement.active", "false")
+            .param("applicationCancellationForManagement.active", "false")
+            .param("applicationAdaptedForManagement.active", "false")
+            .param("applicationWaitingReminderForManagement.active", "false")
+            .param("applicationCancellationRequestedForManagement.active", "false")
+            .param("applicationAppliedAndChanges.active", "false")
+            .param("applicationUpcoming.active", "false")
+            .param("holidayReplacement.active", "false")
+            .param("holidayReplacementUpcoming.active", "false")
+            .param("personNewManagementAll.active", "false")
+            .param("overtimeAppliedForManagement.active", "false")
+            .param("overtimeAppliedByManagement.active", "false")
+            .param("overtimeApplied.active", "false")
+            .param("absenceForColleagues.active", "false")
         )
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/person/1/notifications"));

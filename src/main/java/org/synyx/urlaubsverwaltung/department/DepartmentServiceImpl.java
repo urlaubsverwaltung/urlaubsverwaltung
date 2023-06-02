@@ -23,9 +23,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -432,6 +434,26 @@ class DepartmentServiceImpl implements DepartmentService {
         });
 
         return departmentsByPerson;
+    }
+
+    @Override
+    public boolean hasDepartmentMatch(Person person, Person otherPerson) {
+
+        final Set<DepartmentEntity> personDepartments = new HashSet<>(departmentRepository.findByMembersPerson(person));
+        if (person.hasAnyRole(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)) {
+            personDepartments.addAll(
+                departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(person, person)
+            );
+        }
+
+        final Set<DepartmentEntity> otherPersonDepartments = new HashSet<>(departmentRepository.findByMembersPerson(otherPerson));
+        if (otherPerson.hasAnyRole(DEPARTMENT_HEAD, SECOND_STAGE_AUTHORITY)) {
+            otherPersonDepartments.addAll(
+                departmentRepository.findByDepartmentHeadsOrSecondStageAuthorities(otherPerson, otherPerson)
+            );
+        }
+
+        return personDepartments.stream().anyMatch(otherPersonDepartments::contains);
     }
 
     private static List<String> merge(Collection<String> departmentNames, Collection<String> bucket) {
