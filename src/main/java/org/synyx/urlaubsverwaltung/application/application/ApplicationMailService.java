@@ -45,6 +45,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED;
@@ -287,15 +288,20 @@ class ApplicationMailService {
     @Async
     void sendSickNoteConvertedToVacationNotification(Application application) {
 
-        final Map<String, Object> model = Map.of(APPLICATION, application);
-
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_CONVERTED)
             .withSubject("subject.sicknote.converted")
-            .withTemplate("sicknote_converted", model)
+            .withTemplate("sicknote_converted", Map.of(APPLICATION, application))
             .build();
-
         mailService.send(mailToApplicant);
+
+        final List<Person> relevantRecipientsToInform = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED);
+        final Mail mailToManagement = Mail.builder()
+            .withRecipient(relevantRecipientsToInform)
+            .withSubject("subject.sicknote.converted.management", application.getPerson().getNiceName())
+            .withTemplate("sicknote_converted_to_management", Map.of(APPLICATION, application))
+            .build();
+        mailService.send(mailToManagement);
     }
 
     /**

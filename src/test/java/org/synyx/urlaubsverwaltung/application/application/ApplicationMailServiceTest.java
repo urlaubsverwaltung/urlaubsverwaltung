@@ -52,6 +52,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED;
@@ -345,18 +346,23 @@ class ApplicationMailServiceTest {
         final Application application = new Application();
         application.setPerson(person);
 
-        final Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
+        final Person relevantPerson = new Person();
+        relevantPerson.setId(2);
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED)).thenReturn(List.of(relevantPerson));
 
         sut.sendSickNoteConvertedToVacationNotification(application);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
-        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
-        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.converted");
-        assertThat(mail.getTemplateName()).isEqualTo("sicknote_converted");
-        assertThat(mail.getTemplateModel()).isEqualTo(model);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.sicknote.converted");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("sicknote_converted");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(Map.<String, Object>of("application", application));
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(relevantPerson));
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.sicknote.converted.management");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("sicknote_converted_to_management");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(Map.<String, Object>of("application", application));
     }
 
     @Test

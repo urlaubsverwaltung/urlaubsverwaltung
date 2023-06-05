@@ -1,0 +1,8 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{sick_note.converted.to_management(${application.applier.niceName},${application.person.niceName},${#temporals.format(application.startDate, "dd.MM.yyyy")},${#temporals.format(application.endDate, "dd.MM.yyyy")})})]
+
+    [(${baseLinkURL})]web/application/[(${application.id})]
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]
