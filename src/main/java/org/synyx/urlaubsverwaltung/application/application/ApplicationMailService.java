@@ -43,6 +43,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED;
@@ -230,7 +231,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // send cancelled cancellation request information to the office and relevant persons
-        final List<Person> relevantRecipientsToInform = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION);
+        final List<Person> relevantRecipientsToInform = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED);
         final Mail mailToOffice = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancellationRequest.declined.management")
@@ -263,7 +264,7 @@ class ApplicationMailService {
         mailService.send(mailToApplicant);
 
         // send reject information to the office or boss, dh or ssa with APPLICATION_CANCELLATION_REQUESTED
-        final List<Person> recipientsOfInterest = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION);
+        final List<Person> recipientsOfInterest = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED);
         final Mail mailToOffice = Mail.builder()
             .withRecipient(recipientsOfInterest)
             .withSubject("subject.application.cancellationRequest")

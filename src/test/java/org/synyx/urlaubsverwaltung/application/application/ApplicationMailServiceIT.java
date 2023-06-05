@@ -57,6 +57,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED;
@@ -589,7 +590,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setId(10);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
-        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION), List.of(OFFICE));
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED), List.of(OFFICE));
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setPerson(office);
@@ -603,7 +604,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Person relevantPerson = new Person("relevant", "Person", "Relevant", "relevantperson@example.org");
         relevantPerson.setId(2);
         relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION));
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(relevantPerson, office));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
 
         sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
 
@@ -669,7 +670,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         person.setId(1);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
-        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION), List.of(OFFICE));
+        final Person office = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED), List.of(OFFICE));
 
         final ApplicationComment comment = new ApplicationComment(person, clock);
         comment.setText("Bitte stornieren!");
@@ -678,7 +679,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setStartDate(LocalDate.of(2020, 5, 29));
         application.setEndDate(LocalDate.of(2020, 5, 29));
 
-        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION)).thenReturn(List.of(office));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(office));
 
         sut.sendCancellationRequest(application, comment);
 
@@ -704,10 +705,10 @@ class ApplicationMailServiceIT extends TestContainersBase {
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
 
         // send mail to all relevant persons?
-        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(office.getEmail());
-        assertThat(inbox).hasSize(1);
+        final MimeMessage[] inboxOffice = greenMail.getReceivedMessagesForDomain(office.getEmail());
+        assertThat(inboxOffice).hasSize(1);
 
-        final Message msgOffice = inbox[0];
+        final Message msgOffice = inboxOffice[0];
         assertThat(msgOffice.getSubject()).isEqualTo("Ein Benutzer beantragt die Stornierung einer genehmigten Abwesenheit");
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msgOffice.getAllRecipients()[0]);
         assertThat(msgOffice.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
