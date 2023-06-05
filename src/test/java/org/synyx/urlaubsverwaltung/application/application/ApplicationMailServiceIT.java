@@ -58,6 +58,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED;
@@ -2971,28 +2972,52 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void sendEditedApplicationNotification() throws Exception {
 
-        final Person recipient = new Person("recipient", "Muster", "Max", "mustermann@example.org");
-        recipient.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
+        final Person editor = new Person("editor", "Muster", "Max", "mustermann@example.org");
+        editor.setId(1);
+        editor.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
 
-        final Application application = createApplication(recipient);
-        application.setPerson(recipient);
+        final Application application = createApplication(editor);
+        application.setPerson(editor);
 
-        sut.sendEditedNotification(application, recipient);
+        final Person relevantPerson = new Person("relevantPerson", "Relevant", "Person", "relevantPerson@example.org");
+        relevantPerson.setId(2);
+        relevantPerson.setPermissions(List.of(BOSS));
+        relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
 
-        // was email sent?
-        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(recipient.getEmail());
+        sut.sendEditedNotification(application, editor);
+
+        // check editor email
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(editor.getEmail());
         assertThat(inbox.length).isOne();
-
-        // check content of user email
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
-        assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(msg.getContent()).isEqualTo(
+            "Hallo Max Muster," + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "die Abwesenheit von Max Muster wurde bearbeitet." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK + EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
+        );
 
-        // check content of email
-        String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Max Muster");
-        assertThat(content).contains("die Abwesenheit von Max Muster wurde bearbeitet.");
-        assertThat(content).contains("/web/application/1234");
+        // check relevant person email
+        final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
+        assertThat(inboxRelevantPerson.length).isOne();
+        final Message msgRelevantPerson = inboxRelevantPerson[0];
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
+        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+        assertThat(msgRelevantPerson.getContent()).isEqualTo(
+            "Hallo Person Relevant," + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "die Abwesenheit von Max Muster wurde bearbeitet." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK + EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen."
+        );
     }
 
     @Test
