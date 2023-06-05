@@ -529,7 +529,6 @@ class ApplicationMailService {
             .withSubject("subject.application.holidayReplacement.edit", application.getPerson().getNiceName())
             .withTemplate("application_edited_to_holiday_replacement", model)
             .build();
-
         mailService.send(mailToReplacement);
     }
 
