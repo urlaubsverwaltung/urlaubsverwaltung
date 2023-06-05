@@ -58,6 +58,8 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED;
@@ -741,23 +743,21 @@ class ApplicationMailServiceIT extends TestContainersBase {
         application.setStartDate(LocalDate.of(2023, FEBRUARY, 2));
         application.setEndDate(LocalDate.of(2023, FEBRUARY, 4));
 
+        final Person relevantPerson = new Person("relevantPerson", "Relevant", "Person", "relevantPerson@example.org");
+        relevantPerson.setId(2);
+        relevantPerson.setPermissions(List.of(BOSS));
+        relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED)).thenReturn(List.of(relevantPerson));
+
         sut.sendSickNoteConvertedToVacationNotification(application);
 
-        // was email sent?
-        MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(person.getEmail());
-        assertThat(inbox.length).isOne();
-
-        // has mail correct attributes?
-        Message msg = inbox[0];
-
-        // check subject
-        assertThat(msg.getSubject()).contains("Deine Krankmeldung wurde in eine Abwesenheit umgewandelt");
-
-        // check from and recipient
-        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
-
-        // check content of email
-        assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
+        // Was email sent to applicant
+        final MimeMessage[] inboxApplicant = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxApplicant.length).isOne();
+        final Message msgApplicant = inboxApplicant[0];
+        assertThat(msgApplicant.getSubject()).contains("Deine Krankmeldung wurde in eine Abwesenheit umgewandelt");
+        assertThat(new InternetAddress(person.getEmail())).isEqualTo(msgApplicant.getAllRecipients()[0]);
+        assertThat(msgApplicant.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Marlene Muster hat deine Krankmeldung vom 02.02.2023 bis 04.02.2023 zu Urlaub umgewandelt." + EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
@@ -765,6 +765,21 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
+
+        // Was email sent to management
+        final MimeMessage[] inboxManagement = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
+        assertThat(inboxManagement.length).isOne();
+        final Message msgManagement = inboxManagement[0];
+        assertThat(msgManagement.getSubject()).contains("Die Krankmeldung von Lieschen Müller wurde in eine Abwesenheit umgewandelt");
+        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgManagement.getAllRecipients()[0]);
+        assertThat(msgManagement.getContent()).isEqualTo("Hallo Person Relevant," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Marlene Muster hat die Krankmeldung von Lieschen Müller vom 02.02.2023 bis 04.02.2023 zu Urlaub umgewandelt." + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen.");
     }
 
     @Test
@@ -2971,28 +2986,52 @@ class ApplicationMailServiceIT extends TestContainersBase {
     @Test
     void sendEditedApplicationNotification() throws Exception {
 
-        final Person recipient = new Person("recipient", "Muster", "Max", "mustermann@example.org");
-        recipient.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
+        final Person editor = new Person("editor", "Muster", "Max", "mustermann@example.org");
+        editor.setId(1);
+        editor.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
 
-        final Application application = createApplication(recipient);
-        application.setPerson(recipient);
+        final Application application = createApplication(editor);
+        application.setPerson(editor);
 
-        sut.sendEditedNotification(application, recipient);
+        final Person relevantPerson = new Person("relevantPerson", "Relevant", "Person", "relevantPerson@example.org");
+        relevantPerson.setId(2);
+        relevantPerson.setPermissions(List.of(BOSS));
+        relevantPerson.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED));
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
 
-        // was email sent?
-        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(recipient.getEmail());
+        sut.sendEditedNotification(application, editor);
+
+        // check editor email
+        final MimeMessage[] inbox = greenMail.getReceivedMessagesForDomain(editor.getEmail());
         assertThat(inbox.length).isOne();
-
-        // check content of user email
         final Message msg = inbox[0];
         assertThat(msg.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
-        assertThat(new InternetAddress(recipient.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(new InternetAddress(editor.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
+        assertThat(msg.getContent()).isEqualTo(
+            "Hallo Max Muster," + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "die Abwesenheit von Max Muster wurde bearbeitet." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK + EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen."
+        );
 
-        // check content of email
-        String content = (String) msg.getContent();
-        assertThat(content).contains("Hallo Max Muster");
-        assertThat(content).contains("die Abwesenheit von Max Muster wurde bearbeitet.");
-        assertThat(content).contains("/web/application/1234");
+        // check relevant person email
+        final MimeMessage[] inboxRelevantPerson = greenMail.getReceivedMessagesForDomain(relevantPerson.getEmail());
+        assertThat(inboxRelevantPerson.length).isOne();
+        final Message msgRelevantPerson = inboxRelevantPerson[0];
+        assertThat(msgRelevantPerson.getSubject()).isEqualTo("Zu genehmigende Abwesenheit von Max Muster wurde erfolgreich bearbeitet");
+        assertThat(new InternetAddress(relevantPerson.getEmail())).isEqualTo(msgRelevantPerson.getAllRecipients()[0]);
+        assertThat(msgRelevantPerson.getContent()).isEqualTo(
+            "Hallo Person Relevant," + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "die Abwesenheit von Max Muster wurde bearbeitet." + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK +
+                "    https://localhost:8080/web/application/1234" + EMAIL_LINE_BREAK +
+                EMAIL_LINE_BREAK + EMAIL_LINE_BREAK +
+                "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen."
+        );
     }
 
     @Test

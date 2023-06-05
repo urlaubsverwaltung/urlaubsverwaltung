@@ -32,10 +32,11 @@ import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.absence.AbsenceType.DEFAULT;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.CANCELLED;
 import static org.synyx.urlaubsverwaltung.calendar.ICalType.PUBLISHED;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CONVERTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
@@ -44,6 +45,8 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED;
@@ -52,7 +55,6 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED;
 
 @Service
 class ApplicationMailService {
@@ -119,11 +121,11 @@ class ApplicationMailService {
         final Map<String, Object> modelColleagues = Map.of(APPLICATION, application);
         final List<Person> relevantColleaguesToInform = mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED);
         final Mail mailToRelevantColleagues = Mail.builder()
-                .withRecipient(relevantColleaguesToInform)
-                .withSubject("subject.application.allowed.to_colleagues", application.getPerson().getNiceName())
-                .withTemplate("application_allowed_to_colleagues", modelColleagues)
-                .withAttachment(CALENDAR_ICS, calendarFile)
-                .build();
+            .withRecipient(relevantColleaguesToInform)
+            .withSubject("subject.application.allowed.to_colleagues", application.getPerson().getNiceName())
+            .withTemplate("application_allowed_to_colleagues", modelColleagues)
+            .withAttachment(CALENDAR_ICS, calendarFile)
+            .build();
         mailService.send(mailToRelevantColleagues);
     }
 
@@ -193,20 +195,25 @@ class ApplicationMailService {
      * an edited notification will be sent to himself and the boss/department head
      *
      * @param application that has been edited
-     * @param recipient   that edited the application for leave
+     * @param editor      that edited the application for leave
      */
     @Async
-    void sendEditedNotification(Application application, Person recipient) {
+    void sendEditedNotification(Application application, Person editor) {
 
-        final Map<String, Object> model = Map.of(APPLICATION, application);
-
-        final Mail mailToApplicant = Mail.builder()
-            .withRecipient(recipient, NOTIFICATION_EMAIL_APPLICATION_EDITED)
+        final Mail mailToEditor = Mail.builder()
+            .withRecipient(editor, NOTIFICATION_EMAIL_APPLICATION_EDITED)
             .withSubject("subject.application.edited", application.getPerson().getNiceName())
-            .withTemplate("application_edited_by_applicant_to_applicant", model)
+            .withTemplate("application_edited_by_applicant_to_applicant", Map.of(APPLICATION, application))
             .build();
+        mailService.send(mailToEditor);
 
-        mailService.send(mailToApplicant);
+        final List<Person> relevantRecipientsToInform = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED);
+        final Mail mailToManagement = Mail.builder()
+            .withRecipient(relevantRecipientsToInform)
+            .withSubject("subject.application.edited.management", application.getPerson().getNiceName(), editor.getNiceName())
+            .withTemplate("application_edited_by_applicant_to_management", Map.of(APPLICATION, application, "editor", editor))
+            .build();
+        mailService.send(mailToManagement);
     }
 
     /**
@@ -232,12 +239,12 @@ class ApplicationMailService {
 
         // send cancelled cancellation request information to the office and relevant persons
         final List<Person> relevantRecipientsToInform = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED);
-        final Mail mailToOffice = Mail.builder()
+        final Mail mailToManagement = Mail.builder()
             .withRecipient(relevantRecipientsToInform)
             .withSubject("subject.application.cancellationRequest.declined.management")
             .withTemplate("application_cancellation_request_declined_to_management", model)
             .build();
-        mailService.send(mailToOffice);
+        mailService.send(mailToManagement);
     }
 
     /**
@@ -265,12 +272,12 @@ class ApplicationMailService {
 
         // send reject information to the office or boss, dh or ssa with APPLICATION_CANCELLATION_REQUESTED
         final List<Person> recipientsOfInterest = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED);
-        final Mail mailToOffice = Mail.builder()
+        final Mail mailToManagement = Mail.builder()
             .withRecipient(recipientsOfInterest)
             .withSubject("subject.application.cancellationRequest")
             .withTemplate("application_cancellation_request_to_management", model)
             .build();
-        mailService.send(mailToOffice);
+        mailService.send(mailToManagement);
     }
 
     /**
@@ -281,15 +288,20 @@ class ApplicationMailService {
     @Async
     void sendSickNoteConvertedToVacationNotification(Application application) {
 
-        final Map<String, Object> model = Map.of(APPLICATION, application);
-
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_CONVERTED)
             .withSubject("subject.sicknote.converted")
-            .withTemplate("sicknote_converted", model)
+            .withTemplate("sicknote_converted", Map.of(APPLICATION, application))
             .build();
-
         mailService.send(mailToApplicant);
+
+        final List<Person> relevantRecipientsToInform = mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED);
+        final Mail mailToManagement = Mail.builder()
+            .withRecipient(relevantRecipientsToInform)
+            .withSubject("subject.sicknote.converted.management", application.getPerson().getNiceName())
+            .withTemplate("sicknote_converted_to_management", Map.of(APPLICATION, application))
+            .build();
+        mailService.send(mailToManagement);
     }
 
     /**
@@ -523,7 +535,6 @@ class ApplicationMailService {
             .withSubject("subject.application.holidayReplacement.edit", application.getPerson().getNiceName())
             .withTemplate("application_edited_to_holiday_replacement", model)
             .build();
-
         mailService.send(mailToReplacement);
     }
 

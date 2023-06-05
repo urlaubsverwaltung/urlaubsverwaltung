@@ -1,0 +1,8 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{application.edited.by_applicant_to_management(${application.person.niceName}, ${editor})})]
+
+    [(${baseLinkURL})]web/application/[(${application.id})]
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

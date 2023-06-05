@@ -39,11 +39,11 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED;
-import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CONVERTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT;
@@ -52,6 +52,8 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REJECTED;
@@ -236,8 +238,8 @@ class ApplicationMailServiceTest {
     @Test
     void sendEditedApplicationNotification() {
 
-        final Person recipient = new Person();
-        recipient.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
+        final Person editor = new Person();
+        editor.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
         vacationType.setCategory(HOLIDAY);
@@ -245,23 +247,28 @@ class ApplicationMailServiceTest {
         final Application application = new Application();
         application.setVacationType(vacationType);
         application.setDayLength(FULL);
-        application.setPerson(recipient);
+        application.setPerson(editor);
         application.setStartDate(LocalDate.of(2020, 12, 1));
         application.setEndDate(LocalDate.of(2020, 12, 2));
         application.setStatus(ALLOWED);
 
-        Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
+        final Person relevantPerson = new Person();
+        relevantPerson.setId(2);
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
 
-        sut.sendEditedNotification(application, recipient);
+        sut.sendEditedNotification(application, editor);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
-        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(recipient));
-        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.application.edited");
-        assertThat(mail.getTemplateName()).isEqualTo("application_edited_by_applicant_to_applicant");
-        assertThat(mail.getTemplateModel()).isEqualTo(model);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mail = argument.getAllValues();
+        assertThat(mail.get(0).getMailAddressRecipients()).hasValue(List.of(editor));
+        assertThat(mail.get(0).getSubjectMessageKey()).isEqualTo("subject.application.edited");
+        assertThat(mail.get(0).getTemplateName()).isEqualTo("application_edited_by_applicant_to_applicant");
+        assertThat(mail.get(0).getTemplateModel()).isEqualTo(Map.<String, Object>of("application", application));
+        assertThat(mail.get(1).getMailAddressRecipients()).hasValue(List.of(relevantPerson));
+        assertThat(mail.get(1).getSubjectMessageKey()).isEqualTo("subject.application.edited.management");
+        assertThat(mail.get(1).getTemplateName()).isEqualTo("application_edited_by_applicant_to_management");
+        assertThat(mail.get(1).getTemplateModel()).isEqualTo(Map.of("application", application, "editor", editor));
     }
 
     @Test
@@ -339,18 +346,23 @@ class ApplicationMailServiceTest {
         final Application application = new Application();
         application.setPerson(person);
 
-        final Map<String, Object> model = new HashMap<>();
-        model.put("application", application);
+        final Person relevantPerson = new Person();
+        relevantPerson.setId(2);
+        when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED)).thenReturn(List.of(relevantPerson));
 
         sut.sendSickNoteConvertedToVacationNotification(application);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
-        verify(mailService).send(argument.capture());
-        final Mail mail = argument.getValue();
-        assertThat(mail.getMailAddressRecipients()).hasValue(List.of(person));
-        assertThat(mail.getSubjectMessageKey()).isEqualTo("subject.sicknote.converted");
-        assertThat(mail.getTemplateName()).isEqualTo("sicknote_converted");
-        assertThat(mail.getTemplateModel()).isEqualTo(model);
+        verify(mailService, times(2)).send(argument.capture());
+        final List<Mail> mails = argument.getAllValues();
+        assertThat(mails.get(0).getMailAddressRecipients()).hasValue(List.of(person));
+        assertThat(mails.get(0).getSubjectMessageKey()).isEqualTo("subject.sicknote.converted");
+        assertThat(mails.get(0).getTemplateName()).isEqualTo("sicknote_converted");
+        assertThat(mails.get(0).getTemplateModel()).isEqualTo(Map.<String, Object>of("application", application));
+        assertThat(mails.get(1).getMailAddressRecipients()).hasValue(List.of(relevantPerson));
+        assertThat(mails.get(1).getSubjectMessageKey()).isEqualTo("subject.sicknote.converted.management");
+        assertThat(mails.get(1).getTemplateName()).isEqualTo("sicknote_converted_to_management");
+        assertThat(mails.get(1).getTemplateModel()).isEqualTo(Map.<String, Object>of("application", application));
     }
 
     @Test
