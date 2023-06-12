@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,6 +13,7 @@ import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.account.AccountService;
 import org.synyx.urlaubsverwaltung.account.VacationDaysService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
+import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentForm;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
@@ -32,10 +34,10 @@ import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -944,6 +946,32 @@ class ApplicationForLeaveDetailsViewControllerTest {
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID));
+    }
+
+    @Test
+    void ensureCancellationRequestedFailsIfNoCommentWasProvided() throws Exception {
+
+        final Person signedInPerson = somePerson();
+        when(personService.getSignedInUser()).thenReturn(signedInPerson);
+
+        final Application application = applicationOfPerson(signedInPerson);
+        application.setStatus(ALLOWED);
+        when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
+
+        doAnswer(invocation -> {
+            final Errors errors = invocation.getArgument(1);
+            errors.rejectValue("text", "errors");
+            return null;
+        }).when(commentValidator).validate(any(), any());
+
+        perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
+            .andExpect(status().isFound())
+            .andExpect(redirectedUrl("/web/application/" + APPLICATION_ID + "?action=cancel"));
+
+        final ArgumentCaptor<ApplicationCommentForm> captor = ArgumentCaptor.forClass(ApplicationCommentForm.class);
+        verify(commentValidator).validate(captor.capture(), any());
+        final ApplicationCommentForm applicationCommentForm = captor.getValue();
+        assertThat(applicationCommentForm.isMandatory()).isTrue();
     }
 
     @Test

@@ -301,8 +301,8 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
                 "for leave of user '%s'", signedInUser.getId(), application.getPerson().getId()));
         }
 
-        // user can revoke their own applications, so the comment is NOT mandatory
-        final boolean isCommentMandatory = !signedInUser.equals(application.getPerson());
+        // comment is mandatory if cancel for another user or cancellation request of own
+        final boolean isCommentMandatory = allowedToStartCancellationRequest || !signedInUser.equals(application.getPerson());
         comment.setMandatory(isCommentMandatory);
 
         commentValidator.validate(comment, errors);
