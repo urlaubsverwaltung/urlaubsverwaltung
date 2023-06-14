@@ -101,12 +101,14 @@ class MailRecipientServiceImpl implements MailRecipientService {
 
     private List<Person> getOfficeBossWithDepartmentMatch(Person personOfInterest, List<Person> officeAndBosses) {
 
+        final List<Person> distinctOfficesAndBosses = officeAndBosses.stream().distinct().collect(toList());
+
         if (noDepartmentsAvailable()) {
-            return officeAndBosses;
+            return distinctOfficesAndBosses;
         }
 
-        final Map<PersonId, Person> byPersonId = officeAndBosses.stream().collect(toMap(person -> new PersonId(person.getId()), identity(), (person, person2) -> person));
-        final List<PersonId> officeBossIds = officeAndBosses.stream().map(Person::getId).map(PersonId::new).collect(toList());
+        final Map<PersonId, Person> byPersonId = distinctOfficesAndBosses.stream().collect(toMap(person -> new PersonId(person.getId()), identity(), (person, person2) -> person));
+        final List<PersonId> officeBossIds = distinctOfficesAndBosses.stream().map(Person::getId).map(PersonId::new).collect(toList());
         final Predicate<PersonId> departmentMatch = personId -> departmentService.hasDepartmentMatch(byPersonId.get(personId), personOfInterest);
 
         final List<PersonId> notInterestedIds = userNotificationSettingsService.findNotificationSettings(officeBossIds).values().stream()
@@ -115,7 +117,7 @@ class MailRecipientServiceImpl implements MailRecipientService {
             .filter(not(departmentMatch))
             .collect(toList());
 
-        return officeAndBosses.stream()
+        return distinctOfficesAndBosses.stream()
             .filter(not(person -> notInterestedIds.contains(new PersonId(person.getId()))))
             .collect(toList());
     }
