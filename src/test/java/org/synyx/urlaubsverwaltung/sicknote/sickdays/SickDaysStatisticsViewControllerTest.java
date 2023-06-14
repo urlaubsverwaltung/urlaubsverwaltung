@@ -46,7 +46,7 @@ class SickDaysStatisticsViewControllerTest {
     @Mock
     private DateFormatAware dateFormatAware;
 
-    private static Clock clock = Clock.systemUTC();
+    private final static Clock clock = Clock.systemUTC();
 
     @BeforeEach
     void setUp() {
@@ -55,7 +55,7 @@ class SickDaysStatisticsViewControllerTest {
     }
 
     @Test
-    void downloadCSVReturnsBadRequestIfPeriodNotTheSameYear() throws Exception {
+    void ensureThatDownloadCSVReturnsBadRequestIfPeriodNotTheSameYear() throws Exception {
 
         final Locale locale = JAPANESE;
 
@@ -75,7 +75,7 @@ class SickDaysStatisticsViewControllerTest {
     }
 
     @Test
-    void downloadCSVSetsDownloadHeaders() throws Exception {
+    void ensureThatDownloadCSVSetsDownloadHeaders() throws Exception {
 
         final Locale locale = JAPANESE;
 
@@ -112,7 +112,7 @@ class SickDaysStatisticsViewControllerTest {
     }
 
     @Test
-    void downloadCSVWritesCSV() throws Exception {
+    void ensureThatDownloadCSVWritesCSVWithPagination() throws Exception {
 
         final Locale locale = JAPANESE;
 
@@ -142,6 +142,78 @@ class SickDaysStatisticsViewControllerTest {
             .locale(locale)
             .param("from", fromString)
             .param("to", endString)
+            .param("page", "2")
+            .param("size", "50")
+        )
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void ensureThatDownloadCSVWritesCSVWithAll() throws Exception {
+
+        final Locale locale = JAPANESE;
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final String fromString = "01.01.2019";
+        when(dateFormatAware.parse(fromString, locale)).thenReturn(Optional.of(startDate));
+        final String endString = "01.08.2019";
+        when(dateFormatAware.parse(endString, locale)).thenReturn(Optional.of(endDate));
+
+        final PageableSearchQuery pageableSearchQuery =
+            new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+        when(sickDaysStatisticsService.getAll(signedInUser, startDate, endDate, pageableSearchQuery))
+            .thenReturn(new PageImpl<>(List.of()));
+
+        when(sickDaysDetailedStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of()))
+            .thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
+
+        perform(get("/web/sickdays/statistics/download")
+            .locale(locale)
+            .param("from", fromString)
+            .param("to", endString)
+            .param("allElements", "true")
+        )
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void ensureThatDownloadCSVWritesCSVForAllElementsWithSelectionParameter() throws Exception {
+
+        final Locale locale = JAPANESE;
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final String fromString = "01.01.2019";
+        when(dateFormatAware.parse(fromString, locale)).thenReturn(Optional.of(startDate));
+        final String endString = "01.08.2019";
+        when(dateFormatAware.parse(endString, locale)).thenReturn(Optional.of(endDate));
+
+        final PageableSearchQuery pageableSearchQuery =
+            new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+        when(sickDaysStatisticsService.getAll(signedInUser, startDate, endDate, pageableSearchQuery))
+            .thenReturn(new PageImpl<>(List.of()));
+
+        when(sickDaysDetailedStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of()))
+            .thenReturn(new CSVFile("filename.csv", new ByteArrayResource(new byte[]{})));
+
+        perform(get("/web/sickdays/statistics/download")
+            .locale(locale)
+            .param("from", fromString)
+            .param("to", endString)
+            .param("allElements", "true")
             .param("page", "2")
             .param("size", "50")
         )
