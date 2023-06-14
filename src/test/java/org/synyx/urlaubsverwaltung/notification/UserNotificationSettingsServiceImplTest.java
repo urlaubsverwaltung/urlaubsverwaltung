@@ -8,6 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,5 +71,19 @@ class UserNotificationSettingsServiceImplTest {
         final UserNotificationSettingsEntity actualPersisted = captor.getValue();
         assertThat(actualPersisted.getPersonId()).isEqualTo(1);
         assertThat(actualPersisted.isRestrictToDepartments()).isTrue();
+    }
+
+    @Test
+    void ensureFindNotificationSettingsWithMultipleSameIdsReturnsCorrectValue() {
+
+        final UserNotificationSettingsEntity entity = new UserNotificationSettingsEntity();
+        entity.setPersonId(1);
+        entity.setRestrictToDepartments(true);
+
+        when(repository.findAllById(List.of(1, 1))).thenReturn(List.of(entity,entity));
+
+        final Map<PersonId, UserNotificationSettings> notificationSettings = sut.findNotificationSettings(List.of(new PersonId(1), new PersonId(1)));
+        assertThat(notificationSettings.get(new PersonId(1)).getPersonId()).isEqualTo(new PersonId(1));
+        assertThat(notificationSettings.get(new PersonId(1)).isRestrictToDepartments()).isTrue();
     }
 }

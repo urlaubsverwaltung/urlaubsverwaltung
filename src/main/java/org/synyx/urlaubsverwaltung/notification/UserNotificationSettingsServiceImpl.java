@@ -35,14 +35,14 @@ class UserNotificationSettingsServiceImpl implements UserNotificationSettingsSer
 
         final Map<PersonId, UserNotificationSettings> notificationsByPerson = repository.findAllById(personIdValues).stream()
             .map(UserNotificationSettingsServiceImpl::toNotification)
-            .collect(toMap(UserNotificationSettings::getPersonId, identity()));
+            .collect(toMap(UserNotificationSettings::getPersonId, identity(), (userNotificationSettings, userNotificationSettings2) -> userNotificationSettings));
 
         final Stream<UserNotificationSettings> defaultNotificationSettings = personIds.stream()
             .filter(not(notificationsByPerson::containsKey))
             .map(UserNotificationSettingsServiceImpl::defaultNotificationSettings);
 
         return Stream.concat(notificationsByPerson.values().stream(), defaultNotificationSettings)
-            .collect(toMap(UserNotificationSettings::getPersonId, identity()));
+            .collect(toMap(UserNotificationSettings::getPersonId, identity(), (userNotificationSettings, userNotificationSettings2) -> userNotificationSettings));
     }
 
     @Override
