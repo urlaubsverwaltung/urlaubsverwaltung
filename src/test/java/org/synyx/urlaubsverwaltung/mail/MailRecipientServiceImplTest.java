@@ -55,6 +55,29 @@ class MailRecipientServiceImplTest {
     }
 
     @Test
+    void ensureToMapBossesAndOfficesPersonsCorrectly() {
+
+        when(departmentService.getNumberOfDepartments()).thenReturn(1L);
+
+        // given user application
+        final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
+        normalUser.setId(1);
+        normalUser.setPermissions(List.of(USER));
+
+        // given bossAndOffice
+        final Person bossAndOffice = new Person("bossAndOffice", "bossAndOffice", "bossAndOffice", "bossAndOffice@example.org");
+        bossAndOffice.setId(2);
+        bossAndOffice.setPermissions(List.of(USER, BOSS, OFFICE));
+        bossAndOffice.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED));
+        when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAndOffice));
+        when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(bossAndOffice));
+
+        final List<Person> recipientsForAllowAndRemind = sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
+        assertThat(recipientsForAllowAndRemind)
+            .containsOnly(bossAndOffice);
+    }
+
+    @Test
     void getRecipientsOfInterestWithDepartmentsFilteredByEnabledMailNotification() {
 
         when(departmentService.getNumberOfDepartments()).thenReturn(1L);

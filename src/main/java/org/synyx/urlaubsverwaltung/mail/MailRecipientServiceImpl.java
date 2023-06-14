@@ -105,7 +105,7 @@ class MailRecipientServiceImpl implements MailRecipientService {
             return officeAndBosses;
         }
 
-        final Map<PersonId, Person> byPersonId = officeAndBosses.stream().collect(toMap(person -> new PersonId(person.getId()), identity()));
+        final Map<PersonId, Person> byPersonId = officeAndBosses.stream().collect(toMap(person -> new PersonId(person.getId()), identity(), (person, person2) -> person));
         final List<PersonId> officeBossIds = officeAndBosses.stream().map(Person::getId).map(PersonId::new).collect(toList());
         final Predicate<PersonId> departmentMatch = personId -> departmentService.hasDepartmentMatch(byPersonId.get(personId), personOfInterest);
 
