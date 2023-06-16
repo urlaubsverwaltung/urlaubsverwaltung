@@ -87,17 +87,6 @@
               <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2" aria-labelledby="statistics-download-label">
                 <li>
                   <a
-                    id="statistics-csv-download-link"
-                    th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
-                    class="icon-link tw-px-1 tw-flex tw-gap-2"
-                    download
-                  >
-                    <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
-                    <th:block th:text="#{action.sicknotes.download.filtered.persons}"></th:block>
-                  </a>
-                </li>
-                <li>
-                  <a
                     id="statistics-csv-download-link-asd"
                     th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
                     class="icon-link tw-px-1 tw-flex tw-gap-2"
@@ -105,6 +94,17 @@
                   >
                     <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
                     <th:block th:text="#{action.sicknotes.download.all.persons}"></th:block>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    id="statistics-csv-download-link"
+                    th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
+                    class="icon-link tw-px-1 tw-flex tw-gap-2"
+                    download
+                  >
+                    <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
+                    <th:block th:text="#{action.sicknotes.download.filtered.persons}"></th:block>
                   </a>
                 </li>
               </ul>
