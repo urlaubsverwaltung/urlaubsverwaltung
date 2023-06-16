@@ -7,13 +7,16 @@
   <body>
     <details
       th:fragment="details-dropdown(summary, content)"
+      th:with="class=${class?:''}, hideChevron=${hideChevron?:false}, placement=${placement?:'left'}"
       class="details-dropdown"
+      th:classappend="${class}"
       is="uv-details-dropdown"
       th:data-close-delay="${closeDelay}"
     >
-      <summary class="details-dropdown_summary tw-text-sm tw-pr-8 tw-relative">
+      <summary class="details-dropdown_summary tw-text-sm tw-relative" th:classappend="${hideChevron ? '' : 'tw-pr-8'}">
         <th:block th:replace="${summary}"></th:block>
         <span
+          th:if="${not hideChevron}"
           class="select-caret tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-px-2"
         >
           <svg
@@ -27,9 +30,18 @@
           </svg>
         </span>
       </summary>
-      <div class="details-dropdown_content">
+      <div
+        class="details-dropdown_content"
+        th:classappend="${placement == 'right' ? 'details-dropdown_content--align-right' : ''}"
+      >
         <th:block th:replace="${content}" />
       </div>
     </details>
+
+    <th:block th:fragment="details-dropdown-input(summary, content)">
+      <th:block
+        th:replace="~{::details-dropdown(summary=${summary}, content=${content}, class='details-dropdown-input')}"
+      ></th:block>
+    </th:block>
   </body>
 </html>

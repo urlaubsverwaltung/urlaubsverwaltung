@@ -1,0 +1,38 @@
+/* see `form.css` for more styling */
+
+.details-dropdown {
+  position: relative;
+}
+
+.details-dropdown_summary {
+  @apply tw-cursor-pointer;
+}
+
+.details-dropdown_summary::-webkit-details-marker {
+  display: none;
+}
+
+.details-dropdown_content {
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  min-width: fit-content;
+  @apply -tw-bottom-1;
+  @apply tw-translate-y-full;
+  @apply tw-bg-white;
+  @apply tw-shadow-lg;
+  @apply dark:tw-shadow-none;
+  @apply dark:tw-bg-zinc-900;
+  @apply tw-border;
+  @apply dark:tw-border-zinc-500;
+  @apply tw-px-4;
+  @apply tw-py-3;
+  @apply tw-rounded;
+}
+
+.details-dropdown_content.details-dropdown_content--align-right {
+  left: auto;
+  right: 0;
+}

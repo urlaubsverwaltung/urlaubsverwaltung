@@ -92,7 +92,7 @@
                 <fieldset>
                   <legend class="tw-sr-only" th:text="#{applications.statistics.period.legend.text}">Zeitraum</legend>
                   <div
-                    th:replace="fragments/details-dropdown::details-dropdown(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)"
+                    th:replace="fragments/details-dropdown::details-dropdown-input(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)"
                   >
                     <th:block th:ref="period-dropdown-summary">
                       <th:block th:text="#{applications.statistics.period.legend.text}"></th:block>

@@ -52,7 +52,13 @@ class DetailsDropdown extends HTMLDetailsElement {
   }
 }
 
-const interactiveElements = [HTMLButtonElement, HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement];
+const interactiveElements = [
+  HTMLButtonElement,
+  HTMLInputElement,
+  HTMLSelectElement,
+  HTMLTextAreaElement,
+  HTMLAnchorElement,
+];
 
 function isInteractiveElement(element) {
   return interactiveElements.some((ElementType) => element instanceof ElementType);

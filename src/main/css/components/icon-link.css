@@ -4,6 +4,7 @@
 
 .icon-link,
 .text-link {
+  @apply tw-whitespace-nowrap;
   @apply tw-text-zinc-700 !important;
   @apply tw-no-underline !important;
   @apply hover:tw-text-black !important;
