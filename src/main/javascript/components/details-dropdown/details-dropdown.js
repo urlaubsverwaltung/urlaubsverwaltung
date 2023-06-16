@@ -61,9 +61,12 @@ const interactiveElements = [
 ];
 
 function isInteractiveElement(element) {
-  return interactiveElements.some(
-    (ElementType) => element instanceof ElementType || isInteractiveElement(element.parentElement),
-  );
+  if (element === undefined || element === null) {
+    return false;
+  }
+
+  let isInteractive = interactiveElements.some((ElementType) => element instanceof ElementType);
+  return isInteractive === true ? true : isInteractiveElement(element.parentElement);
 }
 
 customElements.define("uv-details-dropdown", DetailsDropdown, { extends: "details" });
