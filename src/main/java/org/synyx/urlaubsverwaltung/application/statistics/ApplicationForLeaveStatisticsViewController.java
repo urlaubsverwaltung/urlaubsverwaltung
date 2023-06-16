@@ -6,6 +6,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
@@ -42,6 +43,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.IntStream;
 
+import static java.lang.Integer.MAX_VALUE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.joining;
@@ -149,11 +151,11 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         Pageable pageable,
         @RequestParam(value = "from", defaultValue = "") String from,
         @RequestParam(value = "to", defaultValue = "") String to,
+        @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,
         @RequestParam(value = "query", required = false, defaultValue = "") String query,
         Locale locale, HttpServletResponse response
     ) {
         final FilterPeriod period = toFilterPeriod(from, to, locale);
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(pageable, query);
 
         // NOTE: Not supported at the moment
         if (period.getStartDate().getYear() != period.getEndDate().getYear()) {
@@ -161,6 +163,9 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         }
 
         final Person signedInUser = personService.getSignedInUser();
+
+        final Pageable adaptedPageable = allElements ? PageRequest.of(0, MAX_VALUE, pageable.getSort()) : pageable;
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(adaptedPageable, query);
 
         final Page<ApplicationForLeaveStatistics> statisticsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageableSearchQuery);
         final List<ApplicationForLeaveStatistics> statistics = statisticsPage.getContent();
