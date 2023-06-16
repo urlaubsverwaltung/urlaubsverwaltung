@@ -11,7 +11,8 @@ public class AbsenceTypeSettingsItemDto {
     private boolean active;
     private String messageKey;
     private VacationCategory category;
-    private boolean requiresApproval;
+    private boolean requiresApprovalToApply;
+    private boolean requiresApprovalToCancel;
     private VacationTypeColor color;
     private boolean visibleToEveryone;
 
@@ -47,12 +48,20 @@ public class AbsenceTypeSettingsItemDto {
         this.category = category;
     }
 
-    public boolean isRequiresApproval() {
-        return requiresApproval;
+    public boolean isRequiresApprovalToApply() {
+        return requiresApprovalToApply;
     }
 
-    public void setRequiresApproval(boolean requiresApproval) {
-        this.requiresApproval = requiresApproval;
+    public void setRequiresApprovalToApply(boolean requiresApprovalToApply) {
+        this.requiresApprovalToApply = requiresApprovalToApply;
+    }
+
+    public boolean isRequiresApprovalToCancel() {
+        return requiresApprovalToCancel;
+    }
+
+    public void setRequiresApprovalToCancel(boolean requiresApprovalToCancel) {
+        this.requiresApprovalToCancel = requiresApprovalToCancel;
     }
 
     public VacationTypeColor getColor() {
@@ -62,7 +71,6 @@ public class AbsenceTypeSettingsItemDto {
     public void setColor(VacationTypeColor color) {
         this.color = color;
     }
-
 
     public boolean isVisibleToEveryone() {
         return visibleToEveryone;
@@ -83,7 +91,8 @@ public class AbsenceTypeSettingsItemDto {
             ", active=" + active +
             ", messageKey='" + messageKey + '\'' +
             ", category='" + category + '\'' +
-            ", requiresApproval=" + requiresApproval +
+            ", requiresApprovalToApply=" + requiresApprovalToApply +
+            ", requiresApprovalToCancel=" + requiresApprovalToCancel +
             ", color=" + color +
             ", visibleToEveryone=" + visibleToEveryone +
             '}';
@@ -95,7 +104,8 @@ public class AbsenceTypeSettingsItemDto {
         if (o == null || getClass() != o.getClass()) return false;
         AbsenceTypeSettingsItemDto that = (AbsenceTypeSettingsItemDto) o;
         return active == that.active
-            && requiresApproval == that.requiresApproval
+            && requiresApprovalToApply == that.requiresApprovalToApply
+            && requiresApprovalToCancel == that.requiresApprovalToCancel
             && visibleToEveryone == that.visibleToEveryone
             && Objects.equals(id, that.id)
             && Objects.equals(messageKey, that.messageKey)
@@ -105,7 +115,7 @@ public class AbsenceTypeSettingsItemDto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, active, messageKey, category, requiresApproval, color, visibleToEveryone);
+        return Objects.hash(id, active, messageKey, category, requiresApprovalToApply, requiresApprovalToCancel, color, visibleToEveryone);
     }
 
     static class Builder {
@@ -113,7 +123,8 @@ public class AbsenceTypeSettingsItemDto {
         private boolean active;
         private String messageKey;
         private VacationCategory category;
-        private boolean requiresApproval;
+        private boolean requiresApprovalToApply;
+        private boolean requiresApprovalToCancel;
         private VacationTypeColor color;
         private boolean visibleToEveryone;
 
@@ -137,8 +148,13 @@ public class AbsenceTypeSettingsItemDto {
             return this;
         }
 
-        Builder setRequiresApproval(boolean requiresApproval) {
-            this.requiresApproval = requiresApproval;
+        Builder setRequiresApprovalToApply(boolean requiresApprovalToApply) {
+            this.requiresApprovalToApply = requiresApprovalToApply;
+            return this;
+        }
+
+        Builder setRequiresApprovalToCancel(boolean requiresApprovalToCancel) {
+            this.requiresApprovalToCancel = requiresApprovalToCancel;
             return this;
         }
 
@@ -158,7 +174,8 @@ public class AbsenceTypeSettingsItemDto {
             dto.setActive(active);
             dto.setMessageKey(messageKey);
             dto.setCategory(category);
-            dto.setRequiresApproval(requiresApproval);
+            dto.setRequiresApprovalToApply(requiresApprovalToApply);
+            dto.setRequiresApprovalToCancel(requiresApprovalToCancel);
             dto.setColor(color);
             dto.setVisibleToEveryone(visibleToEveryone);
             return dto;

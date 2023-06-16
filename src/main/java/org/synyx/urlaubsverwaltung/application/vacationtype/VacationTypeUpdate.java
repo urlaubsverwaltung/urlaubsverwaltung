@@ -4,14 +4,16 @@ public class VacationTypeUpdate {
 
     private final Integer id;
     private final boolean active;
-    private final boolean requiresApproval;
+    private final boolean requiresApprovalToApply;
+    private final boolean requiresApprovalToCancel;
     private final VacationTypeColor color;
     private final boolean visibleToEveryone;
 
-    public VacationTypeUpdate(Integer id, boolean active, boolean requiresApproval, VacationTypeColor color, boolean visibleToEveryone) {
+    public VacationTypeUpdate(Integer id, boolean active, boolean requiresApprovalToApply, boolean requiresApprovalToCancel, VacationTypeColor color, boolean visibleToEveryone) {
         this.id = id;
         this.active = active;
-        this.requiresApproval = requiresApproval;
+        this.requiresApprovalToApply = requiresApprovalToApply;
+        this.requiresApprovalToCancel = requiresApprovalToCancel;
         this.color = color;
         this.visibleToEveryone = visibleToEveryone;
     }
@@ -24,8 +26,12 @@ public class VacationTypeUpdate {
         return active;
     }
 
-    boolean isRequiresApproval() {
-        return requiresApproval;
+    boolean isRequiresApprovalToApply() {
+        return requiresApprovalToApply;
+    }
+
+    public boolean isRequiresApprovalToCancel() {
+        return requiresApprovalToCancel;
     }
 
     public VacationTypeColor getColor() {

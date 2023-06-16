@@ -77,7 +77,7 @@ class ApplicationForLeaveStatisticsServiceTest {
 
         when(personService.getActivePersons(personSearchQuery)).thenReturn(new PageImpl<>(List.of(anyPerson)));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         final List<VacationType> activeVacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(activeVacationTypes);
 
@@ -116,7 +116,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         final PersonBasedata personBasedata = new PersonBasedata(new PersonId(2), "42", "additional information");
         when(personBasedataService.getBasedataByPersonId(List.of(2))).thenReturn(Map.of(new PersonId(2), personBasedata));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -154,7 +154,7 @@ class ApplicationForLeaveStatisticsServiceTest {
 
         when(departmentService.getManagedMembersOfPerson(departmentHead, personSearchQuery)).thenReturn(new PageImpl<>(List.of(departmentMember)));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -190,7 +190,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         final PageableSearchQuery activePersonsPageableSearchQuery = new PageableSearchQuery(activePersonsPageRequest, "");
         when(personService.getActivePersons(activePersonsPageableSearchQuery)).thenReturn(new PageImpl<>(List.of(anyPerson)));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
@@ -229,7 +229,7 @@ class ApplicationForLeaveStatisticsServiceTest {
         when(departmentService.getManagedMembersOfPerson(notBossOrOfficePerson, new PageableSearchQuery(Pageable.unpaged(), "")))
             .thenReturn(new PageImpl<>(List.of(departmentMember, departmentMemberTwo)));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         final List<VacationType> vacationTypes = List.of(vacationType);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 

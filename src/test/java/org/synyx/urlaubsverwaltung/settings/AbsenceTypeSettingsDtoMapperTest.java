@@ -20,7 +20,7 @@ class AbsenceTypeSettingsDtoMapperTest {
         vacationType.setColor(YELLOW);
         vacationType.setId(42);
         vacationType.setActive(true);
-        vacationType.setRequiresApproval(false);
+        vacationType.setRequiresApprovalToApply(false);
         vacationType.setMessageKey("messageKey");
         vacationType.setCategory(HOLIDAY);
 
@@ -32,7 +32,7 @@ class AbsenceTypeSettingsDtoMapperTest {
                 AbsenceTypeSettingsItemDto::getColor,
                 AbsenceTypeSettingsItemDto::getId,
                 AbsenceTypeSettingsItemDto::isActive,
-                AbsenceTypeSettingsItemDto::isRequiresApproval,
+                AbsenceTypeSettingsItemDto::isRequiresApprovalToApply,
                 AbsenceTypeSettingsItemDto::getMessageKey,
                 AbsenceTypeSettingsItemDto::getCategory)
             .contains(tuple(YELLOW, 42, true, false, "messageKey", HOLIDAY));

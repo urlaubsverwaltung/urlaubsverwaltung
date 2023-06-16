@@ -37,7 +37,7 @@
         class="form confirm alert alert-danger"
         th:classappend="${action eq 'cancel' ? '' : 'tw-hidden'}"
         method="post"
-        th:with="deleteRequest=${app.vacationType.requiresApproval == true && (app.status.name == 'ALLOWED' || app.status.name == 'TEMPORARY_ALLOWED') && !isOffice && !signedInUser.hasRole('APPLICATION_CANCEL')}"
+        th:with="deleteRequest=${app.vacationType.requiresApprovalToCancel == true && (app.status.name == 'ALLOWED' || app.status.name == 'TEMPORARY_ALLOWED') && !isOffice && !signedInUser.hasRole('APPLICATION_CANCEL')}"
         th:action="@{/web/application/__${app.id}__/cancel}"
         th:object="${comment}"
       >

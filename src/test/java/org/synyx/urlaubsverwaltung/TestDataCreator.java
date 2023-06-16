@@ -203,16 +203,16 @@ public final class TestDataCreator {
 
         final List<VacationType> vacationTypes = new ArrayList<>();
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true, true, YELLOW, false);
         vacationTypes.add(holidayType);
 
-        final VacationType specialLeaveType = new VacationType(2000, true, SPECIALLEAVE, "application.data.vacationType.specialleave", true, YELLOW, false);
+        final VacationType specialLeaveType = new VacationType(2000, true, SPECIALLEAVE, "application.data.vacationType.specialleave", true, true, YELLOW, false);
         vacationTypes.add(specialLeaveType);
 
-        final VacationType vacationType3 = new VacationType(3000, true, UNPAIDLEAVE, "application.data.vacationType.unpaidleave", true, YELLOW, false);
+        final VacationType vacationType3 = new VacationType(3000, true, UNPAIDLEAVE, "application.data.vacationType.unpaidleave", true, true, YELLOW, false);
         vacationTypes.add(vacationType3);
 
-        final VacationType vacationType4 = new VacationType(4000, true, OVERTIME, "application.data.vacationType.overtime", true, YELLOW, false);
+        final VacationType vacationType4 = new VacationType(4000, true, OVERTIME, "application.data.vacationType.overtime", true, true, YELLOW, false);
         vacationTypes.add(vacationType4);
 
         return vacationTypes;

@@ -105,7 +105,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery()))
             .thenReturn(new PageImpl<>(List.of()));
 
-        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false));
+        final List<VacationType> vacationType = List.of(new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
         final ResultActions resultActions = perform(get("/web/application/statistics")
@@ -133,7 +133,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         when(messageSource.getMessage("hours.abbr", new Object[]{}, locale)).thenReturn("Std.");
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
@@ -360,7 +360,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(statistics)));
@@ -389,7 +389,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -422,7 +422,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
@@ -454,7 +454,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
         final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");

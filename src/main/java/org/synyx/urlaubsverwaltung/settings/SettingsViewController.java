@@ -203,7 +203,8 @@ public class SettingsViewController implements HasLaunchpad {
         return new VacationTypeUpdate(
             absenceTypeSettingsItemDto.getId(),
             absenceTypeSettingsItemDto.isActive(),
-            absenceTypeSettingsItemDto.isRequiresApproval(),
+            absenceTypeSettingsItemDto.isRequiresApprovalToApply(),
+            absenceTypeSettingsItemDto.isRequiresApprovalToCancel(),
             absenceTypeSettingsItemDto.getColor(),
             absenceTypeSettingsItemDto.isVisibleToEveryone());
     }

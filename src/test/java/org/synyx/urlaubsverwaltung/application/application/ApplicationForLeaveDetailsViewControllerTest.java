@@ -907,7 +907,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final Application application = applicationOfPerson(signedInPerson);
-        application.getVacationType().setRequiresApproval(false);
+        application.getVacationType().setRequiresApprovalToCancel(false);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
@@ -1286,7 +1286,8 @@ class ApplicationForLeaveDetailsViewControllerTest {
         application.setEndDate(LocalDate.now().plusDays(30));
         application.setStatus(WAITING);
         final VacationTypeEntity vacationType = new VacationTypeEntity();
-        vacationType.setRequiresApproval(true);
+        vacationType.setRequiresApprovalToApply(true);
+        vacationType.setRequiresApprovalToCancel(true);
         application.setVacationType(vacationType);
         return application;
     }

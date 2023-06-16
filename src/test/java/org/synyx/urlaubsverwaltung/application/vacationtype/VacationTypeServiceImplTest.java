@@ -106,7 +106,7 @@ class VacationTypeServiceImplTest {
         holidayEntity.setCategory(HOLIDAY);
         holidayEntity.setMessageKey("holiday.message.key");
         holidayEntity.setActive(false);
-        holidayEntity.setRequiresApproval(false);
+        holidayEntity.setRequiresApprovalToApply(false);
         holidayEntity.setVisibleToEveryone(false);
 
         final VacationTypeEntity overtimeEntity = new VacationTypeEntity();
@@ -114,7 +114,7 @@ class VacationTypeServiceImplTest {
         overtimeEntity.setCategory(OVERTIME);
         overtimeEntity.setMessageKey("overtime.message.key");
         overtimeEntity.setActive(false);
-        overtimeEntity.setRequiresApproval(false);
+        overtimeEntity.setRequiresApprovalToApply(false);
         overtimeEntity.setVisibleToEveryone(false);
 
         final VacationTypeEntity specialLeaveEntity = new VacationTypeEntity();
@@ -122,15 +122,15 @@ class VacationTypeServiceImplTest {
         specialLeaveEntity.setCategory(SPECIALLEAVE);
         specialLeaveEntity.setMessageKey("specialleave.message.key");
         specialLeaveEntity.setActive(true);
-        specialLeaveEntity.setRequiresApproval(false);
+        specialLeaveEntity.setRequiresApprovalToApply(false);
         specialLeaveEntity.setVisibleToEveryone(true);
 
         when(vacationTypeRepository.findAllById(Set.of(1, 2, 3))).thenReturn(List.of(holidayEntity, overtimeEntity, specialLeaveEntity));
 
         sut.updateVacationTypes(List.of(
-            new VacationTypeUpdate(1, true, false, YELLOW, false),
-            new VacationTypeUpdate(2, false, true, YELLOW, false),
-            new VacationTypeUpdate(3, true, true, YELLOW, true)
+            new VacationTypeUpdate(1, true, false, false, YELLOW, false),
+            new VacationTypeUpdate(2, false, true, true, YELLOW, false),
+            new VacationTypeUpdate(3, true, true, true, YELLOW, true)
         ));
 
         @SuppressWarnings("unchecked")
@@ -142,19 +142,19 @@ class VacationTypeServiceImplTest {
         assertThat(persistedList.get(0).getCategory()).isEqualTo(HOLIDAY);
         assertThat(persistedList.get(0).getMessageKey()).isEqualTo("holiday.message.key");
         assertThat(persistedList.get(0).isActive()).isTrue();
-        assertThat(persistedList.get(0).isRequiresApproval()).isFalse();
+        assertThat(persistedList.get(0).isRequiresApprovalToApply()).isFalse();
         assertThat(persistedList.get(0).isVisibleToEveryone()).isFalse();
         assertThat(persistedList.get(1).getId()).isEqualTo(2);
         assertThat(persistedList.get(1).getCategory()).isEqualTo(OVERTIME);
         assertThat(persistedList.get(1).getMessageKey()).isEqualTo("overtime.message.key");
         assertThat(persistedList.get(1).isActive()).isFalse();
-        assertThat(persistedList.get(1).isRequiresApproval()).isTrue();
+        assertThat(persistedList.get(1).isRequiresApprovalToApply()).isTrue();
         assertThat(persistedList.get(1).isVisibleToEveryone()).isFalse();
         assertThat(persistedList.get(2).getId()).isEqualTo(3);
         assertThat(persistedList.get(2).getCategory()).isEqualTo(SPECIALLEAVE);
         assertThat(persistedList.get(2).getMessageKey()).isEqualTo("specialleave.message.key");
         assertThat(persistedList.get(2).isActive()).isTrue();
-        assertThat(persistedList.get(2).isRequiresApproval()).isTrue();
+        assertThat(persistedList.get(2).isRequiresApprovalToApply()).isTrue();
         assertThat(persistedList.get(2).isVisibleToEveryone()).isTrue();
 
     }

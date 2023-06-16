@@ -48,7 +48,14 @@
             <span th:text="#{settings.absenceTypes.table.head.state}"></span>
             <span th:text="#{settings.absenceTypes.table.head.type}"></span>
             <span th:text="#{settings.absenceTypes.table.head.category}"></span>
-            <span th:text="#{settings.absenceTypes.table.head.approval}" class="tw-break-all tw-text-right"></span>
+            <span
+              th:text="#{settings.absenceTypes.table.head.approvalToApply}"
+              class="tw-break-words tw-text-right"
+            ></span>
+            <span
+              th:text="#{settings.absenceTypes.table.head.approvalToCancel}"
+              class="tw-break-words tw-text-right"
+            ></span>
             <span
               th:text="#{settings.absenceTypes.table.head.visibleToEveryone}"
               class="tw-break-words tw-text-right"
@@ -95,15 +102,29 @@
               </div>
               <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
                 <label
-                  th:text="#{settings.absenceTypes.action.approve.label}"
-                  th:for="${'absenceType-approval-' + loop.index}"
+                  th:text="#{settings.absenceTypes.action.approveToApply.label}"
+                  th:for="${'absenceType-approval-to-apply-' + loop.index}"
                   class="absence-type-cell-title tw-m-0"
                 >
                 </label>
                 <input
                   type="checkbox"
-                  th:field="*{absenceTypeSettings.items[__${loop.index}__].requiresApproval}"
-                  th:id="${'absenceType-approval-' + loop.index}"
+                  th:field="*{absenceTypeSettings.items[__${loop.index}__].requiresApprovalToApply}"
+                  th:id="${'absenceType-approval-to-apply-' + loop.index}"
+                  class="uv-checkbox"
+                />
+              </div>
+              <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
+                <label
+                  th:text="#{settings.absenceTypes.action.approveToCancel.label}"
+                  th:for="${'absenceType-approval-to-cancel-' + loop.index}"
+                  class="absence-type-cell-title tw-m-0"
+                >
+                </label>
+                <input
+                  type="checkbox"
+                  th:field="*{absenceTypeSettings.items[__${loop.index}__].requiresApprovalToCancel}"
+                  th:id="${'absenceType-approval-to-cancel-' + loop.index}"
                   class="uv-checkbox"
                 />
               </div>
