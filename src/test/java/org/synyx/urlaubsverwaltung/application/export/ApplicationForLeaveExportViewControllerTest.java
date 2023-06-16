@@ -8,7 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.ResultActions;
@@ -70,8 +69,8 @@ class ApplicationForLeaveExportViewControllerTest {
             .andExpect(status().isBadRequest());
     }
 
-    @Test
-    void ensuresToExportAbsences() throws Exception {
+        @Test
+    void ensuresToExportAbsencesForSelectionWithDefaultValues() throws Exception {
 
         final Locale locale = JAPANESE;
 
@@ -102,7 +101,8 @@ class ApplicationForLeaveExportViewControllerTest {
         final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
 
         final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
-        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery)).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
@@ -115,12 +115,148 @@ class ApplicationForLeaveExportViewControllerTest {
             .andExpect(content().string("csv-resource"));
     }
 
-    private static PageableSearchQuery defaultPersonSearchQuery() {
-        return new PageableSearchQuery(defaultPageRequest(), "");
+    @Test
+    void ensuresToExportAbsencesForSelectionWithDifferentPageAndSize() throws Exception {
+
+        final Locale locale = JAPANESE;
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setVisibleToEveryone(true);
+        vacationTypeEntity.setCategory(HOLIDAY);
+        vacationTypeEntity.setMessageKey("messagekey.holiday");
+
+        final Application application = new Application();
+        application.setId(42);
+        application.setPerson(signedInUser);
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setDayLength(DayLength.FULL);
+        application.setStatus(ALLOWED);
+        application.setVacationType(vacationTypeEntity);
+
+        when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
+
+        final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery)).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
+
+        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
+        when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
+
+        perform(get("/web/application/export")
+            .locale(locale)
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019")
+            .param("page", "2")
+            .param("size", "50"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("csv-resource"));
     }
 
-    private static Pageable defaultPageRequest() {
-        return PageRequest.of(0, 20, Sort.by(Sort.Direction.ASC, "person.firstName"));
+    @Test
+    void ensuresToExportAbsencesForAll() throws Exception {
+
+        final Locale locale = JAPANESE;
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setVisibleToEveryone(true);
+        vacationTypeEntity.setCategory(HOLIDAY);
+        vacationTypeEntity.setMessageKey("messagekey.holiday");
+
+        final Application application = new Application();
+        application.setId(42);
+        application.setPerson(signedInUser);
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setDayLength(DayLength.FULL);
+        application.setStatus(ALLOWED);
+        application.setVacationType(vacationTypeEntity);
+
+        when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
+
+        final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery)).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
+
+        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
+        when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
+
+        perform(get("/web/application/export")
+            .locale(locale)
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019")
+            .param("allElements", "true"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("csv-resource"));
+    }
+
+    @Test
+    void ensuresToExportAbsencesForAllWithSelectionParametersAndAllElementsShouldWin() throws Exception {
+
+        final Locale locale = JAPANESE;
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setVisibleToEveryone(true);
+        vacationTypeEntity.setCategory(HOLIDAY);
+        vacationTypeEntity.setMessageKey("messagekey.holiday");
+
+        final Application application = new Application();
+        application.setId(42);
+        application.setPerson(signedInUser);
+        application.setStartDate(startDate);
+        application.setEndDate(endDate);
+        application.setDayLength(DayLength.FULL);
+        application.setStatus(ALLOWED);
+        application.setVacationType(vacationTypeEntity);
+
+        when(workDaysCountService.getWorkDaysCount(application.getDayLength(), application.getStartDate(), application.getEndDate(), application.getPerson())).thenReturn(TEN);
+        final ApplicationForLeave applicationForLeave = new ApplicationForLeave(application, workDaysCountService);
+
+        final ApplicationForLeaveExport applicationForLeaveExport = new ApplicationForLeaveExport("1", signedInUser.getFirstName(), signedInUser.getLastName(), List.of(applicationForLeave), List.of("departmentA"));
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+        when(applicationForLeaveExportService.getAll(signedInUser, startDate, endDate, pageableSearchQuery)).thenReturn(new PageImpl<>(List.of(applicationForLeaveExport)));
+
+        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
+        when(applicationForLeaveCsvExportService.generateCSV(filterPeriod, locale, List.of(applicationForLeaveExport))).thenReturn(csvFile);
+
+        perform(get("/web/application/export")
+            .locale(locale)
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019")
+            .param("allElements", "true")
+            .param("page", "2")
+            .param("size", "50"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("csv-resource"));
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
