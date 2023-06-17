@@ -66,14 +66,35 @@
                   <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2" aria-labelledby="statistics-download-label">
                     <li>
                       <a
-                        id="statistics-csv-download-link"
-                        th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
+                        id="statistics-csv-download-link-all"
+                        th:href="@{/web/application/statistics/download (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
                         class="icon-link tw-px-1"
-                        th:data-title="#{applications.statistics.button.hover}"
                         download
                       >
                         <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
-                        <span th:text="#{applications.statistics.button}"></span>
+                        <span th:text="#{applications.statistics.all.button}"></span>
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        id="statistics-csv-download-link"
+                        th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
+                        class="icon-link tw-px-1"
+                        download
+                      >
+                        <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                        <span th:text="#{applications.statistics.visible.button}"></span>
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        id="export-csv-download-link-all"
+                        th:href="@{/web/application/export (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
+                        class="icon-link tw-px-1"
+                        download
+                      >
+                        <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                        <span th:text="#{applications.export.absences.all.button}"></span>
                       </a>
                     </li>
                     <li>
@@ -81,11 +102,10 @@
                         id="export-csv-download-link"
                         th:href="@{/web/application/export (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
                         class="icon-link tw-px-1"
-                        th:data-title="#{applications.export.absences.button.hover}"
                         download
                       >
                         <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
-                        <span th:text="#{applications.export.absences.button}"></span>
+                        <span th:text="#{applications.export.absences.visible.button}"></span>
                       </a>
                     </li>
                   </ul>
