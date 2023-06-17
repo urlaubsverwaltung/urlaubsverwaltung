@@ -52,10 +52,21 @@ class DetailsDropdown extends HTMLDetailsElement {
   }
 }
 
-const interactiveElements = [HTMLButtonElement, HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement];
+const interactiveElements = [
+  HTMLButtonElement,
+  HTMLInputElement,
+  HTMLSelectElement,
+  HTMLTextAreaElement,
+  HTMLAnchorElement,
+];
 
 function isInteractiveElement(element) {
-  return interactiveElements.some((ElementType) => element instanceof ElementType);
+  if (element === undefined || element === null) {
+    return false;
+  }
+
+  let isInteractive = interactiveElements.some((ElementType) => element instanceof ElementType);
+  return isInteractive === true ? true : isInteractiveElement(element.parentElement);
 }
 
 customElements.define("uv-details-dropdown", DetailsDropdown, { extends: "details" });

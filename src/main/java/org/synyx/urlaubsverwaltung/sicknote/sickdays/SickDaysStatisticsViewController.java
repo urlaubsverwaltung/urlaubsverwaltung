@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.sicknote.sickdays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
@@ -27,6 +28,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.Locale;
 
+import static java.lang.Integer.MAX_VALUE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.springframework.http.HttpStatus.OK;
@@ -60,6 +62,7 @@ class SickDaysStatisticsViewController {
     @GetMapping("/download")
     public ResponseEntity<ByteArrayResource> downloadCSV(@RequestParam(value = "from", defaultValue = "") String from,
                                                          @RequestParam(value = "to", defaultValue = "") String to,
+                                                         @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,
                                                          @RequestParam(value = "query", required = false, defaultValue = "") String query,
                                                          @SortDefault.SortDefaults({@SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)})
                                                          Pageable pageable, Locale locale) {
@@ -73,8 +76,11 @@ class SickDaysStatisticsViewController {
 
         final Person signedInUser = personService.getSignedInUser();
 
+        final Pageable adaptedPageable = allElements ? PageRequest.of(0, MAX_VALUE, pageable.getSort()) : pageable;
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(adaptedPageable, query);
+
         final Page<SickDaysDetailedStatistics> sickDaysStatisticsPage =
-                sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate(), new PageableSearchQuery(pageable, query));
+            sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate(), pageableSearchQuery);
 
         final CSVFile csvFile = sickDaysDetailedStatisticsCsvExportService.generateCSV(period, locale, sickDaysStatisticsPage.getContent());
 

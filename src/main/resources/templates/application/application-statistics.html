@@ -46,27 +46,51 @@
             <h1 th:text="#{applications.statistics}">Abwesenheitsstatistik</h1>
           </th:block>
           <th:block th:ref="absences-statistics-heading-actions">
-            <div class="tw-flex tw-flex-col sm:tw-flex-row">
-              <a
-                id="statistics-csv-download-link"
-                th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
-                class="icon-link tw-px-1"
-                th:data-title="#{applications.statistics.button.hover}"
-                download
+            <div class="tw-flex tw-items-center tw-gap-2">
+              <div
+                th:replace="fragments/details-dropdown::details-dropdown(
+                  summary=~{::download-dropdown-summary}, content=~{::download-dropdown-content}, closeDelay=1000, hideChevron=true, placement='right'
+                )"
               >
-                <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
-                <span th:text="#{applications.statistics.button}"></span>
-              </a>
-              <a
-                id="export-csv-download-link"
-                th:href="@{/web/application/export (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
-                class="icon-link tw-px-1"
-                th:data-title="#{applications.export.button.hover}"
-                download
-              >
-                <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
-                <span th:text="#{applications.export.button}"></span>
-              </a>
+                <th:block th:ref="download-dropdown-summary">
+                  <span class="text-link tw-flex" th:data-title="#{applications.export.button}">
+                    <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
+                  </span>
+                  <span
+                    id="statistics-download-label"
+                    th:text="#{applications.export.button}"
+                    class="tw-sr-only"
+                  ></span>
+                </th:block>
+                <th:block th:ref="download-dropdown-content">
+                  <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2" aria-labelledby="statistics-download-label">
+                    <li>
+                      <a
+                        id="statistics-csv-download-link"
+                        th:href="@{/web/application/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
+                        class="icon-link tw-px-1"
+                        th:data-title="#{applications.statistics.button.hover}"
+                        download
+                      >
+                        <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                        <span th:text="#{applications.statistics.button}"></span>
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        id="export-csv-download-link"
+                        th:href="@{/web/application/export (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
+                        class="icon-link tw-px-1"
+                        th:data-title="#{applications.export.absences.button.hover}"
+                        download
+                      >
+                        <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                        <span th:text="#{applications.export.absences.button}"></span>
+                      </a>
+                    </li>
+                  </ul>
+                </th:block>
+              </div>
               <button th:replace="fragments/print::button"></button>
             </div>
           </th:block>
@@ -92,7 +116,7 @@
                 <fieldset>
                   <legend class="tw-sr-only" th:text="#{applications.statistics.period.legend.text}">Zeitraum</legend>
                   <div
-                    th:replace="fragments/details-dropdown::details-dropdown(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)"
+                    th:replace="fragments/details-dropdown::details-dropdown-input(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)"
                   >
                     <th:block th:ref="period-dropdown-summary">
                       <th:block th:text="#{applications.statistics.period.legend.text}"></th:block>

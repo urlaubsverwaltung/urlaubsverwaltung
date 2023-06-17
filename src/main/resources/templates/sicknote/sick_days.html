@@ -72,16 +72,44 @@
             <svg th:replace="icon/presentation-chart-bar::svg(className='tw-w-5 tw-h-5')"></svg>
             <span th:text="#{action.sicknotes.statistics}" class="tw-sr-only"></span>
           </a>
-          <a
-            id="statistics-csv-download-link"
-            th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
-            class="icon-link tw-px-1"
-            th:data-title="#{action.sicknotes.download}"
-            download
+          <div
+            th:replace="fragments/details-dropdown::details-dropdown(
+              summary=~{::download-dropdown-summary}, content=~{::download-dropdown-content}, closeDelay=1000, hideChevron=true, placement='right'
+            )"
           >
-            <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
-            <span th:text="#{action.sicknotes.download}" class="tw-sr-only"></span>
-          </a>
+            <th:block th:ref="download-dropdown-summary">
+              <span class="text-link" th:data-title="#{action.sicknotes.download}">
+                <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
+              </span>
+              <span id="statistics-download-label" th:text="#{action.sicknotes.download}" class="tw-sr-only"></span>
+            </th:block>
+            <th:block th:ref="download-dropdown-content">
+              <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2" aria-labelledby="statistics-download-label">
+                <li>
+                  <a
+                    id="statistics-csv-download-link-asd"
+                    th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
+                    class="icon-link tw-px-1 tw-flex tw-gap-2"
+                    download
+                  >
+                    <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
+                    <th:block th:text="#{action.sicknotes.download.all.persons}"></th:block>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    id="statistics-csv-download-link"
+                    th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, page=${statisticsPagination.page.number + 1}, size=${statisticsPagination.page.size}, sort=${sortQuery}, query=${query})}"
+                    class="icon-link tw-px-1 tw-flex tw-gap-2"
+                    download
+                  >
+                    <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
+                    <th:block th:text="#{action.sicknotes.download.filtered.persons}"></th:block>
+                  </a>
+                </li>
+              </ul>
+            </th:block>
+          </div>
           <button th:replace="fragments/print::button"></button>
         </th:block>
       </div>
@@ -106,7 +134,7 @@
               <fieldset>
                 <legend class="tw-sr-only" th:text="#{sicknotes.statistics.period.legend.text}">Zeitraum</legend>
                 <div
-                  th:replace="fragments/details-dropdown::details-dropdown(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)"
+                  th:replace="fragments/details-dropdown::details-dropdown-input(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)"
                 >
                   <th:block th:ref="period-dropdown-summary">
                     <th:block th:text="#{sicknotes.statistics.period.legend.text}"></th:block>
