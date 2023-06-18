@@ -47,7 +47,6 @@
           <div class="absence-type-list-head">
             <span th:text="#{settings.absenceTypes.table.head.state}"></span>
             <span th:text="#{settings.absenceTypes.table.head.type}"></span>
-            <span th:text="#{settings.absenceTypes.table.head.category}"></span>
             <span
               th:text="#{settings.absenceTypes.table.head.approvalToApply}"
               class="tw-break-words tw-text-right"
@@ -95,10 +94,6 @@
                   th:text="#{__${absenceType.messageKey}__}"
                   class="absence-type-cell-text tw-flex-1 sm:tw-truncate"
                 ></span>
-              </div>
-              <div class="tw-flex sm:tw-items-center sm:tw-overflow-hidden">
-                <span th:text="#{settings.absenceTypes.table.head.category}" class="absence-type-cell-title"></span>
-                <span th:text="#{__${absenceType.category}__}" class="absence-type-cell-text sm:tw-truncate"></span>
               </div>
               <div class="tw-flex sm:tw-items-center sm:tw-justify-end">
                 <label
