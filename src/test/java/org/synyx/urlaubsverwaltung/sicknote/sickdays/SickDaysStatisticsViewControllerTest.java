@@ -216,6 +216,7 @@ class SickDaysStatisticsViewControllerTest {
             .param("allElements", "true")
             .param("page", "2")
             .param("size", "50")
+            .param("query", "hans")
         )
             .andExpect(status().isOk());
     }

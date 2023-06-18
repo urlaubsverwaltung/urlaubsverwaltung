@@ -165,7 +165,8 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
 
         final Pageable adaptedPageable = allElements ? PageRequest.of(0, MAX_VALUE, pageable.getSort()) : pageable;
-        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(adaptedPageable, query);
+        final String adaptedQuery = allElements ? "" : query;
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(adaptedPageable, adaptedQuery);
 
         final Page<ApplicationForLeaveStatistics> statisticsPage = applicationForLeaveStatisticsService.getStatistics(signedInUser, period, pageableSearchQuery);
         final List<ApplicationForLeaveStatistics> statistics = statisticsPage.getContent();

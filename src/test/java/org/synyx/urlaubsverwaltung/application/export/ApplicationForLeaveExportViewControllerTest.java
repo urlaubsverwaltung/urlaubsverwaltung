@@ -254,7 +254,8 @@ class ApplicationForLeaveExportViewControllerTest {
             .param("to", "01.08.2019")
             .param("allElements", "true")
             .param("page", "2")
-            .param("size", "50"))
+            .param("size", "50")
+            .param("query", "hans"))
             .andExpect(status().isOk())
             .andExpect(content().string("csv-resource"));
     }
