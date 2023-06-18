@@ -110,7 +110,7 @@ class ApplicationForLeaveCsvExportServiceTest {
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        when(messageSource.getMessage("applications.export", new String[]{}, locale)).thenReturn("test filename");
+        when(messageSource.getMessage("applications.export.filename", new String[]{}, locale)).thenReturn("test filename");
 
         final String fileName = sut.fileName(period, locale);
         assertThat(fileName).startsWith("test-filename_");

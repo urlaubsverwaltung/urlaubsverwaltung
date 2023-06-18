@@ -59,7 +59,7 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        when(messageSource.getMessage("sicknotes.statistics", new String[]{}, locale)).thenReturn("test filename");
+        when(messageSource.getMessage("action.sicknotes.download.filename", new String[]{}, locale)).thenReturn("test filename");
 
         final String fileName = sut.fileName(period, locale);
         assertThat(fileName).startsWith("test-filename_");
@@ -74,7 +74,7 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         final LocalDate endDate = LocalDate.parse("2018-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        when(messageSource.getMessage("sicknotes.statistics", new String[]{}, locale)).thenReturn("test");
+        when(messageSource.getMessage("action.sicknotes.download.filename", new String[]{}, locale)).thenReturn("test");
 
         final String fileName = sut.fileName(period, locale);
         assertThat(fileName).isEqualTo("test_2018-01-01_2018-12-31_ja.csv");
@@ -89,7 +89,7 @@ class SickDaysDetailedStatisticsCsvExportServiceTest {
         final LocalDate endDate = LocalDate.parse("2019-12-31");
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
-        when(messageSource.getMessage(eq("sicknotes.statistics"), any(), any())).thenReturn("test");
+        when(messageSource.getMessage(eq("action.sicknotes.download.filename"), any(), any())).thenReturn("test");
 
         final String fileName = sut.fileName(period, locale);
         assertThat(fileName).isEqualTo("test_2019-01-01_2019-12-31_ja.csv");

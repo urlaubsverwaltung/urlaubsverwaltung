@@ -84,10 +84,13 @@
               <span id="statistics-download-label" th:text="#{action.sicknotes.download}" class="tw-sr-only"></span>
             </th:block>
             <th:block th:ref="download-dropdown-content">
+              <span class="tw-inline-block tw-mb-2 tw-font-bold" th:text="#{action.sicknotes.download.title}"
+                >Krankmeldungen</span
+              >
               <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2" aria-labelledby="statistics-download-label">
                 <li>
                   <a
-                    id="statistics-csv-download-link-asd"
+                    id="statistics-csv-download-link-all"
                     th:href="@{/web/sickdays/statistics/download (from=${from}, to=${to}, sort=${sortQuery}, query=${query}, allElements=${true})}"
                     class="icon-link tw-px-1 tw-flex tw-gap-2"
                     download
@@ -104,7 +107,7 @@
                     download
                   >
                     <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
-                    <th:block th:text="#{action.sicknotes.download.filtered.persons}"></th:block>
+                    <th:block th:text="#{action.sicknotes.download.visible.persons}"></th:block>
                   </a>
                 </li>
               </ul>

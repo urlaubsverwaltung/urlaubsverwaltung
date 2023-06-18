@@ -348,7 +348,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
     }
 
     @Test
-    void downloadCSVWritesCSV() throws Exception {
+    void ensureToDownloadCSVStatisticsForSelectionWithDefaultValues() throws Exception {
 
         final Locale locale = JAPANESE;
 
@@ -363,8 +363,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
-        when(applicationForLeaveStatisticsService.getStatistics(eq(signedInUser), any(FilterPeriod.class), eq(defaultPersonSearchQuery())))
-            .thenReturn(new PageImpl<>(List.of(statistics)));
+        when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery())).thenReturn(new PageImpl<>(List.of(statistics)));
 
         final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
         when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
@@ -373,6 +372,106 @@ class ApplicationForLeaveStatisticsViewControllerTest {
             .locale(locale)
             .param("from", "01.01.2019")
             .param("to", "01.08.2019"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("csv-resource"));
+    }
+
+    @Test
+    void ensureToDownloadCSVStatisticsForSelectionWithGivenValues() throws Exception {
+
+        final Locale locale = JAPANESE;
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
+
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(2, 50, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+        when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, pageableSearchQuery))
+            .thenReturn(new PageImpl<>(List.of(statistics)));
+
+        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
+        when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
+
+        perform(get("/web/application/statistics/download")
+            .locale(locale)
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019")
+            .param("page", "2")
+            .param("size", "50"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("csv-resource"));
+    }
+
+    @Test
+    void ensureToDownloadCSVStatisticsForAll() throws Exception {
+
+        final Locale locale = JAPANESE;
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
+
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+        when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, pageableSearchQuery))
+            .thenReturn(new PageImpl<>(List.of(statistics)));
+
+        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
+        when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
+
+        perform(get("/web/application/statistics/download")
+            .locale(locale)
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019")
+            .param("allElements", "true"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("csv-resource"));
+    }
+
+    @Test
+    void ensureToDownloadCSVStatisticsForAllWithSelectionParameterAndAllShouldWin() throws Exception {
+
+        final Locale locale = JAPANESE;
+
+        final Person signedInUser = new Person();
+        signedInUser.setId(1);
+        when(personService.getSignedInUser()).thenReturn(signedInUser);
+
+        final LocalDate startDate = LocalDate.parse("2019-01-01");
+        final LocalDate endDate = LocalDate.parse("2019-08-01");
+        final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
+
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key_holiday", true, YELLOW, false);
+
+        final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
+        final PageableSearchQuery pageableSearchQuery = new PageableSearchQuery(PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "person.firstName")), "");
+        when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, pageableSearchQuery))
+            .thenReturn(new PageImpl<>(List.of(statistics)));
+
+        final CSVFile csvFile = new CSVFile("csv-file-name", new ByteArrayResource("csv-resource".getBytes()));
+        when(applicationForLeaveStatisticsCsvExportService.generateCSV(filterPeriod, locale, List.of(statistics))).thenReturn(csvFile);
+
+        perform(get("/web/application/statistics/download")
+            .locale(locale)
+            .param("from", "01.01.2019")
+            .param("to", "01.08.2019")
+            .param("allElements", "true")
+            .param("page", "2")
+            .param("size", "50")
+            .param("query", "hans"))
             .andExpect(status().isOk())
             .andExpect(content().string("csv-resource"));
     }
