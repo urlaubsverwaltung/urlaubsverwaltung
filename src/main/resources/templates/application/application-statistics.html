@@ -63,6 +63,9 @@
                   ></span>
                 </th:block>
                 <th:block th:ref="download-dropdown-content">
+                  <span class="tw-inline-block tw-mb-2 tw-font-bold" th:text="#{applications.export.absences.title}"
+                    >Abwesenheitsstatistik</span
+                  >
                   <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2" aria-labelledby="statistics-download-label">
                     <li>
                       <a
@@ -86,6 +89,13 @@
                         <span th:text="#{applications.statistics.visible.button}"></span>
                       </a>
                     </li>
+                  </ul>
+                  <span
+                    class="tw-inline-block tw-mt-4 tw-mb-2 tw-font-bold"
+                    th:text="#{applications.export.absences.title}"
+                    >Abwesenheiten</span
+                  >
+                  <ul class="tw-list-none tw-m-0 tw-p-0 tw-space-y-2" aria-labelledby="statistics-download-label">
                     <li>
                       <a
                         id="export-csv-download-link-all"
