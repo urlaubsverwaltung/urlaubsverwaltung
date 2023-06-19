@@ -39,7 +39,7 @@ class ApplicationForLeaveFormTest {
         final LocalDate endDate = LocalDate.now().minusDays(2);
         final LocalTime endTime = LocalTime.now().minusHours(7);
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false);
 
         final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
 
@@ -137,7 +137,7 @@ class ApplicationForLeaveFormTest {
         final LocalDate endDate = LocalDate.of(2022, 2, 2);
         final LocalTime endTime = LocalTime.of(12, 10, 0);
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false);
 
         final HolidayReplacementDto replacementDto = new HolidayReplacementDto();
         replacementDto.setPerson(holidayReplacement);
@@ -160,7 +160,7 @@ class ApplicationForLeaveFormTest {
 
         assertThat(form).hasToString("ApplicationForLeaveForm{person=Person{id='null'}, startDate=2022-01-02, " +
             "startTime=11:10, endDate=2022-02-02, endTime=12:10, vacationType=VacationType{id=1, active=true, category=HOLIDAY, " +
-            "messageKey='message_key', requiresApproval='true', color='YELLOW', visibleToEveryone=false}, dayLength=ZERO, " +
+            "messageKey='message_key', requiresApprovalToApply='true', requiresApprovalToCancel='true', color='YELLOW', visibleToEveryone=false}, dayLength=ZERO, " +
             "hours=0, minutes=0, holidayReplacements=[HolidayReplacementDto{person=Person{id='null'}, " +
             "departments=null}], teamInformed=true}");
     }

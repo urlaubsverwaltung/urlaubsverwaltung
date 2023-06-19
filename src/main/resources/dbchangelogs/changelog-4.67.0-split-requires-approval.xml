@@ -1,0 +1,31 @@
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+  <changeSet author="schneider" id="split-requires-approval">
+    <preConditions>
+      <tableExists tableName="vacation_type"/>
+      <columnExists tableName="vacation_type" columnName="requires_approval"/>
+      <not>
+        <columnExists tableName="vacation_type" columnName="requires_approval_to_cancel"/>
+      </not>
+    </preConditions>
+
+    <renameColumn tableName="vacation_type"
+                  oldColumnName="requires_approval"
+                  newColumnName="requires_approval_to_apply"
+                  columnDataType="BIT(1)"/>
+
+    <addColumn tableName="vacation_type">
+      <column name="requires_approval_to_cancel"
+              type="BIT(1)"
+              afterColumn="requires_approval_to_apply"
+              defaultValueBoolean="true"
+              valueComputed="requires_approval_to_apply">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+  </changeSet>
+</databaseChangeLog>

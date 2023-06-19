@@ -11,7 +11,8 @@ public class VacationType {
     private boolean active;
     private VacationCategory category;
     private String messageKey;
-    private boolean requiresApproval;
+    private boolean requiresApprovalToApply;
+    private boolean requiresApprovalToCancel;
     private VacationTypeColor color;
     private boolean visibleToEveryone;
 
@@ -19,12 +20,14 @@ public class VacationType {
         // ok
     }
 
-    public VacationType(Integer id, boolean active, VacationCategory category, String messageKey, boolean requiresApproval, VacationTypeColor color, boolean visibleToEveryone) {
+    public VacationType(Integer id, boolean active, VacationCategory category, String messageKey, boolean requiresApprovalToApply,
+                        boolean requiresApprovalToCancel, VacationTypeColor color, boolean visibleToEveryone) {
         this.id = id;
         this.active = active;
         this.category = category;
         this.messageKey = messageKey;
-        this.requiresApproval = requiresApproval;
+        this.requiresApprovalToApply = requiresApprovalToApply;
+        this.requiresApprovalToCancel = requiresApprovalToCancel;
         this.color = color;
         this.visibleToEveryone = visibleToEveryone;
     }
@@ -65,12 +68,20 @@ public class VacationType {
         this.messageKey = messageKey;
     }
 
-    public boolean isRequiresApproval() {
-        return requiresApproval;
+    public boolean isRequiresApprovalToApply() {
+        return requiresApprovalToApply;
     }
 
-    public void setRequiresApproval(boolean requiresApproval) {
-        this.requiresApproval = requiresApproval;
+    public void setRequiresApprovalToApply(boolean requiresApprovalToApply) {
+        this.requiresApprovalToApply = requiresApprovalToApply;
+    }
+
+    public boolean isRequiresApprovalToCancel() {
+        return requiresApprovalToCancel;
+    }
+
+    public void setRequiresApprovalToCancel(boolean requiresApprovalToCancel) {
+        this.requiresApprovalToCancel = requiresApprovalToCancel;
     }
 
     public VacationTypeColor getColor() {
@@ -96,7 +107,8 @@ public class VacationType {
             ", active=" + active +
             ", category=" + category +
             ", messageKey='" + messageKey + '\'' +
-            ", requiresApproval='" + requiresApproval + '\'' +
+            ", requiresApprovalToApply='" + requiresApprovalToApply + '\'' +
+            ", requiresApprovalToCancel='" + requiresApprovalToCancel + '\'' +
             ", color='" + color + '\'' +
             ", visibleToEveryone=" + visibleToEveryone +
             '}';
@@ -107,11 +119,17 @@ public class VacationType {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VacationType that = (VacationType) o;
-        return active == that.active && requiresApproval == that.requiresApproval && visibleToEveryone == that.visibleToEveryone && category == that.category && Objects.equals(messageKey, that.messageKey) && Objects.equals(color, that.color);
+        return active == that.active
+            && requiresApprovalToApply == that.requiresApprovalToApply
+            && requiresApprovalToCancel == that.requiresApprovalToCancel
+            && visibleToEveryone == that.visibleToEveryone
+            && category == that.category
+            && Objects.equals(messageKey, that.messageKey)
+            && Objects.equals(color, that.color);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(active, category, messageKey, requiresApproval, color, visibleToEveryone);
+        return Objects.hash(active, category, messageKey, requiresApprovalToApply, requiresApprovalToCancel, color, visibleToEveryone);
     }
 }

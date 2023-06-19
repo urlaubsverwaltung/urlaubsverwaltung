@@ -290,12 +290,12 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         final boolean isDepartmentHead = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, person);
         final boolean isSecondStageAuthority = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, person);
 
-        final boolean requiresApproval = application.getVacationType().isRequiresApproval();
+        final boolean requiresApprovalToCancel = application.getVacationType().isRequiresApprovalToCancel();
 
-        final boolean allowedToRevokeApplication = isAllowedToRevokeApplication(application, signedInUser, requiresApproval);
+        final boolean allowedToRevokeApplication = isAllowedToRevokeApplication(application, signedInUser, requiresApprovalToCancel);
         final boolean allowedToCancelApplication = isAllowedToCancelApplication(application, signedInUser, isDepartmentHead, isSecondStageAuthority);
-        final boolean allowedToCancelDirectlyApplication = isAllowedToCancelDirectlyApplication(application, signedInUser, isDepartmentHead, isSecondStageAuthority, requiresApproval);
-        final boolean allowedToStartCancellationRequest = isAllowedToStartCancellationRequest(application, signedInUser, isDepartmentHead, isSecondStageAuthority, requiresApproval);
+        final boolean allowedToCancelDirectlyApplication = isAllowedToCancelDirectlyApplication(application, signedInUser, isDepartmentHead, isSecondStageAuthority, requiresApprovalToCancel);
+        final boolean allowedToStartCancellationRequest = isAllowedToStartCancellationRequest(application, signedInUser, isDepartmentHead, isSecondStageAuthority, requiresApprovalToCancel);
         if (!(allowedToRevokeApplication || allowedToCancelApplication || allowedToCancelDirectlyApplication || allowedToStartCancellationRequest)) {
             throw new AccessDeniedException(format("User '%s' has not the correct permissions to cancel or revoke application " +
                 "for leave of user '%s'", signedInUser.getId(), application.getPerson().getId()));
@@ -311,7 +311,7 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
             return REDIRECT_WEB_APPLICATION + applicationId + "?action=cancel";
         }
 
-        if (requiresApproval) {
+        if (requiresApprovalToCancel) {
             applicationInteractionService.cancel(application, signedInUser, Optional.ofNullable(comment.getText()));
         } else {
             applicationInteractionService.directCancel(application, signedInUser, Optional.ofNullable(comment.getText()));
@@ -439,17 +439,17 @@ class ApplicationForLeaveDetailsViewController implements HasLaunchpad {
         // Signed in person is allowed to manage
         final boolean isDepartmentHeadOfPerson = departmentService.isDepartmentHeadAllowedToManagePerson(signedInUser, application.getPerson());
         final boolean isSecondStageAuthorityOfPerson = departmentService.isSecondStageAuthorityAllowedToManagePerson(signedInUser, application.getPerson());
-        final boolean requiresApproval = application.getVacationType().isRequiresApproval();
+        final boolean requiresApprovalToCancel = application.getVacationType().isRequiresApprovalToCancel();
 
         model.addAttribute("isAllowedToAllowWaitingApplication", isAllowedToAllowWaitingApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
         model.addAttribute("isAllowedToAllowTemporaryAllowedApplication", isAllowedToAllowTemporaryAllowedApplication(application, signedInUser, isSecondStageAuthorityOfPerson));
 
         model.addAttribute("isAllowedToRejectApplication", isAllowedToRejectApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
 
-        model.addAttribute("isAllowedToRevokeApplication", isAllowedToRevokeApplication(application, signedInUser, requiresApproval));
+        model.addAttribute("isAllowedToRevokeApplication", isAllowedToRevokeApplication(application, signedInUser, requiresApprovalToCancel));
         model.addAttribute("isAllowedToCancelApplication", isAllowedToCancelApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
-        model.addAttribute("isAllowedToCancelDirectlyApplication", isAllowedToCancelDirectlyApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApproval));
-        model.addAttribute("isAllowedToStartCancellationRequest", isAllowedToStartCancellationRequest(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApproval));
+        model.addAttribute("isAllowedToCancelDirectlyApplication", isAllowedToCancelDirectlyApplication(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel));
+        model.addAttribute("isAllowedToStartCancellationRequest", isAllowedToStartCancellationRequest(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson, requiresApprovalToCancel));
 
         model.addAttribute("isAllowedToDeclineCancellationRequest", isAllowedToDeclineCancellationRequest(application, signedInUser, isDepartmentHeadOfPerson, isSecondStageAuthorityOfPerson));
 

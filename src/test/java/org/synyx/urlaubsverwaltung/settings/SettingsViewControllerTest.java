@@ -97,7 +97,7 @@ class SettingsViewControllerTest {
         final VacationType vacationType = new VacationType();
         vacationType.setId(1);
         vacationType.setActive(true);
-        vacationType.setRequiresApproval(true);
+        vacationType.setRequiresApprovalToApply(true);
         vacationType.setCategory(VacationCategory.HOLIDAY);
         vacationType.setMessageKey("vacationType.messageKey");
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
@@ -235,7 +235,8 @@ class SettingsViewControllerTest {
                 .param("absenceTypeSettings.items[0].id", "1000")
                 .param("absenceTypeSettings.items[0].active", "true")
                 .param("_absenceTypeSettings.items[0].active", "on")
-                .param("_absenceTypeSettings.items[0].requiresApproval", "on")
+                .param("_absenceTypeSettings.items[0].requiresApprovalToApply", "on")
+                .param("_absenceTypeSettings.items[0].requiresApprovalToCancel", "on")
                 // actual system under test
                 .param("workingTimeSettings.workingDays", "1")
                 .param("_workingTimeSettings.workingDays", "on")

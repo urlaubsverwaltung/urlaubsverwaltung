@@ -299,7 +299,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         final Application app = mapToApplication(appForm);
 
         final Application savedApplicationForLeave;
-        if (app.getVacationType().isRequiresApproval()) {
+        if (app.getVacationType().isRequiresApprovalToApply()) {
             savedApplicationForLeave = applicationInteractionService.apply(app, applier, ofNullable(appForm.getComment()));
         } else {
             savedApplicationForLeave = applicationInteractionService.directAllow(app, applier, ofNullable(appForm.getComment()));

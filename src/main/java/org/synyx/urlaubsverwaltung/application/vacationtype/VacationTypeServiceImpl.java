@@ -60,7 +60,8 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             .map(vacationType -> {
                 final VacationTypeUpdate vacationTypeUpdate = byId.get(vacationType.getId());
                 vacationType.setActive(vacationTypeUpdate.isActive());
-                vacationType.setRequiresApproval(vacationTypeUpdate.isRequiresApproval());
+                vacationType.setRequiresApprovalToApply(vacationTypeUpdate.isRequiresApprovalToApply());
+                vacationType.setRequiresApprovalToCancel(vacationTypeUpdate.isRequiresApprovalToCancel());
                 vacationType.setColor(vacationTypeUpdate.getColor());
                 vacationType.setVisibleToEveryone(vacationTypeUpdate.isVisibleToEveryone());
                 return vacationType;
@@ -72,7 +73,17 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     }
 
     private Function<VacationTypeEntity, VacationType> convertToVacationType() {
-        return vacationTypeEntity -> new VacationType(vacationTypeEntity.getId(), vacationTypeEntity.isActive(), vacationTypeEntity.getCategory(), vacationTypeEntity.getMessageKey(), vacationTypeEntity.isRequiresApproval(), vacationTypeEntity.getColor(), vacationTypeEntity.isVisibleToEveryone());
+        return vacationTypeEntity ->
+            new VacationType(
+                vacationTypeEntity.getId(),
+                vacationTypeEntity.isActive(),
+                vacationTypeEntity.getCategory(),
+                vacationTypeEntity.getMessageKey(),
+                vacationTypeEntity.isRequiresApprovalToApply(),
+                vacationTypeEntity.isRequiresApprovalToCancel(),
+                vacationTypeEntity.getColor(),
+                vacationTypeEntity.isVisibleToEveryone()
+            );
     }
 
     public static VacationTypeEntity convert(VacationType vacationType) {
@@ -81,13 +92,23 @@ public class VacationTypeServiceImpl implements VacationTypeService {
         vacationTypeEntity.setActive(vacationType.isActive());
         vacationTypeEntity.setCategory(vacationType.getCategory());
         vacationTypeEntity.setMessageKey(vacationType.getMessageKey());
-        vacationTypeEntity.setRequiresApproval(vacationType.isRequiresApproval());
+        vacationTypeEntity.setRequiresApprovalToApply(vacationType.isRequiresApprovalToApply());
+        vacationTypeEntity.setRequiresApprovalToCancel(vacationType.isRequiresApprovalToCancel());
         vacationTypeEntity.setColor(vacationType.getColor());
         vacationTypeEntity.setVisibleToEveryone(vacationType.isVisibleToEveryone());
         return vacationTypeEntity;
     }
 
     public static VacationType convert(VacationTypeEntity vacationTypeEntity) {
-        return new VacationType(vacationTypeEntity.getId(), vacationTypeEntity.isActive(), vacationTypeEntity.getCategory(), vacationTypeEntity.getMessageKey(), vacationTypeEntity.isRequiresApproval(), vacationTypeEntity.getColor(), vacationTypeEntity.isVisibleToEveryone());
+        return new VacationType(
+            vacationTypeEntity.getId(),
+            vacationTypeEntity.isActive(),
+            vacationTypeEntity.getCategory(),
+            vacationTypeEntity.getMessageKey(),
+            vacationTypeEntity.isRequiresApprovalToApply(),
+            vacationTypeEntity.isRequiresApprovalToCancel(),
+            vacationTypeEntity.getColor(),
+            vacationTypeEntity.isVisibleToEveryone()
+        );
     }
 }

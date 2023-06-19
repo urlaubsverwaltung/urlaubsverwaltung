@@ -66,8 +66,8 @@
   .absence-type-list-head,
   .absence-type-list-item {
     display: grid;
-    grid-column-gap: 2rem;
-    grid-template-columns: 2.5rem 1fr 1fr 4rem 4rem 4rem;
+    grid-column-gap: 1rem;
+    grid-template-columns: 2.5rem 1fr 10rem 10rem 4rem 4rem;
     @apply tw-py-1;
     @apply tw-px-2;
   }
@@ -109,8 +109,8 @@
 @screen md {
   .absence-type-list-head,
   .absence-type-list-item {
-    grid-column-gap: 3rem;
-    grid-template-columns: 2.5rem 1fr 1fr 5rem 4rem 4rem;
+    grid-column-gap: 1.5rem;
+    grid-template-columns: 2.5rem 1fr 10rem 10rem 4rem 4rem;
   }
 }
 
@@ -121,7 +121,7 @@
   .absence-type-list-item {
     @apply tw-py-1;
     @apply tw-px-4;
-    grid-template-columns: 2.5rem 1fr 1fr 10rem 7rem 4rem;
+    grid-template-columns: 2.5rem 1fr 10rem 10rem 7rem 4rem;
   }
 }
 
@@ -132,6 +132,6 @@
 
   .absence-type-list-head,
   .absence-type-list-item {
-    grid-column-gap: 4rem;
+    grid-column-gap: 2rem;
   }
 }

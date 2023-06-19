@@ -199,7 +199,7 @@ class ApplicationTest {
         assertThat(toString).isEqualTo("Application{person=Person{id='10'}, applier=Person{id='10'}, boss=Person{id='10'}, " +
             "canceller=Person{id='10'}, twoStageApproval=true, startDate=-999999999-01-01, startTime=12:15, endDate=+999999999-12-31, " +
             "endTime=11:15, vacationType=VacationTypeEntity{id=null, active=false, category=HOLIDAY, messageKey='null', " +
-            "requiresApproval=false, color=YELLOW, visibleToEveryone=false}, dayLength=FULL, " +
+            "requiresApprovalToApply=false, requiresApprovalToCancel=false, color=YELLOW, visibleToEveryone=false}, dayLength=FULL, " +
             "holidayReplacements=[HolidayReplacementEntity{person=Person{id='10'}}], " +
             "applicationDate=1970-01-01, cancelDate=+999999999-12-31, editedDate=+999999999-12-31, remindDate=+999999999-12-31, " +
             "status=ALLOWED, teamInformed=true, hours=PT10H}");

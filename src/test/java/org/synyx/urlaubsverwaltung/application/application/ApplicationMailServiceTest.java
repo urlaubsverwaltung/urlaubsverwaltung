@@ -574,7 +574,7 @@ class ApplicationMailServiceTest {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
-        vacationType.setRequiresApproval(false);
+        vacationType.setRequiresApprovalToApply(false);
         vacationType.setCategory(HOLIDAY);
         vacationType.setMessageKey("application.data.vacationType.holiday");
 
@@ -623,7 +623,7 @@ class ApplicationMailServiceTest {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
-        vacationType.setRequiresApproval(false);
+        vacationType.setRequiresApprovalToApply(false);
         vacationType.setCategory(HOLIDAY);
         vacationType.setMessageKey("application.data.vacationType.holiday");
 
@@ -673,7 +673,7 @@ class ApplicationMailServiceTest {
         person.setLastName("Helmchen");
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
-        vacationType.setRequiresApproval(false);
+        vacationType.setRequiresApprovalToApply(false);
         vacationType.setCategory(HOLIDAY);
         vacationType.setMessageKey("application.data.vacationType.holiday");
 

@@ -26,7 +26,9 @@ public class VacationTypeEntity {
 
     private String messageKey;
 
-    private boolean requiresApproval;
+    private boolean requiresApprovalToApply;
+
+    private boolean requiresApprovalToCancel;
 
     @Enumerated(STRING)
     @NotNull
@@ -70,12 +72,20 @@ public class VacationTypeEntity {
         this.messageKey = messageKey;
     }
 
-    public boolean isRequiresApproval() {
-        return requiresApproval;
+    public boolean isRequiresApprovalToApply() {
+        return requiresApprovalToApply;
     }
 
-    public void setRequiresApproval(boolean requiresApproval) {
-        this.requiresApproval = requiresApproval;
+    public void setRequiresApprovalToApply(boolean requiresApprovalToApply) {
+        this.requiresApprovalToApply = requiresApprovalToApply;
+    }
+
+    public boolean isRequiresApprovalToCancel() {
+        return requiresApprovalToCancel;
+    }
+
+    public void setRequiresApprovalToCancel(boolean requiresApprovalToCancel) {
+        this.requiresApprovalToCancel = requiresApprovalToCancel;
     }
 
     public void setColor(VacationTypeColor color) {
@@ -101,7 +111,8 @@ public class VacationTypeEntity {
             ", active=" + active +
             ", category=" + category +
             ", messageKey='" + messageKey + '\'' +
-            ", requiresApproval=" + requiresApproval +
+            ", requiresApprovalToApply=" + requiresApprovalToApply +
+            ", requiresApprovalToCancel=" + requiresApprovalToCancel +
             ", color=" + color +
             ", visibleToEveryone=" + visibleToEveryone +
             '}';

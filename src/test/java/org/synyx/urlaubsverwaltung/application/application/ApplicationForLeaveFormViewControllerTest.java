@@ -197,7 +197,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -227,7 +227,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -257,7 +257,7 @@ class ApplicationForLeaveFormViewControllerTest {
         final Account account = new Account(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "comment");
         when(accountService.getHolidaysAccount(year, person)).thenReturn(Optional.of(account));
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(List.of(vacationType));
 
         final OvertimeSettings overtimeSettings = new OvertimeSettings();
@@ -594,7 +594,7 @@ class ApplicationForLeaveFormViewControllerTest {
         person.setId(1);
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(applicationInteractionService.directAllow(any(Application.class), any(Person.class), any(Optional.class)))
+        when(applicationInteractionService.directAllow(any(Application.class), eq(person), any(Optional.class)))
             .thenReturn(new Application());
 
         perform(post("/web/application")
@@ -779,7 +779,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(post("/web/application")
             .param("vacationType.category", "HOLIDAY")
-            .param("vacationType.requiresApproval", "true"));
+            .param("vacationType.requiresApprovalToApply", "true"));
 
         verify(applicationInteractionService).apply(any(), eq(person), any());
     }
@@ -793,7 +793,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(post("/web/application")
             .param("vacationType.category", "HOLIDAY")
-            .param("vacationType.requiresApproval", "false"));
+            .param("vacationType.requiresApprovalToApply", "false"));
 
         verify(applicationInteractionService).directAllow(any(), eq(person), any());
     }
@@ -809,7 +809,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         perform(post("/web/application")
             .param("vacationType.category", "HOLIDAY")
-            .param("vacationType.requiresApproval", "true"))
+            .param("vacationType.requiresApprovalToApply", "true"))
             .andExpect(flash().attribute("applySuccess", true))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + applicationId));
@@ -1617,7 +1617,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
     private Application someApplication() {
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true, YELLOW, false);
+        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true, true, YELLOW, false);
 
         final Application application = new Application();
         application.setVacationType(convert(holidayType));

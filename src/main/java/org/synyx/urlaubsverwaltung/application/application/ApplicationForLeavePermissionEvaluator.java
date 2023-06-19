@@ -33,9 +33,9 @@ class ApplicationForLeavePermissionEvaluator {
             && (signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson);
     }
 
-    static boolean isAllowedToRevokeApplication(Application application, Person signedInUser, boolean requiresApproval) {
+    static boolean isAllowedToRevokeApplication(Application application, Person signedInUser, boolean requiresApprovalToCancel) {
         return application.hasStatus(WAITING)
-            && requiresApproval
+            && requiresApprovalToCancel
             && (application.getPerson().equals(signedInUser) || signedInUser.hasRole(OFFICE));
     }
 
@@ -44,15 +44,15 @@ class ApplicationForLeavePermissionEvaluator {
             && (signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL)));
     }
 
-    static boolean isAllowedToCancelDirectlyApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson, boolean requiresApproval) {
+    static boolean isAllowedToCancelDirectlyApplication(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson, boolean requiresApprovalToCancel) {
         return (application.hasStatus(WAITING) || application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
-            && !requiresApproval
+            && !requiresApprovalToCancel
             && (application.getPerson().equals(signedInUser) || signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL)));
     }
 
-    static boolean isAllowedToStartCancellationRequest(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson, boolean requiresApproval) {
+    static boolean isAllowedToStartCancellationRequest(Application application, Person signedInUser, boolean isDepartmentHeadOfPerson, boolean isSecondStageAuthorityOfPerson, boolean requiresApprovalToCancel) {
         return (application.hasStatus(ALLOWED) || application.hasStatus(TEMPORARY_ALLOWED) || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
-            && requiresApproval
+            && requiresApprovalToCancel
             && !(signedInUser.hasRole(OFFICE) || ((signedInUser.hasRole(BOSS) || isDepartmentHeadOfPerson || isSecondStageAuthorityOfPerson) && signedInUser.hasRole(APPLICATION_CANCEL)));
     }
 
