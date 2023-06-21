@@ -144,7 +144,8 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(savedSickNote, SickNoteCommentAction.CANCELLED, canceller);
 
-        sickNoteMailService.sendCancelToColleagues(sickNote);
+        sickNoteMailService.sendCancelledToApplicant(savedSickNote);
+        sickNoteMailService.sendCancelToColleagues(savedSickNote);
 
         final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(savedSickNote.getId(), SICKNOTE);
         if (absenceMapping.isPresent()) {
@@ -152,7 +153,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
             absenceMappingService.delete(absenceMapping.get());
         }
 
-        applicationEventPublisher.publishEvent(SickNoteCancelledEvent.of(sickNote));
+        applicationEventPublisher.publishEvent(SickNoteCancelledEvent.of(savedSickNote));
         return savedSickNote;
     }
 

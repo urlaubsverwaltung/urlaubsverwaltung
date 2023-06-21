@@ -38,6 +38,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
@@ -81,6 +82,7 @@ final class PersonNotificationsMapper {
 
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteCreatedByManagement(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT);
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteEditedByManagement(), NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT);
+        addIfActive(mailNotifications, personNotificationsDto.getSickNoteEditedByManagement(), NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT);
 
         return mailNotifications;
     }
@@ -109,6 +111,7 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT, personNotificationsDto::setOvertimeAppliedByManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT, personNotificationsDto::setSickNoteCreatedByManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT, personNotificationsDto::setSickNoteEditedByManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT, personNotificationsDto::setSickNoteCancelledByManagement);
 
         // department notifications
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, personNotificationsDto::setApplicationAppliedForManagement);
@@ -156,7 +159,8 @@ final class PersonNotificationsMapper {
             personNotificationsDto.getOvertimeAppliedByManagement(),
             personNotificationsDto.getOvertimeApplied(),
             personNotificationsDto.getSickNoteCreatedByManagement(),
-            personNotificationsDto.getSickNoteEditedByManagement()
+            personNotificationsDto.getSickNoteEditedByManagement(),
+            personNotificationsDto.getSickNoteCancelledByManagement()
         );
 
         final List<PersonNotificationDtoDepartmentAware> visiblePersonal = dtoPersonalNotifications.stream()

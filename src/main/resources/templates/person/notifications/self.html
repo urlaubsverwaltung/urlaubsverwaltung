@@ -88,6 +88,9 @@
               <li
                 th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteEditedByManagement.visible},active=${personNotificationsDto.sickNoteEditedByManagement.active},name='sickNoteEditedByManagement.active',label='person.notifications.section.sicknote.edited.label',info='person.notifications.section.sicknote.edited.info')}"
               ></li>
+              <li
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteCancelledByManagement.visible},active=${personNotificationsDto.sickNoteCancelledByManagement.active},name='sickNoteCancelledByManagement.active',label='person.notifications.section.sicknote.cancelled.label',info='person.notifications.section.sicknote.cancelled.info')}"
+              ></li>
             </ul>
           </section>
           <section>

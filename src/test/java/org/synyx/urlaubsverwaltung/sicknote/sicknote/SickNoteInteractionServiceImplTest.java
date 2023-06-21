@@ -307,6 +307,7 @@ class SickNoteInteractionServiceImplTest {
 
         sut.cancel(sickNote, canceller);
 
+        verify(sickNoteMailService).sendCancelledToApplicant(sickNote);
         verify(sickNoteMailService).sendCancelToColleagues(sickNote);
     }
 

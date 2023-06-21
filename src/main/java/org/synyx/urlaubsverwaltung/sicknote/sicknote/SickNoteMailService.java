@@ -20,6 +20,7 @@ import java.util.Map;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
@@ -142,6 +143,21 @@ class SickNoteMailService {
             .withTemplate("sick_note_edited_by_management_to_applicant", Map.of("sickNote", sickNote))
             .build();
         mailService.send(mailToApplicant);
+    }
+
+    /**
+     * Sends information about a cancelled sick note to the applicant
+     *
+     * @param sickNote that has been created
+     */
+    @Async
+    void sendCancelledToApplicant(SickNote sickNote) {
+        final Mail mailToRelevantColleagues = Mail.builder()
+            .withRecipient(sickNote.getPerson(),NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT)
+            .withSubject("subject.sicknote.cancelled.to_applicant_by_management")
+            .withTemplate("sick_note_cancelled_by_management_to_applicant", Map.of("sickNote", sickNote))
+            .build();
+        mailService.send(mailToRelevantColleagues);
     }
 
     /**
