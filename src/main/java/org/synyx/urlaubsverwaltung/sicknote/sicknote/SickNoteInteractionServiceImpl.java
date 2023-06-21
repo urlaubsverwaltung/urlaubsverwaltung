@@ -76,9 +76,9 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     public SickNote create(SickNote sickNote, Person applier, String comment) {
 
         final SickNote updatedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(ACTIVE).build());
+        LOG.info("Created sick note: {}", updatedSickNote);
 
         commentService.create(updatedSickNote, SickNoteCommentAction.CREATED, applier, comment);
-        LOG.info("Created sick note: {}", updatedSickNote);
 
         sickNoteMailService.sendCreatedToApplicant(updatedSickNote);
         sickNoteMailService.sendCreatedToColleagues(updatedSickNote);
@@ -97,9 +97,12 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         LOG.info("Updated sick note: {}", updatedSickNote);
 
         commentService.create(updatedSickNote, EDITED, editor, comment);
+
+        sickNoteMailService.sendEditedToApplicant(updatedSickNote);
+
         updateAbsence(updatedSickNote);
 
-        applicationEventPublisher.publishEvent(SickNoteUpdatedEvent.of(sickNote));
+        applicationEventPublisher.publishEvent(SickNoteUpdatedEvent.of(updatedSickNote));
 
         return updatedSickNote;
     }

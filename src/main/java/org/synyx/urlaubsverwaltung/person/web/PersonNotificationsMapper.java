@@ -41,6 +41,7 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
 
 final class PersonNotificationsMapper {
 
@@ -79,6 +80,7 @@ final class PersonNotificationsMapper {
         addIfActive(mailNotifications, personNotificationsDto.getAbsenceForColleagues(), notificationEmailAbsenceColleagues);
 
         addIfActive(mailNotifications, personNotificationsDto.getSickNoteCreatedByManagement(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT);
+        addIfActive(mailNotifications, personNotificationsDto.getSickNoteEditedByManagement(), NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT);
 
         return mailNotifications;
     }
@@ -106,6 +108,7 @@ final class PersonNotificationsMapper {
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED, personNotificationsDto::setOvertimeApplied);
         setterByNotification.put(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT, personNotificationsDto::setOvertimeAppliedByManagement);
         setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT, personNotificationsDto::setSickNoteCreatedByManagement);
+        setterByNotification.put(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT, personNotificationsDto::setSickNoteEditedByManagement);
 
         // department notifications
         setterByNotification.put(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED, personNotificationsDto::setApplicationAppliedForManagement);
@@ -152,7 +155,8 @@ final class PersonNotificationsMapper {
             personNotificationsDto.getHolidayReplacementUpcoming(),
             personNotificationsDto.getOvertimeAppliedByManagement(),
             personNotificationsDto.getOvertimeApplied(),
-            personNotificationsDto.getSickNoteCreatedByManagement()
+            personNotificationsDto.getSickNoteCreatedByManagement(),
+            personNotificationsDto.getSickNoteEditedByManagement()
         );
 
         final List<PersonNotificationDtoDepartmentAware> visiblePersonal = dtoPersonalNotifications.stream()

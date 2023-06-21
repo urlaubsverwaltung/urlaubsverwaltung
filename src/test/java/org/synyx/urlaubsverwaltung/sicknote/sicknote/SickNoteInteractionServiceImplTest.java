@@ -224,6 +224,8 @@ class SickNoteInteractionServiceImplTest {
         assertThat(sickNoteUpdatedEvent.getSickNote()).isEqualTo(sickNote);
         assertThat(sickNoteUpdatedEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
         assertThat(sickNoteUpdatedEvent.getId()).isNotNull();
+
+        verify(sickNoteMailService).sendEditedToApplicant(sickNote);
     }
 
     @Test
