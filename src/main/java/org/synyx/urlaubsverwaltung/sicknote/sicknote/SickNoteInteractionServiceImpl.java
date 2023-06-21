@@ -113,7 +113,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
         // make sick note inactive
         final SickNote convertedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CONVERTED_TO_VACATION).build());
 
-        commentService.create(sickNote, SickNoteCommentAction.CONVERTED_TO_VACATION, converter);
+        commentService.create(convertedSickNote, SickNoteCommentAction.CONVERTED_TO_VACATION, converter);
         applicationInteractionService.createFromConvertedSickNote(application, converter);
         LOG.info("Converted sick note to vacation: {}", convertedSickNote);
 
