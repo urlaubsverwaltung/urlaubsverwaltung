@@ -75,19 +75,19 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     @Override
     public SickNote create(SickNote sickNote, Person applier, String comment) {
 
-        final SickNote updatedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(ACTIVE).build());
-        LOG.info("Created sick note: {}", updatedSickNote);
+        final SickNote createdSickNote = sickNoteService.save(SickNote.builder(sickNote).status(ACTIVE).build());
+        LOG.info("Created sick note: {}", createdSickNote);
 
-        commentService.create(updatedSickNote, SickNoteCommentAction.CREATED, applier, comment);
+        commentService.create(createdSickNote, SickNoteCommentAction.CREATED, applier, comment);
 
-        sickNoteMailService.sendCreatedToApplicant(updatedSickNote);
-        sickNoteMailService.sendCreatedToColleagues(updatedSickNote);
+        sickNoteMailService.sendCreatedToApplicant(createdSickNote);
+        sickNoteMailService.sendCreatedToColleagues(createdSickNote);
 
-        updateCalendar(updatedSickNote);
+        updateCalendar(createdSickNote);
 
-        applicationEventPublisher.publishEvent(SickNoteCreatedEvent.of(updatedSickNote));
+        applicationEventPublisher.publishEvent(SickNoteCreatedEvent.of(createdSickNote));
 
-        return updatedSickNote;
+        return createdSickNote;
     }
 
     @Override
@@ -111,14 +111,14 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
     public SickNote convert(SickNote sickNote, Application application, Person converter) {
 
         // make sick note inactive
-        final SickNote updatedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CONVERTED_TO_VACATION).build());
+        final SickNote convertedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CONVERTED_TO_VACATION).build());
 
         commentService.create(sickNote, SickNoteCommentAction.CONVERTED_TO_VACATION, converter);
         applicationInteractionService.createFromConvertedSickNote(application, converter);
-        LOG.info("Converted sick note to vacation: {}", updatedSickNote);
+        LOG.info("Converted sick note to vacation: {}", convertedSickNote);
 
         if (calendarSyncService.isRealProviderConfigured()) {
-            final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(updatedSickNote.getId(), SICKNOTE);
+            final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(convertedSickNote.getId(), SICKNOTE);
             if (absenceMapping.isPresent()) {
                 final String eventId = absenceMapping.get().getEventId();
                 final TimeSettings timeSettings = getTimeSettings();
@@ -133,28 +133,28 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         applicationEventPublisher.publishEvent(SickNoteToApplicationConvertedEvent.of(sickNote, application));
 
-        return updatedSickNote;
+        return convertedSickNote;
     }
 
     @Override
     public SickNote cancel(SickNote sickNote, Person canceller) {
 
-        final SickNote savedSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CANCELLED).build());
-        LOG.info("Cancelled sick note: {}", savedSickNote);
+        final SickNote cancelledSickNote = sickNoteService.save(SickNote.builder(sickNote).status(CANCELLED).build());
+        LOG.info("Cancelled sick note: {}", cancelledSickNote);
 
-        commentService.create(savedSickNote, SickNoteCommentAction.CANCELLED, canceller);
+        commentService.create(cancelledSickNote, SickNoteCommentAction.CANCELLED, canceller);
 
-        sickNoteMailService.sendCancelledToApplicant(savedSickNote);
-        sickNoteMailService.sendCancelToColleagues(savedSickNote);
+        sickNoteMailService.sendCancelledToApplicant(cancelledSickNote);
+        sickNoteMailService.sendCancelToColleagues(cancelledSickNote);
 
-        final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(savedSickNote.getId(), SICKNOTE);
+        final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(cancelledSickNote.getId(), SICKNOTE);
         if (absenceMapping.isPresent()) {
             calendarSyncService.deleteAbsence(absenceMapping.get().getEventId());
             absenceMappingService.delete(absenceMapping.get());
         }
 
-        applicationEventPublisher.publishEvent(SickNoteCancelledEvent.of(savedSickNote));
-        return savedSickNote;
+        applicationEventPublisher.publishEvent(SickNoteCancelledEvent.of(cancelledSickNote));
+        return cancelledSickNote;
     }
 
     /**
