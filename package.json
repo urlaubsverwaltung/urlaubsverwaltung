@@ -36,7 +36,7 @@
     "@babel/polyfill": "7.12.1",
     "@duetds/date-picker": "1.4.0",
     "@hotwired/turbo": "7.3.0",
-    "@ungap/custom-elements": "1.2.0",
+    "@ungap/custom-elements": "1.2.1",
     "bootstrap": "3.4.1",
     "datalist-polyfill": "1.25.1",
     "font-awesome": "4.7.0",
