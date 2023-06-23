@@ -46,6 +46,11 @@ public class FrameDataProvider implements HandlerInterceptor {
     @Override
     public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, ModelAndView modelAndView) {
 
+        if (modelAndView != null && Objects.equals(modelAndView.getViewName(), "error")) {
+            modelAndView.addObject("doNotShowNavigation", true);
+            return;
+        }
+
         if (modelAndView != null && menuIsShown(modelAndView)) {
 
             final Person signedInUserInModel = (Person) modelAndView.getModelMap().get("signedInUser");

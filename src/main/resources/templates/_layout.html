@@ -122,7 +122,9 @@
     <th:block th:replace="${scripts}"></th:block>
   </head>
   <body th:fragment="body(content, scripts)">
-    <nav th:replace="_navigation::nav">navigation block</nav>
+    <th:block th:if="${doNotShowNavigation == null || #bools.isFalse(doNotShowNavigation)}">
+      <nav th:replace="_navigation::nav">navigation block</nav>
+    </th:block>
 
     <main th:replace="${content}">content block</main>
 
