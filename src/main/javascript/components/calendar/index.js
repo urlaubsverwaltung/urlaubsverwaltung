@@ -494,7 +494,7 @@ const View = (function () {
 
   // eslint-disable-next-line unicorn/consistent-function-scoping
   function render(tmpl, data) {
-    return tmpl.replace(/{{(\w+)}}/g, function (_, type) {
+    return tmpl.replaceAll(/{{(\w+)}}/g, function (_, type) {
       if (typeof data === "function") {
         return data.apply(this, arguments);
       }
