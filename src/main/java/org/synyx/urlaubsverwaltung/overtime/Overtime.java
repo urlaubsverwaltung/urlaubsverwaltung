@@ -109,6 +109,35 @@ public class Overtime {
 
         return DecimalConverter.toDuration(secondsProRata);
     }
+
+    private List<DateRange> splitByYear() {
+        List<DateRange> dateRangesByYear = new ArrayList<>();
+
+        LocalDate currentStartDate = startDate;
+        LocalDate currentEndDate = startDate.withDayOfYear(1).plusYears(1).minusDays(1);
+
+        while (currentEndDate.isBefore(endDate) || currentEndDate.isEqual(endDate)) {
+            dateRangesByYear.add(new DateRange(currentStartDate, currentEndDate));
+
+            currentStartDate = currentEndDate.plusDays(1);
+            currentEndDate = currentStartDate.withDayOfYear(1).plusYears(1).minusDays(1);
+        }
+
+        // Add the remaining date range if endDate is not on a year boundary
+        if (currentStartDate.isBefore(endDate)) {
+            dateRangesByYear.add(new DateRange(currentStartDate, endDate));
+        }
+
+        return dateRangesByYear;
+    }
+
+
+    public Map<Integer, Duration> getDurationByYear() {
+        return this.splitByYear().stream().collect(Collectors.toMap(
+                dateRangeForYear -> dateRangeForYear.getStartDate().getYear(),
+                this::getDurationForDateRange));
+    }
+
     public void setPerson(Person person) {
         this.person = person;
     }
