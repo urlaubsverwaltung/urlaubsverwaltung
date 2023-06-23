@@ -189,7 +189,7 @@ class OvertimeServiceImpl implements OvertimeService {
         return overtimeRepository.findByPersonIsInAndStartDateIsLessThanEqual(persons, until).stream()
             .map(overtime -> {
                 final DateRange requestedDateRange = new DateRange(overtime.getStartDate(), until);
-                final Duration overtimeDurationForDateRange = getOvertimeDurationForDateRange(overtime, requestedDateRange);
+                final Duration overtimeDurationForDateRange = overtime.getDurationForDateRange(requestedDateRange);
                 return Map.entry(overtime.getPerson(), overtimeDurationForDateRange);
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
@@ -199,23 +199,10 @@ class OvertimeServiceImpl implements OvertimeService {
         final DateRange requestedDateRange = new DateRange(start, end);
         return overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, start, end).stream()
             .map(overtime -> {
-                final Duration overtimeDurationForDateRange = getOvertimeDurationForDateRange(overtime, requestedDateRange);
+                final Duration overtimeDurationForDateRange = overtime.getDurationForDateRange(requestedDateRange);
                 return Map.entry(overtime.getPerson(), overtimeDurationForDateRange);
             })
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
-    }
-
-    private Duration getOvertimeDurationForDateRange(Overtime overtime, DateRange dateRange) {
-        final DateRange overtimeDateRange = new DateRange(overtime.getStartDate(), overtime.getEndDate());
-        final Duration durationOfOverlap = overtimeDateRange.overlap(dateRange).map(DateRange::duration).orElse(ZERO);
-
-        final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
-        final BigDecimal secondsProRata = toFormattedDecimal(overtime.getDuration())
-            .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
-            .multiply(toFormattedDecimal(durationOfOverlap))
-            .setScale(0, HALF_EVEN);
-
-        return DecimalConverter.toDuration(secondsProRata);
     }
 
     private Map<Person, OvertimeReduction> getOvertimeReduction(Map<Person, List<Application>> overtimeApplicationsByPerson, LocalDate start, LocalDate end) {
