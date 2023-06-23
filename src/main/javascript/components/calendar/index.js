@@ -710,7 +710,7 @@ const View = (function () {
 
       elements[0]?.remove();
 
-      const lastMonthElement = elements[elements.length - 1];
+      const lastMonthElement = elements.at(-1);
       const month = Number(lastMonthElement.dataset[DATA.month]);
       const year = Number(lastMonthElement.dataset[DATA.year]);
 
@@ -725,7 +725,7 @@ const View = (function () {
     displayPrevious: function () {
       const elements = [...rootElement.querySelectorAll("." + CSS.month)];
 
-      elements[elements.length - 1]?.remove();
+      elements.at(-1)?.remove();
 
       const firstMonthElement = elements[0];
       const month = Number(firstMonthElement.dataset[DATA.month]);
