@@ -31,7 +31,7 @@ final class OvertimeListMapper {
         final List<OvertimeListRecordDto> allOvertimes = orderedOvertimesAndAbsences(overtimeAbsences, overtimes, signedInUser, isUserIsAllowedToEditOvertime);
         for (OvertimeListRecordDto overtimeEntry : allOvertimes) {
             sum = sum.plus(overtimeEntry.getDuration());
-            overtimeListRecordDtos.add(new OvertimeListRecordDto(overtimeEntry, sum));
+            overtimeListRecordDtos.add(new OvertimeListRecordDto(overtimeEntry, sum, overtimeEntry.getDurationByYear()));
         }
 
         reverse(overtimeListRecordDtos);
@@ -52,6 +52,7 @@ final class OvertimeListMapper {
                 application.getStartDate(),
                 application.getEndDate(),
                 application.getHours().negated(),
+                application.getHoursByYear(),
                 Duration.ZERO,
                 application.getStatus().name(),
                 application.getVacationType().getColor().name(),
@@ -67,6 +68,7 @@ final class OvertimeListMapper {
                 overtime.getStartDate(),
                 overtime.getEndDate(),
                 overtime.getDuration(),
+                overtime.getDurationByYear(),
                 Duration.ZERO,
                 "",
                 "",

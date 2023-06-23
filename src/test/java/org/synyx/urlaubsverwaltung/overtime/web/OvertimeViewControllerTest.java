@@ -227,11 +227,11 @@ class OvertimeViewControllerTest {
             .thenReturn(List.of(applicationNonEditable, applicationEditable));
 
         final OvertimeListRecordDto overtimeRecord = new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(),
-            overtime.getEndDate(), overtime.getDuration(), Duration.ofHours(10), "", "", "OVERTIME", true);
+            overtime.getEndDate(), overtime.getDuration(), overtime.getDurationByYear(), Duration.ofHours(10), "", "", "OVERTIME", true);
         final OvertimeListRecordDto absenceRecordNonEditable = new OvertimeListRecordDto(overtime.getId(), applicationNonEditable.getStartDate(),
-            applicationNonEditable.getEndDate(), Duration.ofHours(-8), Duration.ofHours(-6), "WAITING", "ORANGE", "ABSENCE", false);
+            applicationNonEditable.getEndDate(), Duration.ofHours(-8), null, Duration.ofHours(-6), "WAITING", "ORANGE", "ABSENCE", false);
         final OvertimeListRecordDto absenceRecordEditable = new OvertimeListRecordDto(overtime.getId(), applicationNonEditable.getStartDate().minusDays(1),
-            applicationNonEditable.getEndDate().minusDays(1), Duration.ofHours(-8), Duration.ofHours(2), "WAITING", "ORANGE", "ABSENCE", true);
+            applicationNonEditable.getEndDate().minusDays(1), Duration.ofHours(-8), null, Duration.ofHours(2), "WAITING", "ORANGE", "ABSENCE", true);
 
 
         perform(get("/web/overtime").param("person", "5"))
@@ -275,7 +275,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
         final OvertimeListRecordDto listRecordDto = new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(),
-            overtime.getEndDate(), overtime.getDuration(), Duration.ofHours(20), "", "", "OVERTIME", true);
+            overtime.getEndDate(), overtime.getDuration(), overtime.getDurationByYear(), Duration.ofHours(20), "", "", "OVERTIME", true);
 
         perform(get("/web/overtime")
             .param("person", "5")
