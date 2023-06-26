@@ -25,26 +25,25 @@
             <h1 th:text="#{departments.title}">Abwesenheitsstatistik</h1>
           </th:block>
           <th:block th:ref="department-list-heading-actions">
-            <a
-              th:if="${canCreateAndModifyDepartment}"
-              th:href="@{/web/department/new}"
-              class="icon-link tw-px-1"
-              th:data-title="#{action.department.create}"
-            >
-              <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
-              <span class="tw-sr-only" th:text="#{action.department.create}"></span>
-            </a>
-
-            <a
-              th:href="@{/web/absences}"
-              class="icon-link tw-px-1"
-              th:data-title="#{action.applications.absences_overview}"
-            >
-              <svg th:replace="icon/calendar::svg(className='tw-w-5 tw-h-5')"></svg>
-              <span class="tw-sr-only" th:text="#{action.applications.absences_overview}"></span>
-            </a>
-
-            <button th:replace="fragments/print::button"></button>
+            <div class="tw-flex tw-flex-col sm:tw-flex-row">
+              <a
+                th:if="${canCreateAndModifyDepartment}"
+                th:href="@{/web/department/new}"
+                class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                th:data-title="#{action.department.create}"
+              >
+                <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                <span th:text="#{action.department.create}"></span>
+              </a>
+              <a
+                th:href="@{/web/absences}"
+                class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
+              >
+                <svg th:replace="icon/calendar::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                <span th:text="#{action.applications.absences_overview}"></span>
+              </a>
+              <button th:replace="fragments/print::button"></button>
+            </div>
           </th:block>
         </div>
 
