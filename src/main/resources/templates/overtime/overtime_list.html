@@ -22,10 +22,9 @@
             th:if="${userIsAllowedToWriteOvertime}"
             th:href="@{/web/overtime/new?person=__${person.id}__}"
             class="icon-link tw-px-1"
-            th:data-title="#{action.overtime.new}"
           >
-            <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
-            <span th:text="#{action.overtime.new}" class="tw-sr-only"></span>
+            <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+            <span th:text="#{action.overtime.new}"></span>
           </a>
         </th:block>
       </div>

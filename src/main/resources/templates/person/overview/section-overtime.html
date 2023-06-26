@@ -5,44 +5,42 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <div class="print:tw-hidden">
-        <div
-          th:replace="fragments/section-heading::section-heading(~{::overtime-heading-body}, ~{::overtime-heading-actions})"
-        >
-          <th:block th:ref="overtime-heading-body">
-            <h2 id="overtime" th:text="#{overtime.title}">Überstunden</h2>
-          </th:block>
-          <th:block th:ref="overtime-heading-actions">
-            <div class="tw-flex tw-flex-col sm:tw-flex-row">
-              <a
-                th:if="${userIsAllowedToWriteOvertime}"
-                class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
-                href="#"
-                th:href="@{/web/overtime/new (person=${person.id})}"
-              >
-                <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
-                <span th:text="#{action.overtime.new}"></span>
-              </a>
-              <a
-                class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
-                href="#"
-                th:href="@{/web/overtime (person=${person.id}, year=${displayYear})}"
-              >
-                <svg th:replace="icon/briefcase::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
-                <span th:text="#{action.overtime.list}"></span>
-              </a>
-            </div>
-          </th:block>
-        </div>
+      <div
+        th:replace="fragments/section-heading::section-heading(~{::overtime-heading-body}, ~{::overtime-heading-actions})"
+      >
+        <th:block th:ref="overtime-heading-body">
+          <h2 id="overtime" th:text="#{overtime.title}">Überstunden</h2>
+        </th:block>
+        <th:block th:ref="overtime-heading-actions">
+          <div class="tw-flex tw-flex-col sm:tw-flex-row">
+            <a
+              th:if="${userIsAllowedToWriteOvertime}"
+              class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+              href="#"
+              th:href="@{/web/overtime/new (person=${person.id})}"
+            >
+              <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+              <span th:text="#{action.overtime.new}"></span>
+            </a>
+            <a
+              class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
+              href="#"
+              th:href="@{/web/overtime (person=${person.id}, year=${displayYear})}"
+            >
+              <svg th:replace="icon/briefcase::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+              <span th:text="#{action.overtime.list}"></span>
+            </a>
+          </div>
+        </th:block>
+      </div>
 
-        <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
-          <div class="tw-w-full lg:tw-w-1/3"></div>
-          <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
-            <div th:replace="overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})"></div>
-          </div>
-          <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
-            <div th:replace="overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})"></div>
-          </div>
+      <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
+        <div class="tw-w-full lg:tw-w-1/3"></div>
+        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+          <div th:replace="overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})"></div>
+        </div>
+        <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
+          <div th:replace="overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})"></div>
         </div>
       </div>
     </th:block>
