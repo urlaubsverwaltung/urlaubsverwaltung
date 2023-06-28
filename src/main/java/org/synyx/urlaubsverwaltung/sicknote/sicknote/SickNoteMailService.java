@@ -101,7 +101,7 @@ class SickNoteMailService {
      * @param sickNote that has been created
      */
     @Async
-    void sendCreatedToApplicant(SickNote sickNote) {
+    void sendCreatedSickPerson(SickNote sickNote) {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.created.to_applicant_by_management")
@@ -136,7 +136,7 @@ class SickNoteMailService {
      * @param sickNote that has been created
      */
     @Async
-    void sendEditedToApplicant(SickNote sickNote) {
+    void sendEditedToSickPerson(SickNote sickNote) {
         final Mail mailToApplicant = Mail.builder()
             .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.edited.to_applicant_by_management")
@@ -151,7 +151,7 @@ class SickNoteMailService {
      * @param sickNote that has been created
      */
     @Async
-    void sendCancelledToApplicant(SickNote sickNote) {
+    void sendCancelledToSickPerson(SickNote sickNote) {
         final Mail mailToRelevantColleagues = Mail.builder()
             .withRecipient(sickNote.getPerson(),NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.cancelled.to_applicant_by_management")

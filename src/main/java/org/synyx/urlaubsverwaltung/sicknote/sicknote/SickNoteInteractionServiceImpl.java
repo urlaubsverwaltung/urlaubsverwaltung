@@ -80,7 +80,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(createdSickNote, SickNoteCommentAction.CREATED, applier, comment);
 
-        sickNoteMailService.sendCreatedToApplicant(createdSickNote);
+        sickNoteMailService.sendCreatedSickPerson(createdSickNote);
         sickNoteMailService.sendCreatedToColleagues(createdSickNote);
 
         updateCalendar(createdSickNote);
@@ -98,7 +98,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(updatedSickNote, EDITED, editor, comment);
 
-        sickNoteMailService.sendEditedToApplicant(updatedSickNote);
+        sickNoteMailService.sendEditedToSickPerson(updatedSickNote);
 
         updateAbsence(updatedSickNote);
 
@@ -144,7 +144,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
 
         commentService.create(cancelledSickNote, SickNoteCommentAction.CANCELLED, canceller);
 
-        sickNoteMailService.sendCancelledToApplicant(cancelledSickNote);
+        sickNoteMailService.sendCancelledToSickPerson(cancelledSickNote);
         sickNoteMailService.sendCancelToColleagues(cancelledSickNote);
 
         final Optional<AbsenceMapping> absenceMapping = absenceMappingService.getAbsenceByIdAndType(cancelledSickNote.getId(), SICKNOTE);

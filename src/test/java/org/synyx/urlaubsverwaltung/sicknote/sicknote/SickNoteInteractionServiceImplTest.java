@@ -183,7 +183,7 @@ class SickNoteInteractionServiceImplTest {
 
         sut.create(sickNote, creator);
 
-        verify(sickNoteMailService).sendCreatedToApplicant(sickNote);
+        verify(sickNoteMailService).sendCreatedSickPerson(sickNote);
         verify(sickNoteMailService).sendCreatedToColleagues(sickNote);
     }
 
@@ -225,7 +225,7 @@ class SickNoteInteractionServiceImplTest {
         assertThat(sickNoteUpdatedEvent.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
         assertThat(sickNoteUpdatedEvent.getId()).isNotNull();
 
-        verify(sickNoteMailService).sendEditedToApplicant(sickNote);
+        verify(sickNoteMailService).sendEditedToSickPerson(sickNote);
     }
 
     @Test
@@ -307,7 +307,7 @@ class SickNoteInteractionServiceImplTest {
 
         sut.cancel(sickNote, canceller);
 
-        verify(sickNoteMailService).sendCancelledToApplicant(sickNote);
+        verify(sickNoteMailService).sendCancelledToSickPerson(sickNote);
         verify(sickNoteMailService).sendCancelToColleagues(sickNote);
     }
 

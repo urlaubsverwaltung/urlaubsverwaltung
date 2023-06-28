@@ -150,7 +150,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
             .sickNoteType(sickNoteTypeChild)
             .build();
 
-        sut.sendCreatedToApplicant(sickNote);
+        sut.sendCreatedSickPerson(sickNote);
 
         // check email of colleague
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -194,7 +194,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
             .sickNoteType(sickNoteTypeChild)
             .build();
 
-        sut.sendEditedToApplicant(sickNote);
+        sut.sendEditedToSickPerson(sickNote);
 
         // check email of colleague
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
@@ -276,7 +276,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
             .sickNoteType(sickNoteTypeChild)
             .build();
 
-        sut.sendCancelledToApplicant(sickNote);
+        sut.sendCancelledToSickPerson(sickNote);
 
         // check email of colleague
         final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());

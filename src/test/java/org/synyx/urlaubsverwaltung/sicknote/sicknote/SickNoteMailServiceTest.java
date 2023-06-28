@@ -161,7 +161,7 @@ class SickNoteMailServiceTest {
             .endDate(LocalDate.of(2022, 4, 20))
             .build();
 
-        sut.sendCreatedToApplicant(sickNote);
+        sut.sendCreatedSickPerson(sickNote);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
@@ -222,7 +222,7 @@ class SickNoteMailServiceTest {
             .endDate(LocalDate.of(2022, 4, 20))
             .build();
 
-        sut.sendEditedToApplicant(sickNote);
+        sut.sendEditedToSickPerson(sickNote);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
@@ -253,7 +253,7 @@ class SickNoteMailServiceTest {
             .endDate(LocalDate.of(2022, 4, 20))
             .build();
 
-        sut.sendCancelledToApplicant(sickNote);
+        sut.sendCancelledToSickPerson(sickNote);
 
         final ArgumentCaptor<Mail> argument = ArgumentCaptor.forClass(Mail.class);
         verify(mailService).send(argument.capture());
