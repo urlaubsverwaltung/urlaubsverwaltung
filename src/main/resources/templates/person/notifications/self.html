@@ -83,13 +83,7 @@
             </h2>
             <ul class="list-selectable tw-list-none tw-m-0 tw-p-0">
               <li
-                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteCreatedByManagement.visible},active=${personNotificationsDto.sickNoteCreatedByManagement.active},name='sickNoteCreatedByManagement.active',label='person.notifications.section.sicknote.created.label',info='person.notifications.section.sicknote.created.info')}"
-              ></li>
-              <li
-                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteEditedByManagement.visible},active=${personNotificationsDto.sickNoteEditedByManagement.active},name='sickNoteEditedByManagement.active',label='person.notifications.section.sicknote.edited.label',info='person.notifications.section.sicknote.edited.info')}"
-              ></li>
-              <li
-                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteCancelledByManagement.visible},active=${personNotificationsDto.sickNoteCancelledByManagement.active},name='sickNoteCancelledByManagement.active',label='person.notifications.section.sicknote.cancelled.label',info='person.notifications.section.sicknote.cancelled.info')}"
+                th:replace="~{person/notifications/notification-card::list-item-card(visible=${personNotificationsDto.sickNoteCreatedEditedCancelledByManagement.visible},active=${personNotificationsDto.sickNoteCreatedEditedCancelledByManagement.active},name='sickNoteCreatedEditedCancelledByManagement.active',label='person.notifications.section.sicknote.createdEditedCancelled.label',info='person.notifications.section.sicknote.createdEditedCancelled.info')}"
               ></li>
             </ul>
           </section>
