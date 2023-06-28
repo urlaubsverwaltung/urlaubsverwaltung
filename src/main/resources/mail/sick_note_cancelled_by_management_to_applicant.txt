@@ -1,0 +1,13 @@
+[(#{greeting(${recipient.niceName})})],
+
+[(#{sick_note.cancelled.by_management_to_applicant(${sickNote.applier.niceName})})]
+
+    [(${baseLinkURL})]web/sicknote/[(${sickNote.id})]
+
+[(#{sick_note.information.title})]
+
+    [(${rightPadder.rightPad('__#{sick_note.information.period}__',__#{sick_note.information.max_length}__)})] [(${#temporals.format(sickNote.startDate, 'dd.MM.yyyy')})] [(#{until})] [(${#temporals.format(sickNote.endDate, 'dd.MM.yyyy')})], [(#{__${sickNote.dayLength.name}__})]
+    [(${rightPadder.rightPad('__#{sick_note.information.type}__',__#{sick_note.information.max_length}__)})] [(#{__${sickNote.sickNoteType.messageKey}__})]
+
+
+[(#{notification.description(|${baseLinkURL}web/person/${recipient.id}/notifications|)})]

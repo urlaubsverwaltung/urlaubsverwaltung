@@ -13,6 +13,7 @@ import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.sicknote.sicknotetype.SickNoteType;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -24,10 +25,14 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT;
+import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
 @SpringBootTest(properties = {"spring.mail.port=3025", "spring.mail.host=localhost"})
 @Transactional
@@ -125,6 +130,94 @@ class SickNoteMailServiceIT extends TestContainersBase {
     }
 
     @Test
+    void sendSickNoteCreatedByManagementToSickPerson() throws MessagingException, IOException {
+
+        final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT), List.of(USER));
+
+        final Person management = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
+        final SickNoteType sickNoteTypeChild = new SickNoteType();
+        sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
+        sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1)
+            .person(person)
+            .applier(management)
+            .startDate(LocalDate.of(2022, 2, 1))
+            .endDate(LocalDate.of(2022, 4, 1))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
+
+        sut.sendCreatedSickPerson(sickNote);
+
+        // check email of colleague
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxPerson).hasSize(1);
+
+        final Message msgPerson = inboxPerson[0];
+        assertThat(msgPerson.getSubject()).isEqualTo("Eine neue Krankmeldung wurde für dich eingetragen");
+        assertThat(msgPerson.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Lieschen Müller hat eine neue Krankmeldung für dich eintragen:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/sicknote/1" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Krankmeldung:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Krankmeldung: Kind-Krankmeldung" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + person.getId() + "/notifications anpassen.");
+    }
+
+    @Test
+    void sendSickNoteEditedByManagementToSickPerson() throws MessagingException, IOException {
+
+        final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT), List.of(USER));
+
+        final Person management = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
+        final SickNoteType sickNoteTypeChild = new SickNoteType();
+        sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
+        sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1)
+            .person(person)
+            .applier(management)
+            .startDate(LocalDate.of(2022, 2, 1))
+            .endDate(LocalDate.of(2022, 4, 1))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
+
+        sut.sendEditedToSickPerson(sickNote);
+
+        // check email of colleague
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxPerson).hasSize(1);
+
+        final Message msgPerson = inboxPerson[0];
+        assertThat(msgPerson.getSubject()).isEqualTo("Eine Krankmeldung wurde für dich bearbeitet");
+        assertThat(msgPerson.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Lieschen Müller hat die folgende Krankmeldung für dich bearbeitet:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/sicknote/1" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Krankmeldung:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Krankmeldung: Kind-Krankmeldung" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + person.getId() + "/notifications anpassen.");
+    }
+
+    @Test
     void sendSickNoteCreatedToColleagues() throws MessagingException, IOException {
 
         final Person colleague = personService.create("colleague", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED), List.of(USER));
@@ -162,6 +255,49 @@ class SickNoteMailServiceIT extends TestContainersBase {
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + colleague.getId() + "/notifications anpassen.");
     }
 
+    @Test
+    void sendSickNoteCancelledByManagementToSickPerson() throws MessagingException, IOException {
+
+        final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT), List.of(USER));
+
+        final Person management = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
+
+        final SickNoteType sickNoteTypeChild = new SickNoteType();
+        sickNoteTypeChild.setCategory(SICK_NOTE_CHILD);
+        sickNoteTypeChild.setMessageKey("application.data.sicknotetype.sicknotechild");
+
+        final SickNote sickNote = SickNote.builder()
+            .id(1)
+            .person(person)
+            .applier(management)
+            .startDate(LocalDate.of(2022, 2, 1))
+            .endDate(LocalDate.of(2022, 4, 1))
+            .dayLength(DayLength.FULL)
+            .sickNoteType(sickNoteTypeChild)
+            .build();
+
+        sut.sendCancelledToSickPerson(sickNote);
+
+        // check email of colleague
+        final MimeMessage[] inboxPerson = greenMail.getReceivedMessagesForDomain(person.getEmail());
+        assertThat(inboxPerson).hasSize(1);
+
+        final Message msgPerson = inboxPerson[0];
+        assertThat(msgPerson.getSubject()).isEqualTo("Eine Krankmeldung wurde für dich storniert");
+        assertThat(msgPerson.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Lieschen Müller hat die folgende Krankmeldung für dich storniert:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    https://localhost:8080/web/sicknote/1" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Informationen zur Krankmeldung:" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "    Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
+            "    Art der Krankmeldung: Kind-Krankmeldung" + EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            EMAIL_LINE_BREAK +
+            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + person.getId() + "/notifications anpassen.");
+    }
 
     @Test
     void sendSickNoteCancelToColleagues() throws MessagingException, IOException {
