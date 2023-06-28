@@ -142,7 +142,7 @@ class SickNoteMailServiceTest {
     }
 
     @Test
-    void ensureSendSickNoteCreatedByManagementToApplicant() {
+    void ensureSendSickNoteCreatedByManagementToSickPerson() {
 
         final Person management = new Person("muster", "Muster", "Marlene", "muster@example.org");
         management.setId(1);
@@ -203,7 +203,7 @@ class SickNoteMailServiceTest {
     }
 
     @Test
-    void ensureSendSickNoteEditedByManagementToApplicant() {
+    void ensureSendSickNoteEditedByManagementToSickPerson() {
 
         final Person management = new Person("muster", "Muster", "Marlene", "muster@example.org");
         management.setId(1);
@@ -234,7 +234,7 @@ class SickNoteMailServiceTest {
     }
 
     @Test
-    void ensureSendSickNoteCancelledByManagementToApplicant() {
+    void ensureSendSickNoteCancelledByManagementToSickPerson() {
 
         final Person management = new Person("muster", "Muster", "Marlene", "muster@example.org");
         management.setId(1);

@@ -130,7 +130,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void sendSickNoteCreatedByManagementToApplicant() throws MessagingException, IOException {
+    void sendSickNoteCreatedByManagementToSickPerson() throws MessagingException, IOException {
 
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT), List.of(USER));
 
@@ -174,7 +174,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void sendSickNoteEditedByManagementToApplicant() throws MessagingException, IOException {
+    void sendSickNoteEditedByManagementToSickPerson() throws MessagingException, IOException {
 
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT), List.of(USER));
 
@@ -256,7 +256,7 @@ class SickNoteMailServiceIT extends TestContainersBase {
     }
 
     @Test
-    void sendSickNoteCancelledByManagementToApplicant() throws MessagingException, IOException {
+    void sendSickNoteCancelledByManagementToSickPerson() throws MessagingException, IOException {
 
         final Person person = personService.create("person", "Marlene", "Muster", "colleague@example.org", List.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT), List.of(USER));
 
