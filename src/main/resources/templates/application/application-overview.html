@@ -26,26 +26,26 @@
         th:replace="~{fragments/section-heading::section-heading-paddingless(~{::user-applications-heading-body}, ~{::user-applications-heading-actions})}"
       >
         <th:block th:ref="user-applications-heading-actions">
-          <a
-            href="#"
-            th:href="@{/web/absences}"
-            class="icon-link tw-px-1"
-            th:data-title="#{action.applications.absences_overview}"
-          >
-            <svg th:replace="~{icon/calendar::svg(className='tw-w-5 tw-h-5')}"></svg>
-            <span class="tw-sr-only" th:text="#{action.applications.absences_overview}"></span>
-          </a>
-          <a
-            href="#"
-            th:href="@{/web/application/statistics}"
-            class="icon-link tw-px-1"
-            th:data-title="#{action.applications.statistics}"
-            th:if="${canAccessApplicationStatistics}"
-          >
-            <svg th:replace="~{icon/presentation-chart-bar::svg(className='tw-w-5 tw-h-5')}"></svg>
-            <span class="tw-sr-only" th:text="#{action.applications.statistics}"></span>
-          </a>
-          <button th:replace="fragments/print::button"></button>
+          <div class="tw-flex tw-flex-col sm:tw-flex-row">
+            <a
+              href="#"
+              th:href="@{/web/absences}"
+              class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+            >
+              <svg th:replace="~{icon/calendar::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+              <span th:text="#{action.applications.absences_overview}"></span>
+            </a>
+            <a
+              href="#"
+              th:href="@{/web/application/statistics}"
+              class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
+              th:if="${canAccessApplicationStatistics}"
+            >
+              <svg th:replace="~{icon/presentation-chart-bar::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+              <span th:text="#{action.applications.statistics}"></span>
+            </a>
+            <button th:replace="fragments/print::button"></button>
+          </div>
         </th:block>
         <th:block th:ref="user-applications-heading-body">
           <ul
