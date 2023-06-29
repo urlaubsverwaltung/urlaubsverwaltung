@@ -30,7 +30,6 @@
                 th:if="${canCreateAndModifyDepartment}"
                 th:href="@{/web/department/new}"
                 class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
-                th:data-title="#{action.department.create}"
               >
                 <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
                 <span th:text="#{action.department.create}"></span>

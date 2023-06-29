@@ -29,7 +29,6 @@
                   th:if="${userIsAllowedToWriteOvertime}"
                   th:href="@{/web/overtime/__${record.id}__/edit}"
                   class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
-                  th:data-title="#{action.edit}"
                 >
                   <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
@@ -37,7 +36,6 @@
                 <a
                   th:href="@{/web/overtime?person=__${record.person.id}__}"
                   class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
-                  th:data-title="#{action.overtime.list}"
                   aria-hidden="true"
                 >
                   <svg th:replace="icon/clock::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
