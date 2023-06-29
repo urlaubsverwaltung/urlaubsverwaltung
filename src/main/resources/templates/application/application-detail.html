@@ -33,14 +33,16 @@
           th:replace="fragments/section-heading::section-heading(~{::applications-details-heading-body}, ~{::applications-details-heading-actions})"
         >
           <th:block th:ref="applications-details-heading-actions">
-            <th:block th:include="application/app-sections/action-allow::button"></th:block>
-            <th:block th:include="application/app-sections/action-reject::button"></th:block>
-            <th:block th:include="application/app-sections/action-edit::button"></th:block>
-            <th:block th:include="application/app-sections/action-cancel::button"></th:block>
-            <th:block th:include="application/app-sections/action-decline-cancellation-request::button"></th:block>
-            <th:block th:include="application/app-sections/action-remind::button"></th:block>
-            <th:block th:include="application/app-sections/action-refer::button"></th:block>
-            <button th:replace="fragments/print::button"></button>
+            <div class="tw-flex tw-flex-row">
+              <th:block th:include="application/app-sections/action-allow::button"></th:block>
+              <th:block th:include="application/app-sections/action-reject::button"></th:block>
+              <th:block th:include="application/app-sections/action-edit::button"></th:block>
+              <th:block th:include="application/app-sections/action-cancel::button"></th:block>
+              <th:block th:include="application/app-sections/action-decline-cancellation-request::button"></th:block>
+              <th:block th:include="application/app-sections/action-remind::button"></th:block>
+              <th:block th:include="application/app-sections/action-refer::button"></th:block>
+              <button th:replace="fragments/print::button"></button>
+            </div>
           </th:block>
           <th:block th:ref="applications-details-heading-body">
             <h1 th:text="#{application.data.title}"></h1>

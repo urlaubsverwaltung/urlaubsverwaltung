@@ -8,8 +8,7 @@
     <th:block th:fragment="button">
       <button
         th:if="${isAllowedToRevokeApplication || isAllowedToCancelApplication || isAllowedToCancelDirectlyApplication}"
-        class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-red-500"
-        th:data-title="#{action.delete}"
+        class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-red-500"
         onclick="document.querySelector('#reject')?.classList.add('tw-hidden');
         document.querySelector('#allow')?.classList.add('tw-hidden');
         document.querySelector('#refer')?.classList.add('tw-hidden');
@@ -22,12 +21,11 @@
 
       <button
         th:if="${isAllowedToStartCancellationRequest}"
-        class="icon-link tw-bg-transparent tw-px-1 tw-py-0 hover:tw-text-red-500"
-        th:data-title="#{action.delete.request}"
+        class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-red-500"
         onclick="document.querySelector('#reject')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.add('tw-hidden'); document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.remove('tw-hidden');"
       >
-        <svg th:replace="icon/trash-2::svg(className='tw-w-5 tw-h-5')"></svg>
-        <span class="tw-sr-only" th:text="#{action.delete.request}"></span>
+        <svg th:replace="icon/trash-2::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+        <span th:text="#{action.delete.request}"></span>
       </button>
     </th:block>
 
