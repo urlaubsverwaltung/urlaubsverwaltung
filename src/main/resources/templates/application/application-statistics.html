@@ -53,14 +53,12 @@
                 )"
               >
                 <th:block th:ref="download-dropdown-summary">
-                  <span class="text-link tw-flex" th:data-title="#{applications.export.button}">
-                    <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
-                  </span>
                   <span
-                    id="statistics-download-label"
-                    th:text="#{applications.export.button}"
-                    class="tw-sr-only"
-                  ></span>
+                    class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                  >
+                    <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                    <span id="statistics-download-label" th:text="#{applications.export.button}"></span>
+                  </span>
                 </th:block>
                 <th:block th:ref="download-dropdown-content">
                   <span class="tw-inline-block tw-mb-2 tw-font-bold" th:text="#{applications.statistics}"

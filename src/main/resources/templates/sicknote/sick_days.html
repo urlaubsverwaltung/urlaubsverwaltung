@@ -78,10 +78,12 @@
             )"
           >
             <th:block th:ref="download-dropdown-summary">
-              <span class="text-link" th:data-title="#{action.sicknotes.download}">
-                <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>
+              <span
+                class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+              >
+                <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                <span id="statistics-download-label" th:text="#{action.sicknotes.download}"></span>
               </span>
-              <span id="statistics-download-label" th:text="#{action.sicknotes.download}" class="tw-sr-only"></span>
             </th:block>
             <th:block th:ref="download-dropdown-content">
               <span class="tw-inline-block tw-mb-2 tw-font-bold" th:text="#{action.sicknotes.download.title}"

@@ -197,8 +197,8 @@
                   onclick="document.getElementById('comment-form').classList.remove('tw-hidden');"
                   th:data-title="#{action.comment.new}"
                 >
-                  <svg th:replace="icon/message-square::svg(className='tw-w-5 tw-h-5')"></svg>
-                  <span class="tw-sr-only" th:text="#{action.comment.new}"></span>
+                  <svg th:replace="icon/message-square::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                  <span th:text="#{action.comment.new}"></span>
                 </button>
               </th:block>
             </th:block>

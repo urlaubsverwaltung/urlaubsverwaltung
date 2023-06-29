@@ -104,7 +104,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(userPerson)))
-            .andExpect(model().attribute("canAddApplicationForAnotherUser", is(false)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(false)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(false)))
             .andExpect(model().attribute("userApplications", hasSize(2)))
@@ -182,7 +181,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(bossPerson)))
-            .andExpect(model().attribute("canAddApplicationForAnotherUser", is(true)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(false)))
             .andExpect(model().attribute("userApplications", hasSize(2)))
@@ -284,7 +282,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(bossPerson)))
-            .andExpect(model().attribute("canAddApplicationForAnotherUser", is(true)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
             .andExpect(model().attribute("userApplications", hasSize(2)))
@@ -383,7 +380,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(officePerson)))
-            .andExpect(model().attribute("canAddApplicationForAnotherUser", is(true)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
             .andExpect(model().attribute("userApplications", hasSize(1)))
@@ -482,7 +478,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(headPerson)))
-            .andExpect(model().attribute("canAddApplicationForAnotherUser", is(true)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(false)))
             .andExpect(model().attribute("userApplications", hasSize(2)))
@@ -579,7 +574,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(headPerson)))
-            .andExpect(model().attribute("canAddApplicationForAnotherUser", is(true)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
             .andExpect(model().attribute("userApplications", hasSize(2)))
@@ -670,7 +664,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(secondStagePerson)))
-            .andExpect(model().attribute("canAddApplicationForAnotherUser", is(true)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(false)))
             .andExpect(model().attribute("userApplications", hasSize(1)))
@@ -778,7 +771,6 @@ class ApplicationForLeaveViewControllerTest {
 
         perform(get("/web/application")).andExpect(status().isOk())
             .andExpect(model().attribute("signedInUser", is(secondStagePerson)))
-            .andExpect(model().attribute("canAddApplicationForAnotherUser", is(true)))
             .andExpect(model().attribute("canAccessApplicationStatistics", is(true)))
             .andExpect(model().attribute("canAccessCancellationRequests", is(true)))
             .andExpect(model().attribute("userApplications", hasSize(1)))
