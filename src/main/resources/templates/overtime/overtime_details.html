@@ -24,24 +24,26 @@
               <h2 th:text="#{overtime.title}"></h2>
             </th:block>
             <th:block th:fragment="overtime-details-heading-actions">
-              <a
-                th:if="${userIsAllowedToWriteOvertime}"
-                th:href="@{/web/overtime/__${record.id}__/edit}"
-                class="icon-link tw-px-1"
-                th:data-title="#{action.edit}"
-              >
-                <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5')"></svg>
-                <span th:text="#{action.edit}" class="tw-sr-only"></span>
-              </a>
-              <a
-                th:href="@{/web/overtime?person=__${record.person.id}__}"
-                class="icon-link tw-px-1"
-                th:data-title="#{action.overtime.list}"
-                aria-hidden="true"
-              >
-                <svg th:replace="icon/layout-grid::svg(className='tw-w-5 tw-h-5')"></svg>
-                <span th:text="#{action.overtime.list}" class="tw-sr-only"></span>
-              </a>
+              <div class="tw-flex tw-flex-col sm:tw-flex-row">
+                <a
+                  th:if="${userIsAllowedToWriteOvertime}"
+                  th:href="@{/web/overtime/__${record.id}__/edit}"
+                  class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+                  th:data-title="#{action.edit}"
+                >
+                  <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                  <span th:text="#{action.edit}"></span>
+                </a>
+                <a
+                  th:href="@{/web/overtime?person=__${record.person.id}__}"
+                  class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
+                  th:data-title="#{action.overtime.list}"
+                  aria-hidden="true"
+                >
+                  <svg th:replace="icon/clock::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                  <span th:text="#{action.overtime.list}"></span>
+                </a>
+              </div>
             </th:block>
           </div>
 
@@ -54,7 +56,7 @@
                   th:replace="fragments/rounded::block(content=~{::overtime-box-total-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')"
                 >
                   <th:block th:ref="overtime-box-total-icon-rounded">
-                    <svg th:replace="icon/briefcase::svg(className='tw-w-8 tw-h-8')" />
+                    <svg th:replace="icon/clock::svg(className='tw-w-8 tw-h-8')" />
                   </th:block>
                 </div>
               </th:block>
