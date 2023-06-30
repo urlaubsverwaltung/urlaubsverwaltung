@@ -131,7 +131,7 @@ class SickNoteInteractionServiceImpl implements SickNoteInteractionService {
             }
         }
 
-        applicationEventPublisher.publishEvent(SickNoteToApplicationConvertedEvent.of(updatedSickNote, application));
+        applicationEventPublisher.publishEvent(SickNoteToApplicationConvertedEvent.of(convertedSickNote, application));
 
         return convertedSickNote;
     }

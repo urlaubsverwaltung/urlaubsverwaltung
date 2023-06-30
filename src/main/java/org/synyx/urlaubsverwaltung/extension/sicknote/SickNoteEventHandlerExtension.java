@@ -27,6 +27,7 @@ import java.time.ZoneId;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -190,15 +191,31 @@ public class SickNoteEventHandlerExtension {
     }
 
     private Optional<AbsencePeriod> getAbsencePeriods(SickNote sickNote) {
-        return absenceService.getOpenAbsences(sickNote.getPerson(), sickNote.getStartDate(), sickNote.getEndDate())
-            .stream()
+        return absenceService.getOpenAbsences(sickNote.getPerson(), sickNote.getStartDate(), sickNote.getEndDate()).stream()
+            .filter(isFullOrSameDayLength(sickNote.getDayLength()))
             .findFirst();
     }
 
     private Optional<AbsencePeriod> getClosedAbsencePeriods(SickNote sickNote) {
-        return absenceService.getClosedAbsences(sickNote.getPerson(), sickNote.getStartDate(), sickNote.getEndDate())
-            .stream()
+        return absenceService.getClosedAbsences(sickNote.getPerson(), sickNote.getStartDate(), sickNote.getEndDate()).stream()
+            .filter(isFullOrSameDayLength(sickNote.getDayLength()))
             .findFirst();
+    }
+
+    private static Predicate<AbsencePeriod> isFullOrSameDayLength(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
+        return isFullDay(dayLength).or(isMorning(dayLength)).or(isNoon(dayLength));
+    }
+
+    private static Predicate<AbsencePeriod> isFullDay(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
+        return absencePeriod -> dayLength.isFull();
+    }
+
+    private static Predicate<AbsencePeriod> isMorning(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
+        return absencePeriod -> dayLength.isMorning() && absencePeriod.getAbsenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getMorning().isPresent());
+    }
+
+    private static Predicate<AbsencePeriod> isNoon(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
+        return absencePeriod -> dayLength.isNoon() && absencePeriod.getAbsenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getNoon().isPresent());
     }
 
 }

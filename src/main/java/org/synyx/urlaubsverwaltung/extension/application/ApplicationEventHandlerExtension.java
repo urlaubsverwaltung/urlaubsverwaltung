@@ -17,7 +17,6 @@ import org.synyx.urlaubsverwaltung.absence.AbsenceService;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationAllowedEvent;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationCancelledEvent;
-import org.synyx.urlaubsverwaltung.application.application.ApplicationDeletedEvent;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -27,6 +26,7 @@ import java.time.ZoneId;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Component
@@ -55,9 +55,6 @@ public class ApplicationEventHandlerExtension {
     }
 
     private static ApplicationPeriodDTO toPeriod(Application application) {
-        // TODO think about this:
-        //  an application can have a morning and an afternoon period
-        //  and a time period (e.g. 09:00 - 12:00)
         return ApplicationPeriodDTO.builder()
             .startDate(localDateToInstant(application.getStartDate()))
             .endDate(localDateToInstant(application.getEndDate()))
@@ -163,14 +160,30 @@ public class ApplicationEventHandlerExtension {
     }
 
     private Optional<AbsencePeriod> getAbsencePeriods(Application application) {
-        return absenceService.getOpenAbsences(application.getPerson(), application.getStartDate(), application.getEndDate())
-            .stream()
+        return absenceService.getOpenAbsences(application.getPerson(), application.getStartDate(), application.getEndDate()).stream()
+            .filter(isFullOrSameDayLength(application.getDayLength()))
             .findFirst();
     }
 
     private Optional<AbsencePeriod> getClosedAbsencePeriods(Application application) {
-        return absenceService.getClosedAbsences(application.getPerson(), application.getStartDate(), application.getEndDate())
-            .stream()
+        return absenceService.getClosedAbsences(application.getPerson(), application.getStartDate(), application.getEndDate()).stream()
+            .filter(isFullOrSameDayLength(application.getDayLength()))
             .findFirst();
+    }
+
+    private static Predicate<AbsencePeriod> isFullOrSameDayLength(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
+        return isFullDay(dayLength).or(isMorning(dayLength)).or(isNoon(dayLength));
+    }
+
+    private static Predicate<AbsencePeriod> isFullDay(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
+        return absencePeriod -> dayLength.isFull();
+    }
+
+    private static Predicate<AbsencePeriod> isMorning(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
+        return absencePeriod -> dayLength.isMorning() && absencePeriod.getAbsenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getMorning().isPresent());
+    }
+
+    private static Predicate<AbsencePeriod> isNoon(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
+        return absencePeriod -> dayLength.isNoon() && absencePeriod.getAbsenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getNoon().isPresent());
     }
 }

@@ -17,7 +17,6 @@ public interface AbsenceService {
      * @return list of all matching absences
      */
     List<AbsencePeriod> getOpenAbsences(Person person, LocalDate start, LocalDate end);
-    List<AbsencePeriod> getClosedAbsences(Person person, LocalDate start, LocalDate end);
 
     /**
      * Get all open absences for the given persons and date range.
@@ -29,6 +28,27 @@ public interface AbsenceService {
      * @return list of all matching absences
      */
     List<AbsencePeriod> getOpenAbsences(List<Person> persons, LocalDate start, LocalDate end);
+
+    /**
+     * Get all closed absences for the given person and date range.
+     * "Closed" means it has one of the status REJECTED, CANCELLED, REVOKED
+     *
+     * @param person {@link Person} to get the absences for
+     * @param start  start of the date range (inclusive)
+     * @param end    end of the date range (inclusive)
+     * @return list of all matching absences
+     */
+    List<AbsencePeriod> getClosedAbsences(Person person, LocalDate start, LocalDate end);
+
+    /**
+     * Get all closed absences for the given persons and date range.
+     * "closed" means it has one of the status REJECTED, CANCELLED, REVOKED
+     *
+     * @param persons list of {@link Person}s to get the absences for
+     * @param start   start of the date range (inclusive)
+     * @param end     end of the date range (inclusive)
+     * @return list of all matching absences
+     */
     List<AbsencePeriod> getClosedAbsences(List<Person> persons, LocalDate start, LocalDate end);
 
     /**
