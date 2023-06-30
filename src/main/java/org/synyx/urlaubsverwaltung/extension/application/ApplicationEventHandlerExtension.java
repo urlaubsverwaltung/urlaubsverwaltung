@@ -139,7 +139,8 @@ public class ApplicationEventHandlerExtension {
     private static VacationTypeDTO toVacationType(VacationTypeEntity vacationType) {
         return VacationTypeDTO.builder()
             .category(vacationType.getCategory().name())
-            .requiresApproval(vacationType.isRequiresApproval())
+            .requiresApprovalToApply(vacationType.isRequiresApprovalToApply())
+            .requiresApprovalToCancel(vacationType.isRequiresApprovalToCancel())
             .color(vacationType.getColor().name())
             .visibleToEveryone(vacationType.isVisibleToEveryone())
             .build();
