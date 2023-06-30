@@ -4,6 +4,7 @@ import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonCreatedEventD
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonDeletedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonDisabledEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.person.PersonUpdatedEventDTO;
+import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -21,11 +22,14 @@ import org.synyx.urlaubsverwaltung.person.PersonUpdatedEvent;
 @Component
 class PersonEventHandlerExtension {
 
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final TenantSupplier tenantSupplier;
     private final PersonService personService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    PersonEventHandlerExtension(PersonService personService,
+    PersonEventHandlerExtension(TenantSupplier tenantSupplier,
+                                PersonService personService,
                                 ApplicationEventPublisher applicationEventPublisher) {
+        this.tenantSupplier = tenantSupplier;
         this.personService = personService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
@@ -35,7 +39,7 @@ class PersonEventHandlerExtension {
     void on(PersonCreatedEvent event) {
         personService.getPersonByUsername(event.getUsername())
             .ifPresent(existing -> {
-                final PersonCreatedEventDTO eventToPublish = PersonCreatedEventDTO.create(existing.getId(), existing.getUsername(), existing.getLastName(), existing.getFirstName(), existing.getEmail(), existing.isActive());
+                final PersonCreatedEventDTO eventToPublish = PersonCreatedEventDTO.create(tenantSupplier.get(), existing.getId(), existing.getUsername(), existing.getLastName(), existing.getFirstName(), existing.getEmail(), existing.isActive());
                 applicationEventPublisher.publishEvent(eventToPublish);
             });
     }
@@ -45,7 +49,7 @@ class PersonEventHandlerExtension {
     void on(PersonUpdatedEvent event) {
         personService.getPersonByUsername(event.getUsername())
             .ifPresent(existing -> {
-                final PersonUpdatedEventDTO eventToPublish = PersonUpdatedEventDTO.create(existing.getId(), existing.getUsername(), existing.getLastName(), existing.getFirstName(), existing.getEmail(), existing.isActive());
+                final PersonUpdatedEventDTO eventToPublish = PersonUpdatedEventDTO.create(tenantSupplier.get(), existing.getId(), existing.getUsername(), existing.getLastName(), existing.getFirstName(), existing.getEmail(), existing.isActive());
                 applicationEventPublisher.publishEvent(eventToPublish);
             });
     }
@@ -55,7 +59,7 @@ class PersonEventHandlerExtension {
     void on(PersonDisabledEvent event) {
         personService.getPersonByUsername(event.getUsername())
             .ifPresent(existing -> {
-                final PersonDisabledEventDTO eventToPublish = PersonDisabledEventDTO.create(existing.getId(), existing.getUsername(), existing.getLastName(), existing.getFirstName(), existing.getEmail());
+                final PersonDisabledEventDTO eventToPublish = PersonDisabledEventDTO.create(tenantSupplier.get(), existing.getId(), existing.getUsername(), existing.getLastName(), existing.getFirstName(), existing.getEmail());
                 applicationEventPublisher.publishEvent(eventToPublish);
             });
     }
@@ -64,7 +68,7 @@ class PersonEventHandlerExtension {
     @EventListener
     void on(PersonDeletedEvent event) {
         final Person person = event.getPerson();
-        final PersonDeletedEventDTO eventToPublish = PersonDeletedEventDTO.create(person.getId(), person.getUsername(), person.getLastName(), person.getFirstName(), person.getEmail(), person.isActive());
+        final PersonDeletedEventDTO eventToPublish = PersonDeletedEventDTO.create(tenantSupplier.get(), person.getId(), person.getUsername(), person.getLastName(), person.getFirstName(), person.getEmail(), person.isActive());
         applicationEventPublisher.publishEvent(eventToPublish);
     }
 

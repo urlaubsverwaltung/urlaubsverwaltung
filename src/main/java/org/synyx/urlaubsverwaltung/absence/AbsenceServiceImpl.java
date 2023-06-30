@@ -27,9 +27,14 @@ import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REJECTED;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
+import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.CONVERTED_TO_VACATION;
+
 
 @Service
 public class AbsenceServiceImpl implements AbsenceService {
@@ -72,6 +77,29 @@ public class AbsenceServiceImpl implements AbsenceService {
 
         final List<SickNote> openSickNotes = sickNoteService.getForStatesAndPerson(SICK_NOTE_STATUSES, persons, start, end);
         final List<AbsencePeriod> sickNoteAbsences = generateAbsencePeriodFromSickNotes(openSickNotes, askedDateRange, workingTimeCalendarByPerson::get);
+
+        return Stream.concat(applicationAbsences.stream(), sickNoteAbsences.stream()).collect(toList());
+    }
+
+    @Override
+    public List<AbsencePeriod> getClosedAbsences(Person person, LocalDate start, LocalDate end) {
+        return getClosedAbsences(List.of(person), start, end);
+    }
+
+    @Override
+    public List<AbsencePeriod> getClosedAbsences(List<Person> persons, LocalDate start, LocalDate end) {
+
+        final DateRange askedDateRange = new DateRange(start, end);
+
+        final Map<Person, WorkingTimeCalendar> workingTimeCalendarByPerson = workingTimeCalendarService.getWorkingTimesByPersons(persons, askedDateRange);
+
+        List<ApplicationStatus> closedAppStatus = List.of(REJECTED, CANCELLED, REVOKED);
+        final List<Application> closedApplications = applicationService.getForStatesAndPerson(closedAppStatus, persons, start, end);
+        final List<AbsencePeriod> applicationAbsences = generateAbsencePeriodFromApplication(closedApplications, askedDateRange, workingTimeCalendarByPerson::get);
+
+        List<SickNoteStatus> closedSickNoteStatus = List.of(CONVERTED_TO_VACATION, SickNoteStatus.CANCELLED);
+        final List<SickNote> closedSickNotes = sickNoteService.getForStatesAndPerson(closedSickNoteStatus, persons, start, end);
+        final List<AbsencePeriod> sickNoteAbsences = generateAbsencePeriodFromSickNotes(closedSickNotes, askedDateRange, workingTimeCalendarByPerson::get);
 
         return Stream.concat(applicationAbsences.stream(), sickNoteAbsences.stream()).collect(toList());
     }
@@ -142,6 +170,12 @@ public class AbsenceServiceImpl implements AbsenceService {
                 return AbsencePeriod.AbsenceStatus.TEMPORARY_ALLOWED;
             case ALLOWED_CANCELLATION_REQUESTED:
                 return AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED;
+            case REVOKED:
+                return AbsencePeriod.AbsenceStatus.REVOKED;
+            case REJECTED:
+                return AbsencePeriod.AbsenceStatus.REJECTED;
+            case CANCELLED:
+                return AbsencePeriod.AbsenceStatus.CANCELLED;
             default:
                 throw new IllegalStateException("application status not expected here.");
         }
@@ -208,6 +242,19 @@ public class AbsenceServiceImpl implements AbsenceService {
         return new AbsencePeriod(days(sickNote, askedDateRange, workingTimeCalendarSupplier));
     }
 
+    private AbsencePeriod.AbsenceStatus toAbsenceStatus(SickNoteStatus sickNoteStatus) {
+        switch (sickNoteStatus) {
+            case ACTIVE:
+                return AbsencePeriod.AbsenceStatus.ACTIVE;
+            case CANCELLED:
+                return AbsencePeriod.AbsenceStatus.CANCELLED;
+            case CONVERTED_TO_VACATION:
+                return AbsencePeriod.AbsenceStatus.CONVERTED_TO_VACATION;
+            default:
+                throw new IllegalStateException("sick note status not expected here.");
+        }
+    }
+
     private List<AbsencePeriod.Record> days(SickNote sickNote, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
 
         final LocalDate start = maxDate(sickNote.getStartDate(), askedDateRange.getStartDate());
@@ -227,6 +274,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
         final Integer sickNoteId = sickNote.getId();
         final Person person = sickNote.getPerson();
+        final AbsencePeriod.AbsenceStatus status = toAbsenceStatus(sickNote.getStatus());
 
         final AbsencePeriod.RecordMorningSick morning;
         final AbsencePeriod.RecordNoonSick noon;
@@ -234,23 +282,23 @@ public class AbsenceServiceImpl implements AbsenceService {
         if (workingTimeDayLength.isHalfDay()) {
             if (workingTimeDayLength.isMorning()) {
                 morning = null;
-                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
+                noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status);
             } else {
-                morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
+                morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status);
                 noon = null;
             }
             return new AbsencePeriod.Record(date, person, morning, noon);
         }
 
         if (DayLength.MORNING.equals(sickNote.getDayLength())) {
-            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
+            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status);
             noon = null;
         } else if (DayLength.NOON.equals(sickNote.getDayLength())) {
             morning = null;
-            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
+            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status);
         } else {
-            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId);
-            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId);
+            morning = new AbsencePeriod.RecordMorningSick(person, sickNoteId, status);
+            noon = new AbsencePeriod.RecordNoonSick(person, sickNoteId, status);
         }
 
         return new AbsencePeriod.Record(date, person, morning, noon);

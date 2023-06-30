@@ -33,19 +33,17 @@ public enum ApplicationStatus {
     ALLOWED_CANCELLATION_REQUESTED,
 
     /**
-     * Status after a boss has rejected application for leave.
+     * If an application for leave has **not** been allowed yet and is revoked by the applicant, it gets this status.
+     */
+    REVOKED,
+
+    /**
+     * If an application for leave has **not** been allowed yet and the management has rejected the application, it gets this status.
      */
     REJECTED,
 
     /**
-     * If an application for leave has been allowed and is cancelled afterwards, it gets this status.
+     * If an application for leave has been allowed and is cancelled afterward, it gets this status.
      */
-    CANCELLED,
-
-    /**
-     * If an application for leave has **not** been allowed yet and is cancelled, it gets this status.
-     *
-     * @since 2.5.2
-     */
-    REVOKED
+    CANCELLED
 }

@@ -32,8 +32,13 @@ public class AbsencePeriod {
         TEMPORARY_ALLOWED,
         ALLOWED,
         ALLOWED_CANCELLATION_REQUESTED,
-        // sick note
+        REVOKED,
+        REJECTED,
+        // sick note,
         ACTIVE,
+        CONVERTED_TO_VACATION,
+        // sick notes and vacation
+        CANCELLED
     }
 
     private final List<AbsencePeriod.Record> absenceRecords;
@@ -275,8 +280,8 @@ public class AbsencePeriod {
     }
 
     public static class RecordMorningSick extends AbstractRecordInfo implements RecordMorning {
-        public RecordMorningSick(Person person, Integer sickNoteId) {
-            super(person, AbsenceType.SICK, sickNoteId, AbsenceStatus.ACTIVE);
+        public RecordMorningSick(Person person, Integer sickNoteId, AbsenceStatus status) {
+            super(person, AbsenceType.SICK, sickNoteId, status);
         }
     }
 
@@ -287,8 +292,8 @@ public class AbsencePeriod {
     }
 
     public static class RecordNoonSick extends AbstractRecordInfo implements RecordNoon {
-        public RecordNoonSick(Person person, Integer sickNoteId) {
-            super(person, AbsenceType.SICK, sickNoteId, AbsenceStatus.ACTIVE);
+        public RecordNoonSick(Person person, Integer sickNoteId, AbsenceStatus status) {
+            super(person, AbsenceType.SICK, sickNoteId, status);
         }
     }
 }
