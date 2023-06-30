@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.extension.application;
 
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationAllowedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationCancelledEventDTO;
-import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationDeletedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationPeriodDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationPersonDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.VacationTypeDTO;
@@ -135,32 +134,6 @@ public class ApplicationEventHandlerExtension {
         };
     }
 
-    private static Function<AbsencePeriod, ApplicationDeletedEventDTO> toApplicationDeletedEventDTO(String tenantId, ApplicationDeletedEvent event) {
-        return absencePeriod -> {
-            final ApplicationPersonDTO person = toApplicationPersonDTO(event.getApplication().getPerson());
-            final ApplicationPersonDTO appliedBy = toApplicationPersonDTO(event.getApplication().getApplier());
-            final ApplicationPeriodDTO period = toPeriod(event.getApplication());
-            final VacationTypeDTO vacationType = toVacationType(event.getApplication().getVacationType());
-            final String status = toStatus(event.getApplication());
-            final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
-
-            return ApplicationDeletedEventDTO.builder()
-                .id(event.getId())
-                .createdAt(event.getCreatedAt())
-                .tenantId(tenantId)
-                .person(person)
-                .appliedBy(appliedBy)
-                .twoStageApproval(event.getApplication().isTwoStageApproval())
-                .period(period)
-                .vacationType(vacationType)
-                .reason(event.getApplication().getReason())
-                .status(status)
-                .teamInformed(event.getApplication().isTeamInformed())
-                .absentWorkingDays(absentWorkingDays)
-                .build();
-        };
-    }
-
     private static VacationTypeDTO toVacationType(VacationTypeEntity vacationType) {
         return VacationTypeDTO.builder()
             .category(vacationType.getCategory().name())
@@ -183,16 +156,6 @@ public class ApplicationEventHandlerExtension {
     void on(ApplicationCancelledEvent event) {
         getClosedAbsencePeriods(event.getApplication())
             .map(toApplicationCancelledEventDTO(tenantSupplier.get(), event))
-            .ifPresent(applicationEventPublisher::publishEvent);
-    }
-
-    @EventListener
-    @Async
-    void on(ApplicationDeletedEvent event) {
-        // TODO think about this
-        //   when a person gets deleted - maybe use this event to delete related application stuff
-        getClosedAbsencePeriods(event.getApplication())
-            .map(toApplicationDeletedEventDTO(tenantSupplier.get(), event))
             .ifPresent(applicationEventPublisher::publishEvent);
     }
 
