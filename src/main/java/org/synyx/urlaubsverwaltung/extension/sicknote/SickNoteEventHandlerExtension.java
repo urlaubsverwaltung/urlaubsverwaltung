@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.extension.sicknote;
 
+import de.focus_shift.urlaubsverwaltung.extension.api.sicknote.DayLength;
 import de.focus_shift.urlaubsverwaltung.extension.api.sicknote.SickNoteCancelledEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.sicknote.SickNoteCreatedEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.sicknote.SickNotePeriodDTO;
@@ -58,6 +59,7 @@ public class SickNoteEventHandlerExtension {
         return SickNotePeriodDTO.builder()
             .startDate(localDateToInstant(sickNote.getStartDate()))
             .endDate(localDateToInstant(sickNote.getEndDate()))
+            .dayLength(DayLength.valueOf(sickNote.getDayLength().name()))
             .build();
     }
 

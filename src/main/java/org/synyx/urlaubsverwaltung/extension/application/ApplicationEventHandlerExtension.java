@@ -4,6 +4,7 @@ import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationAll
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationCancelledEventDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationPeriodDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.ApplicationPersonDTO;
+import de.focus_shift.urlaubsverwaltung.extension.api.application.DayLength;
 import de.focus_shift.urlaubsverwaltung.extension.api.application.VacationTypeDTO;
 import de.focus_shift.urlaubsverwaltung.extension.api.tenancy.TenantSupplier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -60,6 +61,7 @@ public class ApplicationEventHandlerExtension {
         return ApplicationPeriodDTO.builder()
             .startDate(localDateToInstant(application.getStartDate()))
             .endDate(localDateToInstant(application.getEndDate()))
+            .dayLength(DayLength.valueOf(application.getDayLength().name()))
             .build();
     }
 
