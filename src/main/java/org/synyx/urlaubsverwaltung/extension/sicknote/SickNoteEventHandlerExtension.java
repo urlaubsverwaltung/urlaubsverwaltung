@@ -176,17 +176,17 @@ public class SickNoteEventHandlerExtension {
             final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
 
             return SickNoteConvertedToApplicationEventDTO.builder()
-                    .id(event.getId())
-                    .createdAt(event.getCreatedAt())
-                    .tenantId(tenantId)
-                    .person(person)
-                    .applier(applier)
-                    .type(toSickNoteType(event.getSickNote()))
-                    .status(toStatus(event.getSickNote()))
-                    .period(period)
-                    .medicalCertificatePeriod(medicalCertificatePeriod)
-                    .absentWorkingDays(absentWorkingDays)
-                    .build();
+                .id(event.getId())
+                .createdAt(event.getCreatedAt())
+                .tenantId(tenantId)
+                .person(person)
+                .applier(applier)
+                .type(toSickNoteType(event.getSickNote()))
+                .status(toStatus(event.getSickNote()))
+                .period(period)
+                .medicalCertificatePeriod(medicalCertificatePeriod)
+                .absentWorkingDays(absentWorkingDays)
+                .build();
         };
     }
 
@@ -218,8 +218,8 @@ public class SickNoteEventHandlerExtension {
     @Async
     void on(SickNoteToApplicationConvertedEvent event) {
         getAbsencePeriods(event.getSickNote())
-                .map(toSickNoteConvertedEventDTO(tenantSupplier.get(), event))
-                .ifPresent(applicationEventPublisher::publishEvent);
+            .map(toSickNoteConvertedEventDTO(tenantSupplier.get(), event))
+            .ifPresent(applicationEventPublisher::publishEvent);
     }
 
     private Optional<AbsencePeriod> getAbsencePeriods(SickNote sickNote) {
@@ -249,5 +249,4 @@ public class SickNoteEventHandlerExtension {
     private static Predicate<AbsencePeriod> isNoon(org.synyx.urlaubsverwaltung.period.DayLength dayLength) {
         return absencePeriod -> dayLength.isNoon() && absencePeriod.getAbsenceRecords().stream().allMatch(absenceRecord -> absenceRecord.getNoon().isPresent());
     }
-
 }
