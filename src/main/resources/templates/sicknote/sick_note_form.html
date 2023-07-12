@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="_layout::head(~{::title}, ~{::styles}, ~{::scripts})">
     <title th:text="${sickNote.id == null} ? #{sicknote.create.header.title} : #{sicknote.edit.header.title}">
