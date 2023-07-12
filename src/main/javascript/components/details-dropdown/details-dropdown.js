@@ -28,11 +28,14 @@ class DetailsDropdown extends HTMLDetailsElement {
 
     const handleFocusOut = (event) => {
       if (event.target.tagName !== "SUMMARY") {
-        setTimeout(() => {
-          if (!this.matches(":focus-within") && (document.activeElement !== document.body || !contentClicked)) {
-            this.open = false;
-          }
-        }, Number(this.dataset.closeDelay ?? 0));
+        setTimeout(
+          () => {
+            if (!this.matches(":focus-within") && (document.activeElement !== document.body || !contentClicked)) {
+              this.open = false;
+            }
+          },
+          Number(this.dataset.closeDelay ?? 0),
+        );
       }
     };
 
