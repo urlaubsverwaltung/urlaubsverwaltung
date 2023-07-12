@@ -64,7 +64,7 @@
     "date-fns": "2.30.0",
     "eslint": "8.44.0",
     "eslint-config-prettier": "8.8.0",
-    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-prettier": "5.0.0",
     "eslint-plugin-unicorn": "47.0.0",
     "fetch-mock": "9.11.0",
     "file-loader": "6.2.0",
