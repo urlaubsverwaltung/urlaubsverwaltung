@@ -52,7 +52,9 @@
   opacity: 0;
   transform-origin: top left;
   @apply tw-scale-0;
-  transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+  transition:
+    opacity 150ms ease-in-out,
+    transform 150ms ease-in-out;
 }
 
 /* query detects safari. kudos: https://codepen.io/karlsson/pen/zYNYwNO */
