@@ -46,7 +46,7 @@
             <h1 th:text="#{applications.statistics}">Abwesenheitsstatistik</h1>
           </th:block>
           <th:block th:ref="absences-statistics-heading-actions">
-            <div class="tw-flex tw-items-center tw-gap-2">
+            <div class="tw-flex tw-flex-col sm:tw-flex-row">
               <div
                 th:replace="fragments/details-dropdown::details-dropdown(
                   summary=~{::download-dropdown-summary}, content=~{::download-dropdown-content}, closeDelay=1000, hideChevron=true, placement='right'
