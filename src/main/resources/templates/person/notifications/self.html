@@ -122,15 +122,11 @@
       </div>
 
       <noscript>
-        <div class="tw-mt-24 form-section tw-mb-16">
-          <hr />
-          <button th:text="#{action.save}" class="button-main-green col-xs-12 col-sm-5 col-md-2" type="submit"></button>
-          <button
-            th:text="#{action.cancel}"
-            type="button"
-            class="button col-xs-12 col-sm-5 col-md-2 pull-right"
-            data-back-button
-          ></button>
+        <hr class="tw-w-full tw-m-0 tw-mt-6" />
+
+        <div class="tw-mt-6 tw-flex tw-justify-between">
+          <button th:text="#{action.save}" class="button-main-green" type="submit"></button>
+          <button th:text="#{action.cancel}" type="button" class="button" data-back-button></button>
         </div>
       </noscript>
     </form>
