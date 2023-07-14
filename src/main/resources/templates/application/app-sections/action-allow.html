@@ -8,8 +8,7 @@
     <th:block th:fragment="button">
       <button
         th:if="${isAllowedToAllowTemporaryAllowedApplication}"
-        class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-emerald-500"
-        th:data-title="#{action.allow}"
+        class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-emerald-500"
         onclick="document.querySelector('#reject')?.classList.add('tw-hidden');
         document.querySelector('#refer')?.classList.add('tw-hidden');
         document.querySelector('#cancel')?.classList.add('tw-hidden');
@@ -23,8 +22,7 @@
       <button
         th:if="${isAllowedToAllowWaitingApplication}"
         th:with="messageKey=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval ? 'action.temporary_allow' : 'action.allow'}"
-        class="icon-link tw-bg-transparent tw-px-1 hover:tw-text-emerald-500"
-        th:data-title="#{__${messageKey}__}"
+        class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-emerald-500"
         onclick="document.querySelector('#reject')?.classList.add('tw-hidden'); document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.remove('tw-hidden');"
       >
         <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>

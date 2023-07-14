@@ -88,7 +88,6 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
         final Person signedInUser = personService.getSignedInUser();
         model.addAttribute("signedInUser", signedInUser);
 
-        model.addAttribute("canAddApplicationForAnotherUser", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
         model.addAttribute("canAccessApplicationStatistics", signedInUser.hasRole(OFFICE) || signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY));
         model.addAttribute("canAccessCancellationRequests", signedInUser.hasRole(OFFICE) || (signedInUser.hasRole(APPLICATION_CANCELLATION_REQUESTED) && (signedInUser.hasRole(BOSS) || signedInUser.hasRole(DEPARTMENT_HEAD) || signedInUser.hasRole(SECOND_STAGE_AUTHORITY))));
 

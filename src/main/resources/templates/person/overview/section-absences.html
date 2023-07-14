@@ -12,26 +12,26 @@
           <h2 id="vacation" th:text="#{applications.title}">Abwesenheiten</h2>
         </th:block>
         <th:block th:ref="absences-heading-actions">
-          <a
-            th:if="${person.id == signedInUser.id}"
-            class="icon-link tw-px-1"
-            href="#"
-            th:href="@{/web/application/new}"
-            th:data-title="#{action.apply.vacation}"
-          >
-            <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
-            <span class="tw-sr-only" th:text="#{action.apply.vacation}"></span>
-          </a>
-          <a
-            th:if="${person.id != signedInUser.id && canAddApplicationForLeaveForAnotherUser}"
-            class="icon-link tw-px-1"
-            href="#"
-            th:href="@{/web/application/new (personId=${person.id})}"
-            th:data-title="#{action.apply.vacation}"
-          >
-            <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
-            <span class="tw-sr-only" th:text="#{action.apply.vacation}"></span>
-          </a>
+          <div class="tw-flex tw-flex-col sm:tw-flex-row">
+            <a
+              th:if="${person.id == signedInUser.id}"
+              class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+              href="#"
+              th:href="@{/web/application/new}"
+            >
+              <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+              <span th:text="#{action.apply.vacation}"></span>
+            </a>
+            <a
+              th:if="${person.id != signedInUser.id && canAddApplicationForLeaveForAnotherUser}"
+              class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
+              href="#"
+              th:href="@{/web/application/new (personId=${person.id})}"
+            >
+              <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+              <span th:text="#{action.apply.vacation}"></span>
+            </a>
+          </div>
         </th:block>
       </div>
 

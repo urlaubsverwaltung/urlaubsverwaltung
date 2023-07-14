@@ -12,25 +12,25 @@
           <h2 id="overtime" th:text="#{overtime.title}">Überstunden</h2>
         </th:block>
         <th:block th:ref="overtime-heading-actions">
-          <a
-            th:if="${userIsAllowedToWriteOvertime}"
-            href="#"
-            th:href="@{/web/overtime/new (person=${person.id})}"
-            class="icon-link tw-px-1"
-            th:data-title="#{action.overtime.new}"
-          >
-            <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>
-            <span class="tw-sr-only" th:text="#{action.overtime.new}"></span>
-          </a>
-          <a
-            href="#"
-            th:href="@{/web/overtime (person=${person.id}, year=${displayYear})}"
-            class="icon-link tw-px-1"
-            th:data-title="#{action.overtime.list}"
-          >
-            <svg th:replace="icon/briefcase::svg(className='tw-w-5 tw-h-5')"></svg>
-            <span class="tw-sr-only" th:text="#{action.overtime.list}"></span>
-          </a>
+          <div class="tw-flex tw-flex-col sm:tw-flex-row">
+            <a
+              th:if="${userIsAllowedToWriteOvertime}"
+              class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
+              href="#"
+              th:href="@{/web/overtime/new (person=${person.id})}"
+            >
+              <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+              <span th:text="#{action.overtime.new}"></span>
+            </a>
+            <a
+              class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
+              href="#"
+              th:href="@{/web/overtime (person=${person.id}, year=${displayYear})}"
+            >
+              <svg th:replace="icon/clock::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+              <span th:text="#{action.overtime.list}"></span>
+            </a>
+          </div>
         </th:block>
       </div>
 

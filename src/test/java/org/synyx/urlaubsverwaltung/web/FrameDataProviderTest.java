@@ -98,7 +98,7 @@ class FrameDataProviderTest {
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
                     new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user"),
                     new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users")
@@ -136,7 +136,7 @@ class FrameDataProviderTest {
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
                     new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user"),
                     new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users")
@@ -174,7 +174,7 @@ class FrameDataProviderTest {
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
                     new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user"),
                     new NavigationItemDto("department-link", "/web/department", "nav.department.title", "users"),
@@ -213,7 +213,7 @@ class FrameDataProviderTest {
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
                     new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user")
                 );
@@ -250,7 +250,7 @@ class FrameDataProviderTest {
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
                     new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user")
                 );
@@ -287,7 +287,7 @@ class FrameDataProviderTest {
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
                     new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user")
                 );
@@ -324,7 +324,7 @@ class FrameDataProviderTest {
                     new NavigationItemDto("home-link", "/web/overview", "nav.home.title", "home"),
                     new NavigationItemDto("application-new-link", "/web/application/new", "nav.apply.title", "plus-circle"),
                     new NavigationItemDto("application-link", "/web/application", "nav.vacation.title", "calendar"),
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"),
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"),
                     new NavigationItemDto("sicknote-link", "/web/sickdays", "nav.sicknote.title", "medkit", "navigation-sick-notes-link"),
                     new NavigationItemDto("person-link", "/web/person", "nav.person.title", "user")
                 );
@@ -386,7 +386,7 @@ class FrameDataProviderTest {
             .satisfies(navigation -> {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements()).contains(
-                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase")
+                    new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock")
                 );
             });
 
@@ -415,7 +415,7 @@ class FrameDataProviderTest {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements())
                     .isNotEmpty()
-                    .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"));
+                    .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", false);
@@ -486,7 +486,7 @@ class FrameDataProviderTest {
                 final NavigationDto dto = (NavigationDto) navigation;
                 assertThat(dto.getElements())
                     .isNotEmpty()
-                    .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"));
+                    .doesNotContain(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
             });
 
         assertThat(modelAndView.getModelMap()).containsEntry("navigationOvertimeItemEnabled", false);

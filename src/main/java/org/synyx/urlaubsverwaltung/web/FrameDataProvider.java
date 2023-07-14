@@ -79,7 +79,7 @@ public class FrameDataProvider implements HandlerInterceptor {
 
         final boolean overtime = overtimeEnabled(user);
         if (overtime) {
-            elements.add(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "briefcase"));
+            elements.add(new NavigationItemDto("overtime-link", "/web/overtime", "nav.overtime.title", "clock"));
         }
 
         final boolean sickNote = user.hasRole(OFFICE) || user.hasRole(SICK_NOTE_VIEW);

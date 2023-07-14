@@ -8,8 +8,7 @@
     <th:block th:fragment="button">
       <button
         th:if="${isAllowedToRemindApplication}"
-        class="icon-link tw-bg-transparent tw-px-1 tw-py-0"
-        th:data-title="#{action.remind}"
+        class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
         onclick="$('form#remind').submit();"
       >
         <svg th:replace="icon/megaphone::svg(className='tw-w-5 tw-h-5')"></svg>

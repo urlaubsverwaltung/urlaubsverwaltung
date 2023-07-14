@@ -7,12 +7,11 @@
   <body>
     <button
       th:fragment="button"
-      class="tw-bg-transparent icon-link tw-px-1 tw-py-0 tw-hidden sm:tw-flex print:tw-hidden"
-      th:data-title="#{action.print}"
+      class="tw-ml-1 tw-pr-0 tw-bg-transparent icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row print:tw-hidden"
       onclick="window.print(); return false;"
     >
-      <svg th:replace="~{icon/printer::svg(className='tw-w-5 tw-h-5')}"></svg>
-      <span class="tw-sr-only" th:text="#{action.print}"></span>
+      <svg th:replace="~{icon/printer::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
+      <span th:text="#{action.print}"></span>
     </button>
   </body>
 </html>
