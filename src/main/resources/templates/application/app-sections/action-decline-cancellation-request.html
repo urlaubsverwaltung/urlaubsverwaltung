@@ -54,16 +54,12 @@
           </small>
         </div>
 
-        <div class="form-group is-sticky row">
-          <button
-            th:text="#{action.cancellationRequest}"
-            type="submit"
-            class="button-danger col-xs-12 col-sm-5"
-          ></button>
+        <div class="form-group tw-mb-0 tw-flex tw-justify-between tw-gap-4">
+          <button th:text="#{action.cancellationRequest}" type="submit" class="button-danger tw-w-56"></button>
           <button
             type="button"
             th:text="#{action.cancel}"
-            class="button col-xs-12 col-sm-5 pull-right"
+            class="button"
             onclick="document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden');"
           ></button>
         </div>
