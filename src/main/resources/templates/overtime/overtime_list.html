@@ -90,23 +90,21 @@
                   th:href="@{__${recordDetailsUrl}__}"
                 >
                 </a>
-                <th:block th:switch="${record.status}">
-                  <th:block th:case="WAITING">
-                    <svg th:replace="icon/help-circle::svg(className='tw-w-4 tw-h-4')"></svg>
-                  </th:block>
-                  <th:block th:case="ALLOWED">
-                    <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')"></svg>
-                  </th:block>
-                  <th:block th:case="TEMPORARY_ALLOWED">
-                    <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')"></svg>
-                  </th:block>
-                  <th:block th:case="ALLOWED_CANCELLATION_REQUESTED">
-                    <svg th:replace="icon/check-circle-2::svg(className='tw-w-4 tw-h-4')"></svg>
-                    <svg th:replace="icon/arrow-narrow-right::svg(className='tw-w-5 tw-h-5')"></svg>
-                    <svg th:replace="icon/trash-2::svg(className='tw-w-4 tw-h-4')"></svg>
-                  </th:block>
-                  <th:block th:case="*"> &nbsp; </th:block>
-                </th:block>
+                <span
+                  class="absence-type_color-box"
+                  th:classappend="|
+                  ${record.status == 'WAITING' ? 'absence-type_color-box-waiting' : ''}
+                  ${record.status == 'TEMPORARY_ALLOWED' ? 'absence-type_color-box-temporary-allowed' : ''}
+                  ${record.status == 'ALLOWED' ? 'absence-type_color-box-allowed' : ''}
+                  ${record.status == 'ALLOWED_CANCELLATION_REQUESTED' ? 'absence-type_color-box-cancellation-requested' : ''}
+                  ${record.status == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
+                  ${record.status == 'REJECTED' || record.status == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
+                  |"
+                  th:styleappend="|${'--absence-bar-color:var(--absence-color-' + record.color + ');'}|"
+                  th:title="${#messages.msg(record.status)}"
+                >
+                  &nbsp;
+                </span>
               </th:block>
               <p>
                 <th:block th:replace="fragments/date-range(from=${record.startDate}, to=${record.endDate})" />
