@@ -98,7 +98,7 @@ public class SickNoteEventHandlerExtension {
     private static Function<AbsencePeriod, SickNoteCancelledEventDTO> toSickNoteCancelledEventDTO(String tenantId, SickNoteCancelledEvent event) {
         return absencePeriod -> {
             final SickNotePersonDTO person = toSickNotePersonDTO(event.getSickNote().getPerson());
-            final SickNotePersonDTO applier = toSickNotePersonDTO(event.getSickNote().getApplier());
+            final SickNotePersonDTO applier = event.getSickNote().getApplier() != null ? toSickNotePersonDTO(event.getSickNote().getApplier()) : null;
             final SickNotePeriodDTO period = toPeriod(event.getSickNote());
             final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.getSickNote());
             final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
@@ -123,7 +123,7 @@ public class SickNoteEventHandlerExtension {
     private static Function<AbsencePeriod, SickNoteCreatedEventDTO> toSickNoteCreatedEventDTO(String tenantId, SickNoteCreatedEvent event) {
         return absencePeriod -> {
             final SickNotePersonDTO person = toSickNotePersonDTO(event.getSickNote().getPerson());
-            final SickNotePersonDTO applier = toSickNotePersonDTO(event.getSickNote().getApplier());
+            final SickNotePersonDTO applier = event.getSickNote().getApplier() != null ? toSickNotePersonDTO(event.getSickNote().getApplier()) : null;
             final SickNotePeriodDTO period = toPeriod(event.getSickNote());
             final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.getSickNote());
             final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
@@ -148,7 +148,7 @@ public class SickNoteEventHandlerExtension {
     private static Function<AbsencePeriod, SickNoteUpdatedEventDTO> toSickNoteUpdatedEventDTO(String tenantId, SickNoteUpdatedEvent event) {
         return absencePeriod -> {
             final SickNotePersonDTO person = toSickNotePersonDTO(event.getSickNote().getPerson());
-            final SickNotePersonDTO applier = toSickNotePersonDTO(event.getSickNote().getApplier());
+            final SickNotePersonDTO applier = event.getSickNote().getApplier() != null ? toSickNotePersonDTO(event.getSickNote().getApplier()) : null;
             final SickNotePeriodDTO period = toPeriod(event.getSickNote());
             final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.getSickNote());
             final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
@@ -173,7 +173,7 @@ public class SickNoteEventHandlerExtension {
     private static Function<AbsencePeriod, SickNoteConvertedToApplicationEventDTO> toSickNoteConvertedEventDTO(String tenantId, SickNoteToApplicationConvertedEvent event) {
         return absencePeriod -> {
             final SickNotePersonDTO person = toSickNotePersonDTO(event.getSickNote().getPerson());
-            final SickNotePersonDTO applier = toSickNotePersonDTO(event.getSickNote().getApplier());
+            final SickNotePersonDTO applier = event.getSickNote().getApplier() != null ? toSickNotePersonDTO(event.getSickNote().getApplier()) : null;
             final SickNotePeriodDTO period = toPeriod(event.getSickNote());
             final SickNotePeriodDTO medicalCertificatePeriod = toMedicalCertificatePeriod(event.getSickNote());
             final Set<LocalDate> absentWorkingDays = toAbsentWorkingDays(absencePeriod);
