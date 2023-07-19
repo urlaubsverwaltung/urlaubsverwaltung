@@ -25,7 +25,7 @@
         onclick="document.querySelector('#reject')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.add('tw-hidden'); document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.remove('tw-hidden');"
       >
         <svg th:replace="icon/trash-2::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
-        <span th:text="#{action.delete.request}"></span>
+        <span class="tw-sr-only" th:text="#{action.delete.request}"></span>
       </button>
     </th:block>
 
