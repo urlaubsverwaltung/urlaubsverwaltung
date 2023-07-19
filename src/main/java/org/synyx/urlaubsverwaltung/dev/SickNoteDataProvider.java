@@ -36,6 +36,7 @@ class SickNoteDataProvider {
 
             SickNote.Builder builder = SickNote.builder()
                     .person(person)
+                    .applier(office)
                     .startDate(startDate)
                     .endDate(endDate)
                     .status(ACTIVE)
