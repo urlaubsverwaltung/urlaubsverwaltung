@@ -82,7 +82,7 @@ public class ApplicationEventHandlerExtension {
     private static Function<AbsencePeriod, ApplicationCreatedFromSickNoteEventDTO> toApplicationCreatedFromSickNoteEventDTO(String tenantId, ApplicationCreatedFromSickNoteEvent event) {
         return absencePeriod -> {
             final ApplicationPersonDTO person = toApplicationPersonDTO(event.getApplication().getPerson());
-            final ApplicationPersonDTO appliedBy = toApplicationPersonDTO(event.getApplication().getApplier());
+            final ApplicationPersonDTO appliedBy = event.getApplication().getApplier() != null ? toApplicationPersonDTO(event.getApplication().getApplier()) : null;
             final ApplicationPeriodDTO period = toPeriod(event.getApplication());
             final VacationTypeDTO vacationType = toVacationType(event.getApplication().getVacationType());
             final String status = toStatus(event.getApplication());
@@ -108,8 +108,8 @@ public class ApplicationEventHandlerExtension {
     private static Function<AbsencePeriod, ApplicationAllowedEventDTO> toApplicationAllowedEventDTO(String tenantId, ApplicationAllowedEvent event) {
         return absencePeriod -> {
             final ApplicationPersonDTO person = toApplicationPersonDTO(event.getApplication().getPerson());
-            final ApplicationPersonDTO appliedBy = toApplicationPersonDTO(event.getApplication().getApplier());
-            final ApplicationPersonDTO allowedBy = toApplicationPersonDTO(event.getApplication().getBoss());
+            final ApplicationPersonDTO appliedBy = event.getApplication().getApplier() != null ? toApplicationPersonDTO(event.getApplication().getApplier()) : null;
+            final ApplicationPersonDTO allowedBy = event.getApplication().getBoss() != null ? toApplicationPersonDTO(event.getApplication().getBoss()) : null;
             final ApplicationPeriodDTO period = toPeriod(event.getApplication());
             final VacationTypeDTO vacationType = toVacationType(event.getApplication().getVacationType());
             final String status = toStatus(event.getApplication());
@@ -137,8 +137,8 @@ public class ApplicationEventHandlerExtension {
     private static Function<AbsencePeriod, ApplicationCancelledEventDTO> toApplicationCancelledEventDTO(String tenantId, ApplicationCancelledEvent event) {
         return absencePeriod -> {
             final ApplicationPersonDTO person = toApplicationPersonDTO(event.getApplication().getPerson());
-            final ApplicationPersonDTO appliedBy = toApplicationPersonDTO(event.getApplication().getApplier());
-            final ApplicationPersonDTO cancelledBy = toApplicationPersonDTO(event.getApplication().getCanceller());
+            final ApplicationPersonDTO appliedBy = event.getApplication().getApplier() != null ? toApplicationPersonDTO(event.getApplication().getApplier()) : null;
+            final ApplicationPersonDTO cancelledBy = event.getApplication().getCanceller() != null ? toApplicationPersonDTO(event.getApplication().getCanceller()) : null;
             final ApplicationPeriodDTO period = toPeriod(event.getApplication());
             final VacationTypeDTO vacationType = toVacationType(event.getApplication().getVacationType());
             final String status = toStatus(event.getApplication());
