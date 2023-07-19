@@ -11,7 +11,10 @@ import org.springframework.stereotype.Component;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCreatedEvent;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 
+import java.time.Clock;
 import java.time.LocalDate;
+
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 
 @Component
 @ConditionalOnProperty(value = "uv.extensions.sicknote.republish.enabled", havingValue = "true")
@@ -22,10 +25,12 @@ public class SickNoteEventRepublisher {
 
     private final SickNoteService sickNoteService;
     private final SickNoteEventHandlerExtension sickNoteEventHandlerExtension;
+    private final Clock clock;
 
-    public SickNoteEventRepublisher(SickNoteService sickNoteService, SickNoteEventHandlerExtension sickNoteEventHandlerExtension) {
+    SickNoteEventRepublisher(SickNoteService sickNoteService, SickNoteEventHandlerExtension sickNoteEventHandlerExtension, Clock clock) {
         this.sickNoteService = sickNoteService;
         this.sickNoteEventHandlerExtension = sickNoteEventHandlerExtension;
+        this.clock = clock;
     }
 
     @Async
@@ -34,19 +39,19 @@ public class SickNoteEventRepublisher {
 
         LOG.info("Republishing all events with type sickNoteCreatedEvent");
 
-        LocalDate now = LocalDate.now();
+        final LocalDate now = LocalDate.now(clock);
 
-        LocalDate startOfYear = now.withDayOfYear(1);
-        LocalDate endOfYear = now.withDayOfYear(now.lengthOfYear());
+        final LocalDate startOfYear = now.withDayOfYear(1);
+        final LocalDate endOfYear = startOfYear.with(lastDayOfYear());
 
-        this.sickNoteService.getAllActiveByPeriod(startOfYear, endOfYear)
+        sickNoteService.getAllActiveByPeriod(startOfYear, endOfYear)
             .stream()
             .map(SickNoteCreatedEvent::of)
             .forEach(event -> {
-                LOG.info("Publishing sickNoteCreatedEvent with id={} for personId={} with startDate={} and endDate={}", event.getSickNote().getId(), event.getSickNote().getPerson().getUsername(), event.getSickNote().getStartDate(), event.getSickNote().getEndDate());
+                LOG.info("Publishing sickNoteCreatedEvent with id={} for personId={} with startDate={} and endDate={}", event.getSickNote().getId(), event.getSickNote().getPerson().getId(), event.getSickNote().getStartDate(), event.getSickNote().getEndDate());
                 sickNoteEventHandlerExtension.on(event);
             });
 
-        LOG.info("Republished all events with type sickNoteCreatedEvent");
+        LOG.info("Republished all events with type=SickNoteCreatedEvent");
     }
 }
