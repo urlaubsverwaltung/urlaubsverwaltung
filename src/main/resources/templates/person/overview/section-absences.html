@@ -135,8 +135,8 @@
               <td class="is-centered">
                 <th:block th:text="#{overview.vacations.expired.days(${expiredRemainingVacationDays})}"></th:block>
               </td>
-              <td class="is-centered hidden-xs print:tw-hidden">
-                <div class="tw-flex tw-items-center">
+              <td class="hidden-xs print:tw-hidden">
+                <div class="tw-flex tw-items-center tw-justify-center">
                   <svg th:replace="icon/clock::svg(className='tw-w-4 tw-h-4')"></svg>&nbsp;
                   <th:block th:text="#{application.progress.EXPIRED}"></th:block>&nbsp;
                   <th:block th:replace="fragments/date::date(${expiryDate})"></th:block>
@@ -232,8 +232,8 @@
                   </script>
                 </th:block>
               </td>
-              <td class="is-centered hidden-xs print:tw-hidden">
-                <div class="tw-flex tw-items-center">
+              <td class="hidden-xs print:tw-hidden">
+                <div class="tw-flex tw-items-center tw-justify-center">
                   <svg th:replace="icon/clock::svg(className='tw-w-4 tw-h-4')"></svg>&nbsp;
                   <span>
                     <th:block th:if="${app.status.name == 'WAITING'}">

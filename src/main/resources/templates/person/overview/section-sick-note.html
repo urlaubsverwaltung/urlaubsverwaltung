@@ -164,8 +164,8 @@
             <td class="is-centered">
               <span th:text="#{overview.sicknotes.sickdays.days(${sickNote.workDays})}"></span>
             </td>
-            <td class="print:tw-hidden is-centered hidden-xs">
-              <div class="tw-flex tw-items-center">
+            <td class="print:tw-hidden hidden-xs">
+              <div class="tw-flex tw-items-center tw-justify-center">
                 <svg th:replace="icon/clock::svg(className='tw-w-4 tw-h-4')"></svg>&nbsp;
                 <span>
                   <th:block th:text="#{sicknote.progress.lastEdited}"></th:block>
