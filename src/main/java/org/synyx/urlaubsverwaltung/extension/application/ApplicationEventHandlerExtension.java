@@ -90,6 +90,7 @@ public class ApplicationEventHandlerExtension {
 
             return ApplicationCreatedFromSickNoteEventDTO.builder()
                 .id(event.getId())
+                .sourceId(event.getApplication().getId())
                 .createdAt(event.getCreatedAt())
                 .tenantId(tenantId)
                 .person(person)
@@ -116,6 +117,7 @@ public class ApplicationEventHandlerExtension {
 
             return ApplicationAllowedEventDTO.builder()
                 .id(event.getId())
+                .sourceId(event.getApplication().getId())
                 .createdAt(event.getCreatedAt())
                 .tenantId(tenantId)
                 .person(person)
@@ -144,6 +146,7 @@ public class ApplicationEventHandlerExtension {
 
             return ApplicationCancelledEventDTO.builder()
                 .id(event.getId())
+                .sourceId(event.getApplication().getId())
                 .createdAt(event.getCreatedAt())
                 .tenantId(tenantId)
                 .person(person)
