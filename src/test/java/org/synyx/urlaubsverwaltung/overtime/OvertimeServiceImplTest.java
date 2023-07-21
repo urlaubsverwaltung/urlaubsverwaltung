@@ -268,9 +268,10 @@ class OvertimeServiceImplTest {
         final Overtime overtime = new Overtime(person, LocalDate.of(2016, 1, 5), LocalDate.of(2016, 1, 5), Duration.ofHours(10));
         final Overtime overtime2 = new Overtime(person, LocalDate.of(2016, 2, 5), LocalDate.of(2016, 2, 5), Duration.ofHours(4));
 
-        final LocalDate firstDateOfYear = LocalDate.of(2017, 1, 1);
-        when(overtimeRepository.findByPersonAndStartDateIsBefore(person, firstDateOfYear)).thenReturn(List.of(overtime, overtime2));
-        when(applicationService.getTotalOvertimeReductionOfPersonBefore(person, firstDateOfYear)).thenReturn(Duration.ofHours(1));
+        final LocalDate firstDayOfYear = LocalDate.of(2017, 1, 1);
+        final LocalDate lastDayOfBeforeYear = firstDayOfYear.minusYears(1).with(lastDayOfYear());
+        when(overtimeRepository.findByPersonAndStartDateIsBefore(person, firstDayOfYear)).thenReturn(List.of(overtime, overtime2));
+        when(applicationService.getTotalOvertimeReductionOfPersonUntil(person, lastDayOfBeforeYear)).thenReturn(Duration.ofHours(1));
 
         final Duration totalHours = sut.getTotalOvertimeForPersonBeforeYear(person, 2017);
         assertThat(totalHours).isEqualTo(Duration.ofHours(13));

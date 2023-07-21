@@ -70,14 +70,6 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
     List<Application> findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
         Collection<Person> persons, VacationCategory category, List<ApplicationStatus> statuses, LocalDate until);
 
-    @Query(
-        "SELECT SUM(application.hours) FROM Application application WHERE application.person = :person "
-            + "AND application.startDate < :date "
-            + "AND application.vacationType.category = 'OVERTIME' "
-            + "AND (application.status = 'WAITING' OR application.status = 'TEMPORARY_ALLOWED' OR application.status = 'ALLOWED' OR application.status = 'ALLOWED_CANCELLATION_REQUESTED')"
-    )
-    BigDecimal calculateTotalOvertimeReductionOfPersonBefore(@Param("person") Person person, @Param("date") LocalDate before);
-
     List<Application> findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(Person person, LocalDate date, List<ApplicationStatus> status);
 
     List<Application> findByBoss(Person person);

@@ -415,69 +415,6 @@ class ApplicationRepositoryIT extends TestContainersBase {
     }
 
     @Test
-    void ensureCountsTotalOvertimeReductionBeforeDateCorrectly() {
-
-        final Person person = personService.create("sam", "sam", "smith", "smith@example.org");
-        final Person otherPerson = personService.create("freddy", "freddy", "Gwin", "gwin@example.org");
-
-        final LocalDate now = LocalDate.now(UTC);
-
-        // Should be in the calculation
-        final Application halfDayWaitingOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(10), MORNING);
-        halfDayWaitingOvertimeReduction.setHours(Duration.ofMinutes(150));
-        halfDayWaitingOvertimeReduction.setStatus(WAITING);
-        sut.save(halfDayWaitingOvertimeReduction);
-
-        Application fullDayTemporaryAllowedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
-        fullDayTemporaryAllowedOvertimeReduction.setHours(Duration.ofHours(8));
-        fullDayTemporaryAllowedOvertimeReduction.setStatus(TEMPORARY_ALLOWED);
-        sut.save(fullDayTemporaryAllowedOvertimeReduction);
-
-        Application fullDayAllowedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
-        fullDayAllowedOvertimeReduction.setHours(Duration.ofHours(8));
-        fullDayAllowedOvertimeReduction.setStatus(ALLOWED);
-        sut.save(fullDayAllowedOvertimeReduction);
-
-        Application fullDayAllowedCancellationRequestedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
-        fullDayAllowedCancellationRequestedOvertimeReduction.setHours(Duration.ofHours(8));
-        fullDayAllowedCancellationRequestedOvertimeReduction.setStatus(ALLOWED_CANCELLATION_REQUESTED);
-        sut.save(fullDayAllowedCancellationRequestedOvertimeReduction);
-
-        // Should NOT be in the calculation
-        final Application cancelledOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
-        cancelledOvertimeReduction.setHours(Duration.ofHours(1));
-        cancelledOvertimeReduction.setStatus(CANCELLED);
-        sut.save(cancelledOvertimeReduction);
-
-        final Application rejectedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
-        rejectedOvertimeReduction.setHours(Duration.ofHours(1));
-        rejectedOvertimeReduction.setStatus(REJECTED);
-        sut.save(rejectedOvertimeReduction);
-
-        final Application revokedOvertimeReduction = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(2), FULL);
-        revokedOvertimeReduction.setHours(Duration.ofHours(1));
-        revokedOvertimeReduction.setStatus(REVOKED);
-        sut.save(revokedOvertimeReduction);
-
-        // NOTE: Holiday should not have hours set, but who knows....More than once heard: "this should never happen" ;)
-        final Application holiday = createApplication(person, getVacationType(HOLIDAY), LocalDate.of(2021, 12, 31), now.minusDays(4), FULL);
-        holiday.setHours(Duration.ofHours(1));
-        sut.save(holiday);
-
-        final Application overtimeReduction = createApplication(otherPerson, getVacationType(OVERTIME), LocalDate.of(2021, 12, 31), now.plusDays(10), NOON);
-        overtimeReduction.setHours(Duration.ofMinutes(150));
-        sut.save(overtimeReduction);
-
-        final Application overtimeReductionAfterDate = createApplication(person, getVacationType(OVERTIME), LocalDate.of(2022, 1, 1), now.plusDays(10), NOON);
-        overtimeReductionAfterDate.setHours(Duration.ofMinutes(150));
-        sut.save(overtimeReductionAfterDate);
-
-        // Let's calculate! --------------------------------------------------------------------------------------------
-        final BigDecimal totalHours = sut.calculateTotalOvertimeReductionOfPersonBefore(person, LocalDate.of(2022, 1, 1));
-        assertThat(totalHours).isEqualTo(BigDecimal.valueOf(26.5));
-    }
-
-    @Test
     void findByHolidayReplacementAndEndDateIsGreaterThanEqualAndStatusIn() {
 
         final Person holidayReplacement = personService.create("holly", "replacement", "holly", "holly@example.org");

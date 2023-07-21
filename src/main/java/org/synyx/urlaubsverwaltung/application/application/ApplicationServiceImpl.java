@@ -117,6 +117,11 @@ class ApplicationServiceImpl implements ApplicationService {
         return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
     }
 
+    @Override
+    public Duration getTotalOvertimeReductionOfPersonUntil(Person person, LocalDate until) {
+        return getTotalOvertimeReductionOfPersonUntil(List.of(person), until).getOrDefault(person, Duration.ZERO);
+    }
+
     public Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until) {
 
         final List<ApplicationStatus> waitingAndAllowedStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
@@ -139,12 +144,6 @@ class ApplicationServiceImpl implements ApplicationService {
         return persons.stream()
             .map(person -> Map.entry(person, overtimeReductionByPerson.getOrDefault(person, Duration.ZERO)))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    @Override
-    public Duration getTotalOvertimeReductionOfPersonBefore(Person person, LocalDate date) {
-        final BigDecimal overtimeReduction = Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPersonBefore(person, date)).orElse(BigDecimal.ZERO);
-        return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
     }
 
     @Override

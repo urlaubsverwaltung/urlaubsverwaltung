@@ -78,20 +78,6 @@ class ApplicationServiceImplTest {
     }
 
     @Test
-    void ensureReturnsZeroIfPersonHasNoApplicationsForLeaveBeforeDate() {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate date = LocalDate.of(2022, 1, 1);
-        when(applicationRepository.calculateTotalOvertimeReductionOfPersonBefore(person, date)).thenReturn(null);
-
-        final Duration totalHours = sut.getTotalOvertimeReductionOfPersonBefore(person, date);
-
-        verify(applicationRepository).calculateTotalOvertimeReductionOfPersonBefore(person, date);
-
-        assertThat(totalHours).isEqualTo(ZERO);
-    }
-
-    @Test
     void getForStates() {
 
         final Application application = new Application();
@@ -117,7 +103,6 @@ class ApplicationServiceImplTest {
         assertThat(result).isEqualTo(applications);
     }
 
-
     @Test
     void ensureReturnsCorrectTotalOvertimeReductionForPerson() {
 
@@ -130,20 +115,6 @@ class ApplicationServiceImplTest {
         verify(applicationRepository).calculateTotalOvertimeReductionOfPerson(person);
 
         assertThat(totalHours).isEqualTo(Duration.ofHours(1));
-    }
-
-    @Test
-    void ensureReturnsCorrectTotalOvertimeReductionForPersonBeforeDate() {
-
-        final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        final LocalDate date = LocalDate.of(2022, 1, 1);
-
-        when(applicationRepository.calculateTotalOvertimeReductionOfPersonBefore(person, date)).thenReturn(BigDecimal.ONE);
-
-        final Duration totalHours = sut.getTotalOvertimeReductionOfPersonBefore(person, date);
-        assertThat(totalHours).isEqualTo(Duration.ofHours(1));
-
-        verify(applicationRepository).calculateTotalOvertimeReductionOfPersonBefore(person, date);
     }
 
     @Test

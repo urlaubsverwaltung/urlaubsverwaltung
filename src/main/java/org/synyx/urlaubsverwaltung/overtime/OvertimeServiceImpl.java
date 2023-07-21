@@ -121,7 +121,8 @@ class OvertimeServiceImpl implements OvertimeService {
     @Override
     public Duration getTotalOvertimeForPersonBeforeYear(Person person, int year) {
         final LocalDate firstDayOfYear = Year.of(year).atDay(1);
-        final Duration totalOvertimeReductionBeforeYear = applicationService.getTotalOvertimeReductionOfPersonBefore(person, firstDayOfYear);
+        final LocalDate lastDayOfBeforeYear = firstDayOfYear.minusYears(1).with(lastDayOfYear());
+        final Duration totalOvertimeReductionBeforeYear = applicationService.getTotalOvertimeReductionOfPersonUntil(person, lastDayOfBeforeYear);
         final Duration totalOvertimeBeforeYear = overtimeRepository.findByPersonAndStartDateIsBefore(person, firstDayOfYear).stream()
             .map(overtime -> overtime.getTotalDurationBefore(year))
             .reduce(ZERO, Duration::plus);
