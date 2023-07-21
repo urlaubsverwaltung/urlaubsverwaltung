@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
+
 public final class OvertimeListRecordDto {
 
     enum OvertimeListRecordType {
@@ -73,7 +75,7 @@ public final class OvertimeListRecordDto {
     public Map<Integer, Duration> getDurationByYear(int withoutYear) {
         return durationByYear.entrySet().stream()
             .filter(e -> e.getKey() != withoutYear)
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public Duration getSum() {

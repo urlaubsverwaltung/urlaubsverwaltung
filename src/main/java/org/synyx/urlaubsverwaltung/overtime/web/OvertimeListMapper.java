@@ -5,13 +5,17 @@ import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Duration;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.reverse;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Stream.concat;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
 import static org.synyx.urlaubsverwaltung.overtime.web.OvertimeListRecordDto.OvertimeListRecordType.ABSENCE;
@@ -23,14 +27,14 @@ final class OvertimeListMapper {
         // ok
     }
 
-    static OvertimeListDto mapToDto(List<Application> overtimeAbsences, List<Overtime> overtimes, Duration totalOvertime, Duration totalOvertimeLastYear, Duration leftOvertime, Person signedInUser, boolean isUserIsAllowedToEditOvertime) {
+    static OvertimeListDto mapToDto(List<Application> overtimeAbsences, List<Overtime> overtimes, Duration totalOvertime, Duration totalOvertimeLastYear, Duration leftOvertime, Person signedInUser, boolean isUserIsAllowedToEditOvertime, int selectedYear) {
 
         final List<OvertimeListRecordDto> overtimeListRecordDtos = new ArrayList<>();
         Duration sum = totalOvertimeLastYear;
 
         final List<OvertimeListRecordDto> allOvertimes = orderedOvertimesAndAbsences(overtimeAbsences, overtimes, signedInUser, isUserIsAllowedToEditOvertime);
         for (OvertimeListRecordDto overtimeEntry : allOvertimes) {
-            sum = sum.plus(overtimeEntry.getDuration());
+            sum = sum.plus(overtimeEntry.getDurationByYear().getOrDefault(selectedYear, Duration.ZERO));
             overtimeListRecordDtos.add(new OvertimeListRecordDto(overtimeEntry, sum, overtimeEntry.getDurationByYear()));
         }
 
@@ -52,7 +56,7 @@ final class OvertimeListMapper {
                 application.getStartDate(),
                 application.getEndDate(),
                 application.getHours().negated(),
-                application.getHoursByYear(),
+                application.getHoursByYear().entrySet().stream().collect(toMap(Map.Entry::getKey, entry -> entry.getValue().negated())),
                 Duration.ZERO,
                 application.getStatus().name(),
                 application.getVacationType().getColor().name(),

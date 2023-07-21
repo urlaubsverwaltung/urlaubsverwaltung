@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.time.Duration.ZERO;
 import static java.time.ZoneOffset.UTC;
+import static java.util.stream.Collectors.toMap;
 import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
 /**
@@ -124,7 +125,7 @@ public class Overtime {
         }
 
         // Add the remaining date range if endDate is not on a year boundary
-        if (currentStartDate.isBefore(endDate)) {
+        if (!currentStartDate.isAfter(endDate)) {
             dateRangesByYear.add(new DateRange(currentStartDate, endDate));
         }
 
@@ -133,9 +134,15 @@ public class Overtime {
 
 
     public Map<Integer, Duration> getDurationByYear() {
-        return this.splitByYear().stream().collect(Collectors.toMap(
-                dateRangeForYear -> dateRangeForYear.getStartDate().getYear(),
-                this::getDurationForDateRange));
+        return this.splitByYear().stream()
+                .collect(toMap(dateRangeForYear -> dateRangeForYear.getStartDate().getYear(), this::getDurationForDateRange));
+    }
+
+    public Duration getTotalDurationBefore(int year) {
+        return this.getDurationByYear().entrySet().stream()
+                .filter(entry -> entry.getKey() < year)
+                .map(Map.Entry::getValue)
+                .reduce(ZERO, Duration::plus);
     }
 
     public void setPerson(Person person) {

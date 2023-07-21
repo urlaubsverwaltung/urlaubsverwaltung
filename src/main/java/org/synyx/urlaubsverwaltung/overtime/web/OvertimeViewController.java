@@ -128,7 +128,7 @@ public class OvertimeViewController implements HasLaunchpad {
             overtimeService.getTotalOvertimeForPersonBeforeYear(person, selectedYear),
             overtimeService.getLeftOvertimeForPerson(person),
             signedInUser,
-            userIsAllowedToWriteOvertime);
+            userIsAllowedToWriteOvertime, selectedYear);
 
         model.addAttribute("records", overtimeListDto.getRecords());
         model.addAttribute("overtimeTotal", overtimeListDto.getOvertimeTotal());

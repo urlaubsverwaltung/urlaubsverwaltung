@@ -367,7 +367,7 @@ public class Application {
         }
 
         // Add the remaining date range if endDate is not on a year boundary
-        if (currentStartDate.isBefore(endDate)) {
+        if (!currentStartDate.isAfter(endDate)) {
             dateRangesByYear.add(new DateRange(currentStartDate, endDate));
         }
 
