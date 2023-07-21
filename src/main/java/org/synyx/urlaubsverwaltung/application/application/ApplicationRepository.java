@@ -69,9 +69,6 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
     )
     BigDecimal calculateTotalOvertimeReductionOfPerson(@Param("person") Person person);
 
-    List<Application> findByPersonAndVacationTypeCategoryAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(
-        Person person, VacationCategory category, List<ApplicationStatus> statuses, LocalDate start, LocalDate end);
-
     List<Application> findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
         Collection<Person> persons, VacationCategory category, List<ApplicationStatus> statuses, LocalDate until);
 

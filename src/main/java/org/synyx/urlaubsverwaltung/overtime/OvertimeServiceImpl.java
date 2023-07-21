@@ -10,8 +10,6 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
-import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
@@ -137,30 +135,6 @@ class OvertimeServiceImpl implements OvertimeService {
         final Duration overtimeReduction = applicationService.getTotalOvertimeReductionOfPerson(person);
 
         return totalOvertime.minus(overtimeReduction);
-    }
-
-    // TODO remove if not needed
-    @Override
-    public Duration getLeftOvertimeForPerson(Person person, LocalDate start, LocalDate end) {
-
-        final DateRange dateRangeOfPeriod = new DateRange(start, end);
-
-        final Duration overtimeForPeriod = overtimeRepository.findByPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, start, end).stream()
-                .map(overtime -> {
-                    final DateRange overtimeDateRange = new DateRange(overtime.getStartDate(), overtime.getEndDate());
-                    final Duration durationOfOverlap = dateRangeOfPeriod.overlap(overtimeDateRange).map(DateRange::duration).orElse(ZERO);
-                    return toFormattedDecimal(overtime.getDuration())
-                            .divide(toFormattedDecimal(overtimeDateRange.duration()), HALF_EVEN)
-                            .multiply(toFormattedDecimal(durationOfOverlap))
-                            .setScale(0, HALF_EVEN);
-                })
-                .map(DecimalConverter::toDuration)
-                .reduce(ZERO, Duration::plus);
-
-        final Duration overtimeReductionForPeriod = applicationService.getTotalOvertimeReductionOfPerson(person, start, end);
-
-        final Duration totalOvertimeBeforeYear = getTotalOvertimeForPersonBeforeYear(person, start.getYear());
-        return totalOvertimeBeforeYear.plus(overtimeForPeriod).minus(overtimeReductionForPeriod);
     }
 
     @Override

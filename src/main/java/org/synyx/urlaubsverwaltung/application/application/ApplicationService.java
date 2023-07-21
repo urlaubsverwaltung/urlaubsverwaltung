@@ -162,8 +162,6 @@ public interface ApplicationService {
      */
     Duration getTotalOvertimeReductionOfPerson(Person person);
 
-    Duration getTotalOvertimeReductionOfPerson(Person person, LocalDate start, LocalDate end);
-
     Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until);
 
     Duration getTotalOvertimeReductionOfPersonBefore(Person person, LocalDate before);

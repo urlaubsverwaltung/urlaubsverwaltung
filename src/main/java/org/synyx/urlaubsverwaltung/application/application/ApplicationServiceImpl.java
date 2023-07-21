@@ -122,24 +122,6 @@ class ApplicationServiceImpl implements ApplicationService {
         return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
     }
 
-    @Override
-    public Duration getTotalOvertimeReductionOfPerson(Person person, LocalDate start, LocalDate end) {
-
-        final DateRange dateRangeOfPeriod = new DateRange(start, end);
-
-        final List<ApplicationStatus> waitingAndAllowedStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        return applicationRepository.findByPersonAndVacationTypeCategoryAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, OVERTIME, waitingAndAllowedStatus, start, end).stream()
-            .map(application -> {
-                final DateRange applicationDateRage = new DateRange(application.getStartDate(), application.getEndDate());
-                final Duration durationOfOverlap = dateRangeOfPeriod.overlap(applicationDateRage).map(DateRange::duration).orElse(Duration.ZERO);
-                return toFormattedDecimal(application.getHours())
-                    .divide(toFormattedDecimal(applicationDateRage.duration()), HALF_EVEN)
-                    .multiply(toFormattedDecimal(durationOfOverlap)).setScale(0, HALF_EVEN);
-            })
-            .map(DecimalConverter::toDuration)
-            .reduce(Duration.ZERO, Duration::plus);
-    }
-
     public Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until) {
 
         final List<ApplicationStatus> waitingAndAllowedStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
