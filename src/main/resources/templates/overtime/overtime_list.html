@@ -123,15 +123,22 @@
             </td>
 
             <td class="tw-text-center">
-              <p th:text="${{record.durationByYear.get(selectedYear)}}"></p>
-              <p>
+              <div th:text="${{record.durationByYear.get(selectedYear)}}"></div>
+              <span>
                 <th:block th:each="yearDurationEntry, iterStat : ${record.getDurationByYear(selectedYear)}">
-                  <span th:if="${iterStat.first}">(sowie </span>
-                  <span th:text="'im Jahr ' + ${{yearDurationEntry.key}} + ' ' + ${{yearDurationEntry.value}}"></span>
-                  <span th:if="${!iterStat.last}"> und </span>
-                  <span th:if="${iterStat.last}">)</span>
+                  <th:block
+                    th:if="${iterStat.first}"
+                    th:text="#{overtime.list.col.duration.additionalInfo.first}"
+                  ></th:block>
+                  <th:block
+                    th:text="#{overtime.list.col.duration.additionalInfo(${{yearDurationEntry.value}}, ${yearDurationEntry.key})}"
+                  ></th:block>
+                  <th:block
+                    th:if="${!iterStat.last}"
+                    th:text="#{overtime.list.col.duration.additionalInfo.notLast}"
+                  ></th:block>
                 </th:block>
-              </p>
+              </span>
             </td>
 
             <td>
