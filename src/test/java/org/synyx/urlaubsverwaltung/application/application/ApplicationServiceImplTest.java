@@ -189,20 +189,6 @@ class ApplicationServiceImplTest {
     }
 
     @Test
-    void getApplicationsStartingInACertainPeriodAndPersonAndVacationCategory() {
-        final Person person = new Person();
-        final LocalDate from = LocalDate.of(2020, 10, 1);
-        final LocalDate to = LocalDate.of(2020, 10, 3);
-
-        final Application application = new Application();
-        final List<ApplicationStatus> statuses = List.of(TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        when(applicationRepository.findByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory(statuses, person, from, to, HOLIDAY)).thenReturn(List.of(application));
-
-        final List<Application> holidayReplacementApplications = sut.getApplicationsStartingInACertainPeriodAndPersonAndVacationCategory(from, to, person, statuses, HOLIDAY);
-        assertThat(holidayReplacementApplications).hasSize(1).contains(application);
-    }
-
-    @Test
     void getApplicationsForACertainPeriodAndPersonAndVacationCategory() {
         final Person person = new Person();
         final LocalDate from = LocalDate.of(2020, 10, 1);

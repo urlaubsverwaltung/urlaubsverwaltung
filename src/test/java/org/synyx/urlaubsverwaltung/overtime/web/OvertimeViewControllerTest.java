@@ -223,7 +223,7 @@ class OvertimeViewControllerTest {
         applicationNonEditable.setHours(Duration.ofHours(8));
 
         final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        when(applicationService.getApplicationsStartingInACertainPeriodAndPersonAndVacationCategory(Year.of(year).atDay(1), DateUtil.getLastDayOfYear(year), person, statuses, OVERTIME))
+        when(applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(Year.of(year).atDay(1), DateUtil.getLastDayOfYear(year), person, statuses, OVERTIME))
             .thenReturn(List.of(applicationNonEditable));
 
         final OvertimeListRecordDto overtimeRecord = new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(),

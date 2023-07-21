@@ -49,8 +49,6 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
     )
     List<Application> getApplicationsForACertainTimeAndPerson(LocalDate startDate, LocalDate endDate, Person person);
 
-    List<Application> findByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory(List<ApplicationStatus> statuses, Person person, LocalDate start, LocalDate end, VacationCategory vacationCategory);
-
     List<Application> findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(List<ApplicationStatus> statuses, Person person, LocalDate start, LocalDate end, VacationCategory vacationCategory);
 
     @Query(

@@ -31,7 +31,6 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
 import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
-import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 
 import javax.validation.Valid;
@@ -44,6 +43,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import static java.lang.String.format;
+import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -300,9 +300,9 @@ public class OvertimeViewController implements HasLaunchpad {
 
     private List<Application> getOvertimeAbsences(int year, Person person) {
         final LocalDate firstDayOfYear = Year.of(year).atDay(1);
-        final LocalDate lastDayOfYear = DateUtil.getLastDayOfYear(year);
+        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
 
         final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        return applicationService.getApplicationsStartingInACertainPeriodAndPersonAndVacationCategory(firstDayOfYear, lastDayOfYear, person, statuses, VacationCategory.OVERTIME);
+        return applicationService.getApplicationsForACertainPeriodAndPersonAndVacationCategory(firstDayOfYear, lastDayOfYear, person, statuses, VacationCategory.OVERTIME);
     }
 }

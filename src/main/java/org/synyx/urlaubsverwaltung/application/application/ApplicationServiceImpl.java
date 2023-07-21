@@ -62,11 +62,6 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<Application> getApplicationsStartingInACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory) {
-        return applicationRepository.findByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory(statuses, person, startDate, endDate, vacationCategory);
-    }
-
-    @Override
     public List<Application> getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory) {
         return applicationRepository.findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(statuses, person, startDate, endDate, vacationCategory);
     }
