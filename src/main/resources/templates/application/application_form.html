@@ -607,20 +607,18 @@
             </div>
           </div>
 
-          <div class="form-section tw-mb-12">
-            <hr />
+          <hr class="tw-w-full tw-m-0 tw-mt-6" />
+
+          <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4">
             <button
               id="apply-application"
-              th:text="${applicationForLeaveForm.id == null} ? #{action.apply.vacation}: #{action.apply.vacation.edit}"
               type="submit"
-              class="button-main-green pull-left col-xs-12 col-sm-5 col-md-2"
-            ></button>
-            <button
-              type="button"
-              th:text="#{action.cancel}"
-              class="button col-xs-12 col-sm-5 col-md-2 pull-right"
-              data-back-button
-            ></button>
+              class="button-main-green tw-w-56"
+              th:text="${applicationForLeaveForm.id == null} ? #{action.apply.vacation}: #{action.apply.vacation.edit}"
+            >
+              Speichern
+            </button>
+            <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
           </div>
         </form>
       </th:block>

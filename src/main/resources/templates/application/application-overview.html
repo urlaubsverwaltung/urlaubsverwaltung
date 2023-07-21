@@ -67,7 +67,7 @@
               </a>
             </li>
             <li
-              class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 tw-pl-2 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
+              class="tw-border-l-4 dark:tw-border-l-2 xs:tw-border-l-0 xs:dark:tw-border-l-0 xs:tw-border-b-4 xs:dark:tw-border-b-2 tw-pl-2 xs:tw-pl-0"
               th:classappend="${activeContent == 'replacement' ? 'tw-border-zinc-200' : 'tw-border-transparent'}"
               data-content="#user-replacements-block"
               th:attrappend="data-active=${activeContent == 'replacement'}?${'data-active'}"
@@ -308,7 +308,6 @@
           <h2 class="tw-text-xl tw-font-medium" id="waiting-requests" th:text="#{applications.other.waiting}"></h2>
         </th:block>
       </div>
-
       <div class="tw-mb-10">
         <p th:if="${#lists.isEmpty(otherApplications)}" th:text="#{applications.none}"></p>
         <ul

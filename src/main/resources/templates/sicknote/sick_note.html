@@ -80,7 +80,7 @@
                   <h4 id="myModalLabel" th:text="|#{action.delete}?|" class="modal-title"></h4>
                 </div>
                 <div th:text="#{action.sicknote.cancel.confirm}" class="modal-body"></div>
-                <div class="modal-footer tw-flex tw-space-x-2 tw-justify-end">
+                <div class="modal-footer tw-flex tw-justify-between">
                   <button class="button-danger" type="submit" th:text="#{action.delete}"></button>
                   <button class="button" data-dismiss="modal" aria-hidden="true" th:text="#{action.cancel}"></button>
                 </div>
@@ -271,13 +271,13 @@
               onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
             ></textarea>
             <div class="tw-flex tw-justify-between tw-mt-2 tw-mb-6">
-              <button th:text="#{action.save}" class="button-main-green" type="submit"></button>
               <button
                 th:text="#{action.cancel}"
                 class="button"
                 type="button"
                 onclick="document.getElementById('comment-form').classList.add('tw-hidden');"
               ></button>
+              <button th:text="#{action.save}" class="button-main-green tw-w-56" type="submit"></button>
             </div>
           </form>
         </div>

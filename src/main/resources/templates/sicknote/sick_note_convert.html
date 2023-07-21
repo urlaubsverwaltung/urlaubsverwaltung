@@ -182,12 +182,14 @@
             </table>
           </div>
         </div>
-        <div>
-          <hr />
-          <div class="tw-flex tw-flex-col lg:tw-flex-row lg:tw-justify-between">
-            <button class="button-main-green tw-px-8" th:text="#{action.save}" type="submit"></button>
-            <a class="button tw-px-8" th:text="#{action.cancel}" th:href="@{/web/sicknote/__${sickNote.id}__}"></a>
-          </div>
+
+        <hr class="tw-w-full tw-m-0 tw-mt-6" />
+
+        <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4">
+          <button id="apply-application" type="submit" class="button-main-green tw-w-56" th:text="#{action.save}">
+            Speichern
+          </button>
+          <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
         </div>
       </form>
     </main>

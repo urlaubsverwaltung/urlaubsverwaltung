@@ -330,24 +330,18 @@
           </div>
         </div>
 
-        <div class="form-section">
-          <div class="row tw-mb-16">
-            <div class="col-xs-12">
-              <hr />
-              <button
-                th:text="#{action.save}"
-                class="button-main-green col-xs-12 col-sm-5 col-md-2"
-                type="submit"
-                data-test-id="sicknote-submit-button"
-              ></button>
-              <button
-                th:text="#{action.cancel}"
-                class="button col-xs-12 col-sm-5 col-md-2 pull-right"
-                type="button"
-                data-back-button
-              ></button>
-            </div>
-          </div>
+        <hr class="tw-w-full tw-m-0 tw-mt-6" />
+
+        <div class="tw-mt-6 tw-flex tw-justify-between tw-gap-4">
+          <button
+            type="submit"
+            class="button-main-green tw-w-56"
+            th:text="#{action.save}"
+            data-test-id="sicknote-submit-button"
+          >
+            Speichern
+          </button>
+          <button data-back-button th:text="#{action.cancel}" type="button" class="button">Abbrechen</button>
         </div>
       </form>
     </main>
