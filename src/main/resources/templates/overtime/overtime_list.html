@@ -115,11 +115,13 @@
 
             <td th:text="${{record.duration}}" class="tw-text-right"></td>
 
-            <td class="tw-text-right">
-              <div class="tw-relative">
-                <span class="tw-absolute tw-right-28">Σ</span>
+            <td>
+              <div class="tw-flex tw-justify-end">
+                <div class="tw-flex tw-justify-between tw-gap-2 tw-w-full md:tw-w-8/12 lg:tw-w-8/12">
+                  <span>Σ</span>
+                  <span th:text="${{record.sum}}">1 Std. 30 Min. </span>
+                </div>
               </div>
-              <th:block th:text="${{record.sum}}" />
             </td>
 
             <td class="tw-text-right">
