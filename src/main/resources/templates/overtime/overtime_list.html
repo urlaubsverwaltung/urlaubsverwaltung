@@ -49,7 +49,7 @@
         <caption th:text="#{overtime.list.title}" class="tw-sr-only"></caption>
         <thead th:if="${not #lists.isEmpty(records)}">
           <tr>
-            <th th:text="#{overtime.list.col.icon}" class="tw-sr-only" scope="col"></th>
+            <th th:text="#{overtime.list.col.icon}" class="tw-hidden md:tw-table-cell tw-sr-only" scope="col"></th>
             <th th:text="#{overtime.list.col.date}" class="tw-font-medium" scope="col"></th>
             <th th:text="#{overtime.list.col.duration}" class="tw-font-medium tw-text-right" scope="col"></th>
             <th th:text="#{overtime.list.col.sum}" class="tw-font-medium tw-text-right" scope="col"></th>
@@ -63,7 +63,7 @@
             th:onclick="|navigate('__${recordDetailsUrl}__');|"
             class="active"
           >
-            <td class="is-centered">
+            <td class="tw-hidden md:tw-table-cell is-centered">
               <th:block th:if="${record.negative}">
                 <svg th:replace="icon/arrow-down::svg(className='tw-w-5 tw-h-5')"></svg>
               </th:block>
@@ -144,7 +144,7 @@
             th:with="lastYear=${selectedYear - 1}, lastYearUrl=|/web/overtime?person=${person.id}&year=${lastYear}|"
             th:onclick="|navigate('__${lastYearUrl}__');|"
           >
-            <td class="tw-border-b-0">
+            <td class="tw-hidden md:tw-table-cell tw-border-b-0">
               <svg th:replace="icon/reply::svg(className='tw-w-5 tw-h-5 tw--scale-x-100')"></svg>
             </td>
 
