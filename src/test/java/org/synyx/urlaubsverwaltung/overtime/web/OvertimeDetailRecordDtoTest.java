@@ -11,6 +11,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class OvertimeDetailRecordDtoTest {
 
     @Test
+    void getDurationByYearOverTwoYears() {
+        final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(1, "email@example.org", "niceName", "gravatarUrl", false);
+        final OvertimeDetailRecordDto sut = new OvertimeDetailRecordDto(1, person, LocalDate.parse("2021-06-28"), LocalDate.parse("2022-06-29"), Duration.ofHours(4), Map.of(2021, Duration.ofHours(1), 2022, Duration.ofHours(3)), LocalDate.parse("2021-06-28"));
+
+        final Map<Integer, Duration> durationByYear = sut.getDurationByYear(2021);
+
+        assertThat(durationByYear).containsEntry(2022, Duration.ofHours(3L));
+    }
+
+    @Test
     void equals() {
         final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(1, "email@example.org", "niceName", "gravatarUrl", false);
         final OvertimeDetailRecordDto overtimeDetailRecordDto = new OvertimeDetailRecordDto(1, person, LocalDate.parse("2021-06-28"), LocalDate.parse("2021-06-29"), Duration.ofHours(2), Map.of(2021, Duration.ofHours(2)), LocalDate.parse("2021-06-28"));

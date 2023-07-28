@@ -335,6 +335,7 @@ class OvertimeViewControllerTest {
         perform(get("/web/overtime/2"))
             .andExpect(status().isOk())
             .andExpect(view().name("overtime/overtime_details"))
+            .andExpect(model().attribute("currentYear", is(Year.now(clock).getValue())))
             .andExpect(model().attribute("overtimeTotal", is(Duration.ofHours(1))))
             .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
             .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)))
