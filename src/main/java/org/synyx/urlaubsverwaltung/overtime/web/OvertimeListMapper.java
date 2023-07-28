@@ -54,6 +54,7 @@ final class OvertimeListMapper {
                 application.getHours().negated(),
                 Duration.ZERO,
                 application.getStatus().name(),
+                application.getVacationType().getColor().name(),
                 ABSENCE.name(),
                 application.getPerson().equals(signInUser) && application.hasStatus(WAITING))
             );
@@ -67,6 +68,7 @@ final class OvertimeListMapper {
                 overtime.getEndDate(),
                 overtime.getDuration(),
                 Duration.ZERO,
+                "",
                 "",
                 OVERTIME.name(),
                 isUserIsAllowedToEditOvertime)

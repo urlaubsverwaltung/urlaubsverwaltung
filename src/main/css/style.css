@@ -3,6 +3,7 @@
 
 @import "tailwindcss/components";
 @import "./components/absence-color.css";
+@import "./components/absence-type-box.css";
 @import "./components/alert.css";
 @import "./components/action-link.css";
 @import "./components/button.css";

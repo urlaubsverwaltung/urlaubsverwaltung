@@ -17,23 +17,25 @@ public final class OvertimeListRecordDto {
     private final Duration duration;
     private final Duration sum;
     private final String status;
+    private final String color;
     private final String type;
     private final boolean isAllowedToEdit;
 
-    OvertimeListRecordDto(Integer id, LocalDate startDate, LocalDate endDate, Duration duration, Duration sum, String status, String type, boolean isAllowedToEdit) {
+    OvertimeListRecordDto(Integer id, LocalDate startDate, LocalDate endDate, Duration duration, Duration sum, String status, String color, String type, boolean isAllowedToEdit) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
         this.duration = duration;
         this.sum = sum;
         this.status = status;
+        this.color = color;
         this.type = type;
         this.isAllowedToEdit = isAllowedToEdit;
     }
 
     OvertimeListRecordDto(OvertimeListRecordDto overtimeListRecordDto, Duration sum) {
         this(overtimeListRecordDto.id, overtimeListRecordDto.startDate, overtimeListRecordDto.endDate, overtimeListRecordDto.getDuration(),
-            sum, overtimeListRecordDto.getStatus(), overtimeListRecordDto.getType(), overtimeListRecordDto.isAllowedToEdit);
+            sum, overtimeListRecordDto.getStatus(), overtimeListRecordDto.getColor(), overtimeListRecordDto.getType(), overtimeListRecordDto.isAllowedToEdit);
     }
 
     public Integer getId() {
@@ -68,6 +70,10 @@ public final class OvertimeListRecordDto {
         return status;
     }
 
+    public String getColor() {
+        return color;
+    }
+
     public String getType() {
         return type;
     }
@@ -83,12 +89,12 @@ public final class OvertimeListRecordDto {
         OvertimeListRecordDto that = (OvertimeListRecordDto) o;
         return Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate)
             && Objects.equals(duration, that.duration) && Objects.equals(sum, that.sum)
-            && Objects.equals(status, that.status) && Objects.equals(type, that.type);
+            && Objects.equals(status, that.status) && Objects.equals(color, that.color) && Objects.equals(type, that.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDate, endDate, duration, sum, status, type);
+        return Objects.hash(startDate, endDate, duration, sum, status, color, type);
     }
 
     @Override
@@ -100,6 +106,7 @@ public final class OvertimeListRecordDto {
             ", duration=" + duration +
             ", sum=" + sum +
             ", status='" + status + '\'' +
+            ", color='" + color + '\'' +
             ", type='" + type + '\'' +
             ", isAllowedToEdit=" + isAllowedToEdit +
             '}';

@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ public class ApplicationForLeaveDto {
     private final int id;
     private final ApplicationPersonDto person;
     private final VacationType vacationType;
+    private final ApplicationStatus status;
     private final String duration;
     private final DayLength dayLength;
     private final BigDecimal workDays;
@@ -22,13 +24,14 @@ public class ApplicationForLeaveDto {
     private final boolean cancellationRequested;
 
     @SuppressWarnings("java:S107") // "Methods should not have too many parameters" - Builder is used for construction
-    private ApplicationForLeaveDto(int id, ApplicationPersonDto person, VacationType vacationType, String duration,
-                                   DayLength dayLength, BigDecimal workDays, String durationOfAbsenceDescription,
+    private ApplicationForLeaveDto(int id, ApplicationPersonDto person, VacationType vacationType, ApplicationStatus status,
+                                   String duration, DayLength dayLength, BigDecimal workDays, String durationOfAbsenceDescription,
                                    boolean statusWaiting, boolean cancelAllowed, boolean editAllowed, boolean approveAllowed,
                                    boolean temporaryApproveAllowed, boolean rejectAllowed, boolean cancellationRequested) {
         this.id = id;
         this.person = person;
         this.vacationType = vacationType;
+        this.status = status;
         this.duration = duration;
         this.dayLength = dayLength;
         this.workDays = workDays;
@@ -52,6 +55,10 @@ public class ApplicationForLeaveDto {
 
     public VacationType getVacationType() {
         return vacationType;
+    }
+
+    public ApplicationStatus getStatus() {
+        return status;
     }
 
     public String getDuration() {
@@ -106,6 +113,7 @@ public class ApplicationForLeaveDto {
         private int id;
         private ApplicationPersonDto person;
         private VacationType vacationType;
+        private ApplicationStatus status;
         private String duration;
         private DayLength dayLength;
         private BigDecimal workDays;
@@ -130,6 +138,11 @@ public class ApplicationForLeaveDto {
 
         Builder vacationType(VacationType vacationType) {
             this.vacationType = vacationType;
+            return this;
+        }
+
+        Builder status(ApplicationStatus status) {
+            this.status = status;
             return this;
         }
 
@@ -193,6 +206,7 @@ public class ApplicationForLeaveDto {
                 id,
                 person,
                 vacationType,
+                status,
                 duration,
                 dayLength,
                 workDays,
@@ -211,10 +225,12 @@ public class ApplicationForLeaveDto {
     public static class VacationType {
         private final String category;
         private final String messageKey;
+        private final VacationTypeColor color;
 
-        VacationType(String category, String messageKey) {
+        VacationType(String category, String messageKey, VacationTypeColor color) {
             this.category = category;
             this.messageKey = messageKey;
+            this.color = color;
         }
 
         public String getCategory() {
@@ -223,6 +239,10 @@ public class ApplicationForLeaveDto {
 
         public String getMessageKey() {
             return messageKey;
+        }
+
+        public VacationTypeColor getColor() {
+            return color;
         }
     }
 }
