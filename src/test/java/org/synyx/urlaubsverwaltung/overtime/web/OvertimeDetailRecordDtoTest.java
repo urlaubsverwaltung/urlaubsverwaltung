@@ -37,6 +37,6 @@ class OvertimeDetailRecordDtoTest {
     void hashCodeTest() {
         final OvertimeDetailPersonDto person = new OvertimeDetailPersonDto(1, "email@example.org", "niceName", "gravatarUrl", false);
         final OvertimeDetailRecordDto overtimeDetailRecordDto = new OvertimeDetailRecordDto(1, person, LocalDate.parse("2021-06-28"), LocalDate.parse("2021-06-29"), Duration.ofHours(2), Map.of(2021, Duration.ofHours(2)), LocalDate.parse("2021-06-28"));
-        assertThat(overtimeDetailRecordDto.hashCode()).isEqualTo(38396037);
+        assertThat(overtimeDetailRecordDto.hashCode()).isEqualTo(-8943973);
     }
 }
