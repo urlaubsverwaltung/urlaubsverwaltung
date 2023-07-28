@@ -201,24 +201,9 @@
                 </a>
               </td>
               <td class="is-centered">
-                <span>
-                  <th:block th:text="#{overview.vacations.days(${app.workDays})}"></th:block>
-                  <th:block th:if="${app.startDate.year != app.endDate.year}">
-                    <span class="text-muted days">
-                      <!--filled by javascript-->
-                      <!--see app_info.js-->
-                    </span>
-                  </th:block>
-                  <th:block th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}">
-                    <span class="text-muted">
-                      <br />
-                      <th:block th:text="${{app.hours}}" />
-                      <th:block th:text="#{application.data.hours.number}" />
-                    </span>
-                  </th:block>
-                </span>
+                <span th:text="#{overview.vacations.days(${app.workDays})}"></span>
                 <th:block th:if="${app.startDate.year != app.endDate.year}">
-                  <span th:class="|days-${loopStatus.index}|">
+                  <span th:class="|text-muted days-${loopStatus.index}|">
                     <!-- is filled by javascript-->
                   </span>
                   <script type="text/javascript" th:inline="javascript">
@@ -239,6 +224,11 @@
                     });
                   </script>
                 </th:block>
+                <span th:if="${app.vacationType.category.name == 'OVERTIME' && app.hours != null}" class="text-muted">
+                  <br />
+                  <th:block th:text="${{app.hours}}" />
+                  <th:block th:text="#{application.data.hours.number}" />
+                </span>
               </td>
               <td class="hidden-xs print:tw-hidden">
                 <div class="tw-flex tw-items-center tw-justify-center">
