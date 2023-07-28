@@ -86,21 +86,16 @@
             <tr>
               <td th:text="#{overtime.period.duration.label}"></td>
               <td>
-                <th:block
-                  th:text="#{overtime.period.duration(${{record.durationByYear.get(currentYear)}}, ${currentYear})}"
-                ></th:block>
-                <th:block th:each="yearDurationEntry, iterStat : ${record.getDurationByYear(currentYear)}">
-                  <th:block
-                    th:if="${iterStat.first}"
-                    th:text="#{overtime.list.col.duration.additionalInfo.first}"
-                  ></th:block>
-                  <th:block
-                    th:text="#{overtime.list.col.duration.additionalInfo(${{yearDurationEntry.value}}, ${yearDurationEntry.key})}"
-                  ></th:block>
-                  <th:block
-                    th:if="${!iterStat.last}"
-                    th:text="#{overtime.list.col.duration.additionalInfo.notLast}"
-                  ></th:block>
+                <th:block th:each="yearDurationEntry, iterStat : ${record.getDurationByYear()}">
+                  <div>
+                    <th:block
+                      th:text="#{overtime.list.col.duration.additionalInfo(${{yearDurationEntry.value}}, ${yearDurationEntry.key})}"
+                    ></th:block>
+                    <th:block
+                      th:if="${!iterStat.last}"
+                      th:text="#{overtime.list.col.duration.additionalInfo.notLast}"
+                    ></th:block>
+                  </div>
                 </th:block>
               </td>
             </tr>
