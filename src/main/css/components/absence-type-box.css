@@ -3,8 +3,10 @@
 }
 
 .absence-type_color-box {
+  display: inline-block;
   width: 0.75rem;
-  height: 2.25rem;
+  min-height: 2.25rem;
+  height: calc(100% - 0.75rem);
   @apply tw-rounded-lg;
 }
 

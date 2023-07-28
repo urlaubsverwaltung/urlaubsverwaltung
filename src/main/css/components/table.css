@@ -4,6 +4,12 @@
 
 **************************************************************************/
 
+table td {
+  /* allow children to fill full height with `height: 100%` */
+  /* note: this does not work in firefox. use `min-height` on children as 'workaround' additionally to `height` */
+  height: 0;
+}
+
 /**************************************************************************
   ACTIVE/INACTIVE ROWS
 **************************************************************************/

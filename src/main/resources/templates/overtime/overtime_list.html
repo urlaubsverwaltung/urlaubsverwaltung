@@ -50,7 +50,7 @@
         <thead th:if="${not #lists.isEmpty(records)}">
           <tr>
             <th th:text="#{overtime.list.col.icon}" class="tw-hidden md:tw-table-cell tw-sr-only" scope="col"></th>
-            <th th:text="#{overtime.list.col.date}" class="tw-font-medium" scope="col"></th>
+            <th th:text="#{overtime.list.col.date}" class="tw-pl-8 tw-font-medium" scope="col"></th>
             <th th:text="#{overtime.list.col.duration}" class="tw-font-medium tw-text-right" scope="col"></th>
             <th th:text="#{overtime.list.col.sum}" class="tw-font-medium tw-text-right" scope="col"></th>
             <th th:text="#{overtime.list.col.actions}" class="tw-sr-only" scope="col"></th>
@@ -73,42 +73,53 @@
             </td>
 
             <td>
-              <th:block th:if="${record.type == 'OVERTIME'}">
-                <span th:text="#{overtime.link.overtime}" class="visible-print"></span>
-                <a
-                  th:text="#{overtime.link.overtime}"
-                  class="print:tw-hidden tw-text-lg tw-mb-1"
-                  th:href="@{__${recordDetailsUrl}__}"
-                >
-                </a>
-              </th:block>
-              <th:block th:if="${record.type == 'ABSENCE'}">
-                <span th:text="#{overtime.link.absence}" class="visible-print"></span>
-                <a
-                  th:text="#{overtime.link.absence}"
-                  class="print:tw-hidden tw-text-lg tw-mb-1"
-                  th:href="@{__${recordDetailsUrl}__}"
-                >
-                </a>
-                <span
-                  class="absence-type_color-box"
-                  th:classappend="|
-                  ${record.status == 'WAITING' ? 'absence-type_color-box-waiting' : ''}
-                  ${record.status == 'TEMPORARY_ALLOWED' ? 'absence-type_color-box-temporary-allowed' : ''}
-                  ${record.status == 'ALLOWED' ? 'absence-type_color-box-allowed' : ''}
-                  ${record.status == 'ALLOWED_CANCELLATION_REQUESTED' ? 'absence-type_color-box-cancellation-requested' : ''}
-                  ${record.status == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
-                  ${record.status == 'REJECTED' || record.status == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
-                  |"
-                  th:styleappend="|${'--absence-bar-color:var(--absence-color-' + record.color + ');'}|"
-                  th:title="${#messages.msg(record.status)}"
-                >
-                  &nbsp;
-                </span>
-              </th:block>
-              <p>
-                <th:block th:replace="fragments/date-range(from=${record.startDate}, to=${record.endDate})" />
-              </p>
+              <div class="tw-flex">
+                <div class="tw-flex tw-items-center tw-mr-2">
+                  <th:block th:if="${record.type == 'OVERTIME'}">
+                    <div class="tw-w-3"></div>
+                  </th:block>
+                  <th:block th:if="${record.type == 'ABSENCE'}">
+                    <div
+                      class="absence-type_color-box tw-w-3"
+                      th:classappend="|
+                        ${record.status == 'WAITING' ? 'absence-type_color-box-waiting' : ''}
+                        ${record.status == 'TEMPORARY_ALLOWED' ? 'absence-type_color-box-temporary-allowed' : ''}
+                        ${record.status == 'ALLOWED' ? 'absence-type_color-box-allowed' : ''}
+                        ${record.status == 'ALLOWED_CANCELLATION_REQUESTED' ? 'absence-type_color-box-cancellation-requested' : ''}
+                        ${record.status == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
+                        ${record.status == 'REJECTED' || record.status == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
+                        |"
+                      th:styleappend="|${'--absence-bar-color:var(--absence-color-' + record.color + ');'}|"
+                      th:title="${#messages.msg(record.status)}"
+                    >
+                      &nbsp;
+                    </div>
+                  </th:block>
+                </div>
+                <div class="tw-flex tw-flex-col">
+                  <th:block th:if="${record.type == 'OVERTIME'}">
+                    <span th:text="#{overtime.link.overtime}" class="visible-print"></span>
+                    <a
+                      th:text="#{overtime.link.overtime}"
+                      class="print:tw-hidden tw-text-lg tw-mb-1"
+                      th:href="@{__${recordDetailsUrl}__}"
+                    >
+                    </a>
+                  </th:block>
+                  <th:block th:if="${record.type == 'ABSENCE'}">
+                    <span th:text="#{overtime.link.absence}" class="visible-print"></span>
+                    <a
+                      th:text="#{overtime.link.absence}"
+                      class="print:tw-hidden tw-text-lg tw-mb-1"
+                      th:href="@{__${recordDetailsUrl}__}"
+                    >
+                    </a>
+                  </th:block>
+                  <span>
+                    <th:block th:replace="fragments/date-range(from=${record.startDate}, to=${record.endDate})" />
+                  </span>
+                </div>
+              </div>
             </td>
 
             <td th:text="${{record.duration}}" class="tw-text-right"></td>
@@ -146,7 +157,7 @@
               <svg th:replace="icon/reply::svg(className='tw-w-5 tw-h-5 tw--scale-x-100')"></svg>
             </td>
 
-            <td class="tw-border-b-0">
+            <td class="tw-border-b-0 tw-pl-8">
               <span th:text="#{overtime.link.last-year}" class="visible-print"> </span>
               <a
                 th:text="#{overtime.link.last-year}"
