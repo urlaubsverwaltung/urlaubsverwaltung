@@ -79,7 +79,10 @@
             </div>
           </div>
 
-          <table class="list-table striped-table bordered-table tw-text-sm tw-table-fixed">
+          <table
+            th:if="${#maps.size(record.getDurationByYear()) >= 2}"
+            class="list-table striped-table bordered-table tw-text-sm tw-table-fixed"
+          >
             <tr>
               <td th:text="#{overtime.period.duration.label}"></td>
               <td>
@@ -102,6 +105,7 @@
               </td>
             </tr>
           </table>
+
           <div th:replace="fragments/section-heading::section-heading(~{::overtime-progress-heading-body}, ~{})">
             <th:block th:fragment="overtime-progress-heading-body">
               <h2 th:text="#{overtime.progress.title}"></h2>
