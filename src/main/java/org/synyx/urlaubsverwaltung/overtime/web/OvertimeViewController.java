@@ -135,6 +135,7 @@ public class OvertimeViewController implements HasLaunchpad {
         model.addAttribute("overtimeTotalLastYear", overtimeListDto.getOvertimeTotalLastYear());
         model.addAttribute("overtimeLeft", overtimeListDto.getOvertimeLeft());
         model.addAttribute("userIsAllowedToWriteOvertime", userIsAllowedToWriteOvertime);
+        model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 
         return "overtime/overtime_list";
     }
@@ -163,6 +164,7 @@ public class OvertimeViewController implements HasLaunchpad {
         model.addAttribute("overtimeTotal", overtimeDetailsDto.getOvertimeTotal());
         model.addAttribute("overtimeLeft", overtimeDetailsDto.getOvertimeLeft());
         model.addAttribute("userIsAllowedToWriteOvertime", overtimeService.isUserIsAllowedToWriteOvertime(signedInUser, person));
+        model.addAttribute("departmentsOfPerson", departmentService.getAssignedDepartmentsOfMember(person));
 
         return "overtime/overtime_details";
     }

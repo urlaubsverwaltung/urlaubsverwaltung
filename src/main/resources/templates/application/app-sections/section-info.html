@@ -31,39 +31,22 @@
                   th:text="${(app.status.name == 'ALLOWED' && app.editedDate == null) ? #messages.msg('application.applier.appliedDirectly') : #messages.msg('application.applier.applied')}"
                 />
               </span>
-              <span class="tw-my-1 tw-text-lg tw-font-medium">
+              <span class="tw-flex tw-justify-between tw-gap-4 tw-items-center tw-my-1 tw-text-lg tw-font-medium">
                 <th:block th:text="#{__${app.vacationType.messageKey}__}" />
                 <span
-                  class="state pull-right print:tw-hidden"
-                  th:classappend="${app.status.name}"
+                  class="absence-type_color-box print:tw-hidden tw-mr-5"
+                  th:classappend="|
+                  ${app.status.name == 'WAITING' ? 'absence-type_color-box-waiting' : ''}
+                  ${app.status.name == 'TEMPORARY_ALLOWED' ? 'absence-type_color-box-temporary-allowed' : ''}
+                  ${app.status.name == 'ALLOWED' ? 'absence-type_color-box-allowed' : ''}
+                  ${app.status.name == 'ALLOWED_CANCELLATION_REQUESTED' ? 'absence-type_color-box-cancellation-requested' : ''}
+                  ${app.status.name == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
+                  ${app.status.name == 'REJECTED' || app.status.name == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
+                  |"
+                  th:styleappend="|${'--absence-bar-color:var(--absence-color-' + app.vacationType.color + ');'}|"
                   th:title="${#messages.msg(app.status.name)}"
                 >
-                  <th:block th:switch="${app.status.name}">
-                    <th:block th:case="'WAITING'">
-                      <svg th:replace="icon/help-circle::svg(className='tw-w-6 tw-h-6')"></svg>
-                    </th:block>
-                    <th:block th:case="'TEMPORARY_ALLOWED'">
-                      <svg th:replace="icon/check-circle-2::svg(className='tw-w-6 tw-h-6')"></svg>
-                    </th:block>
-                    <th:block th:case="'ALLOWED'">
-                      <svg th:replace="icon/check-circle-2::svg(className='tw-w-6 tw-h-6')"></svg>
-                    </th:block>
-                    <th:block th:case="'ALLOWED_CANCELLATION_REQUESTED'">
-                      <svg th:replace="icon/check-circle-2::svg(className='tw-w-6 tw-h-6')"></svg>
-                      <svg th:replace="icon/arrow-narrow-right::svg(className='tw-w-6 tw-h-6')"></svg>
-                      <svg th:replace="icon/trash-2::svg(className='tw-w-6 tw-h-6')"></svg>
-                    </th:block>
-                    <th:block th:case="'REJECTED'">
-                      <svg th:replace="icon/slash::svg(className='tw-w-6 tw-h-6')"></svg>
-                    </th:block>
-                    <th:block th:case="'CANCELLED'">
-                      <svg th:replace="icon/trash-2::svg(className='tw-w-6 tw-h-6')"></svg>
-                    </th:block>
-                    <th:block th:case="'REVOKED'">
-                      <svg th:replace="icon/trash-2::svg(className='tw-w-6 tw-h-6')"></svg>
-                    </th:block>
-                    <th:block th:case="*"> &nbsp; </th:block>
-                  </th:block>
+                  &nbsp;
                 </span>
               </span>
               <span class="tw-text-sm tw-text-black tw-text-opacity-75 dark:tw-text-zinc-300 dark:tw-text-opacity-100">

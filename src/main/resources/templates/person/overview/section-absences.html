@@ -135,8 +135,8 @@
               <td class="is-centered">
                 <th:block th:text="#{overview.vacations.expired.days(${expiredRemainingVacationDays})}"></th:block>
               </td>
-              <td class="is-centered hidden-xs print:tw-hidden">
-                <div class="tw-flex tw-items-center">
+              <td class="hidden-xs print:tw-hidden">
+                <div class="tw-flex tw-items-center tw-justify-center">
                   <svg th:replace="icon/clock::svg(className='tw-w-4 tw-h-4')"></svg>&nbsp;
                   <th:block th:text="#{application.progress.EXPIRED}"></th:block>&nbsp;
                   <th:block th:replace="fragments/date::date(${expiryDate})"></th:block>
@@ -151,31 +151,22 @@
               <td class="visible-print">
                 <th:block th:text="${#messages.msg(app.status)}"></th:block>
               </td>
-              <td
-                class="is-centered state print:tw-hidden"
-                th:classappend="${app.status}"
-                th:title="${#messages.msg(app.status)}"
-              >
-                <th:block th:if="${app.status.name == 'WAITING'}">
-                  <svg th:replace="icon/help-circle::svg(className='tw-w-6 tw-h-6')"></svg>
-                </th:block>
-                <th:block th:if="${app.status.name == 'ALLOWED'}">
-                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-6 tw-h-6')"></svg>
-                </th:block>
-                <th:block th:if="${app.status.name == 'TEMPORARY_ALLOWED'}">
-                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-6 tw-h-6')"></svg>
-                </th:block>
-                <th:block th:if="${app.status.name == 'ALLOWED_CANCELLATION_REQUESTED'}">
-                  <svg th:replace="icon/check-circle-2::svg(className='tw-w-6 tw-h-6')"></svg>
-                  <svg th:replace="icon/arrow-narrow-right::svg(className='tw-w-5 tw-h-5')"></svg>
-                  <svg th:replace="icon/trash-2::svg(className='tw-w-6 tw-h-6')"></svg>
-                </th:block>
-                <th:block th:if="${app.status.name == 'REJECTED'}">
-                  <svg th:replace="icon/slash::svg(className='tw-w-6 tw-h-6')"></svg>
-                </th:block>
-                <th:block th:if="${app.status.name == 'CANCELLED' || app.status.name == 'REVOKED'}">
-                  <svg th:replace="icon/trash-2::svg(className='tw-w-6 tw-h-6')"></svg>
-                </th:block>
+              <td class="tw-py-6 absence-type_color-box-parent">
+                <div
+                  class="absence-type_color-box"
+                  th:classappend="|
+                  ${app.status.name == 'WAITING' ? 'absence-type_color-box-waiting' : ''}
+                  ${app.status.name == 'TEMPORARY_ALLOWED' ? 'absence-type_color-box-temporary-allowed' : ''}
+                  ${app.status.name == 'ALLOWED' ? 'absence-type_color-box-allowed' : ''}
+                  ${app.status.name == 'ALLOWED_CANCELLATION_REQUESTED' ? 'absence-type_color-box-cancellation-requested' : ''}
+                  ${app.status.name == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
+                  ${app.status.name == 'REJECTED' || app.status.name == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
+                  |"
+                  th:styleappend="|${'--absence-bar-color:var(--absence-color-' + app.vacationType.color + ');'}|"
+                  th:title="${#messages.msg(app.status)}"
+                >
+                  &nbsp;
+                </div>
               </td>
               <td class="tw-py-6">
                 <a
@@ -249,8 +240,8 @@
                   </script>
                 </th:block>
               </td>
-              <td class="is-centered hidden-xs print:tw-hidden">
-                <div class="tw-flex tw-items-center">
+              <td class="hidden-xs print:tw-hidden">
+                <div class="tw-flex tw-items-center tw-justify-center">
                   <svg th:replace="icon/clock::svg(className='tw-w-4 tw-h-4')"></svg>&nbsp;
                   <span>
                     <th:block th:if="${app.status.name == 'WAITING'}">

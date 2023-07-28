@@ -150,6 +150,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
             .id(application.getId())
             .person(toViewPerson(person, allowedToAccessPersonData))
             .vacationType(toViewVacationType(application.getVacationType()))
+            .status(application.getStatus())
             .duration(DurationFormatter.toDurationString(application.getHours(), messageSource, locale))
             .dayLength(application.getDayLength())
             .workDays(application.getWorkDays())
@@ -199,7 +200,7 @@ class ApplicationForLeaveViewController implements HasLaunchpad {
     }
 
     private static ApplicationForLeaveDto.VacationType toViewVacationType(VacationTypeEntity vacationType) {
-        return new ApplicationForLeaveDto.VacationType(vacationType.getCategory().name(), vacationType.getMessageKey());
+        return new ApplicationForLeaveDto.VacationType(vacationType.getCategory().name(), vacationType.getMessageKey(), vacationType.getColor());
     }
 
     private List<ApplicationReplacementDto> getHolidayReplacements(Person signedInUser, LocalDate holidayReplacementForDate, Locale locale) {

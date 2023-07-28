@@ -16,6 +16,7 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
+import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
@@ -152,8 +153,7 @@ class OvertimeViewControllerTest {
         person.setId(5);
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final ResultActions resultActions = perform(get("/web/overtime"));
-        resultActions
+        perform(get("/web/overtime"))
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/overtime?person=5"));
     }
@@ -169,9 +169,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(true);
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final ResultActions resultActions = perform(get("/web/overtime").param("person", "5"));
-
-        resultActions
+        perform(get("/web/overtime").param("person", "5"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)));
     }
@@ -187,9 +185,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.isUserIsAllowedToWriteOvertime(person, person)).thenReturn(false);
         when(personService.getSignedInUser()).thenReturn(person);
 
-        final ResultActions resultActions = perform(get("/web/overtime").param("person", "5"));
-
-        resultActions
+        perform(get("/web/overtime").param("person", "5"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(false)));
     }
@@ -207,7 +203,11 @@ class OvertimeViewControllerTest {
         final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
+        final Department department = new Department();
+        department.setName("Buchhaltung");
+        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(signedInPerson, person)).thenReturn(true);
+
         when(overtimeService.isUserIsAllowedToWriteOvertime(signedInPerson, person)).thenReturn(true);
 
         final Overtime overtime = new Overtime(person, LocalDate.MIN, LocalDate.MAX, Duration.ofHours(10));
@@ -227,11 +227,11 @@ class OvertimeViewControllerTest {
             .thenReturn(List.of(applicationNonEditable, applicationEditable));
 
         final OvertimeListRecordDto overtimeRecord = new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(),
-            overtime.getEndDate(), overtime.getDuration(), Duration.ofHours(10), "", "OVERTIME", true);
+            overtime.getEndDate(), overtime.getDuration(), Duration.ofHours(10), "", "", "OVERTIME", true);
         final OvertimeListRecordDto absenceRecordNonEditable = new OvertimeListRecordDto(overtime.getId(), applicationNonEditable.getStartDate(),
-            applicationNonEditable.getEndDate(), Duration.ofHours(-8), Duration.ofHours(-6), "WAITING", "ABSENCE", false);
+            applicationNonEditable.getEndDate(), Duration.ofHours(-8), Duration.ofHours(-6), "WAITING", "ORANGE", "ABSENCE", false);
         final OvertimeListRecordDto absenceRecordEditable = new OvertimeListRecordDto(overtime.getId(), applicationNonEditable.getStartDate().minusDays(1),
-            applicationNonEditable.getEndDate().minusDays(1), Duration.ofHours(-8), Duration.ofHours(2), "WAITING", "ABSENCE", true);
+            applicationNonEditable.getEndDate().minusDays(1), Duration.ofHours(-8), Duration.ofHours(2), "WAITING", "ORANGE", "ABSENCE", true);
 
 
         perform(get("/web/overtime").param("person", "5"))
@@ -246,7 +246,8 @@ class OvertimeViewControllerTest {
             .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)))
             .andExpect(model().attribute("records", hasItem(overtimeRecord)))
             .andExpect(model().attribute("records", hasItem(absenceRecordNonEditable)))
-            .andExpect(model().attribute("records", hasItem(absenceRecordEditable)));
+            .andExpect(model().attribute("records", hasItem(absenceRecordEditable)))
+            .andExpect(model().attribute("departmentsOfPerson", List.of(department)));
     }
 
     @Test
@@ -274,7 +275,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
         final OvertimeListRecordDto listRecordDto = new OvertimeListRecordDto(overtime.getId(), overtime.getStartDate(),
-            overtime.getEndDate(), overtime.getDuration(), Duration.ofHours(20), "", "OVERTIME", true);
+            overtime.getEndDate(), overtime.getDuration(), Duration.ofHours(20), "", "", "OVERTIME", true);
 
         perform(get("/web/overtime")
             .param("person", "5")
@@ -320,6 +321,9 @@ class OvertimeViewControllerTest {
 
         when(personService.getSignedInUser()).thenReturn(overtimePerson);
 
+        final Department department = new Department();
+        department.setName("Buchhaltung");
+        when(departmentService.getAssignedDepartmentsOfMember(overtimePerson)).thenReturn(List.of(department));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(overtimePerson, overtimePerson)).thenReturn(true);
         when(overtimeService.isUserIsAllowedToWriteOvertime(overtimePerson, overtimePerson)).thenReturn(true);
 
@@ -341,7 +345,8 @@ class OvertimeViewControllerTest {
             .andExpect(model().attribute("overtimeLeft", is(Duration.ZERO)))
             .andExpect(model().attribute("userIsAllowedToWriteOvertime", is(true)))
             .andExpect(model().attribute("record", is(record)))
-            .andExpect(model().attribute("comments", hasItem(commentDto)));
+            .andExpect(model().attribute("comments", hasItem(commentDto)))
+            .andExpect(model().attribute("departmentsOfPerson", List.of(department)));
     }
 
     @Test

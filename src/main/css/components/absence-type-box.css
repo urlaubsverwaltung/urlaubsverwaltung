@@ -1,0 +1,66 @@
+.absence-type_color-box-parent {
+  width: 0.75rem;
+}
+
+.absence-type_color-box {
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: transparent;
+  position: relative;
+  display: inline-block;
+  width: calc(0.75rem - 4px);
+  min-height: calc(2.25rem - 4px);
+  height: calc(100% - 0.75rem);
+  @apply tw-rounded-lg;
+}
+
+.absence-type_color-box::after {
+  content: "";
+  position: absolute;
+  @apply tw-rounded-lg;
+  top: calc(-1 * var(--border-width));
+  left: calc(-1 * var(--border-width));
+  right: calc(-1 * var(--border-width));
+  bottom: calc(-1 * var(--border-width));
+  border: var(--border-width) var(--border-style) var(--border-color);
+}
+
+.absence-type_color-box-waiting {
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: var(--absence-bar-color);
+}
+
+.absence-type_color-box-temporary-allowed {
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: var(--absence-bar-color);
+  background: linear-gradient(225deg, var(--absence-bar-color) 50%, transparent 50%);
+}
+
+.absence-type_color-box-allowed {
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: var(--absence-bar-color);
+  background: linear-gradient(135deg, var(--absence-bar-color) 50%, var(--absence-bar-color) 50%);
+}
+
+.absence-type_color-box-cancellation-requested {
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: var(--absence-bar-color);
+  background: linear-gradient(135deg, var(--absence-bar-color) 50%, var(--absence-bar-color) 50%);
+}
+
+.absence-type_color-box-cancelled {
+  --border-width: 2px;
+  --border-style: dashed;
+  --border-color: var(--absence-bar-color);
+  background: linear-gradient(135deg, var(--absence-bar-color) 50%, var(--absence-bar-color) 50%);
+}
+
+.absence-type_color-box-rejected-revoked {
+  --border-width: 2px;
+  --border-style: dashed;
+  --border-color: var(--absence-bar-color);
+}
