@@ -125,32 +125,51 @@
             class="lg:list--hover tw-w-full tw-list-none tw-m-0 tw-p-0 tw-pl-20 md:tw-pl-0 md:tw-flex-1 tw-space-y-10 lg:tw-space-y-2 md:tw-mt-2 lg:tw-mt-0 md:tw-translate-y-0.5 tw-text-sm"
           >
             <li
-              class="tw-mt-2 xs:tw-mt-0 md:tw-space-x-0 lg:tw-p-2 md:tw-block lg:tw-flex lg:tw-items-end dark:tw-rounded"
+              class="tw-mt-2 tw-flex tw-flex-col tw-justify-between xs:tw-mt-0 md:tw-space-x-0 lg:tw-p-2 lg:tw-flex-row lg:tw-items-end dark:tw-rounded"
               th:each="userRequestForLeave,loopStatus: ${userApplications}"
             >
-              <a
-                href="#"
-                th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id})}"
-                class="tw-block tw-flex-1 tw-no-underline print:no-link"
-                th:classappend="${userRequestForLeave.cancellationRequested ? 'tw-text-black-almost' : ''}"
-              >
-                <span class="hover:tw-underline tw-mb-1 tw-text-lg">
-                  <th:block th:if="${userRequestForLeave.cancellationRequested}">
-                    <th:block th:text="#{applications.cancellationRequestPrefix}" />
-                  </th:block>
-                  <th:block th:if="${#strings.isEmpty(userRequestForLeave.duration)}">
-                    <th:block th:text="#{applications.days(${userRequestForLeave.workDays})}" />
-                  </th:block>
-                  <th:block th:if="${not #strings.isEmpty(userRequestForLeave.duration)}">
-                    <th:block th:text="${userRequestForLeave.duration}" />
-                  </th:block>
-                  <th:block th:text="#{${userRequestForLeave.vacationType.messageKey}}"></th:block>
-                </span>
-                <span
-                  class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
-                  th:text="${userRequestForLeave.durationOfAbsenceDescription}"
-                ></span>
-              </a>
+              <div class="tw-flex tw-items-center tw-gap-3">
+                <div
+                  th:fragment="absence-color-box(absence)"
+                  th:with="absence=${absence ?: userRequestForLeave}"
+                  class="tw-shrink-0 absence-type_color-box"
+                  th:classappend="|
+                    ${absence.status.name == 'WAITING' ? 'absence-type_color-box-waiting' : ''}
+                    ${absence.status.name == 'TEMPORARY_ALLOWED' ? 'absence-type_color-box-temporary-allowed' : ''}
+                    ${absence.status.name == 'ALLOWED' ? 'absence-type_color-box-allowed' : ''}
+                    ${absence.status.name == 'ALLOWED_CANCELLATION_REQUESTED' ? 'absence-type_color-box-cancellation-requested' : ''}
+                    ${absence.status.name == 'CANCELLED' ? 'absence-type_color-box-cancelled' : ''}
+                    ${absence.status.name == 'REJECTED' || absence.status.name == 'REVOKED' ? 'absence-type_color-box-rejected-revoked' : ''}
+                    |"
+                  th:styleappend="|${'--absence-bar-color:var(--absence-color-' + absence.vacationType.color + ');'}|"
+                  th:title="${#messages.msg(absence.status)}"
+                >
+                  &nbsp;
+                </div>
+                <a
+                  href="#"
+                  th:href="@{/web/application/{applicationId} (applicationId=${userRequestForLeave.id})}"
+                  class="tw-block tw-flex-1 tw-no-underline print:no-link"
+                  th:classappend="${userRequestForLeave.cancellationRequested ? 'tw-text-black-almost' : ''}"
+                >
+                  <span class="hover:tw-underline tw-mb-1 tw-text-lg">
+                    <th:block th:if="${userRequestForLeave.cancellationRequested}">
+                      <th:block th:text="#{applications.cancellationRequestPrefix}" />
+                    </th:block>
+                    <th:block th:if="${#strings.isEmpty(userRequestForLeave.duration)}">
+                      <th:block th:text="#{applications.days(${userRequestForLeave.workDays})}" />
+                    </th:block>
+                    <th:block th:if="${not #strings.isEmpty(userRequestForLeave.duration)}">
+                      <th:block th:text="${userRequestForLeave.duration}" />
+                    </th:block>
+                    <th:block th:text="#{${userRequestForLeave.vacationType.messageKey}}"></th:block>
+                  </span>
+                  <span
+                    class="tw-block tw-text-black-almost dark:tw-text-zinc-200"
+                    th:text="${userRequestForLeave.durationOfAbsenceDescription}"
+                  ></span>
+                </a>
+              </div>
               <div class="tw-mt-2 lg:tw-mt-0 tw-flex tw-flex-wrap tw-gap-2 lg:tw-justify-end print:tw-hidden">
                 <a
                   class="button tw-flex-1 tw-justify-center"
@@ -347,7 +366,8 @@
               </span>
             </div>
             <div class="tw-flex-1 lg:tw-flex lg:tw-items-center tw-pl-20 md:tw-pl-0">
-              <div class="tw-flex-1 lg:tw-px-1">
+              <div class="tw-flex-1 tw-flex tw-items-center tw-gap-3 lg:tw-px-1">
+                <div th:replace="~{::absence-color-box(${otherRequestForLeave})}"></div>
                 <a
                   href="#"
                   th:href="@{/web/application/{applicationId}(applicationId=${otherRequestForLeave.id})}"
@@ -482,7 +502,8 @@
                 </span>
               </div>
               <div class="tw-flex-1 lg:tw-flex lg:tw-items-center tw-pl-20 md:tw-pl-0">
-                <div class="tw-flex-1 lg:tw-px-1">
+                <div class="tw-flex-1 tw-flex tw-items-center tw-gap-3 lg:tw-px-1">
+                  <div th:replace="~{::absence-color-box(${cancellationRequest})}"></div>
                   <a
                     href="#"
                     th:href="@{/web/application/{applicationId}(applicationId=${cancellationRequest.id})}"
