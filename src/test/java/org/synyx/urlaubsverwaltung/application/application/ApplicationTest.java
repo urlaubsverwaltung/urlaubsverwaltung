@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -154,6 +155,20 @@ class ApplicationTest {
 
         final ZonedDateTime endDateWithTime = application.getEndDateWithTime();
         assertThat(endDateWithTime).isNull();
+    }
+
+    @Test
+    void getHoursByYear() {
+
+        final Application application = new Application();
+        application.setStartDate(LocalDate.of(2022, 12, 30));
+        application.setEndDate(LocalDate.of(2023, 1, 2));
+        application.setHours(Duration.ofHours(20));
+
+        final Map<Integer, Duration> hoursByYear = application.getHoursByYear();
+
+        assertThat(hoursByYear).containsEntry(2022, Duration.ofHours(10));
+        assertThat(hoursByYear).containsEntry(2023, Duration.ofHours(10));
     }
 
     @Test

@@ -2,10 +2,12 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.hibernate.annotations.LazyCollection;
 import org.synyx.urlaubsverwaltung.DurationConverter;
+import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Convert;
@@ -16,18 +18,24 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+import static java.math.RoundingMode.HALF_EVEN;
+import static java.time.Duration.ZERO;
 import static java.time.ZoneOffset.UTC;
 import static javax.persistence.EnumType.STRING;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
+import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
 /**
  * This class describes an application for leave.
@@ -330,6 +338,46 @@ public class Application {
 
     public Duration getHours() {
         return hours;
+    }
+
+    private Duration getHoursForDateRange(DateRange dateRange) {
+        final DateRange overtimeDateRange = new DateRange(startDate, endDate);
+        final Duration durationOfOverlap = overtimeDateRange.overlap(dateRange).map(DateRange::duration).orElse(ZERO);
+
+        final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
+        final BigDecimal secondsProRata = toFormattedDecimal(hours)
+                .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
+                .multiply(toFormattedDecimal(durationOfOverlap))
+                .setScale(0, HALF_EVEN);
+
+        return DecimalConverter.toDuration(secondsProRata);
+    }
+
+    private List<DateRange> splitByYear() {
+        List<DateRange> dateRangesByYear = new ArrayList<>();
+
+        LocalDate currentStartDate = startDate;
+        LocalDate currentEndDate = startDate.withDayOfYear(1).plusYears(1).minusDays(1);
+
+        while (currentEndDate.isBefore(endDate) || currentEndDate.isEqual(endDate)) {
+            dateRangesByYear.add(new DateRange(currentStartDate, currentEndDate));
+
+            currentStartDate = currentEndDate.plusDays(1);
+            currentEndDate = currentStartDate.withDayOfYear(1).plusYears(1).minusDays(1);
+        }
+
+        // Add the remaining date range if endDate is not on a year boundary
+        if (!currentStartDate.isAfter(endDate)) {
+            dateRangesByYear.add(new DateRange(currentStartDate, endDate));
+        }
+
+        return dateRangesByYear;
+    }
+
+    public Map<Integer, Duration> getHoursByYear() {
+        return this.splitByYear().stream().collect(Collectors.toMap(
+                dateRangeForYear -> dateRangeForYear.getStartDate().getYear(),
+                this::getHoursForDateRange));
     }
 
     public void setHours(Duration hours) {

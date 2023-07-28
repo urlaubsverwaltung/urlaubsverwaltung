@@ -49,8 +49,6 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
     )
     List<Application> getApplicationsForACertainTimeAndPerson(LocalDate startDate, LocalDate endDate, Person person);
 
-    List<Application> findByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory(List<ApplicationStatus> statuses, Person person, LocalDate start, LocalDate end, VacationCategory vacationCategory);
-
     List<Application> findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(List<ApplicationStatus> statuses, Person person, LocalDate start, LocalDate end, VacationCategory vacationCategory);
 
     @Query(
@@ -69,19 +67,8 @@ interface ApplicationRepository extends CrudRepository<Application, Integer> {
     )
     BigDecimal calculateTotalOvertimeReductionOfPerson(@Param("person") Person person);
 
-    List<Application> findByPersonAndVacationTypeCategoryAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(
-        Person person, VacationCategory category, List<ApplicationStatus> statuses, LocalDate start, LocalDate end);
-
     List<Application> findByPersonInAndVacationTypeCategoryAndStatusInAndStartDateIsLessThanEqual(
         Collection<Person> persons, VacationCategory category, List<ApplicationStatus> statuses, LocalDate until);
-
-    @Query(
-        "SELECT SUM(application.hours) FROM Application application WHERE application.person = :person "
-            + "AND application.startDate < :date "
-            + "AND application.vacationType.category = 'OVERTIME' "
-            + "AND (application.status = 'WAITING' OR application.status = 'TEMPORARY_ALLOWED' OR application.status = 'ALLOWED' OR application.status = 'ALLOWED_CANCELLATION_REQUESTED')"
-    )
-    BigDecimal calculateTotalOvertimeReductionOfPersonBefore(@Param("person") Person person, @Param("date") LocalDate before);
 
     List<Application> findByHolidayReplacements_PersonAndEndDateIsGreaterThanEqualAndStatusIn(Person person, LocalDate date, List<ApplicationStatus> status);
 

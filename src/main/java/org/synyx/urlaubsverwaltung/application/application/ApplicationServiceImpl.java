@@ -62,11 +62,6 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<Application> getApplicationsStartingInACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory) {
-        return applicationRepository.findByStatusInAndPersonAndStartDateBetweenAndVacationTypeCategory(statuses, person, startDate, endDate, vacationCategory);
-    }
-
-    @Override
     public List<Application> getApplicationsForACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory) {
         return applicationRepository.findByStatusInAndPersonAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqualAndVacationTypeCategory(statuses, person, startDate, endDate, vacationCategory);
     }
@@ -123,21 +118,8 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Duration getTotalOvertimeReductionOfPerson(Person person, LocalDate start, LocalDate end) {
-
-        final DateRange dateRangeOfPeriod = new DateRange(start, end);
-
-        final List<ApplicationStatus> waitingAndAllowedStatus = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);
-        return applicationRepository.findByPersonAndVacationTypeCategoryAndStatusInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(person, OVERTIME, waitingAndAllowedStatus, start, end).stream()
-            .map(application -> {
-                final DateRange applicationDateRage = new DateRange(application.getStartDate(), application.getEndDate());
-                final Duration durationOfOverlap = dateRangeOfPeriod.overlap(applicationDateRage).map(DateRange::duration).orElse(Duration.ZERO);
-                return toFormattedDecimal(application.getHours())
-                    .divide(toFormattedDecimal(applicationDateRage.duration()), HALF_EVEN)
-                    .multiply(toFormattedDecimal(durationOfOverlap)).setScale(0, HALF_EVEN);
-            })
-            .map(DecimalConverter::toDuration)
-            .reduce(Duration.ZERO, Duration::plus);
+    public Duration getTotalOvertimeReductionOfPersonUntil(Person person, LocalDate until) {
+        return getTotalOvertimeReductionOfPersonUntil(List.of(person), until).getOrDefault(person, Duration.ZERO);
     }
 
     public Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until) {
@@ -162,12 +144,6 @@ class ApplicationServiceImpl implements ApplicationService {
         return persons.stream()
             .map(person -> Map.entry(person, overtimeReductionByPerson.getOrDefault(person, Duration.ZERO)))
             .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    @Override
-    public Duration getTotalOvertimeReductionOfPersonBefore(Person person, LocalDate date) {
-        final BigDecimal overtimeReduction = Optional.ofNullable(applicationRepository.calculateTotalOvertimeReductionOfPersonBefore(person, date)).orElse(BigDecimal.ZERO);
-        return Duration.ofMinutes(overtimeReduction.multiply(BigDecimal.valueOf(60)).longValue());
     }
 
     @Override

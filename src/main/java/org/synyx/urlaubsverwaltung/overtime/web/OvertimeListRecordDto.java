@@ -2,7 +2,10 @@ package org.synyx.urlaubsverwaltung.overtime.web;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Objects;
+
+import static java.util.stream.Collectors.toMap;
 
 public final class OvertimeListRecordDto {
 
@@ -15,17 +18,19 @@ public final class OvertimeListRecordDto {
     private final LocalDate startDate;
     private final LocalDate endDate;
     private final Duration duration;
+    private final Map<Integer, Duration> durationByYear;
     private final Duration sum;
     private final String status;
     private final String color;
     private final String type;
     private final boolean isAllowedToEdit;
 
-    OvertimeListRecordDto(Integer id, LocalDate startDate, LocalDate endDate, Duration duration, Duration sum, String status, String color, String type, boolean isAllowedToEdit) {
+    OvertimeListRecordDto(Integer id, LocalDate startDate, LocalDate endDate, Duration duration, Map<Integer, Duration> durationByYear, Duration sum, String status, String color, String type, boolean isAllowedToEdit) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
         this.duration = duration;
+        this.durationByYear = durationByYear;
         this.sum = sum;
         this.status = status;
         this.color = color;
@@ -33,9 +38,9 @@ public final class OvertimeListRecordDto {
         this.isAllowedToEdit = isAllowedToEdit;
     }
 
-    OvertimeListRecordDto(OvertimeListRecordDto overtimeListRecordDto, Duration sum) {
+    OvertimeListRecordDto(OvertimeListRecordDto overtimeListRecordDto, Duration sum, Map<Integer, Duration> durationByYear) {
         this(overtimeListRecordDto.id, overtimeListRecordDto.startDate, overtimeListRecordDto.endDate, overtimeListRecordDto.getDuration(),
-            sum, overtimeListRecordDto.getStatus(), overtimeListRecordDto.getColor(), overtimeListRecordDto.getType(), overtimeListRecordDto.isAllowedToEdit);
+            durationByYear, sum, overtimeListRecordDto.getStatus(), overtimeListRecordDto.getColor(), overtimeListRecordDto.getType(), overtimeListRecordDto.isAllowedToEdit);
     }
 
     public Integer getId() {
@@ -60,6 +65,16 @@ public final class OvertimeListRecordDto {
 
     public boolean isPositive() {
         return !duration.isNegative() && !duration.isZero();
+    }
+
+    public Map<Integer, Duration> getDurationByYear() {
+        return durationByYear;
+    }
+
+    public Map<Integer, Duration> getDurationByYear(int withoutYear) {
+        return durationByYear.entrySet().stream()
+            .filter(e -> e.getKey() != withoutYear)
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public Duration getSum() {

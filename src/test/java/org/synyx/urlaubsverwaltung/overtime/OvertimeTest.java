@@ -2,12 +2,14 @@ package org.synyx.urlaubsverwaltung.overtime;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ReflectionUtils;
+import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.lang.reflect.Field;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -103,6 +105,30 @@ class OvertimeTest {
         assertThat(overtime.getLastModificationDate()).isEqualTo(now.minusDays(3));
         overtime.onUpdate();
         assertThat(overtime.getLastModificationDate()).isEqualTo(now);
+    }
+
+    @Test
+    void getDurationByYear() {
+
+        final Overtime overtime = new Overtime();
+        overtime.setStartDate(LocalDate.of(2022, 12, 30));
+        overtime.setEndDate(LocalDate.of(2023, 1, 2));
+        overtime.setDuration(Duration.ofHours(20));
+
+        final Map<Integer, Duration> durationByYear = overtime.getDurationByYear();
+
+        assertThat(durationByYear).containsEntry(2022, Duration.ofHours(10));
+        assertThat(durationByYear).containsEntry(2023, Duration.ofHours(10));
+    }
+
+    @Test
+    void getTotalDurationBefore() {
+        final Overtime overtime = new Overtime();
+        overtime.setStartDate(LocalDate.of(2022, 12, 30));
+        overtime.setEndDate(LocalDate.of(2023, 1, 2));
+        overtime.setDuration(Duration.ofHours(20));
+
+        assertThat(overtime.getTotalDurationBefore(2023)).isEqualTo(Duration.ofHours(10));
     }
 
     @Test

@@ -51,7 +51,7 @@
           <tr>
             <th th:text="#{overtime.list.col.icon}" class="tw-hidden md:tw-table-cell tw-sr-only" scope="col"></th>
             <th th:text="#{overtime.list.col.date}" class="tw-pl-8 tw-font-medium" scope="col"></th>
-            <th th:text="#{overtime.list.col.duration}" class="tw-font-medium tw-text-right" scope="col"></th>
+            <th th:text="#{overtime.list.col.duration}" class="tw-font-medium tw-text-center" scope="col"></th>
             <th th:text="#{overtime.list.col.sum}" class="tw-font-medium tw-text-right" scope="col"></th>
             <th th:text="#{overtime.list.col.actions}" class="tw-sr-only" scope="col"></th>
           </tr>
@@ -122,7 +122,24 @@
               </div>
             </td>
 
-            <td th:text="${{record.duration}}" class="tw-text-right"></td>
+            <td class="tw-text-center">
+              <div th:text="${{record.durationByYear.get(selectedYear)}}"></div>
+              <span>
+                <th:block th:each="yearDurationEntry, iterStat : ${record.getDurationByYear(selectedYear)}">
+                  <th:block
+                    th:if="${iterStat.first}"
+                    th:text="#{overtime.list.col.duration.additionalInfo.first}"
+                  ></th:block>
+                  <th:block
+                    th:text="#{overtime.list.col.duration.additionalInfo(${{yearDurationEntry.value}}, ${yearDurationEntry.key})}"
+                  ></th:block>
+                  <th:block
+                    th:if="${!iterStat.last}"
+                    th:text="#{overtime.list.col.duration.additionalInfo.notLast}"
+                  ></th:block>
+                </th:block>
+              </span>
+            </td>
 
             <td>
               <div class="tw-flex tw-justify-end">

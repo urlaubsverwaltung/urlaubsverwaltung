@@ -103,28 +103,6 @@ class OvertimeRepositoryIT extends TestContainersBase {
     }
 
     @Test
-    void ensureReturnsAllRecordsWithStartOrEndDateInTheGivenYear() {
-
-        final Person savedPerson = personService.create("muster", "Marlene", "Muster", "muster@example.org");
-
-        // records to find
-        sut.save(new Overtime(savedPerson, of(2015, 10, 5), of(2015, 10, 20), Duration.ofHours(2)));
-        sut.save(new Overtime(savedPerson, of(2015, 12, 28), of(2016, 1, 6), Duration.ofHours(3)));
-
-        // record not to find
-        sut.save(new Overtime(savedPerson, of(2014, 12, 30), of(2015, 1, 3), Duration.ofHours(1)));
-        sut.save(new Overtime(savedPerson, of(2014, 12, 5), of(2014, 12, 31), Duration.ofHours(4)));
-        sut.save(new Overtime(savedPerson, of(2014, 12, 5), of(2016, 12, 31), Duration.ofHours(4)));
-
-        final List<Overtime> overtimes = sut.findByPersonAndStartDateBetweenOrderByStartDateDesc(savedPerson, of(2015, 1, 1), of(2015, 12, 31));
-        assertThat(overtimes).hasSize(2);
-        assertThat(overtimes.get(0).getStartDate()).isEqualTo(of(2015, 12, 28));
-        assertThat(overtimes.get(1).getStartDate()).isEqualTo(of(2015, 10, 5));
-        assertThat(overtimes.get(0).getDuration()).isEqualTo(Duration.ofHours(3));
-        assertThat(overtimes.get(1).getDuration()).isEqualTo(Duration.ofHours(2));
-    }
-
-    @Test
     void ensureFindByPersonAndStartDateIsBefore() {
 
         final Person person = personService.create("muster", "Marlene", "Muster", "muster@example.org");

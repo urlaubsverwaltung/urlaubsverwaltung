@@ -54,19 +54,6 @@ public interface ApplicationService {
     List<Application> getApplicationsForACertainPeriodAndStatus(LocalDate startDate, LocalDate endDate, List<Person> persons, List<ApplicationStatus> statuses);
 
     /**
-     * Returns all {@link Application}s with vacation time starting in between startDate x and endDate y for the given
-     * status and filters by the person, status and vacation category
-     *
-     * @param startDate        {@link LocalDate}
-     * @param endDate          {@link LocalDate}
-     * @param person           {@link Person}
-     * @param statuses         {@link ApplicationStatus} that should be filtered for
-     * @param vacationCategory {@link VacationCategory} that should be filtered for
-     * @return filters {@link Application}s by status of the given person with vacation category between startDate x and endDate y
-     */
-    List<Application> getApplicationsStartingInACertainPeriodAndPersonAndVacationCategory(LocalDate startDate, LocalDate endDate, Person person, List<ApplicationStatus> statuses, VacationCategory vacationCategory);
-
-    /**
      * Returns all {@link Application}s where their start or end date is overlapping with the given period between startDate and endDate
      * and filters by the person, status and vacation category
      *
@@ -162,11 +149,9 @@ public interface ApplicationService {
      */
     Duration getTotalOvertimeReductionOfPerson(Person person);
 
-    Duration getTotalOvertimeReductionOfPerson(Person person, LocalDate start, LocalDate end);
-
     Map<Person, Duration> getTotalOvertimeReductionOfPersonUntil(Collection<Person> persons, LocalDate until);
 
-    Duration getTotalOvertimeReductionOfPersonBefore(Person person, LocalDate before);
+    Duration getTotalOvertimeReductionOfPersonUntil(Person person, LocalDate before);
 
     /**
      * Get a list of all active replacements of the given person and that are active at the given date
