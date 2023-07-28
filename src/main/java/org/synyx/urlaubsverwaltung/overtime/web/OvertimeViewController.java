@@ -159,6 +159,10 @@ public class OvertimeViewController implements HasLaunchpad {
             overtimeService.getTotalOvertimeForPersonAndYear(person, overtime.getEndDate().getYear()),
             overtimeService.getLeftOvertimeForPerson(person));
 
+        final int currentYear = Year.now(clock).getValue();
+        model.addAttribute("currentYear", currentYear);
+
+
         model.addAttribute("record", overtimeDetailsDto.getRecord());
         model.addAttribute("comments", overtimeDetailsDto.getComments());
         model.addAttribute("overtimeTotal", overtimeDetailsDto.getOvertimeTotal());

@@ -79,6 +79,29 @@
             </div>
           </div>
 
+          <table class="list-table striped-table bordered-table tw-text-sm tw-table-fixed">
+            <tr>
+              <td th:text="#{overtime.period.duration.label}"></td>
+              <td>
+                <th:block
+                  th:text="#{overtime.period.duration(${{record.durationByYear.get(currentYear)}}, ${currentYear})}"
+                ></th:block>
+                <th:block th:each="yearDurationEntry, iterStat : ${record.getDurationByYear(currentYear)}">
+                  <th:block
+                    th:if="${iterStat.first}"
+                    th:text="#{overtime.list.col.duration.additionalInfo.first}"
+                  ></th:block>
+                  <th:block
+                    th:text="#{overtime.list.col.duration.additionalInfo(${{yearDurationEntry.value}}, ${yearDurationEntry.key})}"
+                  ></th:block>
+                  <th:block
+                    th:if="${!iterStat.last}"
+                    th:text="#{overtime.list.col.duration.additionalInfo.notLast}"
+                  ></th:block>
+                </th:block>
+              </td>
+            </tr>
+          </table>
           <div th:replace="fragments/section-heading::section-heading(~{::overtime-progress-heading-body}, ~{})">
             <th:block th:fragment="overtime-progress-heading-body">
               <h2 th:text="#{overtime.progress.title}"></h2>
