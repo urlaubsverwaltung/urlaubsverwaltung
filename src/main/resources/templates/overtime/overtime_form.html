@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer})}"
+  >
     <title
       th:with="overtimeTitleMessagekey=${overtime.id == null ? 'overtime.record.header.title.new' : 'overtime.record.header.title.edit'}"
       th:text="#{__${overtimeTitleMessagekey}__}"
@@ -26,6 +28,8 @@
       </script>
       <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
       <script th:replace="~{fragments/vacation-type-colors-script :: vacation-type-colors-script}"></script>
+    </th:block>
+    <th:block th:ref="scriptsDefer">
       <script defer asset:src="npm.duetds.js"></script>
       <script defer asset:src="npm.date-fns.js"></script>
       <script

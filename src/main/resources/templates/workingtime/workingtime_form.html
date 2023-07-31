@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer})}"
+  >
     <title th:text="#{person.form.workingTime.header.title(${person.niceName})}">Arbeitszeiten von</title>
     <th:block th:fragment="styles">
       <link
@@ -15,6 +17,17 @@
       />
     </th:block>
     <th:block th:fragment="scripts">
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.uv = window.uv || {};
+        window.uv.personId = /*[[${userId}]]*/ "personId";
+        window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
+        window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
+        /*]]>*/
+      </script>
+      <script th:replace="~{fragments/datepicker-localization}"></script>
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
       <script defer asset:src="npm.duetds.js"></script>
       <script defer asset:src="npm.date-fns.js"></script>
       <script
@@ -30,15 +43,6 @@
         asset:src="account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js"
       ></script>
       <script defer asset:src="workingtime_form.js"></script>
-      <script th:inline="javascript">
-        /*<![CDATA[*/
-        window.uv = window.uv || {};
-        window.uv.personId = /*[[${userId}]]*/ "personId";
-        window.uv.webPrefix = /*[[@{/web}]]*/ "/web";
-        window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
-        /*]]>*/
-      </script>
-      <script th:replace="~{fragments/datepicker-localization}"></script>
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">

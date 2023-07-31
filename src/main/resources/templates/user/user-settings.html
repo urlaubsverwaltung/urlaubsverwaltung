@@ -6,9 +6,9 @@
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
 >
-  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{user-settings.header.title}"></title>
-    <th:block th:fragment="scripts">
+    <th:block th:fragment="scriptsDefer">
       <script
         defer
         asset:src="account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js"

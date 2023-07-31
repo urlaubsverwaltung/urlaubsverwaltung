@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer})}"
+  >
     <title th:text="#{sicknotes.header.title}">Krankmeldungen</title>
     <th:block th:fragment="styles">
       <link
@@ -23,6 +25,8 @@
         /*]]>*/
       </script>
       <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
       <script defer asset:src="npm.duetds.js"></script>
       <script defer asset:src="npm.date-fns.js"></script>
       <script defer asset:src="npm.hotwired.js"></script>

@@ -1,9 +1,8 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{calendar.share.header.title}">Kalenderfreigabe</title>
-    <th:block th:fragment="styles"></th:block>
-    <th:block th:fragment="scripts">
+    <th:block th:fragment="scriptsDefer">
       <script defer asset:src="copy_to_clipboard_input.js"></script>
       <script defer asset:src="tabs.js"></script>
     </th:block>

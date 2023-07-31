@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
+  <head th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{application.data.header.title(${app.person.niceName})}"></title>
     <th:block th:fragment="scripts">
       <script th:inline="javascript">
@@ -14,6 +14,8 @@
         window.uv.endDate = /*[[${#temporals.format(app.endDate, 'yyyy/MM/dd')}]]*/ "endDate";
         /*]]>*/
       </script>
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
       <script defer asset:src="npm.date-fns.js"></script>
       <script defer asset:src="app_detail~app_form~person_overview.js"></script>
       <script

@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
+  <head th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{absences.overview.header.title}">Absence Overview</title>
     <th:block th:fragment="styles">
       <link rel="stylesheet" type="text/css" asset:href="absences_overview.css" />
     </th:block>
-    <th:block th:fragment="scripts">
+    <th:block th:fragment="scriptsDefer">
       <script defer asset:src="npm.tablesorter.js"></script>
       <script defer asset:src="absences_overview.js"></script>
     </th:block>

@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer})}"
+  >
     <title th:text="#{overview.header.title(${person.niceName}, ${selectedYear})}"></title>
     <th:block th:fragment="styles">
       <link
@@ -26,6 +28,8 @@
         /*]]>*/
       </script>
       <script th:replace="~{fragments/vacation-type-colors-script :: vacation-type-colors-script}"></script>
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
       <script defer asset:src="npm.date-fns.js"></script>
       <script defer asset:src="app_detail~app_form~person_overview.js"></script>
       <script

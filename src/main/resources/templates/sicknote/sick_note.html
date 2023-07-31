@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer})}">
     <title
       th:with="messageKey=#{__${sickNote.sickNoteType.messageKey}__}"
       th:text="#{sicknote.header.title(${messageKey}, ${sickNote.person.niceName})}"
     >
       Krankmeldung von Marlene
     </title>
-    <th:block th:fragment="scripts">
+    <th:block th:fragment="scriptsDefer">
       <script defer asset:src="sick_note.js"></script>
     </th:block>
   </head>

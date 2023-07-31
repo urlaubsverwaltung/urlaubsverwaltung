@@ -1,9 +1,7 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
+  <head th:replace="~{_layout::head(title=~{::title})}">
     <title th:text="#{sicknotes.statistics.header.title(${statistics.year})}">Krankmeldungsstatistik</title>
-    <th:block th:fragment="styles"></th:block>
-    <th:block th:fragment="scripts"></th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">

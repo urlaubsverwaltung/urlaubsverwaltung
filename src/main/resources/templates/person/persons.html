@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{person.overview.header.title}"></title>
-    <th:block th:ref="scripts">
+    <th:block th:ref="scriptsDefer">
       <script defer asset:src="npm.hotwired.js"></script>
       <script defer asset:src="app_statistics~department_form~person_notifications~persons~sick_notes.js"></script>
       <script defer asset:src="persons.js"></script>

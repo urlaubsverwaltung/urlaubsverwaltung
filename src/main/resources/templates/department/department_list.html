@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
+  <head th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{departments.header.title}"></title>
     <th:block th:fragment="scripts">
       <script>
@@ -11,6 +11,8 @@
           document.head.append(style);
         })();
       </script>
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
       <script defer asset:src="npm.tablesorter.js"></script>
       <script defer asset:src="department_list.js"></script>
     </th:block>
