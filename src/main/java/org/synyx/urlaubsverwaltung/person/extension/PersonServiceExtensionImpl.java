@@ -48,8 +48,8 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
     }
 
     @Override
-    public void delete(PersonDTO person, Integer signedInUserId) {
-        personService.getPersonByID(signedInUserId)
+    public void delete(PersonDTO person, Long signedInUserId) {
+        personService.getPersonByID(signedInUserId.intValue())
             .ifPresentOrElse(
                 signedInUser -> personService.delete(toPerson(person), signedInUser),
                 () -> LOG.warn("trying to delete person={}, but the person={} who wants to delete the given person doesn't exists - skipped delete!", person.getId(), signedInUserId)
@@ -57,8 +57,8 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
     }
 
     @Override
-    public Optional<PersonDTO> getPersonById(Integer id) {
-        return personService.getPersonByID(id)
+    public Optional<PersonDTO> getPersonById(Long id) {
+        return personService.getPersonByID(id.intValue())
             .map(PersonDTOMapper::toPersonDTO);
     }
 
