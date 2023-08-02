@@ -23,8 +23,8 @@ import java.util.Objects;
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.time.Duration.ZERO;
 import static java.time.ZoneOffset.UTC;
-import static javax.persistence.GenerationType.SEQUENCE;
 import static java.util.stream.Collectors.toMap;
+import static javax.persistence.GenerationType.SEQUENCE;
 import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
 /**

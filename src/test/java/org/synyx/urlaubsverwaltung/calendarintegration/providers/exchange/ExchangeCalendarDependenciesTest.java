@@ -20,6 +20,6 @@ class ExchangeCalendarDependenciesTest {
     void checkDependenciesAvailable() {
         final ExchangeService exchangeService = new ExchangeService(Exchange2010_SP2);
         exchangeService.setUrl(URI.create("http://localhost"));
-        assertThrows(ServiceRequestException.class,() -> exchangeService.createItem(mock(Item.class), getFolderIdFromString("folderId"), SaveOnly, SendToNone));
+        assertThrows(ServiceRequestException.class, () -> exchangeService.createItem(mock(Item.class), getFolderIdFromString("folderId"), SaveOnly, SendToNone));
     }
 }

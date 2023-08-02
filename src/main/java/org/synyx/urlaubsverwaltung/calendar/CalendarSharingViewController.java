@@ -205,7 +205,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
             final PersonCalendar personCalendar = maybePersonCalendar.get();
             final var path = format("web/persons/%d/calendar?secret=%s", personId, personCalendar.getSecret());
             final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                    .replacePath(path).build().toString();
+                .replacePath(path).build().toString();
 
             dto.setCalendarUrl(url);
             dto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(personCalendar.getCalendarPeriod()));
@@ -226,7 +226,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
 
         if (activeDepartmentId != null && departments.stream().noneMatch(department -> department.getId().equals(activeDepartmentId))) {
             throw new ResponseStatusException(BAD_REQUEST, String.format(
-                    "person=%s is not a member of department=%s", personId, activeDepartmentId));
+                "person=%s is not a member of department=%s", personId, activeDepartmentId));
         }
 
         for (Department department : departments) {
@@ -243,7 +243,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
                 final var departmentCalendar = maybeDepartmentCalendar.get();
                 final var path = format("web/departments/%s/persons/%s/calendar?secret=%s", departmentId, personId, departmentCalendar.getSecret());
                 final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                        .replacePath(path).build().toString();
+                    .replacePath(path).build().toString();
 
                 departmentCalendarDto.setCalendarUrl(url);
                 departmentCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(departmentCalendar.getCalendarPeriod()));
@@ -270,7 +270,7 @@ public class CalendarSharingViewController implements HasLaunchpad {
             final CompanyCalendar companyCalendar = maybeCompanyCalendar.get();
             final var path = format("web/company/persons/%d/calendar?secret=%s", personId, companyCalendar.getSecret());
             final var url = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                    .replacePath(path).build().toString();
+                .replacePath(path).build().toString();
 
             companyCalendarDto.setCalendarUrl(url);
             companyCalendarDto.setCalendarPeriod(CalendarPeriodViewType.ofPeriod(companyCalendar.getCalendarPeriod()));

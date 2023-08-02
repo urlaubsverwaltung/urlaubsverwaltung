@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 public class PageStreamSupport {
 
-        private PageStreamSupport() {
+    private PageStreamSupport() {
         // Utility classes should not have public constructors java:S1118
     }
 

@@ -35,13 +35,13 @@ class SickNoteDataProvider {
             final SickNoteType type = getSickNoteType(sickNoteCategory);
 
             SickNote.Builder builder = SickNote.builder()
-                    .person(person)
-                    .applier(office)
-                    .startDate(startDate)
-                    .endDate(endDate)
-                    .status(ACTIVE)
-                    .sickNoteType(type)
-                    .dayLength(dayLength);
+                .person(person)
+                .applier(office)
+                .startDate(startDate)
+                .endDate(endDate)
+                .status(ACTIVE)
+                .sickNoteType(type)
+                .dayLength(dayLength);
 
             if (withAUB) {
                 builder = builder.aubStartDate(startDate).aubEndDate(endDate);

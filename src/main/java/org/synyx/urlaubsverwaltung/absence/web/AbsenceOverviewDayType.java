@@ -30,7 +30,8 @@ public class AbsenceOverviewDayType {
 
     private final AbsenceOverviewDayTypeColor color;
 
-    @SuppressWarnings("java:S107") // Methods should not have too many parameters -> builder below must be used for construction
+    @SuppressWarnings("java:S107")
+    // Methods should not have too many parameters -> builder below must be used for construction
     private AbsenceOverviewDayType(boolean sickNoteMorning, boolean sickNoteNoon, boolean sickNoteFull, boolean absenceMorning,
                                    boolean absenceNoon, boolean absenceFull, boolean waitingAbsenceMorning, boolean waitingAbsenceNoon,
                                    boolean waitingAbsenceFull, boolean temporaryAllowedAbsenceMorning, boolean temporaryAllowedAbsenceNoon,

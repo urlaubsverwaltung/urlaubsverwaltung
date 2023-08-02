@@ -44,18 +44,18 @@ public class AccountServiceImpl implements AccountService {
         final LocalDate defaultExpiryDate = LocalDate.of(year, APRIL, 1);
 
         final LocalDate expiryDate = (expiresLocally != null && expiresLocally) || (expiresLocally == null && expiresGlobally)
-                ? prevYearAccount.map(Account::getExpiryDate).map(date -> date.withYear(year)).orElse(defaultExpiryDate)
-                : defaultExpiryDate;
+            ? prevYearAccount.map(Account::getExpiryDate).map(date -> date.withYear(year)).orElse(defaultExpiryDate)
+            : defaultExpiryDate;
 
         return AccountDraft.builder()
-                .person(person)
-                .year(Year.of(year))
-                .annualVacationDays(prevYearAccount.map(Account::getAnnualVacationDays).orElse(null))
-                .doRemainingVacationDaysExpireLocally(expiresLocally)
-                .doRemainingVacationDaysExpireGlobally(expiresGlobally)
-                .expiryDate(expiryDate)
-                .setRemainingVacationDaysNotExpiring(prevYearAccount.map(Account::getRemainingVacationDaysNotExpiring).orElse(null))
-                .build();
+            .person(person)
+            .year(Year.of(year))
+            .annualVacationDays(prevYearAccount.map(Account::getAnnualVacationDays).orElse(null))
+            .doRemainingVacationDaysExpireLocally(expiresLocally)
+            .doRemainingVacationDaysExpireGlobally(expiresGlobally)
+            .expiryDate(expiryDate)
+            .setRemainingVacationDaysNotExpiring(prevYearAccount.map(Account::getRemainingVacationDaysNotExpiring).orElse(null))
+            .build();
     }
 
     @Override
@@ -77,8 +77,8 @@ public class AccountServiceImpl implements AccountService {
             // therefore we're looking for the previous expiryDate or using a fallback by german law.
 
             final LocalDate expiryDate = getHolidaysAccount(account.getYear() - 1, account.getPerson())
-                    .map(Account::getExpiryDate)
-                    .orElse(LocalDate.of(account.getYear() - 1, APRIL, 1));
+                .map(Account::getExpiryDate)
+                .orElse(LocalDate.of(account.getYear() - 1, APRIL, 1));
 
             accountEntity.setExpiryDate(expiryDate.withYear(account.getYear()));
         }

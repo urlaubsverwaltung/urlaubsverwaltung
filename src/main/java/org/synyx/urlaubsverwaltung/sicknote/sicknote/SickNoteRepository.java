@@ -35,7 +35,7 @@ interface SickNoteRepository extends CrudRepository<SickNoteEntity, Long> {
         AND status = 'ACTIVE'
         AND (end_of_sick_pay_notification_send IS NULL)
         """
-        ,nativeQuery = true
+        , nativeQuery = true
     )
     List<SickNoteEntity> findSickNotesToNotifyForSickPayEnd(
         @Param("maximumSickPayDays") int maximumSickPayDays,

@@ -174,13 +174,13 @@ class DateRangeTest {
 
     @Test
     void dateRangeDurationReturnsCorrectValueIfNotEmpty() {
-        final Duration duration = new DateRange(LocalDate.of(2022,10, 10), LocalDate.of(2022,10, 20)).duration();
+        final Duration duration = new DateRange(LocalDate.of(2022, 10, 10), LocalDate.of(2022, 10, 20)).duration();
         assertThat(duration).isEqualTo(Duration.ofDays(11));
     }
 
     @Test
     void ensureThatDateRangeIsCorrectOverMoreThanOneMonth() {
-        final Duration duration = new DateRange(LocalDate.of(2021,7, 12), LocalDate.of(2021,8, 13)).duration();
+        final Duration duration = new DateRange(LocalDate.of(2021, 7, 12), LocalDate.of(2021, 8, 13)).duration();
         assertThat(duration).isEqualTo(Duration.ofDays(33));
     }
 

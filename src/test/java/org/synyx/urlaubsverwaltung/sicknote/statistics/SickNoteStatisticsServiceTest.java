@@ -64,10 +64,10 @@ class SickNoteStatisticsServiceTest {
         final LocalDate firstDayOfYear = Year.now(fixedClock).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final List<SickNote> sickNotes = List.of(SickNote.builder()
-                .person(member1)
-                .startDate(LocalDate.of(2022, 10, 10))
-                .endDate(LocalDate.of(2022, 10, 10))
-                .build());
+            .person(member1)
+            .startDate(LocalDate.of(2022, 10, 10))
+            .endDate(LocalDate.of(2022, 10, 10))
+            .build());
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);
 
@@ -105,10 +105,10 @@ class SickNoteStatisticsServiceTest {
         final LocalDate firstDayOfYear = Year.now(fixedClock).atDay(1);
         final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
         final SickNote sickNote = SickNote.builder()
-                .person(member1)
-                .startDate(LocalDate.of(2022, 10, 10))
-                .endDate(LocalDate.of(2022, 10, 10))
-                .build();
+            .person(member1)
+            .startDate(LocalDate.of(2022, 10, 10))
+            .endDate(LocalDate.of(2022, 10, 10))
+            .build();
         final List<SickNote> sickNotes = List.of(sickNote);
         when(sickNoteService.getForStatesAndPerson(List.of(ACTIVE), members, firstDayOfYear, lastDayOfYear)).thenReturn(sickNotes);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);
@@ -144,10 +144,10 @@ class SickNoteStatisticsServiceTest {
         final LocalDate to = LocalDate.of(2022, 12, 31);
 
         final SickNote sickNote = SickNote.builder()
-                .person(person)
-                .startDate(LocalDate.of(2022, 10, 10))
-                .endDate(LocalDate.of(2022, 10, 10))
-                .build();
+            .person(person)
+            .startDate(LocalDate.of(2022, 10, 10))
+            .endDate(LocalDate.of(2022, 10, 10))
+            .build();
         final List<SickNote> sickNotes = List.of(sickNote);
         when(sickNoteService.getAllActiveByPeriod(from, to)).thenReturn(sickNotes);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);
@@ -183,10 +183,10 @@ class SickNoteStatisticsServiceTest {
         final LocalDate to = LocalDate.of(2022, 12, 31);
 
         final SickNote sickNote = SickNote.builder()
-                .person(person)
-                .startDate(LocalDate.of(2022, 10, 10))
-                .endDate(LocalDate.of(2022, 10, 10))
-                .build();
+            .person(person)
+            .startDate(LocalDate.of(2022, 10, 10))
+            .endDate(LocalDate.of(2022, 10, 10))
+            .build();
         final List<SickNote> sickNotes = List.of(sickNote);
         when(sickNoteService.getAllActiveByPeriod(from, to)).thenReturn(sickNotes);
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(ONE);

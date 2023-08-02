@@ -113,9 +113,9 @@ class OvertimeServiceImpl implements OvertimeService {
     @Override
     public Duration getTotalOvertimeForPersonAndYear(Person person, int year) {
         return getOvertimeRecordsForPersonAndYear(person, year).stream()
-                .map(Overtime::getDurationByYear)
-                .map(map -> map.getOrDefault(year, ZERO))
-                .reduce(ZERO, Duration::plus);
+            .map(Overtime::getDurationByYear)
+            .map(map -> map.getOrDefault(year, ZERO))
+            .reduce(ZERO, Duration::plus);
     }
 
     @Override
@@ -124,8 +124,8 @@ class OvertimeServiceImpl implements OvertimeService {
         final LocalDate lastDayOfBeforeYear = firstDayOfYear.minusYears(1).with(lastDayOfYear());
         final Duration totalOvertimeReductionBeforeYear = applicationService.getTotalOvertimeReductionOfPersonUntil(person, lastDayOfBeforeYear);
         final Duration totalOvertimeBeforeYear = overtimeRepository.findByPersonAndStartDateIsBefore(person, firstDayOfYear).stream()
-                .map(overtime -> overtime.getTotalDurationBefore(year))
-                .reduce(ZERO, Duration::plus);
+            .map(overtime -> overtime.getTotalDurationBefore(year))
+            .reduce(ZERO, Duration::plus);
 
         return totalOvertimeBeforeYear.minus(totalOvertimeReductionBeforeYear);
     }
@@ -142,9 +142,9 @@ class OvertimeServiceImpl implements OvertimeService {
     public Map<Person, LeftOvertime> getLeftOvertimeTotalAndDateRangeForPersons(List<Person> persons, List<Application> applications, LocalDate start, LocalDate end) {
 
         final Map<Person, List<Application>> overtimeApplicationsByPerson = applications.stream()
-                .filter(application -> application.getVacationType().getCategory().equals(OVERTIME))
-                .filter(application -> List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED).contains(application.getStatus()))
-                .collect(groupingBy(Application::getPerson));
+            .filter(application -> application.getVacationType().getCategory().equals(OVERTIME))
+            .filter(application -> List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED).contains(application.getStatus()))
+            .collect(groupingBy(Application::getPerson));
 
         final Map<Person, Duration> overtimeSumBeforeYearByPerson = getOvertimeSumBeforeYear(persons, start.getYear());
         final Map<Person, Duration> yearOvertimeSumByPerson = getTotalOvertimeUntil(persons, start.with(firstDayOfYear()), start.with(lastDayOfYear()));
@@ -152,21 +152,21 @@ class OvertimeServiceImpl implements OvertimeService {
         final Map<Person, OvertimeReduction> dateRangeOvertimeReductionByPerson = getOvertimeReduction(overtimeApplicationsByPerson, start, end);
 
         return persons.stream()
-                .map(person -> {
-                    final OvertimeReduction personOvertimeReduction = dateRangeOvertimeReductionByPerson.getOrDefault(person, OvertimeReduction.identity());
-                    final Duration overallOvertimeBeforeYear = overtimeSumBeforeYearByPerson.getOrDefault(person, ZERO);
+            .map(person -> {
+                final OvertimeReduction personOvertimeReduction = dateRangeOvertimeReductionByPerson.getOrDefault(person, OvertimeReduction.identity());
+                final Duration overallOvertimeBeforeYear = overtimeSumBeforeYearByPerson.getOrDefault(person, ZERO);
 
-                    // overall
-                    final Duration yearDuration = yearOvertimeSumByPerson.getOrDefault(person, ZERO);
-                    final Duration finalOverallDuration = overallOvertimeBeforeYear.plus(yearDuration).minus(personOvertimeReduction.getReductionOverall());
+                // overall
+                final Duration yearDuration = yearOvertimeSumByPerson.getOrDefault(person, ZERO);
+                final Duration finalOverallDuration = overallOvertimeBeforeYear.plus(yearDuration).minus(personOvertimeReduction.getReductionOverall());
 
-                    // date range
-                    final Duration dateRangeDuration = dateRangeOvertimeSumByPerson.getOrDefault(person, ZERO);
-                    final Duration finalDateRangeDuration = overallOvertimeBeforeYear.plus(dateRangeDuration).minus(personOvertimeReduction.getReductionDateRange());
+                // date range
+                final Duration dateRangeDuration = dateRangeOvertimeSumByPerson.getOrDefault(person, ZERO);
+                final Duration finalDateRangeDuration = overallOvertimeBeforeYear.plus(dateRangeDuration).minus(personOvertimeReduction.getReductionDateRange());
 
-                    return Map.entry(person, new LeftOvertime(finalOverallDuration, finalDateRangeDuration));
-                })
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+                return Map.entry(person, new LeftOvertime(finalOverallDuration, finalDateRangeDuration));
+            })
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private Map<Person, Duration> getOvertimeSumBeforeYear(Collection<Person> persons, int year) {
@@ -175,61 +175,61 @@ class OvertimeServiceImpl implements OvertimeService {
         final Map<Person, Duration> totalReductionBeforeYearByPerson = applicationService.getTotalOvertimeReductionOfPersonUntil(persons, lastDayOfLastYear);
         final Map<Person, Duration> overtimesStartingWithoutRequestedYearByPerson = getTotalOvertimeUntil(persons, lastDayOfLastYear);
         return persons.stream()
-                .map(person -> {
-                    final Duration totalOvertimeReductionBeforeYear = totalReductionBeforeYearByPerson.getOrDefault(person, ZERO);
-                    final Duration totalOvertimeBeforeYear = overtimesStartingWithoutRequestedYearByPerson.getOrDefault(person, ZERO);
-                    final Duration duration = totalOvertimeBeforeYear.minus(totalOvertimeReductionBeforeYear);
-                    return Map.entry(person, duration);
-                })
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .map(person -> {
+                final Duration totalOvertimeReductionBeforeYear = totalReductionBeforeYearByPerson.getOrDefault(person, ZERO);
+                final Duration totalOvertimeBeforeYear = overtimesStartingWithoutRequestedYearByPerson.getOrDefault(person, ZERO);
+                final Duration duration = totalOvertimeBeforeYear.minus(totalOvertimeReductionBeforeYear);
+                return Map.entry(person, duration);
+            })
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private Map<Person, Duration> getTotalOvertimeUntil(Collection<Person> persons, LocalDate until) {
         return overtimeRepository.findByPersonIsInAndStartDateIsLessThanEqual(persons, until).stream()
-                .map(overtime -> {
-                    final DateRange requestedDateRange = new DateRange(overtime.getStartDate(), until);
-                    final Duration overtimeDurationForDateRange = overtime.getDurationForDateRange(requestedDateRange);
-                    return Map.entry(overtime.getPerson(), overtimeDurationForDateRange);
-                })
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
+            .map(overtime -> {
+                final DateRange requestedDateRange = new DateRange(overtime.getStartDate(), until);
+                final Duration overtimeDurationForDateRange = overtime.getDurationForDateRange(requestedDateRange);
+                return Map.entry(overtime.getPerson(), overtimeDurationForDateRange);
+            })
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
     }
 
     private Map<Person, Duration> getTotalOvertimeUntil(List<Person> persons, LocalDate start, LocalDate end) {
         final DateRange requestedDateRange = new DateRange(start, end);
         return overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, start, end).stream()
-                .map(overtime -> {
-                    final Duration overtimeDurationForDateRange = overtime.getDurationForDateRange(requestedDateRange);
-                    return Map.entry(overtime.getPerson(), overtimeDurationForDateRange);
-                })
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
+            .map(overtime -> {
+                final Duration overtimeDurationForDateRange = overtime.getDurationForDateRange(requestedDateRange);
+                return Map.entry(overtime.getPerson(), overtimeDurationForDateRange);
+            })
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue, Duration::plus));
     }
 
     private Map<Person, OvertimeReduction> getOvertimeReduction(Map<Person, List<Application>> overtimeApplicationsByPerson, LocalDate start, LocalDate end) {
         final DateRange dateRange = new DateRange(start, end);
         return overtimeApplicationsByPerson.entrySet()
-                .stream()
-                .map(entry -> {
-                    final List<Application> overtimeApplications = entry.getValue();
-                    final Duration totalOvertimeReductionDuration = overtimeApplications.stream()
-                            .map(Application::getHours)
-                            .reduce(ZERO, Duration::plus);
+            .stream()
+            .map(entry -> {
+                final List<Application> overtimeApplications = entry.getValue();
+                final Duration totalOvertimeReductionDuration = overtimeApplications.stream()
+                    .map(Application::getHours)
+                    .reduce(ZERO, Duration::plus);
 
-                    final BigDecimal dateRangeOvertimeReductionSeconds = overtimeApplications.stream()
-                            .filter(application -> !application.getStartDate().isBefore(start) && !application.getStartDate().isAfter(end))
-                            .map(application -> {
-                                final DateRange applicationDateRage = new DateRange(application.getStartDate(), application.getEndDate());
-                                final Duration durationOfOverlap = dateRange.overlap(applicationDateRage).map(DateRange::duration).orElse(ZERO);
-                                return toFormattedDecimal(application.getHours())
-                                        .divide(toFormattedDecimal(applicationDateRage.duration()), HALF_EVEN)
-                                        .multiply(toFormattedDecimal(durationOfOverlap)).setScale(0, HALF_EVEN);
-                            })
-                            .reduce(BigDecimal.ZERO, BigDecimal::add);
-                    final Duration dateRangeOvertimeReductionDuration = Duration.ofSeconds(dateRangeOvertimeReductionSeconds.longValue());
+                final BigDecimal dateRangeOvertimeReductionSeconds = overtimeApplications.stream()
+                    .filter(application -> !application.getStartDate().isBefore(start) && !application.getStartDate().isAfter(end))
+                    .map(application -> {
+                        final DateRange applicationDateRage = new DateRange(application.getStartDate(), application.getEndDate());
+                        final Duration durationOfOverlap = dateRange.overlap(applicationDateRage).map(DateRange::duration).orElse(ZERO);
+                        return toFormattedDecimal(application.getHours())
+                            .divide(toFormattedDecimal(applicationDateRage.duration()), HALF_EVEN)
+                            .multiply(toFormattedDecimal(durationOfOverlap)).setScale(0, HALF_EVEN);
+                    })
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                final Duration dateRangeOvertimeReductionDuration = Duration.ofSeconds(dateRangeOvertimeReductionSeconds.longValue());
 
-                    final Person person = entry.getKey();
-                    return Map.entry(person, new OvertimeReduction(totalOvertimeReductionDuration, dateRangeOvertimeReductionDuration));
-                })
-                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+                final Person person = entry.getKey();
+                return Map.entry(person, new OvertimeReduction(totalOvertimeReductionDuration, dateRangeOvertimeReductionDuration));
+            })
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**
@@ -253,8 +253,8 @@ class OvertimeServiceImpl implements OvertimeService {
     public boolean isUserIsAllowedToWriteOvertime(Person signedInUser, Person personOfOvertime) {
         final OvertimeSettings overtimeSettings = settingsService.getSettings().getOvertimeSettings();
         return signedInUser.hasRole(OFFICE)
-                || (signedInUser.equals(personOfOvertime) && !overtimeSettings.isOvertimeWritePrivilegedOnly())
-                || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly());
+            || (signedInUser.equals(personOfOvertime) && !overtimeSettings.isOvertimeWritePrivilegedOnly())
+            || (signedInUser.isPrivileged() && overtimeSettings.isOvertimeWritePrivilegedOnly());
     }
 
     /**
@@ -278,9 +278,9 @@ class OvertimeServiceImpl implements OvertimeService {
 
     private Duration getTotalOvertimeForPerson(Person person) {
         return overtimeRepository.calculateTotalHoursForPerson(person)
-                .map(totalHours -> Math.round(totalHours * 60))
-                .map(totalMinutes -> Duration.of(totalMinutes, MINUTES))
-                .orElse(ZERO);
+            .map(totalHours -> Math.round(totalHours * 60))
+            .map(totalMinutes -> Duration.of(totalMinutes, MINUTES))
+            .orElse(ZERO);
     }
 
     private static class OvertimeReduction {

@@ -71,7 +71,7 @@ public class WorkingTimeViewController implements HasLaunchpad {
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/workingtime")
     public String getWorkingTime(@PathVariable("personId") Long personId, Model model)
-            throws UnknownPersonException {
+        throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
         final Optional<WorkingTime> optionalWorkingTime = workingTimeService.getWorkingTime(person, LocalDate.now(clock));

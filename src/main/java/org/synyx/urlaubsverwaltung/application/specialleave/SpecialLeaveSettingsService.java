@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -14,12 +13,6 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OTHER;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.UNPAIDLEAVE;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 @Component
 public class SpecialLeaveSettingsService {
@@ -69,12 +62,12 @@ public class SpecialLeaveSettingsService {
         final long count = specialLeaveSettingsRepository.count();
         if (count == 0) {
 
-            final SpecialLeaveSettingsEntity ownWedding = createSpecialLeaveEntity(1L, 1, true,"application.data.specialleave.own_wedding");
-            final SpecialLeaveSettingsEntity birthOfChild = createSpecialLeaveEntity(2L, 1, true,"application.data.specialleave.birth_of_child");
-            final SpecialLeaveSettingsEntity deathOfChild = createSpecialLeaveEntity(3L, 2, true,"application.data.specialleave.death_of_child");
-            final SpecialLeaveSettingsEntity deathOfParent = createSpecialLeaveEntity(4L, 1, true,"application.data.specialleave.death_of_parent");
-            final SpecialLeaveSettingsEntity seriousIllnessFamilyMember = createSpecialLeaveEntity(5L, 1, true,"application.data.specialleave.serious_illness_familiy_member");
-            final SpecialLeaveSettingsEntity relocationForBusinessReason = createSpecialLeaveEntity(6L, 1, true,"application.data.specialleave.relocation_for_business_reason");
+            final SpecialLeaveSettingsEntity ownWedding = createSpecialLeaveEntity(1L, 1, true, "application.data.specialleave.own_wedding");
+            final SpecialLeaveSettingsEntity birthOfChild = createSpecialLeaveEntity(2L, 1, true, "application.data.specialleave.birth_of_child");
+            final SpecialLeaveSettingsEntity deathOfChild = createSpecialLeaveEntity(3L, 2, true, "application.data.specialleave.death_of_child");
+            final SpecialLeaveSettingsEntity deathOfParent = createSpecialLeaveEntity(4L, 1, true, "application.data.specialleave.death_of_parent");
+            final SpecialLeaveSettingsEntity seriousIllnessFamilyMember = createSpecialLeaveEntity(5L, 1, true, "application.data.specialleave.serious_illness_familiy_member");
+            final SpecialLeaveSettingsEntity relocationForBusinessReason = createSpecialLeaveEntity(6L, 1, true, "application.data.specialleave.relocation_for_business_reason");
 
             final List<SpecialLeaveSettingsEntity> vacationTypes = List.of(ownWedding, birthOfChild, deathOfChild, deathOfParent, seriousIllnessFamilyMember, relocationForBusinessReason);
             final List<SpecialLeaveSettingsEntity> savesVacationTypes = specialLeaveSettingsRepository.saveAll(vacationTypes);

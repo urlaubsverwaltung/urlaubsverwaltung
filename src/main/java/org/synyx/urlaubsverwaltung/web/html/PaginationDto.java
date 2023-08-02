@@ -8,6 +8,7 @@ public class PaginationDto<T> {
 
     private final Page<T> page;
     private final String pageLinkPrefix;
+
     public PaginationDto(Page<T> page, String pageLinkPrefix) {
         this.page = page;
         this.pageLinkPrefix = pageLinkPrefix;

@@ -24,7 +24,7 @@ class LocalDevelopmentAuthConfiguration {
     }
 
     @PostConstruct
-    void onlyUseForLocalDevelopment(){
+    void onlyUseForLocalDevelopment() {
         LOG.info("#################################################################");
         LOG.info("##         You are using `uv.security.auth=development`        ##");
         LOG.info("##     Do not use this authentication method in production     ##");

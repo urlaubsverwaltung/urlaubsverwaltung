@@ -83,7 +83,6 @@ public class VacationDaysService {
      * @param account  the account for the year to calculate the vacation days for
      * @param nextYear the account for following year, if available
      * @return information about the vacation days left for that year
-     *
      * @deprecated in favor of {@link VacationDaysService#getVacationDaysLeft(List, Map, DateRange)} (less database calls)
      */
     @Deprecated(since = "4.53.0")
@@ -98,7 +97,6 @@ public class VacationDaysService {
      * @param workingTimeCalendarsByPerson {@link WorkingTimeCalendar} to calculate the used vacation days for the {@link Account}s persons.
      * @param dateRange                    date range to calculate left vacation days for. must be within a year.
      * @return {@link HolidayAccountVacationDays} for every passed {@link Account}. {@link Account}s with no used vacation are included.
-     *
      * @throws IllegalArgumentException when dateRange is over one year.
      */
     public Map<Account, HolidayAccountVacationDays> getVacationDaysLeft(List<Account> holidayAccounts,

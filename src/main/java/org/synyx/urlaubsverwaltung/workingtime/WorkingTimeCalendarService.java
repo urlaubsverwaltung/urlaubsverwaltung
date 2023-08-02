@@ -13,7 +13,7 @@ public interface WorkingTimeCalendarService {
      * Returns a map of persons and the associated {@link WorkingTimeCalendar}.
      *
      * @param persons to get the WorkingTimeCalendar
-     * @param year to get the WorkingTimeCalendar
+     * @param year    to get the WorkingTimeCalendar
      * @return map of persons and the associated {@link WorkingTimeCalendar}.
      */
     Map<Person, WorkingTimeCalendar> getWorkingTimesByPersons(Collection<Person> persons, Year year);
@@ -21,7 +21,7 @@ public interface WorkingTimeCalendarService {
     /**
      * Returns a map of persons and the associated {@link WorkingTimeCalendar}.
      *
-     * @param persons to get the WorkingTimeCalendar
+     * @param persons   to get the WorkingTimeCalendar
      * @param dateRange to get the WorkingTimeCalendar
      * @return map of persons and the associated {@link WorkingTimeCalendar}.
      */

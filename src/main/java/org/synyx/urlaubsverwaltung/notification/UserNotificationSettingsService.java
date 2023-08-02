@@ -26,7 +26,7 @@ public interface UserNotificationSettingsService {
     /**
      * Update notification settings of a person.
      *
-     * @param personId id of the person
+     * @param personId              id of the person
      * @param restrictToDepartments whether to restrict mail notifications to departments or not
      * @return the updated {@linkplain UserNotificationSettings}
      */

@@ -87,7 +87,7 @@ public enum FederalState {
 
     MALTA("mt", "mt"),
 
-    ITALY("it","it");
+    ITALY("it", "it");
 
     private final String[] codes;
 
