@@ -1,6 +1,8 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -23,8 +25,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvide
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.util.List;

@@ -1,25 +1,25 @@
 package org.synyx.urlaubsverwaltung.department;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.LazyCollection;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.time.ZoneOffset.UTC;
-import static javax.persistence.GenerationType.SEQUENCE;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 
 @Entity(name = "department")

@@ -12,7 +12,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.14</version>
+    <version>3.0.9</version>
   </parent>
 
   <properties>
@@ -20,7 +20,6 @@
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>17</java.version>
     <testcontainers.version>1.18.3</testcontainers.version>
-    <opentelemetry-agent.version>1.14.0</opentelemetry-agent.version>
     <shedlock.version>4.43.0</shedlock.version>
     <uv-extension-api.version>0.9.0</uv-extension-api.version>
 
@@ -40,9 +39,15 @@
   <dependencies>
 
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-properties-migrator</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
       <groupId>de.focus-shift</groupId>
       <artifactId>launchpad</artifactId>
-      <version>0.1.0</version>
+      <version>1.1.0</version>
     </dependency>
 
     <!-- Logging -->
@@ -64,8 +69,8 @@
     <!-- API DOCUMENTATION -->
     <dependency>
       <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
-      <version>1.7.0</version>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.1.0</version>
     </dependency>
 
     <!-- SESSION -->
@@ -144,13 +149,13 @@
     <dependency>
       <groupId>com.icegreen</groupId>
       <artifactId>greenmail-junit5</artifactId>
-      <version>1.6.14</version>
+      <version>2.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-email</artifactId>
-      <version>1.5</version>
+      <groupId>org.simplejavamail</groupId>
+      <artifactId>simple-java-mail</artifactId>
+      <version>7.5.1</version>
       <scope>test</scope>
     </dependency>
 
@@ -172,9 +177,9 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>com.sun.activation</groupId>
-      <artifactId>jakarta.activation</artifactId>
-      <version>2.0.1</version>
+      <groupId>jakarta.activation</groupId>
+      <artifactId>jakarta.activation-api</artifactId>
+      <version>2.1.2</version>
     </dependency>
 
     <!-- SPRINGBOOT DEVTOOLS -->
@@ -248,11 +253,7 @@
     </dependency>
     <dependency>
       <groupId>org.thymeleaf.extras</groupId>
-      <artifactId>thymeleaf-extras-springsecurity5</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.thymeleaf.extras</groupId>
-      <artifactId>thymeleaf-extras-java8time</artifactId>
+      <artifactId>thymeleaf-extras-springsecurity6</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
@@ -520,7 +521,7 @@
                 <artifactItem>
                   <groupId>io.opentelemetry.javaagent</groupId>
                   <artifactId>opentelemetry-javaagent</artifactId>
-                  <version>${opentelemetry-agent.version}</version>
+                  <version>1.28.0</version>
                   <overWrite>true</overWrite>
                   <outputDirectory>${project.build.directory}/docker-extra/opentelemetry-agent
                   </outputDirectory>

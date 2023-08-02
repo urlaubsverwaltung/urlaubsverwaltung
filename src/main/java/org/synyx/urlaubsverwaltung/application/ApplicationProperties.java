@@ -1,11 +1,10 @@
 package org.synyx.urlaubsverwaltung.application;
 
+import jakarta.validation.Valid;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.synyx.urlaubsverwaltung.validation.CronExpression;
-
-import javax.validation.Valid;
 
 @Component
 @ConfigurationProperties("uv.application")

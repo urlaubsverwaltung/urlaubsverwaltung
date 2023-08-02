@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Controller;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;

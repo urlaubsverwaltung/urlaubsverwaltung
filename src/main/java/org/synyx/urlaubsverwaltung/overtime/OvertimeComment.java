@@ -1,15 +1,15 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.ManyToOne;
 import org.synyx.urlaubsverwaltung.comment.AbstractComment;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
 import java.time.Clock;
 
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 
 /**
  * Recorded comment after executed an overtime action, e.g. create a new overtime record.

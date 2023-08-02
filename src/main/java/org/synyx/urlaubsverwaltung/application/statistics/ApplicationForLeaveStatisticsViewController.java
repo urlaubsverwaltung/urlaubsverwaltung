@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
@@ -33,7 +34,6 @@ import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 
-import javax.servlet.http.HttpServletResponse;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;

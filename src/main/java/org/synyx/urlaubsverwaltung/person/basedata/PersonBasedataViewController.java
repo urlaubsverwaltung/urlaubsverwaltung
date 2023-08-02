@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.person.basedata;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -16,8 +17,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonId;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.UnknownPersonException;
-
-import javax.validation.Valid;
 
 import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataDtoMapper.mapToPersonBasedata;
 import static org.synyx.urlaubsverwaltung.person.basedata.PersonBasedataDtoMapper.mapToPersonBasedataDto;

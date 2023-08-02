@@ -2,6 +2,9 @@ package org.synyx.urlaubsverwaltung.calendarintegration;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +15,6 @@ import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.mail.MailProperties;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.ZonedDateTime;

@@ -1,6 +1,6 @@
 package org.synyx.urlaubsverwaltung.person.settings;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class AvatarSettings {

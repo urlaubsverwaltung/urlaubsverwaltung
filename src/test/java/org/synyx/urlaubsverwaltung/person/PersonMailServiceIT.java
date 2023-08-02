@@ -2,6 +2,10 @@ package org.synyx.urlaubsverwaltung.person;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.person.web.PersonPermissionsRoleDto;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.List;
 

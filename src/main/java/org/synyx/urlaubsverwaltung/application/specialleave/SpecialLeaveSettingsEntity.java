@@ -1,13 +1,13 @@
 package org.synyx.urlaubsverwaltung.application.specialleave;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.validation.constraints.NotNull;
 
-import static javax.persistence.GenerationType.SEQUENCE;
+import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "special_leave_settings")
 class SpecialLeaveSettingsEntity {

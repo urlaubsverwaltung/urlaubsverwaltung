@@ -1,11 +1,10 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
+import jakarta.validation.Valid;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.synyx.urlaubsverwaltung.validation.CronExpression;
-
-import javax.validation.Valid;
 
 @Component
 @ConfigurationProperties("uv.security.directory-service")

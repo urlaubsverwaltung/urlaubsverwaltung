@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.department;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.time.Instant;
 import java.util.Objects;
 

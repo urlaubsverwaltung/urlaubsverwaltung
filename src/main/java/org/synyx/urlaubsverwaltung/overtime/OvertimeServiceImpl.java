@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.overtime;
 
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -11,7 +12,6 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;

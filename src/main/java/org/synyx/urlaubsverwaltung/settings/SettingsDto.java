@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.settings;
 
+import jakarta.validation.Valid;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
@@ -9,7 +10,6 @@ import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
-import javax.validation.Valid;
 import java.util.Objects;
 
 public class SettingsDto {

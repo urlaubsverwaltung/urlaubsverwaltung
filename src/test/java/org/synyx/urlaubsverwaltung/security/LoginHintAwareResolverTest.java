@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -9,8 +11,6 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;

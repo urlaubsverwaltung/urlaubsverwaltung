@@ -2,9 +2,15 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
-import org.apache.commons.mail.util.MimeMessageParser;
+import jakarta.mail.Address;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.simplejavamail.api.email.AttachmentResource;
+import org.simplejavamail.converter.EmailConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -19,12 +25,6 @@ import org.synyx.urlaubsverwaltung.mail.MailRecipientService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import javax.activation.DataSource;
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
@@ -179,7 +179,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/3/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachmentsUser = getAttachments(msgUser);
+        final List<AttachmentResource> attachmentsUser = getAttachments(msgUser);
         assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
@@ -208,7 +208,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + office.getId() + "/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
+        final List<AttachmentResource> attachmentsOffice = getAttachments(msgOffice);
         assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
 
         // check email management attributes
@@ -237,7 +237,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachmentsBoss = getAttachments(msgBoss);
+        final List<AttachmentResource> attachmentsBoss = getAttachments(msgBoss);
         assertThat(attachmentsBoss.get(0).getName()).contains("calendar.ics");
 
         // check email colleague
@@ -255,7 +255,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/42/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachmentsColleague = getAttachments(msgColleague);
+        final List<AttachmentResource> attachmentsColleague = getAttachments(msgColleague);
         assertThat(attachmentsColleague.get(0).getName()).contains("calendar.ics");
     }
 
@@ -321,7 +321,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachmentsUser = getAttachments(msgUser);
+        final List<AttachmentResource> attachmentsUser = getAttachments(msgUser);
         assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
@@ -350,7 +350,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + office.getId() + "/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
+        final List<AttachmentResource> attachmentsOffice = getAttachments(msgOffice);
         assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
     }
 
@@ -420,7 +420,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachmentsUser = getAttachments(msgUser);
+        final List<AttachmentResource> attachmentsUser = getAttachments(msgUser);
         assertThat(attachmentsUser.get(0).getName()).contains("calendar.ics");
 
         // check email office attributes
@@ -449,7 +449,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + office.getId() + "/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachmentsOffice = getAttachments(msgOffice);
+        final List<AttachmentResource> attachmentsOffice = getAttachments(msgOffice);
         assertThat(attachmentsOffice.get(0).getName()).contains("calendar.ics");
     }
 
@@ -1017,7 +1017,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachments = getAttachments(msg);
+        final List<AttachmentResource> attachments = getAttachments(msg);
         assertThat(attachments.get(0).getName()).contains("calendar.ics");
     }
 
@@ -1092,7 +1092,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("/web/application/replacement");
         assertThat(content).contains("Eine Nachricht an die Vertretung");
 
-        final List<DataSource> attachments = getAttachments(msg);
+        final List<AttachmentResource> attachments = getAttachments(msg);
         assertThat(attachments.get(0).getName()).contains("calendar.ics");
     }
 
@@ -1130,7 +1130,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         assertThat(content).contains("Einen Überblick deiner aktuellen und zukünftigen Vertretungen findest du unter");
         assertThat(content).contains("/web/application/replacement");
 
-        final List<DataSource> attachments = getAttachments(msg);
+        final List<AttachmentResource> attachments = getAttachments(msg);
         assertThat(attachments.get(0).getName()).contains("calendar.ics");
     }
 
@@ -1684,7 +1684,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachmentsRelevantPerson = getAttachments(msg);
+        final List<AttachmentResource> attachmentsRelevantPerson = getAttachments(msg);
         assertThat(attachmentsRelevantPerson.get(0).getName()).contains("calendar.ics");
 
         // check email colleague
@@ -1705,7 +1705,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachmentsColleague = getAttachments(msgColleague);
+        final List<AttachmentResource> attachmentsColleague = getAttachments(msgColleague);
         assertThat(attachmentsColleague.get(0).getName()).contains("calendar.ics");
     }
 
@@ -1834,7 +1834,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachments = getAttachments(msg);
+        final List<AttachmentResource> attachments = getAttachments(msg);
         assertThat(attachments.get(0).getName()).contains("calendar.ics");
 
         // was email sent to relevant person?
@@ -1857,7 +1857,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/2/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachmentsRelevantPerson = getAttachments(msgRelevantPerson);
+        final List<AttachmentResource> attachmentsRelevantPerson = getAttachments(msgRelevantPerson);
         assertThat(attachmentsRelevantPerson.get(0).getName()).contains("calendar.ics");
 
         // was email sent to colleague?
@@ -1879,7 +1879,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
             EMAIL_LINE_BREAK +
             "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/42/notifications anpassen." + EMAIL_LINE_BREAK);
 
-        final List<DataSource> attachmentsColleague = getAttachments(msgColleague);
+        final List<AttachmentResource> attachmentsColleague = getAttachments(msgColleague);
         assertThat(attachmentsColleague.get(0).getName()).contains("calendar.ics");
     }
 
@@ -3741,11 +3741,11 @@ class ApplicationMailServiceIT extends TestContainersBase {
         return application;
     }
 
-    private String readPlainContent(MimeMessage message) throws Exception {
-        return new MimeMessageParser(message).parse().getPlainContent();
+    private String readPlainContent(MimeMessage message) {
+        return EmailConverter.mimeMessageToEmail(message).getPlainText();
     }
 
-    private List<DataSource> getAttachments(MimeMessage message) throws Exception {
-        return new MimeMessageParser(message).parse().getAttachmentList();
+    private List<AttachmentResource> getAttachments(MimeMessage message) {
+        return EmailConverter.mimeMessageToEmail(message).getAttachments();
     }
 }

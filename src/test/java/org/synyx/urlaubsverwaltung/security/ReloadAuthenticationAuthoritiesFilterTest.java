@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.security;
 
+import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +18,6 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.List;
 

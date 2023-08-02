@@ -1,20 +1,20 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import static javax.persistence.EnumType.STRING;
-import static javax.persistence.GenerationType.SEQUENCE;
+import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.GenerationType.SEQUENCE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
 

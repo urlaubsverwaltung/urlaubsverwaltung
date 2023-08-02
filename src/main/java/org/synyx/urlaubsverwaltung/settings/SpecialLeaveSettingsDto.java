@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 public class SpecialLeaveSettingsDto {

@@ -1,14 +1,14 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknotetype;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 public class SickNoteType {

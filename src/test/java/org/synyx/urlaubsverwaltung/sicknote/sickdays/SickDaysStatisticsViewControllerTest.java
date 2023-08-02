@@ -107,7 +107,7 @@ class SickDaysStatisticsViewControllerTest {
             .param("size", "50")
             .param("query", "")
         )
-            .andExpect(header().string("Content-disposition", "attachment; filename*=UTF-8''filename.csv"))
+            .andExpect(header().string("Content-disposition", "attachment; filename=\"=?UTF-8?Q?filename.csv?=\"; filename*=UTF-8''filename.csv"))
             .andExpect(header().string("Content-Type", "text/csv;charset=UTF-8"));
     }
 
