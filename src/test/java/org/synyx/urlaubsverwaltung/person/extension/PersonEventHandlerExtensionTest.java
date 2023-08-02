@@ -91,7 +91,7 @@ class PersonEventHandlerExtensionTest {
             assertThat(result.getId()).isNotNull();
             assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
             assertThat(result.getTenantId()).isEqualTo("default");
-            assertThat(result.getPersonId()).isEqualTo(person.getId());
+            assertThat(result.getPersonId()).isEqualTo(1L);
             assertThat(result.getUsername()).isEqualTo(person.getUsername());
             assertThat(result.getLastName()).isEqualTo(person.getLastName());
             assertThat(result.getFirstName()).isEqualTo(person.getFirstName());
@@ -139,7 +139,7 @@ class PersonEventHandlerExtensionTest {
             assertThat(result.getId()).isNotNull();
             assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
             assertThat(result.getTenantId()).isEqualTo("default");
-            assertThat(result.getPersonId()).isEqualTo(person.getId());
+            assertThat(result.getPersonId()).isEqualTo(1L);
             assertThat(result.getUsername()).isEqualTo(person.getUsername());
             assertThat(result.getLastName()).isEqualTo(person.getLastName());
             assertThat(result.getFirstName()).isEqualTo(person.getFirstName());
@@ -187,7 +187,7 @@ class PersonEventHandlerExtensionTest {
             assertThat(result.getId()).isNotNull();
             assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
             assertThat(result.getTenantId()).isEqualTo("default");
-            assertThat(result.getPersonId()).isEqualTo(person.getId());
+            assertThat(result.getPersonId()).isEqualTo(1L);
             assertThat(result.getUsername()).isEqualTo(person.getUsername());
             assertThat(result.getLastName()).isEqualTo(person.getLastName());
             assertThat(result.getFirstName()).isEqualTo(person.getFirstName());
@@ -234,7 +234,7 @@ class PersonEventHandlerExtensionTest {
             assertThat(result.getId()).isNotNull();
             assertThat(result.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
             assertThat(result.getTenantId()).isEqualTo("default");
-            assertThat(result.getPersonId()).isEqualTo(person.getId());
+            assertThat(result.getPersonId()).isEqualTo(1L);
             assertThat(result.getUsername()).isEqualTo(person.getUsername());
             assertThat(result.getLastName()).isEqualTo(person.getLastName());
             assertThat(result.getFirstName()).isEqualTo(person.getFirstName());

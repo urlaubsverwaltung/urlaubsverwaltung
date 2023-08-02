@@ -63,7 +63,7 @@ class PersonDTOMapperTest {
         void activePerson() {
 
             final PersonDTO personDTO = PersonDTO.builder()
-                .id(1)
+                .id(1L)
                 .username("muster")
                 .lastName("Muster")
                 .firstName("Marlene")
@@ -88,7 +88,7 @@ class PersonDTOMapperTest {
         void disabledPerson() {
 
             final PersonDTO personDTO = PersonDTO.builder()
-                .id(1)
+                .id(1L)
                 .username("muster")
                 .lastName("Muster")
                 .firstName("Marlene")

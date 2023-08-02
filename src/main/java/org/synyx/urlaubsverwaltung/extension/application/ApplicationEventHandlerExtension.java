@@ -66,7 +66,7 @@ public class ApplicationEventHandlerExtension {
 
     private static ApplicationPersonDTO toApplicationPersonDTO(Person person) {
         return ApplicationPersonDTO.builder()
-            .personId(person.getId())
+            .personId(Long.valueOf(person.getId()))
             .username(person.getUsername())
             .build();
     }
@@ -90,7 +90,7 @@ public class ApplicationEventHandlerExtension {
 
             return ApplicationCreatedFromSickNoteEventDTO.builder()
                 .id(event.getId())
-                .sourceId(event.getApplication().getId())
+                .sourceId(Long.valueOf(event.getApplication().getId()))
                 .createdAt(event.getCreatedAt())
                 .tenantId(tenantId)
                 .person(person)
@@ -117,7 +117,7 @@ public class ApplicationEventHandlerExtension {
 
             return ApplicationAllowedEventDTO.builder()
                 .id(event.getId())
-                .sourceId(event.getApplication().getId())
+                .sourceId(Long.valueOf(event.getApplication().getId()))
                 .createdAt(event.getCreatedAt())
                 .tenantId(tenantId)
                 .person(person)
@@ -146,7 +146,7 @@ public class ApplicationEventHandlerExtension {
 
             return ApplicationCancelledEventDTO.builder()
                 .id(event.getId())
-                .sourceId(event.getApplication().getId())
+                .sourceId(Long.valueOf(event.getApplication().getId()))
                 .createdAt(event.getCreatedAt())
                 .tenantId(tenantId)
                 .person(person)
@@ -165,7 +165,7 @@ public class ApplicationEventHandlerExtension {
 
     private static VacationTypeDTO toVacationType(VacationTypeEntity vacationType) {
         return VacationTypeDTO.builder()
-            .sourceId(vacationType.getId())
+            .sourceId(Long.valueOf(vacationType.getId()))
             .category(vacationType.getCategory().name())
             .requiresApprovalToApply(vacationType.isRequiresApprovalToApply())
             .requiresApprovalToCancel(vacationType.isRequiresApprovalToCancel())
