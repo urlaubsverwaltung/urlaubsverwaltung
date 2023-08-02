@@ -39,12 +39,6 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-properties-migrator</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
       <groupId>de.focus-shift</groupId>
       <artifactId>launchpad</artifactId>
       <version>1.1.0</version>
