@@ -320,6 +320,7 @@
       <column name="days_before_remind_for_upcoming_holiday_replacement" type="INTEGER"/>
       <column name="days_before_remind_for_waiting_applications" type="INTEGER"/>
       <column name="maximum_months_to_apply_for_leave_in_advance" type="INTEGER"/>
+      <column name="maximum_months_to_apply_for_leave_afterwards" type="INTEGER"/>
       <column name="remind_for_upcoming_applications" type="BOOLEAN">
         <constraints nullable="false"/>
       </column>
@@ -361,6 +362,9 @@
       <column name="wednesday" type="VARCHAR(255)"/>
       <column name="working_duration_for_christmas_eve" type="VARCHAR(255)"/>
       <column name="working_duration_for_new_years_eve" type="VARCHAR(255)"/>
+      <column name="gravatar_enabled" type="BOOLEAN" defaultValue="true">
+        <constraints nullable="false"/>
+      </column>
     </createTable>
 
     <createTable tableName="sick_note">
@@ -427,7 +431,28 @@
         <constraints nullable="false" primaryKey="true" primaryKeyName="user_settings_pkey"/>
       </column>
       <column name="locale" type="VARCHAR(255)"/>
+      <column name="locale_browser_specific" type="VARCHAR(255)">
+        <constraints nullable="true"/>
+      </column>
       <column name="theme" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="user_pagination_settings">
+      <column name="person_id" type="BIGINT">
+        <constraints primaryKey="true" unique="true" uniqueConstraintName="user_pagination_settings_pkey"/>
+      </column>
+      <column name="default_page_size" type="INTEGER">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="user_notification_settings">
+      <column name="person_id" type="BIGINT">
+        <constraints primaryKey="true" unique="true" uniqueConstraintName="user_notification_settings_pkey"/>
+      </column>
+      <column name="restrict_to_departments" type="BOOLEAN">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -446,7 +471,10 @@
       <column name="message_key" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
-      <column name="requires_approval" type="BOOLEAN">
+      <column name="requires_approval_to_apply" type="BOOLEAN" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
+      <column name="requires_approval_to_cancel" type="BOOLEAN" defaultValueBoolean="true">
         <constraints nullable="false"/>
       </column>
       <column name="visible_to_everyone" type="BOOLEAN">
@@ -624,6 +652,14 @@
                              referencedTableName="sick_note" validate="true"/>
     <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="user_settings"
                              constraintName="fk7687azhshs87687qwertzhbsd" deferrable="false" initiallyDeferred="false"
+                             onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="user_pagination_settings"
+                             constraintName="fk_user_pagination_settings_person_id" deferrable="false" initiallyDeferred="false"
+                             onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id"
+                             referencedTableName="person" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="person_id" baseTableName="user_notification_settings"
+                             constraintName="FK_NOTIFICATION_PERSON" deferrable="false" initiallyDeferred="false"
                              onDelete="CASCADE" onUpdate="NO ACTION" referencedColumnNames="id"
                              referencedTableName="person" validate="true"/>
   </changeSet>
