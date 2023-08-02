@@ -19,7 +19,6 @@
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>17</java.version>
-    <shedlock.version>4.43.0</shedlock.version>
     <uv-extension-api.version>0.9.0</uv-extension-api.version>
 
     <docker-publish-registry>registry.example.com</docker-publish-registry>
@@ -130,7 +129,7 @@
     <dependency>
       <groupId>net.javacrumbs.shedlock</groupId>
       <artifactId>shedlock-provider-jdbc-template</artifactId>
-      <version>${shedlock.version}</version>
+      <version>5.6.0</version>
     </dependency>
 
     <!-- MAIL -->
