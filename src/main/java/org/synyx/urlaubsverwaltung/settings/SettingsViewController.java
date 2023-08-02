@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettings
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
+import org.synyx.urlaubsverwaltung.calendarintegration.CalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -202,9 +203,10 @@ public class SettingsViewController implements HasLaunchpad {
     private Settings processGoogleRefreshToken(Settings settingsUpdate) {
 
         final GoogleCalendarSettings storedGoogleSettings = settingsService.getSettings().getCalendarSettings().getGoogleCalendarSettings();
-        final GoogleCalendarSettings updateGoogleSettings = settingsUpdate.getCalendarSettings().getGoogleCalendarSettings();
+        final CalendarSettings updatedCalendarSettings = settingsUpdate.getCalendarSettings();
 
-        if (storedGoogleSettings != null) {
+        if (storedGoogleSettings != null && updatedCalendarSettings != null) {
+            final GoogleCalendarSettings updateGoogleSettings = updatedCalendarSettings.getGoogleCalendarSettings();
             updateGoogleSettings.setRefreshToken(storedGoogleSettings.getRefreshToken());
 
             if (refreshTokenGotInvalid(storedGoogleSettings, updateGoogleSettings)) {
