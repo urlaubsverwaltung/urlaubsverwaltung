@@ -16,6 +16,7 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
+      day: "friday"
       interval: "monthly"
     target-branch: "v4.x"
     labels:
@@ -41,7 +42,8 @@ updates:
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
-      interval: "weekly"
+      day: "friday"
+      interval: "monthly"
     target-branch: "v4.x"
     labels:
       - "type: dependencies"
@@ -61,7 +63,8 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      day: "friday"
+      interval: "monthly"
     target-branch: "v4.x"
     labels:
       - "type: dependencies"
