@@ -36,10 +36,10 @@
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
                     minValue="1" sequenceName="working_time_id_seq" startValue="1"/>
     <createTable tableName="absence_mapping">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="absence_mapping_pkey"/>
       </column>
-      <column name="absence_id" type="BIGINT">
+      <column name="absence_id" type="bigint">
         <constraints nullable="false"/>
       </column>
       <column name="absence_mapping_type" type="text">
@@ -51,13 +51,13 @@
     </createTable>
 
     <createTable tableName="account">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="account_pkey"/>
       </column>
       <column name="actual_vacation_days" type="numeric(19, 2)"/>
       <column name="annual_vacation_days" type="numeric(19, 2)"/>
       <column name="comment" type="text"/>
-      <column name="do_remaining_vacation_days_expire" type="BOOLEAN"/>
+      <column name="do_remaining_vacation_days_expire" type="boolean"/>
       <column name="expiry_date" type="date">
         <constraints nullable="false"/>
       </column>
@@ -66,11 +66,11 @@
       <column name="remaining_vacation_days_not_expiring" type="numeric(19, 2)"/>
       <column name="valid_from" type="date"/>
       <column name="valid_to" type="date"/>
-      <column name="person_id" type="BIGINT"/>
+      <column name="person_id" type="bigint"/>
     </createTable>
 
     <createTable tableName="application">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="application_pkey"/>
       </column>
       <column name="address" type="text"/>
@@ -86,23 +86,23 @@
       <column name="start_date" type="date"/>
       <column name="start_time" type="time(6) WITHOUT TIME ZONE"/>
       <column name="status" type="text"/>
-      <column name="team_informed" type="BOOLEAN">
+      <column name="team_informed" type="boolean">
         <constraints nullable="false"/>
       </column>
-      <column name="two_stage_approval" type="BOOLEAN">
+      <column name="two_stage_approval" type="boolean">
         <constraints nullable="false"/>
       </column>
       <column name="upcoming_applications_reminder_send" type="date"/>
       <column name="upcoming_holiday_replacement_notification_send" type="date"/>
-      <column name="applier_id" type="BIGINT"/>
-      <column name="boss_id" type="BIGINT"/>
-      <column name="canceller_id" type="BIGINT"/>
-      <column name="person_id" type="BIGINT"/>
-      <column name="vacation_type_id" type="BIGINT"/>
+      <column name="applier_id" type="bigint"/>
+      <column name="boss_id" type="bigint"/>
+      <column name="canceller_id" type="bigint"/>
+      <column name="person_id" type="bigint"/>
+      <column name="vacation_type_id" type="bigint"/>
     </createTable>
 
     <createTable tableName="application_comment">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="application_comment_pkey"/>
       </column>
       <column name="date" type="timestamptz">
@@ -110,24 +110,24 @@
       </column>
       <column name="text" type="text"/>
       <column name="action" type="text"/>
-      <column name="person_id" type="BIGINT"/>
-      <column name="application_id" type="BIGINT"/>
+      <column name="person_id" type="bigint"/>
+      <column name="application_id" type="bigint"/>
     </createTable>
 
     <createTable tableName="calendar_accessible">
       <column name="dtype" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="calendar_accessible_pkey"/>
       </column>
-      <column name="is_accessible" type="BOOLEAN">
+      <column name="is_accessible" type="boolean">
         <constraints nullable="false"/>
       </column>
     </createTable>
 
     <createTable tableName="company_calendar">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="company_calendar_pkey"/>
       </column>
       <column name="calendar_period" type="text" defaultValue="P100Y">
@@ -136,13 +136,13 @@
       <column name="secret" type="varchar(32)">
         <constraints nullable="false"/>
       </column>
-      <column name="person_id" type="BIGINT">
+      <column name="person_id" type="bigint">
         <constraints nullable="false" unique="true"/>
       </column>
     </createTable>
 
     <createTable tableName="department">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="department_pkey"/>
       </column>
       <column name="created_at" type="date">
@@ -153,72 +153,72 @@
       <column name="name" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="two_stage_approval" type="BOOLEAN">
+      <column name="two_stage_approval" type="boolean">
         <constraints nullable="false"/>
       </column>
     </createTable>
 
     <createTable tableName="department_calendar">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="department_calendar_pkey"/>
       </column>
       <column name="calendar_period" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="department_id" type="BIGINT">
+      <column name="department_id" type="bigint">
         <constraints nullable="false"/>
       </column>
       <column name="secret" type="varchar(32)">
         <constraints nullable="false"/>
       </column>
-      <column name="person_id" type="BIGINT">
+      <column name="person_id" type="bigint">
         <constraints nullable="false"/>
       </column>
     </createTable>
 
     <createTable tableName="department_department_head">
-      <column name="department_id" type="BIGINT">
+      <column name="department_id" type="bigint">
         <constraints nullable="false"/>
       </column>
-      <column name="department_heads_id" type="BIGINT">
+      <column name="department_heads_id" type="bigint">
         <constraints nullable="false"/>
       </column>
     </createTable>
 
     <createTable tableName="department_member">
-      <column name="department_id" type="BIGINT">
+      <column name="department_id" type="bigint">
         <constraints nullable="false"/>
       </column>
       <column name="accession_date" type="timestamptz" defaultValue="1970-01-01">
         <constraints nullable="false"/>
       </column>
-      <column name="members_id" type="BIGINT">
+      <column name="members_id" type="bigint">
         <constraints nullable="false"/>
       </column>
     </createTable>
 
     <createTable tableName="department_second_stage_authority">
-      <column name="department_id" type="BIGINT">
+      <column name="department_id" type="bigint">
         <constraints nullable="false"/>
       </column>
-      <column name="second_stage_authorities_id" type="BIGINT">
+      <column name="second_stage_authorities_id" type="bigint">
         <constraints nullable="false"/>
       </column>
     </createTable>
 
     <createTable tableName="holiday_replacements">
-      <column name="application_id" type="BIGINT">
+      <column name="application_id" type="bigint">
         <constraints nullable="false"/>
       </column>
       <column name="note" type="text"/>
-      <column name="person_id" type="BIGINT">
+      <column name="person_id" type="bigint">
         <constraints nullable="false"/>
       </column>
     </createTable>
     <addPrimaryKey tableName="holiday_replacements" columnNames="person_id, application_id"/>
 
     <createTable tableName="overtime">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="overtime_pkey"/>
       </column>
       <column name="duration" type="FLOAT8">
@@ -233,11 +233,11 @@
       <column name="start_date" type="date">
         <constraints nullable="false"/>
       </column>
-      <column name="person_id" type="BIGINT"/>
+      <column name="person_id" type="bigint"/>
     </createTable>
 
     <createTable tableName="overtime_comment">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="overtime_comment_pkey"/>
       </column>
       <column name="date" type="timestamptz">
@@ -247,12 +247,12 @@
       <column name="action" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="person_id" type="BIGINT"/>
-      <column name="overtime_id" type="BIGINT"/>
+      <column name="person_id" type="bigint"/>
+      <column name="overtime_id" type="bigint"/>
     </createTable>
 
     <createTable tableName="person">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="person_pkey"/>
       </column>
       <column name="email" type="text"/>
@@ -268,7 +268,7 @@
     </createTable>
 
     <createTable tableName="person_basedata">
-      <column name="person_id" type="BIGINT">
+      <column name="person_id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="person_basedata_pkey"/>
       </column>
       <column name="additional_information" type="text"/>
@@ -276,7 +276,7 @@
     </createTable>
 
     <createTable tableName="person_calendar">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="person_calendar_pkey"/>
       </column>
       <column name="calendar_period" type="text">
@@ -285,73 +285,73 @@
       <column name="secret" type="text(32)">
         <constraints nullable="false"/>
       </column>
-      <column name="person_id" type="BIGINT">
+      <column name="person_id" type="bigint">
         <constraints nullable="false" unique="true"/>
       </column>
     </createTable>
 
     <createTable tableName="person_notifications">
-      <column name="person_id" type="BIGINT">
+      <column name="person_id" type="bigint">
         <constraints nullable="false"/>
       </column>
       <column name="notifications" type="text"/>
     </createTable>
 
     <createTable tableName="person_permissions">
-      <column name="person_id" type="BIGINT">
+      <column name="person_id" type="bigint">
         <constraints nullable="false"/>
       </column>
       <column name="permissions" type="text"/>
     </createTable>
 
     <createTable tableName="settings">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="settings_pkey"/>
       </column>
-      <column name="default_vacation_days" type="INTEGER"/>
-      <column name="do_remaining_vacation_days_expire_globally" type="BOOLEAN">
+      <column name="default_vacation_days" type="integer"/>
+      <column name="do_remaining_vacation_days_expire_globally" type="boolean">
         <constraints nullable="false"/>
       </column>
-      <column name="maximum_annual_vacation_days" type="INTEGER"/>
-      <column name="allow_half_days" type="BOOLEAN">
+      <column name="maximum_annual_vacation_days" type="integer"/>
+      <column name="allow_half_days" type="boolean">
         <constraints nullable="false"/>
       </column>
-      <column name="days_before_remind_for_upcoming_applications" type="INTEGER"/>
-      <column name="days_before_remind_for_upcoming_holiday_replacement" type="INTEGER"/>
-      <column name="days_before_remind_for_waiting_applications" type="INTEGER"/>
-      <column name="maximum_months_to_apply_for_leave_in_advance" type="INTEGER"/>
-      <column name="maximum_months_to_apply_for_leave_afterwards" type="INTEGER"/>
-      <column name="remind_for_upcoming_applications" type="BOOLEAN">
+      <column name="days_before_remind_for_upcoming_applications" type="integer"/>
+      <column name="days_before_remind_for_upcoming_holiday_replacement" type="integer"/>
+      <column name="days_before_remind_for_waiting_applications" type="integer"/>
+      <column name="maximum_months_to_apply_for_leave_in_advance" type="integer"/>
+      <column name="maximum_months_to_apply_for_leave_afterwards" type="integer"/>
+      <column name="remind_for_upcoming_applications" type="boolean">
         <constraints nullable="false"/>
       </column>
-      <column name="remind_for_upcoming_holiday_replacement" type="BOOLEAN">
+      <column name="remind_for_upcoming_holiday_replacement" type="boolean">
         <constraints nullable="false"/>
       </column>
-      <column name="remind_for_waiting_applications" type="BOOLEAN">
+      <column name="remind_for_waiting_applications" type="boolean">
         <constraints nullable="false"/>
       </column>
       <column name="calendar_ews_calendar" type="text"/>
       <column name="calendar_ews_email" type="text"/>
       <column name="calendar_ews_url" type="text"/>
       <column name="calendar_ews_password" type="text"/>
-      <column name="calendar_ews_send_invitation_active" type="BOOLEAN"/>
+      <column name="calendar_ews_send_invitation_active" type="boolean"/>
       <column name="calendar_ews_timezoneid" type="text"/>
       <column name="calendar_google_calendar_id" type="text"/>
       <column name="calendar_google_client_id" type="text"/>
       <column name="calendar_google_client_secret" type="text"/>
       <column name="calendar_google_refresh_token" type="text"/>
       <column name="calendar_provider" type="text"/>
-      <column name="overtime_maximum" type="INTEGER"/>
-      <column name="overtime_minimum" type="INTEGER"/>
-      <column name="overtime_minimum_reduction" type="INTEGER"/>
-      <column name="overtime_active" type="BOOLEAN"/>
-      <column name="overtime_reduction_without_application_active" type="BOOLEAN"/>
-      <column name="overtime_write_privileged_only" type="BOOLEAN"/>
-      <column name="days_before_end_of_sick_pay_notification" type="INTEGER"/>
-      <column name="maximum_sick_pay_days" type="INTEGER"/>
+      <column name="overtime_maximum" type="integer"/>
+      <column name="overtime_minimum" type="integer"/>
+      <column name="overtime_minimum_reduction" type="integer"/>
+      <column name="overtime_active" type="boolean"/>
+      <column name="overtime_reduction_without_application_active" type="boolean"/>
+      <column name="overtime_write_privileged_only" type="boolean"/>
+      <column name="days_before_end_of_sick_pay_notification" type="integer"/>
+      <column name="maximum_sick_pay_days" type="integer"/>
       <column name="timezoneid" type="text"/>
-      <column name="work_day_begin_hour" type="INTEGER"/>
-      <column name="work_day_end_hour" type="INTEGER"/>
+      <column name="work_day_begin_hour" type="integer"/>
+      <column name="work_day_end_hour" type="integer"/>
       <column name="federal_state" type="text"/>
       <column name="friday" type="text"/>
       <column name="monday" type="text"/>
@@ -362,13 +362,13 @@
       <column name="wednesday" type="text"/>
       <column name="working_duration_for_christmas_eve" type="text"/>
       <column name="working_duration_for_new_years_eve" type="text"/>
-      <column name="gravatar_enabled" type="BOOLEAN" defaultValue="true">
+      <column name="gravatar_enabled" type="boolean" defaultValue="true">
         <constraints nullable="false"/>
       </column>
     </createTable>
 
     <createTable tableName="sick_note">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="sick_note_pkey"/>
       </column>
       <column name="aub_end_date" type="date"/>
@@ -379,13 +379,13 @@
       <column name="last_edited" type="date"/>
       <column name="start_date" type="date"/>
       <column name="status" type="text"/>
-      <column name="applier_id" type="BIGINT"/>
-      <column name="person_id" type="BIGINT"/>
-      <column name="sick_note_type_id" type="BIGINT"/>
+      <column name="applier_id" type="bigint"/>
+      <column name="person_id" type="bigint"/>
+      <column name="sick_note_type_id" type="bigint"/>
     </createTable>
 
     <createTable tableName="sick_note_comment">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="sick_note_comment_pkey"/>
       </column>
       <column name="date" type="timestamptz">
@@ -393,14 +393,14 @@
       </column>
       <column name="text" type="text"/>
       <column name="action" type="text"/>
-      <column name="sick_note_id" type="BIGINT">
+      <column name="sick_note_id" type="bigint">
         <constraints nullable="false"/>
       </column>
-      <column name="person_id" type="BIGINT"/>
+      <column name="person_id" type="bigint"/>
     </createTable>
 
     <createTable tableName="sick_note_type">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="sick_note_type_pkey"/>
       </column>
       <column name="category" type="text">
@@ -412,13 +412,13 @@
     </createTable>
 
     <createTable tableName="special_leave_settings">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="special_leave_settings_pkey"/>
       </column>
-      <column name="active" type="BOOLEAN">
+      <column name="active" type="boolean">
         <constraints nullable="false"/>
       </column>
-      <column name="days" type="INTEGER">
+      <column name="days" type="integer">
         <constraints nullable="false"/>
       </column>
       <column name="message_key" type="text">
@@ -427,7 +427,7 @@
     </createTable>
 
     <createTable tableName="user_settings">
-      <column name="person_id" type="BIGINT">
+      <column name="person_id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="user_settings_pkey"/>
       </column>
       <column name="locale" type="text"/>
@@ -440,28 +440,28 @@
     </createTable>
 
     <createTable tableName="user_pagination_settings">
-      <column name="person_id" type="BIGINT">
+      <column name="person_id" type="bigint">
         <constraints primaryKey="true" unique="true" uniqueConstraintName="user_pagination_settings_pkey"/>
       </column>
-      <column name="default_page_size" type="INTEGER">
+      <column name="default_page_size" type="integer">
         <constraints nullable="false"/>
       </column>
     </createTable>
 
     <createTable tableName="user_notification_settings">
-      <column name="person_id" type="BIGINT">
+      <column name="person_id" type="bigint">
         <constraints primaryKey="true" unique="true" uniqueConstraintName="user_notification_settings_pkey"/>
       </column>
-      <column name="restrict_to_departments" type="BOOLEAN">
+      <column name="restrict_to_departments" type="boolean">
         <constraints nullable="false"/>
       </column>
     </createTable>
 
     <createTable tableName="vacation_type">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="vacation_type_pkey"/>
       </column>
-      <column name="active" type="BOOLEAN">
+      <column name="active" type="boolean">
         <constraints nullable="false"/>
       </column>
       <column name="category" type="text"/>
@@ -471,19 +471,19 @@
       <column name="message_key" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="requires_approval_to_apply" type="BOOLEAN" defaultValueBoolean="true">
+      <column name="requires_approval_to_apply" type="boolean" defaultValueBoolean="true">
         <constraints nullable="false"/>
       </column>
-      <column name="requires_approval_to_cancel" type="BOOLEAN" defaultValueBoolean="true">
+      <column name="requires_approval_to_cancel" type="boolean" defaultValueBoolean="true">
         <constraints nullable="false"/>
       </column>
-      <column name="visible_to_everyone" type="BOOLEAN">
+      <column name="visible_to_everyone" type="boolean">
         <constraints nullable="false"/>
       </column>
     </createTable>
 
     <createTable tableName="working_time">
-      <column name="id" type="BIGINT">
+      <column name="id" type="bigint">
         <constraints nullable="false" primaryKey="true" primaryKeyName="working_time_pkey"/>
       </column>
       <column name="federal_state_override" type="text"/>
@@ -495,7 +495,7 @@
       <column name="tuesday" type="text"/>
       <column name="valid_from" type="date"/>
       <column name="wednesday" type="text"/>
-      <column name="person_id" type="BIGINT"/>
+      <column name="person_id" type="bigint"/>
     </createTable>
 
     <createTable tableName="shedlock">
