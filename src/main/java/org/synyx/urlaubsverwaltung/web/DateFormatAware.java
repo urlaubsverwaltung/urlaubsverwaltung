@@ -36,7 +36,7 @@ public class DateFormatAware {
 
     /**
      * @param dateString valid date string in random date format
-     * @param locale {@linkplain Locale} to parse the date
+     * @param locale     {@linkplain Locale} to parse the date
      * @return the {@linkplain LocalDate} of the given dateString or an empty {@linkplain Optional} when the string cannot be parsed.
      */
     public Optional<LocalDate> parse(String dateString, Locale locale) {
@@ -55,7 +55,7 @@ public class DateFormatAware {
         try {
             final Date parse = dateFormatter.parse(dateString, locale);
             d = Optional.of(parse);
-        } catch(ParseException e) {
+        } catch (ParseException e) {
             LOG.debug("could not parse dateString={} locale={}", dateString, locale);
         }
 

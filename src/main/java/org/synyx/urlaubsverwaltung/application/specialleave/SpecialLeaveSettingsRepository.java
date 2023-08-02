@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.application.specialleave;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-interface SpecialLeaveSettingsRepository extends CrudRepository<SpecialLeaveSettingsEntity, Long> {
+interface SpecialLeaveSettingsRepository extends JpaRepository<SpecialLeaveSettingsEntity, Long> {
 
     @Override
     List<SpecialLeaveSettingsEntity> findAll();

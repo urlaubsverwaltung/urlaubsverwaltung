@@ -1,19 +1,17 @@
 version: '3.9'
 services:
-  mariadb:
-    image: mariadb:10.6.14
-    volumes:
-      - mariadb_data:/var/lib/mysql
+  postgres:
+    image: postgres:15.3-alpine
     environment:
-      MYSQL_DATABASE: 'urlaubsverwaltung'
-      MYSQL_USER: 'urlaubsverwaltung'
-      MYSQL_PASSWORD: 'urlaubsverwaltung'
-      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
-    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+      POSTGRES_DB: ${POSTGRES_DB:-urlaubsverwaltung}
+      POSTGRES_USER: ${POSTGRES_USER:-urlaubsverwaltung}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-urlaubsverwaltung}
     ports:
-      - '3308:3306'
+      - "5434:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "bash", "-c", "/usr/bin/mysql --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD --execute \"SHOW DATABASES;\""]
+      test: [ "CMD-SHELL", "pg_isready", "-d", "$$POSTGRES_DB" ]
       interval: 3s
       timeout: 1s
       retries: 5
@@ -43,5 +41,5 @@ services:
       retries: 5
 
 volumes:
-  mariadb_data: {}
-
+  db:
+    driver: local

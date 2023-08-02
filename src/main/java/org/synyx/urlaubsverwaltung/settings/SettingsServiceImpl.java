@@ -23,14 +23,21 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public void save(Settings settings) {
-        settingsRepository.save(settings);
-        LOG.info("Updated settings: {}", settings);
+    public Settings save(Settings settings) {
+        final Settings savedSettings = settingsRepository.save(settings);
+        LOG.info("Updated settings: {}", savedSettings);
+        return savedSettings;
     }
 
     @Override
     public Settings getSettings() {
         return settingsRepository.findById(1L)
-            .orElseThrow(() -> new IllegalStateException("No settings in database found."));
+            .orElseGet(() -> {
+                final Settings settings = new Settings();
+                settings.setId(1L);
+                final Settings savedSettings = settingsRepository.save(settings);
+                LOG.info("Saved initial settings {}", savedSettings);
+                return savedSettings;
+            });
     }
 }

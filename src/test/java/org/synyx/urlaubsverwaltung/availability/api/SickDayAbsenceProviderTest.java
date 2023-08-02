@@ -93,12 +93,12 @@ class SickDayAbsenceProviderTest {
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
         final SickNote sickNote = SickNote.builder()
-                .person(person)
-                .startDate(sickDay)
-                .endDate(sickDay)
-                .dayLength(FULL)
-                .status(CANCELLED)
-                .build();
+            .person(person)
+            .startDate(sickDay)
+            .endDate(sickDay)
+            .dayLength(FULL)
+            .status(CANCELLED)
+            .build();
 
         when(sickNoteService.getByPersonAndPeriod(person, sickDay, sickDay)).thenReturn(singletonList(sickNote));
 
@@ -119,12 +119,12 @@ class SickDayAbsenceProviderTest {
         final LocalDate sickDay = LocalDate.of(2016, 1, 4);
 
         final SickNote sickNote = SickNote.builder()
-                .person(person)
-                .startDate(sickDay)
-                .endDate(sickDay)
-                .dayLength(FULL)
-                .status(CONVERTED_TO_VACATION)
-                .build();
+            .person(person)
+            .startDate(sickDay)
+            .endDate(sickDay)
+            .dayLength(FULL)
+            .status(CONVERTED_TO_VACATION)
+            .build();
 
         when(sickNoteService.getByPersonAndPeriod(person, sickDay, sickDay)).thenReturn(singletonList(sickNote));
 

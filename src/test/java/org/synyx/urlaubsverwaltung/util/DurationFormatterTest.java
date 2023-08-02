@@ -26,7 +26,7 @@ class DurationFormatterTest {
         when(messageSource.getMessage("hours.abbr", new Object[]{}, GERMAN)).thenReturn("Std.");
         when(messageSource.getMessage("minutes.abbr", new Object[]{}, GERMAN)).thenReturn("Min.");
 
-        final Duration duration = Duration.ofMinutes(23*60+32);
+        final Duration duration = Duration.ofMinutes(23 * 60 + 32);
         final String durationString = DurationFormatter.toDurationString(duration, messageSource, GERMAN);
         assertThat(durationString).isEqualTo("23 Std. 32 Min.");
     }

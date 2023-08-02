@@ -46,12 +46,12 @@ public class ApplicationEventRepublisher {
         final LocalDate endOfYear = startOfYear.with(lastDayOfYear());
 
         applicationService.getApplicationsForACertainPeriodAndState(startOfYear, endOfYear, ALLOWED)
-                .stream()
-                .map(ApplicationAllowedEvent::of)
-                .forEach(event -> {
-                    LOG.info("Publishing ApplicationAllowedEvent with id={} for personId={} with startDate={} and endDate={}", event.getApplication().getId(), event.getApplication().getPerson().getId(), event.getApplication().getStartDate(), event.getApplication().getEndDate());
-                    applicationEventHandlerExtension.on(event);
-                });
+            .stream()
+            .map(ApplicationAllowedEvent::of)
+            .forEach(event -> {
+                LOG.info("Publishing ApplicationAllowedEvent with id={} for personId={} with startDate={} and endDate={}", event.getApplication().getId(), event.getApplication().getPerson().getId(), event.getApplication().getStartDate(), event.getApplication().getEndDate());
+                applicationEventHandlerExtension.on(event);
+            });
 
         LOG.info("Republished all events with type=ApplicationAllowedEvent");
     }

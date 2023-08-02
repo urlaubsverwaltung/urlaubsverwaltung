@@ -15,10 +15,8 @@ import org.synyx.urlaubsverwaltung.person.PersonDeletedEvent;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.map;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME;
 
 @ExtendWith(MockitoExtension.class)
 class SessionServiceImplTest {

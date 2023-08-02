@@ -7,12 +7,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.SequenceGenerator;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Objects;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Optional.ofNullable;
+import static javax.persistence.GenerationType.SEQUENCE;
 
 
 /**
@@ -22,7 +24,9 @@ import static java.util.Optional.ofNullable;
 public abstract class AbstractComment {
 
     @Id
-    @GeneratedValue
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = SEQUENCE, generator = "comment_generator")
+    @SequenceGenerator(name = "comment_generator", sequenceName = "comment_id_seq")
     private Long id;
 
     // Who has written the comment?

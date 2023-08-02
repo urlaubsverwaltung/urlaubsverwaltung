@@ -12,7 +12,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.synyx.urlaubsverwaltung.TestMariaDBContainer;
+import org.synyx.urlaubsverwaltung.TestPostgreContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -77,12 +77,12 @@ class ApplicationForLeaveCreateIT {
         .withRecordingMode(RECORD_FAILING, new File("target"))
         .withCapabilities(chromeOptions());
 
-    static final TestMariaDBContainer mariaDB = new TestMariaDBContainer();
+    static final TestPostgreContainer postgre = new TestPostgreContainer();
 
     @DynamicPropertySource
-    static void mariaDBProperties(DynamicPropertyRegistry registry) {
-        mariaDB.start();
-        mariaDB.configureSpringDataSource(registry);
+    static void postgreProperties(DynamicPropertyRegistry registry) {
+        postgre.start();
+        postgre.configureSpringDataSource(registry);
     }
 
     @Autowired

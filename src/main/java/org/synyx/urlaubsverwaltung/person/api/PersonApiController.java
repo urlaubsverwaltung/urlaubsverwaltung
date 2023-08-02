@@ -49,16 +49,16 @@ public class PersonApiController {
     }
 
     @Operation(
-            summary = "Get all active persons of the application",
-            description = "Get all active persons of the application"
+        summary = "Get all active persons of the application",
+        description = "Get all active persons of the application"
     )
     @GetMapping
     @PreAuthorize(IS_OFFICE)
     public ResponseEntity<List<PersonDto>> persons() {
 
         List<PersonDto> persons = personService.getActivePersons().stream()
-                .map(this::createPersonResponse)
-                .collect(toList());
+            .map(this::createPersonResponse)
+            .collect(toList());
 
         return new ResponseEntity<>(persons, OK);
     }
@@ -69,8 +69,8 @@ public class PersonApiController {
     public ResponseEntity<PersonDto> getPerson(@PathVariable Long id) {
 
         return personService.getPersonByID(id)
-                .map(value -> new ResponseEntity<>(createPersonResponse(value), OK))
-                .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
+            .map(value -> new ResponseEntity<>(createPersonResponse(value), OK))
+            .orElseGet(() -> new ResponseEntity<>(NOT_FOUND));
     }
 
     private PersonDto createPersonResponse(Person person) {

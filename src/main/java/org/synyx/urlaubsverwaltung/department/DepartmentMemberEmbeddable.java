@@ -16,7 +16,7 @@ class DepartmentMemberEmbeddable {
     @JoinColumn(name = "members_id", nullable = false)
     private Person person;
 
-    @Column(name = "accession_date")
+    @Column(name = "accession_date", nullable = false)
     private Instant accessionDate;
 
     public Person getPerson() {

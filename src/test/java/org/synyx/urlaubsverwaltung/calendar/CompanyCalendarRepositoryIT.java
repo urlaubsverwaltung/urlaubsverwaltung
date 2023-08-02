@@ -35,7 +35,7 @@ class CompanyCalendarRepositoryIT extends TestContainersBase {
         final Person savedPersonTwo = personService.create("martin", "martin", "scissor", "martin@example.org");
         final CompanyCalendar secondCompanyCalendar = new CompanyCalendar(savedPersonTwo);
         secondCompanyCalendar.setCalendarPeriod(Period.ofDays(1));
-        sut.save(secondCompanyCalendar);
+        sut.saveAndFlush(secondCompanyCalendar);
 
         assertThat(sut.findAll()).hasSize(2);
     }
@@ -52,7 +52,7 @@ class CompanyCalendarRepositoryIT extends TestContainersBase {
         final CompanyCalendar secondCompanyCalendar = new CompanyCalendar(savedPerson);
         secondCompanyCalendar.setCalendarPeriod(Period.ofDays(1));
 
-        final DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> sut.save(secondCompanyCalendar));
-        assertThat(exception.getMessage()).contains("constraint [unique_company_calendar_per_person]");
+        final DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> sut.saveAndFlush(secondCompanyCalendar));
+        assertThat(exception.getMessage()).contains("constraint [company_calendar_person_id_key]");
     }
 }

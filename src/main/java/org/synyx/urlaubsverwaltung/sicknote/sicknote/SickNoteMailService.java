@@ -153,7 +153,7 @@ class SickNoteMailService {
     @Async
     void sendCancelledToSickPerson(SickNote sickNote) {
         final Mail mailToRelevantColleagues = Mail.builder()
-            .withRecipient(sickNote.getPerson(),NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT)
+            .withRecipient(sickNote.getPerson(), NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT)
             .withSubject("subject.sicknote.cancelled.to_applicant_by_management")
             .withTemplate("sick_note_cancelled_by_management_to_applicant", Map.of("sickNote", sickNote))
             .build();

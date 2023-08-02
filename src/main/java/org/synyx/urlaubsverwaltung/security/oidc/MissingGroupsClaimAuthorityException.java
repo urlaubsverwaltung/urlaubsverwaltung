@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AccountStatusException;
 public class MissingGroupsClaimAuthorityException extends AccountStatusException {
     /**
      * Constructs a <code>MissingAuthorityException</code> with the specified message.
+     *
      * @param msg the detail message
      */
     MissingGroupsClaimAuthorityException(String msg) {

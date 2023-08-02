@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import static java.math.RoundingMode.HALF_EVEN;
 import static java.time.Duration.ZERO;
 import static java.time.ZoneOffset.UTC;
 import static java.util.stream.Collectors.toMap;
+import static javax.persistence.GenerationType.SEQUENCE;
 import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
 /**
@@ -34,7 +36,9 @@ import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecim
 public class Overtime {
 
     @Id
-    @GeneratedValue
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = SEQUENCE, generator = "overtime_generator")
+    @SequenceGenerator(name = "overtime_generator", sequenceName = "overtime_id_seq")
     private Long id;
 
     @ManyToOne
@@ -103,9 +107,9 @@ public class Overtime {
 
         final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
         final BigDecimal secondsProRata = toFormattedDecimal(duration)
-                .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
-                .multiply(toFormattedDecimal(durationOfOverlap))
-                .setScale(0, HALF_EVEN);
+            .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
+            .multiply(toFormattedDecimal(durationOfOverlap))
+            .setScale(0, HALF_EVEN);
 
         return DecimalConverter.toDuration(secondsProRata);
     }
@@ -134,14 +138,14 @@ public class Overtime {
 
     public Map<Integer, Duration> getDurationByYear() {
         return this.splitByYear().stream()
-                .collect(toMap(dateRangeForYear -> dateRangeForYear.getStartDate().getYear(), this::getDurationForDateRange));
+            .collect(toMap(dateRangeForYear -> dateRangeForYear.getStartDate().getYear(), this::getDurationForDateRange));
     }
 
     public Duration getTotalDurationBefore(int year) {
         return this.getDurationByYear().entrySet().stream()
-                .filter(entry -> entry.getKey() < year)
-                .map(Map.Entry::getValue)
-                .reduce(ZERO, Duration::plus);
+            .filter(entry -> entry.getKey() < year)
+            .map(Map.Entry::getValue)
+            .reduce(ZERO, Duration::plus);
     }
 
     public void setPerson(Person person) {
@@ -178,12 +182,12 @@ public class Overtime {
     @Override
     public String toString() {
         return "Overtime{" +
-                "id=" + getId() +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", duration=" + duration +
-                ", person=" + person +
-                '}';
+            "id=" + getId() +
+            ", startDate=" + startDate +
+            ", endDate=" + endDate +
+            ", duration=" + duration +
+            ", person=" + person +
+            '}';
     }
 
     @Override

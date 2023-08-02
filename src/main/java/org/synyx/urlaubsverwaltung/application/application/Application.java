@@ -10,6 +10,7 @@ import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -33,6 +35,7 @@ import static java.math.RoundingMode.HALF_EVEN;
 import static java.time.Duration.ZERO;
 import static java.time.ZoneOffset.UTC;
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.SEQUENCE;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
@@ -44,7 +47,9 @@ import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecim
 public class Application {
 
     @Id
-    @GeneratedValue
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = SEQUENCE, generator = "application_generator")
+    @SequenceGenerator(name = "application_generator", sequenceName = "application_id_seq")
     private Long id;
 
     /**
@@ -346,9 +351,9 @@ public class Application {
 
         final Duration overtimeDateRangeDuration = overtimeDateRange.duration();
         final BigDecimal secondsProRata = toFormattedDecimal(hours)
-                .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
-                .multiply(toFormattedDecimal(durationOfOverlap))
-                .setScale(0, HALF_EVEN);
+            .divide(toFormattedDecimal(overtimeDateRangeDuration), HALF_EVEN)
+            .multiply(toFormattedDecimal(durationOfOverlap))
+            .setScale(0, HALF_EVEN);
 
         return DecimalConverter.toDuration(secondsProRata);
     }
@@ -376,8 +381,8 @@ public class Application {
 
     public Map<Integer, Duration> getHoursByYear() {
         return this.splitByYear().stream().collect(Collectors.toMap(
-                dateRangeForYear -> dateRangeForYear.getStartDate().getYear(),
-                this::getHoursForDateRange));
+            dateRangeForYear -> dateRangeForYear.getStartDate().getYear(),
+            this::getHoursForDateRange));
     }
 
     public void setHours(Duration hours) {
@@ -464,26 +469,26 @@ public class Application {
     @Override
     public String toString() {
         return "Application{" +
-                "person=" + person +
-                ", applier=" + applier +
-                ", boss=" + boss +
-                ", canceller=" + canceller +
-                ", twoStageApproval=" + twoStageApproval +
-                ", startDate=" + startDate +
-                ", startTime=" + startTime +
-                ", endDate=" + endDate +
-                ", endTime=" + endTime +
-                ", vacationType=" + vacationType +
-                ", dayLength=" + dayLength +
-                ", holidayReplacements=" + holidayReplacements +
-                ", applicationDate=" + applicationDate +
-                ", cancelDate=" + cancelDate +
-                ", editedDate=" + editedDate +
-                ", remindDate=" + remindDate +
-                ", status=" + status +
-                ", teamInformed=" + teamInformed +
-                ", hours=" + hours +
-                '}';
+            "person=" + person +
+            ", applier=" + applier +
+            ", boss=" + boss +
+            ", canceller=" + canceller +
+            ", twoStageApproval=" + twoStageApproval +
+            ", startDate=" + startDate +
+            ", startTime=" + startTime +
+            ", endDate=" + endDate +
+            ", endTime=" + endTime +
+            ", vacationType=" + vacationType +
+            ", dayLength=" + dayLength +
+            ", holidayReplacements=" + holidayReplacements +
+            ", applicationDate=" + applicationDate +
+            ", cancelDate=" + cancelDate +
+            ", editedDate=" + editedDate +
+            ", remindDate=" + remindDate +
+            ", status=" + status +
+            ", teamInformed=" + teamInformed +
+            ", hours=" + hours +
+            '}';
     }
 
     @Override

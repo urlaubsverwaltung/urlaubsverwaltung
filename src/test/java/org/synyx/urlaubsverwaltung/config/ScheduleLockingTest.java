@@ -66,6 +66,6 @@ class ScheduleLockingTest {
         assertThat(lockConfiguration.getName()).isEqualTo("someName");
         assertThat(lockConfiguration.getUnlockTime())
             .isAfter(Instant.now())
-            .isBefore(Instant.now().plusSeconds(12*60));
+            .isBefore(Instant.now().plusSeconds(12 * 60));
     }
 }

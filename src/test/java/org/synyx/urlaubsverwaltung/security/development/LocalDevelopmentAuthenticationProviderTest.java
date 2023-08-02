@@ -48,7 +48,7 @@ class LocalDevelopmentAuthenticationProviderTest {
         grantedAuthorities.add(new SimpleGrantedAuthority(OFFICE.name()));
 
         final String username = "user";
-        final  Person user = TestDataCreator.createPerson(username, USER, OFFICE);
+        final Person user = TestDataCreator.createPerson(username, USER, OFFICE);
 
         when(personService.getPersonByUsername(username)).thenReturn(Optional.of(user));
 

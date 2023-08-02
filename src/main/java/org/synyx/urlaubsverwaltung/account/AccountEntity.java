@@ -2,13 +2,17 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
+
+import static javax.persistence.GenerationType.SEQUENCE;
 
 /**
  * This class describes how many vacation days and remaining vacation days a person has in which period (validFrom, validTo).
@@ -17,7 +21,9 @@ import java.util.Objects;
 public class AccountEntity {
 
     @Id
-    @GeneratedValue
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = SEQUENCE, generator = "account_generator")
+    @SequenceGenerator(name = "account_generator", sequenceName = "account_id_seq")
     private Long id;
 
     @ManyToOne

@@ -67,6 +67,7 @@ public enum MailNotification {
 
     /**
      * Whether this mail notification is department related or not.
+     *
      * @return {@code true} if department related, {@code false} otherwise
      */
     public boolean isDepartmentRelated() {

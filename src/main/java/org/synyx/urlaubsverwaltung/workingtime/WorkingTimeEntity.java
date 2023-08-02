@@ -3,15 +3,18 @@ package org.synyx.urlaubsverwaltung.workingtime;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import java.time.LocalDate;
 import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
+import static javax.persistence.GenerationType.SEQUENCE;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 
 
@@ -22,7 +25,9 @@ import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 class WorkingTimeEntity {
 
     @Id
-    @GeneratedValue
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = SEQUENCE, generator = "working_time_generator")
+    @SequenceGenerator(name = "working_time_generator", sequenceName = "working_time_id_seq")
     private Long id;
 
     @OneToOne

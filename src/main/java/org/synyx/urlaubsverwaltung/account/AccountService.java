@@ -22,10 +22,10 @@ public interface AccountService {
      * This may consider information of the persons {@link Account} of the previous year.
      *
      * <p>
-     *     Note that this does not take care about whether the person has an actual {@link Account} for this year or not.
+     * Note that this does not take care about whether the person has an actual {@link Account} for this year or not.
      * </p>
      *
-     * @param year to get the holidays account draft for
+     * @param year   to get the holidays account draft for
      * @param person to get the holiday account draft for
      * @return {@link AccountDraft}
      */
@@ -34,7 +34,7 @@ public interface AccountService {
     /**
      * Get existing {@link Account}s for the given year and persons.
      *
-     * @param year   to get the holidays account for
+     * @param year    to get the holidays account for
      * @param persons to get the holidays account for
      * @return {@link Account}s that matches the given parameters.
      */

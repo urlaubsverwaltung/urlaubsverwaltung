@@ -4,13 +4,17 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.synyx.urlaubsverwaltung.person.Person;
 
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import java.time.Period;
+
+import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
 class CompanyCalendar {
@@ -18,7 +22,9 @@ class CompanyCalendar {
     private static final int SECRET_LENGTH = 32;
 
     @Id
-    @GeneratedValue
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = SEQUENCE, generator = "company_calendar_generator")
+    @SequenceGenerator(name = "company_calendar_generator", sequenceName = "company_calendar_id_seq")
     private Long id;
 
     @NotNull

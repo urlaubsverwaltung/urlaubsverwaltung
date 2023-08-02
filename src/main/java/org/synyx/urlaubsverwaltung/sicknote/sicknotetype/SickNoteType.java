@@ -4,8 +4,8 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 import static javax.persistence.EnumType.STRING;
@@ -14,12 +14,13 @@ import static javax.persistence.EnumType.STRING;
 public class SickNoteType {
 
     @Id
-    @GeneratedValue
     private Long id;
 
+    @NotNull
     @Enumerated(STRING)
     private SickNoteCategory category;
 
+    @NotNull
     private String messageKey;
 
     public Long getId() {

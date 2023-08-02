@@ -11,9 +11,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import java.time.Period;
 
+import static javax.persistence.GenerationType.SEQUENCE;
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 
 @Entity
@@ -22,7 +24,9 @@ class DepartmentCalendar {
     private static final int SECRET_LENGTH = 32;
 
     @Id
-    @GeneratedValue
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = SEQUENCE, generator = "department_calendar_generator")
+    @SequenceGenerator(name = "department_calendar_generator", sequenceName = "department_calendar_id_seq")
     private Long id;
 
     @NotNull
@@ -34,9 +38,11 @@ class DepartmentCalendar {
     @OneToOne
     private Person person;
 
+    @NotNull
     @Length(min = SECRET_LENGTH, max = SECRET_LENGTH)
     private String secret;
 
+    @NotNull
     @Convert(converter = PeriodConverter.class)
     private Period calendarPeriod;
 

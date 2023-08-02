@@ -11,7 +11,6 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 /**
  * A not yet existent {@link Account} containing information taken from the previous year.
  * Can be used to manually create a new {@link Account} for instance.
- *
  */
 final class AccountDraft {
 
@@ -122,8 +121,8 @@ final class AccountDraft {
 
         public AccountDraft build() {
             return new AccountDraft(person, year, doRemainingVacationDaysExpireGlobally,
-                    doRemainingVacationDaysExpireLocally, expiryDate, annualVacationDays,
-                    remainingVacationDaysNotExpiring);
+                doRemainingVacationDaysExpireLocally, expiryDate, annualVacationDays,
+                remainingVacationDaysNotExpiring);
         }
     }
 }

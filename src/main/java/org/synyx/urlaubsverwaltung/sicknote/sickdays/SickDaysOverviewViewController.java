@@ -84,8 +84,8 @@ public class SickDaysOverviewViewController implements HasLaunchpad {
             sickDaysStatisticsService.getAll(signedInUser, period.getStartDate(), period.getEndDate(), new PageableSearchQuery(pageable, query));
 
         final List<SickDaysOverviewDto> sickDaysOverviewDtos = sickDaysStatisticsPage.stream()
-                .map(statistic -> toSickDaysOverviewDto(statistic, period.getStartDate(), period.getEndDate()))
-                .collect(toList());
+            .map(statistic -> toSickDaysOverviewDto(statistic, period.getStartDate(), period.getEndDate()))
+            .collect(toList());
 
         model.addAttribute("sickDaysStatistics", sickDaysOverviewDtos);
         model.addAttribute("showPersonnelNumberColumn", personnelNumberAvailable(sickDaysStatisticsPage.getContent()));

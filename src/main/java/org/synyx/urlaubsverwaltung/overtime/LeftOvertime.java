@@ -26,7 +26,6 @@ public class LeftOvertime {
     }
 
     /**
-     *
      * @return an empty {@link LeftOvertime} to describe "no overtime information"
      */
     public static LeftOvertime identity() {
