@@ -42,10 +42,10 @@
       <column name="absence_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
-      <column name="absence_mapping_type" type="VARCHAR(255)">
+      <column name="absence_mapping_type" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="event_id" type="VARCHAR(255)">
+      <column name="event_id" type="text">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -56,7 +56,7 @@
       </column>
       <column name="actual_vacation_days" type="numeric(19, 2)"/>
       <column name="annual_vacation_days" type="numeric(19, 2)"/>
-      <column name="comment" type="VARCHAR(255)"/>
+      <column name="comment" type="text"/>
       <column name="do_remaining_vacation_days_expire" type="BOOLEAN"/>
       <column name="expiry_date" type="date">
         <constraints nullable="false"/>
@@ -73,19 +73,19 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="application_pkey"/>
       </column>
-      <column name="address" type="VARCHAR(255)"/>
+      <column name="address" type="text"/>
       <column name="application_date" type="date"/>
       <column name="cancel_date" type="date"/>
-      <column name="day_length" type="VARCHAR(255)"/>
+      <column name="day_length" type="text"/>
       <column name="edited_date" type="date"/>
       <column name="end_date" type="date"/>
       <column name="end_time" type="time(6) WITHOUT TIME ZONE"/>
       <column name="hours" type="FLOAT8"/>
-      <column name="reason" type="VARCHAR(255)"/>
+      <column name="reason" type="text"/>
       <column name="remind_date" type="date"/>
       <column name="start_date" type="date"/>
       <column name="start_time" type="time(6) WITHOUT TIME ZONE"/>
-      <column name="status" type="VARCHAR(255)"/>
+      <column name="status" type="text"/>
       <column name="team_informed" type="BOOLEAN">
         <constraints nullable="false"/>
       </column>
@@ -108,14 +108,14 @@
       <column name="date" type="TIMESTAMP WITHOUT TIME ZONE">
         <constraints nullable="false"/>
       </column>
-      <column name="text" type="VARCHAR(255)"/>
-      <column name="action" type="VARCHAR(255)"/>
+      <column name="text" type="text"/>
+      <column name="action" type="text"/>
       <column name="person_id" type="BIGINT"/>
       <column name="application_id" type="BIGINT"/>
     </createTable>
 
     <createTable tableName="calendar_accessible">
-      <column name="dtype" type="VARCHAR(31)">
+      <column name="dtype" type="text">
         <constraints nullable="false"/>
       </column>
       <column name="id" type="BIGINT">
@@ -130,10 +130,10 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="company_calendar_pkey"/>
       </column>
-      <column name="calendar_period" type="VARCHAR(255)" defaultValue="P100Y">
+      <column name="calendar_period" type="text" defaultValue="P100Y">
         <constraints nullable="false"/>
       </column>
-      <column name="secret" type="VARCHAR(32)">
+      <column name="secret" type="varchar(32)">
         <constraints nullable="false"/>
       </column>
       <column name="person_id" type="BIGINT">
@@ -148,9 +148,9 @@
       <column name="created_at" type="date">
         <constraints nullable="false"/>
       </column>
-      <column name="description" type="VARCHAR(255)"/>
+      <column name="description" type="text"/>
       <column name="last_modification" type="date"/>
-      <column name="name" type="VARCHAR(255)">
+      <column name="name" type="text">
         <constraints nullable="false"/>
       </column>
       <column name="two_stage_approval" type="BOOLEAN">
@@ -162,13 +162,13 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="department_calendar_pkey"/>
       </column>
-      <column name="calendar_period" type="VARCHAR(255)">
+      <column name="calendar_period" type="text">
         <constraints nullable="false"/>
       </column>
       <column name="department_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
-      <column name="secret" type="VARCHAR(32)">
+      <column name="secret" type="varchar(32)">
         <constraints nullable="false"/>
       </column>
       <column name="person_id" type="BIGINT">
@@ -210,7 +210,7 @@
       <column name="application_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
-      <column name="note" type="VARCHAR(255)"/>
+      <column name="note" type="text"/>
       <column name="person_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
@@ -243,8 +243,8 @@
       <column name="date" type="TIMESTAMP WITHOUT TIME ZONE">
         <constraints nullable="false"/>
       </column>
-      <column name="text" type="VARCHAR(255)"/>
-      <column name="action" type="VARCHAR(255)">
+      <column name="text" type="text"/>
+      <column name="action" type="text">
         <constraints nullable="false"/>
       </column>
       <column name="person_id" type="BIGINT"/>
@@ -255,14 +255,14 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="person_pkey"/>
       </column>
-      <column name="email" type="VARCHAR(255)"/>
-      <column name="first_name" type="VARCHAR(255)">
+      <column name="email" type="text"/>
+      <column name="first_name" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="last_name" type="VARCHAR(255)">
+      <column name="last_name" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="username" type="VARCHAR(255)">
+      <column name="username" type="text">
         <constraints unique="true" nullable="false"/>
       </column>
     </createTable>
@@ -271,18 +271,18 @@
       <column name="person_id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="person_basedata_pkey"/>
       </column>
-      <column name="additional_information" type="VARCHAR(500)"/>
-      <column name="personnel_number" type="VARCHAR(20)"/>
+      <column name="additional_information" type="text"/>
+      <column name="personnel_number" type="text"/>
     </createTable>
 
     <createTable tableName="person_calendar">
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="person_calendar_pkey"/>
       </column>
-      <column name="calendar_period" type="VARCHAR(255)">
+      <column name="calendar_period" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="secret" type="VARCHAR(32)">
+      <column name="secret" type="text(32)">
         <constraints nullable="false"/>
       </column>
       <column name="person_id" type="BIGINT">
@@ -294,14 +294,14 @@
       <column name="person_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
-      <column name="notifications" type="VARCHAR(255)"/>
+      <column name="notifications" type="text"/>
     </createTable>
 
     <createTable tableName="person_permissions">
       <column name="person_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
-      <column name="permissions" type="VARCHAR(255)"/>
+      <column name="permissions" type="text"/>
     </createTable>
 
     <createTable tableName="settings">
@@ -330,17 +330,17 @@
       <column name="remind_for_waiting_applications" type="BOOLEAN">
         <constraints nullable="false"/>
       </column>
-      <column name="calendar_ews_calendar" type="VARCHAR(255)"/>
-      <column name="calendar_ews_email" type="VARCHAR(255)"/>
-      <column name="calendar_ews_url" type="VARCHAR(255)"/>
-      <column name="calendar_ews_password" type="VARCHAR(255)"/>
+      <column name="calendar_ews_calendar" type="text"/>
+      <column name="calendar_ews_email" type="text"/>
+      <column name="calendar_ews_url" type="text"/>
+      <column name="calendar_ews_password" type="text"/>
       <column name="calendar_ews_send_invitation_active" type="BOOLEAN"/>
-      <column name="calendar_ews_timezoneid" type="VARCHAR(255)"/>
-      <column name="calendar_google_calendar_id" type="VARCHAR(255)"/>
-      <column name="calendar_google_client_id" type="VARCHAR(255)"/>
-      <column name="calendar_google_client_secret" type="VARCHAR(255)"/>
-      <column name="calendar_google_refresh_token" type="VARCHAR(255)"/>
-      <column name="calendar_provider" type="VARCHAR(255)"/>
+      <column name="calendar_ews_timezoneid" type="text"/>
+      <column name="calendar_google_calendar_id" type="text"/>
+      <column name="calendar_google_client_id" type="text"/>
+      <column name="calendar_google_client_secret" type="text"/>
+      <column name="calendar_google_refresh_token" type="text"/>
+      <column name="calendar_provider" type="text"/>
       <column name="overtime_maximum" type="INTEGER"/>
       <column name="overtime_minimum" type="INTEGER"/>
       <column name="overtime_minimum_reduction" type="INTEGER"/>
@@ -349,19 +349,19 @@
       <column name="overtime_write_privileged_only" type="BOOLEAN"/>
       <column name="days_before_end_of_sick_pay_notification" type="INTEGER"/>
       <column name="maximum_sick_pay_days" type="INTEGER"/>
-      <column name="timezoneid" type="VARCHAR(255)"/>
+      <column name="timezoneid" type="text"/>
       <column name="work_day_begin_hour" type="INTEGER"/>
       <column name="work_day_end_hour" type="INTEGER"/>
-      <column name="federal_state" type="VARCHAR(255)"/>
-      <column name="friday" type="VARCHAR(255)"/>
-      <column name="monday" type="VARCHAR(255)"/>
-      <column name="saturday" type="VARCHAR(255)"/>
-      <column name="sunday" type="VARCHAR(255)"/>
-      <column name="thursday" type="VARCHAR(255)"/>
-      <column name="tuesday" type="VARCHAR(255)"/>
-      <column name="wednesday" type="VARCHAR(255)"/>
-      <column name="working_duration_for_christmas_eve" type="VARCHAR(255)"/>
-      <column name="working_duration_for_new_years_eve" type="VARCHAR(255)"/>
+      <column name="federal_state" type="text"/>
+      <column name="friday" type="text"/>
+      <column name="monday" type="text"/>
+      <column name="saturday" type="text"/>
+      <column name="sunday" type="text"/>
+      <column name="thursday" type="text"/>
+      <column name="tuesday" type="text"/>
+      <column name="wednesday" type="text"/>
+      <column name="working_duration_for_christmas_eve" type="text"/>
+      <column name="working_duration_for_new_years_eve" type="text"/>
       <column name="gravatar_enabled" type="BOOLEAN" defaultValue="true">
         <constraints nullable="false"/>
       </column>
@@ -373,12 +373,12 @@
       </column>
       <column name="aub_end_date" type="date"/>
       <column name="aub_start_date" type="date"/>
-      <column name="day_length" type="VARCHAR(255)"/>
+      <column name="day_length" type="text"/>
       <column name="end_date" type="date"/>
       <column name="end_of_sick_pay_notification_send" type="date"/>
       <column name="last_edited" type="date"/>
       <column name="start_date" type="date"/>
-      <column name="status" type="VARCHAR(255)"/>
+      <column name="status" type="text"/>
       <column name="applier_id" type="BIGINT"/>
       <column name="person_id" type="BIGINT"/>
       <column name="sick_note_type_id" type="BIGINT"/>
@@ -391,8 +391,8 @@
       <column name="date" type="TIMESTAMP WITHOUT TIME ZONE">
         <constraints nullable="false"/>
       </column>
-      <column name="text" type="VARCHAR(255)"/>
-      <column name="action" type="VARCHAR(255)"/>
+      <column name="text" type="text"/>
+      <column name="action" type="text"/>
       <column name="sick_note_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
@@ -403,10 +403,10 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="sick_note_type_pkey"/>
       </column>
-      <column name="category" type="VARCHAR(255)">
+      <column name="category" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="message_key" type="VARCHAR(255)">
+      <column name="message_key" type="text">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -421,7 +421,7 @@
       <column name="days" type="INTEGER">
         <constraints nullable="false"/>
       </column>
-      <column name="message_key" type="VARCHAR(255)">
+      <column name="message_key" type="text">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -430,11 +430,11 @@
       <column name="person_id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="user_settings_pkey"/>
       </column>
-      <column name="locale" type="VARCHAR(255)"/>
-      <column name="locale_browser_specific" type="VARCHAR(255)">
+      <column name="locale" type="text"/>
+      <column name="locale_browser_specific" type="text">
         <constraints nullable="true"/>
       </column>
-      <column name="theme" type="VARCHAR(255)">
+      <column name="theme" type="text">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -464,11 +464,11 @@
       <column name="active" type="BOOLEAN">
         <constraints nullable="false"/>
       </column>
-      <column name="category" type="VARCHAR(255)"/>
-      <column name="color" type="VARCHAR(255)">
+      <column name="category" type="text"/>
+      <column name="color" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="message_key" type="VARCHAR(255)">
+      <column name="message_key" type="text">
         <constraints nullable="false"/>
       </column>
       <column name="requires_approval_to_apply" type="BOOLEAN" defaultValueBoolean="true">
@@ -486,20 +486,20 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="working_time_pkey"/>
       </column>
-      <column name="federal_state_override" type="VARCHAR(255)"/>
-      <column name="friday" type="VARCHAR(255)"/>
-      <column name="monday" type="VARCHAR(255)"/>
-      <column name="saturday" type="VARCHAR(255)"/>
-      <column name="sunday" type="VARCHAR(255)"/>
-      <column name="thursday" type="VARCHAR(255)"/>
-      <column name="tuesday" type="VARCHAR(255)"/>
+      <column name="federal_state_override" type="text"/>
+      <column name="friday" type="text"/>
+      <column name="monday" type="text"/>
+      <column name="saturday" type="text"/>
+      <column name="sunday" type="text"/>
+      <column name="thursday" type="text"/>
+      <column name="tuesday" type="text"/>
       <column name="valid_from" type="date"/>
-      <column name="wednesday" type="VARCHAR(255)"/>
+      <column name="wednesday" type="text"/>
       <column name="person_id" type="BIGINT"/>
     </createTable>
 
     <createTable tableName="shedlock">
-      <column name="name" type="VARCHAR(64)">
+      <column name="name" type="text(64)">
         <constraints nullable="false" primaryKey="true"/>
       </column>
       <column name="lock_until" type="TIMESTAMP">
@@ -508,7 +508,7 @@
       <column name="locked_at" type="TIMESTAMP">
         <constraints nullable="false"/>
       </column>
-      <column name="locked_by" type="VARCHAR(255)">
+      <column name="locked_by" type="text">
         <constraints nullable="false"/>
       </column>
     </createTable>
