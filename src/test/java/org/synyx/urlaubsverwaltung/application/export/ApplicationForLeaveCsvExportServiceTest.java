@@ -57,18 +57,18 @@ class ApplicationForLeaveCsvExportServiceTest {
         final FilterPeriod period = new FilterPeriod(startDate, endDate);
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setFirstName("personOneFirstName");
         person.setLastName("personOneLastName");
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setId(1L);
         vacationTypeEntity.setVisibleToEveryone(true);
         vacationTypeEntity.setCategory(HOLIDAY);
         vacationTypeEntity.setMessageKey("messagekey.holiday");
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(person);
         application.setStartDate(startDate);
         application.setEndDate(endDate);

@@ -27,7 +27,7 @@ class SickDaysOverviewTest {
     void ensureGeneratesCorrectSickDaysOverview() {
 
         final Person person = new Person("username", "last name", "first name", "email@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final SickNoteType sickNoteType = new SickNoteType();
         sickNoteType.setCategory(SICK_NOTE);

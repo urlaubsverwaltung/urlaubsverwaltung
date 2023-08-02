@@ -4,17 +4,17 @@ import javax.validation.constraints.Min;
 
 public class SpecialLeaveSettingsItemDto {
 
-    private int id;
+    private long id;
     private boolean active;
     private String messageKey;
     @Min(0)
     private int days;
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

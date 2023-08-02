@@ -6,9 +6,9 @@ import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;
 
-interface PersonBasedataRepository extends CrudRepository<PersonBasedataEntity, Integer> {
+interface PersonBasedataRepository extends CrudRepository<PersonBasedataEntity, Long> {
 
-    List<PersonBasedataEntity> findAllByPersonIdIsIn(List<Integer> personIds);
+    List<PersonBasedataEntity> findAllByPersonIdIsIn(List<Long> personIds);
 
     @Modifying
     void deleteByPerson(Person person);

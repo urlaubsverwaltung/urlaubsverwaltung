@@ -5,12 +5,12 @@ import org.springframework.lang.Nullable;
 
 public class PersonDisabledEvent extends ApplicationEvent {
 
-    private final Integer personId;
+    private final Long personId;
     private final String personNiceName;
     private final String username;
     private final String email;
 
-    public PersonDisabledEvent(Object source, int personId, String personNiceName, @Nullable String username, String email) {
+    public PersonDisabledEvent(Object source, Long personId, String personNiceName, @Nullable String username, String email) {
         super(source);
         this.personId = personId;
         this.personNiceName = personNiceName;
@@ -18,7 +18,7 @@ public class PersonDisabledEvent extends ApplicationEvent {
         this.email = email;
     }
 
-    public int getPersonId() {
+    public Long getPersonId() {
         return personId;
     }
 

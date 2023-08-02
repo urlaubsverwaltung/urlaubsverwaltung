@@ -16,7 +16,7 @@ import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO_DATE;
 
 public class SickNoteFormDto {
 
-    private Integer id;
+    private Long id;
     private Person person;
     private SickNoteType sickNoteType;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
@@ -30,11 +30,11 @@ public class SickNoteFormDto {
     private LocalDate aubEndDate;
     private String comment;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -137,7 +137,7 @@ public class SickNoteFormDto {
     }
 
     public static class Builder {
-        private Integer id;
+        private Long id;
         private Person person;
         private SickNoteType sickNoteType;
         private LocalDate startDate;
@@ -147,7 +147,7 @@ public class SickNoteFormDto {
         private LocalDate aubEndDate;
         private String comment;
 
-        public Builder id(Integer id) {
+        public Builder id(Long id) {
             this.id = id;
             return this;
         }

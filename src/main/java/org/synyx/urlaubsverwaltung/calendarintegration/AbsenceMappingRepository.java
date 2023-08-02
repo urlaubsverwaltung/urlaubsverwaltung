@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 @Deprecated(since = "4.26.0", forRemoval = true)
-interface AbsenceMappingRepository extends CrudRepository<AbsenceMapping, Integer> {
+interface AbsenceMappingRepository extends CrudRepository<AbsenceMapping, Long> {
 
-    Optional<AbsenceMapping> findAbsenceMappingByAbsenceIdAndAbsenceMappingType(Integer id, AbsenceMappingType absenceType);
+    Optional<AbsenceMapping> findAbsenceMappingByAbsenceIdAndAbsenceMappingType(Long id, AbsenceMappingType absenceType);
 }

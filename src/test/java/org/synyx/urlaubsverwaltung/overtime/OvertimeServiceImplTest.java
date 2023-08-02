@@ -36,7 +36,7 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -114,10 +114,10 @@ class OvertimeServiceImplTest {
     void ensureRecordingOvertimeSendsNotificationFromManagement() {
 
         final Person author = new Person();
-        author.setId(1);
+        author.setId(1L);
 
         final Person person = new Person();
-        person.setId(2);
+        person.setId(2L);
 
         final Overtime overtime = new Overtime();
         overtime.setPerson(person);
@@ -153,7 +153,7 @@ class OvertimeServiceImplTest {
     void ensureCreatesCommentWithCorrectActionForExistentOvertime() {
 
         final Overtime overtime = new Overtime();
-        overtime.setId(1);
+        overtime.setId(1L);
         final Person author = new Person();
 
         sut.record(overtime, Optional.empty(), author);
@@ -207,17 +207,17 @@ class OvertimeServiceImplTest {
     @Test
     void ensureGetByIDCallsCorrectDAOMethod() {
 
-        sut.getOvertimeById(42);
+        sut.getOvertimeById(42L);
 
-        verify(overtimeRepository).findById(42);
+        verify(overtimeRepository).findById(42L);
     }
 
     @Test
     void ensureReturnsEmptyOptionalIfNoOvertimeFoundForID() {
 
-        when(overtimeRepository.findById(anyInt())).thenReturn(Optional.empty());
+        when(overtimeRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        final Optional<Overtime> maybeOvertime = sut.getOvertimeById(42);
+        final Optional<Overtime> maybeOvertime = sut.getOvertimeById(42L);
         assertThat(maybeOvertime).isEmpty();
     }
 
@@ -399,10 +399,10 @@ class OvertimeServiceImplTest {
         final LocalDate to = LocalDate.now(clock).withMonth(AUGUST.getValue()).with(lastDayOfMonth());
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final Person person2 = new Person();
-        person2.setId(2);
+        person2.setId(2L);
 
         final List<Person> persons = List.of(person, person2);
 
@@ -458,10 +458,10 @@ class OvertimeServiceImplTest {
         final LocalDate to = LocalDate.now(clock).withMonth(AUGUST.getValue()).with(lastDayOfMonth());
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final Person person2 = new Person();
-        person2.setId(2);
+        person2.setId(2L);
 
         final List<Person> persons = List.of(person, person2);
 
@@ -495,11 +495,11 @@ class OvertimeServiceImplTest {
             .thenReturn(List.of(overtimeOne, overtimeTwo));
 
         final VacationTypeEntity overtimeVacationTypeEntity = new VacationTypeEntity();
-        overtimeVacationTypeEntity.setId(1);
+        overtimeVacationTypeEntity.setId(1L);
         overtimeVacationTypeEntity.setCategory(VacationCategory.OVERTIME);
 
         final Application personOvertimeReduction = new Application();
-        personOvertimeReduction.setId(1);
+        personOvertimeReduction.setId(1L);
         personOvertimeReduction.setPerson(person);
         personOvertimeReduction.setStatus(ApplicationStatus.ALLOWED);
         personOvertimeReduction.setVacationType(overtimeVacationTypeEntity);
@@ -531,7 +531,7 @@ class OvertimeServiceImplTest {
         final LocalDate to = LocalDate.now(clock).withMonth(AUGUST.getValue()).with(lastDayOfMonth());
 
         final Person personWithoutOvertime = new Person();
-        personWithoutOvertime.setId(1);
+        personWithoutOvertime.setId(1L);
 
         final List<Person> persons = List.of(personWithoutOvertime);
 

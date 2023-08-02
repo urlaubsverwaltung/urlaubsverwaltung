@@ -6,9 +6,9 @@ public class ApplicationPersonDto {
     private final String avatarUrl;
     private final Boolean isInactive;
 
-    private final Integer id;
+    private final Long id;
 
-    ApplicationPersonDto(String name, String avatarUrl, Boolean isInactive, Integer id) {
+    ApplicationPersonDto(String name, String avatarUrl, Boolean isInactive, Long id) {
         this.name = name;
         this.avatarUrl = avatarUrl;
         this.id = id;
@@ -27,7 +27,7 @@ public class ApplicationPersonDto {
         return isInactive;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 }

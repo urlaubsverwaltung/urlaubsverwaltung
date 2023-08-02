@@ -2,7 +2,7 @@ package org.synyx.urlaubsverwaltung.person.web;
 
 public class PersonNotificationsDto {
 
-    private Integer personId;
+    private Long personId;
 
     /**
      * Whether all personal related notifications are active or not.
@@ -37,11 +37,11 @@ public class PersonNotificationsDto {
         // ok
     }
 
-    public Integer getPersonId() {
+    public Long getPersonId() {
         return personId;
     }
 
-    public void setPersonId(Integer personId) {
+    public void setPersonId(Long personId) {
         this.personId = personId;
     }
 
@@ -92,9 +92,11 @@ public class PersonNotificationsDto {
     public void setApplicationAllowedForManagement(PersonNotificationDto applicationAllowedForManagement) {
         this.applicationAllowedForManagement = applicationAllowedForManagement;
     }
+
     public PersonNotificationDto getApplicationCancellationForManagement() {
         return applicationCancellationForManagement;
     }
+
     public void setApplicationCancellationForManagement(PersonNotificationDto applicationCancellationForManagement) {
         this.applicationCancellationForManagement = applicationCancellationForManagement;
     }

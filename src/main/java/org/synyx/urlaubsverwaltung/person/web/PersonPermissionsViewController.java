@@ -57,7 +57,7 @@ public class PersonPermissionsViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/person/{personId}/permissions")
-    public String showPersonPermissions(@PathVariable("personId") Integer personId, Model model) throws UnknownPersonException {
+    public String showPersonPermissions(@PathVariable("personId") Long personId, Model model) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId).orElseThrow(() -> new UnknownPersonException(personId));
 
@@ -70,7 +70,7 @@ public class PersonPermissionsViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/person/{personId}/permissions")
-    public String editPersonPermissions(@PathVariable("personId") Integer personId,
+    public String editPersonPermissions(@PathVariable("personId") Long personId,
                                         @ModelAttribute("person") PersonPermissionsDto personPermissionsDto, Errors errors,
                                         RedirectAttributes redirectAttributes) throws UnknownPersonException {
 

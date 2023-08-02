@@ -16,7 +16,7 @@ public interface AbsenceMappingService {
      * @param eventId            identifies the calendar event
      * @return created absence mapping
      */
-    AbsenceMapping create(Integer id, AbsenceMappingType absenceMappingType, String eventId);
+    AbsenceMapping create(Long id, AbsenceMappingType absenceMappingType, String eventId);
 
     /**
      * Deletes an absence mapping.
@@ -32,5 +32,5 @@ public interface AbsenceMappingService {
      * @param absenceMappingType type ob absence
      * @return mapping between absence and event
      */
-    Optional<AbsenceMapping> getAbsenceByIdAndType(Integer id, AbsenceMappingType absenceMappingType);
+    Optional<AbsenceMapping> getAbsenceByIdAndType(Long id, AbsenceMappingType absenceMappingType);
 }

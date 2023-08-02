@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Repository for {@link DepartmentEntity} entities.
  */
-interface DepartmentRepository extends JpaRepository<DepartmentEntity, Integer> {
+interface DepartmentRepository extends JpaRepository<DepartmentEntity, Long> {
 
     List<DepartmentEntity> findByDepartmentHeadsOrSecondStageAuthorities(Person departmentHead, Person secondStageAuthority);
 

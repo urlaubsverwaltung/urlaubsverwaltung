@@ -13,10 +13,10 @@ import java.util.Optional;
 /**
  * Repository for {@link Person} entities.
  */
-interface PersonRepository extends JpaRepository<Person, Integer> {
+interface PersonRepository extends JpaRepository<Person, Long> {
 
     @Modifying
-    void deleteById(Integer id);
+    void deleteById(Long id);
 
     Optional<Person> findByUsername(String username);
 
@@ -24,7 +24,7 @@ interface PersonRepository extends JpaRepository<Person, Integer> {
 
     int countByPermissionsNotContaining(Role permission);
 
-    int countByPermissionsContainingAndIdNotIn(Role permission, List<Integer> id);
+    int countByPermissionsContainingAndIdNotIn(Role permission, List<Long> id);
 
     List<Person> findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(Role permission);
 

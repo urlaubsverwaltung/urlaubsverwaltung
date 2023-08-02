@@ -64,7 +64,7 @@ class CalendarSharingViewControllerTest {
     void redirectUnpersonalizedPathToPersonalizedPath() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(person);
 
@@ -77,12 +77,12 @@ class CalendarSharingViewControllerTest {
     void indexWithoutCompanyCalendarForUserDueToDisabledFeature() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(false);
 
@@ -96,16 +96,16 @@ class CalendarSharingViewControllerTest {
     void indexWithCompanyCalendarForUserDueToDisabledFeatureButRoleBoss() throws Exception {
 
         final Person bossPerson = new Person("max", "boss", "senior", "max@example.org");
-        bossPerson.setId(2);
+        bossPerson.setId(2L);
         bossPerson.setPermissions(List.of(USER, BOSS));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(bossPerson);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(false);
 
@@ -119,16 +119,16 @@ class CalendarSharingViewControllerTest {
     void indexWithCompanyCalendarForBossWithRoleBoss() throws Exception {
 
         final Person bossPerson = new Person("max", "boss", "senior", "max@example.org");
-        bossPerson.setId(2);
+        bossPerson.setId(2L);
         bossPerson.setPermissions(List.of(USER, BOSS));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(bossPerson);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
         when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(anyCompanyCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
@@ -142,16 +142,16 @@ class CalendarSharingViewControllerTest {
     void indexWithCompanyCalendarForUserDueToDisabledFeatureButRoleOffice() throws Exception {
 
         final Person officeUser = new Person("max", "office", "senior", "max@example.org");
-        officeUser.setId(2);
+        officeUser.setId(2L);
         officeUser.setPermissions(List.of(USER, OFFICE));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(officeUser);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(false);
 
@@ -165,13 +165,13 @@ class CalendarSharingViewControllerTest {
     void indexWithCompanyCalendarForUser() throws Exception {
 
         final Person person = new Person("max", "officeBoss", "senior", "max@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER, OFFICE, BOSS));
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(true);
 
@@ -185,13 +185,13 @@ class CalendarSharingViewControllerTest {
     void indexWithoutCompanyCalendarAccessibleForUser() throws Exception {
 
         final Person person = new Person("max", "muster", "senior", "max@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -203,13 +203,13 @@ class CalendarSharingViewControllerTest {
     void indexWithCompanyCalendarAccessibleForBoss() throws Exception {
 
         final Person bossPerson = new Person("max", "boss", "senior", "max@example.org");
-        bossPerson.setId(1);
+        bossPerson.setId(1L);
         bossPerson.setPermissions(List.of(USER, BOSS));
 
         when(personService.getSignedInUser()).thenReturn(bossPerson);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(bossPerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(bossPerson));
         when(departmentService.getAssignedDepartmentsOfMember(bossPerson)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -221,13 +221,13 @@ class CalendarSharingViewControllerTest {
     void indexWithCompanyCalendarAccessibleForOffice() throws Exception {
 
         final Person officePerson = new Person("max", "office", "senior", "max@example.org");
-        officePerson.setId(1);
+        officePerson.setId(1L);
         officePerson.setPermissions(List.of(USER, OFFICE));
 
         when(personService.getSignedInUser()).thenReturn(officePerson);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(officePerson));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(officePerson));
         when(departmentService.getAssignedDepartmentsOfMember(officePerson)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -239,12 +239,12 @@ class CalendarSharingViewControllerTest {
     void indexWithoutDepartments() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -256,18 +256,18 @@ class CalendarSharingViewControllerTest {
     void indexWithDepartments() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Department sockentraeger = createDepartment("sockenträger");
-        sockentraeger.setId(42);
+        sockentraeger.setId(42L);
 
         final Department barfuslaeufer = createDepartment("barfußläufer");
-        barfuslaeufer.setId(1337);
+        barfuslaeufer.setId(1337L);
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -279,19 +279,19 @@ class CalendarSharingViewControllerTest {
     void indexWithVisibleDepartment() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
 
         final Department sockentraeger = createDepartment("sockenträger");
-        sockentraeger.setId(42);
+        sockentraeger.setId(42L);
 
         final Department barfuslaeufer = createDepartment("barfußläufer");
-        barfuslaeufer.setId(1337);
+        barfuslaeufer.setId(1337L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
             .andExpect(view().name("calendarsharing/index"))
@@ -302,21 +302,21 @@ class CalendarSharingViewControllerTest {
     void indexWithVisibleAndSharedDepartment() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
 
         final Department sockentraeger = createDepartment("sockenträger");
-        sockentraeger.setId(42);
+        sockentraeger.setId(42L);
 
         final Department barfuslaeufer = createDepartment("barfußläufer");
-        barfuslaeufer.setId(1337);
+        barfuslaeufer.setId(1337L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger, barfuslaeufer));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
-        when(departmentCalendarService.getCalendarForDepartment(1337, 1)).thenReturn(Optional.of(anyDepartmentCalendar()));
-        when(departmentCalendarService.getCalendarForDepartment(42, 1)).thenReturn(Optional.empty());
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(departmentCalendarService.getCalendarForDepartment(1337L, 1L)).thenReturn(Optional.of(anyDepartmentCalendar()));
+        when(departmentCalendarService.getCalendarForDepartment(42L, 1L)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
             .andExpect(view().name("calendarsharing/index"))
@@ -330,16 +330,16 @@ class CalendarSharingViewControllerTest {
     void indexWithVisibleAndSharedDepartmentHasModelAttributePersonalCalendar() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
 
         final Department department = createDepartment("awesome-department");
-        department.setId(42);
+        department.setId(42L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
             .andExpect(view().name("calendarsharing/index"))
@@ -351,16 +351,16 @@ class CalendarSharingViewControllerTest {
     void indexWithVisibleAndSharedDepartmentDoesNotHaveModelAttributeCompanyCalendarForRoleUser() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(USER));
 
         final Department department = createDepartment("awesome-department");
-        department.setId(42);
+        department.setId(42L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
             .andExpect(view().name("calendarsharing/index"))
@@ -373,16 +373,16 @@ class CalendarSharingViewControllerTest {
     void indexWithVisibleAndSharedDepartmentHasModelAttributeCompanyCalendarForRoleUser() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(BOSS));
 
         final Department department = createDepartment("awesome-department");
-        department.setId(42);
+        department.setId(42L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.empty());
 
         when(calendarAccessibleService.isCompanyCalendarAccessible()).thenReturn(true);
         when(companyCalendarService.getCompanyCalendar(1)).thenReturn(Optional.of(anyCompanyCalendar()));
@@ -398,16 +398,16 @@ class CalendarSharingViewControllerTest {
     void indexWithVisibleAndSharedDepartmentHasModelAttributeCompanyCalendarForRoleOffice() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(OFFICE));
 
         final Department department = createDepartment("awesome-department");
-        department.setId(42);
+        department.setId(42L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
             .andExpect(view().name("calendarsharing/index"))
@@ -420,16 +420,16 @@ class CalendarSharingViewControllerTest {
     void indexWithVisibleAndSharedDepartmentHasModelAttributeCompanyCalendarForRoleBoss() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(List.of(BOSS));
 
         final Department department = createDepartment("awesome-department");
-        department.setId(42);
+        department.setId(42L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1/departments/42"))
             .andExpect(view().name("calendarsharing/index"))
@@ -442,14 +442,14 @@ class CalendarSharingViewControllerTest {
     void indexWithActiveDepartmentThrowsWhenPersonIsNotAMemberOfTheDepartment() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Department sockentraeger = createDepartment("sockenträger");
-        sockentraeger.setId(42);
+        sockentraeger.setId(42L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(sockentraeger));
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1/departments/1337"))
             .andExpect(status().isBadRequest());
@@ -459,13 +459,13 @@ class CalendarSharingViewControllerTest {
     void indexNoPersonCalendar() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
 
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -477,13 +477,13 @@ class CalendarSharingViewControllerTest {
     void indexWithPersonCalendar() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
 
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -501,7 +501,7 @@ class CalendarSharingViewControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1"));
 
-        verify(personCalendarService).createCalendarForPerson(1, java.time.Period.parse("P1Y"));
+        verify(personCalendarService).createCalendarForPerson(1L, java.time.Period.parse("P1Y"));
     }
 
     @Test
@@ -592,16 +592,16 @@ class CalendarSharingViewControllerTest {
     void indexWatchForAnotherPersonAsBoss() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final Person bossPerson = new Person("max", "boss", "senior", "max@example.org");
-        bossPerson.setId(2);
+        bossPerson.setId(2L);
         bossPerson.setPermissions(List.of(USER, BOSS));
 
         when(personService.getSignedInUser()).thenReturn(bossPerson);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))
@@ -615,12 +615,12 @@ class CalendarSharingViewControllerTest {
     void indexWatchForMyself() throws Exception {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(Collections.emptyList());
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.of(anyPersonCalendar()));
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.of(anyPersonCalendar()));
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(view().name("calendarsharing/index"))

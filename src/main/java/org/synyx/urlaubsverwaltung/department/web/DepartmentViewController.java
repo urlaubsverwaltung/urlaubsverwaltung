@@ -104,7 +104,7 @@ public class DepartmentViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/department/{departmentId}/edit")
-    public String editDepartment(@PathVariable("departmentId") Integer departmentId, Model model)
+    public String editDepartment(@PathVariable("departmentId") Long departmentId, Model model)
         throws UnknownDepartmentException {
 
         final Department department = departmentService.getDepartmentById(departmentId)
@@ -122,7 +122,7 @@ public class DepartmentViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/department/{departmentId}")
-    public String updateDepartment(@PathVariable("departmentId") Integer departmentId,
+    public String updateDepartment(@PathVariable("departmentId") Long departmentId,
                                    @ModelAttribute("department") DepartmentForm departmentForm, Errors errors,
                                    Model model, RedirectAttributes redirectAttributes) {
 
@@ -143,7 +143,7 @@ public class DepartmentViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping(value = {"/department", "/department/{departmentId}/edit"}, params = "do-member-search")
-    public String updateDepartment(@PathVariable(value = "departmentId", required = false) Integer departmentId,
+    public String updateDepartment(@PathVariable(value = "departmentId", required = false) Long departmentId,
                                    @RequestParam("memberQuery") String memberQuery,
                                    @ModelAttribute("department") DepartmentForm departmentForm,
                                    @RequestHeader(name = "Turbo-Frame", required = false) String turboFrame,
@@ -181,7 +181,7 @@ public class DepartmentViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/department/{departmentId}/delete")
-    public String deleteDepartment(@PathVariable("departmentId") Integer departmentId,
+    public String deleteDepartment(@PathVariable("departmentId") Long departmentId,
                                    RedirectAttributes redirectAttributes) {
 
         final Optional<Department> maybeDepartment = departmentService.getDepartmentById(departmentId);

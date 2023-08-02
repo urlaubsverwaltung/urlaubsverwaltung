@@ -27,7 +27,7 @@ class PersonDisabledListenerIT extends TestContainersBase {
     @Test
     void ensureDeletedPersonalCalendarOnPersonDisabledEvent() {
 
-        applicationEventPublisher.publishEvent(new PersonDisabledEvent(this, 42, "niceName", "username", "email"));
+        applicationEventPublisher.publishEvent(new PersonDisabledEvent((Object) this, 42L, "niceName", "username", "email"));
 
         verify(personCalendarService).deletePersonalCalendarForPerson(42);
         verify(departmentCalendarService).deleteDepartmentsCalendarsForPerson(42);

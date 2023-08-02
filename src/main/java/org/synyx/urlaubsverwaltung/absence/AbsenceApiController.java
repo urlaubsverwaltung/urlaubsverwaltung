@@ -66,32 +66,32 @@ public class AbsenceApiController {
     }
 
     @Operation(
-        summary = "Get all absences for a certain period and person",
-        description = "Get all absences for a certain period and person"
+            summary = "Get all absences for a certain period and person",
+            description = "Get all absences for a certain period and person"
     )
     @GetMapping(ABSENCES)
     @PreAuthorize(IS_BOSS_OR_OFFICE +
-        " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
-        " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
-        " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
+            " or @userApiMethodSecurity.isSamePersonId(authentication, #personId)" +
+            " or @userApiMethodSecurity.isInDepartmentOfDepartmentHead(authentication, #personId)" +
+            " or @userApiMethodSecurity.isInDepartmentOfSecondStageAuthority(authentication, #personId)")
     public DayAbsencesDto personsAbsences(
-        @Parameter(description = "ID of the person")
-        @PathVariable("personId")
-        Integer personId,
-        @Parameter(description = "start of interval to get absences from (inclusive)")
-        @RequestParam("from")
-        @DateTimeFormat(iso = ISO.DATE)
-        LocalDate startDate,
-        @Parameter(description = "end of interval to get absences from (inclusive)")
-        @RequestParam("to")
-        @DateTimeFormat(iso = ISO.DATE)
-        LocalDate endDate,
-        @Parameter(description = "Type of absences, vacation or sick notes")
-        @RequestParam(value = "type", required = false)
-        String type,
-        @Parameter(description = "Whether to include no-workdays or not. Default is 'false' which will ignore no-workdays.")
-        @RequestParam(value = "noWorkdaysInclusive", required = false, defaultValue = "false")
-        boolean noWorkdaysInclusive) {
+            @Parameter(description = "ID of the person")
+            @PathVariable("personId")
+            Long personId,
+            @Parameter(description = "start of interval to get absences from (inclusive)")
+            @RequestParam("from")
+            @DateTimeFormat(iso = ISO.DATE)
+            LocalDate startDate,
+            @Parameter(description = "end of interval to get absences from (inclusive)")
+            @RequestParam("to")
+            @DateTimeFormat(iso = ISO.DATE)
+            LocalDate endDate,
+            @Parameter(description = "Type of absences, vacation or sick notes")
+            @RequestParam(value = "type", required = false)
+            String type,
+            @Parameter(description = "Whether to include no-workdays or not. Default is 'false' which will ignore no-workdays.")
+            @RequestParam(value = "noWorkdaysInclusive", required = false, defaultValue = "false")
+            boolean noWorkdaysInclusive) {
 
         if (startDate.isAfter(endDate)) {
             throw new ResponseStatusException(BAD_REQUEST, "Start date " + startDate + " must not be after end date " + endDate);
@@ -116,10 +116,10 @@ public class AbsenceApiController {
         final Map<LocalDate, PublicHoliday> publicHolidaysByDate = publicHolidaysByDate(person, start, end);
 
         final List<DayAbsenceDto> absences = absenceService.getOpenAbsences(person, start, end)
-            .stream()
-            .flatMap(absencePeriod -> this.toDayAbsenceDto(absencePeriod, publicHolidaysByDate))
-            .filter(vacationAsked.and(isVacation).or(sickAsked.and(isSick)))
-            .collect(toList());
+                .stream()
+                .flatMap(absencePeriod -> this.toDayAbsenceDto(absencePeriod, publicHolidaysByDate))
+                .filter(vacationAsked.and(isVacation).or(sickAsked.and(isSick)))
+                .collect(toList());
 
         if (!includeNonWorkingDays) {
             return absences;
@@ -144,11 +144,11 @@ public class AbsenceApiController {
 
     private boolean isWorkday(LocalDate date, List<WorkingTime> workingTimeList) {
         return workingTimeList
-            .stream()
-            .filter(w -> w.getValidFrom().isBefore(date) || w.getValidFrom().isEqual(date))
-            .findFirst()
-            .map(w -> w.isWorkingDay(date.getDayOfWeek()))
-            .orElse(false);
+                .stream()
+                .filter(w -> w.getValidFrom().isBefore(date) || w.getValidFrom().isEqual(date))
+                .findFirst()
+                .map(w -> w.isWorkingDay(date.getDayOfWeek()))
+                .orElse(false);
     }
 
     private List<DayAbsenceDto> dayAbsenceDtoForDate(String formattedDate, List<DayAbsenceDto> absences) {
@@ -157,26 +157,26 @@ public class AbsenceApiController {
 
     private Map<LocalDate, PublicHoliday> publicHolidaysByDate(Person person, LocalDate start, LocalDate end) {
         return workingTimeService.getFederalStatesByPersonAndDateRange(person, new DateRange(start, end)).entrySet().stream()
-            .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
-            .flatMap(List::stream)
-            .collect(toMap(PublicHoliday::getDate, Function.identity()));
+                .map(entry -> publicHolidaysService.getPublicHolidays(entry.getKey().getStartDate(), entry.getKey().getEndDate(), entry.getValue()))
+                .flatMap(List::stream)
+                .collect(toMap(PublicHoliday::getDate, Function.identity()));
     }
 
     private Stream<DayAbsenceDto> toDayAbsenceDto(AbsencePeriod absence, Map<LocalDate, PublicHoliday> holidaysByDate) {
         return absence.getAbsenceRecords()
-            .stream()
-            .map(day -> this.toDayAbsenceDto(day, holidaysByDate.get(day.getDate())))
-            .flatMap(List::stream);
+                .stream()
+                .map(day -> this.toDayAbsenceDto(day, holidaysByDate.get(day.getDate())))
+                .flatMap(List::stream);
     }
 
     private List<DayAbsenceDto> toDayAbsenceDto(AbsencePeriod.Record absenceRecord, PublicHoliday publicHoliday) {
         final List<DayAbsenceDto> result = new ArrayList<>(2);
 
         sickToDayAbsenceDto(absenceRecord, publicHoliday)
-            .ifPresent(result::add);
+                .ifPresent(result::add);
 
         vacationToDayAbsenceDto(absenceRecord, publicHoliday)
-            .ifPresent(result::add);
+                .ifPresent(result::add);
 
         return result;
     }
@@ -253,13 +253,9 @@ public class AbsenceApiController {
     }
 
     private Optional<DayAbsenceDto.Type> toType(AbsencePeriod.AbsenceType absenceType) {
-        switch (absenceType) {
-            case VACATION:
-                return Optional.of(VACATION);
-            case SICK:
-                return Optional.of(SICK_NOTE);
-            default:
-                return Optional.empty();
-        }
+        return switch (absenceType) {
+            case VACATION -> Optional.of(VACATION);
+            case SICK -> Optional.of(SICK_NOTE);
+        };
     }
 }

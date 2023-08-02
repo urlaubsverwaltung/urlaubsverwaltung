@@ -161,24 +161,16 @@ public class AbsenceServiceImpl implements AbsenceService {
     }
 
     private AbsencePeriod.AbsenceStatus toAbsenceStatus(ApplicationStatus applicationStatus) {
-        switch (applicationStatus) {
-            case ALLOWED:
-                return AbsencePeriod.AbsenceStatus.ALLOWED;
-            case WAITING:
-                return AbsencePeriod.AbsenceStatus.WAITING;
-            case TEMPORARY_ALLOWED:
-                return AbsencePeriod.AbsenceStatus.TEMPORARY_ALLOWED;
-            case ALLOWED_CANCELLATION_REQUESTED:
-                return AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED;
-            case REVOKED:
-                return AbsencePeriod.AbsenceStatus.REVOKED;
-            case REJECTED:
-                return AbsencePeriod.AbsenceStatus.REJECTED;
-            case CANCELLED:
-                return AbsencePeriod.AbsenceStatus.CANCELLED;
-            default:
-                throw new IllegalStateException("application status not expected here.");
-        }
+        return switch (applicationStatus) {
+            case ALLOWED -> AbsencePeriod.AbsenceStatus.ALLOWED;
+            case WAITING -> AbsencePeriod.AbsenceStatus.WAITING;
+            case TEMPORARY_ALLOWED -> AbsencePeriod.AbsenceStatus.TEMPORARY_ALLOWED;
+            case ALLOWED_CANCELLATION_REQUESTED -> AbsencePeriod.AbsenceStatus.ALLOWED_CANCELLATION_REQUESTED;
+            case REVOKED -> AbsencePeriod.AbsenceStatus.REVOKED;
+            case REJECTED -> AbsencePeriod.AbsenceStatus.REJECTED;
+            case CANCELLED -> AbsencePeriod.AbsenceStatus.CANCELLED;
+            default -> throw new IllegalStateException("application status not expected here.");
+        };
     }
 
     private List<AbsencePeriod.Record> days(Application application, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
@@ -199,9 +191,9 @@ public class AbsenceServiceImpl implements AbsenceService {
     private AbsencePeriod.Record toVacationAbsencePeriodRecord(LocalDate date, DayLength workingDayLength, Application application) {
 
         final Person person = application.getPerson();
-        final Integer applicationId = application.getId();
+        final Long applicationId = application.getId();
         final AbsencePeriod.AbsenceStatus status = toAbsenceStatus(application.getStatus());
-        final Integer vacationTypeId = application.getVacationType().getId();
+        final Long vacationTypeId = application.getVacationType().getId();
         final boolean visibleToEveryone = application.getVacationType().isVisibleToEveryone();
         final DayLength applicationDayLength = application.getDayLength();
 
@@ -272,7 +264,7 @@ public class AbsenceServiceImpl implements AbsenceService {
 
     private AbsencePeriod.Record toSickAbsencePeriodRecord(LocalDate date, DayLength workingTimeDayLength, SickNote sickNote) {
 
-        final Integer sickNoteId = sickNote.getId();
+        final Long sickNoteId = sickNote.getId();
         final Person person = sickNote.getPerson();
         final AbsencePeriod.AbsenceStatus status = toAbsenceStatus(sickNote.getStatus());
 

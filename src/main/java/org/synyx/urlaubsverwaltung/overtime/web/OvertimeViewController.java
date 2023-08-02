@@ -99,7 +99,7 @@ public class OvertimeViewController implements HasLaunchpad {
 
     @GetMapping(value = "/overtime", params = "person")
     public String showOvertime(
-        @RequestParam(value = "person") Integer personId,
+        @RequestParam(value = "person") Long personId,
         @RequestParam(value = "year", required = false) Integer requestedYear, Model model)
         throws UnknownPersonException {
 
@@ -141,7 +141,7 @@ public class OvertimeViewController implements HasLaunchpad {
     }
 
     @GetMapping("/overtime/{id}")
-    public String showOvertimeDetails(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException {
+    public String showOvertimeDetails(@PathVariable("id") Long id, Model model) throws UnknownOvertimeException {
 
         final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
         final Person person = overtime.getPerson();
@@ -175,7 +175,7 @@ public class OvertimeViewController implements HasLaunchpad {
 
     @GetMapping("/overtime/new")
     public String recordOvertime(
-        @RequestParam(value = "person", required = false) Integer personId, Model model)
+        @RequestParam(value = "person", required = false) Long personId, Model model)
         throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -227,7 +227,7 @@ public class OvertimeViewController implements HasLaunchpad {
     }
 
     @GetMapping("/overtime/{id}/edit")
-    public String editOvertime(@PathVariable("id") Integer id, Model model) throws UnknownOvertimeException {
+    public String editOvertime(@PathVariable("id") Long id, Model model) throws UnknownOvertimeException {
 
         final Overtime overtime = overtimeService.getOvertimeById(id).orElseThrow(() -> new UnknownOvertimeException(id));
         final Person signedInUser = personService.getSignedInUser();
@@ -245,7 +245,7 @@ public class OvertimeViewController implements HasLaunchpad {
     }
 
     @PostMapping("/overtime/{id}")
-    public String updateOvertime(@PathVariable("id") Integer id,
+    public String updateOvertime(@PathVariable("id") Long id,
                                  @ModelAttribute("overtime") OvertimeForm overtimeForm, Errors errors,
                                  Model model, RedirectAttributes redirectAttributes) throws UnknownOvertimeException {
 

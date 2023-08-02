@@ -57,7 +57,6 @@ import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toUnmodifiableList;
 import static java.util.stream.Stream.concat;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.mapToApplication;
@@ -126,7 +125,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     }
 
     @GetMapping("/application/new")
-    public String newApplicationForm(@RequestParam(value = "personId", required = false) Integer personId,
+    public String newApplicationForm(@RequestParam(value = "personId", required = false) Long personId,
                                      @RequestParam(value = "from", required = false) String startDateString,
                                      @RequestParam(value = "to", required = false) String endDateString,
                                      Model model, Locale locale) {
@@ -157,7 +156,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         final Person signedInUser = personService.getSignedInUser();
         final Person person = ofNullable(applicationForLeaveForm.getPerson())
-            .orElse(signedInUser);
+                .orElse(signedInUser);
 
         if (!isPersonAllowedToExecuteRoleOn(signedInUser, APPLICATION_ADD, person)) {
             throw new AccessDeniedException(format(USER_HAS_NOT_THE_CORRECT_PERMISSIONS, signedInUser.getId(), person.getId()));
@@ -168,8 +167,8 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
             final Person replacementPersonToAdd = applicationForLeaveForm.getHolidayReplacementToAdd();
             if (replacementPersonToAdd == null) {
                 final List<SelectableHolidayReplacementDto> selectableHolidayReplacementDtos = selectableHolidayReplacements(
-                    not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
-                        .and(not(isEqual(person)))
+                        not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
+                                .and(not(isEqual(person)))
                 );
                 addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacementDtos);
             } else {
@@ -182,10 +181,10 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
                 // and remove it from the selectable elements
                 final List<SelectableHolidayReplacementDto> nextSelectableReplacements = selectableHolidayReplacements(
-                    not(
-                        personEquals(replacementPersonToAdd)
-                            .or(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
-                    ).and(not(isEqual(person)))
+                        not(
+                                personEquals(replacementPersonToAdd)
+                                        .or(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
+                        ).and(not(isEqual(person)))
                 );
                 addSelectableHolidayReplacementsToModel(model, nextSelectableReplacements);
             }
@@ -221,7 +220,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         model.addAttribute("index", applicationForLeave.getHolidayReplacements().size());
 
-        final Integer applicationForLeaveId = applicationForLeave.getId();
+        final Long applicationForLeaveId = applicationForLeave.getId();
         if (applicationForLeaveId == null) {
             model.addAttribute("deleteButtonFormActionValue", "/web/application/new");
         } else {
@@ -233,7 +232,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
     @PostMapping(value = {"/application/new", "/application/{applicationId}"}, params = "remove-holiday-replacement")
     public String removeHolidayReplacement(@ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm applicationForLeaveForm,
-                                           @RequestParam(name = "remove-holiday-replacement") Integer personIdToRemove,
+                                           @RequestParam(name = "remove-holiday-replacement") Long personIdToRemove,
                                            Model model) {
 
         final Person signedInUser = personService.getSignedInUser();
@@ -246,16 +245,16 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         final Optional<Account> holidaysAccount = accountService.getHolidaysAccount(ZonedDateTime.now(clock).getYear(), person);
         if (holidaysAccount.isPresent()) {
             final List<HolidayReplacementDto> newList = applicationForLeaveForm.getHolidayReplacements()
-                .stream()
-                .filter(holidayReplacementDto -> !holidayReplacementDto.getPerson().getId().equals(personIdToRemove))
-                .collect(toList());
+                    .stream()
+                    .filter(holidayReplacementDto -> !holidayReplacementDto.getPerson().getId().equals(personIdToRemove))
+                    .collect(toList());
             applicationForLeaveForm.setHolidayReplacements(newList);
             prepareApplicationForLeaveForm(signedInUser, person, applicationForLeaveForm, model);
 
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
-                personEquals(personIdToRemove)
-                    .or(not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm))))
-                    .and(not(isEqual(person)))
+                    personEquals(personIdToRemove)
+                            .or(not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm))))
+                            .and(not(isEqual(person)))
             );
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements);
         }
@@ -281,8 +280,8 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         if (errors.hasErrors()) {
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacementDtos = selectableHolidayReplacements(
-                not(containsPerson(holidayReplacementPersonsOfApplication(appForm)))
-                    .and(not(isEqual(person)))
+                    not(containsPerson(holidayReplacementPersonsOfApplication(appForm)))
+                            .and(not(isEqual(person)))
             );
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacementDtos);
 
@@ -312,7 +311,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     }
 
     @GetMapping("/application/{applicationId}/edit")
-    public String editApplicationForm(@PathVariable("applicationId") Integer applicationId, Model model) {
+    public String editApplicationForm(@PathVariable("applicationId") Long applicationId, Model model) {
 
         final Optional<Application> maybeApplication = applicationInteractionService.get(applicationId);
         if (maybeApplication.isEmpty()) {
@@ -336,8 +335,8 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
             prepareApplicationForLeaveForm(signedInUser, signedInUser, applicationForLeaveForm, model);
 
             final List<SelectableHolidayReplacementDto> selectableHolidayReplacements = selectableHolidayReplacements(
-                not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
-                    .and(not(isEqual(signedInUser)))
+                    not(containsPerson(holidayReplacementPersonsOfApplication(applicationForLeaveForm)))
+                            .and(not(isEqual(signedInUser)))
             );
             model.addAttribute("selectableHolidayReplacements", selectableHolidayReplacements);
         }
@@ -349,7 +348,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
     }
 
     @PostMapping("/application/{applicationId}")
-    public String sendEditApplicationForm(@PathVariable("applicationId") Integer applicationId,
+    public String sendEditApplicationForm(@PathVariable("applicationId") Long applicationId,
                                           @ModelAttribute("applicationForLeaveForm") ApplicationForLeaveForm appForm, Errors errors,
                                           Model model, RedirectAttributes redirectAttributes) throws UnknownApplicationForLeaveException {
 
@@ -376,8 +375,8 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
             }
 
             addSelectableHolidayReplacementsToModel(model, selectableHolidayReplacements(
-                not(containsPerson(holidayReplacementPersonsOfApplication(appForm)))
-                    .and(not(isEqual(signedInUser))))
+                    not(containsPerson(holidayReplacementPersonsOfApplication(appForm)))
+                            .and(not(isEqual(signedInUser))))
             );
 
             LOG.debug("edit application ({}) has errors: {}", appForm, errors);
@@ -399,7 +398,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         return "redirect:/web/application/" + savedApplicationForLeave.getId();
     }
 
-    private Optional<Person> getPersonByRequestParam(Integer personId) {
+    private Optional<Person> getPersonByRequestParam(Long personId) {
         if (personId == null) {
             return Optional.empty();
         }
@@ -423,8 +422,8 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         model.addAttribute("vacationTypes", activeVacationTypes);
 
         final List<SpecialLeaveSettingsItem> specialLeaveSettings = specialLeaveSettingsService.getSpecialLeaveSettings().stream()
-            .filter(SpecialLeaveSettingsItem::isActive)
-            .collect(toList());
+                .filter(SpecialLeaveSettingsItem::isActive)
+                .collect(toList());
         model.addAttribute("specialLeave", mapToSpecialLeaveSettingsDto(specialLeaveSettings));
 
         appendDepartmentsToReplacements(appForm);
@@ -442,7 +441,7 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         return person::equals;
     }
 
-    private static Predicate<Person> personEquals(Integer personId) {
+    private static Predicate<Person> personEquals(Long personId) {
         return p -> p.getId().equals(personId);
     }
 
@@ -456,9 +455,9 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
     private List<SelectableHolidayReplacementDto> selectableHolidayReplacements(Predicate<Person> predicate) {
         return getAllSelectableReplacementPersons().stream()
-            .filter(predicate)
-            .map(ApplicationForLeaveFormViewController::toSelectableHolidayReplacementDto)
-            .collect(toUnmodifiableList());
+                .filter(predicate)
+                .map(ApplicationForLeaveFormViewController::toSelectableHolidayReplacementDto)
+                .toList();
     }
 
     private static void addSelectableHolidayReplacementsToModel(Model model, List<SelectableHolidayReplacementDto> dtos) {
@@ -474,9 +473,9 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
     private static List<Person> holidayReplacementPersonsOfApplication(ApplicationForLeaveForm applicationForLeaveForm) {
         return ofNullable(applicationForLeaveForm.getHolidayReplacements())
-            .orElse(emptyList()).stream()
-            .map(HolidayReplacementDto::getPerson)
-            .collect(toList());
+                .orElse(emptyList()).stream()
+                .map(HolidayReplacementDto::getPerson)
+                .collect(toList());
     }
 
     private void appendDepartmentsToReplacements(ApplicationForLeaveForm appForm) {
@@ -492,31 +491,31 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         final List<Department> departments = departmentService.getAllDepartments();
 
         final List<HolidayReplacementDto> holidayReplacementDtos = application.getHolidayReplacements().stream()
-            .map(holidayReplacementEntity -> toDto(holidayReplacementEntity, departments))
-            .collect(toList());
+                .map(holidayReplacementEntity -> toDto(holidayReplacementEntity, departments))
+                .collect(toList());
 
         return new ApplicationForLeaveForm.Builder()
-            .id(application.getId())
-            .address(application.getAddress())
-            .startDate(application.getStartDate())
-            .startTime(application.getStartTime())
-            .endDate(application.getEndDate())
-            .endTime(application.getEndTime())
-            .teamInformed(application.isTeamInformed())
-            .dayLength(application.getDayLength())
-            .hoursAndMinutes(application.getHours())
-            .person(application.getPerson())
-            .vacationType(convert(application.getVacationType()))
-            .reason(application.getReason())
-            .holidayReplacements(holidayReplacementDtos)
-            .build();
+                .id(application.getId())
+                .address(application.getAddress())
+                .startDate(application.getStartDate())
+                .startTime(application.getStartTime())
+                .endDate(application.getEndDate())
+                .endTime(application.getEndTime())
+                .teamInformed(application.isTeamInformed())
+                .dayLength(application.getDayLength())
+                .hoursAndMinutes(application.getHours())
+                .person(application.getPerson())
+                .vacationType(convert(application.getVacationType()))
+                .reason(application.getReason())
+                .holidayReplacements(holidayReplacementDtos)
+                .build();
     }
 
     private List<String> departmentNamesForPerson(Person person, List<Department> departments) {
         return departments.stream()
-            .filter(d -> d.getMembers().contains(person))
-            .map(Department::getName)
-            .collect(toList());
+                .filter(d -> d.getMembers().contains(person))
+                .map(Department::getName)
+                .collect(toList());
     }
 
     private HolidayReplacementDto toDto(HolidayReplacementEntity holidayReplacementEntity, List<Department> departments) {
@@ -535,8 +534,8 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
 
         if (applier.hasRole(role)) {
             return applier.hasRole(BOSS)
-                || departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)
-                || departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person);
+                    || departmentService.isDepartmentHeadAllowedToManagePerson(applier, person)
+                    || departmentService.isSecondStageAuthorityAllowedToManagePerson(applier, person);
         }
 
         return false;
@@ -549,17 +548,17 @@ class ApplicationForLeaveFormViewController implements HasLaunchpad {
         }
 
         final List<Person> membersForDepartmentHead = signedInUser.hasRole(DEPARTMENT_HEAD) && signedInUser.hasRole(APPLICATION_ADD)
-            ? departmentService.getManagedMembersOfDepartmentHead(signedInUser)
-            : List.of();
+                ? departmentService.getManagedMembersOfDepartmentHead(signedInUser)
+                : List.of();
 
         final List<Person> memberForSecondStageAuthority = signedInUser.hasRole(SECOND_STAGE_AUTHORITY) && signedInUser.hasRole(APPLICATION_ADD)
-            ? departmentService.getManagedMembersForSecondStageAuthority(signedInUser)
-            : List.of();
+                ? departmentService.getManagedMembersForSecondStageAuthority(signedInUser)
+                : List.of();
 
         return concat(concat(memberForSecondStageAuthority.stream(), membersForDepartmentHead.stream()), Stream.of(signedInUser))
-            .filter(person -> !person.hasRole(INACTIVE))
-            .distinct()
-            .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
-            .collect(toList());
+                .filter(person -> !person.hasRole(INACTIVE))
+                .distinct()
+                .sorted(comparing(Person::getFirstName).thenComparing(Person::getLastName))
+                .collect(toList());
     }
 }

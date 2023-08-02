@@ -60,7 +60,7 @@ public class PersonDetailsViewController implements HasLaunchpad {
     }
 
     @GetMapping("/person/{personId}")
-    public String showPersonInformation(@PathVariable("personId") Integer personId,
+    public String showPersonInformation(@PathVariable("personId") Long personId,
                                         @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                                         Model model) throws UnknownPersonException {
 

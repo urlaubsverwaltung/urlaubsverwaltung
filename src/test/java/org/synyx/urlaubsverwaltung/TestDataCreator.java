@@ -71,7 +71,7 @@ public final class TestDataCreator {
         LocalDate endDate = startDate.plusDays(7);
 
         Overtime overtime = new Overtime(person, startDate, endDate, Duration.ofHours(1));
-        overtime.setId(1234);
+        overtime.setId(1234L);
         return overtime;
     }
 
@@ -130,13 +130,13 @@ public final class TestDataCreator {
         sickNoteType.setMessageKey("Krankmeldung");
 
         return SickNote.builder()
-                .person(person)
-                .startDate(startDate)
-                .endDate(endDate)
-                .dayLength(dayLength)
-                .sickNoteType(sickNoteType)
-                .status(SickNoteStatus.ACTIVE)
-                .build();
+            .person(person)
+            .startDate(startDate)
+            .endDate(endDate)
+            .dayLength(dayLength)
+            .sickNoteType(sickNoteType)
+            .status(SickNoteStatus.ACTIVE)
+            .build();
     }
 
     // Department ------------------------------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ public final class TestDataCreator {
     public static WorkingTime createWorkingTime() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final WorkingTime workingTime = new WorkingTime(person, LocalDate.MIN, GERMANY_BADEN_WUERTTEMBERG, false);
 
@@ -205,16 +205,16 @@ public final class TestDataCreator {
 
         final List<VacationType> vacationTypes = new ArrayList<>();
 
-        final VacationType holidayType = new VacationType(1000, true, HOLIDAY, "application.data.vacationType.holiday", true, true, YELLOW, false);
+        final VacationType holidayType = new VacationType(1000L, true, HOLIDAY, "application.data.vacationType.holiday", true, true, YELLOW, false);
         vacationTypes.add(holidayType);
 
-        final VacationType specialLeaveType = new VacationType(2000, true, SPECIALLEAVE, "application.data.vacationType.specialleave", true, true, YELLOW, false);
+        final VacationType specialLeaveType = new VacationType(2000L, true, SPECIALLEAVE, "application.data.vacationType.specialleave", true, true, YELLOW, false);
         vacationTypes.add(specialLeaveType);
 
-        final VacationType vacationType3 = new VacationType(3000, true, UNPAIDLEAVE, "application.data.vacationType.unpaidleave", true, true, YELLOW, false);
+        final VacationType vacationType3 = new VacationType(3000L, true, UNPAIDLEAVE, "application.data.vacationType.unpaidleave", true, true, YELLOW, false);
         vacationTypes.add(vacationType3);
 
-        final VacationType vacationType4 = new VacationType(4000, true, OVERTIME, "application.data.vacationType.overtime", true, true, YELLOW, false);
+        final VacationType vacationType4 = new VacationType(4000L, true, OVERTIME, "application.data.vacationType.overtime", true, true, YELLOW, false);
         vacationTypes.add(vacationType4);
 
         return vacationTypes;
@@ -225,7 +225,7 @@ public final class TestDataCreator {
         ArrayList<VacationTypeEntity> vacationTypes = new ArrayList<>();
 
         VacationTypeEntity vacationType1 = new VacationTypeEntity();
-        vacationType1.setId(1000);
+        vacationType1.setId(1000L);
         vacationType1.setCategory(HOLIDAY);
         vacationType1.setMessageKey("application.data.vacationType.holiday");
         vacationTypes.add(vacationType1);
@@ -233,19 +233,19 @@ public final class TestDataCreator {
         VacationTypeEntity vacationType2 = new VacationTypeEntity();
         vacationType2.setCategory(VacationCategory.SPECIALLEAVE);
         vacationType2.setMessageKey("application.data.vacationType.specialleave");
-        vacationType2.setId(2000);
+        vacationType2.setId(2000L);
         vacationTypes.add(vacationType2);
 
         VacationTypeEntity vacationType3 = new VacationTypeEntity();
         vacationType3.setCategory(VacationCategory.UNPAIDLEAVE);
         vacationType3.setMessageKey("application.data.vacationType.unpaidleave");
-        vacationType3.setId(3000);
+        vacationType3.setId(3000L);
         vacationTypes.add(vacationType3);
 
         VacationTypeEntity vacationType4 = new VacationTypeEntity();
         vacationType4.setCategory(VacationCategory.OVERTIME);
         vacationType4.setMessageKey("application.data.vacationType.overtime");
-        vacationType4.setId(4000);
+        vacationType4.setId(4000L);
         vacationTypes.add(vacationType4);
 
         return vacationTypes;

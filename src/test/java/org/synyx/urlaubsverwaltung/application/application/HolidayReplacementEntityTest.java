@@ -83,7 +83,7 @@ class HolidayReplacementEntityTest {
     @Test
     void ensureDoNotLogNote() {
         final Person holidayReplacement = new Person();
-        holidayReplacement.setId(1);
+        holidayReplacement.setId(1L);
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacement);
         holidayReplacementEntity.setNote("This is some text for the replacement note");

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 public class ApplicationForLeaveDto {
 
-    private final int id;
+    private final long id;
     private final ApplicationPersonDto person;
     private final VacationType vacationType;
     private final ApplicationStatus status;
@@ -24,7 +24,7 @@ public class ApplicationForLeaveDto {
     private final boolean cancellationRequested;
 
     @SuppressWarnings("java:S107") // "Methods should not have too many parameters" - Builder is used for construction
-    private ApplicationForLeaveDto(int id, ApplicationPersonDto person, VacationType vacationType, ApplicationStatus status,
+    private ApplicationForLeaveDto(long id, ApplicationPersonDto person, VacationType vacationType, ApplicationStatus status,
                                    String duration, DayLength dayLength, BigDecimal workDays, String durationOfAbsenceDescription,
                                    boolean statusWaiting, boolean cancelAllowed, boolean editAllowed, boolean approveAllowed,
                                    boolean temporaryApproveAllowed, boolean rejectAllowed, boolean cancellationRequested) {
@@ -45,7 +45,7 @@ public class ApplicationForLeaveDto {
         this.cancellationRequested = cancellationRequested;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -110,7 +110,7 @@ public class ApplicationForLeaveDto {
     }
 
     static class Builder {
-        private int id;
+        private long id;
         private ApplicationPersonDto person;
         private VacationType vacationType;
         private ApplicationStatus status;
@@ -126,7 +126,7 @@ public class ApplicationForLeaveDto {
         private boolean rejectAllowed;
         private boolean cancellationRequested;
 
-        Builder id(int id) {
+        Builder id(long id) {
             this.id = id;
             return this;
         }

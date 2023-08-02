@@ -42,7 +42,7 @@ class PersonMailServiceTest {
         when(personService.getActivePersonsWithNotificationType(NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL)).thenReturn(List.of(personWithNotification));
 
         final Person createdPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        createdPerson.setId(1);
+        createdPerson.setId(1L);
         final PersonCreatedEvent event = new PersonCreatedEvent(this, createdPerson.getId(), createdPerson.getNiceName(), createdPerson.getUsername(), createdPerson.getEmail(), createdPerson.isActive());
 
         final Map<String, Object> model = Map.of(

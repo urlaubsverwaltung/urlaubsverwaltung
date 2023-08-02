@@ -12,7 +12,7 @@ import static org.synyx.urlaubsverwaltung.util.DateAndTimeFormat.ISO_DATE;
 
 public class DepartmentOverviewDto {
 
-    private Integer id;
+    private Long id;
     private String name;
     private String description;
     @DateTimeFormat(pattern = DD_MM_YYYY, fallbackPatterns = {D_M_YY, D_M_YYYY, ISO_DATE})
@@ -21,11 +21,11 @@ public class DepartmentOverviewDto {
     private int activeMembersCount;
     private int inactiveMembersCount;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

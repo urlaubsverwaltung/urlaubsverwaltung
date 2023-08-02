@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -175,7 +174,7 @@ class ApplicationTest {
     void toStringTest() {
 
         final Person person = new Person("Theo", "Theo", "Theo", "Theo");
-        person.setId(10);
+        person.setId(10L);
         person.setPermissions(List.of(USER));
 
         final HolidayReplacementEntity replacementEntity = new HolidayReplacementEntity();
@@ -193,7 +192,7 @@ class ApplicationTest {
         application.setDayLength(DayLength.FULL);
         application.setPerson(person);
         application.setVacationType(vacationType);
-        application.setId(1);
+        application.setId(1L);
         application.setHours(Duration.ofHours(10));
         application.setApplicationDate(LocalDate.EPOCH);
         application.setTwoStageApproval(true);
@@ -223,13 +222,13 @@ class ApplicationTest {
     @Test
     void equals() {
         final Application applicationOne = new Application();
-        applicationOne.setId(1);
+        applicationOne.setId(1L);
 
         final Application applicationOneOne = new Application();
-        applicationOneOne.setId(1);
+        applicationOneOne.setId(1L);
 
         final Application applicationTwo = new Application();
-        applicationTwo.setId(2);
+        applicationTwo.setId(2L);
 
         assertThat(applicationOne)
             .isEqualTo(applicationOne)
@@ -242,7 +241,7 @@ class ApplicationTest {
     @Test
     void hashCodeTest() {
         final Application applicationOne = new Application();
-        applicationOne.setId(1);
+        applicationOne.setId(1L);
 
         assertThat(applicationOne.hashCode()).isEqualTo(32);
     }

@@ -33,10 +33,10 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
     @Override
     public PersonDTO create(PersonDTO person) {
         final Person created = personService.create(
-            person.getUsername(),
-            person.getFirstName(),
-            person.getLastName(),
-            person.getEmail()
+                person.getUsername(),
+                person.getFirstName(),
+                person.getLastName(),
+                person.getEmail()
         );
         return toPersonDTO(created);
     }
@@ -48,42 +48,42 @@ public class PersonServiceExtensionImpl implements PersonServiceExtension {
     }
 
     @Override
-    public void delete(PersonDTO person, Integer signedInUserId) {
+    public void delete(PersonDTO person, Long signedInUserId) {
         personService.getPersonByID(signedInUserId)
-            .ifPresentOrElse(
-                signedInUser -> personService.delete(toPerson(person), signedInUser),
-                () -> LOG.warn("trying to delete person={}, but the person={} who wants to delete the given person doesn't exists - skipped delete!", person.getId(), signedInUserId)
-            );
+                .ifPresentOrElse(
+                        signedInUser -> personService.delete(toPerson(person), signedInUser),
+                        () -> LOG.warn("trying to delete person={}, but the person={} who wants to delete the given person doesn't exists - skipped delete!", person.getId(), signedInUserId)
+                );
     }
 
     @Override
-    public Optional<PersonDTO> getPersonById(Integer id) {
+    public Optional<PersonDTO> getPersonById(Long id) {
         return personService.getPersonByID(id)
-            .map(PersonDTOMapper::toPersonDTO);
+                .map(PersonDTOMapper::toPersonDTO);
     }
 
     @Override
     public Optional<PersonDTO> getPersonByUsername(String username) {
         return personService.getPersonByUsername(username)
-            .map(PersonDTOMapper::toPersonDTO);
+                .map(PersonDTOMapper::toPersonDTO);
     }
 
     @Override
     public Optional<PersonDTO> getPersonByMailAddress(String mailAddress) {
         return personService.getPersonByMailAddress(mailAddress)
-            .map(PersonDTOMapper::toPersonDTO);
+                .map(PersonDTOMapper::toPersonDTO);
     }
 
     @Override
     public Stream<PersonDTO> getActivePersons() {
         return PageStreamSupport.stream(pageable -> personService.getActivePersons(new PageableSearchQuery(pageable)))
-            .map(PersonDTOMapper::toPersonDTO);
+                .map(PersonDTOMapper::toPersonDTO);
     }
 
     @Override
     public Stream<PersonDTO> getInactivePersons() {
         return PageStreamSupport.stream(pageable -> personService.getInactivePersons(new PageableSearchQuery(pageable)))
-            .map(PersonDTOMapper::toPersonDTO);
+                .map(PersonDTOMapper::toPersonDTO);
     }
 
     @Override

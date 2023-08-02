@@ -17,7 +17,7 @@ class DepartmentDepartmentOverviewDtoMapperTest {
     void ensureMapping() {
 
         final Department department = new Department();
-        department.setId(42);
+        department.setId(42L);
         final Person activePerson = new Person();
         activePerson.setPermissions(Set.of(Role.USER));
         final Person inactivePerson = new Person();

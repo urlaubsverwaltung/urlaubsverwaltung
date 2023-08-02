@@ -55,8 +55,8 @@ class WorkingTimeViewControllerTest {
 
     private WorkingTimeViewController sut;
 
-    private static final int KNOWN_PERSON_ID = 1;
-    private static final int UNKNOWN_PERSON_ID = 217;
+    private static final long KNOWN_PERSON_ID = 1;
+    private static final long UNKNOWN_PERSON_ID = 217;
 
     @Mock
     private PersonService personService;
@@ -95,7 +95,7 @@ class WorkingTimeViewControllerTest {
         when(workingTimeService.getWorkingTime(eq(person), any(LocalDate.class))).thenReturn(Optional.of(workingTime));
         when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
 
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(model().attribute("workingTime", equalTo(new WorkingTimeForm(workingTime))))
@@ -106,7 +106,7 @@ class WorkingTimeViewControllerTest {
             .andExpect(model().attribute("workingTimeHistories", hasItem(hasProperty("workingDays", hasItem("MONDAY")))))
             .andExpect(model().attribute("defaultFederalState", equalTo(GERMANY_BADEN_WUERTTEMBERG)))
             .andExpect(model().attribute("federalStateTypes", equalTo(FederalState.federalStatesTypesByCountry())))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(model().attribute("weekDays", equalTo(DayOfWeek.values())));
     }
 
@@ -126,7 +126,7 @@ class WorkingTimeViewControllerTest {
 
         when(workingTimeService.getByPerson(person)).thenReturn(List.of(workingTime));
 
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         perform(get("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
             .andExpect(status().isOk())
@@ -168,7 +168,7 @@ class WorkingTimeViewControllerTest {
 
         when(settingsService.getSettings()).thenReturn(new Settings());
         when(personService.getPersonByID(KNOWN_PERSON_ID)).thenReturn(Optional.of(new Person()));
-        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1, ORANGE)));
+        when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         doAnswer(invocation -> {
             Errors errors = invocation.getArgument(1);
@@ -177,7 +177,7 @@ class WorkingTimeViewControllerTest {
         }).when(validator).validate(any(), any());
 
         perform(post("/web/person/" + KNOWN_PERSON_ID + "/workingtime"))
-            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1, ORANGE)))))
+            .andExpect(model().attribute("vacationTypeColors", equalTo(List.of(new VacationTypeDto(1L, ORANGE)))))
             .andExpect(view().name("workingtime/workingtime_form"));
 
         verify(workingTimeWriteService, never()).touch(any(), any(), any(), any());
@@ -220,19 +220,19 @@ class WorkingTimeViewControllerTest {
     void updateAccountSucceedsWithValidFrom(String givenDate, LocalDate givenLocalDate) throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(
             post("/web/person/1/workingtime")
                 .param("validFrom", givenDate)
                 .param("workingDays", "1", "2", "3", "4", "5")
                 .param("federalState", "GERMANY_BADEN_WUERTTEMBERG")
-            )
+        )
             .andExpect(redirectedUrl("/web/person/1"));
 
-        verify(workingTimeWriteService).touch(List.of(1,2,3,4,5), givenLocalDate, person, GERMANY_BADEN_WUERTTEMBERG);
+        verify(workingTimeWriteService).touch(List.of(1, 2, 3, 4, 5), givenLocalDate, person, GERMANY_BADEN_WUERTTEMBERG);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

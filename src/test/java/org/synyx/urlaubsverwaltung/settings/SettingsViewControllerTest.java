@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.validation.Errors;
 import org.synyx.urlaubsverwaltung.absence.Absence;
 import org.synyx.urlaubsverwaltung.absence.TimeSettings;
-import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.account.AccountSettings;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
@@ -25,7 +24,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.settings.AvatarSettings;
 import org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettings;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeSettings;
 
 import java.time.Clock;
@@ -35,7 +33,6 @@ import java.util.Optional;
 import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
@@ -81,7 +78,7 @@ class SettingsViewControllerTest {
 
     @BeforeEach
     void setUp() {
-        sut = new SettingsViewController(new AccountProperties(), new WorkingTimeProperties(), settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock,  specialLeaveService);
+        sut = new SettingsViewController(settingsService, vacationTypeService, CALENDAR_PROVIDER_LIST, settingsValidator, clock, specialLeaveService);
     }
 
     @Test
@@ -95,7 +92,7 @@ class SettingsViewControllerTest {
     void ensureSettingsDetailsFillsModelCorrectly() throws Exception {
 
         final VacationType vacationType = new VacationType();
-        vacationType.setId(1);
+        vacationType.setId(1L);
         vacationType.setActive(true);
         vacationType.setRequiresApprovalToApply(true);
         vacationType.setCategory(VacationCategory.HOLIDAY);
@@ -115,8 +112,6 @@ class SettingsViewControllerTest {
             .andExpect(model().attribute("weekDays", DayOfWeek.values()))
             .andExpect(model().attribute("providers", contains("SomeCalendarProvider", "AnotherCalendarProvider")))
             .andExpect(model().attribute("availableTimezones", containsInAnyOrder(TimeZone.getAvailableIDs())))
-            .andExpect(model().attribute("defaultVacationDaysFromSettings", is(false)))
-            .andExpect(model().attribute("defaultWorkingTimeFromSettings", is(false)))
             .andExpect(model().attribute("authorizedRedirectUrl",
                 sut.getAuthorizedRedirectUrl("http://localhost" + requestUrl, OATUH_REDIRECT_REL)));
     }
@@ -339,7 +334,7 @@ class SettingsViewControllerTest {
 
     private static Settings someSettings() {
         final Settings settings = new Settings();
-        settings.setId(1);
+        settings.setId(1L);
         settings.setApplicationSettings(new ApplicationSettings());
         settings.setAccountSettings(new AccountSettings());
         settings.setWorkingTimeSettings(new WorkingTimeSettings());

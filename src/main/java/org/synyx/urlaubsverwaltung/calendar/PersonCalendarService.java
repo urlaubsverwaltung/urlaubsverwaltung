@@ -43,7 +43,7 @@ class PersonCalendarService {
         this.clock = clock;
     }
 
-    PersonCalendar createCalendarForPerson(Integer personId, Period calendarPeriod) {
+    PersonCalendar createCalendarForPerson(Long personId, Period calendarPeriod) {
 
         final Person person = getPersonOrThrow(personId);
 
@@ -56,14 +56,14 @@ class PersonCalendarService {
         return personCalendarRepository.save(personCalendar);
     }
 
-    Optional<PersonCalendar> getPersonCalendar(Integer personId) {
+    Optional<PersonCalendar> getPersonCalendar(Long personId) {
 
         final Person person = getPersonOrThrow(personId);
 
         return personCalendarRepository.findByPerson(person);
     }
 
-    ByteArrayResource getCalendarForPerson(Integer personId, String secret, Locale locale) {
+    ByteArrayResource getCalendarForPerson(Long personId, String secret, Locale locale) {
 
         if (StringUtils.isBlank(secret)) {
             throw new IllegalArgumentException("secret must not be empty.");
@@ -89,7 +89,7 @@ class PersonCalendarService {
     }
 
     @Transactional
-    public void deletePersonalCalendarForPerson(int personId) {
+    public void deletePersonalCalendarForPerson(long personId) {
 
         final Person person = getPersonOrThrow(personId);
 
@@ -102,7 +102,7 @@ class PersonCalendarService {
         personCalendarRepository.deleteByPerson(event.getPerson());
     }
 
-    private Person getPersonOrThrow(Integer personId) {
+    private Person getPersonOrThrow(Long personId) {
 
         final Optional<Person> maybePerson = personService.getPersonByID(personId);
         if (maybePerson.isEmpty()) {

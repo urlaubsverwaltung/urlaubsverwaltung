@@ -45,7 +45,7 @@ public class Application {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     /**
      * Person that will be on vacation if this application for leave is allowed.
@@ -172,11 +172,11 @@ public class Application {
 
     private LocalDate upcomingApplicationsReminderSend;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -464,26 +464,26 @@ public class Application {
     @Override
     public String toString() {
         return "Application{" +
-            "person=" + person +
-            ", applier=" + applier +
-            ", boss=" + boss +
-            ", canceller=" + canceller +
-            ", twoStageApproval=" + twoStageApproval +
-            ", startDate=" + startDate +
-            ", startTime=" + startTime +
-            ", endDate=" + endDate +
-            ", endTime=" + endTime +
-            ", vacationType=" + vacationType +
-            ", dayLength=" + dayLength +
-            ", holidayReplacements=" + holidayReplacements +
-            ", applicationDate=" + applicationDate +
-            ", cancelDate=" + cancelDate +
-            ", editedDate=" + editedDate +
-            ", remindDate=" + remindDate +
-            ", status=" + status +
-            ", teamInformed=" + teamInformed +
-            ", hours=" + hours +
-            '}';
+                "person=" + person +
+                ", applier=" + applier +
+                ", boss=" + boss +
+                ", canceller=" + canceller +
+                ", twoStageApproval=" + twoStageApproval +
+                ", startDate=" + startDate +
+                ", startTime=" + startTime +
+                ", endDate=" + endDate +
+                ", endTime=" + endTime +
+                ", vacationType=" + vacationType +
+                ", dayLength=" + dayLength +
+                ", holidayReplacements=" + holidayReplacements +
+                ", applicationDate=" + applicationDate +
+                ", cancelDate=" + cancelDate +
+                ", editedDate=" + editedDate +
+                ", remindDate=" + remindDate +
+                ", status=" + status +
+                ", teamInformed=" + teamInformed +
+                ", hours=" + hours +
+                '}';
     }
 
     @Override

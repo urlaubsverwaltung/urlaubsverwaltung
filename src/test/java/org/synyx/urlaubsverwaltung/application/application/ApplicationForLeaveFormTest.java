@@ -39,7 +39,7 @@ class ApplicationForLeaveFormTest {
         final LocalDate endDate = LocalDate.now().minusDays(2);
         final LocalTime endTime = LocalTime.now().minusHours(7);
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
 
         final HolidayReplacementDto holidayReplacementDto = new HolidayReplacementDto();
 
@@ -137,7 +137,7 @@ class ApplicationForLeaveFormTest {
         final LocalDate endDate = LocalDate.of(2022, 2, 2);
         final LocalTime endTime = LocalTime.of(12, 10, 0);
 
-        final VacationType vacationType = new VacationType(1, true, HOLIDAY, "message_key", true, true, YELLOW, false);
+        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
 
         final HolidayReplacementDto replacementDto = new HolidayReplacementDto();
         replacementDto.setPerson(holidayReplacement);

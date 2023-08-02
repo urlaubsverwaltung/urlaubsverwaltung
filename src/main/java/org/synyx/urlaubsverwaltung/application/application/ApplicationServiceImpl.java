@@ -42,7 +42,7 @@ class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Optional<Application> getApplicationById(Integer id) {
+    public Optional<Application> getApplicationById(Long id) {
         return applicationRepository.findById(id);
     }
 

@@ -35,7 +35,7 @@ class DepartmentTest {
     @Test
     void toStringTest() {
         final Department department = new Department();
-        department.setId(1);
+        department.setId(1L);
         department.setLastModification(LocalDate.MAX);
         department.setDescription("Description");
         department.setName("DepartmentName");
@@ -53,13 +53,13 @@ class DepartmentTest {
     @Test
     void equals() {
         final Department departmentOne = new Department();
-        departmentOne.setId(1);
+        departmentOne.setId(1L);
 
         final Department departmentOneOne = new Department();
-        departmentOneOne.setId(1);
+        departmentOneOne.setId(1L);
 
         final Department departmentTwo = new Department();
-        departmentTwo.setId(2);
+        departmentTwo.setId(2L);
 
         assertThat(departmentOne)
             .isEqualTo(departmentOne)

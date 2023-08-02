@@ -61,11 +61,11 @@ class TurnOfTheYearAccountUpdaterServiceTest {
         final Person user3 = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
         final Account account1 = createHolidaysAccount(user1, LAST_YEAR);
-        account1.setId(1);
+        account1.setId(1L);
         final Account account2 = createHolidaysAccount(user2, LAST_YEAR);
-        account2.setId(2);
+        account2.setId(2L);
         final Account account3 = createHolidaysAccount(user3, LAST_YEAR);
-        account3.setId(3);
+        account3.setId(3L);
 
         when(personService.getActivePersons()).thenReturn(asList(user1, user2, user3));
         when(accountService.getHolidaysAccount(LAST_YEAR, user1)).thenReturn(Optional.of(account1));

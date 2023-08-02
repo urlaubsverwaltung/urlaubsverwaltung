@@ -10,7 +10,7 @@ class UnknownDepartmentExceptionTest {
     @Test
     void ensureCorrectExceptionMessage() {
 
-        UnknownDepartmentException exception = new UnknownDepartmentException(42);
+        UnknownDepartmentException exception = new UnknownDepartmentException(42L);
 
         assertThat(exception.getMessage()).isEqualTo("No department found for ID = 42");
     }

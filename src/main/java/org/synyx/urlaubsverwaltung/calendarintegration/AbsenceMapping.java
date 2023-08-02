@@ -18,10 +18,10 @@ public class AbsenceMapping {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false)
-    private Integer absenceId;
+    private Long absenceId;
 
     @Enumerated(STRING)
     @Column(nullable = false)
@@ -34,25 +34,25 @@ public class AbsenceMapping {
         /* OK */
     }
 
-    public AbsenceMapping(Integer absenceId, AbsenceMappingType absenceMappingType, String eventId) {
+    public AbsenceMapping(Long absenceId, AbsenceMappingType absenceMappingType, String eventId) {
         this.absenceId = absenceId;
         this.absenceMappingType = absenceMappingType;
         this.eventId = eventId;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getAbsenceId() {
+    public Long getAbsenceId() {
         return absenceId;
     }
 
-    public void setAbsenceId(Integer absenceId) {
+    public void setAbsenceId(Long absenceId) {
         this.absenceId = absenceId;
     }
 

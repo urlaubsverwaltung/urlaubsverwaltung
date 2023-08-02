@@ -31,7 +31,7 @@ class UserNotificationSettingsServiceImpl implements UserNotificationSettingsSer
     @Override
     public Map<PersonId, UserNotificationSettings> findNotificationSettings(Collection<PersonId> personIds) {
 
-        final List<Integer> personIdValues = personIds.stream().map(PersonId::getValue).collect(toList());
+        final List<Long> personIdValues = personIds.stream().map(PersonId::getValue).collect(toList());
 
         final Map<PersonId, UserNotificationSettings> notificationsByPerson = repository.findAllById(personIdValues).stream()
             .map(UserNotificationSettingsServiceImpl::toNotification)

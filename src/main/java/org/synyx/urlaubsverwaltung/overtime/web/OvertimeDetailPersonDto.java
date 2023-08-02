@@ -6,13 +6,13 @@ import java.util.Objects;
 
 public class OvertimeDetailPersonDto {
 
-    private final Integer id;
+    private final Long id;
     private final String email;
     private final String niceName;
     private final String gravatarURL;
     private final Boolean isInactive;
 
-    OvertimeDetailPersonDto(Integer id, @Nullable String email, String niceName, String gravatarURL, Boolean isInactive) {
+    OvertimeDetailPersonDto(Long id, @Nullable String email, String niceName, String gravatarURL, Boolean isInactive) {
         this.id = id;
         this.email = email;
         this.niceName = niceName;
@@ -20,7 +20,7 @@ public class OvertimeDetailPersonDto {
         this.isInactive = isInactive;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

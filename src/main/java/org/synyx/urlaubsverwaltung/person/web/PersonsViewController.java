@@ -83,11 +83,11 @@ public class PersonsViewController implements HasLaunchpad {
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping("/person")
     public String showPerson(@RequestParam(value = "active", required = false, defaultValue = "true") boolean active,
-                             @RequestParam(value = "department", required = false) Optional<Integer> requestedDepartmentId,
+                             @RequestParam(value = "department", required = false) Optional<Long> requestedDepartmentId,
                              @RequestParam(value = "year", required = false) Optional<Integer> requestedYear,
                              @RequestParam(value = "query", required = false, defaultValue = "") String query,
                              @SortDefault.SortDefaults({
-                                 @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)
+                                     @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)
                              })
                              Pageable pageable,
                              Model model) throws UnknownDepartmentException {
@@ -116,27 +116,27 @@ public class PersonsViewController implements HasLaunchpad {
         Page<Person> personPage = null;
 
         if (requestedDepartmentId.isPresent()) {
-            final Integer departmentId = requestedDepartmentId.get();
+            final Long departmentId = requestedDepartmentId.get();
             final Department department = departmentService.getDepartmentById(departmentId)
-                .orElseThrow(() -> new UnknownDepartmentException(departmentId));
+                    .orElseThrow(() -> new UnknownDepartmentException(departmentId));
 
             if (departmentService.isPersonAllowedToManageDepartment(signedInUser, department)) {
                 model.addAttribute("department", department);
                 personPage = active
-                    ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery)
-                    : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery);
+                        ? departmentService.getManagedMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery)
+                        : departmentService.getManagedInactiveMembersOfPersonAndDepartment(signedInUser, departmentId, personPageableSearchQuery);
             }
         }
 
         if (personPage == null) {
             personPage = active
-                ? getRelevantActivePersons(signedInUser, personPageableSearchQuery)
-                : getRelevantInactivePersons(signedInUser, personPageableSearchQuery);
+                    ? getRelevantActivePersons(signedInUser, personPageableSearchQuery)
+                    : getRelevantInactivePersons(signedInUser, personPageableSearchQuery);
         }
 
         final Page<PersonDto> personDtoPage = personPage(personPage, accountSort, selectedYear, now);
         final boolean showPersonnelNumberColumn = personDtoPage.getContent().stream()
-            .anyMatch(personDto -> hasText(personDto.getPersonnelNumber()));
+                .anyMatch(personDto -> hasText(personDto.getPersonnelNumber()));
 
         final String sortQuery = pageable.getSort().stream().map(order -> order.getProperty() + "," + order.getDirection()).collect(joining("&"));
 
@@ -188,28 +188,28 @@ public class PersonsViewController implements HasLaunchpad {
 
         if (signedInUser.hasRole(BOSS) || signedInUser.hasRole(OFFICE)) {
             departmentService.getAllDepartments().stream()
-                .collect(toCollection(() -> relevantDepartments));
+                    .collect(toCollection(() -> relevantDepartments));
         }
 
         if (signedInUser.hasRole(DEPARTMENT_HEAD)) {
             departmentService.getManagedDepartmentsOfDepartmentHead(signedInUser).stream()
-                .collect(toCollection(() -> relevantDepartments));
+                    .collect(toCollection(() -> relevantDepartments));
         }
 
         if (signedInUser.hasRole(SECOND_STAGE_AUTHORITY)) {
             departmentService.getManagedDepartmentsOfSecondStageAuthority(signedInUser).stream()
-                .collect(toCollection(() -> relevantDepartments));
+                    .collect(toCollection(() -> relevantDepartments));
         }
 
         if (!signedInUser.isPrivileged()) {
             departmentService.getAssignedDepartmentsOfMember(signedInUser).stream()
-                .collect(toCollection(() -> relevantDepartments));
+                    .collect(toCollection(() -> relevantDepartments));
         }
 
         return Stream.of(relevantDepartments).flatMap(Set::stream)
-            .distinct()
-            .sorted(comparing(Department::getName))
-            .collect(toList());
+                .distinct()
+                .sorted(comparing(Department::getName))
+                .collect(toList());
     }
 
     private Page<PersonDto> personPage(Page<Person> personPage, Sort originalAccountSort, int year, LocalDate now) {
@@ -230,26 +230,26 @@ public class PersonsViewController implements HasLaunchpad {
                 final double remainingVacationDays = vacationDaysLeft.getRemainingVacationDaysLeft(now, doRemainingVacationDaysExpire, expiryDate).doubleValue();
 
                 personDtoBuilder
-                    .entitlementYear(holidaysAccount.getAnnualVacationDays().doubleValue())
-                    .entitlementActual(holidaysAccount.getActualVacationDays().doubleValue())
-                    .entitlementRemaining(holidaysAccount.getRemainingVacationDays().doubleValue())
-                    .vacationDaysLeft(vacationDaysLeft.getVacationDays().doubleValue())
-                    .vacationDaysLeftRemaining(remainingVacationDays);
+                        .entitlementYear(holidaysAccount.getAnnualVacationDays().doubleValue())
+                        .entitlementActual(holidaysAccount.getActualVacationDays().doubleValue())
+                        .entitlementRemaining(holidaysAccount.getRemainingVacationDays().doubleValue())
+                        .vacationDaysLeft(vacationDaysLeft.getVacationDays().doubleValue())
+                        .vacationDaysLeftRemaining(remainingVacationDays);
             }
 
             final String lastName = person.getFirstName() == null && person.getLastName() == null
-                ? person.getUsername()
-                : person.getLastName();
+                    ? person.getUsername()
+                    : person.getLastName();
 
             personDtoBuilder
-                .id(person.getId())
-                .gravatarUrl(person.getGravatarURL())
-                .firstName(person.getFirstName())
-                .niceName(person.getNiceName())
-                .lastName(lastName);
+                    .id(person.getId())
+                    .gravatarUrl(person.getGravatarURL())
+                    .firstName(person.getFirstName())
+                    .niceName(person.getNiceName())
+                    .lastName(lastName);
 
             personBasedataService.getBasedataByPersonId(person.getId())
-                .ifPresent(personBasedata -> personDtoBuilder.personnelNumber(personBasedata.getPersonnelNumber()));
+                    .ifPresent(personBasedata -> personDtoBuilder.personnelNumber(personBasedata.getPersonnelNumber()));
 
             final PersonDto personDto = personDtoBuilder.build();
 
@@ -291,8 +291,8 @@ public class PersonsViewController implements HasLaunchpad {
 
     private static List<HtmlOptionDto> htmlOptionDto(String propertyPrefix, String property, Sort.Order order) {
         return List.of(
-            new HtmlOptionDto(String.format("persons.sort.%s.asc", property), propertyPrefix + "." + property + ",asc", order != null && order.isAscending()),
-            new HtmlOptionDto(String.format("persons.sort.%s.desc", property), propertyPrefix + "." + property + ",desc", order != null && order.isDescending())
+                new HtmlOptionDto(String.format("persons.sort.%s.asc", property), propertyPrefix + "." + property + ",asc", order != null && order.isAscending()),
+                new HtmlOptionDto(String.format("persons.sort.%s.desc", property), propertyPrefix + "." + property + ",desc", order != null && order.isDescending())
         );
     }
 }

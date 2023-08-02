@@ -54,9 +54,9 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isForbidden());
@@ -99,13 +99,13 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
     void indexAsOfficeUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setUsername("user");
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isOk());
@@ -116,12 +116,12 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
     void indexAsBossUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isOk());
@@ -132,13 +132,13 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
     void indexForSameUserIsForbidden() throws Exception {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setUsername("user");
 
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(personService.getSignedInUser()).thenReturn(person);
 
-        when(personCalendarService.getPersonCalendar(1)).thenReturn(Optional.empty());
+        when(personCalendarService.getPersonCalendar(1L)).thenReturn(Optional.empty());
 
         perform(get("/web/calendars/share/persons/1"))
             .andExpect(status().isOk());
@@ -157,7 +157,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/me").with(csrf()))
             .andExpect(status().isForbidden());
@@ -201,7 +201,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/me")
             .param("calendarPeriod", "YEAR")
@@ -218,7 +218,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/me")
             .param("calendarPeriod", "YEAR")
@@ -235,7 +235,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/me")
             .param("calendarPeriod", "YEAR")
@@ -259,7 +259,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/me").param("unlink", "").with(csrf()))
             .andExpect(status().isForbidden());
@@ -303,7 +303,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/me").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
@@ -316,7 +316,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/me").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())
@@ -329,7 +329,7 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
 
         final Person person = new Person();
         person.setUsername("user");
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/calendars/share/persons/1/me").param("unlink", "").with(csrf()))
             .andExpect(status().is3xxRedirection())

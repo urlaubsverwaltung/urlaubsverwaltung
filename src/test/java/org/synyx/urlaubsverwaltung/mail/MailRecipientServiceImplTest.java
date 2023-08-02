@@ -61,12 +61,12 @@ class MailRecipientServiceImplTest {
 
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
-        normalUser.setId(1);
+        normalUser.setId(1L);
         normalUser.setPermissions(List.of(USER));
 
         // given bossAndOffice
         final Person bossAndOffice = new Person("bossAndOffice", "bossAndOffice", "bossAndOffice", "bossAndOffice@example.org");
-        bossAndOffice.setId(2);
+        bossAndOffice.setId(2L);
         bossAndOffice.setPermissions(List.of(USER, BOSS, OFFICE));
         bossAndOffice.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAndOffice));
@@ -84,30 +84,30 @@ class MailRecipientServiceImplTest {
 
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
-        normalUser.setId(1);
+        normalUser.setId(1L);
         normalUser.setPermissions(List.of(USER));
 
         // given boss all
         final Person bossAll = new Person("boss", "boss", "boss", "boss@example.org");
-        bossAll.setId(2);
+        bossAll.setId(2L);
         bossAll.setPermissions(List.of(USER, BOSS));
         bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
         // given department head
         final Person departmentHead = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
-        departmentHead.setId(5);
+        departmentHead.setId(5L);
         departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD));
         departmentHead.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         // given second stage
         final Person secondStage = new Person("secondStage", "secondStage", "secondStage", "secondStage@example.org");
-        secondStage.setId(6);
+        secondStage.setId(6L);
         secondStage.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
         secondStage.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
 
         final Person secondStageWithoutMailtNotification = new Person("secondStage", "secondStage", "secondStage", "secondStage@example.org");
-        secondStageWithoutMailtNotification.setId(7);
+        secondStageWithoutMailtNotification.setId(7L);
         secondStageWithoutMailtNotification.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
         secondStageWithoutMailtNotification.setNotifications(List.of());
 
@@ -134,12 +134,12 @@ class MailRecipientServiceImplTest {
 
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
-        normalUser.setId(1);
+        normalUser.setId(1L);
         normalUser.setPermissions(List.of(USER));
 
         // given office all
         final Person officeAll = new Person("office", "office", "office", "office@example.org");
-        officeAll.setId(3);
+        officeAll.setId(3L);
         officeAll.setPermissions(List.of(USER, OFFICE));
         officeAll.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED));
         when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(officeAll));
@@ -162,12 +162,12 @@ class MailRecipientServiceImplTest {
 
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
-        normalUser.setId(1);
+        normalUser.setId(1L);
         normalUser.setPermissions(List.of(USER));
 
         // given office all
         final Person officeAll = new Person("office", "office", "office", "office@example.org");
-        officeAll.setId(3);
+        officeAll.setId(3L);
         officeAll.setPermissions(List.of(USER, OFFICE, DEPARTMENT_HEAD));
         officeAll.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED));
         when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(officeAll));
@@ -193,11 +193,11 @@ class MailRecipientServiceImplTest {
 
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
-        normalUser.setId(1);
+        normalUser.setId(1L);
 
         // given boss all
         final Person bossAll = new Person("boss", "boss", "boss", "boss@example.org");
-        bossAll.setId(2);
+        bossAll.setId(2L);
         bossAll.setPermissions(List.of(USER, BOSS));
         bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
@@ -215,11 +215,11 @@ class MailRecipientServiceImplTest {
 
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
-        normalUser.setId(1);
+        normalUser.setId(1L);
 
         // given boss all
         final Person bossAll = new Person("boss", "boss", "boss", "boss@example.org");
-        bossAll.setId(2);
+        bossAll.setId(2L);
         bossAll.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED));
         when(personService.getActivePersonsByRole(BOSS)).thenReturn(List.of(bossAll));
 
@@ -235,7 +235,7 @@ class MailRecipientServiceImplTest {
 
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
-        normalUser.setId(1);
+        normalUser.setId(1L);
 
         sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_OVERTIME_MANAGEMENT_APPLIED);
         verify(personService).getActivePersonsByRole(role);
@@ -248,7 +248,7 @@ class MailRecipientServiceImplTest {
 
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
-        normalUser.setId(1);
+        normalUser.setId(1L);
 
         when(responsiblePersonService.getResponsibleDepartmentHeads(normalUser)).thenReturn(List.of());
 
@@ -265,7 +265,7 @@ class MailRecipientServiceImplTest {
 
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
-        normalUser.setId(1);
+        normalUser.setId(1L);
 
         when(responsiblePersonService.getResponsibleDepartmentHeads(normalUser)).thenReturn(List.of());
 
@@ -283,7 +283,7 @@ class MailRecipientServiceImplTest {
 
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
-        normalUser.setId(1);
+        normalUser.setId(1L);
 
         sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_PERSON_NEW_MANAGEMENT_ALL);
         verify(personService, never()).getActivePersonsByRole(role);
@@ -297,7 +297,7 @@ class MailRecipientServiceImplTest {
 
         // given user application
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
-        normalUser.setId(1);
+        normalUser.setId(1L);
 
         sut.getRecipientsOfInterest(normalUser, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED);
         verify(personService, never()).getActivePersonsByRole(role);
@@ -309,18 +309,18 @@ class MailRecipientServiceImplTest {
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
         normalUser.setPermissions(List.of(USER));
         normalUser.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
-        normalUser.setId(1);
+        normalUser.setId(1L);
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
         colleague.setPermissions(List.of(USER));
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
-        colleague.setId(4);
+        colleague.setId(4L);
 
         final Person departmentHead = new Person("departmentHead", "departmentHead", "departmentHead", "departmentHead@example.org");
-        departmentHead.setId(2);
+        departmentHead.setId(2L);
 
         final Person secondStageAuthority = new Person("secondStageAuthority", "secondStageAuthority", "secondStageAuthority", "secondStageAuthority@example.org");
-        secondStageAuthority.setId(1);
+        secondStageAuthority.setId(1L);
 
         final Department department = new Department();
         department.setMembers(List.of(normalUser, colleague, departmentHead));
@@ -340,17 +340,17 @@ class MailRecipientServiceImplTest {
         final Person normalUser = new Person("normalUser", "normalUser", "normalUser", "normalUser@example.org");
         normalUser.setPermissions(List.of(USER));
         normalUser.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
-        normalUser.setId(1);
+        normalUser.setId(1L);
 
         final Person colleague = new Person("colleague", "colleague", "colleague", "colleague@example.org");
         colleague.setPermissions(List.of(USER));
         colleague.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED));
-        colleague.setId(4);
+        colleague.setId(4L);
 
         final Person colleagueWithoutMailNotification = new Person("colleagueWithoutMailNotification", "colleagueWithoutMailNotification", "colleagueWithoutMailNotification", "colleagueWithoutMailNotification@example.org");
         colleagueWithoutMailNotification.setPermissions(List.of(USER));
         colleagueWithoutMailNotification.setNotifications(List.of());
-        colleagueWithoutMailNotification.setId(5);
+        colleagueWithoutMailNotification.setId(5L);
 
         when(personService.getActivePersons()).thenReturn(List.of(normalUser, colleague, colleagueWithoutMailNotification));
         when(departmentService.getNumberOfDepartments()).thenReturn(0L);

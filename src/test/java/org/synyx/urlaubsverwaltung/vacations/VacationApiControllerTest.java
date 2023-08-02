@@ -70,7 +70,7 @@ class VacationApiControllerTest {
         when(applicationService.getApplicationsForACertainPeriodAndPersonAndState(any(LocalDate.class), any(LocalDate.class), eq(person), eq(ALLOWED_CANCELLATION_REQUESTED)))
             .thenReturn(List.of(vacation2));
 
-        when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
         perform(get("/api/persons/23/vacations")
             .param("from", "2016-01-01")
@@ -89,7 +89,7 @@ class VacationApiControllerTest {
     @Test
     void getVacationsNoPersonFound() throws Exception {
 
-        when(personService.getPersonByID(23)).thenReturn(Optional.empty());
+        when(personService.getPersonByID(23L)).thenReturn(Optional.empty());
 
         perform(get("/api/persons/23/vacations")
             .param("from", "2016-01-01")
@@ -158,7 +158,7 @@ class VacationApiControllerTest {
         final List<Department> departments = List.of(new Department(), new Department());
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(departments);
 
-        when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
         final Application vacationAllowed = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
             of(2016, 5, 19), of(2016, 5, 20), FULL);
@@ -188,7 +188,7 @@ class VacationApiControllerTest {
 
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
 
-        when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(23L)).thenReturn(Optional.of(person));
 
         final Application vacationAllowed = createApplication(new Person("muster", "Muster", "Marlene", "muster@example.org"),
             of(2016, 5, 19), of(2016, 5, 20), FULL);
@@ -217,7 +217,7 @@ class VacationApiControllerTest {
     @Test
     void getVacationsOfOthersOrDepartmentColleaguesNoPersonFound() throws Exception {
 
-        when(personService.getPersonByID(23)).thenReturn(Optional.empty());
+        when(personService.getPersonByID(23L)).thenReturn(Optional.empty());
 
         perform(get("/api/persons/23/vacations")
             .param("from", "2016-01-01")

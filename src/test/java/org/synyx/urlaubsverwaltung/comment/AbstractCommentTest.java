@@ -38,13 +38,13 @@ class AbstractCommentTest {
     @Test
     void equals() {
         final TestComment commentOne = new TestComment(Clock.systemUTC());
-        commentOne.setId(1);
+        commentOne.setId(1L);
 
         final TestComment commentOneOne = new TestComment(Clock.systemUTC());
-        commentOneOne.setId(1);
+        commentOneOne.setId(1L);
 
         final TestComment commentTwo = new TestComment(Clock.systemUTC());
-        commentTwo.setId(2);
+        commentTwo.setId(2L);
 
         assertThat(commentOne)
             .isEqualTo(commentOne)
@@ -57,7 +57,7 @@ class AbstractCommentTest {
     @Test
     void hashCodeTest() {
         final TestComment commentOne = new TestComment(Clock.systemUTC());
-        commentOne.setId(1);
+        commentOne.setId(1L);
 
         assertThat(commentOne.hashCode()).isEqualTo(32);
     }

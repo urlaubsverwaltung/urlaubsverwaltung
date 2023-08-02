@@ -63,21 +63,21 @@ class PersonServiceImpl implements PersonService {
     public Person create(String username, String firstName, String lastName, String email) {
 
         final List<MailNotification> defaultMailNotifications = List.of(
-            NOTIFICATION_EMAIL_APPLICATION_APPLIED,
-            NOTIFICATION_EMAIL_APPLICATION_ALLOWED,
-            NOTIFICATION_EMAIL_APPLICATION_REVOKED,
-            NOTIFICATION_EMAIL_APPLICATION_REJECTED,
-            NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED,
-            NOTIFICATION_EMAIL_APPLICATION_CANCELLATION,
-            NOTIFICATION_EMAIL_APPLICATION_EDITED,
-            NOTIFICATION_EMAIL_APPLICATION_CONVERTED,
-            NOTIFICATION_EMAIL_APPLICATION_UPCOMING,
-            NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT,
-            NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING
+                NOTIFICATION_EMAIL_APPLICATION_APPLIED,
+                NOTIFICATION_EMAIL_APPLICATION_ALLOWED,
+                NOTIFICATION_EMAIL_APPLICATION_REVOKED,
+                NOTIFICATION_EMAIL_APPLICATION_REJECTED,
+                NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED,
+                NOTIFICATION_EMAIL_APPLICATION_CANCELLATION,
+                NOTIFICATION_EMAIL_APPLICATION_EDITED,
+                NOTIFICATION_EMAIL_APPLICATION_CONVERTED,
+                NOTIFICATION_EMAIL_APPLICATION_UPCOMING,
+                NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT,
+                NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING
         );
 
         final List<Role> defaultPermissions = List.of(
-            USER
+                USER
         );
 
         return create(username, firstName, lastName, email, defaultMailNotifications, defaultPermissions);
@@ -139,7 +139,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public Optional<Person> getPersonByID(Integer id) {
+    public Optional<Person> getPersonByID(Long id) {
         return personRepository.findById(id);
     }
 
@@ -235,7 +235,7 @@ class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public int numberOfPersonsWithOfficeRoleExcludingPerson(int excludingId) {
+    public int numberOfPersonsWithOfficeRoleExcludingPerson(long excludingId) {
         return personRepository.countByPermissionsContainingAndIdNotIn(OFFICE, List.of(excludingId));
     }
 

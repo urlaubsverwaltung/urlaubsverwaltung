@@ -494,7 +494,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
     }
 
     @Override
-    public Optional<Application> get(Integer applicationId) {
+    public Optional<Application> get(Long applicationId) {
         return applicationService.getApplicationById(applicationId);
     }
 

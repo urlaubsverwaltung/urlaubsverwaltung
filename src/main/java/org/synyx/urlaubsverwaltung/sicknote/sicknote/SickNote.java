@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class SickNote {
 
-    private final Integer id;
+    private final Long id;
     private final Person person;
     private final Person applier;
     private final SickNoteType sickNoteType;
@@ -29,7 +29,7 @@ public class SickNote {
     private final SickNoteStatus status;
     private final WorkingTimeCalendar workingTimeCalendar;
 
-    private SickNote(Integer id, Person person, Person applier, SickNoteType sickNoteType, LocalDate startDate,
+    private SickNote(Long id, Person person, Person applier, SickNoteType sickNoteType, LocalDate startDate,
                      LocalDate endDate, DayLength dayLength, LocalDate aubStartDate, LocalDate aubEndDate,
                      LocalDate lastEdited, LocalDate endOfSickPayNotificationSend, SickNoteStatus status,
                      WorkingTimeCalendar workingTimeCalendar) {
@@ -49,7 +49,7 @@ public class SickNote {
         this.workingTimeCalendar = workingTimeCalendar;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -140,7 +140,7 @@ public class SickNote {
         for (LocalDate localDate : dateRange) {
             final BigDecimal workingTime = workingTimeCalendar.workingTime(localDate).orElse(BigDecimal.ZERO);
             if (dayLength.isHalfDay()) {
-                workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2),1, RoundingMode.CEILING));
+                workingTimeSum = workingTimeSum.add(workingTime.divide(BigDecimal.valueOf(2), 1, RoundingMode.CEILING));
             } else {
                 workingTimeSum = workingTimeSum.add(workingTime);
             }
@@ -171,21 +171,21 @@ public class SickNote {
     @Override
     public String toString() {
         return "SickNote{" +
-                "id=" + id +
-                ", person=" + person +
-                ", applier=" + applier +
-                ", sickNoteType=" + sickNoteType +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", dayLength=" + dayLength +
-                ", aubStartDate=" + aubStartDate +
-                ", aubEndDate=" + aubEndDate +
-                ", lastEdited=" + lastEdited +
-                ", endOfSickPayNotificationSend=" + endOfSickPayNotificationSend +
-                ", status=" + status +
-                ", workDays=" + getWorkDays() +
-                ", workDaysWithAub=" + getWorkDaysWithAub() +
-                '}';
+            "id=" + id +
+            ", person=" + person +
+            ", applier=" + applier +
+            ", sickNoteType=" + sickNoteType +
+            ", startDate=" + startDate +
+            ", endDate=" + endDate +
+            ", dayLength=" + dayLength +
+            ", aubStartDate=" + aubStartDate +
+            ", aubEndDate=" + aubEndDate +
+            ", lastEdited=" + lastEdited +
+            ", endOfSickPayNotificationSend=" + endOfSickPayNotificationSend +
+            ", status=" + status +
+            ", workDays=" + getWorkDays() +
+            ", workDaysWithAub=" + getWorkDaysWithAub() +
+            '}';
     }
 
     @Override
@@ -194,11 +194,11 @@ public class SickNote {
         if (o == null || getClass() != o.getClass()) return false;
         SickNote sickNote = (SickNote) o;
         return Objects.equals(person, sickNote.person)
-                && Objects.equals(applier, sickNote.applier)
-                && Objects.equals(sickNoteType, sickNote.sickNoteType)
-                && Objects.equals(startDate, sickNote.startDate)
-                && Objects.equals(endDate, sickNote.endDate)
-                && dayLength == sickNote.dayLength;
+            && Objects.equals(applier, sickNote.applier)
+            && Objects.equals(sickNoteType, sickNote.sickNoteType)
+            && Objects.equals(startDate, sickNote.startDate)
+            && Objects.equals(endDate, sickNote.endDate)
+            && dayLength == sickNote.dayLength;
     }
 
     @Override
@@ -212,22 +212,22 @@ public class SickNote {
 
     public static Builder builder(SickNote sickNote) {
         return new Builder()
-                .id(sickNote.getId())
-                .person(sickNote.getPerson())
-                .applier(sickNote.getApplier())
-                .sickNoteType(sickNote.getSickNoteType())
-                .startDate(sickNote.getStartDate())
-                .endDate(sickNote.getEndDate())
-                .dayLength(sickNote.getDayLength())
-                .aubStartDate(sickNote.getAubStartDate())
-                .aubEndDate(sickNote.getAubEndDate())
-                .lastEdited(sickNote.getLastEdited())
-                .endOfSickPayNotificationSend(sickNote.getEndOfSickPayNotificationSend())
-                .status(sickNote.getStatus());
+            .id(sickNote.getId())
+            .person(sickNote.getPerson())
+            .applier(sickNote.getApplier())
+            .sickNoteType(sickNote.getSickNoteType())
+            .startDate(sickNote.getStartDate())
+            .endDate(sickNote.getEndDate())
+            .dayLength(sickNote.getDayLength())
+            .aubStartDate(sickNote.getAubStartDate())
+            .aubEndDate(sickNote.getAubEndDate())
+            .lastEdited(sickNote.getLastEdited())
+            .endOfSickPayNotificationSend(sickNote.getEndOfSickPayNotificationSend())
+            .status(sickNote.getStatus());
     }
 
     public static class Builder {
-        private Integer id;
+        private Long id;
         private Person person;
         private Person applier;
         private SickNoteType sickNoteType;
@@ -241,7 +241,7 @@ public class SickNote {
         private SickNoteStatus status;
         private WorkingTimeCalendar workingTimeCalendar;
 
-        public Builder id(Integer id) {
+        public Builder id(Long id) {
             this.id = id;
             return this;
         }
@@ -308,7 +308,7 @@ public class SickNote {
 
         public SickNote build() {
             return new SickNote(id, person, applier, sickNoteType, startDate, endDate, dayLength, aubStartDate,
-                    aubEndDate, lastEdited, endOfSickPayNotificationSend, status, workingTimeCalendar);
+                aubEndDate, lastEdited, endOfSickPayNotificationSend, status, workingTimeCalendar);
         }
     }
 }

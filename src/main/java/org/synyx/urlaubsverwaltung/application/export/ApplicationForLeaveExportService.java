@@ -74,7 +74,7 @@ class ApplicationForLeaveExportService {
 
         final Page<Person> relevantMembersPage = getMembersForPerson(person, pageableSearchQuery);
         final List<Person> relevantMembers = relevantMembersPage.getContent();
-        final List<Integer> relevantPersonIds = relevantMembers.stream().map(Person::getId).collect(toList());
+        final List<Long> relevantPersonIds = relevantMembers.stream().map(Person::getId).collect(toList());
 
         if (relevantPersonIds.isEmpty()) {
             return Page.empty();

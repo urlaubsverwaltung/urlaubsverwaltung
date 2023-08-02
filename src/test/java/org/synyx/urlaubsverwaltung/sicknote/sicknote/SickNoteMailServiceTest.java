@@ -72,14 +72,14 @@ class SickNoteMailServiceTest {
         when(personService.getActivePersonsByRole(OFFICE)).thenReturn(List.of(office));
 
         final SickNote sickNoteA = SickNote.builder()
-            .id(1)
+            .id(1L)
             .person(person)
             .startDate(LocalDate.of(2022, 4, 1))
             .endDate(LocalDate.of(2022, 4, 13))
             .build();
 
         final SickNote sickNoteB = SickNote.builder()
-            .id(2)
+            .id(2L)
             .person(person)
             .startDate(LocalDate.of(2022, 4, 10))
             .endDate(LocalDate.of(2022, 4, 20))
@@ -145,16 +145,16 @@ class SickNoteMailServiceTest {
     void ensureSendSickNoteCreatedByManagementToSickPerson() {
 
         final Person management = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        management.setId(1);
+        management.setId(1L);
         management.setPermissions(List.of(USER, OFFICE));
 
         final Person person = new Person("person", "person", "theo", "theo@example.org");
-        person.setId(2);
+        person.setId(2L);
         person.setPermissions(Set.of(USER));
         person.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_CREATED_BY_MANAGEMENT));
 
         final SickNote sickNote = SickNote.builder()
-            .id(2)
+            .id(2L)
             .person(person)
             .applier(management)
             .startDate(LocalDate.of(2022, 3, 10))
@@ -176,17 +176,17 @@ class SickNoteMailServiceTest {
     void ensureSendSickNoteCreatedToColleagues() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final SickNote sickNote = SickNote.builder()
-            .id(2)
+            .id(2L)
             .person(person)
             .startDate(LocalDate.of(2022, 4, 10))
             .endDate(LocalDate.of(2022, 4, 20))
             .build();
 
         final Person colleague = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        colleague.setId(1);
+        colleague.setId(1L);
         colleague.setPermissions(Set.of(USER));
         colleague.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED));
         when(mailRecipientService.getColleagues(person, NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CREATED)).thenReturn(List.of(colleague));
@@ -206,16 +206,16 @@ class SickNoteMailServiceTest {
     void ensureSendSickNoteEditedByManagementToSickPerson() {
 
         final Person management = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        management.setId(1);
+        management.setId(1L);
         management.setPermissions(List.of(USER, OFFICE));
 
         final Person person = new Person("person", "person", "theo", "theo@example.org");
-        person.setId(2);
+        person.setId(2L);
         person.setPermissions(Set.of(USER));
         person.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_EDITED_BY_MANAGEMENT));
 
         final SickNote sickNote = SickNote.builder()
-            .id(2)
+            .id(2L)
             .person(person)
             .applier(management)
             .startDate(LocalDate.of(2022, 3, 10))
@@ -237,16 +237,16 @@ class SickNoteMailServiceTest {
     void ensureSendSickNoteCancelledByManagementToSickPerson() {
 
         final Person management = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        management.setId(1);
+        management.setId(1L);
         management.setPermissions(List.of(USER, OFFICE));
 
         final Person person = new Person("person", "person", "theo", "theo@example.org");
-        person.setId(2);
+        person.setId(2L);
         person.setPermissions(Set.of(USER));
         person.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_CANCELLED_BY_MANAGEMENT));
 
         final SickNote sickNote = SickNote.builder()
-            .id(2)
+            .id(2L)
             .person(person)
             .applier(management)
             .startDate(LocalDate.of(2022, 3, 10))
@@ -268,17 +268,17 @@ class SickNoteMailServiceTest {
     void ensureSendSickNoteCancelToColleagues() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final SickNote sickNote = SickNote.builder()
-            .id(2)
+            .id(2L)
             .person(person)
             .startDate(LocalDate.of(2022, 4, 10))
             .endDate(LocalDate.of(2022, 4, 20))
             .build();
 
         final Person colleague = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        colleague.setId(1);
+        colleague.setId(1L);
         colleague.setPermissions(Set.of(USER));
         colleague.setNotifications(Set.of(NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED));
         when(mailRecipientService.getColleagues(person, NOTIFICATION_EMAIL_SICK_NOTE_COLLEAGUES_CANCELLED)).thenReturn(List.of(colleague));

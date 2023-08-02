@@ -33,7 +33,7 @@ class AbsenceMappingServiceImplTest {
         when(absenceMappingRepository.save(any(AbsenceMapping.class))).then(returnsFirstArg());
 
         final String eventId = "eventId";
-        final AbsenceMapping absenceMapping = sut.create(42, VACATION, eventId);
+        final AbsenceMapping absenceMapping = sut.create(42L, VACATION, eventId);
         assertThat(absenceMapping.getAbsenceId()).isEqualTo(42);
         assertThat(absenceMapping.getAbsenceMappingType()).isEqualTo(VACATION);
         assertThat(absenceMapping.getEventId()).isEqualTo(eventId);
@@ -45,7 +45,7 @@ class AbsenceMappingServiceImplTest {
         when(absenceMappingRepository.save(any(AbsenceMapping.class))).then(returnsFirstArg());
 
         final String eventId = "eventId";
-        final AbsenceMapping absenceMapping = sut.create(21, SICKNOTE, eventId);
+        final AbsenceMapping absenceMapping = sut.create(21L, SICKNOTE, eventId);
         assertThat(absenceMapping.getAbsenceId()).isEqualTo(21);
         assertThat(absenceMapping.getAbsenceMappingType()).isEqualTo(SICKNOTE);
         assertThat(absenceMapping.getEventId()).isEqualTo(eventId);
@@ -54,7 +54,7 @@ class AbsenceMappingServiceImplTest {
     @Test
     void shouldCallAbsenceMappingDaoDelete() {
 
-        final AbsenceMapping absenceMapping = new AbsenceMapping(42, VACATION, "dummyEvent");
+        final AbsenceMapping absenceMapping = new AbsenceMapping(42L, VACATION, "dummyEvent");
         sut.delete(absenceMapping);
 
         verify(absenceMappingRepository).delete(absenceMapping);
@@ -63,21 +63,21 @@ class AbsenceMappingServiceImplTest {
     @Test
     void shouldCallAbsenceMappingDaoFind() {
 
-        sut.getAbsenceByIdAndType(21, SICKNOTE);
+        sut.getAbsenceByIdAndType(21L, SICKNOTE);
 
-        verify(absenceMappingRepository).findAbsenceMappingByAbsenceIdAndAbsenceMappingType(21, SICKNOTE);
+        verify(absenceMappingRepository).findAbsenceMappingByAbsenceIdAndAbsenceMappingType(21L, SICKNOTE);
     }
 
     @Test
     void equals() {
         final AbsenceMapping absenceMappingOne = new AbsenceMapping();
-        absenceMappingOne.setId(1);
+        absenceMappingOne.setId(1L);
 
         final AbsenceMapping absenceMappingOneOne = new AbsenceMapping();
-        absenceMappingOneOne.setId(1);
+        absenceMappingOneOne.setId(1L);
 
         final AbsenceMapping absenceMappingTwo = new AbsenceMapping();
-        absenceMappingTwo.setId(2);
+        absenceMappingTwo.setId(2L);
 
         assertThat(absenceMappingOne)
             .isEqualTo(absenceMappingOne)
@@ -90,7 +90,7 @@ class AbsenceMappingServiceImplTest {
     @Test
     void hashCodeTest() {
         final AbsenceMapping absenceMappingOne = new AbsenceMapping();
-        absenceMappingOne.setId(1);
+        absenceMappingOne.setId(1L);
 
         assertThat(absenceMappingOne.hashCode()).isEqualTo(32);
     }

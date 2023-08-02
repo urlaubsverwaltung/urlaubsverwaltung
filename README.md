@@ -60,7 +60,7 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 
 ### Voraussetzungen
 
-* [JDK 11](https://adoptium.net)
+* [JDK 17](https://adoptium.net)
 * [MariaDB Datenbank (v10.6)](https://mariadb.org/)
 * [Security Provider](#security-provider-konfigurieren)
 
@@ -112,7 +112,6 @@ Nachstehend alle spezifischen Konfigurationsmöglichkeiten der Urlaubsverwaltung
 
 ```properties
 # account
-uv.account.default-vacation-days=20 # deprecated - kann über 'Einstellungen' gesetzt werden wenn auf '-1' gesetzt
 uv.account.update.cron=0 0 5 1 1 *
 
 # application
@@ -176,15 +175,6 @@ uv.security.oidc.scopes=openid,profile,email
 
 # sick-note
 uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
-
-# workingtime - deprecated - kann über 'Einstellungen' gesetzt werden 
-# wenn auf uv.workingtime.default-working-days[0]=-1 gesetzt
-# (monday till friday)
-uv.workingtime.default-working-days[0]=1
-uv.workingtime.default-working-days[1]=2
-uv.workingtime.default-working-days[2]=3
-uv.workingtime.default-working-days[3]=4
-uv.workingtime.default-working-days[4]=5
 ```
 
 
@@ -211,7 +201,7 @@ Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkei
     * Authentifizierung via Active Directory
     * Es müssen die Active Directory Domain und LDAP URL konfiguriert
       sein, damit eine Authentifizierung via Active Directory möglich ist.
-* `default`
+* `development`
     * für lokalen Entwicklungsmodus und [Demodaten-Modus](#demodaten-modus)
     
 Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt.
@@ -388,7 +378,7 @@ Abschnitte an. Bei Fragen kannst du gerne [ein neue Q&A](https://github.com/urla
 
 ### Voraussetzungen
 
-* [JDK 11](https://adoptium.net)
+* [JDK 17](https://adoptium.net)
 * [Docker 20.10.+](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 

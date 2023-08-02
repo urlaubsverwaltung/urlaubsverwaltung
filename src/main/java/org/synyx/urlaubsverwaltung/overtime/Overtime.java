@@ -35,7 +35,7 @@ public class Overtime {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     private Person person;
@@ -65,11 +65,11 @@ public class Overtime {
         this.lastModificationDate = LocalDate.now(UTC);
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -178,12 +178,12 @@ public class Overtime {
     @Override
     public String toString() {
         return "Overtime{" +
-            "id=" + getId() +
-            ", startDate=" + startDate +
-            ", endDate=" + endDate +
-            ", duration=" + duration +
-            ", person=" + person +
-            '}';
+                "id=" + getId() +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", duration=" + duration +
+                ", person=" + person +
+                '}';
     }
 
     @Override

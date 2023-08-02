@@ -12,10 +12,10 @@ public class SecurityConfigurationProperties {
         OIDC,
         LDAP,
         ACTIVEDIRECTORY,
-        DEFAULT
+        DEVELOPMENT
     }
 
-    private AuthenticationProvider auth = AuthenticationProvider.DEFAULT;
+    private AuthenticationProvider auth = AuthenticationProvider.OIDC;
 
     public AuthenticationProvider getAuth() {
         return auth;

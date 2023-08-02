@@ -119,7 +119,7 @@ class VacationDaysReminderServiceTest {
         assertThat(capturedMail.getTemplateName()).isEqualTo("account_cron_currently_left_vacation_days");
         assertThat(capturedMail.getTemplateModel()).contains(
             entry("recipientNiceName", "Marlene Muster"),
-            entry("personId", 42),
+            entry("personId", 42L),
             entry("vacationDaysLeft", TEN),
             entry("nextYear", 2023)
         );
@@ -195,7 +195,7 @@ class VacationDaysReminderServiceTest {
         assertThat(capturedMail.getTemplateName()).isEqualTo("account_cron_remind_remaining_vacation_days");
         assertThat(capturedMail.getTemplateModel()).contains(
             entry("recipientNiceName", "Marlene Muster"),
-            entry("personId", 42),
+            entry("personId", 42L),
             entry("remainingVacationDays", TEN),
             entry("dayBeforeExpiryDate", LocalDate.of(2022, 3, 31))
         );
@@ -329,7 +329,7 @@ class VacationDaysReminderServiceTest {
         assertThat(capturedMail.getTemplateName()).isEqualTo("account_cron_expired_remaining_vacation_days");
         assertThat(capturedMail.getTemplateModel()).contains(
             entry("recipientNiceName", "Marlene Muster"),
-            entry("personId", 42),
+            entry("personId", 42L),
             entry("expiredRemainingVacationDays", BigDecimal.valueOf(9L)),
             entry("totalLeftVacationDays", BigDecimal.valueOf(11L)),
             entry("remainingVacationDaysNotExpiring", ONE),
@@ -341,7 +341,7 @@ class VacationDaysReminderServiceTest {
         final Person person = new Person();
         person.setFirstName("Marlene");
         person.setLastName("Muster");
-        person.setId(42);
+        person.setId(42L);
         return person;
     }
 }

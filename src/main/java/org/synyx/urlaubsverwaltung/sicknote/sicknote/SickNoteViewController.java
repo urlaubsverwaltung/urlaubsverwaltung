@@ -110,7 +110,7 @@ class SickNoteViewController implements HasLaunchpad {
     }
 
     @GetMapping("/sicknote/{id}")
-    public String sickNoteDetails(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException {
+    public String sickNoteDetails(@PathVariable("id") Long id, Model model) throws UnknownSickNoteException {
 
         final Person signedInUser = personService.getSignedInUser();
         final SickNote sickNote = getSickNote(id);
@@ -145,7 +145,7 @@ class SickNoteViewController implements HasLaunchpad {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_ADD')")
     @GetMapping("/sicknote/new")
-    public String newSickNote(@RequestParam(value = "person", required = false) Integer personId, Model model) throws UnknownPersonException {
+    public String newSickNote(@RequestParam(value = "person", required = false) Long personId, Model model) throws UnknownPersonException {
 
         final Person signedInUser = personService.getSignedInUser();
 
@@ -175,16 +175,16 @@ class SickNoteViewController implements HasLaunchpad {
         model.addAttribute("signedInUser", signedInUser);
 
         final SickNote sickNote = SickNote.builder()
-                .id(sickNoteFormDto.getId())
-                .person(sickNoteFormDto.getPerson())
-                .applier(signedInUser)
-                .sickNoteType(sickNoteFormDto.getSickNoteType())
-                .startDate(sickNoteFormDto.getStartDate())
-                .endDate(sickNoteFormDto.getEndDate())
-                .dayLength(sickNoteFormDto.getDayLength())
-                .aubStartDate(sickNoteFormDto.getAubStartDate())
-                .aubEndDate(sickNoteFormDto.getAubEndDate())
-                .build();
+            .id(sickNoteFormDto.getId())
+            .person(sickNoteFormDto.getPerson())
+            .applier(signedInUser)
+            .sickNoteType(sickNoteFormDto.getSickNoteType())
+            .startDate(sickNoteFormDto.getStartDate())
+            .endDate(sickNoteFormDto.getEndDate())
+            .dayLength(sickNoteFormDto.getDayLength())
+            .aubStartDate(sickNoteFormDto.getAubStartDate())
+            .aubEndDate(sickNoteFormDto.getAubEndDate())
+            .build();
 
         sickNoteValidator.validate(sickNote, errors);
         if (errors.hasErrors()) {
@@ -206,7 +206,7 @@ class SickNoteViewController implements HasLaunchpad {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
     @GetMapping("/sicknote/{id}/edit")
-    public String editSickNote(@PathVariable("id") Integer id, Model model) throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
+    public String editSickNote(@PathVariable("id") Long id, Model model) throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
         final SickNote sickNote = getSickNote(id);
         if (!sickNote.isActive()) {
@@ -232,7 +232,7 @@ class SickNoteViewController implements HasLaunchpad {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_EDIT')")
     @PostMapping("/sicknote/{id}/edit")
-    public String editSickNote(@PathVariable("id") Integer sickNoteId,
+    public String editSickNote(@PathVariable("id") Long sickNoteId,
                                @ModelAttribute("sickNote") SickNoteFormDto sickNoteFormDto, Errors errors, Model model) throws UnknownSickNoteException {
 
         final Optional<SickNote> maybeSickNote = sickNoteService.getById(sickNoteId);
@@ -262,7 +262,7 @@ class SickNoteViewController implements HasLaunchpad {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_COMMENT')")
     @PostMapping("/sicknote/{id}/comment")
-    public String addComment(@PathVariable("id") Integer id,
+    public String addComment(@PathVariable("id") Long id,
                              @ModelAttribute("comment") SickNoteCommentFormDto comment, Errors errors, RedirectAttributes redirectAttributes)
         throws UnknownSickNoteException {
 
@@ -288,7 +288,7 @@ class SickNoteViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @GetMapping("/sicknote/{id}/convert")
-    public String convertSickNoteToVacation(@PathVariable("id") Integer id, Model model)
+    public String convertSickNoteToVacation(@PathVariable("id") Long id, Model model)
         throws UnknownSickNoteException, SickNoteAlreadyInactiveException {
 
         final SickNote sickNote = getSickNote(id);
@@ -305,7 +305,7 @@ class SickNoteViewController implements HasLaunchpad {
 
     @PreAuthorize(IS_OFFICE)
     @PostMapping("/sicknote/{id}/convert")
-    public String convertSickNoteToVacation(@PathVariable("id") Integer id,
+    public String convertSickNoteToVacation(@PathVariable("id") Long id,
                                             @ModelAttribute("sickNoteConvertForm") SickNoteConvertForm sickNoteConvertForm,
                                             Errors errors, Model model)
         throws UnknownSickNoteException {
@@ -329,7 +329,7 @@ class SickNoteViewController implements HasLaunchpad {
 
     @PreAuthorize("hasAnyAuthority('OFFICE', 'SICK_NOTE_CANCEL')")
     @PostMapping("/sicknote/{id}/cancel")
-    public String cancelSickNote(@PathVariable("id") Integer id) throws UnknownSickNoteException {
+    public String cancelSickNote(@PathVariable("id") Long id) throws UnknownSickNoteException {
 
         final SickNote sickNote = getSickNote(id);
         final Person signedInUser = personService.getSignedInUser();
@@ -389,7 +389,7 @@ class SickNoteViewController implements HasLaunchpad {
         model.addAttribute("vacationTypeColors", vacationTypeDtos);
     }
 
-    private SickNote getSickNote(Integer id) throws UnknownSickNoteException {
+    private SickNote getSickNote(Long id) throws UnknownSickNoteException {
         return sickNoteService.getById(id).orElseThrow(() -> new UnknownSickNoteException(id));
     }
 

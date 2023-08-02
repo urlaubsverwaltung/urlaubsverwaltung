@@ -65,14 +65,14 @@ class UserSettingsServiceTest {
     void ensureUserSettingsForPerson() {
 
         final Person person = new Person();
-        person.setId(42);
+        person.setId(42L);
 
         final UserSettingsEntity entity = new UserSettingsEntity();
-        entity.setPersonId(42);
+        entity.setPersonId(42L);
         entity.setTheme(Theme.DARK);
         entity.setLocale(GERMAN);
 
-        when(userSettingsRepository.findById(42)).thenReturn(Optional.of(entity));
+        when(userSettingsRepository.findById(42L)).thenReturn(Optional.of(entity));
 
         final UserSettings actual = sut.getUserSettingsForPerson(person);
 
@@ -83,9 +83,9 @@ class UserSettingsServiceTest {
     @Test
     void ensureUserSettingsForPersonReturnsDefault() {
         final Person person = new Person();
-        person.setId(42);
+        person.setId(42L);
 
-        when(userSettingsRepository.findById(42)).thenReturn(Optional.empty());
+        when(userSettingsRepository.findById(42L)).thenReturn(Optional.empty());
 
         final UserSettings actual = sut.getUserSettingsForPerson(person);
 
@@ -97,18 +97,18 @@ class UserSettingsServiceTest {
     void ensureUpdateUserPreference() {
 
         final Person person = new Person();
-        person.setId(42);
+        person.setId(42L);
 
         final UserSettingsEntity entity = new UserSettingsEntity();
-        entity.setPersonId(42);
+        entity.setPersonId(42L);
         entity.setTheme(Theme.DARK);
         entity.setLocale(null);
         entity.setLocaleBrowserSpecific(ENGLISH);
 
-        when(userSettingsRepository.findById(42)).thenReturn(Optional.of(entity));
+        when(userSettingsRepository.findById(42L)).thenReturn(Optional.of(entity));
 
         final UserSettingsEntity entityToSave = new UserSettingsEntity();
-        entityToSave.setPersonId(42);
+        entityToSave.setPersonId(42L);
         entityToSave.setTheme(LIGHT);
         entityToSave.setLocale(GERMAN);
 
@@ -137,18 +137,18 @@ class UserSettingsServiceTest {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         final Person person = new Person();
-        person.setId(42);
+        person.setId(42L);
 
         final UserSettingsEntity entity = new UserSettingsEntity();
-        entity.setPersonId(42);
+        entity.setPersonId(42L);
         entity.setTheme(Theme.DARK);
         entity.setLocale(ENGLISH);
         entity.setLocaleBrowserSpecific(null);
 
-        when(userSettingsRepository.findById(42)).thenReturn(Optional.of(entity));
+        when(userSettingsRepository.findById(42L)).thenReturn(Optional.of(entity));
 
         final UserSettingsEntity entityToSave = new UserSettingsEntity();
-        entityToSave.setPersonId(42);
+        entityToSave.setPersonId(42L);
         entityToSave.setTheme(LIGHT);
         entityToSave.setLocale(null);
         entityToSave.setLocaleBrowserSpecific(GERMAN);
@@ -174,12 +174,12 @@ class UserSettingsServiceTest {
     void ensureUpdateUserPreferenceWhenNothingHasBeenPersistedYet() {
 
         final Person person = new Person();
-        person.setId(42);
+        person.setId(42L);
 
-        when(userSettingsRepository.findById(42)).thenReturn(Optional.empty());
+        when(userSettingsRepository.findById(42L)).thenReturn(Optional.empty());
 
         final UserSettingsEntity entityToSave = new UserSettingsEntity();
-        entityToSave.setPersonId(42);
+        entityToSave.setPersonId(42L);
         entityToSave.setTheme(LIGHT);
         entityToSave.setLocale(GERMAN);
 
@@ -202,7 +202,7 @@ class UserSettingsServiceTest {
     void ensureFindLocaleForUsernameReturnsEmptyOptionalWhenUsernameIsUnknown() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         when(userSettingsRepository.findByPerson(person)).thenReturn(Optional.empty());
 
@@ -214,7 +214,7 @@ class UserSettingsServiceTest {
     void ensureFindLocaleForUsernameReturnsEmptyOptionalWhenThereIsNoLocale() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final UserSettingsEntity entity = new UserSettingsEntity();
         entity.setLocale(null);
@@ -229,7 +229,7 @@ class UserSettingsServiceTest {
     void ensureFindLocaleForUsernameReturnsLocale() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
 
         final UserSettingsEntity entity = new UserSettingsEntity();
         entity.setLocale(GERMAN);
@@ -296,7 +296,7 @@ class UserSettingsServiceTest {
     void ensureAuthenticationSuccessSetsLocaleForAuthentication(Authentication authentication, Locale locale) {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setUsername("username");
         when(personService.getPersonByUsername("username")).thenReturn(Optional.of(person));
 
@@ -319,7 +319,7 @@ class UserSettingsServiceTest {
     void ensureAuthenticationSuccessDoesNotSetLocaleWhenNotAvailable() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setUsername("username");
         when(personService.getPersonByUsername("username")).thenReturn(Optional.of(person));
 

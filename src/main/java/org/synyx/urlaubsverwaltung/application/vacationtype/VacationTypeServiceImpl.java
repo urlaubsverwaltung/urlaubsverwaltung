@@ -24,7 +24,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     }
 
     @Override
-    public Optional<VacationType> getById(Integer id) {
+    public Optional<VacationType> getById(Long id) {
         return Optional.of(convert(vacationTypeRepository.getById(id)));
     }
 
@@ -52,7 +52,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     @Override
     public void updateVacationTypes(List<VacationTypeUpdate> vacationTypeUpdates) {
 
-        final Map<Integer, VacationTypeUpdate> byId = vacationTypeUpdates.stream().collect(toMap(VacationTypeUpdate::getId, vacationTypeUpdate -> vacationTypeUpdate));
+        final Map<Long, VacationTypeUpdate> byId = vacationTypeUpdates.stream().collect(toMap(VacationTypeUpdate::getId, vacationTypeUpdate -> vacationTypeUpdate));
 
         final List<VacationTypeEntity> updatedEntities = vacationTypeRepository.findAllById(byId.keySet())
             .stream()

@@ -15,7 +15,7 @@ import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-@SpringBootTest(classes = { PageableDefaultSizeChangedEventConsumer.class, UserPaginationSettingsService.class })
+@SpringBootTest(classes = {PageableDefaultSizeChangedEventConsumer.class, UserPaginationSettingsService.class})
 @EnableAsync
 class PageableDefaultSizeChangedEventConsumerIT {
 
@@ -31,13 +31,13 @@ class PageableDefaultSizeChangedEventConsumerIT {
     @Test
     void ensurePageableDefaultSizeChangedEventUpdatesPageableDefaultSizeOfUser() {
 
-        final PageableDefaultSizeChangedEvent event = new PageableDefaultSizeChangedEvent(new PersonId(1), 9001);
+        final PageableDefaultSizeChangedEvent event = new PageableDefaultSizeChangedEvent(new PersonId(1L), 9001);
         eventPublisher.publishEvent(event);
 
         verifyNoInteractions(userPaginationSettingsService);
 
         await().atMost(Duration.ofSeconds(1)).untilAsserted(() -> {
-            verify(userPaginationSettingsService).updatePageableDefaultSize(new PersonId(1), 9001);
+            verify(userPaginationSettingsService).updatePageableDefaultSize(new PersonId(1L), 9001);
         });
     }
 }

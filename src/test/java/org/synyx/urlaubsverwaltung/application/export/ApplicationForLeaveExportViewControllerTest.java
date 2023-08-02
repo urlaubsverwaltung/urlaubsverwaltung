@@ -69,13 +69,13 @@ class ApplicationForLeaveExportViewControllerTest {
             .andExpect(status().isBadRequest());
     }
 
-        @Test
+    @Test
     void ensuresToExportAbsencesForSelectionWithDefaultValues() throws Exception {
 
         final Locale locale = JAPANESE;
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
@@ -83,13 +83,13 @@ class ApplicationForLeaveExportViewControllerTest {
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setId(1L);
         vacationTypeEntity.setVisibleToEveryone(true);
         vacationTypeEntity.setCategory(HOLIDAY);
         vacationTypeEntity.setMessageKey("messagekey.holiday");
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(signedInUser);
         application.setStartDate(startDate);
         application.setEndDate(endDate);
@@ -121,7 +121,7 @@ class ApplicationForLeaveExportViewControllerTest {
         final Locale locale = JAPANESE;
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
@@ -129,13 +129,13 @@ class ApplicationForLeaveExportViewControllerTest {
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setId(1L);
         vacationTypeEntity.setVisibleToEveryone(true);
         vacationTypeEntity.setCategory(HOLIDAY);
         vacationTypeEntity.setMessageKey("messagekey.holiday");
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(signedInUser);
         application.setStartDate(startDate);
         application.setEndDate(endDate);
@@ -169,7 +169,7 @@ class ApplicationForLeaveExportViewControllerTest {
         final Locale locale = JAPANESE;
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
@@ -177,13 +177,13 @@ class ApplicationForLeaveExportViewControllerTest {
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setId(1L);
         vacationTypeEntity.setVisibleToEveryone(true);
         vacationTypeEntity.setCategory(HOLIDAY);
         vacationTypeEntity.setMessageKey("messagekey.holiday");
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(signedInUser);
         application.setStartDate(startDate);
         application.setEndDate(endDate);
@@ -216,7 +216,7 @@ class ApplicationForLeaveExportViewControllerTest {
         final Locale locale = JAPANESE;
 
         final Person signedInUser = new Person();
-        signedInUser.setId(1);
+        signedInUser.setId(1L);
         when(personService.getSignedInUser()).thenReturn(signedInUser);
 
         final LocalDate startDate = LocalDate.parse("2019-01-01");
@@ -224,13 +224,13 @@ class ApplicationForLeaveExportViewControllerTest {
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
         final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
-        vacationTypeEntity.setId(1);
+        vacationTypeEntity.setId(1L);
         vacationTypeEntity.setVisibleToEveryone(true);
         vacationTypeEntity.setCategory(HOLIDAY);
         vacationTypeEntity.setMessageKey("messagekey.holiday");
 
         final Application application = new Application();
-        application.setId(42);
+        application.setId(42L);
         application.setPerson(signedInUser);
         application.setStartDate(startDate);
         application.setEndDate(endDate);

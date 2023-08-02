@@ -65,7 +65,7 @@ public class WorkDaysCountApiController {
     public WorkDaysCountDto personsWorkDays(
         @Parameter(description = "ID of the person")
         @PathVariable("personId")
-        Integer personId,
+        Long personId,
         @Parameter(description = "Start date with pattern yyyy-MM-dd")
         @RequestParam("from")
         @DateTimeFormat(iso = ISO.DATE)

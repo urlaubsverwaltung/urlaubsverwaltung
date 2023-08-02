@@ -48,12 +48,12 @@ class OvertimeMailServiceIT extends TestContainersBase {
     void ensureManagerWithOvertimeNotificationGetMailIfOvertimeRecorded() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen12@example.org");
-        person.setId(1);
+        person.setId(1L);
 
         final LocalDate startDate = LocalDate.of(2020, 4, 16);
         final LocalDate endDate = LocalDate.of(2020, 4, 23);
         final Overtime overtime = new Overtime(person, startDate, endDate, Duration.parse("P1DT30H72M"));
-        overtime.setId(1);
+        overtime.setId(1L);
 
         final OvertimeComment overtimeComment = new OvertimeComment(person, overtime, CREATED, clock);
 
@@ -90,7 +90,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
     void ensureApplicantWithOvertimeNotificationGetMailIfOvertimeRecordedFromManagement() throws MessagingException, IOException {
 
         final Person person = new Person("user", "Müller", "Lieschen", "lieschen@example.org");
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_OVERTIME_APPLIED_BY_MANAGEMENT));
 
         final Person author = personService.create("office", "Marlene", "Muster", "office@example.org", List.of(), List.of(USER, OFFICE));
@@ -98,7 +98,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
         final LocalDate startDate = LocalDate.of(2020, 4, 16);
         final LocalDate endDate = LocalDate.of(2020, 4, 23);
         final Overtime overtime = new Overtime(person, startDate, endDate, Duration.parse("P1DT30H72M"));
-        overtime.setId(1);
+        overtime.setId(1L);
 
         final OvertimeComment overtimeComment = new OvertimeComment(author, overtime, CREATED, clock);
 
@@ -136,7 +136,7 @@ class OvertimeMailServiceIT extends TestContainersBase {
         final LocalDate startDate = LocalDate.of(2020, 4, 16);
         final LocalDate endDate = LocalDate.of(2020, 4, 23);
         final Overtime overtime = new Overtime(author, startDate, endDate, Duration.parse("P1DT30H72M"));
-        overtime.setId(1);
+        overtime.setId(1L);
 
         final OvertimeComment overtimeComment = new OvertimeComment(author, overtime, CREATED, clock);
 

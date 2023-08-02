@@ -11,9 +11,9 @@ import static org.synyx.urlaubsverwaltung.calendar.CalendarPeriodViewType.HALF_Y
 public class DepartmentCalendarDto {
 
     @NotNull
-    private int personId;
+    private long personId;
     @NotNull
-    private int departmentId;
+    private long departmentId;
     @Size(min = 1)
     private String departmentName;
     @Size(min = 1)
@@ -27,19 +27,19 @@ public class DepartmentCalendarDto {
      */
     private boolean active;
 
-    public int getPersonId() {
+    public long getPersonId() {
         return personId;
     }
 
-    public void setPersonId(int personId) {
+    public void setPersonId(long personId) {
         this.personId = personId;
     }
 
-    public int getDepartmentId() {
+    public long getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(int departmentId) {
+    public void setDepartmentId(long departmentId) {
         this.departmentId = departmentId;
     }
 

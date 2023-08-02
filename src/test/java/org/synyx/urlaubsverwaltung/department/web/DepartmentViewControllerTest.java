@@ -123,14 +123,14 @@ class DepartmentViewControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "bru", "way" })
+    @ValueSource(strings = {"bru", "way"})
     void ensureNewDepartmentMemberSearch(String givenQuery) throws Exception {
 
         final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
-        robin.setId(2);
+        robin.setId(2L);
 
         when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
 
@@ -156,14 +156,14 @@ class DepartmentViewControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "bru", "way" })
+    @ValueSource(strings = {"bru", "way"})
     void ensureNewDepartmentMemberSearchWithJavaScript(String givenQuery) throws Exception {
 
         final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
-        robin.setId(2);
+        robin.setId(2L);
 
         when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
 
@@ -193,27 +193,27 @@ class DepartmentViewControllerTest {
     void ensureNewDepartmentMemberSearchKeepsMembersState() throws Exception {
 
         final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
-        robin.setId(2);
+        robin.setId(2L);
 
         final Person departmentHead = new Person("head", "Head", "Department", "departmentHead@example.org");
-        robin.setId(3);
+        robin.setId(3L);
 
         final Person secondStageAuthority = new Person("secondStage", "Authority", "Second Stage", "secondstage@example.org");
-        robin.setId(4);
+        robin.setId(4L);
 
-        when(personService.getPersonByID(2)).thenReturn(Optional.of(robin));
-        when(personService.getPersonByID(3)).thenReturn(Optional.of(departmentHead));
-        when(personService.getPersonByID(4)).thenReturn(Optional.of(secondStageAuthority));
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(robin));
+        when(personService.getPersonByID(3L)).thenReturn(Optional.of(departmentHead));
+        when(personService.getPersonByID(4L)).thenReturn(Optional.of(secondStageAuthority));
 
         when(personService.getActivePersons()).thenReturn(List.of(batman, robin, departmentHead, secondStageAuthority));
 
         // departmentForm values are defined by the POST request
         // ViewController must keep the state from the DTO, not from the `department` received from `departmentService`
         final DepartmentForm expectedDepartmentForm = new DepartmentForm();
-        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setId(1L);
         expectedDepartmentForm.setName("fight club");
         expectedDepartmentForm.setMembers(List.of(robin));
         expectedDepartmentForm.setDepartmentHeads(List.of(departmentHead));
@@ -249,27 +249,27 @@ class DepartmentViewControllerTest {
     void ensureNewDepartmentMemberSearchKeepsMembersStateWithJavaScript() throws Exception {
 
         final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
-        robin.setId(2);
+        robin.setId(2L);
 
         final Person departmentHead = new Person("head", "Head", "Department", "departmentHead@example.org");
-        robin.setId(3);
+        robin.setId(3L);
 
         final Person secondStageAuthority = new Person("secondStage", "Authority", "Second Stage", "secondstage@example.org");
-        robin.setId(4);
+        robin.setId(4L);
 
-        when(personService.getPersonByID(2)).thenReturn(Optional.of(robin));
-        when(personService.getPersonByID(3)).thenReturn(Optional.of(departmentHead));
-        when(personService.getPersonByID(4)).thenReturn(Optional.of(secondStageAuthority));
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(robin));
+        when(personService.getPersonByID(3L)).thenReturn(Optional.of(departmentHead));
+        when(personService.getPersonByID(4L)).thenReturn(Optional.of(secondStageAuthority));
 
         when(personService.getActivePersons()).thenReturn(List.of(batman, robin, departmentHead, secondStageAuthority));
 
         // departmentForm values are defined by the POST request
         // ViewController must keep the state from the DTO, not from the `department` received from `departmentService`
         final DepartmentForm expectedDepartmentForm = new DepartmentForm();
-        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setId(1L);
         expectedDepartmentForm.setName("fight club");
         expectedDepartmentForm.setMembers(List.of(robin));
         expectedDepartmentForm.setDepartmentHeads(List.of(departmentHead));
@@ -303,21 +303,21 @@ class DepartmentViewControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "bru", "way" })
+    @ValueSource(strings = {"bru", "way"})
     void ensureDepartmentMemberSearch(String givenQuery) throws Exception {
 
         final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
-        robin.setId(2);
+        robin.setId(2L);
 
         when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(new Department()));
 
         // departmentForm values are defined by the POST request
         final DepartmentForm expectedDepartmentForm = new DepartmentForm();
-        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setId(1L);
         expectedDepartmentForm.setName("fight club");
 
         perform(post("/web/department/1/edit")
@@ -341,28 +341,28 @@ class DepartmentViewControllerTest {
     void ensureDepartmentMemberSearchKeepsMembersState() throws Exception {
 
         final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
-        robin.setId(2);
+        robin.setId(2L);
 
         final Person departmentHead = new Person("head", "Head", "Department", "departmentHead@example.org");
-        robin.setId(3);
+        robin.setId(3L);
 
         final Person secondStageAuthority = new Person("secondStage", "Authority", "Second Stage", "secondstage@example.org");
-        robin.setId(4);
+        robin.setId(4L);
 
-        when(personService.getPersonByID(2)).thenReturn(Optional.of(robin));
-        when(personService.getPersonByID(3)).thenReturn(Optional.of(departmentHead));
-        when(personService.getPersonByID(4)).thenReturn(Optional.of(secondStageAuthority));
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(robin));
+        when(personService.getPersonByID(3L)).thenReturn(Optional.of(departmentHead));
+        when(personService.getPersonByID(4L)).thenReturn(Optional.of(secondStageAuthority));
 
         when(personService.getActivePersons()).thenReturn(List.of(batman, robin, departmentHead, secondStageAuthority));
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(new Department()));
 
         // departmentForm values are defined by the POST request
         // ViewController must keep the state from the DTO, not from the `department` received from `departmentService`
         final DepartmentForm expectedDepartmentForm = new DepartmentForm();
-        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setId(1L);
         expectedDepartmentForm.setName("fight club");
         expectedDepartmentForm.setMembers(List.of(robin));
         expectedDepartmentForm.setDepartmentHeads(List.of(departmentHead));
@@ -398,17 +398,17 @@ class DepartmentViewControllerTest {
     void ensureDepartmentMemberSearchWithEmptyQuery() throws Exception {
 
         final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
-        robin.setId(2);
+        robin.setId(2L);
 
         when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(new Department()));
 
         // departmentForm values are defined by the POST request
         final DepartmentForm expectedDepartmentForm = new DepartmentForm();
-        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setId(1L);
         expectedDepartmentForm.setName("fight club");
 
         perform(post("/web/department/1/edit")
@@ -429,20 +429,20 @@ class DepartmentViewControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "bru", "ayne" })
+    @ValueSource(strings = {"bru", "ayne"})
     void ensureDepartmentMemberSearchWithJavaScript(String givenQuery) throws Exception {
         final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
-        robin.setId(2);
+        robin.setId(2L);
 
         when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(new Department()));
 
         // departmentForm values are defined by the POST request
         final DepartmentForm expectedDepartmentForm = new DepartmentForm();
-        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setId(1L);
         expectedDepartmentForm.setName("fight club");
 
         perform(post("/web/department/1/edit")
@@ -467,28 +467,28 @@ class DepartmentViewControllerTest {
     void ensureDepartmentMemberSearchWithJavaScriptKeepsMembersState() throws Exception {
 
         final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
-        robin.setId(2);
+        robin.setId(2L);
 
         final Person departmentHead = new Person("head", "Head", "Department", "departmentHead@example.org");
-        robin.setId(3);
+        robin.setId(3L);
 
         final Person secondStageAuthority = new Person("secondStage", "Authority", "Second Stage", "secondstage@example.org");
-        robin.setId(4);
+        robin.setId(4L);
 
-        when(personService.getPersonByID(2)).thenReturn(Optional.of(robin));
-        when(personService.getPersonByID(3)).thenReturn(Optional.of(departmentHead));
-        when(personService.getPersonByID(4)).thenReturn(Optional.of(secondStageAuthority));
+        when(personService.getPersonByID(2L)).thenReturn(Optional.of(robin));
+        when(personService.getPersonByID(3L)).thenReturn(Optional.of(departmentHead));
+        when(personService.getPersonByID(4L)).thenReturn(Optional.of(secondStageAuthority));
 
         when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(new Department()));
 
         // departmentForm values are defined by the POST request
         // ViewController must keep the state from the DTO, not from the `department` received from `departmentService`
         final DepartmentForm expectedDepartmentForm = new DepartmentForm();
-        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setId(1L);
         expectedDepartmentForm.setName("fight club");
         expectedDepartmentForm.setMembers(List.of(robin));
         expectedDepartmentForm.setDepartmentHeads(List.of(departmentHead));
@@ -524,17 +524,17 @@ class DepartmentViewControllerTest {
     @Test
     void ensureDepartmentMemberSearchWithJavaScriptWithEmptyQuery() throws Exception {
         final Person batman = new Person("batman", "Wayne", "Bruce", "batman@example.org");
-        batman.setId(1);
+        batman.setId(1L);
 
         final Person robin = new Person("robin", "Grayson", "Dick", "robin@example.org");
-        robin.setId(2);
+        robin.setId(2L);
 
         when(personService.getActivePersons()).thenReturn(List.of(batman, robin));
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(new Department()));
 
         // departmentForm values are defined by the POST request
         final DepartmentForm expectedDepartmentForm = new DepartmentForm();
-        expectedDepartmentForm.setId(1);
+        expectedDepartmentForm.setId(1L);
         expectedDepartmentForm.setName("fight club");
 
         perform(post("/web/department/1/edit")
@@ -606,19 +606,19 @@ class DepartmentViewControllerTest {
     void editDepartmentAddsDepartmentAndActivePersonsToModelGroupedByDepartmentMember() throws Exception {
 
         final Person activePerson = new Person("username-1", "Quak", "Alfred", "alfred.quak@example.org");
-        activePerson.setId(1);
+        activePerson.setId(1L);
 
         final Person inactivePerson = new Person("username-2", "Inaktiv", "Brigitte", "brigitte.inaktiv@example.org");
-        inactivePerson.setId(2);
+        inactivePerson.setId(2L);
         inactivePerson.setPermissions(List.of(Role.INACTIVE));
 
         final Person otherPerson = new Person("username-3", "Roth", "Anne", "anne.roth@example.org");
-        otherPerson.setId(3);
+        otherPerson.setId(3L);
 
         final Department department = new Department();
-        department.setId(1);
+        department.setId(1L);
         department.setMembers(List.of(activePerson, inactivePerson));
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(department));
 
         when(personService.getActivePersons()).thenReturn(List.of(activePerson, otherPerson));
 
@@ -630,7 +630,7 @@ class DepartmentViewControllerTest {
     @Test
     void editDepartmentUsesCorrectView() throws Exception {
 
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(new Department()));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(new Department()));
 
         perform(get("/web/department/1/edit"))
             .andExpect(view().name("department/department_form"));
@@ -678,29 +678,29 @@ class DepartmentViewControllerTest {
     void deleteDepartment() throws Exception {
 
         final Department department = new Department();
-        department.setId(1);
+        department.setId(1L);
         department.setName("department");
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.of(department));
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(department));
 
         perform(post("/web/department/1/delete"))
             .andExpect(status().isFound())
             .andExpect(flash().attribute("deletedDepartmentName", "department"))
             .andExpect(redirectedUrl("/web/department/"));
 
-        verify(departmentService).delete(1);
+        verify(departmentService).delete(1L);
     }
 
     @Test
     void deleteDepartmentButDoesNotExist() throws Exception {
 
-        when(departmentService.getDepartmentById(1)).thenReturn(Optional.empty());
+        when(departmentService.getDepartmentById(1L)).thenReturn(Optional.empty());
 
         perform(post("/web/department/1/delete"))
             .andExpect(status().isFound())
             .andExpect(flash().attribute("deletedDepartment", nullValue()))
             .andExpect(redirectedUrl("/web/department/"));
 
-        verify(departmentService, never()).delete(1);
+        verify(departmentService, never()).delete(1L);
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

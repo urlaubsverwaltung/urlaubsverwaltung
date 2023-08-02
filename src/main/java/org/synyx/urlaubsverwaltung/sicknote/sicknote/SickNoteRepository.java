@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Repository for {@link SickNoteEntity} entities.
  */
-interface SickNoteRepository extends CrudRepository<SickNoteEntity, Integer> {
+interface SickNoteRepository extends CrudRepository<SickNoteEntity, Long> {
 
     @Query(
         "SELECT x FROM SickNoteEntity x WHERE x.person = ?1 AND "

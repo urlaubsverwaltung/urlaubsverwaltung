@@ -66,7 +66,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
     @GetMapping("/person/{personId}/notifications")
     @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String showPersonNotifications(@PathVariable int personId, Model model) throws UnknownPersonException {
+    public String showPersonNotifications(@PathVariable long personId, Model model) throws UnknownPersonException {
         return showNotifications(false, personId, model);
     }
 
@@ -76,7 +76,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
         return showNotifications(true, personId, model);
     }
 
-    private String showNotifications(boolean isDepartmentSection, int personId, Model model) throws UnknownPersonException {
+    private String showNotifications(boolean isDepartmentSection, long personId, Model model) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId)
             .orElseThrow(() -> new UnknownPersonException(personId));
@@ -119,7 +119,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
 
     @PostMapping("/person/{personId}/notifications/departments")
     @PreAuthorize("hasAuthority('OFFICE') or @userApiMethodSecurity.isSamePersonId(authentication, #personId)")
-    public String editDepartmentsNotifications(@PathVariable int personId,
+    public String editDepartmentsNotifications(@PathVariable long personId,
                                                @ModelAttribute PersonNotificationsDto newPersonNotificationsDto,
                                                Errors errors,
                                                Model model,
@@ -128,7 +128,7 @@ public class PersonNotificationsViewController implements HasLaunchpad {
     }
 
 
-    private String editNotifications(boolean isDepartmentSection, int personId, PersonNotificationsDto newPersonNotificationsDto, Errors errors,
+    private String editNotifications(boolean isDepartmentSection, long personId, PersonNotificationsDto newPersonNotificationsDto, Errors errors,
                                      Model model, RedirectAttributes redirectAttributes, String section) throws UnknownPersonException {
 
         final Person person = personService.getPersonByID(personId)

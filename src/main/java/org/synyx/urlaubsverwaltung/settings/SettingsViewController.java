@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.synyx.urlaubsverwaltung.account.AccountProperties;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
@@ -22,7 +21,6 @@ import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
-import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeProperties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -41,8 +39,6 @@ import static org.synyx.urlaubsverwaltung.settings.SpecialLeaveSettingsDtoMapper
 @RequestMapping("/web/settings")
 public class SettingsViewController implements HasLaunchpad {
 
-    private final AccountProperties accountProperties;
-    private final WorkingTimeProperties workingTimeProperties;
     private final SettingsService settingsService;
     private final VacationTypeService vacationTypeService;
     private final List<CalendarProvider> calendarProviders;
@@ -51,11 +47,8 @@ public class SettingsViewController implements HasLaunchpad {
     private final SpecialLeaveSettingsService specialLeaveSettingsService;
 
     @Autowired
-    public SettingsViewController(AccountProperties accountProperties, WorkingTimeProperties workingTimeProperties,
-                                  SettingsService settingsService, VacationTypeService vacationTypeService, List<CalendarProvider> calendarProviders,
+    public SettingsViewController(SettingsService settingsService, VacationTypeService vacationTypeService, List<CalendarProvider> calendarProviders,
                                   SettingsValidator settingsValidator, Clock clock, SpecialLeaveSettingsService specialLeaveService) {
-        this.accountProperties = accountProperties;
-        this.workingTimeProperties = workingTimeProperties;
         this.settingsService = settingsService;
         this.vacationTypeService = vacationTypeService;
         this.calendarProviders = calendarProviders;
@@ -138,9 +131,6 @@ public class SettingsViewController implements HasLaunchpad {
     }
 
     private void fillModel(Model model, SettingsDto settingsDto, String authorizedRedirectUrl) {
-        model.addAttribute("defaultVacationDaysFromSettings", accountProperties.getDefaultVacationDays() == -1);
-        model.addAttribute("defaultWorkingTimeFromSettings", workingTimeProperties.isDefaultWorkingDaysDeactivated());
-
         settingsDto.setAbsenceTypeSettings(absenceTypeItemSettingDto());
         settingsDto.setSpecialLeaveSettings(getSpecialLeaveSettingsDto());
 

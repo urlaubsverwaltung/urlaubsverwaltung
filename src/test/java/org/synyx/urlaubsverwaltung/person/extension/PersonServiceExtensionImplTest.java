@@ -39,7 +39,7 @@ class PersonServiceExtensionImplTest {
     private PersonServiceExtensionImpl sut;
 
     private static Person anyPerson() {
-        PersonDTO personDTO = anyPersonDTO(1);
+        PersonDTO personDTO = anyPersonDTO(1L);
         final Person createdPerson = new Person(personDTO.getUsername(), personDTO.getLastName(), personDTO.getFirstName(), personDTO.getEmail());
         createdPerson.setId(personDTO.getId());
         createdPerson.setPermissions(Set.of(Role.USER));
@@ -50,7 +50,7 @@ class PersonServiceExtensionImplTest {
         return anyPersonDTO(null);
     }
 
-    private static PersonDTO anyPersonDTO(Integer id) {
+    private static PersonDTO anyPersonDTO(Long id) {
         return PersonDTO.builder()
             .id(id)
             .username("muster")
@@ -66,7 +66,7 @@ class PersonServiceExtensionImplTest {
     void createHappyPath() {
 
         final Person createdPerson = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        createdPerson.setId(1);
+        createdPerson.setId(1L);
         createdPerson.setPermissions(List.of(Role.USER));
         when(personService.create(any(String.class), any(String.class), any(String.class), any(String.class))).thenReturn(createdPerson);
 
@@ -82,7 +82,7 @@ class PersonServiceExtensionImplTest {
 
     @Test
     void updateHappyPath() {
-        final PersonDTO personDTO = anyPersonDTO(1);
+        final PersonDTO personDTO = anyPersonDTO(1L);
         final Person createdPerson = anyPerson();
 
         when(personService.update(any())).thenReturn(createdPerson);
@@ -113,11 +113,11 @@ class PersonServiceExtensionImplTest {
         final Person signedInUserId = new Person("boss", "Scherer", "Theresa", "boss@example.org");
         when(personService.getPersonByID(any())).thenReturn(Optional.of(signedInUserId));
 
-        sut.delete(anyPersonDTO(1), 42);
+        sut.delete(anyPersonDTO(1L), 42L);
 
         ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(Person.class);
 
-        verify(personService).getPersonByID(42);
+        verify(personService).getPersonByID(42L);
 
         verify(personService).delete(personArgumentCaptor.capture(), eq(signedInUserId));
 
@@ -130,16 +130,16 @@ class PersonServiceExtensionImplTest {
     @Test
     void ensureDeleteHandlesSignedInUserUnknown() {
 
-        sut.delete(anyPersonDTO(), 42);
+        sut.delete(anyPersonDTO(), 42L);
 
-        verify(personService).getPersonByID(42);
+        verify(personService).getPersonByID(42L);
         verifyNoMoreInteractions(personService);
     }
 
     @Test
     void getPersonByIdHappyPath() {
 
-        final PersonDTO personDTO = anyPersonDTO(1);
+        final PersonDTO personDTO = anyPersonDTO(1L);
         when(personService.getPersonByID(any())).thenReturn(Optional.of(anyPerson()));
 
         Optional<PersonDTO> personById = sut.getPersonById(personDTO.getId());
@@ -152,16 +152,16 @@ class PersonServiceExtensionImplTest {
     @Test
     void ensureGetPersonByIdHandlesNotFound() {
 
-        Optional<PersonDTO> personById = sut.getPersonById(1);
+        Optional<PersonDTO> personById = sut.getPersonById(1L);
 
-        verify(personService).getPersonByID(1);
+        verify(personService).getPersonByID(1L);
         assertThat(personById).isEmpty();
     }
 
     @Test
     void getPersonByUsernameHappyPath() {
 
-        final PersonDTO personDTO = anyPersonDTO(1);
+        final PersonDTO personDTO = anyPersonDTO(1L);
         when(personService.getPersonByUsername(any())).thenReturn(Optional.of(anyPerson()));
 
         Optional<PersonDTO> personById = sut.getPersonByUsername(personDTO.getUsername());
@@ -183,7 +183,7 @@ class PersonServiceExtensionImplTest {
     @Test
     void getPersonByMailAddressHappyPath() {
 
-        final PersonDTO personDTO = anyPersonDTO(1);
+        final PersonDTO personDTO = anyPersonDTO(1L);
         when(personService.getPersonByMailAddress(any())).thenReturn(Optional.of(anyPerson()));
 
         Optional<PersonDTO> personById = sut.getPersonByMailAddress(personDTO.getEmail());
@@ -205,7 +205,7 @@ class PersonServiceExtensionImplTest {
     @Test
     void getActivePersonsHappyPath() {
 
-        PersonDTO anyPersonDTO = anyPersonDTO(1);
+        PersonDTO anyPersonDTO = anyPersonDTO(1L);
         Person anyPerson = anyPerson();
 
         Page<Person> page = new PageImpl<>(List.of(anyPerson));
@@ -240,7 +240,7 @@ class PersonServiceExtensionImplTest {
     @Test
     void getInactivePersonsHappyPath() {
 
-        PersonDTO anyPersonDTO = anyPersonDTO(1);
+        PersonDTO anyPersonDTO = anyPersonDTO(1L);
         Person anyPerson = anyPerson();
 
         Page<Person> page = new PageImpl<>(List.of(anyPerson));
@@ -287,7 +287,7 @@ class PersonServiceExtensionImplTest {
     @Test
     void appointAsInitialUserIfNoInitialUserPresentHappyPath() {
 
-        final PersonDTO personDTO = anyPersonDTO(1);
+        final PersonDTO personDTO = anyPersonDTO(1L);
         final Person person = anyPerson();
         when(personService.appointAsOfficeUserIfNoOfficeUserPresent(any())).thenReturn(person);
 

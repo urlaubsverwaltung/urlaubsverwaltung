@@ -60,7 +60,7 @@ class UserSettingsViewControllerTest {
     void ensureGetUserSettings() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(42);
+        signedInPerson.setId(42L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
@@ -103,7 +103,7 @@ class UserSettingsViewControllerTest {
     void ensureGetUserSettingsThrowsWhenCalledForOtherPerson() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
@@ -116,7 +116,7 @@ class UserSettingsViewControllerTest {
     void ensureUpdateUserSettings(Theme givenTheme) throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(42);
+        signedInPerson.setId(42L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
@@ -132,7 +132,7 @@ class UserSettingsViewControllerTest {
     void ensureUpdateUserSettingsThrowsWhenThemeNameIsUnknown() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(42);
+        signedInPerson.setId(42L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
@@ -147,7 +147,7 @@ class UserSettingsViewControllerTest {
     void ensureUpdateUserSettingsThrowsWhenCalledForOtherPerson() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(1);
+        signedInPerson.setId(1L);
 
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
@@ -162,7 +162,7 @@ class UserSettingsViewControllerTest {
     void ensureUpdateUserSettingsWithErrorOpensThePageAgainAndDoesNotSave() throws Exception {
 
         final Person signedInPerson = new Person();
-        signedInPerson.setId(42);
+        signedInPerson.setId(42L);
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         doAnswer(invocation -> {

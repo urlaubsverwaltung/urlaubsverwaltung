@@ -11,9 +11,9 @@ import java.util.List;
 /**
  * Repository for {@link SickNoteCommentEntity} entities.
  */
-interface SickNoteCommentEntityRepository extends CrudRepository<SickNoteCommentEntity, Integer> {
+interface SickNoteCommentEntityRepository extends CrudRepository<SickNoteCommentEntity, Long> {
 
-    List<SickNoteCommentEntity> findBySickNoteId(Integer sickNoteId);
+    List<SickNoteCommentEntity> findBySickNoteId(Long sickNoteId);
 
     List<SickNoteCommentEntity> findByPerson(Person author);
 

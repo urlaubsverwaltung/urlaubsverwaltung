@@ -87,11 +87,11 @@ class PersonDetailsViewControllerTest {
     @Test
     void showPersonInformationIfSignedInUserIsNotAllowedToAccessPersonDataThrowsAccessDeniedException() {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(false);
 
         assertThatThrownBy(() ->
@@ -102,11 +102,11 @@ class PersonDetailsViewControllerTest {
     @Test
     void showPersonInformationUsesGivenYear() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
@@ -118,12 +118,12 @@ class PersonDetailsViewControllerTest {
     @Test
     void showPersonInformationShowsBasedata() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
-        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(1), "42", "additional information");
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+        final PersonBasedata personBasedata = new PersonBasedata(new PersonId(1L), "42", "additional information");
         when(personBasedataService.getBasedataByPersonId(1)).thenReturn(Optional.of(personBasedata));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
@@ -136,11 +136,11 @@ class PersonDetailsViewControllerTest {
     @Test
     void showPersonInformationUsesCurrentYearIfNoYearGiven() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
@@ -154,11 +154,11 @@ class PersonDetailsViewControllerTest {
     @Test
     void showPersonInformationUsesAccountIfPresent() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
@@ -175,11 +175,11 @@ class PersonDetailsViewControllerTest {
     @Test
     void showPersonInformationUsesCorrectView() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(person, person)).thenReturn(true);
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
 
@@ -190,13 +190,13 @@ class PersonDetailsViewControllerTest {
     @Test
     void showPersonInformationOfficeCanEditPermissions() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(office);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
@@ -208,13 +208,13 @@ class PersonDetailsViewControllerTest {
     @Test
     void showPersonInformationOfficeCanEditDepartments() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(office);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
@@ -226,13 +226,13 @@ class PersonDetailsViewControllerTest {
     @Test
     void showPersonInformationOfficeCanEditAccounts() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(office);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 
@@ -244,13 +244,13 @@ class PersonDetailsViewControllerTest {
     @Test
     void showPersonInformationOfficeCanEditWorkingtimes() throws Exception {
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setPermissions(singletonList(DEPARTMENT_HEAD));
 
         final Person office = new Person();
         office.setPermissions(List.of(USER, OFFICE));
         when(personService.getSignedInUser()).thenReturn(office);
-        when(personService.getPersonByID(1)).thenReturn(Optional.of(person));
+        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(settingsService.getSettings()).thenReturn(settingsWithFederalState(GERMANY_BADEN_WUERTTEMBERG));
         when(departmentService.isSignedInUserAllowedToAccessPersonData(office, person)).thenReturn(true);
 

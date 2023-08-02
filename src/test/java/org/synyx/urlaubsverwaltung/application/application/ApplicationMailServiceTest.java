@@ -94,7 +94,7 @@ class ApplicationMailServiceTest {
         when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
 
         final Person person = new Person();
-        person.setId(0);
+        person.setId(0L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
@@ -112,14 +112,14 @@ class ApplicationMailServiceTest {
         final ApplicationComment applicationComment = new ApplicationComment(person, clock);
 
         final Person boss = new Person();
-        boss.setId(1);
+        boss.setId(1L);
         final Person office = new Person();
-        office.setId(2);
+        office.setId(2L);
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED))
             .thenReturn(List.of(boss, office));
 
         final Person colleague = new Person();
-        colleague.setId(3);
+        colleague.setId(3L);
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED))
             .thenReturn(List.of(colleague));
 
@@ -253,7 +253,7 @@ class ApplicationMailServiceTest {
         application.setStatus(ALLOWED);
 
         final Person relevantPerson = new Person();
-        relevantPerson.setId(2);
+        relevantPerson.setId(2L);
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED)).thenReturn(List.of(relevantPerson));
 
         sut.sendEditedNotification(application, editor);
@@ -286,9 +286,9 @@ class ApplicationMailServiceTest {
         model.put("comment", comment);
 
         final Person office = new Person();
-        office.setId(1);
+        office.setId(1L);
         final Person relevantPerson = new Person();
-        relevantPerson.setId(2);
+        relevantPerson.setId(2L);
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION_REQUESTED)).thenReturn(List.of(relevantPerson, office));
 
         sut.sendDeclinedCancellationRequestApplicationNotification(application, comment);
@@ -347,7 +347,7 @@ class ApplicationMailServiceTest {
         application.setPerson(person);
 
         final Person relevantPerson = new Person();
-        relevantPerson.setId(2);
+        relevantPerson.setId(2L);
         when(mailRecipientService.getRecipientsOfInterest(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED)).thenReturn(List.of(relevantPerson));
 
         sut.sendSickNoteConvertedToVacationNotification(application);
@@ -570,7 +570,7 @@ class ApplicationMailServiceTest {
     void sendConfirmationAllowedDirectly() {
 
         final Person person = new Person();
-        person.setId(1);
+        person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
         final VacationTypeEntity vacationType = new VacationTypeEntity();
@@ -589,7 +589,7 @@ class ApplicationMailServiceTest {
         final ApplicationComment comment = new ApplicationComment(person, clock);
 
         final Person colleague = new Person();
-        colleague.setId(3);
+        colleague.setId(3L);
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED))
             .thenReturn(List.of(colleague));
 
@@ -638,7 +638,7 @@ class ApplicationMailServiceTest {
         final ApplicationComment comment = new ApplicationComment(person, clock);
 
         final Person colleague = new Person();
-        colleague.setId(3);
+        colleague.setId(3L);
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_ALLOWED))
             .thenReturn(List.of(colleague));
 
@@ -848,7 +848,7 @@ class ApplicationMailServiceTest {
         final ApplicationComment comment = new ApplicationComment(person, clock);
 
         final Person colleague = new Person();
-        colleague.setId(3);
+        colleague.setId(3L);
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION))
             .thenReturn(List.of(colleague));
 
@@ -898,7 +898,7 @@ class ApplicationMailServiceTest {
         final ApplicationComment comment = new ApplicationComment(person, clock);
 
         final Person colleague = new Person();
-        colleague.setId(3);
+        colleague.setId(3L);
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION))
             .thenReturn(List.of(colleague));
 
@@ -957,7 +957,7 @@ class ApplicationMailServiceTest {
             .thenReturn(List.of(person, office));
 
         final Person colleague = new Person();
-        colleague.setId(3);
+        colleague.setId(3L);
         when(mailRecipientService.getColleagues(application.getPerson(), NOTIFICATION_EMAIL_APPLICATION_COLLEAGUES_CANCELLATION))
             .thenReturn(List.of(colleague));
 
