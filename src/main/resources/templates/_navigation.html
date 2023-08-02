@@ -75,7 +75,7 @@
                         th:replace="~{icon/plus::svg(className='nav-popup-menu-button_icon tw-w-7 tw-h-7 lg:tw-w-8 lg:tw-h-8')}"
                       ></svg>
                       <span class="tw-sr-only" th:text="#{nav.add.button.text}"></span>
-                      <svg th:replace="icon/chevron-down::svg(className='tw-w-4 tw-h-4')"></svg>
+                      <svg th:replace="~{icon/chevron-down::svg(className='tw-w-4 tw-h-4')}"></svg>
                     </a>
                   </uv-nav-popup-menu-button>
                   <div id="add-something-new-menu" class="nav-popup-menu" data-test-id="add-something-new-popupmenu">
@@ -135,7 +135,7 @@
                   ></svg>
                   <span class="tw-sr-only" th:text="#{nav.add.vacation}"></span>
                 </a>
-                <div th:replace="launchpad/launchpad::navigation-item"></div>
+                <div th:replace="~{launchpad/launchpad::navigation-item}"></div>
                 <div class="tw-relative">
                   <uv-nav-popup-menu-button>
                     <a
@@ -152,7 +152,7 @@
                           alt=""
                         />
                       </span>
-                      <svg th:replace="icon/chevron-down::svg(className='tw-w-4 tw-h-4')"></svg>
+                      <svg th:replace="~{icon/chevron-down::svg(className='tw-w-4 tw-h-4')}"></svg>
                     </a>
                   </uv-nav-popup-menu-button>
                   <div id="avatar-menu" class="nav-popup-menu" data-test-id="avatar-popupmenu">
@@ -210,11 +210,11 @@
                           <li class="tw-mt-4 xs:tw-mt-1">
                             <a
                               href="#"
-                              th:replace="::nav-popup-menu-link(href=@{/web/person/{userId}/notifications(userId=${userId})}, icon=~{::menu-notifications-icon}, text=#{nav.notifications.title})"
+                              th:replace="~{::nav-popup-menu-link(href=@{/web/person/{userId}/notifications(userId=${userId})}, icon=~{::menu-notifications-icon}, text=#{nav.notifications.title})}"
                             >
                               <svg
                                 th:ref="menu-notifications-icon"
-                                th:replace="icon/mail::svg(className='tw-w-6 tw-h-6')"
+                                th:replace="~{icon/mail::svg(className='tw-w-6 tw-h-6')}"
                               ></svg>
                             </a>
                           </li>

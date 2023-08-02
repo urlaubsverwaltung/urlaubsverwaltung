@@ -5,11 +5,11 @@
   </head>
   <body>
     <th:block th:fragment="person-box(person)">
-      <div th:replace="fragments/box::box-with-icon(~{::person-box-icon}, ~{::person-box-body})">
+      <div th:replace="~{fragments/box::box-with-icon(~{::person-box-icon}, ~{::person-box-body})}">
         <th:block th:ref="person-box-icon">
           <span class="tw-text-blue-50 dark:tw-text-sky-800">
             <img
-              th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404'},niceName=${person.niceName},width='60px',height='60px',personId=${person.id})"
+              th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404'},niceName=${person.niceName},width='60px',height='60px',personId=${person.id})}"
               alt=""
             />
           </span>
@@ -23,7 +23,7 @@
             ></a>
             <th:block th:if="${person.isInactive}">
               <span th:data-title="#{person.data.inactive}">
-                &nbsp;<svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only"
+                &nbsp;<svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}" /><span class="tw-sr-only"
                   >(<th:block th:text="#{person.data.inactive}" />)</span
                 >
               </span>
@@ -36,7 +36,7 @@
             class="icon-link tw-inline-block tw-text-sm print:no-link"
           >
             <span class="tw-flex tw-items-center">
-              <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4')" />&nbsp;<span
+              <svg th:replace="~{icon/mail::svg(className='tw-w-4 tw-h-4')}" />&nbsp;<span
                 th:text="${person.email}"
               ></span>
             </span>

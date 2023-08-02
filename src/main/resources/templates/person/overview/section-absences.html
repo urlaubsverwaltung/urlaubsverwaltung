@@ -6,7 +6,7 @@
   <body>
     <th:block th:fragment="section">
       <div
-        th:replace="fragments/section-heading::section-heading(~{::absences-heading-body}, ~{::absences-heading-actions})"
+        th:replace="~{fragments/section-heading::section-heading(~{::absences-heading-body}, ~{::absences-heading-actions})}"
       >
         <th:block th:ref="absences-heading-body">
           <h2 id="vacation" th:text="#{applications.title}">Abwesenheiten</h2>
@@ -19,7 +19,7 @@
               href="#"
               th:href="@{/web/application/new}"
             >
-              <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+              <svg th:replace="~{icon/plus-circle::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
               <span th:text="#{action.apply.vacation}"></span>
             </a>
             <a
@@ -28,7 +28,7 @@
               href="#"
               th:href="@{/web/application/new (personId=${person.id})}"
             >
-              <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+              <svg th:replace="~{icon/plus-circle::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
               <span th:text="#{action.apply.vacation}"></span>
             </a>
           </div>
@@ -38,13 +38,13 @@
       <div class="tw-mb-4 lg:tw-mb-6">
         <div class="tw-flex tw-flex-wrap tw-space-y-8 sm:tw-space-y-0">
           <div class="tw-w-full sm:tw-w-1/2">
-            <div th:replace="fragments/box::box-with-icon(~{::holidays-sum-box-icon}, ~{::holidays-sum-box-body})">
+            <div th:replace="~{fragments/box::box-with-icon(~{::holidays-sum-box-icon}, ~{::holidays-sum-box-body})}">
               <th:block th:ref="holidays-sum-box-icon">
                 <div
-                  th:replace="fragments/rounded::block(content=~{::holidays-sum-box-icon-rounded}, className='tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900')"
+                  th:replace="~{fragments/rounded::block(content=~{::holidays-sum-box-icon-rounded}, className='tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900')}"
                 >
                   <th:block th:ref="holidays-sum-box-icon-rounded">
-                    <svg th:replace="icon/sun::svg(className='tw-w-8 tw-h-8')" />
+                    <svg th:replace="~{icon/sun::svg(className='tw-w-8 tw-h-8')}" />
                   </th:block>
                 </div>
               </th:block>
@@ -66,7 +66,7 @@
                 >
                   <span class="tw-flex tw-items-center">
                     <span class="tw-text-emerald-500 tw-flex tw-items-center">
-                      <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+                      <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
                     </span>
                     <span
                       th:text="#{overview.vacations.holidayLeaveAllowed(${usedDaysOverview.holidayDaysAllowed.sum})}"
@@ -77,13 +77,13 @@
             </div>
           </div>
           <div class="tw-w-full sm:tw-w-1/2">
-            <div th:replace="fragments/box::box-with-icon(~{::other-days-sum-box-icon}, ~{::other-days-sum-box-body})">
+            <div th:replace="~{fragments/box::box-with-icon(~{::other-days-sum-box-icon}, ~{::other-days-sum-box-body})}">
               <th:block th:ref="other-days-sum-box-icon">
                 <div
-                  th:replace="fragments/rounded::block(content=~{::other-days-sum-box-icon-rounded}, className='tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900')"
+                  th:replace="~{fragments/rounded::block(content=~{::other-days-sum-box-icon-rounded}, className='tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900')}"
                 >
                   <th:block th:ref="other-days-sum-box-icon-rounded">
-                    <svg th:replace="icon/flag::svg(className='tw-w-8 tw-h-8')" />
+                    <svg th:replace="~{icon/flag::svg(className='tw-w-8 tw-h-8')}" />
                   </th:block>
                 </div>
               </th:block>
@@ -105,7 +105,7 @@
                 >
                   <span class="tw-flex tw-items-center">
                     <span class="tw-text-emerald-500 tw-flex tw-items-center">
-                      <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+                      <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
                     </span>
                     <span
                       th:text="#{overview.vacations.otherLeaveAllowed(${usedDaysOverview.otherDaysAllowed.sum})}"
@@ -137,9 +137,9 @@
               </td>
               <td class="hidden-xs print:tw-hidden">
                 <div class="tw-flex tw-items-center tw-justify-center">
-                  <svg th:replace="icon/clock::svg(className='tw-w-4 tw-h-4')"></svg>&nbsp;
+                  <svg th:replace="~{icon/clock::svg(className='tw-w-4 tw-h-4')}"></svg>&nbsp;
                   <th:block th:text="#{application.progress.EXPIRED}"></th:block>&nbsp;
-                  <th:block th:replace="fragments/date::date(${expiryDate})"></th:block>
+                  <th:block th:replace="~{fragments/date::date(${expiryDate})}"></th:block>
                 </div>
               </td>
             </tr>
@@ -181,7 +181,7 @@
                   <span class="tw-block tw-text-[#444444] dark:tw-text-zinc-200">
                     <th:block th:if="${app.startDate == app.endDate}">
                       <th:block th:text="|${#messages.msg(app.weekDayOfStartDate + '.short')}|"></th:block>,
-                      <th:block th:replace="fragments/date::date(${app.startDate})"></th:block>,
+                      <th:block th:replace="~{fragments/date::date(${app.startDate})}"></th:block>,
                       <th:block
                         th:if="${app.startTime != null && app.endTime != null}"
                         th:with="APPLICATION_START_TIME=${#temporals.format(app.startDateWithTime, #messages.msg('pattern.time'))}, APPLICATION_END_TIME=${#temporals.format(app.endDateWithTime, #messages.msg('pattern.time'))}"
@@ -194,7 +194,7 @@
                     </th:block>
                     <th:block th:if="${app.startDate != app.endDate}">
                       <th:block
-                        th:replace="fragments/date-range::date-range(from=${app.startDate}, to=${app.endDate}, pattern='E, dd.MM.yyyy')"
+                        th:replace="~{fragments/date-range::date-range(from=${app.startDate}, to=${app.endDate}, pattern='E, dd.MM.yyyy')}"
                       ></th:block>
                     </th:block>
                   </span>
@@ -232,37 +232,37 @@
               </td>
               <td class="hidden-xs print:tw-hidden">
                 <div class="tw-flex tw-items-center tw-justify-center">
-                  <svg th:replace="icon/clock::svg(className='tw-w-4 tw-h-4')"></svg>&nbsp;
+                  <svg th:replace="~{icon/clock::svg(className='tw-w-4 tw-h-4')}"></svg>&nbsp;
                   <span>
                     <th:block th:if="${app.status.name == 'WAITING'}">
                       <th:block th:text="#{application.progress.APPLIED}"></th:block>
-                      <th:block th:replace="fragments/date::date(${app.applicationDate})"></th:block>
+                      <th:block th:replace="~{fragments/date::date(${app.applicationDate})}"></th:block>
                     </th:block>
                     <th:block th:if="${app.status.name == 'TEMPORARY_ALLOWED'}">
                       <th:block th:text="#{application.progress.TEMPORARY_ALLOWED}"></th:block>
-                      <th:block th:replace="fragments/date::date(${app.editedDate})"></th:block>
+                      <th:block th:replace="~{fragments/date::date(${app.editedDate})}"></th:block>
                     </th:block>
                     <th:block th:if="${app.status.name == 'ALLOWED'}">
                       <th:block th:if="${app.editedDate != null}">
                         <th:block th:text="#{application.progress.ALLOWED}"></th:block>
-                        <th:block th:replace="fragments/date::date(${app.editedDate})"></th:block>
+                        <th:block th:replace="~{fragments/date::date(${app.editedDate})}"></th:block>
                       </th:block>
                       <th:block th:if="${app.editedDate == null}">
                         <th:block th:text="#{application.progress.ALLOWED_DIRECTLY}"></th:block>
-                        <th:block th:replace="fragments/date::date(${app.applicationDate})"></th:block>
+                        <th:block th:replace="~{fragments/date::date(${app.applicationDate})}"></th:block>
                       </th:block>
                     </th:block>
                     <th:block th:if="${app.status.name == 'ALLOWED_CANCELLATION_REQUESTED'}">
                       <th:block th:text="#{application.progress.ALLOWED_CANCELLATION_REQUESTED}"></th:block>
-                      <th:block th:replace="fragments/date::date(${app.cancelDate})"></th:block>
+                      <th:block th:replace="~{fragments/date::date(${app.cancelDate})}"></th:block>
                     </th:block>
                     <th:block th:if="${app.status.name == 'REJECTED'}">
                       <th:block th:text="#{application.progress.REJECTED}"></th:block>
-                      <th:block th:replace="fragments/date::date(${app.editedDate})"></th:block>
+                      <th:block th:replace="~{fragments/date::date(${app.editedDate})}"></th:block>
                     </th:block>
                     <th:block th:if="${app.status.name == 'CANCELLED' || app.status.name == 'REVOKED'}">
                       <th:block th:text="#{application.progress.CANCELLED}"></th:block>
-                      <th:block th:replace="fragments/date::date(${app.cancelDate})"></th:block>
+                      <th:block th:replace="~{fragments/date::date(${app.cancelDate})}"></th:block>
                     </th:block>
                   </span>
                 </div>

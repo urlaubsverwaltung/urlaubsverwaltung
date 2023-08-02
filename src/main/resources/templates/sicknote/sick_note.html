@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
     <title
       th:with="messageKey=#{__${sickNote.sickNoteType.messageKey}__}"
       th:text="#{sicknote.header.title(${messageKey}, ${sickNote.person.niceName})}"
@@ -12,14 +12,14 @@
     </th:block>
   </head>
 
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main
       th:fragment="main"
       class="tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0 lg:tw-grid lg:tw-grid-cols-2 lg:tw-gap-8"
     >
       <div>
         <div
-          th:replace="fragments/section-heading::section-heading(~{::sicknote-heading-body}, ~{::sicknote-heading-actions})"
+          th:replace="~{fragments/section-heading::section-heading(~{::sicknote-heading-body}, ~{::sicknote-heading-actions})}"
         >
           <th:block th:ref="sicknote-heading-body">
             <h2 th:text="#{sicknote.title}">Krankmeldung</h2>
@@ -32,7 +32,7 @@
                     th:href="@{/web/sicknote/__${sickNote.id}__/edit}"
                     class="icon-link tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
                   >
-                    <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5')"></svg>
+                    <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5')}"></svg>
                     <span th:text="#{action.edit}" class="tw-sr-only"></span>
                   </a>
                 </th:block>
@@ -41,7 +41,7 @@
                     th:href="@{/web/sicknote/__${sickNote.id}__/convert}"
                     class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
                   >
-                    <svg th:replace="icon/refresh-ccw::svg(className='tw-w-5 tw-h-5')"></svg>
+                    <svg th:replace="~{icon/refresh-ccw::svg(className='tw-w-5 tw-h-5')}"></svg>
                     <span th:text="#{action.convert}" class="tw-sr-only"></span>
                   </a>
                 </th:block>
@@ -52,11 +52,11 @@
                     data-toggle="modal"
                     class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
                   >
-                    <svg th:replace="icon/trash-2::svg(className='tw-w-5 tw-h-5')"></svg>
+                    <svg th:replace="~{icon/trash-2::svg(className='tw-w-5 tw-h-5')}"></svg>
                     <span th:text="#{action.delete}" class="tw-sr-only"></span>
                   </a>
                 </th:block>
-                <a href="#" th:replace="fragments/print::button"></a>
+                <a href="#" th:replace="~{fragments/print::button}"></a>
               </div>
             </th:block>
           </th:block>
@@ -75,7 +75,7 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                    <svg th:replace="icon/x-circle::svg(className='tw-w-8 tw-h-8')"></svg>
+                    <svg th:replace="~{icon/x-circle::svg(className='tw-w-8 tw-h-8')}"></svg>
                   </button>
                   <h4 id="myModalLabel" th:text="|#{action.delete}?|" class="modal-title"></h4>
                 </div>
@@ -90,17 +90,17 @@
         </form>
 
         <div class="box tw-mb-5 tw-p-5">
-          <div th:replace="fragments/box::box-with-icon(~{::sicknote-box-icon}, ~{::sicknote-box-body})">
+          <div th:replace="~{fragments/box::box-with-icon(~{::sicknote-box-icon}, ~{::sicknote-box-body})}">
             <th:block th:ref="sicknote-box-icon">
               <div
-                th:replace="fragments/rounded::block(content=~{::sicknote-box-icon-rounded}, className='tw-bg-red-500 tw-text-white dark:tw-bg-red-600 dark:tw-text-zinc-900')"
+                th:replace="~{fragments/rounded::block(content=~{::sicknote-box-icon-rounded}, className='tw-bg-red-500 tw-text-white dark:tw-bg-red-600 dark:tw-text-zinc-900')}"
               >
                 <th:block th:ref="sicknote-box-icon-rounded">
                   <th:block th:if="${sickNote.sickNoteType.category.name == 'SICK_NOTE_CHILD'}">
-                    <svg th:replace="icon/child::svg(className='tw-w-8 tw-h-8')"></svg>
+                    <svg th:replace="~{icon/child::svg(className='tw-w-8 tw-h-8')}"></svg>
                   </th:block>
                   <th:block th:if="${sickNote.sickNoteType.category.name != 'SICK_NOTE_CHILD'}">
-                    <svg th:replace="icon/medkit::svg(className='tw-w-8 tw-h-8')"></svg>
+                    <svg th:replace="~{icon/medkit::svg(className='tw-w-8 tw-h-8')}"></svg>
                   </th:block>
                 </th:block>
               </div>
@@ -124,12 +124,12 @@
               >
                 <th:block th:if="${sickNote.startDate == sickNote.endDate}">
                   <th:block th:text="|${#messages.msg(sickNote.weekDayOfStartDate + '.short')}|"></th:block>,
-                  <th:block th:replace="fragments/date::date(${sickNote.startDate})"></th:block>,&nbsp;
+                  <th:block th:replace="~{fragments/date::date(${sickNote.startDate})}"></th:block>,&nbsp;
                   <th:block th:text="${#messages.msg(sickNote.dayLength)}"></th:block>
                 </th:block>
                 <th:block th:if="${sickNote.startDate != sickNote.endDate}">
                   <span
-                    th:replace="fragments/date-range::date-range(from=${sickNote.startDate}, to=${sickNote.endDate}, pattern='E, dd.MM.yyyy')"
+                    th:replace="~{fragments/date-range::date-range(from=${sickNote.startDate}, to=${sickNote.endDate}, pattern='E, dd.MM.yyyy')}"
                   ></span>
                 </th:block>
               </span>
@@ -151,16 +151,16 @@
               <td>
                 <th:block th:if="${sickNote.aubPresent}">
                   <div class="tw-flex tw-items-center" data-test-id="sicknote-aub-date">
-                    <svg th:replace="icon/check::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="~{icon/check::svg(className='tw-w-4 tw-h-4')}"></svg>
                     &nbsp;<th:block
-                      th:replace="fragments/date-range::date-range(from=${sickNote.aubStartDate}, to=${sickNote.aubEndDate}, pattern='E, dd.MM.yyyy')"
+                      th:replace="~{fragments/date-range::date-range(from=${sickNote.aubStartDate}, to=${sickNote.aubEndDate}, pattern='E, dd.MM.yyyy')}"
                     ></th:block>
                   </div>
                   <div class="tw-ml-4" th:text="#{sicknote.data.days(${sickNote.workDaysWithAub})}"></div>
                 </th:block>
                 <th:block th:if="${not sickNote.aubPresent}">
                   <div class="tw-flex tw-items-center" data-test-id="sicknote-aub-date">
-                    <svg th:replace="icon/x-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="~{icon/x-circle::svg(className='tw-w-4 tw-h-4')}"></svg>
                     &nbsp;<th:block th:text="#{sicknote.data.aub.notPresent}"></th:block>
                   </div>
                 </th:block>
@@ -172,19 +172,19 @@
 
       <div>
         <div class="print:tw-hidden">
-          <div th:replace="fragments/section-heading::section-heading(~{::sicknote-data-person-heading-body}, ~{})">
+          <div th:replace="~{fragments/section-heading::section-heading(~{::sicknote-data-person-heading-body}, ~{})}">
             <th:block th:ref="sicknote-data-person-heading-body">
               <h2 th:text="#{sicknote.data.person}">Mitarbeiter</h2>
             </th:block>
           </div>
           <div
-            th:replace="person/box::person-box-with-departments(person=${sickNote.person}, departments=${departmentsOfPerson})"
+            th:replace="~{person/box::person-box-with-departments(person=${sickNote.person}, departments=${departmentsOfPerson})}"
           ></div>
         </div>
 
         <div class="tw-mt-8">
           <div
-            th:replace="fragments/section-heading::section-heading(~{::sicknote-progress-heading-body}, ~{::sicknote-progress-heading-actions})"
+            th:replace="~{fragments/section-heading::section-heading(~{::sicknote-progress-heading-body}, ~{::sicknote-progress-heading-actions})}"
           >
             <th:block th:ref="sicknote-progress-heading-body">
               <h2 th:text="#{sicknote.progress.title}">Verlauf</h2>
@@ -195,7 +195,7 @@
                   class="icon-link tw-bg-transparent tw-px-1 tw-py-0"
                   onclick="document.getElementById('comment-form').classList.remove('tw-hidden');"
                 >
-                  <svg th:replace="icon/message-square::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                  <svg th:replace="~{icon/message-square::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                   <span th:text="#{action.comment.new}"></span>
                 </button>
               </th:block>
@@ -210,7 +210,7 @@
               <tr th:each="comment, loopStatus : ${comments}">
                 <td class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                   <img
-                    th:replace="fragments/avatar::avatar-bordered(url=${comment.person != null ? comment.person.gravatarURL + '?d=404&s=40' : null},niceName=${comment.person != null ? comment.person.niceName : null},width='40px',height='40px',personId=${comment.person != null ? comment.person.id : null})"
+                    th:replace="~{fragments/avatar::avatar-bordered(url=${comment.person != null ? comment.person.gravatarURL + '?d=404&s=40' : null},niceName=${comment.person != null ? comment.person.niceName : null},width='40px',height='40px',personId=${comment.person != null ? comment.person.id : null})}"
                     alt=""
                   />
                 </td>
@@ -228,11 +228,11 @@
                 <td>
                   <th:block th:if="${#strings.isEmpty(comment.text)}">
                     <th:block th:text="#{'sicknote.progress.' + ${comment.action}}"></th:block>
-                    <th:block th:replace="fragments/date::date(${comment.date})"></th:block>
+                    <th:block th:replace="~{fragments/date::date(${comment.date})}"></th:block>
                   </th:block>
                   <th:block th:if="${not #strings.isEmpty(comment.text)}">
                     <th:block th:text="#{'sicknote.progress.' + ${comment.action}}"></th:block>
-                    <th:block th:replace="fragments/date::date(${comment.date})"></th:block>
+                    <th:block th:replace="~{fragments/date::date(${comment.date})}"></th:block>
 
                     <th:block th:if="${comment.action == 'COMMENTED'}"> : </th:block>
                     <th:block th:if="${comment.action != 'COMMENTED'}">

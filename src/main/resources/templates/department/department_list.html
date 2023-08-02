@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
     <title th:text="#{departments.header.title}"></title>
     <th:block th:fragment="scripts">
       <script>
@@ -15,11 +15,11 @@
       <script defer asset:src="department_list.js"></script>
     </th:block>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
       <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
         <div
-          th:replace="fragments/section-heading::section-heading(~{::department-list-heading-body}, ~{::department-list-heading-actions})"
+          th:replace="~{fragments/section-heading::section-heading(~{::department-list-heading-body}, ~{::department-list-heading-actions})}"
         >
           <th:block th:ref="department-list-heading-body">
             <h1 th:text="#{departments.title}">Abwesenheitsstatistik</h1>
@@ -31,17 +31,17 @@
                 th:href="@{/web/department/new}"
                 class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
               >
-                <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                <svg th:replace="~{icon/plus-circle::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                 <span th:text="#{action.department.create}"></span>
               </a>
               <a
                 th:href="@{/web/absences}"
                 class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
               >
-                <svg th:replace="icon/calendar::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                <svg th:replace="~{icon/calendar::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                 <span th:text="#{action.applications.absences_overview}"></span>
               </a>
-              <button th:replace="fragments/print::button"></button>
+              <button th:replace="~{fragments/print::button}"></button>
             </div>
           </th:block>
         </div>
@@ -89,7 +89,7 @@
                       <summary class="overflow tw-flex tw-items-center">
                         <th:block th:text="${department.name}"></th:block>
                         <span data-uv-popover-placement class="tw-flex tw-items-center tw-ml-1">
-                          <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                          <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                         </span>
                       </summary>
                       <p>
@@ -119,7 +119,7 @@
                   </td>
                   <td class="is-centered hidden-xs">
                     <th:block th:if="${department.twoStageApproval == true}">
-                      <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+                      <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
                     </th:block>
                   </td>
                   <td th:text="${{department.lastModification}}" class="hidden-xs"></td>
@@ -137,7 +137,7 @@
                           <div class="modal-content">
                             <div class="modal-header">
                               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                <svg th:replace="icon/x-circle::svg(className='tw-w-8 tw-h-8')"></svg>
+                                <svg th:replace="~{icon/x-circle::svg(className='tw-w-8 tw-h-8')}"></svg>
                               </button>
                               <h4
                                 th:text="|#{action.department.delete} ?|"
@@ -164,7 +164,7 @@
 
                     <div class="tw-flex tw-space-x-4 tw-justify-end print:tw-hidden">
                       <a class="action-link" th:href="@{/web/department/__${department.id}__/edit}">
-                        <svg th:replace="icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                        <svg th:replace="~{icon/pencil::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
                         <th:block th:text="#{action.edit}" />
                       </a>
                       <a
@@ -172,7 +172,7 @@
                         data-toggle="modal"
                         th:href="@{/web/department#modal-cancel-__${department.id}__}"
                       >
-                        <svg th:replace="icon/trash-2::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                        <svg th:replace="~{icon/trash-2::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
                         <th:block th:text="#{action.department.delete}" />
                       </a>
                     </div>

@@ -16,7 +16,7 @@
           class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none tw-pt-2 md:tw-pt-0 tw-text-sm"
         >
           <div>
-            <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
           </div>
           <p>
             <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.one}" />
@@ -27,7 +27,7 @@
               href="https://urlaubsverwaltung.cloud/hilfe/benutzer/#gibt-es-die-moeglichkeit-gravatar-global-zu-deaktivieren"
             >
               <th:block th:text="#{settings.avatar.gravatarEnabled.activation.description.two}" />
-              <svg th:replace="icon/external-link::svg(className='tw-w-4 tw-h-4 tw-ml-1')"></svg>
+              <svg th:replace="~{icon/external-link::svg(className='tw-w-4 tw-h-4 tw-ml-1')}"></svg>
             </a>
           </p>
         </aside>

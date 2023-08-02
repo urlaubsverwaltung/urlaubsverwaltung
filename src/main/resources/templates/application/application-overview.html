@@ -281,7 +281,7 @@
                         />
                         <th:block th:if="${replacementInfo.person.isInactive}">
                           <span th:data-title="#{person.data.inactive}">
-                            &nbsp;<svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')" /><span
+                            &nbsp;<svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}" /><span
                               class="tw-sr-only"
                               >(<th:block th:text="#{person.data.inactive}" />)</span
                             >
@@ -356,7 +356,7 @@
                   ></a>
                   <th:block th:if="${otherRequestForLeave.person.isInactive}">
                     <span th:data-title="#{person.data.inactive}">
-                      &nbsp;<svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only"
+                      &nbsp;<svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}" /><span class="tw-sr-only"
                         >(<th:block th:text="#{person.data.inactive}" />)</span
                       >
                     </span>
@@ -492,7 +492,8 @@
                     ></a>
                     <th:block th:if="${cancellationRequest.person.isInactive}">
                       <span th:data-title="#{person.data.inactive}">
-                        &nbsp;<svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')" /><span class="tw-sr-only"
+                        &nbsp;<svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}" /><span
+                          class="tw-sr-only"
                           >(<th:block th:text="#{person.data.inactive}" />)</span
                         >
                       </span>

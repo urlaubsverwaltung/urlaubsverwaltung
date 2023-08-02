@@ -1,21 +1,21 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
     <title th:text="#{person.form.permissions.header.title}"></title>
     <th:block th:fragment="scripts">
       <script defer asset:src="person_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
-      <div th:replace="fragments/section-heading::section-heading(~{::person-permissions-body}, ~{})">
+      <div th:replace="~{fragments/section-heading::section-heading(~{::person-permissions-body}, ~{})}">
         <th:block th:ref="person-permissions-body">
           <h2 th:text="#{person.form.permissions.title(${person.niceName})}">Berechtigungen für</h2>
         </th:block>
       </div>
 
       <div class="tw-flex tw-items-center tw-gap-4 sm:tw-gap-6 tw-mb-4 md:tw-mb-12">
-        <div th:replace="person/box::person-box(person=${person})"></div>
+        <div th:replace="~{person/box::person-box(person=${person})}"></div>
       </div>
 
       <form
@@ -37,7 +37,7 @@
 
             <aside class="col-md-4 col-md-push-8">
               <p class="help-block tw-text-sm">
-                <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                 <th:block th:text="#{person.form.permissions.description}" />
               </p>
             </aside>
@@ -72,7 +72,7 @@
                       <th:block th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.description}" />
                     </label>
                     <label th:class="|tw-leading-snug ${not #lists.isEmpty(departments) ? 'info' : ''}|">
-                      <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                      <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                       <th:block
                         th:if="${#lists.isEmpty(departments)}"
                         th:text="#{person.form.permissions.roles.DEPARTMENT_HEAD.departments.none.description}"
@@ -96,7 +96,7 @@
                       <th:block th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY.description}" />
                     </label>
                     <label th:class="|tw-leading-snug ${not #lists.isEmpty(secondStageDepartments) ? 'info' : ''}|">
-                      <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                      <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                       <th:block
                         th:if="${#lists.isEmpty(secondStageDepartments)}"
                         th:text="#{person.form.permissions.roles.SECOND_STAGE_AUTHORITY.departments.none.description}"

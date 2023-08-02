@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{::styles}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
     <title
       th:text="${applicationForLeaveForm.id == null} ? #{application.data.header.title.new} : #{application.data.header.title.edit}"
     >
@@ -58,11 +58,11 @@
         defer
         asset:src="account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js"
       ></script>
-      <script th:replace="fragments/datepicker-localization"></script>
-      <script th:replace="fragments/vacation-type-colors-script :: vacation-type-colors-script"></script>
+      <script th:replace="~{fragments/datepicker-localization}"></script>
+      <script th:replace="~{fragments/vacation-type-colors-script :: vacation-type-colors-script}"></script>
     </th:block>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
       <th:block th:if="${noHolidaysAccount == true}" th:text="#{application.applier.account.none}" />
 
@@ -81,7 +81,7 @@
           <p class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}"></p>
 
           <div class="form-section tw-mb-8">
-            <div th:replace="fragments/section-heading::section-heading(~{::application-form-heading-body}, ~{})">
+            <div th:replace="~{fragments/section-heading::section-heading(~{::application-form-heading-body}, ~{})}">
               <th:block th:ref="application-form-heading-body">
                 <h2
                   th:text="${applicationForLeaveForm.id == null} ? #{application.data.title.new}: #{application.data.title.edit}"
@@ -99,7 +99,7 @@
                   <div class="col-md-9">
                     <th:block th:if="${applicationForLeaveForm.id == null}">
                       <select
-                        th:replace="fragments/select::one(id='person-select', name='person', options=~{::application-person-select-options})"
+                        th:replace="~{fragments/select::one(id='person-select', name='person', options=~{::application-person-select-options})}"
                         id="person-select"
                       >
                         <th:block th:fragment="application-person-select-options">
@@ -137,7 +137,7 @@
                   </label>
                   <div class="col-md-9">
                     <select
-                      th:replace="fragments/select::one(id='vacationType', name='vacationType', options=~{::application-vacationtype-select-options}, testId='vacation-type-select', is='uv-vacation-type-select')"
+                      th:replace="~{fragments/select::one(id='vacationType', name='vacationType', options=~{::application-vacationtype-select-options}, testId='vacation-type-select', is='uv-vacation-type-select')}"
                       id="vacationType"
                     >
                       <th:block th:fragment="application-vacationtype-select-options">
@@ -300,7 +300,7 @@
                 <div class="form-group is-required" id="form-group--hours">
                   <label th:text="|#{application.data.hours}:|" class="control-label col-md-3" for="hours"> </label>
                   <div class="col-md-9">
-                    <th:block th:replace="overtime/hour-and-minute-input::hour-and-minute-input"></th:block>
+                    <th:block th:replace="~{overtime/hour-and-minute-input::hour-and-minute-input}"></th:block>
                   </div>
                 </div>
               </div>
@@ -340,7 +340,7 @@
               </div>
               <div class="col-md-6 col-md-push-2">
                 <span class="help-block tw-text-sm">
-                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                   <th:block th:text="#{application.data.specialleave.description}"></th:block>
                   <ul>
                     <li
@@ -355,7 +355,7 @@
 
           <div class="form-section tw-mb-16">
             <div
-              th:replace="fragments/section-heading::section-heading(~{::application-further-information-heading-body}, ~{})"
+              th:replace="~{fragments/section-heading::section-heading(~{::application-further-information-heading-body}, ~{})}"
             >
               <th:block th:ref="application-further-information-heading-body">
                 <h2 th:text="#{application.data.furtherInformation.title}">Weitere Informationen</h2>
@@ -396,7 +396,7 @@
                   <div class="col-md-9">
                     <div class="tw-flex">
                       <select
-                        th:replace="fragments/select::one-with-addon(id='holiday-replacement-select', name='holidayReplacementToAdd', options=~{::application-holidayreplacement-select-options}, addon=~{::application-holidayreplacement-select-addon}, testId='holiday-replacement-select')"
+                        th:replace="~{fragments/select::one-with-addon(id='holiday-replacement-select', name='holidayReplacementToAdd', options=~{::application-holidayreplacement-select-options}, addon=~{::application-holidayreplacement-select-addon}, testId='holiday-replacement-select')}"
                         id="holiday-replacement-select"
                       >
                         <th:block th:fragment="application-holidayreplacement-select-options">
@@ -441,7 +441,7 @@
                           <div class="tw-flex">
                             <span class="tw-text-blue-50 dark:tw-text-sky-800 tw-mr-4 tw-mt-1">
                               <img
-                                th:replace="fragments/avatar::avatar-bordered(url=${holidayReplacement.person.gravatarURL + '?d=404&s=40'},niceName=${holidayReplacement.person.niceName},width='40px',height='40px',personId=${holidayReplacement.person.id})"
+                                th:replace="~{fragments/avatar::avatar-bordered(url=${holidayReplacement.person.gravatarURL + '?d=404&s=40'},niceName=${holidayReplacement.person.niceName},width='40px',height='40px',personId=${holidayReplacement.person.id})}"
                                 alt=""
                               />
                             </span>
@@ -476,7 +476,7 @@
                                   <span
                                     class="tw-flex tw-items-center tw-text-sm tw-text-black tw-text-opacity-50 hover:tw-text-opacity-100 focus:tw-text-opacity-100 dark:tw-text-zinc-200 tw-transition-colors"
                                   >
-                                    <svg th:replace="icon/trash-2::svg(className='tw-w-4 tw-h-4 tw-mr-0.5')"></svg>
+                                    <svg th:replace="~{icon/trash-2::svg(className='tw-w-4 tw-h-4 tw-mr-0.5')}"></svg>
                                     <th:block
                                       th:text="#{application.data.holidayReplacement.remove-button.text}"
                                     ></th:block>

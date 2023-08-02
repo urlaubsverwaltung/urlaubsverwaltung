@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
     <title th:text="#{person.notifications.meta.title}"></title>
     <th:block th:ref="scripts">
       <script defer asset:src="npm.hotwired.js"></script>
@@ -9,7 +9,7 @@
     </th:block>
   </head>
 
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
       <turbo-frame id="frame-feedback" data-turbo-action="replace">
         <div class="feedback">
@@ -18,7 +18,7 @@
         </div>
       </turbo-frame>
 
-      <div th:replace="fragments/section-heading::section-heading(~{::person-notifications-body}, ~{})">
+      <div th:replace="~{fragments/section-heading::section-heading(~{::person-notifications-body}, ~{})}">
         <th:block th:ref="person-notifications-body">
           <h1 th:if="${isViewingOwnNotifications}" th:text="#{person.notifications.header.title}">
             E-Mail-Benachrichtigungen
@@ -38,7 +38,7 @@
 
       <div class="tw-mt-8">
         <div
-          th:replace="fragments/section-heading::section-heading-paddingless(~{::person-notifications-navigation-body}, ~{})"
+          th:replace="~{fragments/section-heading::section-heading-paddingless(~{::person-notifications-navigation-body}, ~{})}"
         >
           <th:block th:ref="person-notifications-navigation-body">
             <ul

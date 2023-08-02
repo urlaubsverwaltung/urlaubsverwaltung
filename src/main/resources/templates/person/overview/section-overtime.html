@@ -6,7 +6,7 @@
   <body>
     <th:block th:fragment="section">
       <div
-        th:replace="fragments/section-heading::section-heading(~{::overtime-heading-body}, ~{::overtime-heading-actions})"
+        th:replace="~{fragments/section-heading::section-heading(~{::overtime-heading-body}, ~{::overtime-heading-actions})}"
       >
         <th:block th:ref="overtime-heading-body">
           <h2 id="overtime" th:text="#{overtime.title}">Überstunden</h2>
@@ -19,7 +19,7 @@
               href="#"
               th:href="@{/web/overtime/new (person=${person.id})}"
             >
-              <svg th:replace="icon/plus-circle::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+              <svg th:replace="~{icon/plus-circle::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
               <span th:text="#{action.overtime.new}"></span>
             </a>
             <a
@@ -27,7 +27,7 @@
               href="#"
               th:href="@{/web/overtime (person=${person.id}, year=${displayYear})}"
             >
-              <svg th:replace="icon/clock::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+              <svg th:replace="~{icon/clock::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
               <span th:text="#{action.overtime.list}"></span>
             </a>
           </div>
@@ -37,10 +37,10 @@
       <div class="tw-flex tw-flex-wrap tw-space-y-8 lg:tw-space-y-0">
         <div class="tw-w-full lg:tw-w-1/3"></div>
         <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
-          <div th:replace="overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})"></div>
+          <div th:replace="~{overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})}"></div>
         </div>
         <div class="tw-w-full sm:tw-w-1/2 lg:tw-w-1/3">
-          <div th:replace="overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})"></div>
+          <div th:replace="~{overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})}"></div>
         </div>
       </div>
     </th:block>

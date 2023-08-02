@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
     <title th:text="#{person.overview.header.title}"></title>
     <th:block th:ref="scripts">
       <script defer asset:src="npm.hotwired.js"></script>
@@ -8,7 +8,7 @@
       <script defer asset:src="persons.js"></script>
     </th:block>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0" data-turbo="true">
       <div class="feedback">
         <p
@@ -18,7 +18,7 @@
         ></p>
       </div>
       <div
-        th:replace="fragments/section-heading::section-heading(~{::persons-overview-heading-body}, ~{::persons-overview-heading-actions})"
+        th:replace="~{fragments/section-heading::section-heading(~{::persons-overview-heading-body}, ~{::persons-overview-heading-actions})}"
       >
         <div
           id="persons-filter"
@@ -34,7 +34,7 @@
               class="tw-bg-transparent tw-text-current tw-m-0 tw-p-0"
             >
               <th:block th:text="${visiblePersonsDropdownText}"></th:block>
-              <svg th:replace="icon/chevron-down::svg(className='tw-ml-0.5 tw-opacity-70 tw-w-4 tw-h-4')"></svg>
+              <svg th:replace="~{icon/chevron-down::svg(className='tw-ml-0.5 tw-opacity-70 tw-w-4 tw-h-4')}"></svg>
             </button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="active-state">
               <li>
@@ -43,7 +43,7 @@
                   class="tw-flex tw-items-center"
                 >
                   <span class="tw-w-5 tw-flex tw-items-center">
-                    <svg th:replace="icon/user::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="~{icon/user::svg(className='tw-w-4 tw-h-4')}"></svg>
                   </span>
                   <th:block th:text="#{persons.active}"></th:block>
                 </a>
@@ -65,7 +65,7 @@
                   class="tw-flex tw-items-center"
                 >
                   <span class="tw-w-5 tw-flex tw-items-center">
-                    <svg th:replace="icon/user-x::svg(className='tw-w-4 tw-h-4')"></svg>
+                    <svg th:replace="~{icon/user-x::svg(className='tw-w-4 tw-h-4')}"></svg>
                   </span>
                   <th:block th:text="#{persons.inactive}"></th:block>
                 </a>
@@ -76,12 +76,12 @@
             th:with="hrefPrefix=${department == null ? '/web/person?active=' + active + '&size=' + personsPagination.page.size + '&sort=' + sortQuery + '&query=' + query + '&year=' : '/web/person?active=' + active + '&department=' + department.id + '&sort=' + sortQuery + '&query=' + query + '&year='}"
           >
             <div
-              th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=${hrefPrefix}, selectedYear=${selectedYear})"
+              th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=${hrefPrefix}, selectedYear=${selectedYear})}"
             ></div>
           </th:block>
         </div>
         <th:block th:fragment="persons-overview-heading-actions">
-          <button th:replace="fragments/print::button"></button>
+          <button th:replace="~{fragments/print::button}"></button>
         </th:block>
       </div>
 
@@ -118,7 +118,7 @@
                 id="search-submit"
                 class="tw-absolute tw-bottom-0 tw-right-0 dark:tw-bg-zinc-800 tw-py-3 tw-px-2 tw-rounded-r-md tw-h-full tw-flex tw-items-center"
               >
-                <svg th:replace="icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')"></svg>
+                <svg th:replace="~{icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')}"></svg>
                 <span class="tw-sr-only" th:text="#{action.search}">Suche</span>
               </button>
             </span>
@@ -146,7 +146,7 @@
               <select
                 id="sort-select"
                 name="sort"
-                th:replace="fragments/select::one(id='sort-select', name='sort', options=~{::sort-select-options}, autosubmit='sort-submit')"
+                th:replace="~{fragments/select::one(id='sort-select', name='sort', options=~{::sort-select-options}, autosubmit='sort-submit')}"
               >
                 <th:block th:ref="sort-select-options">
                   <optgroup
@@ -178,28 +178,28 @@
 
       <turbo-frame id="frame-persons">
         <turbo-stream target="persons-filter" action="replace">
-          <template th:insert="::#persons-filter"></template>
+          <template th:insert="~{::#persons-filter}"></template>
         </turbo-stream>
         <turbo-stream target="persons-form-query-inputs" action="replace">
-          <template th:insert="::#persons-form-query-inputs"></template>
+          <template th:insert="~{::#persons-form-query-inputs}"></template>
         </turbo-stream>
         <turbo-stream target="persons-form-sort-inputs" action="replace">
-          <template th:insert="::#persons-form-sort-inputs"></template>
+          <template th:insert="~{::#persons-form-sort-inputs}"></template>
         </turbo-stream>
         <turbo-stream target="persons-pagination" action="replace">
-          <template th:insert="::#persons-pagination"></template>
+          <template th:insert="~{::#persons-pagination}"></template>
         </turbo-stream>
         <turbo-stream target="pagination-form-size-inputs" action="replace">
-          <template th:insert="::#pagination-form-size-inputs"></template>
+          <template th:insert="~{::#pagination-form-size-inputs}"></template>
         </turbo-stream>
         <turbo-stream target="pagination-size-hint" action="replace">
-          <template th:insert="::#pagination-size-hint"></template>
+          <template th:insert="~{::#pagination-size-hint}"></template>
         </turbo-stream>
         <p th:if="${#lists.isEmpty(personsPagination.page.content)}" class="tw-mt-16" th:text="#{persons.none}"></p>
         <th:block th:if="${not #lists.isEmpty(personsPagination.page.content)}">
           <p class="text-right visible-print">
             <th:block th:text="#{filter.validity}"></th:block>&nbsp;<span
-              th:replace="fragments/date::date(${now})"
+              th:replace="~{fragments/date::date(${now})}"
             ></span>
           </p>
           <div class="tw-mt-8 md:tw-mt-16">
@@ -232,7 +232,7 @@
                   <td class="is-centered">
                     <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                       <img
-                        th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=40'},niceName=${person.niceName},width='40px',height='40px',personId=${person.id})"
+                        th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=40'},niceName=${person.niceName},width='40px',height='40px',personId=${person.id})}"
                         alt=""
                       />
                     </div>
@@ -260,7 +260,7 @@
                   </td>
                   <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <th:block th:if="${person.entitlementYear != null}">
-                      <span th:replace="fragments/number::number(${person.entitlementYear})"></span>
+                      <span th:replace="~{fragments/number::number(${person.entitlementYear})}"></span>
                     </th:block>
                     <th:block
                       th:if="${person.entitlementYear == null}"
@@ -269,7 +269,7 @@
                   </td>
                   <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <th:block th:if="${person.entitlementActual != null}">
-                      <span th:replace="fragments/number::number(${person.entitlementActual})"></span>
+                      <span th:replace="~{fragments/number::number(${person.entitlementActual})}"></span>
                     </th:block>
                     <th:block
                       th:if="${person.entitlementActual == null}"
@@ -278,7 +278,7 @@
                   </td>
                   <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <th:block th:if="${person.entitlementRemaining != null}">
-                      <span th:replace="fragments/number::number(${person.entitlementRemaining})"></span>
+                      <span th:replace="~{fragments/number::number(${person.entitlementRemaining})}"></span>
                     </th:block>
                     <th:block
                       th:if="${person.entitlementRemaining == null}"
@@ -287,7 +287,7 @@
                   </td>
                   <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <th:block th:if="${person.vacationDaysLeft != null}">
-                      <span th:replace="fragments/number::number(${person.vacationDaysLeft})"></span>
+                      <span th:replace="~{fragments/number::number(${person.vacationDaysLeft})}"></span>
                     </th:block>
                     <th:block
                       th:if="${person.vacationDaysLeft == null}"
@@ -296,7 +296,7 @@
                   </td>
                   <td class="is-centered hidden-xs hidden-sm print:tw-table-cell">
                     <th:block th:if="${person.vacationDaysLeftRemaining != null}">
-                      <span th:replace="fragments/number::number(${person.vacationDaysLeftRemaining})"></span>
+                      <span th:replace="~{fragments/number::number(${person.vacationDaysLeftRemaining})}"></span>
                     </th:block>
                     <th:block
                       th:if="${person.vacationDaysLeftRemaining == null}"
@@ -310,7 +310,7 @@
                         data-turbo="false"
                         th:href="@{/web/person/{personId} (personId=${person.id})}"
                       >
-                        <svg th:replace="icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')"></svg>
+                        <svg th:replace="~{icon/user-circle::svg(className='tw-w-5 tw-h-5 tw-mr-1')}"></svg>
                         <th:block th:text="#{action.account.title}"></th:block>
                         <span
                           class="tw-sr-only"
@@ -325,7 +325,7 @@
             <div class="tw-mt-8 md:tw-mt-16 tw-flex tw-flex-col md:tw-flex-row md:tw-items-center tw-gap-8">
               <div id="persons-pagination">
                 <nav
-                  th:replace="fragments/pagination::pagination(${personsPagination}, #{persons.pagination.navigation.aria-label}, 'frame-persons')"
+                  th:replace="~{fragments/pagination::pagination(${personsPagination}, #{persons.pagination.navigation.aria-label}, 'frame-persons')}"
                 ></nav>
               </div>
               <form
@@ -350,7 +350,7 @@
                     <select
                       name="size"
                       id="pagination-size-select"
-                      th:replace="fragments/pagination::default-size-select(id='pagination-size-select', size=${personsPagination.page.size}, autosubmit='size-submit')"
+                      th:replace="~{fragments/pagination::default-size-select(id='pagination-size-select', size=${personsPagination.page.size}, autosubmit='size-submit')}"
                     ></select>
                   </span>
                   <span

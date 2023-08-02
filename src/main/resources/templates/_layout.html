@@ -122,11 +122,11 @@
     <th:block th:replace="${scripts}"></th:block>
   </head>
   <body th:fragment="body(content, scripts)">
-    <nav th:replace="_navigation::nav">navigation block</nav>
+    <nav th:replace="~{_navigation::nav}">navigation block</nav>
 
     <main th:replace="${content}">content block</main>
 
-    <footer th:replace="_footer::footer">footer block</footer>
+    <footer th:replace="~{_footer::footer}">footer block</footer>
 
     <th:block th:replace="${scripts}"></th:block>
   </body>

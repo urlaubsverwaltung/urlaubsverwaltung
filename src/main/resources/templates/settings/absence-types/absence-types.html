@@ -5,7 +5,7 @@
   </head>
   <body>
     <th:block th:fragment="section">
-      <div th:replace="fragments/section-heading::section-heading(~{::absence-types-heading-body}, ~{})">
+      <div th:replace="~{fragments/section-heading::section-heading(~{::absence-types-heading-body}, ~{})}">
         <th:block th:fragment="absence-types-heading-body">
           <h2 th:text="#{settings.absenceTypes.title}"></h2>
         </th:block>
@@ -16,7 +16,7 @@
           class="help-block tw-flex tw-flex-auto tw-justify-left tw-items-start md:tw-flex-none tw-pt-2 md:tw-pt-0 tw-text-sm"
         >
           <div>
-            <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+            <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
           </div>
           <div class="tw-flex tw-flex-col">
             <p>
@@ -28,7 +28,7 @@
                 href="https://urlaubsverwaltung.cloud/hilfe/abwesenheiten/#welche-abwesenheitsarten-gibt-es"
               >
                 <th:block th:text="#{settings.absenceTypes.help.2}" />
-                <svg th:replace="icon/external-link::svg(className='tw-w-4 tw-h-4 tw-ml-1')"></svg>
+                <svg th:replace="~{icon/external-link::svg(className='tw-w-4 tw-h-4 tw-ml-1')}"></svg>
               </a>
             </p>
             <p>
@@ -37,7 +37,7 @@
                 class="tw-flex tw-items-center"
                 href="mailto:info@urlaubsverwaltung.cloud?subject=Weitere%20Abwesenheitsart"
               >
-                <svg th:replace="icon/mail::svg(className='tw-w-4 tw-h-4 tw-mr-1')"></svg>
+                <svg th:replace="~{icon/mail::svg(className='tw-w-4 tw-h-4 tw-mr-1')}"></svg>
                 <th:block th:text="#{settings.absenceTypes.description.2}" />
               </a>
             </p>

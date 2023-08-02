@@ -8,7 +8,7 @@
     <div th:fragment="hour-and-minute-input" class="tw-flex tw-items-start tw-gap-3">
       <span class="tw-flex-1">
         <th:block
-          th:replace="fragments/input-group :: input-group(~{::body-hours}, ~{::addon-hours}, ${#fields.hasErrors('hours')})"
+          th:replace="~{fragments/input-group :: input-group(~{::body-hours}, ~{::addon-hours}, ${#fields.hasErrors('hours')})}"
         >
           <th:block th:ref="addon-hours">
             <th:block th:text="#{hours.abbr}"></th:block>
@@ -31,7 +31,7 @@
       </span>
       <span class="tw-flex-1">
         <th:block
-          th:replace="fragments/input-group :: input-group(~{::body-minutes}, ~{::addon-minutes}, ${#fields.hasErrors('minutes')})"
+          th:replace="~{fragments/input-group :: input-group(~{::body-minutes}, ~{::addon-minutes}, ${#fields.hasErrors('minutes')})}"
         >
           <th:block th:ref="addon-minutes">
             <th:block th:text="#{minutes.abbr}"></th:block>

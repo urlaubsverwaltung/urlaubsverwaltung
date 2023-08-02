@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{::styles}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
     <title th:text="#{person.form.annualVacation.header.title(${person.niceName})}">Urlaubsanspruch</title>
     <th:block th:fragment="styles">
       <link
@@ -38,18 +38,18 @@
         window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
         /*]]>*/
       </script>
-      <script th:replace="fragments/datepicker-localization :: datepicker-localization"></script>
-      <script th:replace="fragments/vacation-type-colors-script :: vacation-type-colors-script"></script>
+      <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
+      <script th:replace="~{fragments/vacation-type-colors-script :: vacation-type-colors-script}"></script>
     </th:block>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
       <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-1.5">
-        <div th:replace="fragments/section-heading::section-heading(~{::account-form-heading-body}, ~{})">
+        <div th:replace="~{fragments/section-heading::section-heading(~{::account-form-heading-body}, ~{})}">
           <th:block th:ref="account-form-heading-body">
             <h1 th:text="#{person.form.annualVacation.title(${person.niceName})}"></h1>
             <div
-              th:replace="fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/person/${person.id}/account?year=|, selectedYear=${selectedYear})"
+              th:replace="~{fragments/year-selector::year-selector(id='year-selection', currentYear=${currentYear}, hrefPrefix=|/web/person/${person.id}/account?year=|, selectedYear=${selectedYear})}"
             ></div>
           </th:block>
         </div>
@@ -74,7 +74,7 @@
             <div class="row tw-mb-16">
               <div class="col-md-4 col-md-push-8">
                 <span class="help-block tw-text-sm">
-                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                   <span th:text="#{person.form.annualVacation.description}"></span>
                 </span>
               </div>

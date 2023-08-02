@@ -17,7 +17,7 @@
         th:if="${departmentsAvailable and not personAssignedToDepartments}"
         class="tw-flex tw-items-center tw-gap-1.5 tw-mb-8 tw-text-yellow-600 dark:tw-text-amber-300"
       >
-        <svg th:replace="icon/info::svg(className='tw-w-5 tw-h-5')"></svg>
+        <svg th:replace="~{icon/info::svg(className='tw-w-5 tw-h-5')}"></svg>
         <p class="tw-m-0">
           <th:block
             th:if="${userId eq personNotificationsDto.personId}"

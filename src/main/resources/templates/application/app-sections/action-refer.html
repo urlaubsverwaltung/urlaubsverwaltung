@@ -15,7 +15,7 @@
         document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden');
         document.querySelector('#refer')?.classList.remove('tw-hidden');"
       >
-        <svg th:replace="icon/share-2::svg(className='tw-w-5 tw-h-5')"></svg>
+        <svg th:replace="~{icon/share-2::svg(className='tw-w-5 tw-h-5')}"></svg>
         <span class="tw-sr-only" th:text="#{action.refer}"></span>
       </button>
     </th:block>
@@ -34,7 +34,7 @@
 
         <div class="form-group">
           <select
-            th:replace="fragments/select::one(id='username', name='username', options=~{::action-refer-person-select-options})"
+            th:replace="~{fragments/select::one(id='username', name='username', options=~{::action-refer-person-select-options})}"
             id="username"
           >
             <th:block th:fragment="action-refer-person-select-options">

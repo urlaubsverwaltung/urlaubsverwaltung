@@ -8,18 +8,18 @@
       <div class="tw-mb-5">
         <div class="box tw-p-5">
           <div
-            th:replace="fragments/box::box-with-icon(~{::application-details-box-icon}, ~{::application-details-box-body})"
+            th:replace="~{fragments/box::box-with-icon(~{::application-details-box-icon}, ~{::application-details-box-body})}"
           >
             <th:block th:ref="application-details-box-icon">
               <div
-                th:replace="fragments/rounded::block(content=~{::application-details-box-icon-rounded}, className='tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900')"
+                th:replace="~{fragments/rounded::block(content=~{::application-details-box-icon-rounded}, className='tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900')}"
               >
                 <th:block th:ref="application-details-box-icon-rounded">
                   <th:block th:if="${app.vacationType.category.name == 'HOLIDAY'}">
-                    <svg th:replace="icon/sun::svg(className='tw-w-8 tw-h-8')" />
+                    <svg th:replace="~{icon/sun::svg(className='tw-w-8 tw-h-8')}" />
                   </th:block>
                   <th:block th:if="${app.vacationType.category.name != 'HOLIDAY'}">
-                    <svg th:replace="icon/flag::svg(className='tw-w-8 tw-h-8')" />
+                    <svg th:replace="~{icon/flag::svg(className='tw-w-8 tw-h-8')}" />
                   </th:block>
                 </th:block>
               </div>
@@ -53,12 +53,12 @@
                 <th:block th:text="#{absence.period.for}" />
                 <th:block th:if="${app.startDate == app.endDate}">
                   <th:block th:text="|${#messages.msg(app.weekDayOfStartDate + '.short')}|"></th:block>,
-                  <th:block th:replace="fragments/date::date(${app.startDate})"></th:block>,&nbsp;
+                  <th:block th:replace="~{fragments/date::date(${app.startDate})}"></th:block>,&nbsp;
                   <th:block th:text="${#messages.msg(app.dayLength)}"></th:block>
                 </th:block>
                 <th:block th:if="${app.startDate != app.endDate}">
                   <span
-                    th:replace="fragments/date-range::date-range(from=${app.startDate}, to=${app.endDate}, pattern='E, dd.MM.yyyy')"
+                    th:replace="~{fragments/date-range::date-range(from=${app.startDate}, to=${app.endDate}, pattern='E, dd.MM.yyyy')}"
                   ></span>
                 </th:block>
               </span>
@@ -151,11 +151,11 @@
           <td>
             <div class="tw-flex tw-items-center">
               <th:block th:if="${app.teamInformed == true}">
-                <svg th:replace="icon/smile::svg(className='tw-w-4 tw-h-4')"></svg>
+                <svg th:replace="~{icon/smile::svg(className='tw-w-4 tw-h-4')}"></svg>
                 &nbsp; <span th:text="#{application.data.teamInformed.true}"></span>
               </th:block>
               <th:block th:if="${app.teamInformed == false}">
-                <svg th:replace="icon/frown::svg(className='tw-w-4 tw-h-4')"></svg>
+                <svg th:replace="~{icon/frown::svg(className='tw-w-4 tw-h-4')}"></svg>
                 &nbsp; <span th:text="#{application.data.teamInformed.false}"></span>
               </th:block>
             </div>

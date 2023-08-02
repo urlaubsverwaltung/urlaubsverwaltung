@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{})">
+  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{})}">
     <title th:text="#{error-page.common.meta.title}"></title>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
       <div class="tw-grow tw-flex tw-flex-col tw-items-center tw-gap-8 sm:tw-gap-16">
         <div class="tw-w-full tw-max-w-screen-xl">

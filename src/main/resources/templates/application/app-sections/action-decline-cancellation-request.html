@@ -15,7 +15,7 @@
         document.querySelector('#cancel')?.classList.add('tw-hidden');
         document.querySelector('#decline-cancellation-request')?.classList.remove('tw-hidden')"
       >
-        <svg th:replace="icon/slash::svg(className='tw-w-5 tw-h-5')"></svg>
+        <svg th:replace="~{icon/slash::svg(className='tw-w-5 tw-h-5')}"></svg>
         <span class="tw-sr-only" th:text="#{action.cancellationRequest}">Stornierung ablehnen</span>
       </button>
     </th:block>
