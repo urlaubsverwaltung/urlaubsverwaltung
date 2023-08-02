@@ -99,7 +99,7 @@ public class DepartmentViewController implements HasLaunchpad {
         final Department createdDepartment = departmentService.create(mapToDepartment(departmentForm));
         redirectAttributes.addFlashAttribute("createdDepartmentName", createdDepartment.getName());
 
-        return "redirect:/web/department/";
+        return "redirect:/web/department";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -138,7 +138,7 @@ public class DepartmentViewController implements HasLaunchpad {
         final Department updatedDepartment = departmentService.update(mapToDepartment(departmentForm));
         redirectAttributes.addFlashAttribute("updatedDepartmentName", updatedDepartment.getName());
 
-        return "redirect:/web/department/";
+        return "redirect:/web/department";
     }
 
     @PreAuthorize(IS_OFFICE)
@@ -190,7 +190,7 @@ public class DepartmentViewController implements HasLaunchpad {
             redirectAttributes.addFlashAttribute("deletedDepartmentName", department.getName());
         });
 
-        return "redirect:/web/department/";
+        return "redirect:/web/department";
     }
 
     private List<Person> getDepartmentMembersAndAllActivePersons(List<Person> departmentMembers) {

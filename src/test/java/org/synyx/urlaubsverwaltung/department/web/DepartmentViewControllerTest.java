@@ -591,7 +591,7 @@ class DepartmentViewControllerTest {
         perform(post("/web/department"))
             .andExpect(status().isFound())
             .andExpect(flash().attribute("createdDepartmentName", "department"))
-            .andExpect(redirectedUrl("/web/department/"));
+            .andExpect(redirectedUrl("/web/department"));
     }
 
     @Test
@@ -671,7 +671,7 @@ class DepartmentViewControllerTest {
         perform(post("/web/department/1"))
             .andExpect(status().isFound())
             .andExpect(flash().attribute("updatedDepartmentName", "department"))
-            .andExpect(redirectedUrl("/web/department/"));
+            .andExpect(redirectedUrl("/web/department"));
     }
 
     @Test
@@ -685,7 +685,7 @@ class DepartmentViewControllerTest {
         perform(post("/web/department/1/delete"))
             .andExpect(status().isFound())
             .andExpect(flash().attribute("deletedDepartmentName", "department"))
-            .andExpect(redirectedUrl("/web/department/"));
+            .andExpect(redirectedUrl("/web/department"));
 
         verify(departmentService).delete(1L);
     }
@@ -698,7 +698,7 @@ class DepartmentViewControllerTest {
         perform(post("/web/department/1/delete"))
             .andExpect(status().isFound())
             .andExpect(flash().attribute("deletedDepartment", nullValue()))
-            .andExpect(redirectedUrl("/web/department/"));
+            .andExpect(redirectedUrl("/web/department"));
 
         verify(departmentService, never()).delete(1L);
     }
