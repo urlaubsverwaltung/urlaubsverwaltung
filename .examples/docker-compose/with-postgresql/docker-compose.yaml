@@ -34,7 +34,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: 'urlaubsverwaltung'
       SPRING_MAIL_HOST: 'mailhog'
     depends_on:
-      mariadb:
+      postgres:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]

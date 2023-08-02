@@ -28,12 +28,12 @@ services:
       - '8080:8080'
     environment:
       SPRING_PROFILES_ACTIVE: 'demodata'
-      SPRING_DATASOURCE_URL: 'jdbc:mariadb://mariadb/urlaubsverwaltung'
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgresql/urlaubsverwaltung'
       SPRING_DATASOURCE_USERNAME: 'urlaubsverwaltung'
       SPRING_DATASOURCE_PASSWORD: 'urlaubsverwaltung'
       SPRING_MAIL_HOST: 'mailhog'
     depends_on:
-      mariadb:
+      postgres:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
