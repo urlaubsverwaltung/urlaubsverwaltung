@@ -89,7 +89,7 @@ class SickNoteIT {
     static final TestPostgreContainer postgre = new TestPostgreContainer();
 
     @DynamicPropertySource
-    static void mariaDBProperties(DynamicPropertyRegistry registry) {
+    static void postgreProperties(DynamicPropertyRegistry registry) {
         postgre.start();
         postgre.configureSpringDataSource(registry);
     }
