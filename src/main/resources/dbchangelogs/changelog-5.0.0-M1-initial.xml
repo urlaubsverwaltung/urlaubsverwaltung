@@ -105,7 +105,7 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="application_comment_pkey"/>
       </column>
-      <column name="date" type="TIMESTAMP WITHOUT TIME ZONE">
+      <column name="date" type="timestamptz">
         <constraints nullable="false"/>
       </column>
       <column name="text" type="text"/>
@@ -189,7 +189,7 @@
       <column name="department_id" type="BIGINT">
         <constraints nullable="false"/>
       </column>
-      <column name="accession_date" type="TIMESTAMP WITHOUT TIME ZONE" defaultValue="1970-01-01">
+      <column name="accession_date" type="timestamptz" defaultValue="1970-01-01">
         <constraints nullable="false"/>
       </column>
       <column name="members_id" type="BIGINT">
@@ -240,7 +240,7 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="overtime_comment_pkey"/>
       </column>
-      <column name="date" type="TIMESTAMP WITHOUT TIME ZONE">
+      <column name="date" type="timestamptz">
         <constraints nullable="false"/>
       </column>
       <column name="text" type="text"/>
@@ -388,7 +388,7 @@
       <column name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="sick_note_comment_pkey"/>
       </column>
-      <column name="date" type="TIMESTAMP WITHOUT TIME ZONE">
+      <column name="date" type="timestamptz">
         <constraints nullable="false"/>
       </column>
       <column name="text" type="text"/>
@@ -502,10 +502,10 @@
       <column name="name" type="text(64)">
         <constraints nullable="false" primaryKey="true"/>
       </column>
-      <column name="lock_until" type="TIMESTAMP">
+      <column name="lock_until" type="timestamptz">
         <constraints nullable="false"/>
       </column>
-      <column name="locked_at" type="TIMESTAMP">
+      <column name="locked_at" type="timestamptz">
         <constraints nullable="false"/>
       </column>
       <column name="locked_by" type="text">
