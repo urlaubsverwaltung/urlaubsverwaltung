@@ -5,7 +5,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 public class TestPostgreContainer extends PostgreSQLContainer<TestPostgreContainer> {
 
-    private static final String VERSION = "15.1";
+    private static final String VERSION = "15.3";
 
     public TestPostgreContainer() {
         super(IMAGE + ":" + VERSION);
