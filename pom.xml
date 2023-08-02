@@ -12,14 +12,13 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.0.9</version>
+    <version>3.1.2</version>
   </parent>
 
   <properties>
     <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
     <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
     <java.version>17</java.version>
-    <testcontainers.version>1.18.3</testcontainers.version>
     <shedlock.version>4.43.0</shedlock.version>
     <uv-extension-api.version>0.9.0</uv-extension-api.version>
 
@@ -117,7 +116,6 @@
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
-      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -176,10 +174,15 @@
       <version>2.1.2</version>
     </dependency>
 
-    <!-- SPRINGBOOT DEVTOOLS -->
+    <!-- DEVELOPMENT -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-docker-compose</artifactId>
       <optional>true</optional>
     </dependency>
 
@@ -304,13 +307,11 @@
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>testcontainers</artifactId>
-      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -323,7 +324,6 @@
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>selenium</artifactId>
-      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
