@@ -143,6 +143,6 @@ public class PersonDeleteViewController implements HasLaunchpad {
 
         redirectAttributes.addFlashAttribute("personDeletionSuccess", person.getNiceName());
 
-        return "redirect:/web/person/?active=" + isActive;
+        return "redirect:/web/person?active=" + isActive;
     }
 }
