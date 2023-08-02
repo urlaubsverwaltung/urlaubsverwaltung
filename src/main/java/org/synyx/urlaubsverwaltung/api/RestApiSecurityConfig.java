@@ -22,7 +22,7 @@ class RestApiSecurityConfig {
     @Order(1)
     SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
 
-        http.securityMatcher("/api/**")
+        http.securityMatcher("/api/**", "/api/", "/api")
             .authorizeHttpRequests(
                 authorizeHttpRequests -> authorizeHttpRequests.anyRequest().authenticated()
             ).sessionManagement(
