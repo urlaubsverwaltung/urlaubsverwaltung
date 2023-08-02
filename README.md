@@ -61,7 +61,7 @@ Eine aktive Person kann eine oder mehrere Rollen innehaben.
 ### Voraussetzungen
 
 * [JDK 17](https://adoptium.net)
-* [MariaDB Datenbank (v10.6)](https://mariadb.org/)
+* [PostgreSQL Datenbank (v15.3)](https://www.postgresql.org/)
 * [Security Provider](#security-provider-konfigurieren)
 
 ### Download
