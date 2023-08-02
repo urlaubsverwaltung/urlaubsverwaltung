@@ -282,7 +282,7 @@
       <column name="calendar_period" type="text">
         <constraints nullable="false"/>
       </column>
-      <column name="secret" type="text(32)">
+      <column name="secret" type="varchar(32)">
         <constraints nullable="false"/>
       </column>
       <column name="person_id" type="bigint">
@@ -499,7 +499,7 @@
     </createTable>
 
     <createTable tableName="shedlock">
-      <column name="name" type="text(64)">
+      <column name="name" type="varchar(64)">
         <constraints nullable="false" primaryKey="true"/>
       </column>
       <column name="lock_until" type="timestamptz">
