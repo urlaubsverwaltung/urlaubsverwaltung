@@ -104,6 +104,9 @@ export default {
       strictRequires: "debug",
     }),
     esbuild({
+      // pin target to explicitly support older browser versions
+      // for browser support of $feature see https://caniuse.com/?search=es2022
+      target: "es2022",
       sourceMap: true,
       minify: isProduction,
     }),
