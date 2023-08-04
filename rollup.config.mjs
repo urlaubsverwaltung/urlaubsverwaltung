@@ -25,7 +25,6 @@ const paths = {
 
 export default {
   input: {
-    polyfill: "@babel/polyfill",
     custom_elements_polyfill: `@ungap/custom-elements`,
     "npm.datalist_polyfill": `datalist-polyfill`,
     copy_to_clipboard_input: `${paths.src}/components/copy-to-clipboard-input/index.js`,

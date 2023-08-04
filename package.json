@@ -35,7 +35,6 @@
   },
   "homepage": "https://github.com/urlaubsverwaltung/urlaubsverwaltung#readme",
   "dependencies": {
-    "@babel/polyfill": "7.12.1",
     "@duetds/date-picker": "1.4.0",
     "@hotwired/turbo": "7.3.0",
     "@rollup/plugin-commonjs": "25.0.3",
