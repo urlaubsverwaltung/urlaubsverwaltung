@@ -10,6 +10,8 @@ public class DemoDataProperties {
      */
     private boolean create = true;
 
+    private boolean localDevelopment = true;
+
     /**
      * Number of additional inactive users to create
      */
@@ -26,6 +28,14 @@ public class DemoDataProperties {
 
     public void setCreate(boolean create) {
         this.create = create;
+    }
+
+    public boolean isLocalDevelopment() {
+        return localDevelopment;
+    }
+
+    public void setLocalDevelopment(boolean localDevelopment) {
+        this.localDevelopment = localDevelopment;
     }
 
     public int getAdditionalInactiveUser() {

@@ -53,35 +53,53 @@ class PersonDataProvider {
         return personService.getPersonByMailAddress(email).isPresent();
     }
 
-    Person createTestPerson(String username, int personnelNumber, String firstName, String lastName, String email, List<Role> permissions, List<MailNotification> notifications) {
+    Optional<Person> getPersonByMailAddress(String email) {
+        return personService.getPersonByMailAddress(email);
+    }
+
+    Person updateTestPerson(int personnelNumber, String email, List<Role> permissions, List<MailNotification> notifications) {
+
+        final Optional<Person> personByUsername = personService.getPersonByMailAddress(email);
+        if (personByUsername.isPresent()) {
+
+            Person person = personByUsername.get();
+            person.setPermissions(permissions);
+            person.setNotifications(notifications);
+
+            final Person savedPerson = personService.update(person);
+            personBasedataService.update(new PersonBasedata(new PersonId(savedPerson.getId()), String.valueOf(personnelNumber), ""));
+
+            final int currentYear = Year.now(clock).getValue();
+            final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);
+            final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+
+            final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).map(DayOfWeek::getValue).collect(toList());
+            workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
+
+            accountInteractionService.updateOrCreateHolidaysAccount(
+                    savedPerson,
+                    firstDayOfYear,
+                    lastDayOfYear,
+                    null,
+                    LocalDate.of(currentYear, APRIL, 1),
+                    BigDecimal.valueOf(30),
+                    BigDecimal.valueOf(30),
+                    BigDecimal.valueOf(5),
+                    ZERO,
+                    null);
+
+            return savedPerson;
+        }
+        return null;
+    }
+
+    Person createTestPerson(String username, String firstName, String lastName, String email) {
 
         final Optional<Person> personByUsername = personService.getPersonByUsername(username);
         if (personByUsername.isPresent()) {
             return personByUsername.get();
         }
 
-        final Person savedPerson = personService.create(username, firstName, lastName, email, notifications, permissions);
-        personBasedataService.update(new PersonBasedata(new PersonId(savedPerson.getId()), String.valueOf(personnelNumber), ""));
-
-        final int currentYear = Year.now(clock).getValue();
-        final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-
-        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).map(DayOfWeek::getValue).collect(toList());
-        workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
-
-        accountInteractionService.updateOrCreateHolidaysAccount(
-            savedPerson,
-            firstDayOfYear,
-            lastDayOfYear,
-            null,
-            LocalDate.of(currentYear, APRIL, 1),
-            BigDecimal.valueOf(30),
-            BigDecimal.valueOf(30),
-            BigDecimal.valueOf(5),
-            ZERO,
-            null);
-
-        return savedPerson;
+        return personService.create(username, firstName, lastName, email, List.of(), List.of());
     }
 }

@@ -1,24 +1,24 @@
 package org.synyx.urlaubsverwaltung.dev;
 
 import org.slf4j.Logger;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonCreatedEvent;
 import org.synyx.urlaubsverwaltung.person.Role;
 
-import javax.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
@@ -47,13 +47,29 @@ import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_E
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_REVOKED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_UPCOMING;
-import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SICK_NOTE_CHILD;
 
 public class DemoDataCreationService {
 
+    public static final List<MailNotification> PERSON_NOTIFICATIONS = List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED, NOTIFICATION_EMAIL_APPLICATION_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_REVOKED, NOTIFICATION_EMAIL_APPLICATION_REJECTED, NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_CANCELLATION, NOTIFICATION_EMAIL_APPLICATION_EDITED, NOTIFICATION_EMAIL_APPLICATION_CONVERTED, NOTIFICATION_EMAIL_APPLICATION_UPCOMING, NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT, NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING);
+    public static final List<MailNotification> MANAGEMENT_NOTIFICATIONS = List.of(
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED,
+            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER
+    );
+    public static final List<MailNotification> NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT = Stream.concat(PERSON_NOTIFICATIONS.stream(), MANAGEMENT_NOTIFICATIONS.stream()).collect(toList());
     private static final Logger LOG = getLogger(lookup().lookupClass());
+    public static final String DEPARTMENT_ADMINS = "Admins";
+    public static final String DEPARTMENT_ENTWICKLUNG = "Entwicklung";
+    public static final String DEPARTMENT_MARKETING = "Marketing";
+    public static final String DEPARTMENT_BOSS = "Geschäftsführung";
 
     private final PersonDataProvider personDataProvider;
     private final ApplicationForLeaveDataProvider applicationForLeaveDataProvider;
@@ -62,6 +78,8 @@ public class DemoDataCreationService {
     private final DepartmentDataProvider departmentDataProvider;
     private final DemoDataProperties demoDataProperties;
     private final Clock clock;
+
+    private final Random random = new Random();
 
     public DemoDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
                                    SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
@@ -75,98 +93,110 @@ public class DemoDataCreationService {
         this.clock = clock;
     }
 
-    @PostConstruct
-    public void createDemoData() {
+    @Async
+    @EventListener
+    void on(PersonCreatedEvent event) {
 
-        LOG.info(">> Demo data creation (uv.development.demodata.create={})", demoDataProperties.isCreate());
-
-        if (personDataProvider.isPersonAlreadyCreated("user@urlaubsverwaltung.cloud")) {
-            LOG.info("-> Demo data was already created. Abort.");
+        final String email = event.getEmail();
+        if (email == null || email.isEmpty()) {
             return;
         }
 
-        LOG.info("-> Starting demo data creation...");
-
-        final List<MailNotification> personNotifications = List.of(
-            NOTIFICATION_EMAIL_APPLICATION_APPLIED,
-            NOTIFICATION_EMAIL_APPLICATION_ALLOWED,
-            NOTIFICATION_EMAIL_APPLICATION_REVOKED,
-            NOTIFICATION_EMAIL_APPLICATION_REJECTED,
-            NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED,
-            NOTIFICATION_EMAIL_APPLICATION_CANCELLATION,
-            NOTIFICATION_EMAIL_APPLICATION_EDITED,
-            NOTIFICATION_EMAIL_APPLICATION_CONVERTED,
-            NOTIFICATION_EMAIL_APPLICATION_UPCOMING,
-            NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT,
-            NOTIFICATION_EMAIL_APPLICATION_HOLIDAY_REPLACEMENT_UPCOMING
-        );
-
-        final List<MailNotification> managementNotifications = List.of(
-            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_APPLIED,
-            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_ALLOWED,
-            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REVOKED,
-            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_REJECTED,
-            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED,
-            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CANCELLATION,
-            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_EDITED,
-            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_CONVERTED,
-            NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER
-        );
-
-        final List<MailNotification> notificationsWithManagementDepartment = Stream.concat(personNotifications.stream(), managementNotifications.stream()).collect(toList());
-
-        final Person user = personDataProvider.createTestPerson("user", 1, "Klaus", "Müller", "user@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications);
-        final Person departmentHead = personDataProvider.createTestPerson("departmentHead", 2, "Thorsten", "Krüger", "departmentHead@urlaubsverwaltung.cloud", List.of(Role.USER, Role.DEPARTMENT_HEAD), notificationsWithManagementDepartment);
-        final Person secondStageAuthority = personDataProvider.createTestPerson("secondStageAuthority", 3, "Juliane", "Huber", "secondStageAuthority@urlaubsverwaltung.cloud", List.of(Role.USER, Role.SECOND_STAGE_AUTHORITY), notificationsWithManagementDepartment);
-        final Person boss = personDataProvider.createTestPerson("boss", 4, "Theresa", "Scherer", "boss@urlaubsverwaltung.cloud", List.of(Role.USER, Role.BOSS), personNotifications);
-        final Person office = personDataProvider.createTestPerson("office", 5, "Marlene", "Muster", "office@urlaubsverwaltung.cloud", List.of(Role.USER, Role.OFFICE), personNotifications);
-        personDataProvider.createTestPerson("admin", 6, "Anne", "Roth", "admin@urlaubsverwaltung.cloud", List.of(Role.USER, Role.ADMIN), List.of());
-
-        // Users
-        int personnelNumber = 100;
-        final Person hans = personDataProvider.createTestPerson("hdampf", personnelNumber++, "Hans", "Dampf", "dampf@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications);
-        final Person franziska = personDataProvider.createTestPerson("fbaier", personnelNumber++, "Franziska", "Baier", "baier@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications);
-        final Person elena = personDataProvider.createTestPerson("eschneider", personnelNumber++, "Elena", "Schneider", "schneider@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications);
-        final Person brigitte = personDataProvider.createTestPerson("bhaendel", personnelNumber++, "Brigitte", "Händel", "haendel@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications);
-        final Person niko = personDataProvider.createTestPerson("nschmidt", personnelNumber++, "Niko", "Schmidt", "schmidt@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications);
-        personDataProvider.createTestPerson("heinz", personnelNumber, "Holger", "Dieter", "hdieter@urlaubsverwaltung.cloud", List.of(INACTIVE), List.of());
-
-        IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser())
-            .forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, i + 42, "Horst", "Aktiv", "hdieter-active@urlaubsverwaltung.cloud", List.of(Role.USER), personNotifications));
-
-        IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser())
-            .forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, i + 21, "Horst", "Inaktiv", "hdieter-inactive@urlaubsverwaltung.cloud", List.of(INACTIVE), List.of()));
-
         // Departments
-        final List<Person> adminDepartmentUser = asList(hans, brigitte, departmentHead, secondStageAuthority);
-        final List<Person> adminDepartmentHeads = singletonList(departmentHead);
-        final List<Person> adminSecondStageAuthorities = singletonList(secondStageAuthority);
-        departmentDataProvider.createTestDepartment("Admins", "Das sind die, die so Admin Sachen machen", adminDepartmentUser, adminDepartmentHeads, adminSecondStageAuthorities);
+        departmentDataProvider.createTestDepartment(DEPARTMENT_ADMINS, "Das sind die, die so Admin Sachen machen");
+        departmentDataProvider.createTestDepartment(DEPARTMENT_ENTWICKLUNG, "Das sind die, die so entwickeln");
+        departmentDataProvider.createTestDepartment(DEPARTMENT_MARKETING, "Das sind die, die so Marketing Sachen machen");
+        departmentDataProvider.createTestDepartment(DEPARTMENT_BOSS, "Das sind die, die so Geschäftsführung Sachen machen");
 
-        final List<Person> developmentMembers = asList(user, niko, departmentHead);
-        departmentDataProvider.createTestDepartment("Entwicklung", "Das sind die, die so entwickeln", developmentMembers, emptyList(), emptyList());
+        switch (email) {
+            case "user@urlaubsverwaltung.cloud":
+                final Person person = personDataProvider.updateTestPerson(1, event.getEmail(), List.of(Role.USER), PERSON_NOTIFICATIONS);
+                departmentDataProvider.addDepartmentMember(DEPARTMENT_ENTWICKLUNG, person);
+                createDemoApplicationsAndSickNotes("user@urlaubsverwaltung.cloud");
+                break;
+            case "departmentHead@urlaubsverwaltung.cloud":
+                final Person departmentHead = personDataProvider.updateTestPerson(2, event.getEmail(), List.of(Role.USER, Role.DEPARTMENT_HEAD), NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT);
+                departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, departmentHead);
+                departmentDataProvider.addDepartmentMember(DEPARTMENT_ENTWICKLUNG, departmentHead);
+                departmentDataProvider.addDepartmentHead(DEPARTMENT_ADMINS, departmentHead);
+                break;
+            case "secondStageAuthority@urlaubsverwaltung.cloud":
+                final Person secondStageAuthority = personDataProvider.updateTestPerson(3, event.getEmail(), List.of(Role.USER, Role.SECOND_STAGE_AUTHORITY), NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT);
+                departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, secondStageAuthority);
+                departmentDataProvider.addDepartmentSecondStageAuthority(DEPARTMENT_ADMINS, secondStageAuthority);
+                createDemoApplicationsAndSickNotes("secondStageAuthority@urlaubsverwaltung.cloud");
+                break;
+            case "boss@urlaubsverwaltung.cloud":
+                final Person boss = personDataProvider.updateTestPerson(4, event.getEmail(), List.of(Role.USER, Role.BOSS), PERSON_NOTIFICATIONS);
+                departmentDataProvider.addDepartmentMember(DEPARTMENT_BOSS, boss);
+                createDemoApplicationsAndSickNotes("user@urlaubsverwaltung.cloud");
+                createDemoApplicationsAndSickNotes("boss@urlaubsverwaltung.cloud");
+                createDemoApplicationsAndSickNotes("office@urlaubsverwaltung.cloud");
+                createDemoApplicationsAndSickNotes("dampf@urlaubsverwaltung.cloud");
+                createDemoApplicationsAndSickNotes("schmidt@urlaubsverwaltung.cloud");
+                createDemoApplicationsAndSickNotes("secondStageAuthority@urlaubsverwaltung.cloud");
 
-        final List<Person> marketingMembers = asList(franziska, elena);
-        departmentDataProvider.createTestDepartment("Marketing", "Das sind die, die so Marketing Sachen machen", marketingMembers, emptyList(), emptyList());
-
-        final List<Person> bossMembers = asList(boss, office);
-        departmentDataProvider.createTestDepartment("Geschäftsführung", "Das sind die, die so Geschäftsführung Sachen machen", bossMembers, emptyList(), emptyList());
-
-        // Applications for leave and sick notes
-        createDemoData(user, boss, office);
-        createDemoData(boss, boss, office);
-        createDemoData(office, boss, office);
-        createDemoData(hans, boss, office);
-        createDemoData(niko, boss, office);
-        createDemoData(secondStageAuthority, boss, office);
-
-        LOG.info("-> Demo data was created");
+                break;
+            case "office@urlaubsverwaltung.cloud":
+                final Person office = personDataProvider.updateTestPerson(5, event.getEmail(), List.of(Role.USER, Role.OFFICE), PERSON_NOTIFICATIONS);
+                departmentDataProvider.addDepartmentMember(DEPARTMENT_BOSS, office);
+                createDemoApplicationsAndSickNotes("user@urlaubsverwaltung.cloud");
+                createDemoApplicationsAndSickNotes("boss@urlaubsverwaltung.cloud");
+                createDemoApplicationsAndSickNotes("office@urlaubsverwaltung.cloud");
+                createDemoApplicationsAndSickNotes("dampf@urlaubsverwaltung.cloud");
+                createDemoApplicationsAndSickNotes("schmidt@urlaubsverwaltung.cloud");
+                createDemoApplicationsAndSickNotes("secondStageAuthority@urlaubsverwaltung.cloud");
+                break;
+            case "admin@urlaubsverwaltung.cloud":
+                personDataProvider.updateTestPerson(5, event.getEmail(), List.of(Role.USER, Role.ADMIN), List.of());
+                break;
+            case "dampf@urlaubsverwaltung.cloud":
+                final Person dampf = personDataProvider.updateTestPerson(6, event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, dampf);
+                createDemoApplicationsAndSickNotes("dampf@urlaubsverwaltung.cloud");
+                break;
+            case "baier@urlaubsverwaltung.cloud":
+                final Person baier = personDataProvider.updateTestPerson(7, event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                departmentDataProvider.addDepartmentMember(DEPARTMENT_MARKETING, baier);
+                break;
+            case "schneider@urlaubsverwaltung.cloud":
+                final Person schneider = personDataProvider.updateTestPerson(8, event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                departmentDataProvider.addDepartmentMember(DEPARTMENT_MARKETING, schneider);
+                break;
+            case "haendel@urlaubsverwaltung.cloud":
+                final Person haendel = personDataProvider.updateTestPerson(9, event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, haendel);
+                break;
+            case "schmidt@urlaubsverwaltung.cloud":
+                final Person schmidt = personDataProvider.updateTestPerson(10, event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                departmentDataProvider.addDepartmentMember(DEPARTMENT_ENTWICKLUNG, schmidt);
+                createDemoApplicationsAndSickNotes("schmidt@urlaubsverwaltung.cloud");
+                break;
+            case "hdieter@urlaubsverwaltung.cloud":
+                personDataProvider.updateTestPerson(11, event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                break;
+            default:
+                personDataProvider.updateTestPerson(randomPersonnelNumber(), event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                break;
+        }
     }
 
-    private void createDemoData(Person person, Person boss, Person office) {
-        createApplicationsForLeave(person, boss, office);
-        createSickNotes(person, office);
-        createOvertimeRecords(person);
+    private int randomPersonnelNumber() {
+        return random.nextInt(1000 - 11 + 1) + 11;
+    }
+
+
+    private void createDemoApplicationsAndSickNotes(String personEmail) {
+
+        Optional<Person> person = personDataProvider.getPersonByMailAddress(personEmail);
+        Optional<Person> boss = personDataProvider.getPersonByMailAddress("boss@urlaubsverwaltung.cloud");
+        Optional<Person> office = personDataProvider.getPersonByMailAddress("office@urlaubsverwaltung.cloud");
+
+        if (person.isPresent() && boss.isPresent() && office.isPresent()) {
+            createApplicationsForLeave(person.get(), boss.get(), office.get());
+            createSickNotes(person.get(), office.get());
+            createOvertimeRecords(person.get());
+        }
     }
 
     private void createApplicationsForLeave(Person person, Person boss, Person office) {

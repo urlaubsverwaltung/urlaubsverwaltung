@@ -35,6 +35,14 @@ public interface DepartmentService {
     Optional<Department> getDepartmentById(Integer departmentId);
 
     /**
+     * Returns a department by its name
+     *
+     * @param departmentName the name of a department
+     * @return department to given name
+     */
+    Optional<Department> getDepartmentByName(String departmentName);
+
+    /**
      * adds the given department to repository.
      *
      * @param department the {@link Department} to create
