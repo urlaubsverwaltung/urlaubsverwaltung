@@ -65,7 +65,7 @@ public class DemoDataCreationService {
             NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_WAITING_REMINDER
     );
     public static final List<MailNotification> NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT = Stream.concat(PERSON_NOTIFICATIONS.stream(), MANAGEMENT_NOTIFICATIONS.stream()).collect(toList());
-    private static final Logger LOG = getLogger(lookup().lookupClass());
+
     public static final String DEPARTMENT_ADMINS = "Admins";
     public static final String DEPARTMENT_ENTWICKLUNG = "Entwicklung";
     public static final String DEPARTMENT_MARKETING = "Marketing";
@@ -76,33 +76,22 @@ public class DemoDataCreationService {
     private final SickNoteDataProvider sickNoteDataProvider;
     private final OvertimeRecordDataProvider overtimeRecordDataProvider;
     private final DepartmentDataProvider departmentDataProvider;
-    private final DemoDataProperties demoDataProperties;
     private final Clock clock;
 
     private final Random random = new Random();
 
     public DemoDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
                                    SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
-                                   DepartmentDataProvider departmentDataProvider, DemoDataProperties demoDataProperties, Clock clock) {
+                                   DepartmentDataProvider departmentDataProvider, Clock clock) {
         this.personDataProvider = personDataProvider;
         this.applicationForLeaveDataProvider = applicationForLeaveDataProvider;
         this.sickNoteDataProvider = sickNoteDataProvider;
         this.overtimeRecordDataProvider = overtimeRecordDataProvider;
         this.departmentDataProvider = departmentDataProvider;
-        this.demoDataProperties = demoDataProperties;
         this.clock = clock;
     }
 
-    @Async
-    @EventListener
-    void on(PersonCreatedEvent event) {
-        final String email = event.getEmail();
-        if (email == null || email.isEmpty()) {
-            LOG.info("received PersonCreatedEvent for unknown person - going to skip create demo data");
-            return;
-        }
-
-        LOG.info("received PersonCreatedEvent for person.email={} - going to create demo data", email);
+    void createDemoData(String email) {
 
         // Departments
         departmentDataProvider.createTestDepartment(DEPARTMENT_ADMINS, "Das sind die, die so Admin Sachen machen");
@@ -112,24 +101,24 @@ public class DemoDataCreationService {
 
         switch (email) {
             case "user@urlaubsverwaltung.cloud":
-                final Person person = personDataProvider.updateTestPerson(1, event.getEmail(), List.of(Role.USER), PERSON_NOTIFICATIONS);
+                final Person person = personDataProvider.updateTestPerson(1, email, List.of(Role.USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ENTWICKLUNG, person);
                 createDemoApplicationsAndSickNotes("user@urlaubsverwaltung.cloud");
                 break;
             case "departmentHead@urlaubsverwaltung.cloud":
-                final Person departmentHead = personDataProvider.updateTestPerson(2, event.getEmail(), List.of(Role.USER, Role.DEPARTMENT_HEAD), NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT);
+                final Person departmentHead = personDataProvider.updateTestPerson(2, email, List.of(Role.USER, Role.DEPARTMENT_HEAD), NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, departmentHead);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ENTWICKLUNG, departmentHead);
                 departmentDataProvider.addDepartmentHead(DEPARTMENT_ADMINS, departmentHead);
                 break;
             case "secondStageAuthority@urlaubsverwaltung.cloud":
-                final Person secondStageAuthority = personDataProvider.updateTestPerson(3, event.getEmail(), List.of(Role.USER, Role.SECOND_STAGE_AUTHORITY), NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT);
+                final Person secondStageAuthority = personDataProvider.updateTestPerson(3, email, List.of(Role.USER, Role.SECOND_STAGE_AUTHORITY), NOTIFICATIONS_WITH_MANAGEMENT_DEPARTMENT);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, secondStageAuthority);
                 departmentDataProvider.addDepartmentSecondStageAuthority(DEPARTMENT_ADMINS, secondStageAuthority);
                 createDemoApplicationsAndSickNotes("secondStageAuthority@urlaubsverwaltung.cloud");
                 break;
             case "boss@urlaubsverwaltung.cloud":
-                final Person boss = personDataProvider.updateTestPerson(4, event.getEmail(), List.of(Role.USER, Role.BOSS), PERSON_NOTIFICATIONS);
+                final Person boss = personDataProvider.updateTestPerson(4, email, List.of(Role.USER, Role.BOSS), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_BOSS, boss);
                 createDemoApplicationsAndSickNotes("user@urlaubsverwaltung.cloud");
                 createDemoApplicationsAndSickNotes("boss@urlaubsverwaltung.cloud");
@@ -140,7 +129,7 @@ public class DemoDataCreationService {
 
                 break;
             case "office@urlaubsverwaltung.cloud":
-                final Person office = personDataProvider.updateTestPerson(5, event.getEmail(), List.of(Role.USER, Role.OFFICE), PERSON_NOTIFICATIONS);
+                final Person office = personDataProvider.updateTestPerson(5, email, List.of(Role.USER, Role.OFFICE), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_BOSS, office);
                 createDemoApplicationsAndSickNotes("user@urlaubsverwaltung.cloud");
                 createDemoApplicationsAndSickNotes("boss@urlaubsverwaltung.cloud");
@@ -150,39 +139,37 @@ public class DemoDataCreationService {
                 createDemoApplicationsAndSickNotes("secondStageAuthority@urlaubsverwaltung.cloud");
                 break;
             case "admin@urlaubsverwaltung.cloud":
-                personDataProvider.updateTestPerson(5, event.getEmail(), List.of(Role.USER, Role.ADMIN), List.of());
+                personDataProvider.updateTestPerson(5, email, List.of(Role.USER, Role.ADMIN), List.of());
                 break;
             case "dampf@urlaubsverwaltung.cloud":
-                final Person dampf = personDataProvider.updateTestPerson(6, event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                final Person dampf = personDataProvider.updateTestPerson(6, email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, dampf);
                 createDemoApplicationsAndSickNotes("dampf@urlaubsverwaltung.cloud");
                 break;
             case "baier@urlaubsverwaltung.cloud":
-                final Person baier = personDataProvider.updateTestPerson(7, event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                final Person baier = personDataProvider.updateTestPerson(7, email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_MARKETING, baier);
                 break;
             case "schneider@urlaubsverwaltung.cloud":
-                final Person schneider = personDataProvider.updateTestPerson(8, event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                final Person schneider = personDataProvider.updateTestPerson(8, email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_MARKETING, schneider);
                 break;
             case "haendel@urlaubsverwaltung.cloud":
-                final Person haendel = personDataProvider.updateTestPerson(9, event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                final Person haendel = personDataProvider.updateTestPerson(9, email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ADMINS, haendel);
                 break;
             case "schmidt@urlaubsverwaltung.cloud":
-                final Person schmidt = personDataProvider.updateTestPerson(10, event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                final Person schmidt = personDataProvider.updateTestPerson(10, email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
                 departmentDataProvider.addDepartmentMember(DEPARTMENT_ENTWICKLUNG, schmidt);
                 createDemoApplicationsAndSickNotes("schmidt@urlaubsverwaltung.cloud");
                 break;
             case "hdieter@urlaubsverwaltung.cloud":
-                personDataProvider.updateTestPerson(11, event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                personDataProvider.updateTestPerson(11, email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
                 break;
             default:
-                personDataProvider.updateTestPerson(randomPersonnelNumber(), event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
+                personDataProvider.updateTestPerson(randomPersonnelNumber(), email, List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
                 break;
         }
-
-        LOG.info("finished creating demo data for PersonCreatedEvent of person.email={}", event.getEmail());
     }
 
     private int randomPersonnelNumber() {

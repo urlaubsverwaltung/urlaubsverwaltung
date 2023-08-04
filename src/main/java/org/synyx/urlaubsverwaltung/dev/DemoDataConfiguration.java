@@ -27,8 +27,13 @@ class DemoDataConfiguration {
     @Bean
     DemoDataCreationService demoDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
                                                     SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
-                                                    DepartmentDataProvider departmentDataProvider, DemoDataProperties demoDataProperties, Clock clock) {
-        return new DemoDataCreationService(personDataProvider, applicationForLeaveDataProvider, sickNoteDataProvider, overtimeRecordDataProvider, departmentDataProvider, demoDataProperties, clock);
+                                                    DepartmentDataProvider departmentDataProvider, Clock clock) {
+        return new DemoDataCreationService(personDataProvider, applicationForLeaveDataProvider, sickNoteDataProvider, overtimeRecordDataProvider, departmentDataProvider, clock);
+    }
+
+    @Bean
+    PersonCreatedEventListener personCreatedEventListener(DemoDataCreationService demoDataCreationService) {
+        return new PersonCreatedEventListener(demoDataCreationService);
     }
 
     @Bean
