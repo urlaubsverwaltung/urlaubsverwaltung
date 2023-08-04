@@ -1,3 +1,4 @@
+import "../js/common";
 import "../components/back-button";
 
 import count from "../js/count";

@@ -1,3 +1,4 @@
+import "../js/common";
 import "../components/datepicker";
 import "../components/timepicker";
 

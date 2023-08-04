@@ -3,8 +3,7 @@
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{calendar.share.header.title}">Kalenderfreigabe</title>
     <th:block th:fragment="scriptsDefer">
-      <script defer type="module" asset:src="copy_to_clipboard_input.js"></script>
-      <script defer type="module" asset:src="tabs.js"></script>
+      <script defer type="module" asset:src="calendar_sharing.js"></script>
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">

@@ -1,3 +1,4 @@
+import "../js/common";
 import "../js/application/app-info";
 
 import count from "../js/count";

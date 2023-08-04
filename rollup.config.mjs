@@ -27,8 +27,6 @@ export default {
   input: {
     custom_elements_polyfill: `@ungap/custom-elements`,
     "npm.datalist_polyfill": `datalist-polyfill`,
-    copy_to_clipboard_input: `${paths.src}/components/copy-to-clipboard-input/index.js`,
-    tabs: `${paths.src}/components/tabs/index.js`,
     ...inputFiles(),
   },
   output: {

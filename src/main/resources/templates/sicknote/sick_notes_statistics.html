@@ -1,7 +1,10 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(title=~{::title})}">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{sicknotes.statistics.header.title(${statistics.year})}">Krankmeldungsstatistik</title>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="sick_notes_statistics.js"></script>
+    </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">

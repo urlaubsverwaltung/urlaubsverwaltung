@@ -1,3 +1,4 @@
+import "../js/common";
 import $ from "jquery";
 import "tablesorter";
 import "../components/popover";
