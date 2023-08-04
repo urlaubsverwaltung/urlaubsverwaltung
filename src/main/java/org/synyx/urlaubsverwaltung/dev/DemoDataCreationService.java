@@ -96,11 +96,13 @@ public class DemoDataCreationService {
     @Async
     @EventListener
     void on(PersonCreatedEvent event) {
-
         final String email = event.getEmail();
         if (email == null || email.isEmpty()) {
+            LOG.info("received PersonCreatedEvent for unknown person - going to skip create demo data");
             return;
         }
+
+        LOG.info("received PersonCreatedEvent for person.email={} - going to create demo data", email);
 
         // Departments
         departmentDataProvider.createTestDepartment(DEPARTMENT_ADMINS, "Das sind die, die so Admin Sachen machen");
@@ -179,6 +181,8 @@ public class DemoDataCreationService {
                 personDataProvider.updateTestPerson(randomPersonnelNumber(), event.getEmail(), List.of(Role.USER, Role.USER), PERSON_NOTIFICATIONS);
                 break;
         }
+
+        LOG.info("finished creating demo data for PersonCreatedEvent of person.email={}", event.getEmail());
     }
 
     private int randomPersonnelNumber() {
