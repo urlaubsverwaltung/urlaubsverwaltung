@@ -45,13 +45,13 @@
       <version>0.1.0</version>
     </dependency>
 
-        <!-- Logging -->
+    <!-- Logging -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-logging</artifactId>
     </dependency>
 
-        <!-- API -->
+    <!-- API -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-hateoas</artifactId>
@@ -61,20 +61,20 @@
       <artifactId>json-path</artifactId>
     </dependency>
 
-        <!-- API DOCUMENTATION -->
+    <!-- API DOCUMENTATION -->
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-ui</artifactId>
       <version>1.7.0</version>
     </dependency>
 
-        <!-- SESSION -->
+    <!-- SESSION -->
     <dependency>
       <groupId>org.springframework.session</groupId>
       <artifactId>spring-session-jdbc</artifactId>
     </dependency>
 
-        <!-- WEB -->
+    <!-- WEB -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -84,14 +84,14 @@
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
     </dependency>
 
-        <!-- Configuration Properties -->
+    <!-- Configuration Properties -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>
     </dependency>
 
-        <!-- METRICS -->
+    <!-- METRICS -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
@@ -101,7 +101,7 @@
       <artifactId>micrometer-registry-prometheus</artifactId>
     </dependency>
 
-        <!-- DATABASE -->
+    <!-- DATABASE -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -122,21 +122,21 @@
       <scope>test</scope>
     </dependency>
 
-        <!-- csv file export -->
+    <!-- csv file export -->
     <dependency>
       <groupId>com.opencsv</groupId>
       <artifactId>opencsv</artifactId>
       <version>5.8</version>
     </dependency>
 
-        <!-- Shedlock -->
+    <!-- Shedlock -->
     <dependency>
       <groupId>net.javacrumbs.shedlock</groupId>
       <artifactId>shedlock-provider-jdbc-template</artifactId>
       <version>${shedlock.version}</version>
     </dependency>
 
-        <!-- MAIL -->
+    <!-- MAIL -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-mail</artifactId>
@@ -154,7 +154,7 @@
       <scope>test</scope>
     </dependency>
 
-        <!-- PUBLIC HOLIDAYS INFORMATION -->
+    <!-- PUBLIC HOLIDAYS INFORMATION -->
     <dependency>
       <groupId>de.focus-shift</groupId>
       <artifactId>jollyday-jaxb</artifactId>
@@ -177,21 +177,21 @@
       <version>2.0.1</version>
     </dependency>
 
-        <!-- SPRINGBOOT DEVTOOLS -->
+    <!-- SPRINGBOOT DEVTOOLS -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
       <optional>true</optional>
     </dependency>
 
-        <!-- iCal -->
+    <!-- iCal -->
     <dependency>
       <groupId>org.mnode.ical4j</groupId>
       <artifactId>ical4j</artifactId>
       <version>3.2.12</version>
     </dependency>
 
-        <!-- EXCHANGE SYNC -->
+    <!-- EXCHANGE SYNC -->
     <dependency>
       <groupId>com.microsoft.ews-java-api</groupId>
       <artifactId>ews-java-api</artifactId>
@@ -218,7 +218,7 @@
       <version>2.3.1</version>
     </dependency>
 
-        <!-- GOOGLE CALENDAR SYNC -->
+    <!-- GOOGLE CALENDAR SYNC -->
     <dependency>
       <groupId>com.google.api-client</groupId>
       <artifactId>google-api-client</artifactId>
@@ -241,7 +241,7 @@
       <version>1.43.3</version>
     </dependency>
 
-        <!-- Security -->
+    <!-- Security -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
@@ -272,7 +272,7 @@
       <scope>test</scope>
     </dependency>
 
-        <!-- Validation -->
+    <!-- Validation -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-validation</artifactId>
@@ -283,7 +283,7 @@
       <version>1.7</version>
     </dependency>
 
-        <!-- uv extension api -->
+    <!-- uv extension api -->
     <dependency>
       <groupId>de.focus-shift.urlaubsverwaltung.extension.api</groupId>
       <artifactId>model-common</artifactId>
@@ -300,7 +300,7 @@
       <version>${uv-extension-api.version}</version>
     </dependency>
 
-        <!-- Test -->
+    <!-- Test -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
@@ -324,7 +324,7 @@
       <scope>test</scope>
     </dependency>
 
-        <!-- WebDriver Tests -->
+    <!-- WebDriver Tests -->
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>selenium</artifactId>
@@ -360,7 +360,7 @@
           <layout>ZIP</layout>
           <image>
             <name>
-                            ${docker-publish-registry}/${docker-publish-registry-path}/${project.artifactId}:${project.version}
+              ${docker-publish-registry}/${docker-publish-registry-path}/${project.artifactId}:${project.version}
             </name>
           </image>
           <docker>
@@ -372,7 +372,7 @@
         </configuration>
       </plugin>
 
-            <!-- Frontend assets -->
+      <!-- Frontend assets -->
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
@@ -382,14 +382,14 @@
           <npmVersion>8.19.4</npmVersion>
         </configuration>
         <executions>
-                    <!-- Install node/npm binary to run npm/node scripts-->
+          <!-- Install node/npm binary to run npm/node scripts-->
           <execution>
             <id>install-node-and-npm</id>
             <goals>
               <goal>install-node-and-npm</goal>
             </goals>
           </execution>
-                    <!-- Install all project dependencies exactly defined in package-lock.json -->
+          <!-- Install all project dependencies exactly defined in package-lock.json -->
           <execution>
             <id>install-npm-dependencies</id>
             <goals>
@@ -399,7 +399,7 @@
               <arguments>ci</arguments>
             </configuration>
           </execution>
-                    <!-- lint JavaScript files (static code analysis) -->
+          <!-- lint JavaScript files (static code analysis) -->
           <execution>
             <id>npm-lint</id>
             <goals>
@@ -409,7 +409,7 @@
               <arguments>run lint</arguments>
             </configuration>
           </execution>
-                    <!-- lint JavaScript files report (static code analysis) -->
+          <!-- lint JavaScript files report (static code analysis) -->
           <execution>
             <id>npm-lint-report</id>
             <goals>
@@ -419,7 +419,7 @@
               <arguments>run lint:report</arguments>
             </configuration>
           </execution>
-                    <!-- Build and minify assets -->
+          <!-- Build and minify assets -->
           <execution>
             <id>npm-build</id>
             <goals>
@@ -429,7 +429,7 @@
               <arguments>run build</arguments>
             </configuration>
           </execution>
-                    <!-- run Tests -->
+          <!-- run Tests -->
           <execution>
             <id>npm-test</id>
             <goals>
@@ -443,13 +443,13 @@
         </executions>
       </plugin>
 
-            <!-- Integration tests -->
+      <!-- Integration tests -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
 
-            <!-- Editorconfig -->
+      <!-- Editorconfig -->
       <plugin>
         <groupId>org.ec4j.maven</groupId>
         <artifactId>editorconfig-maven-plugin</artifactId>
@@ -547,7 +547,7 @@
       <build>
         <plugins>
 
-                    <!-- Coverage -->
+          <!-- Coverage -->
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
@@ -580,7 +580,7 @@
             </executions>
           </plugin>
 
-                    <!-- sonar -->
+          <!-- sonar -->
           <plugin>
             <groupId>org.sonarsource.scanner.maven</groupId>
             <artifactId>sonar-maven-plugin</artifactId>
