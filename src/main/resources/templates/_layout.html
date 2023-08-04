@@ -116,29 +116,33 @@
     <link rel="icon" type="image/png" sizes="160x160" th:href="@{/favicons/favicon-160x160.png}" />
     <link rel="icon" type="image/png" sizes="192x192" th:href="@{/favicons/favicon-192x192.png}" />
     <link rel="icon" type="image/png" sizes="196x196" th:href="@{/favicons/favicon-196x196.png}" />
-    <link rel="stylesheet" type="text/css" asset:href="common.css" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/common.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
     <th:block th:replace="${styles}"></th:block>
 
+    <link rel="preload" as="script" asset:src="npm.core-js.js" crossorigin />
+    <link rel="preload" as="script" asset:src="npm.babel.js" crossorigin />
+    <link rel="preload" as="script" asset:src="npm.jquery.js" crossorigin />
+    <link rel="preload" as="script" asset:src="npm.bootstrap.js" crossorigin />
+    <link rel="preload" as="script" asset:src="npm.underscore.js" crossorigin />
+    <link rel="preload" as="script" asset:src="npm.datalist_polyfill.js" crossorigin />
+    <link rel="preload" as="script" asset:src="npm.date-fns.js" crossorigin />
+    <link th:id="${language == 'de'}" rel="preload" as="script" asset:src="npm.date-fns.de.js" crossorigin />
+    <link th:id="${language == 'en'}" rel="preload" as="script" asset:src="npm.date-fns.en.js" crossorigin />
+    <link th:id="${language == 'el'}" rel="preload" as="script" asset:src="npm.date-fns.el.js" crossorigin />
     <th:block th:replace="${preload}"></th:block>
 
-    <script defer asset:src="runtime.js"></script>
-    <script defer asset:src="polyfill.js"></script>
-    <script defer asset:src="npm.core-js.js"></script>
-    <script defer asset:src="npm.babel.js"></script>
-    <script defer asset:src="npm.jquery.js"></script>
-    <script defer asset:src="npm.bootstrap.js"></script>
-    <script defer asset:src="npm.underscore.js"></script>
-    <script defer asset:src="npm.datalist-polyfill.js"></script>
-    <script
-      defer
-      asset:src="account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js"
-    ></script>
-    <script defer asset:src="common.js"></script>
-    <script defer asset:src="common~copy_to_clipboard_input~person_overview~user_settings.js"></script>
-    <script defer asset:src="date-fns-localized.js"></script>
-    <script defer asset:src="npm.ungap.js"></script>
-    <script defer asset:src="custom-elements-polyfill.js"></script>
+    <script defer type="module" asset:src="polyfill.js"></script>
+    <script defer type="module" asset:src="npm.core-js.js"></script>
+    <script defer type="module" asset:src="npm.babel.js"></script>
+    <script defer type="module" asset:src="npm.jquery.js"></script>
+    <script defer type="module" asset:src="npm.bootstrap.js"></script>
+    <script defer type="module" asset:src="npm.underscore.js"></script>
+    <script defer type="module" asset:src="npm.datalist_polyfill.js"></script>
+    <script defer type="module" asset:src="common.js"></script>
+    <script defer type="module" asset:src="date-fns-localized.js"></script>
+    <script defer type="module" asset:src="custom-elements-polyfill.js"></script>
     <th:block th:replace="${scriptsDefer}"></th:block>
     <th:block th:replace="${prefetchOrPrerender}"></th:block>
     <th:block th:replace="${additional}"></th:block>

@@ -13,8 +13,9 @@ class AssetAttributeTagProcessorTest {
     void ensureDoProcessCallsAssetFilenameHashMapperAndSetsTheHashedValue() {
         final AssetFilenameHashMapper assetFilenameHashMapper = mock(AssetFilenameHashMapper.class);
         final AssetAttributeTagProcessor assetAttributeTagProcessor = new AssetAttributeTagProcessor("uv", "href", assetFilenameHashMapper);
+        final String contextPath = "";
 
-        when(assetFilenameHashMapper.getHashedAssetFilename("awesome-attribute-value"))
+        when(assetFilenameHashMapper.getHashedAssetFilename("awesome-attribute-value", contextPath))
             .thenReturn("value-with-hash");
 
         final IElementTagStructureHandler structureHandler = mock(IElementTagStructureHandler.class);

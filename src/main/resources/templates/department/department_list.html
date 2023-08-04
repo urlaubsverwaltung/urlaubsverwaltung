@@ -13,8 +13,8 @@
       </script>
     </th:block>
     <th:block th:fragment="scriptsDefer">
-      <script defer asset:src="npm.tablesorter.js"></script>
-      <script defer asset:src="department_list.js"></script>
+      <script defer type="module" asset:src="npm.tablesorter.js"></script>
+      <script defer type="module" asset:src="department_list.js"></script>
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">

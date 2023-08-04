@@ -3,7 +3,7 @@
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{settings.header.title}"></title>
     <th:block th:ref="scriptsDefer">
-      <script defer asset:src="settings_form.js"></script>
+      <script defer type="module" asset:src="settings_form.js"></script>
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::content}, ~{})}">

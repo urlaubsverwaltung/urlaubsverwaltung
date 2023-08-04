@@ -17,7 +17,6 @@ class AssetDialect extends AbstractProcessorDialect {
     @Override
     public Set<IProcessor> getProcessors(String dialectPrefix) {
         return Set.of(
-            new AssetAttributeTagProcessor(dialectPrefix, "href", assetFilenameHashMapper),
             new AssetAttributeTagProcessor(dialectPrefix, "src", assetFilenameHashMapper)
         );
     }

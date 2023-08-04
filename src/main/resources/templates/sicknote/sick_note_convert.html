@@ -3,7 +3,7 @@
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{sicknote.convert.header.title}">Krankmeldung in Abwesenheit umwandeln</title>
     <th:block th:fragment="scriptsDefer">
-      <script defer asset:src="sick_note_convert.js"></script>
+      <script defer type="module" asset:src="sick_note_convert.js"></script>
     </th:block>
   </head>
 

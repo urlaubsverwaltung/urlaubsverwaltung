@@ -24,10 +24,10 @@ class AssetFilenameHashMapperTest {
 
         final AssetFilenameHashMapper sut = new AssetFilenameHashMapper(resourceLoader);
 
-        String jsAsset = sut.getHashedAssetFilename("file-one.js");
+        String jsAsset = sut.getHashedAssetFilename("file-one.js", "");
         assertThat(jsAsset).isEqualTo("/public-path/file-one.contenthash.min.js");
 
-        String cssAsset = sut.getHashedAssetFilename("file-one.css");
+        String cssAsset = sut.getHashedAssetFilename("file-one.css", "");
         assertThat(cssAsset).isEqualTo("/public-path/file-one.contenthash.css");
     }
 
@@ -41,7 +41,7 @@ class AssetFilenameHashMapperTest {
         final AssetFilenameHashMapper sut = new AssetFilenameHashMapper(resourceLoader);
 
         assertThatIllegalStateException()
-            .isThrownBy(() -> sut.getHashedAssetFilename("non-existent-filename"))
+            .isThrownBy(() -> sut.getHashedAssetFilename("non-existent-filename", ""))
             .withMessage("could not resolve given asset name=non-existent-filename");
     }
 
@@ -56,7 +56,7 @@ class AssetFilenameHashMapperTest {
         final AssetFilenameHashMapper sut = new AssetFilenameHashMapper(resourceLoader);
 
         assertThatIllegalStateException()
-            .isThrownBy(() -> sut.getHashedAssetFilename("filename"))
+            .isThrownBy(() -> sut.getHashedAssetFilename("filename", ""))
             .withMessage("could not parse manifest json file");
     }
 
@@ -72,7 +72,7 @@ class AssetFilenameHashMapperTest {
         final AssetFilenameHashMapper sut = new AssetFilenameHashMapper(resourceLoader);
 
         assertThatIllegalStateException()
-            .isThrownBy(() -> sut.getHashedAssetFilename("filename"))
-            .withMessage("could not read classpath:assets-manifest.json");
+            .isThrownBy(() -> sut.getHashedAssetFilename("filename", ""))
+            .withMessage("could not read classpath:assets-manifest.json. please ensure 'npm run build' has been executed.");
     }
 }

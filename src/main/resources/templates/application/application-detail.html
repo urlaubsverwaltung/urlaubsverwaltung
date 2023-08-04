@@ -16,13 +16,8 @@
       </script>
     </th:block>
     <th:block th:fragment="scriptsDefer">
-      <script defer asset:src="npm.date-fns.js"></script>
-      <script defer asset:src="app_detail~app_form~person_overview.js"></script>
-      <script
-        defer
-        asset:src="account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js"
-      ></script>
-      <script defer asset:src="app_detail.js"></script>
+      <script defer type="module" asset:src="npm.date-fns.js"></script>
+      <script defer type="module" asset:src="app_detail.js"></script>
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">

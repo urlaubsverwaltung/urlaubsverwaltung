@@ -3,7 +3,7 @@
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{person.form.permissions.header.title}"></title>
     <th:block th:fragment="scriptsDefer">
-      <script defer asset:src="person_form.js"></script>
+      <script defer type="module" asset:src="person_form.js"></script>
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">

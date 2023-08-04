@@ -3,7 +3,7 @@
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{overtime.header.title(${person.niceName})}"></title>
     <th:block th:ref="scriptsDefer">
-      <script defer asset:src="overtime_overview.js"></script>
+      <script defer type="module" asset:src="overtime_overview.js"></script>
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">
