@@ -8,7 +8,7 @@ public class AvatarSettings {
     /**
      * Is gravatar used for avatar images
      */
-    private boolean gravatarEnabled = true;
+    private boolean gravatarEnabled = false;
 
     public boolean isGravatarEnabled() {
         return gravatarEnabled;
