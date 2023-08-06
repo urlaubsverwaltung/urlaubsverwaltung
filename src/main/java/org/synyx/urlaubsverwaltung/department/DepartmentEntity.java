@@ -10,7 +10,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.LazyCollection;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.LocalDate;
@@ -18,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.time.ZoneOffset.UTC;
-import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 
 @Entity(name = "department")
 class DepartmentEntity {
@@ -44,18 +43,15 @@ class DepartmentEntity {
     // flag for two stage approval process
     private boolean twoStageApproval;
 
-    @LazyCollection(FALSE)
     @CollectionTable(name = "department_member", joinColumns = @JoinColumn(name = "department_id"))
-    @ElementCollection
+    @ElementCollection(fetch = EAGER)
     private List<DepartmentMemberEmbeddable> members = new ArrayList<>();
 
-    @OneToMany
-    @LazyCollection(FALSE)
+    @OneToMany(fetch = EAGER)
     @CollectionTable(name = "department_department_head")
     private List<Person> departmentHeads = new ArrayList<>();
 
-    @OneToMany
-    @LazyCollection(FALSE)
+    @OneToMany(fetch = EAGER)
     @CollectionTable(name = "department_second_stage_authority")
     private List<Person> secondStageAuthorities = new ArrayList<>();
 

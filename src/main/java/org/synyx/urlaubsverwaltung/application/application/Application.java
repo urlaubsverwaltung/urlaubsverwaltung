@@ -11,7 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
-import org.hibernate.annotations.LazyCollection;
 import org.synyx.urlaubsverwaltung.DurationConverter;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
@@ -32,11 +31,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.time.Duration.ZERO;
 import static java.time.ZoneOffset.UTC;
-import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
@@ -124,9 +123,8 @@ public class Application {
      */
     private String reason;
 
-    @LazyCollection(FALSE)
     @CollectionTable(name = "holiday_replacements", joinColumns = @JoinColumn(name = "application_id"))
-    @ElementCollection
+    @ElementCollection(fetch = EAGER)
     private List<HolidayReplacementEntity> holidayReplacements = new ArrayList<>();
 
     /**
