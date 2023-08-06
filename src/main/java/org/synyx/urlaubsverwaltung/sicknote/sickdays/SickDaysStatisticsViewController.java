@@ -64,8 +64,8 @@ class SickDaysStatisticsViewController {
                                                          @RequestParam(value = "to", defaultValue = "") String to,
                                                          @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,
                                                          @RequestParam(value = "query", required = false, defaultValue = "") String query,
-                                                         @SortDefault.SortDefaults({@SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)})
-                                                         Pageable pageable, Locale locale) {
+                                                         @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
+                                                         Locale locale) {
 
         final FilterPeriod period = toFilterPeriod(from, to, locale);
 
