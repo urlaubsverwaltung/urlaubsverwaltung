@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 class LocaleModelInterceptor implements HandlerInterceptor {
 
     @Override
-    public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, ModelAndView modelAndView) throws Exception {
+    public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, ModelAndView modelAndView) {
         if (attributeRequired(modelAndView)) {
             modelAndView.addObject("language", LocaleContextHolder.getLocale().toLanguageTag());
         }
