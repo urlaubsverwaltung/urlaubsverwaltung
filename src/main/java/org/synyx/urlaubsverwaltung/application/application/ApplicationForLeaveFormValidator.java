@@ -162,60 +162,50 @@ class ApplicationForLeaveFormValidator implements Validator {
     }
 
     private static void validateChristmasEve(DayLength applicationDayLength, WorkingTimeSettings workingTimeSettings, Errors errors) {
-
         final DayLength workingDurationForChristmasEve = workingTimeSettings.getWorkingDurationForChristmasEve();
-
         switch (workingDurationForChristmasEve) {
-            case ZERO:
+            case ZERO -> {
                 if (applicationDayLength != DayLength.ZERO) {
                     errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_FULL);
                 }
-                break;
-            case MORNING:
+            }
+            case MORNING -> {
                 if (applicationDayLength == NOON) {
                     errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_NOON);
                 }
-                break;
-            case NOON:
+            }
+            case NOON -> {
                 if (applicationDayLength == MORNING) {
                     errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_CHRISTMAS_EVE_MORNING);
                 }
-                break;
-            // nothing to do here
-            default:
-                break;
+            }
         }
     }
 
     private static void validateNewYearsEve(DayLength applicationDayLength, WorkingTimeSettings workingTimeSettings, Errors errors) {
-
         final DayLength workingDurationForNewYearsEve = workingTimeSettings.getWorkingDurationForNewYearsEve();
-
         switch (workingDurationForNewYearsEve) {
-            case ZERO:
+            case ZERO -> {
                 if (applicationDayLength != DayLength.ZERO) {
                     errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_FULL);
                 }
-                break;
-            case MORNING:
+            }
+            case MORNING -> {
                 if (applicationDayLength == NOON) {
                     errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_NOON);
                 }
-                break;
-            case NOON:
+            }
+            case NOON -> {
                 if (applicationDayLength == MORNING) {
                     errors.rejectValue(DAY_LENGTH, ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
                     errors.reject(ERROR_ALREADY_ABSENT_ON_NEWYEARS_EVE_MORNING);
                 }
-                break;
-            // nothing to do here
-            default:
-                break;
+            }
         }
     }
 
