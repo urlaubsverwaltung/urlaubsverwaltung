@@ -48,7 +48,7 @@ class CompanyCalendarService {
         final Person person = getPersonOrThrow(personId);
 
         final Optional<CompanyCalendar> maybeCompanyCalendar = companyCalendarRepository.findByPerson(person);
-        final CompanyCalendar companyCalendar = maybeCompanyCalendar.isEmpty() ? new CompanyCalendar() : maybeCompanyCalendar.get();
+        final CompanyCalendar companyCalendar = maybeCompanyCalendar.orElseGet(CompanyCalendar::new);
         companyCalendar.setPerson(person);
         companyCalendar.setCalendarPeriod(calendarPeriod);
         companyCalendar.generateSecret();

@@ -64,7 +64,7 @@ class DepartmentCalendarService {
         }
 
         final Optional<DepartmentCalendar> maybeDepartmentCalendar = departmentCalendarRepository.findByDepartmentIdAndPerson(departmentId, person);
-        final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar.isEmpty() ? new DepartmentCalendar() : maybeDepartmentCalendar.get();
+        final DepartmentCalendar departmentCalendar = maybeDepartmentCalendar.orElseGet(DepartmentCalendar::new);
         departmentCalendar.setDepartmentId(departmentId);
         departmentCalendar.setPerson(person);
         departmentCalendar.setCalendarPeriod(calendarPeriod);

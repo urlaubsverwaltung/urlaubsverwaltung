@@ -48,7 +48,7 @@ class PersonCalendarService {
         final Person person = getPersonOrThrow(personId);
 
         final Optional<PersonCalendar> maybePersonCalendar = personCalendarRepository.findByPerson(person);
-        final PersonCalendar personCalendar = maybePersonCalendar.isEmpty() ? new PersonCalendar() : maybePersonCalendar.get();
+        final PersonCalendar personCalendar = maybePersonCalendar.orElseGet(PersonCalendar::new);
         personCalendar.setPerson(person);
         personCalendar.setCalendarPeriod(calendarPeriod);
         personCalendar.generateSecret();
