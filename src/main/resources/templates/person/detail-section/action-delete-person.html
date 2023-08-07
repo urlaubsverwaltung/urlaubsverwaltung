@@ -7,21 +7,21 @@
   <body>
     <th:block th:fragment="section">
       <div
-        th:replace="fragments/section-heading::section-heading(~{::person-details-dangerzone-body}, ~{::person-details-dangerzone-actions})"
+        th:replace="~{fragments/section-heading::section-heading(~{::person-details-dangerzone-body}, ~{::person-details-dangerzone-actions})}"
       >
         <th:block th:ref="person-details-dangerzone-body">
           <h2 th:text="#{person.account.dangerzone.title}">Benutzer löschen</h2>
         </th:block>
       </div>
       <div
-        th:replace="fragments/box::box-with-icon(~{::person-details-dangerzone-box-icon}, ~{::person-details-dangerzone-box-body})"
+        th:replace="~{fragments/box::box-with-icon(~{::person-details-dangerzone-box-icon}, ~{::person-details-dangerzone-box-body})}"
       >
         <th:block th:ref="person-details-dangerzone-box-icon">
           <div
-            th:replace="fragments/rounded::block(content=~{::person-details-dangerzone-box-icon-rounded}, className='tw-bg-red-500 tw-text-white dark:tw-bg-red-500 dark:tw-text-zinc-900')"
+            th:replace="~{fragments/rounded::block(content=~{::person-details-dangerzone-box-icon-rounded}, className='tw-bg-red-500 tw-text-white dark:tw-bg-red-500 dark:tw-text-zinc-900')}"
           >
             <th:block th:ref="person-details-dangerzone-box-icon-rounded">
-              <svg th:replace="icon/trash-2::svg(className='tw-w-8 tw-h-8')" />
+              <svg th:replace="~{icon/trash-2::svg(className='tw-w-8 tw-h-8')}" />
             </th:block>
           </div>
         </th:block>

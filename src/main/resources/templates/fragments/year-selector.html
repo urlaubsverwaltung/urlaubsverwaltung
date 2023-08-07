@@ -18,7 +18,7 @@
       >
         <span th:text="#{overview.year.selection.button(${selectedYear})}" class="tw-sr-only"></span>
         <span th:text="${selectedYear}" aria-hidden="true"></span>
-        <svg th:replace="icon/chevron-down::svg(className='tw-ml-0.5 tw-opacity-70 tw-w-4 tw-h-4')"></svg>
+        <svg th:replace="~{icon/chevron-down::svg(className='tw-ml-0.5 tw-opacity-70 tw-w-4 tw-h-4')}"></svg>
       </button>
       <ul class="dropdown-menu">
         <li th:each="i, status: ${#numbers.sequence(0, 10)}" th:with="selectableYear=${currentYear + 2 - status.count}">

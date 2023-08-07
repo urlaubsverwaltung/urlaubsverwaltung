@@ -1,23 +1,22 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import org.hibernate.annotations.LazyCollection;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.EAGER;
+import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableCollection;
-import static javax.persistence.EnumType.STRING;
-import static javax.persistence.GenerationType.SEQUENCE;
-import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
@@ -42,13 +41,11 @@ public class Person {
     private String firstName;
     private String email;
 
-    @ElementCollection
-    @LazyCollection(FALSE)
+    @ElementCollection(fetch = EAGER)
     @Enumerated(STRING)
     private Collection<Role> permissions;
 
-    @ElementCollection
-    @LazyCollection(FALSE)
+    @ElementCollection(fetch = EAGER)
     @Enumerated(STRING)
     private Collection<MailNotification> notifications;
 

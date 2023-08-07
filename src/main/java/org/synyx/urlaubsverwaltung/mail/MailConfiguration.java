@@ -6,9 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.thymeleaf.ITemplateEngine;
-import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 
 import static org.thymeleaf.templatemode.TemplateMode.TEXT;
 
@@ -28,7 +27,6 @@ class MailConfiguration {
     ITemplateEngine emailTemplateEngine() {
         final SpringTemplateEngine emailTemplateEngine = new SpringTemplateEngine();
         emailTemplateEngine.addTemplateResolver(textTemplateResolver());
-        emailTemplateEngine.addDialect(new Java8TimeDialect());
         emailTemplateEngine.setTemplateEngineMessageSource(emailMessageSource());
         return emailTemplateEngine;
     }

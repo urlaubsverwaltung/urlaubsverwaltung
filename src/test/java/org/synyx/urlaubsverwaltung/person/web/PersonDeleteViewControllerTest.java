@@ -117,7 +117,7 @@ class PersonDeleteViewControllerTest {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/1/delete").param("niceNameConfirmation", "Marlene Muster"))
-            .andExpect(redirectedUrl("/web/person/?active=true"))
+            .andExpect(redirectedUrl("/web/person?active=true"))
             .andExpect(flash().attribute("personDeletionSuccess", "Marlene Muster"));
 
         verify(personService).delete(person, signedInUser);
@@ -137,7 +137,7 @@ class PersonDeleteViewControllerTest {
                 .param("niceNameConfirmation", "Marlene Muster")
                 .header("Turbo-Frame", "frame-delete-person")
         )
-            .andExpect(redirectedUrl("/web/person/?active=true"))
+            .andExpect(redirectedUrl("/web/person?active=true"))
             .andExpect(flash().attribute("personDeletionSuccess", "Marlene Muster"));
 
         verify(personService).delete(person, signedInUser);
@@ -153,7 +153,7 @@ class PersonDeleteViewControllerTest {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         perform(post("/web/person/1/delete").param("niceNameConfirmation", "Marlene Muster"))
-            .andExpect(redirectedUrl("/web/person/?active=false"))
+            .andExpect(redirectedUrl("/web/person?active=false"))
             .andExpect(flash().attribute("personDeletionSuccess", "Marlene Muster"));
 
         verify(personService).delete(person, signedInUser);

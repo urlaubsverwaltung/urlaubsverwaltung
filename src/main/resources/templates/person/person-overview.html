@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{::styles}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
     <title th:text="#{overview.header.title(${person.niceName}, ${selectedYear})}"></title>
     <th:block th:fragment="styles">
       <link
@@ -25,7 +25,7 @@
         window.uv.i18n["overview.calendar.button.next.label"] = /*[[#{overview.calendar.button.next.label}]]*/ "";
         /*]]>*/
       </script>
-      <script th:replace="fragments/vacation-type-colors-script :: vacation-type-colors-script"></script>
+      <script th:replace="~{fragments/vacation-type-colors-script :: vacation-type-colors-script}"></script>
       <script defer asset:src="npm.date-fns.js"></script>
       <script defer asset:src="app_detail~app_form~person_overview.js"></script>
       <script
@@ -39,26 +39,26 @@
       <script defer asset:src="person_overview.js"></script>
     </th:block>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
       <div class="tw-mb-12">
-        <div th:replace="person/overview/section-vacation-days::section"></div>
+        <div th:replace="~{person/overview/section-vacation-days::section}"></div>
       </div>
 
       <div th:if="${settings.overtimeSettings.overtimeActive}" class="tw-mb-12">
-        <div th:replace="person/overview/section-overtime::section"></div>
+        <div th:replace="~{person/overview/section-overtime::section}"></div>
       </div>
 
       <div class="tw-mb-4 lg:tw-mb-12">
-        <div th:replace="person/overview/section-calendar::section"></div>
+        <div th:replace="~{person/overview/section-calendar::section}"></div>
       </div>
 
       <div class="tw-mb-12">
-        <div th:replace="person/overview/section-absences::section"></div>
+        <div th:replace="~{person/overview/section-absences::section}"></div>
       </div>
 
       <th:block th:if="${person.id == signedInUser.id || canViewSickNoteAnotherUser}">
-        <div th:replace="person/overview/section-sick-note::section"></div>
+        <div th:replace="~{person/overview/section-sick-note::section}"></div>
       </th:block>
     </main>
   </body>

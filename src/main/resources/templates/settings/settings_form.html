@@ -91,65 +91,65 @@
           <div class="tab-content tw-mb-16">
             <div class="tab-pane active" id="absence">
               <div class="form-section tw-mb-8">
-                <div th:replace="settings/absence/vacation::section"></div>
+                <div th:replace="~{settings/absence/vacation::section}"></div>
               </div>
               <div class="form-section tw-mb-8">
-                <div th:replace="settings/absence/reminder-waiting-application::section"></div>
+                <div th:replace="~{settings/absence/reminder-waiting-application::section}"></div>
               </div>
               <div class="form-section tw-mb-8">
-                <div th:replace="settings/absence/reminder-holiday-replacement::section"></div>
+                <div th:replace="~{settings/absence/reminder-holiday-replacement::section}"></div>
               </div>
               <div class="form-section tw-mb-8">
-                <div th:replace="settings/absence/reminder-upcoming-application::section"></div>
+                <div th:replace="~{settings/absence/reminder-upcoming-application::section}"></div>
               </div>
               <div class="form-section">
-                <div th:replace="settings/absence/sick-days::section"></div>
+                <div th:replace="~{settings/absence/sick-days::section}"></div>
               </div>
             </div>
 
             <div class="tab-pane" id="absenceTypes">
               <div class="form-section tw-mb-12 tw-relative tw-z-10">
-                <div th:replace="settings/absence-types/absence-types::section"></div>
+                <div th:replace="~{settings/absence-types/absence-types::section}"></div>
               </div>
               <div class="form-section">
-                <div th:replace="settings/absence-types/special-leave::section"></div>
+                <div th:replace="~{settings/absence-types/special-leave::section}"></div>
               </div>
             </div>
 
             <div class="tab-pane" id="publicHolidays">
               <div th:if="${defaultWorkingTimeFromSettings}" class="form-section tw-mb-8">
-                <div th:replace="settings/public-holidays/default-workingtime::section"></div>
+                <div th:replace="~{settings/public-holidays/default-workingtime::section}"></div>
               </div>
               <div class="form-section tw-mb-8">
-                <div th:replace="settings/public-holidays/time::section"></div>
+                <div th:replace="~{settings/public-holidays/time::section}"></div>
               </div>
               <div class="form-section tw-mb-8">
-                <div th:replace="settings/public-holidays/public-holidays::section"></div>
+                <div th:replace="~{settings/public-holidays/public-holidays::section}"></div>
               </div>
               <div class="form-section tw-mb-8">
-                <div th:replace="settings/public-holidays/overtime::section"></div>
+                <div th:replace="~{settings/public-holidays/overtime::section}"></div>
               </div>
             </div>
 
             <div class="tab-pane" id="avatar">
               <div class="form-section tw-mb-8">
-                <div th:replace="settings/avatar/avatar::section"></div>
+                <div th:replace="~{settings/avatar/avatar::section}"></div>
               </div>
             </div>
 
             <div class="tab-pane" id="calendar">
               <div class="alert alert-danger tw-flex tw-items-center" role="alert">
-                <svg th:replace="icon/megaphone::svg(className='tw-w-4 tw-h-4')"></svg>
+                <svg th:replace="~{icon/megaphone::svg(className='tw-w-4 tw-h-4')}"></svg>
                 &nbsp;<th:block th:text="#{settings.calendar.deprecated}" />
               </div>
               <div class="form-section">
-                <div th:replace="settings/calendar/integration::section"></div>
+                <div th:replace="~{settings/calendar/integration::section}"></div>
               </div>
               <div class="form-section" id="exchange-calendar">
-                <div th:replace="settings/calendar/exchange::section"></div>
+                <div th:replace="~{settings/calendar/exchange::section}"></div>
               </div>
               <div class="form-section" id="google-calendar">
-                <div th:replace="settings/calendar/google::section"></div>
+                <div th:replace="~{settings/calendar/google::section}"></div>
               </div>
             </div>
           </div>

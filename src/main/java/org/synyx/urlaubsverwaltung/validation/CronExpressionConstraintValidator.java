@@ -1,9 +1,8 @@
 package org.synyx.urlaubsverwaltung.validation;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.scheduling.support.CronSequenceGenerator;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 public class CronExpressionConstraintValidator implements ConstraintValidator<CronExpression, String> {
 

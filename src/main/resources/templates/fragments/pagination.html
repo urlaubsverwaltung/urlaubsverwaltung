@@ -19,7 +19,7 @@
             th:data-turbo-frame="${turboFrame}"
             data-turbo-action="advance"
           >
-            <svg th:replace="icon/chevron-left::svg(className='tw-w-6 tw-h-6')"></svg>
+            <svg th:replace="~{icon/chevron-left::svg(className='tw-w-6 tw-h-6')}"></svg>
             <span class="tw-sr-only" th:text="#{pagination.page.previous}"></span>
           </a>
         </li>
@@ -88,7 +88,7 @@
             data-turbo-action="advance"
           >
             <span class="tw-sr-only" th:text="#{pagination.page.next}"></span>
-            <svg th:replace="icon/chevron-right::svg(className='tw-w-6 tw-h-6')"></svg>
+            <svg th:replace="~{icon/chevron-right::svg(className='tw-w-6 tw-h-6')}"></svg>
           </a>
         </li>
       </ul>
@@ -96,7 +96,7 @@
 
     <select
       th:fragment="default-size-select(id, size, autosubmit)"
-      th:replace="fragments/select::one(id=${id}, name='size', options=~{::pagination-size-options}, autosubmit=${autosubmit})"
+      th:replace="~{fragments/select::one(id=${id}, name='size', options=~{::pagination-size-options}, autosubmit=${autosubmit})}"
     >
       <th:block th:ref="pagination-size-options">
         <option th:if="${size < 10}" th:value="${size}" th:selected="${size < 10}" th:text="${size}">4</option>

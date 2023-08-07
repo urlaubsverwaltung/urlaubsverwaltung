@@ -25,7 +25,7 @@
           <input type="hidden" th:field="*{id}" />
 
           <div class="form-section">
-            <div th:replace="fragments/section-heading::section-heading(~{::department-heading-body}, ~{})">
+            <div th:replace="~{fragments/section-heading::section-heading(~{::department-heading-body}, ~{})}">
               <th:block th:ref="department-heading-body">
                 <h2 th:text="#{department.data}">Abteilungsdaten</h2>
               </th:block>
@@ -34,7 +34,7 @@
             <div class="row">
               <div class="col-md-4 col-md-push-8">
                 <span class="help-block tw-text-sm">
-                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                   <span th:text="#{department.data.description}"></span>
                 </span>
               </div>
@@ -80,9 +80,9 @@
             <div class="row tw-mb-8">
               <div class="col-md-4 col-md-push-8">
                 <span class="help-block tw-text-sm">
-                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                   <th:block th:text="#{department.data.twoStageApproval.help.members}" /><br />
-                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                   <th:block th:text="#{department.data.twoStageApproval.help.departmentHead}" />
                 </span>
               </div>
@@ -117,7 +117,7 @@
           </div>
 
           <div class="form-section">
-            <div th:replace="fragments/section-heading::section-heading(~{::department-members-body}, ~{})">
+            <div th:replace="~{fragments/section-heading::section-heading(~{::department-members-body}, ~{})}">
               <th:block th:ref="department-members-body">
                 <h2 th:text="#{department.members}">Mitarbeiter</h2>
               </th:block>
@@ -134,11 +134,11 @@
             <div class="row">
               <div class="col-md-4 col-md-push-8">
                 <span class="help-block tw-text-sm">
-                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                   <span th:text="#{department.members.description}"></span>
                 </span>
                 <span class="help-block tw-text-sm">
-                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                   <span th:text="#{department.members.secondStageAuthority.description}"></span>
                 </span>
               </div>
@@ -173,7 +173,7 @@
                         data-turbo-frame="frame-department-members"
                         data-turbo-action="replace"
                       >
-                        <svg th:replace="icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')"></svg>
+                        <svg th:replace="~{icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')}"></svg>
                         <span class="tw-sr-only" th:text="#{action.search}">Suche</span>
                       </button>
                     </div>
@@ -208,7 +208,7 @@
                         >
                           <div class="department--member-image tw-text-blue-50 dark:tw-text-sky-800">
                             <img
-                              th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404&s=40'},niceName=${person.niceName},width='40px',height='40px',personId=${person.id})"
+                              th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarURL + '?d=404&s=40'},niceName=${person.niceName},width='40px',height='40px',personId=${person.id})}"
                               alt=""
                             />
                           </div>
@@ -223,7 +223,7 @@
                             </p>
                             <div th:if="${isInactive}" class="tw-flex tw-items-center">
                               <svg
-                                th:replace="icon/info::svg(className='tw-text-amber-300 tw-w-5 tw-h-5 tw-m-0 tw-mr-1')"
+                                th:replace="~{icon/info::svg(className='tw-text-amber-300 tw-w-5 tw-h-5 tw-m-0 tw-mr-1')}"
                               ></svg>
                               <th:block th:text="#{department.members.assigned.inactive}"></th:block>
                             </div>

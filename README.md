@@ -409,15 +409,9 @@ Die Git-Hooks sind im [.githooks](./.githooks/) Verzeichnis zu finden.
 
 ### Anwendung starten
 
-Da die Urlaubsverwaltung abhängig von einer PostgreSQL-Datenbank ist, kann diese über
-
-```bash
-docker-compose up
-```
-gestartet werden.
-
 Die Urlaubsverwaltung ist eine [Spring Boot](http://projects.spring.io/spring-boot/) Anwendung und kann mit dem Maven
-Plugin gestartet werden. Es bietet sich an, die Anwendung mit dem Profil `demodata` zu starten, um Testdaten generieren
+Plugin gestartet werden. Alle Abhängigkeiten, wie die Datenbank oder der Mail-Server werden automatisch gestartet.
+Es bietet sich an, die Anwendung mit dem Profil `demodata` zu starten, um Testdaten generieren
 zu lassen:
 
 ```bash

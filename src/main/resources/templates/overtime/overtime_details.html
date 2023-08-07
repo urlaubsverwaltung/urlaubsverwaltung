@@ -18,7 +18,7 @@
       >
         <div>
           <div
-            th:replace="fragments/section-heading::section-heading(~{::overtime-details-heading-body}, ~{::overtime-details-heading-actions})"
+            th:replace="~{fragments/section-heading::section-heading(~{::overtime-details-heading-body}, ~{::overtime-details-heading-actions})}"
           >
             <th:block th:fragment="overtime-details-heading-body">
               <h2 th:text="#{overtime.title}"></h2>
@@ -30,7 +30,7 @@
                   th:href="@{/web/overtime/__${record.id}__/edit}"
                   class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
                 >
-                  <svg th:replace="icon/pencil::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                  <svg th:replace="~{icon/pencil::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                   <span th:text="#{action.edit}"></span>
                 </a>
                 <a
@@ -38,7 +38,7 @@
                   class="tw-ml-2 icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row"
                   aria-hidden="true"
                 >
-                  <svg th:replace="icon/clock::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                  <svg th:replace="~{icon/clock::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                   <span th:text="#{action.overtime.list}"></span>
                 </a>
               </div>
@@ -47,14 +47,14 @@
 
           <div class="box tw-mb-8 tw-p-5">
             <div
-              th:replace="fragments/box::box-with-icon(~{::overtime-details-box-icon}, ~{::overtime-details-box-body})"
+              th:replace="~{fragments/box::box-with-icon(~{::overtime-details-box-icon}, ~{::overtime-details-box-body})}"
             >
               <th:block th:ref="overtime-details-box-icon">
                 <div
-                  th:replace="fragments/rounded::block(content=~{::overtime-box-total-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')"
+                  th:replace="~{fragments/rounded::block(content=~{::overtime-box-total-icon-rounded}, className='tw-bg-emerald-500 tw-text-white dark:tw-bg-green-500 dark:tw-text-zinc-900')}"
                 >
                   <th:block th:ref="overtime-box-total-icon-rounded">
-                    <svg th:replace="icon/clock::svg(className='tw-w-8 tw-h-8')" />
+                    <svg th:replace="~{icon/clock::svg(className='tw-w-8 tw-h-8')}" />
                   </th:block>
                 </div>
               </th:block>
@@ -72,7 +72,7 @@
                 </span>
                 <span class="tw-text-sm">
                   <th:block
-                    th:replace="fragments/date-range::date-range(${record.startDate}, ${record.endDate})"
+                    th:replace="~{fragments/date-range::date-range(${record.startDate}, ${record.endDate})}"
                   ></th:block>
                 </span>
               </th:block>
@@ -101,7 +101,7 @@
             </tr>
           </table>
 
-          <div th:replace="fragments/section-heading::section-heading(~{::overtime-progress-heading-body}, ~{})">
+          <div th:replace="~{fragments/section-heading::section-heading(~{::overtime-progress-heading-body}, ~{})}">
             <th:block th:fragment="overtime-progress-heading-body">
               <h2 th:text="#{overtime.progress.title}"></h2>
             </th:block>
@@ -115,7 +115,7 @@
                 <td>
                   <span class="tw-text-blue-50 dark:tw-text-sky-800">
                     <img
-                      th:replace="fragments/avatar::avatar-bordered(url=${comment.person != null ? comment.person.gravatarUrl + '?d=404&s=40' : null},niceName=${comment.person != null ? comment.person.niceName : null},width='40px',height='40px',personId=${comment.person != null ? comment.person.id : null})"
+                      th:replace="~{fragments/avatar::avatar-bordered(url=${comment.person != null ? comment.person.gravatarUrl + '?d=404&s=40' : null},niceName=${comment.person != null ? comment.person.niceName : null},width='40px',height='40px',personId=${comment.person != null ? comment.person.id : null})}"
                       alt=""
                     />
                   </span>
@@ -131,7 +131,7 @@
                 <td th:if="${comment.person == null}" th:text="#{overtime.progress.deleted-author}"></td>
                 <td>
                   <th:block th:text="#{'overtime.progress.' + ${comment.action}}"></th:block>
-                  <th:block th:replace="fragments/date::date(${comment.date})"></th:block>
+                  <th:block th:replace="~{fragments/date::date(${comment.date})}"></th:block>
                   <th:block th:if="${comment.text != null && not #lists.isEmpty(comment.text)}">
                     <th:block th:text="#{overtime.progress.comment}"></th:block>
                     <br />
@@ -144,7 +144,7 @@
         </div>
 
         <div class="tw-mb-16">
-          <div th:replace="fragments/section-heading::section-heading(~{::overtime-data-person-heading-body}, ~{})">
+          <div th:replace="~{fragments/section-heading::section-heading(~{::overtime-data-person-heading-body}, ~{})}">
             <th:block th:fragment="overtime-data-person-heading-body">
               <h2 th:text="#{overtime.data.person}"></h2>
             </th:block>
@@ -153,7 +153,7 @@
             <div class="tw-w-full">
               <div class="box tw-mb-5 tw-p-5">
                 <div
-                  th:replace="person/box::person-box(person=${record.person}, departments=${departmentsOfPerson})"
+                  th:replace="~{person/box::person-box(person=${record.person}, departments=${departmentsOfPerson})}"
                 ></div>
               </div>
               <div class="box tw-mb-5 tw-p-5">

@@ -1,20 +1,20 @@
 package org.synyx.urlaubsverwaltung.comment;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.SequenceGenerator;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.SequenceGenerator;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Objects;
 
+import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Optional.ofNullable;
-import static javax.persistence.GenerationType.SEQUENCE;
 
 
 /**

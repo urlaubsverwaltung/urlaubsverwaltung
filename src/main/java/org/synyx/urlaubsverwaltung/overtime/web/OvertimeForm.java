@@ -1,10 +1,10 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
+import jakarta.validation.constraints.Min;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;

@@ -1,11 +1,5 @@
 <!doctype html>
-<html
-  lang="en"
-  th:lang="${language}"
-  th:class="|tw-${theme}|"
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
->
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
     <title th:text="#{absences.overview.header.title}">Absence Overview</title>
     <th:block th:fragment="styles">
@@ -26,7 +20,7 @@
             <h1 th:text="#{absences.overview.title}">Absence Overview</h1>
           </th:block>
           <th:block th:ref="person-basedata-heading-actions">
-            <button th:replace="fragments/print::button"></button>
+            <button th:replace="~{fragments/print::button}"></button>
           </th:block>
         </div>
         <div class="tw-mt-4 md:tw-mt-6">
@@ -196,7 +190,7 @@
                 >
                   <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                     <img
-                      th:replace="fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=32'},niceName=${person.firstName + ' ' + person.lastName},width='32',height='32',personId=${person.id})"
+                      th:replace="~{fragments/avatar::avatar-bordered(url=${person.gravatarUrl + '?d=404&s=32'},niceName=${person.firstName + ' ' + person.lastName},width='32',height='32',personId=${person.id})}"
                       alt=""
                     />
                   </div>
@@ -221,7 +215,7 @@
                       style="height: 100%; display: flex; align-items: center; justify-content: center"
                     >
                       <svg
-                        th:replace="icon/slash::svg(className='no-workday-icon tw-w-5 tw-h-5 tw--translate-y-px')"
+                        th:replace="~{icon/slash::svg(className='no-workday-icon tw-w-5 tw-h-5 tw--translate-y-px')}"
                       ></svg>
                     </div>
                     <span class="tw-hidden print:tw-inline print:tw-font-mono">
@@ -290,7 +284,7 @@
               <tr>
                 <td class="vacationOverview-legend-colorbox">
                   <div class="cal-day tw-flex tw-items-center tw-justify-center">
-                    <svg th:replace="icon/slash::svg(className='no-workday-icon')" />
+                    <svg th:replace="~{icon/slash::svg(className='no-workday-icon')}" />
                   </div>
                 </td>
                 <td class="vacationOverview-legend-text" th:text="#{absences.overview.no-workday}"></td>

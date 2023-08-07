@@ -1,11 +1,11 @@
 package org.synyx.urlaubsverwaltung.security.ldap;
 
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 

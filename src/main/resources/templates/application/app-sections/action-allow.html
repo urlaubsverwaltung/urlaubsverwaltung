@@ -5,7 +5,7 @@
     <title>app action allow</title>
   </head>
   <body>
-    <th:block th:fragment="button">
+    <th:block th:fragment="buttons">
       <button
         th:if="${isAllowedToAllowTemporaryAllowedApplication}"
         class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-emerald-500"
@@ -15,7 +15,7 @@
         document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden');
         document.querySelector('#allow')?.classList.remove('tw-hidden');"
       >
-        <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+        <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
         <span class="tw-sr-only" th:text="#{action.allow}"></span>
       </button>
 
@@ -25,7 +25,7 @@
         class="icon-link tw-bg-transparent tw-text-base tw-flex tw-items-center tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0 hover:tw-text-emerald-500"
         onclick="document.querySelector('#reject')?.classList.add('tw-hidden'); document.querySelector('#refer')?.classList.add('tw-hidden'); document.querySelector('#cancel')?.classList.add('tw-hidden'); document.querySelector('#decline-cancellation-request')?.classList.add('tw-hidden'); document.querySelector('#allow')?.classList.remove('tw-hidden');"
       >
-        <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+        <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
         <span class="tw-sr-only" th:text="#{__${messageKey}__}"></span>
       </button>
     </th:block>
@@ -36,7 +36,7 @@
         class="form confirm alert alert-success"
         th:classappend="${action eq 'allow' ? '' : 'tw-hidden'}"
         method="post"
-        th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/application/__${app.id}__/allow?redirect=/web/application/' : '/web/application/__${app.id}__/allow'},temporary=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval && app.status.name == 'WAITING'}"
+        th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/application/__${app.id}__/allow?redirect=/web/application' : '/web/application/__${app.id}__/allow'},temporary=${isDepartmentHeadOfPerson && !isSecondStageAuthorityOfPerson && app.twoStageApproval && app.status.name == 'WAITING'}"
         th:action="@{__${actionUrl}__}"
         th:object="${comment}"
       >

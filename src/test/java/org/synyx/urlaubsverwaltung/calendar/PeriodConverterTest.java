@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
+import jakarta.persistence.Converter;
 import org.junit.jupiter.api.Test;
 
-import javax.persistence.Converter;
 import java.time.Period;
 
 import static org.assertj.core.api.Assertions.assertThat;

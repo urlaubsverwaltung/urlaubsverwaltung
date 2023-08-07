@@ -1,6 +1,16 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
-import org.hibernate.annotations.LazyCollection;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import org.synyx.urlaubsverwaltung.DurationConverter;
 import org.synyx.urlaubsverwaltung.absence.DateRange;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
@@ -9,17 +19,6 @@ import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -31,12 +30,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.EAGER;
+import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.time.Duration.ZERO;
 import static java.time.ZoneOffset.UTC;
-import static javax.persistence.EnumType.STRING;
-import static javax.persistence.GenerationType.SEQUENCE;
-import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.CANCELLED;
 import static org.synyx.urlaubsverwaltung.util.DecimalConverter.toFormattedDecimal;
 
@@ -124,9 +123,8 @@ public class Application {
      */
     private String reason;
 
-    @LazyCollection(FALSE)
     @CollectionTable(name = "holiday_replacements", joinColumns = @JoinColumn(name = "application_id"))
-    @ElementCollection
+    @ElementCollection(fetch = EAGER)
     private List<HolidayReplacementEntity> holidayReplacements = new ArrayList<>();
 
     /**

@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.overtime.web;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
@@ -33,7 +34,6 @@ import org.synyx.urlaubsverwaltung.person.web.PersonPropertyEditor;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.web.DecimalNumberPropertyEditor;
 
-import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDate;

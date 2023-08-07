@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{::styles}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
     <title th:text="#{person.form.workingTime.header.title(${person.niceName})}">Arbeitszeiten von</title>
     <th:block th:fragment="styles">
       <link
@@ -38,10 +38,10 @@
         window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
         /*]]>*/
       </script>
-      <script th:replace="fragments/datepicker-localization"></script>
+      <script th:replace="~{fragments/datepicker-localization}"></script>
     </th:block>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
       <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
         <form
@@ -52,7 +52,7 @@
         >
           <div class="form-section">
             <div
-              th:replace="fragments/section-heading::section-heading(~{::workingtime-heading-body}, ~{::workingtime-heading-actions})"
+              th:replace="~{fragments/section-heading::section-heading(~{::workingtime-heading-body}, ~{::workingtime-heading-actions})}"
             >
               <th:block th:ref="workingtime-heading-body">
                 <h1 th:text="#{person.form.workingTime.title(${person.niceName})}">Arbeitszeiten von Marlene Muster</h1>
@@ -71,7 +71,7 @@
             >
               <div class="col-md-4 col-md-push-8">
                 <span class="help-block tw-text-sm">
-                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                   &nbsp;
                   <th:block
                     th:text="#{person.form.workingTime.federalState.description(${defaultFederalCountryAndStateName})}"
@@ -79,7 +79,7 @@
                   >
                 </span>
                 <span class="help-block tw-text-sm">
-                  <svg th:replace="icon/info::svg(className='tw-w-4 tw-h-4')"></svg>
+                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
                   &nbsp;<th:block th:text="#{person.form.workingTime.description}">Description</th:block>
                 </span>
               </div>
@@ -94,7 +94,7 @@
 
                   <div class="col-md-9">
                     <select
-                      th:replace="fragments/select::one(id='federalStateType', name='federalState', options=~{::federalStateOptions})"
+                      th:replace="~{fragments/select::one(id='federalStateType', name='federalState', options=~{::federalStateOptions})}"
                       id="federalStateType"
                     >
                       <th:block th:fragment="federalStateOptions">

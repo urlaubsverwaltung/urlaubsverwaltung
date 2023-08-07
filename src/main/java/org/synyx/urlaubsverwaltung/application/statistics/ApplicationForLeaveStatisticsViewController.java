@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.statistics;
 
 import de.focus_shift.launchpad.api.HasLaunchpad;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.io.ByteArrayResource;
@@ -33,7 +34,6 @@ import org.synyx.urlaubsverwaltung.web.html.HtmlOptionDto;
 import org.synyx.urlaubsverwaltung.web.html.HtmlSelectDto;
 import org.synyx.urlaubsverwaltung.web.html.PaginationDto;
 
-import javax.servlet.http.HttpServletResponse;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Year;
@@ -88,8 +88,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping
     public String applicationForLeaveStatistics(
-        @SortDefault.SortDefaults({@SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)})
-        Pageable pageable,
+        @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
         @RequestParam(value = "from", defaultValue = "") String from,
         @RequestParam(value = "to", defaultValue = "") String to,
         @RequestParam(value = "query", required = false, defaultValue = "") String query,
@@ -147,8 +146,7 @@ class ApplicationForLeaveStatisticsViewController implements HasLaunchpad {
     @PreAuthorize(IS_PRIVILEGED_USER)
     @GetMapping(value = "/download")
     public ResponseEntity<ByteArrayResource> downloadCSV(
-        @SortDefault.SortDefaults({@SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC)})
-        Pageable pageable,
+        @SortDefault(sort = "person.firstName", direction = Sort.Direction.ASC) Pageable pageable,
         @RequestParam(value = "from", defaultValue = "") String from,
         @RequestParam(value = "to", defaultValue = "") String to,
         @RequestParam(value = "allElements", defaultValue = "false") boolean allElements,

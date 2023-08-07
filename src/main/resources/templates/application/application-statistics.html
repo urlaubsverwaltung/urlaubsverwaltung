@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{::styles}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
     <title th:text="#{applications.statistics.header.title}">Abwesenheitsstatistik</title>
     <th:block th:fragment="styles">
       <link
@@ -33,14 +33,14 @@
         asset:src="account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js"
       ></script>
       <script defer asset:src="app_statistics.js"></script>
-      <script th:replace="fragments/datepicker-localization :: datepicker-localization"></script>
+      <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
     </th:block>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main" class="tw-pb-32" data-turbo="true">
       <div class="tw-max-w-[93.75rem] tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-8">
         <div
-          th:replace="fragments/section-heading::section-heading(~{::absences-statistics-heading-body}, ~{::absences-statistics-heading-actions})"
+          th:replace="~{fragments/section-heading::section-heading(~{::absences-statistics-heading-body}, ~{::absences-statistics-heading-actions})}"
         >
           <th:block th:ref="absences-statistics-heading-body">
             <h1 th:text="#{applications.statistics}">Abwesenheitsstatistik</h1>
@@ -48,15 +48,15 @@
           <th:block th:ref="absences-statistics-heading-actions">
             <div class="tw-flex tw-flex-col sm:tw-flex-row">
               <div
-                th:replace="fragments/details-dropdown::details-dropdown(
+                th:replace="~{fragments/details-dropdown::details-dropdown(
                   summary=~{::download-dropdown-summary}, content=~{::download-dropdown-content}, closeDelay=1000, hideChevron=true, placement='right'
-                )"
+                )}"
               >
                 <th:block th:ref="download-dropdown-summary">
                   <span
                     class="icon-link tw-text-base tw-flex tw-items-center tw-flex-row-reverse tw-space-x-1 sm:tw-space-x-0 sm:tw-flex-row tw-mr-0"
                   >
-                    <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                    <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                     <span id="statistics-download-label" th:text="#{applications.export.button}"></span>
                   </span>
                 </th:block>
@@ -72,7 +72,7 @@
                         class="icon-link tw-px-1"
                         download
                       >
-                        <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                        <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                         <span th:text="#{applications.statistics.all.button}"></span>
                       </a>
                     </li>
@@ -83,7 +83,7 @@
                         class="icon-link tw-px-1"
                         download
                       >
-                        <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                        <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                         <span th:text="#{applications.statistics.visible.button}"></span>
                       </a>
                     </li>
@@ -101,7 +101,7 @@
                         class="icon-link tw-px-1"
                         download
                       >
-                        <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                        <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                         <span th:text="#{applications.export.absences.all.button}"></span>
                       </a>
                     </li>
@@ -112,14 +112,14 @@
                         class="icon-link tw-px-1"
                         download
                       >
-                        <svg th:replace="icon/download::svg(className='tw-w-5 tw-h-5')"></svg>&nbsp;
+                        <svg th:replace="~{icon/download::svg(className='tw-w-5 tw-h-5')}"></svg>&nbsp;
                         <span th:text="#{applications.export.absences.visible.button}"></span>
                       </a>
                     </li>
                   </ul>
                 </th:block>
               </div>
-              <button th:replace="fragments/print::button"></button>
+              <button th:replace="~{fragments/print::button}"></button>
             </div>
           </th:block>
         </div>
@@ -144,7 +144,7 @@
                 <fieldset>
                   <legend class="tw-sr-only" th:text="#{applications.statistics.period.legend.text}">Zeitraum</legend>
                   <div
-                    th:replace="fragments/details-dropdown::details-dropdown-input(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)"
+                    th:replace="~{fragments/details-dropdown::details-dropdown-input(summary=~{::period-dropdown-summary}, content=~{::period-dropdown-content}, closeDelay=1000)}"
                   >
                     <th:block th:ref="period-dropdown-summary">
                       <th:block th:text="#{applications.statistics.period.legend.text}"></th:block>
@@ -223,7 +223,7 @@
                     id="search-submit"
                     class="dark:tw-bg-zinc-800 tw-px-2 tw-rounded-r-md tw-h-full tw-flex tw-items-center"
                   >
-                    <svg th:replace="icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')"></svg>
+                    <svg th:replace="~{icon/search::svg(className='tw-w-5 tw-h-5 tw-stroke-2')}"></svg>
                     <span class="tw-sr-only" th:text="#{action.search}">Suche</span>
                   </button>
                 </span>
@@ -251,7 +251,7 @@
                 <select
                   id="sort-select"
                   name="sort"
-                  th:replace="fragments/select::one(id='sort-select', name='sort', options=~{::sort-select-options}, autosubmit='sort-submit')"
+                  th:replace="~{fragments/select::one(id='sort-select', name='sort', options=~{::sort-select-options}, autosubmit='sort-submit')}"
                 >
                   <th:block th:ref="sort-select-options">
                     <optgroup
@@ -284,31 +284,31 @@
         <turbo-frame id="frame-statistics">
           <th:block th:if="${turboFrameRequested}">
             <turbo-stream target="statistics-csv-download-link" action="replace">
-              <template th:insert="::#statistics-csv-download-link"></template>
+              <template th:insert="~{::#statistics-csv-download-link}"></template>
             </turbo-stream>
             <turbo-stream target="export-csv-download-link" action="replace">
-              <template th:insert="::#export-csv-download-link"></template>
+              <template th:insert="~{::#export-csv-download-link}"></template>
             </turbo-stream>
             <turbo-stream target="statistics-filter-inputs" action="replace">
-              <template th:insert="::#statistics-filter-inputs"></template>
+              <template th:insert="~{::#statistics-filter-inputs}"></template>
             </turbo-stream>
             <turbo-stream target="statistics-form-query-inputs" action="replace">
-              <template th:insert="::#statistics-form-query-inputs"></template>
+              <template th:insert="~{::#statistics-form-query-inputs}"></template>
             </turbo-stream>
             <turbo-stream target="period-text" action="replace">
-              <template th:insert="::#period-text"></template>
+              <template th:insert="~{::#period-text}"></template>
             </turbo-stream>
             <turbo-stream target="statistics-form-sort-inputs" action="replace">
-              <template th:insert="::#statistics-form-sort-inputs"></template>
+              <template th:insert="~{::#statistics-form-sort-inputs}"></template>
             </turbo-stream>
             <turbo-stream target="pagination" action="replace">
-              <template th:insert="::#pagination"></template>
+              <template th:insert="~{::#pagination}"></template>
             </turbo-stream>
             <turbo-stream target="pagination-form-size-inputs" action="replace">
-              <template th:insert="::#pagination-form-size-inputs"></template>
+              <template th:insert="~{::#pagination-form-size-inputs}"></template>
             </turbo-stream>
             <turbo-stream target="pagination-size-hint" action="replace">
-              <template th:insert="::#pagination-size-hint"></template>
+              <template th:insert="~{::#pagination-size-hint}"></template>
             </turbo-stream>
           </th:block>
 
@@ -368,7 +368,7 @@
                 <td class="tw-text-center">
                   <div class="print:tw-hidden tw-text-blue-50 dark:tw-text-sky-800">
                     <img
-                      th:replace="fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=404&s=60'},niceName=${statistic.niceName},width='60px',height='60px',personId=${statistic.id})"
+                      th:replace="~{fragments/avatar::avatar-bordered(url=${statistic.gravatarURL + '?d=404&s=60'},niceName=${statistic.niceName},width='60px',height='60px',personId=${statistic.id})}"
                       alt=""
                       src=""
                     />
@@ -406,13 +406,13 @@
                 <td class="md:tw-hidden print:tw-hidden">
                   <div class="tw-flex tw-items-center">
                     <span class="tw-w-6">
-                      <svg th:replace="icon/check::svg(className='tw-w-5 tw-h-5')"></svg>
+                      <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
                     </span>
                     <span th:text="#{applications.statistics.days(${statistic.totalAllowedVacationDays})}"></span>
                   </div>
                   <div class="tw-flex tw-items-center">
                     <span class="tw-w-6">
-                      <svg th:replace="icon/help-circle::svg(className='tw-w-4 tw-h-4')"></svg>
+                      <svg th:replace="~{icon/help-circle::svg(className='tw-w-4 tw-h-4')}"></svg>
                     </span>
                     <span
                       class="tw-font-bold"
@@ -529,7 +529,7 @@
         <div class="tw-mt-8 md:tw-mt-16 tw-flex tw-flex-col md:tw-flex-row md:tw-items-center tw-gap-8">
           <div id="pagination">
             <nav
-              th:replace="fragments/pagination::pagination(${statisticsPagination}, #{applications.statistics.pagination.navigation.aria-label}, 'frame-statistics')"
+              th:replace="~{fragments/pagination::pagination(${statisticsPagination}, #{applications.statistics.pagination.navigation.aria-label}, 'frame-statistics')}"
             ></nav>
           </div>
           <form
@@ -554,7 +554,7 @@
                 <select
                   name="size"
                   id="pagination-size-select"
-                  th:replace="fragments/pagination::default-size-select(id='pagination-size-select', size=${statisticsPagination.page.size}, autosubmit='size-submit')"
+                  th:replace="~{fragments/pagination::default-size-select(id='pagination-size-select', size=${statisticsPagination.page.size}, autosubmit='size-submit')}"
                 ></select>
               </span>
               <span
