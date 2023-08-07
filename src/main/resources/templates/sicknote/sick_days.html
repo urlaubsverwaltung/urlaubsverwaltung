@@ -419,7 +419,9 @@
               <td class="visible-xs">
                 <div class="tw-flex tw-items-center">
                   <svg th:replace="~{icon/medkit::svg(className='tw-w-3 tw-h-3')}"></svg>
-                  &nbsp;<th:block th:replace="~{fragments/number::number(${sickDaysStatistic.amountSickDays})}"></th:block>
+                  &nbsp;<th:block
+                    th:replace="~{fragments/number::number(${sickDaysStatistic.amountSickDays})}"
+                  ></th:block>
                   <th:block th:if="${sickDaysStatistic.amountSickDaysWithAUB > 0}">
                     &nbsp; (&nbsp;<svg
                       th:replace="~{icon/check::svg(className='tw-w-4 tw-h-4 tw-text-emerald-500')}"

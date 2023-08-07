@@ -77,7 +77,9 @@
             </div>
           </div>
           <div class="tw-w-full sm:tw-w-1/2">
-            <div th:replace="~{fragments/box::box-with-icon(~{::other-days-sum-box-icon}, ~{::other-days-sum-box-body})}">
+            <div
+              th:replace="~{fragments/box::box-with-icon(~{::other-days-sum-box-icon}, ~{::other-days-sum-box-body})}"
+            >
               <th:block th:ref="other-days-sum-box-icon">
                 <div
                   th:replace="~{fragments/rounded::block(content=~{::other-days-sum-box-icon-rounded}, className='tw-bg-amber-300 tw-text-white dark:tw-bg-amber-400 dark:tw-text-zinc-900')}"
