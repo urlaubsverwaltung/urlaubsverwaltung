@@ -32,8 +32,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @Transactional
 class OvertimeMailServiceIT extends TestContainersBase {
 
-    private static final String EMAIL_LINE_BREAK = "\r\n";
-
     @RegisterExtension
     static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
@@ -70,20 +68,21 @@ class OvertimeMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(office.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        assertThat(msg.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "für Lieschen Müller wurden Überstunden eingetragen." + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    https://localhost:8080/web/overtime/1" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Informationen zu den Überstunden:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Mitarbeiter: Lieschen Müller" + EMAIL_LINE_BREAK +
-            "    Zeitraum:    16.04.2020 - 23.04.2020" + EMAIL_LINE_BREAK +
-            "    Dauer:       55 Std. 12 Min." + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + office.getId() + "/notifications anpassen.");
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            für Lieschen Müller wurden Überstunden eingetragen.
+
+                https://localhost:8080/web/overtime/1
+
+            Informationen zu den Überstunden:
+
+                Mitarbeiter: Lieschen Müller
+                Zeitraum:    16.04.2020 - 23.04.2020
+                Dauer:       55 Std. 12 Min.
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(office.getId()));
     }
 
     @Test
@@ -113,19 +112,20 @@ class OvertimeMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Marlene Muster hat für dich Überstunden eingetragen." + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    https://localhost:8080/web/overtime/1" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Informationen zu den Überstunden:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Zeitraum:    16.04.2020 - 23.04.2020" + EMAIL_LINE_BREAK +
-            "    Dauer:       55 Std. 12 Min." + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.");
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Lieschen Müller,
+
+            Marlene Muster hat für dich Überstunden eingetragen.
+
+                https://localhost:8080/web/overtime/1
+
+            Informationen zu den Überstunden:
+
+                Zeitraum:    16.04.2020 - 23.04.2020
+                Dauer:       55 Std. 12 Min.
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/1/notifications anpassen.""");
     }
 
     @Test
@@ -151,18 +151,23 @@ class OvertimeMailServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(author.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        assertThat(msg.getContent()).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "du hast folgende Überstunden eingetragen." + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    https://localhost:8080/web/overtime/1" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Informationen zu den Überstunden:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Zeitraum:    16.04.2020 - 23.04.2020" + EMAIL_LINE_BREAK +
-            "    Dauer:       55 Std. 12 Min." + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + author.getId() + "/notifications anpassen.");
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Lieschen Müller,
+
+            du hast folgende Überstunden eingetragen.
+
+                https://localhost:8080/web/overtime/1
+
+            Informationen zu den Überstunden:
+
+                Zeitraum:    16.04.2020 - 23.04.2020
+                Dauer:       55 Std. 12 Min.
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(author.getId()));
+    }
+
+    private String readPlainContent(Message message) throws MessagingException, IOException {
+        return message.getContent().toString().replaceAll("\\r", "");
     }
 }
