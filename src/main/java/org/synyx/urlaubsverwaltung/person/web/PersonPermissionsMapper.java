@@ -35,41 +35,25 @@ final class PersonPermissionsMapper {
         final List<Role> mappedToRoles = new ArrayList<>();
         permissionsRoleDto.forEach(roleDto -> {
             switch (roleDto) {
-                case USER:
-                    mappedToRoles.add(Role.USER);
-                    break;
-                case DEPARTMENT_HEAD:
-                    mappedToRoles.add(Role.DEPARTMENT_HEAD);
-                    break;
-                case SECOND_STAGE_AUTHORITY:
-                    mappedToRoles.add(Role.SECOND_STAGE_AUTHORITY);
-                    break;
-                case BOSS:
-                    mappedToRoles.add(Role.BOSS);
-                    break;
-                case OFFICE:
-                    mappedToRoles.add(Role.OFFICE);
-                    break;
-                case ADMIN:
-                    mappedToRoles.add(Role.ADMIN);
-                    break;
-                case INACTIVE:
-                    mappedToRoles.add(Role.INACTIVE);
-                    break;
-                case SICK_NOTE_VIEW_ADD_EDIT:
+                case USER -> mappedToRoles.add(Role.USER);
+                case DEPARTMENT_HEAD -> mappedToRoles.add(Role.DEPARTMENT_HEAD);
+                case SECOND_STAGE_AUTHORITY -> mappedToRoles.add(Role.SECOND_STAGE_AUTHORITY);
+                case BOSS -> mappedToRoles.add(Role.BOSS);
+                case OFFICE -> mappedToRoles.add(Role.OFFICE);
+                case ADMIN -> mappedToRoles.add(Role.ADMIN);
+                case INACTIVE -> mappedToRoles.add(Role.INACTIVE);
+                case SICK_NOTE_VIEW_ADD_EDIT -> {
                     mappedToRoles.add(Role.SICK_NOTE_VIEW);
                     mappedToRoles.add(Role.SICK_NOTE_ADD);
                     mappedToRoles.add(Role.SICK_NOTE_EDIT);
                     mappedToRoles.add(Role.SICK_NOTE_CANCEL);
                     mappedToRoles.add(Role.SICK_NOTE_COMMENT);
-                    break;
-                case APPLICATION_ADD_CANCEL:
+                }
+                case APPLICATION_ADD_CANCEL -> {
                     mappedToRoles.add(Role.APPLICATION_ADD);
                     mappedToRoles.add(Role.APPLICATION_CANCEL);
                     mappedToRoles.add(Role.APPLICATION_CANCELLATION_REQUESTED);
-                    break;
-                default:
-                    break;
+                }
             }
         });
 
@@ -80,41 +64,17 @@ final class PersonPermissionsMapper {
         final Set<PersonPermissionsRoleDto> mappedToRolesDto = new HashSet<>();
         roles.forEach(role -> {
             switch (role) {
-                case USER:
-                    mappedToRolesDto.add(PersonPermissionsRoleDto.USER);
-                    break;
-                case DEPARTMENT_HEAD:
-                    mappedToRolesDto.add(PersonPermissionsRoleDto.DEPARTMENT_HEAD);
-                    break;
-                case SECOND_STAGE_AUTHORITY:
-                    mappedToRolesDto.add(PersonPermissionsRoleDto.SECOND_STAGE_AUTHORITY);
-                    break;
-                case BOSS:
-                    mappedToRolesDto.add(PersonPermissionsRoleDto.BOSS);
-                    break;
-                case OFFICE:
-                    mappedToRolesDto.add(PersonPermissionsRoleDto.OFFICE);
-                    break;
-                case ADMIN:
-                    mappedToRolesDto.add(PersonPermissionsRoleDto.ADMIN);
-                    break;
-                case INACTIVE:
-                    mappedToRolesDto.add(PersonPermissionsRoleDto.INACTIVE);
-                    break;
-                case SICK_NOTE_VIEW:
-                case SICK_NOTE_ADD:
-                case SICK_NOTE_EDIT:
-                case SICK_NOTE_CANCEL:
-                case SICK_NOTE_COMMENT:
+                case USER -> mappedToRolesDto.add(PersonPermissionsRoleDto.USER);
+                case DEPARTMENT_HEAD -> mappedToRolesDto.add(PersonPermissionsRoleDto.DEPARTMENT_HEAD);
+                case SECOND_STAGE_AUTHORITY -> mappedToRolesDto.add(PersonPermissionsRoleDto.SECOND_STAGE_AUTHORITY);
+                case BOSS -> mappedToRolesDto.add(PersonPermissionsRoleDto.BOSS);
+                case OFFICE -> mappedToRolesDto.add(PersonPermissionsRoleDto.OFFICE);
+                case ADMIN -> mappedToRolesDto.add(PersonPermissionsRoleDto.ADMIN);
+                case INACTIVE -> mappedToRolesDto.add(PersonPermissionsRoleDto.INACTIVE);
+                case SICK_NOTE_VIEW, SICK_NOTE_ADD, SICK_NOTE_EDIT, SICK_NOTE_CANCEL, SICK_NOTE_COMMENT ->
                     mappedToRolesDto.add(PersonPermissionsRoleDto.SICK_NOTE_VIEW_ADD_EDIT);
-                    break;
-                case APPLICATION_ADD:
-                case APPLICATION_CANCEL:
-                case APPLICATION_CANCELLATION_REQUESTED:
+                case APPLICATION_ADD, APPLICATION_CANCEL, APPLICATION_CANCELLATION_REQUESTED ->
                     mappedToRolesDto.add(PersonPermissionsRoleDto.APPLICATION_ADD_CANCEL);
-                    break;
-                default:
-                    break;
             }
         });
 

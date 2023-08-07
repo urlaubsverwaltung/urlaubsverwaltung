@@ -147,29 +147,13 @@ public class WorkingTimeSettings {
         if (!workingDays.isEmpty()) {
             for (Integer dayOfWeek : workingDays) {
                 switch (DayOfWeek.of(dayOfWeek)) {
-                    case MONDAY:
-                        this.monday = FULL;
-                        break;
-                    case TUESDAY:
-                        this.tuesday = FULL;
-                        break;
-                    case WEDNESDAY:
-                        this.wednesday = FULL;
-                        break;
-                    case THURSDAY:
-                        this.thursday = FULL;
-                        break;
-                    case FRIDAY:
-                        this.friday = FULL;
-                        break;
-                    case SATURDAY:
-                        this.saturday = FULL;
-                        break;
-                    case SUNDAY:
-                        this.sunday = FULL;
-                        break;
-                    default:
-                        break;
+                    case MONDAY -> this.monday = FULL;
+                    case TUESDAY -> this.tuesday = FULL;
+                    case WEDNESDAY -> this.wednesday = FULL;
+                    case THURSDAY -> this.thursday = FULL;
+                    case FRIDAY -> this.friday = FULL;
+                    case SATURDAY -> this.saturday = FULL;
+                    case SUNDAY -> this.sunday = FULL;
                 }
             }
         }

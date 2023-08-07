@@ -467,15 +467,11 @@ public class AbsenceOverviewViewController implements HasLaunchpad {
 
     private AbsenceOverviewDayType.Builder getPublicHolidayType(DayLength dayLength) {
         final AbsenceOverviewDayType.Builder builder = AbsenceOverviewDayType.builder();
-        switch (dayLength) {
-            case MORNING:
-                return builder.publicHolidayMorning();
-            case NOON:
-                return builder.publicHolidayNoon();
-            case FULL:
-            default:
-                return builder.publicHolidayFull();
-        }
+        return switch (dayLength) {
+            case MORNING -> builder.publicHolidayMorning();
+            case NOON -> builder.publicHolidayNoon();
+            default -> builder.publicHolidayFull();
+        };
     }
 
     private String getSelectedMonth(String month, LocalDate startDate) {

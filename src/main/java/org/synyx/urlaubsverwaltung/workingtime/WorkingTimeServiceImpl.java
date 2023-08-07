@@ -180,27 +180,13 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
 
     private static void setWorkDay(WorkingTimeEntity workingTimeEntity, DayOfWeek dayOfWeek, DayLength dayLength) {
         switch (dayOfWeek) {
-            case MONDAY:
-                workingTimeEntity.setMonday(dayLength);
-                break;
-            case TUESDAY:
-                workingTimeEntity.setTuesday(dayLength);
-                break;
-            case WEDNESDAY:
-                workingTimeEntity.setWednesday(dayLength);
-                break;
-            case THURSDAY:
-                workingTimeEntity.setThursday(dayLength);
-                break;
-            case FRIDAY:
-                workingTimeEntity.setFriday(dayLength);
-                break;
-            case SATURDAY:
-                workingTimeEntity.setSaturday(dayLength);
-                break;
-            case SUNDAY:
-                workingTimeEntity.setSunday(dayLength);
-                break;
+            case MONDAY -> workingTimeEntity.setMonday(dayLength);
+            case TUESDAY -> workingTimeEntity.setTuesday(dayLength);
+            case WEDNESDAY -> workingTimeEntity.setWednesday(dayLength);
+            case THURSDAY -> workingTimeEntity.setThursday(dayLength);
+            case FRIDAY -> workingTimeEntity.setFriday(dayLength);
+            case SATURDAY -> workingTimeEntity.setSaturday(dayLength);
+            case SUNDAY -> workingTimeEntity.setSunday(dayLength);
         }
     }
 

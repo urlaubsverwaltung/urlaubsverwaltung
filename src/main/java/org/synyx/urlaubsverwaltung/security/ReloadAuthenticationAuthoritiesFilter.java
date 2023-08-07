@@ -77,8 +77,7 @@ class ReloadAuthenticationAuthoritiesFilter extends OncePerRequestFilter {
 
     private Authentication getUpdatedAuthentication(List<GrantedAuthority> updatedAuthorities, Authentication authentication) throws ReloadAuthenticationException {
         final Authentication updatedAuthentication;
-        if (authentication instanceof OAuth2AuthenticationToken) {
-            final OAuth2AuthenticationToken oAuth2Auth = (OAuth2AuthenticationToken) authentication;
+        if (authentication instanceof OAuth2AuthenticationToken oAuth2Auth) {
             updatedAuthentication = new OAuth2AuthenticationToken(oAuth2Auth.getPrincipal(), updatedAuthorities, oAuth2Auth.getAuthorizedClientRegistrationId());
         } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
             updatedAuthentication = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), updatedAuthorities);
