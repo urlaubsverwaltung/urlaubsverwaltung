@@ -7,7 +7,7 @@ public class ApplicationUpdatedEvent {
 
     private final UUID id;
     private final Instant createdAt;
-    private Application application;
+    private final Application application;
 
     public ApplicationUpdatedEvent(UUID id, Instant createdAt, Application application) {
         this.id = id;
