@@ -1,0 +1,26 @@
+uv:
+  security:
+    oidc:
+      client-secret: 51964fe9-8509-419d-9ee8-d2450822b7c9
+      issuer-uri: http://localhost:8090/auth/realms/urlaubsverwaltung
+      client-id: urlaubsverwaltung
+      logout-uri: http://localhost:8090/auth/realms/urlaubsverwaltung/protocol/openid-connect/logout
+      group-claim:
+        enabled: 'false'
+    auth: oidc
+  mail:
+    application-url: http://localhost:8080
+    sender: sender@example.org
+    administrator: administrators@example.org
+  calendar:
+    organizer: organizer@example.org
+
+spring:
+  mail:
+    host: localhost
+    port: '1025'
+
+management:
+  health:
+    ldap:
+      enabled: 'false'
