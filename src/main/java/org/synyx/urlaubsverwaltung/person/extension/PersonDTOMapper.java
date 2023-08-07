@@ -16,14 +16,14 @@ class PersonDTOMapper {
 
     static Person toPerson(PersonDTO personDTO) {
         final Person person = new Person(personDTO.getUsername(), personDTO.getLastName(), personDTO.getFirstName(), personDTO.getEmail());
-        person.setId(personDTO.getId().intValue());
+        person.setId(personDTO.getId());
         person.setPermissions(toRoles(personDTO));
         return person;
     }
 
     static PersonDTO toPersonDTO(Person person) {
         return PersonDTO.builder()
-            .id(Long.valueOf(person.getId()))
+            .id(person.getId())
             .username(person.getUsername())
             .lastName(person.getLastName())
             .firstName(person.getFirstName())
