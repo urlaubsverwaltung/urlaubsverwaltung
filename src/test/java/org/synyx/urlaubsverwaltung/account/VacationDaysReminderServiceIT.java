@@ -34,8 +34,6 @@ import static org.mockito.Mockito.when;
 @Transactional
 class VacationDaysReminderServiceIT extends TestContainersBase {
 
-    private static final String EMAIL_LINE_BREAK = "\r\n";
-
     @RegisterExtension
     static final GreenMailExtension greenMail = new GreenMailExtension(SMTP_IMAP);
 
@@ -76,12 +74,13 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        final String content = (String) msg.getContent();
-        assertThat(content).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "Du hast noch 10 Tage Urlaub für dieses Jahr offen, bitte denke daran, deinen Urlaub zu planen." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview");
+        final String content = (String) readPlainContent(msg);
+        assertThat(content).isEqualTo("""
+            Hallo Lieschen Müller,
+
+            Du hast noch 10 Tage Urlaub für dieses Jahr offen, bitte denke daran, deinen Urlaub zu planen.
+
+            Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview""");
     }
 
     @Test
@@ -124,12 +123,13 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        final String content = (String) msg.getContent();
-        assertThat(content).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "Du hast noch 10 Tage Resturlaub aus dem Vorjahr, bitte denke daran den Urlaub bis zum 31.03.2022 zu nehmen." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview");
+        final String content = (String) readPlainContent(msg);
+        assertThat(content).isEqualTo("""
+            Hallo Lieschen Müller,
+
+            Du hast noch 10 Tage Resturlaub aus dem Vorjahr, bitte denke daran den Urlaub bis zum 31.03.2022 zu nehmen.
+
+            Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/42/overview""");
     }
 
     @Test
@@ -173,13 +173,18 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        assertThat(msg.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "leider ist dein Resturlaub zum 01.04.2022 in Höhe von 10 Tagen verfallen." + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "Dein aktueller Urlaubsanspruch:" + EMAIL_LINE_BREAK +
-            "    10 Tage" + EMAIL_LINE_BREAK +
-            "" + EMAIL_LINE_BREAK +
-            "Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/1/overview");
+        assertThat(readPlainContent(msg)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            leider ist dein Resturlaub zum 01.04.2022 in Höhe von 10 Tagen verfallen.
+
+            Dein aktueller Urlaubsanspruch:
+                10 Tage
+
+            Mehr Informationen zu deinem Urlaubsanspruch findest du hier: https://localhost:8080/web/person/1/overview""");
+    }
+
+    private String readPlainContent(Message message) throws MessagingException, IOException {
+        return message.getContent().toString().replaceAll("\\r", "");
     }
 }

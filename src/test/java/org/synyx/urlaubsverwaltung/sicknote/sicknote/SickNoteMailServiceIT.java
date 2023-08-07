@@ -38,8 +38,6 @@ import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory.SIC
 @Transactional
 class SickNoteMailServiceIT extends TestContainersBase {
 
-    private static final String EMAIL_LINE_BREAK = "\r\n";
-
     @RegisterExtension
     static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP_IMAP);
 
@@ -82,49 +80,48 @@ class SickNoteMailServiceIT extends TestContainersBase {
         // check email of user
         final Message msgUser = inbox[0];
         assertThat(msgUser.getSubject()).isEqualTo("Ende deiner Lohnfortzahlung");
+        assertThat(readPlainContent(msgUser)).isEqualTo("""
+            Hallo Lieschen Müller,
 
-        final String content = (String) msgUser.getContent();
-        assertThat(content).isEqualTo("Hallo Lieschen Müller," + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "dein Anspruch auf Lohnfortzahlung von 42 Tagen endete am 14.03.2022." + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    https://localhost:8080/web/sicknote/1" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Informationen zur Krankmeldung:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Mitarbeiter:                  Lieschen Müller" + EMAIL_LINE_BREAK +
-            "    Zeitraum:                     01.02.2022 bis 01.04.2022" + EMAIL_LINE_BREAK +
-            "    Anspruch auf Lohnfortzahlung: 01.02.2022 bis 14.03.2022" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Hinweis:" + EMAIL_LINE_BREAK +
-            "Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal 42 Tage" + EMAIL_LINE_BREAK +
-            "(fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage)." + EMAIL_LINE_BREAK +
-            "Danach wird für gesetzlich Krankenversicherte in der Regel Krankengeld von der Krankenkasse gezahlt.");
+            dein Anspruch auf Lohnfortzahlung von 42 Tagen endete am 14.03.2022.
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Mitarbeiter:                  Lieschen Müller
+                Zeitraum:                     01.02.2022 bis 01.04.2022
+                Anspruch auf Lohnfortzahlung: 01.02.2022 bis 14.03.2022
+
+
+            Hinweis:
+            Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal 42 Tage
+            (fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage).
+            Danach wird für gesetzlich Krankenversicherte in der Regel Krankengeld von der Krankenkasse gezahlt.""");
 
         // check email of office
         final Message msgOffice = inboxOffice[0];
         assertThat(msgOffice.getSubject()).isEqualTo("Ende der Lohnfortzahlung von Lieschen Müller");
 
         // check content of office email
-        final String contentOfficeMail = (String) msgOffice.getContent();
-        assertThat(contentOfficeMail).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "der Anspruch auf Lohnfortzahlung von Lieschen Müller von 42 Tagen endete am 14.03.2022." + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    https://localhost:8080/web/sicknote/1" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Informationen zur Krankmeldung:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Mitarbeiter:                  Lieschen Müller" + EMAIL_LINE_BREAK +
-            "    Zeitraum:                     01.02.2022 bis 01.04.2022" + EMAIL_LINE_BREAK +
-            "    Anspruch auf Lohnfortzahlung: 01.02.2022 bis 14.03.2022" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Hinweis:" + EMAIL_LINE_BREAK +
-            "Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal 42 Tage" + EMAIL_LINE_BREAK +
-            "(fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage)." + EMAIL_LINE_BREAK +
-            "Danach wird für gesetzlich Krankenversicherte in der Regel Krankengeld von der Krankenkasse gezahlt.");
+        assertThat(readPlainContent(msgOffice)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            der Anspruch auf Lohnfortzahlung von Lieschen Müller von 42 Tagen endete am 14.03.2022.
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Mitarbeiter:                  Lieschen Müller
+                Zeitraum:                     01.02.2022 bis 01.04.2022
+                Anspruch auf Lohnfortzahlung: 01.02.2022 bis 14.03.2022
+
+
+            Hinweis:
+            Der Anspruch auf Lohnfortzahlung durch den Arbeitgeber im Krankheitsfall besteht für maximal 42 Tage
+            (fortlaufende Kalendertage ohne Rücksicht auf die Arbeitstage des erkrankten Arbeitnehmers, Sonn- oder Feiertage).
+            Danach wird für gesetzlich Krankenversicherte in der Regel Krankengeld von der Krankenkasse gezahlt.""");
 
         verify(sickNoteService).setEndOfSickPayNotificationSend(sickNote);
     }
@@ -158,19 +155,20 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).isEqualTo("Eine neue Krankmeldung wurde für dich eingetragen");
-        assertThat(msgPerson.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Lieschen Müller hat eine neue Krankmeldung für dich eintragen:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    https://localhost:8080/web/sicknote/1" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Informationen zur Krankmeldung:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
-            "    Art der Krankmeldung: Kind-Krankmeldung" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + person.getId() + "/notifications anpassen.");
+        assertThat(readPlainContent(msgPerson)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            Lieschen Müller hat eine neue Krankmeldung für dich eintragen:
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
+                Art der Krankmeldung: Kind-Krankmeldung
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(person.getId()));
     }
 
     @Test
@@ -202,19 +200,20 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).isEqualTo("Eine Krankmeldung wurde für dich bearbeitet");
-        assertThat(msgPerson.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Lieschen Müller hat die folgende Krankmeldung für dich bearbeitet:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    https://localhost:8080/web/sicknote/1" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Informationen zur Krankmeldung:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
-            "    Art der Krankmeldung: Kind-Krankmeldung" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + person.getId() + "/notifications anpassen.");
+        assertThat(readPlainContent(msgPerson)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            Lieschen Müller hat die folgende Krankmeldung für dich bearbeitet:
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
+                Art der Krankmeldung: Kind-Krankmeldung
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(person.getId()));
     }
 
     @Test
@@ -243,16 +242,17 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
         final Message msgColleague = inboxColleague[0];
         assertThat(msgColleague.getSubject()).isEqualTo("Neue Abwesenheit von Lieschen Müller");
-        assertThat(msgColleague.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "eine Abwesenheit von Lieschen Müller wurde erstellt:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Zeitraum: 01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + colleague.getId() + "/notifications anpassen.");
+        assertThat(readPlainContent(msgColleague)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            eine Abwesenheit von Lieschen Müller wurde erstellt:
+
+                Zeitraum: 01.02.2022 bis 01.04.2022, ganztägig
+
+            Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(colleague.getId()));
     }
 
     @Test
@@ -284,19 +284,20 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
         final Message msgPerson = inboxPerson[0];
         assertThat(msgPerson.getSubject()).isEqualTo("Eine Krankmeldung wurde für dich storniert");
-        assertThat(msgPerson.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Lieschen Müller hat die folgende Krankmeldung für dich storniert:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    https://localhost:8080/web/sicknote/1" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Informationen zur Krankmeldung:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
-            "    Art der Krankmeldung: Kind-Krankmeldung" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + person.getId() + "/notifications anpassen.");
+        assertThat(readPlainContent(msgPerson)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            Lieschen Müller hat die folgende Krankmeldung für dich storniert:
+
+                https://localhost:8080/web/sicknote/1
+
+            Informationen zur Krankmeldung:
+
+                Zeitraum:             01.02.2022 bis 01.04.2022, ganztägig
+                Art der Krankmeldung: Kind-Krankmeldung
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(person.getId()));
     }
 
     @Test
@@ -325,15 +326,20 @@ class SickNoteMailServiceIT extends TestContainersBase {
 
         final Message msgColleague = inboxColleague[0];
         assertThat(msgColleague.getSubject()).isEqualTo("Abwesenheit von Lieschen Müller wurde zurückgenommen");
-        assertThat(msgColleague.getContent()).isEqualTo("Hallo Marlene Muster," + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "eine Abwesenheit von Lieschen Müller wurde zurückgenommen:" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "    Zeitraum: 01.02.2022 bis 01.04.2022, ganztägig" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences" + EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            EMAIL_LINE_BREAK +
-            "Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/" + colleague.getId() + "/notifications anpassen.");
+        assertThat(readPlainContent(msgColleague)).isEqualTo("""
+            Hallo Marlene Muster,
+
+            eine Abwesenheit von Lieschen Müller wurde zurückgenommen:
+
+                Zeitraum: 01.02.2022 bis 01.04.2022, ganztägig
+
+            Link zur Abwesenheitsübersicht: https://localhost:8080/web/absences
+
+
+            Deine E-Mail-Benachrichtigungen kannst du unter https://localhost:8080/web/person/%s/notifications anpassen.""".formatted(colleague.getId()));
+    }
+
+    private String readPlainContent(Message message) throws MessagingException, IOException {
+        return message.getContent().toString().replaceAll("\\r", "");
     }
 }
