@@ -235,16 +235,11 @@ public class AbsenceServiceImpl implements AbsenceService {
     }
 
     private AbsencePeriod.AbsenceStatus toAbsenceStatus(SickNoteStatus sickNoteStatus) {
-        switch (sickNoteStatus) {
-            case ACTIVE:
-                return AbsencePeriod.AbsenceStatus.ACTIVE;
-            case CANCELLED:
-                return AbsencePeriod.AbsenceStatus.CANCELLED;
-            case CONVERTED_TO_VACATION:
-                return AbsencePeriod.AbsenceStatus.CONVERTED_TO_VACATION;
-            default:
-                throw new IllegalStateException("sick note status not expected here.");
-        }
+        return switch (sickNoteStatus) {
+            case ACTIVE -> AbsencePeriod.AbsenceStatus.ACTIVE;
+            case CANCELLED -> AbsencePeriod.AbsenceStatus.CANCELLED;
+            case CONVERTED_TO_VACATION -> AbsencePeriod.AbsenceStatus.CONVERTED_TO_VACATION;
+        };
     }
 
     private List<AbsencePeriod.Record> days(SickNote sickNote, DateRange askedDateRange, Function<Person, WorkingTimeCalendar> workingTimeCalendarSupplier) {
