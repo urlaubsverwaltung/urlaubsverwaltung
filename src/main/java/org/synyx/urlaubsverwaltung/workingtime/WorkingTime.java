@@ -160,27 +160,13 @@ public class WorkingTime {
 
     public void setDayLengthForWeekDay(DayOfWeek dayOfWeek, DayLength dayLength) {
         switch (dayOfWeek) {
-            case MONDAY:
-                this.monday = dayLength;
-                break;
-            case TUESDAY:
-                this.tuesday = dayLength;
-                break;
-            case WEDNESDAY:
-                this.wednesday = dayLength;
-                break;
-            case THURSDAY:
-                this.thursday = dayLength;
-                break;
-            case FRIDAY:
-                this.friday = dayLength;
-                break;
-            case SATURDAY:
-                this.saturday = dayLength;
-                break;
-            case SUNDAY:
-                this.sunday = dayLength;
-                break;
+            case MONDAY -> this.monday = dayLength;
+            case TUESDAY -> this.tuesday = dayLength;
+            case WEDNESDAY -> this.wednesday = dayLength;
+            case THURSDAY -> this.thursday = dayLength;
+            case FRIDAY -> this.friday = dayLength;
+            case SATURDAY -> this.saturday = dayLength;
+            case SUNDAY -> this.sunday = dayLength;
         }
     }
 
