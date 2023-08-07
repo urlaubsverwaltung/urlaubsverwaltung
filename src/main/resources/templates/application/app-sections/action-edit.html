@@ -5,7 +5,7 @@
     <title>app action edit</title>
   </head>
   <body>
-    <th:block th:fragment="button">
+    <th:block th:fragment="buttons">
       <a
         th:if="${isAllowedToEditApplication}"
         th:href="@{/web/application/__${app.id}__/edit}"
