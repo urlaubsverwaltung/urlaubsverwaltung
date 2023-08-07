@@ -2,36 +2,36 @@ uv:
   security:
     auth: oidc
     oidc:
-      client-secret: ''
-      client-id: ''
-      issuer-uri: ''
-      logout-uri: ''
+      client-secret:
+      client-id:
+      issuer-uri:
+      logout-uri:
     directory-service:
       active-directory:
         sync:
           user-search-base: dc=example,dc=org
           user-dn: cn=Administrator,cn=users,dc=example,dc=org
-          enabled: 'false'
+          enabled: false
           password: password
         domain: example.org
         url: ldap://ad.example.org/
       ldap:
-        manager-dn: ''
+        manager-dn:
         url: ldap://ldap.example.org/
         user-search-filter: (uid={0})
         base: dc=example,dc=org
         sync:
-          enabled: 'false'
+          enabled: false
           user-dn: uid=username,ou=other,ou=accounts,dc=example,dc=org
           password: password
           user-search-base: ou=people,ou=accounts
-        manager-password: ''
+        manager-password:
         user-search-base: ou=accounts
       identifier: sAMAccountName
       last-name: sn
       filter:
         object-class: person
-        member-of: ''
+        member-of:
       first-name: givenName
       mail-address: mail
   mail:
@@ -42,51 +42,51 @@ spring:
     resources:
       cache:
         cachecontrol:
-          cache-public: 'true'
-          cache-private: 'true'
+          cache-public: true
+          cache-private: true
           max-age: 365d
       chain:
-        cache: 'true'
+        cache: true
         strategy:
           content:
-            enabled: 'true'
+            enabled: true
             paths: /css/**.css,/favicons/**,/images/**
   data:
     web:
       pageable:
-        one-indexed-parameters: 'true'
-        default-page-size: '10'
+        one-indexed-parameters: true
+        default-page-size: 10
   datasource:
     password: urlaubsverwaltung
     url: jdbc:postgresql://localhost:5434/urlaubsverwaltung
     username: urlaubsverwaltung
   jpa:
-    open-in-view: 'false'
+    open-in-view: false
   session:
     jdbc:
       initialize-schema: always
   messages:
     basename: messages,launchpad-core
-    fallback-to-system-locale: 'false'
+    fallback-to-system-locale: false
   liquibase:
     change-log: classpath:/dbchangelogs/changelogmaster.xml
   thymeleaf:
     servlet:
-      produce-partial-output-while-processing: 'false'
+      produce-partial-output-while-processing: false
 
 info:
   app:
-    version: '@project.version@'
-    name: '@project.name@'
+    version: @project.version@
+    name: @project.name@
 
 server:
   compression:
-    min-response-size: '1024'
-    enabled: 'true'
+    min-response-size: 1024
+    enabled: true
 
 springdoc:
   swagger-ui:
-    disable-swagger-default-url: 'true'
+    disable-swagger-default-url: true
 
 management:
   endpoints:
@@ -95,4 +95,4 @@ management:
         include: health,info
   endpoint:
     prometheus:
-      enabled: 'false'
+      enabled: false

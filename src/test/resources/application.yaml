@@ -13,26 +13,26 @@ spring:
   mail:
     host: localhost
   main:
-    banner-mode: 'off'
+    banner-mode: off
   data:
     web:
       pageable:
-        default-page-size: '1'
+        default-page-size: 1
   liquibase:
     change-log: classpath:/dbchangelogs/changelogmaster.xml
   jpa:
-    open-in-view: 'false'
+    open-in-view: false
     properties:
       hibernate:
         id:
-          new_generator_mappings: 'false'
+          new_generator_mappings: false
   session:
     jdbc:
       initialize-schema: always
   messages:
-    fallback-to-system-locale: 'false'
+    fallback-to-system-locale: false
 
 info:
   app:
-    name: '@project.name@'
-    version: '@project.version@'
+    name: "@project.name@"
+    version: "@project.version@"

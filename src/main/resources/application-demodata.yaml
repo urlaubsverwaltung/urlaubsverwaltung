@@ -9,24 +9,24 @@ uv:
     organizer: organizer@example.org
   development:
     demodata:
-      create: 'true'
+      create: true
 
 spring:
   mail:
     host: localhost
-    port: '1025'
+    port: 1025
   web:
     resources:
       chain:
-        cache: 'false'
+        cache: false
         strategy:
           content:
-            enabled: 'false'
+            enabled: false
       cache:
         cachecontrol:
-          cache-public: 'false'
-          max-age: '0'
-          cache-private: 'false'
+          cache-public: false
+          max-age: 0
+          cache-private: false
 
 launchpad:
   apps[0]:
@@ -40,4 +40,4 @@ launchpad:
 management:
   health:
     ldap:
-      enabled: 'false'
+      enabled: false

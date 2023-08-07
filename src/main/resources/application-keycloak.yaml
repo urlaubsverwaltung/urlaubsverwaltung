@@ -6,7 +6,7 @@ uv:
       client-id: urlaubsverwaltung
       logout-uri: http://localhost:8090/auth/realms/urlaubsverwaltung/protocol/openid-connect/logout
       group-claim:
-        enabled: 'false'
+        enabled: false
     auth: oidc
   mail:
     application-url: http://localhost:8080
@@ -18,9 +18,9 @@ uv:
 spring:
   mail:
     host: localhost
-    port: '1025'
+    port: 1025
 
 management:
   health:
     ldap:
-      enabled: 'false'
+      enabled: false
