@@ -39,7 +39,7 @@ class PersonEventHandlerExtension {
     void on(PersonCreatedEvent event) {
         personService.getPersonByUsername(event.getUsername())
             .ifPresent(existing -> {
-                final PersonCreatedEventDTO eventToPublish = PersonCreatedEventDTO.create(tenantSupplier.get(), existing.getId(), existing.getUsername(), existing.getLastName(), existing.getFirstName(), existing.getEmail(), existing.isActive());
+                final PersonCreatedEventDTO eventToPublish = PersonCreatedEventDTO.create(tenantSupplier.get(), Long.valueOf(existing.getId()), existing.getUsername(), existing.getLastName(), existing.getFirstName(), existing.getEmail(), existing.isActive());
                 applicationEventPublisher.publishEvent(eventToPublish);
             });
     }
@@ -49,7 +49,7 @@ class PersonEventHandlerExtension {
     void on(PersonUpdatedEvent event) {
         personService.getPersonByUsername(event.getUsername())
             .ifPresent(existing -> {
-                final PersonUpdatedEventDTO eventToPublish = PersonUpdatedEventDTO.create(tenantSupplier.get(), existing.getId(), existing.getUsername(), existing.getLastName(), existing.getFirstName(), existing.getEmail(), existing.isActive());
+                final PersonUpdatedEventDTO eventToPublish = PersonUpdatedEventDTO.create(tenantSupplier.get(), Long.valueOf(existing.getId()), existing.getUsername(), existing.getLastName(), existing.getFirstName(), existing.getEmail(), existing.isActive());
                 applicationEventPublisher.publishEvent(eventToPublish);
             });
     }
@@ -59,7 +59,7 @@ class PersonEventHandlerExtension {
     void on(PersonDisabledEvent event) {
         personService.getPersonByUsername(event.getUsername())
             .ifPresent(existing -> {
-                final PersonDisabledEventDTO eventToPublish = PersonDisabledEventDTO.create(tenantSupplier.get(), existing.getId(), existing.getUsername(), existing.getLastName(), existing.getFirstName(), existing.getEmail());
+                final PersonDisabledEventDTO eventToPublish = PersonDisabledEventDTO.create(tenantSupplier.get(), Long.valueOf(existing.getId()), existing.getUsername(), existing.getLastName(), existing.getFirstName(), existing.getEmail());
                 applicationEventPublisher.publishEvent(eventToPublish);
             });
     }
@@ -68,7 +68,7 @@ class PersonEventHandlerExtension {
     @EventListener
     void on(PersonDeletedEvent event) {
         final Person person = event.getPerson();
-        final PersonDeletedEventDTO eventToPublish = PersonDeletedEventDTO.create(tenantSupplier.get(), person.getId(), person.getUsername(), person.getLastName(), person.getFirstName(), person.getEmail(), person.isActive());
+        final PersonDeletedEventDTO eventToPublish = PersonDeletedEventDTO.create(tenantSupplier.get(), Long.valueOf(person.getId()), person.getUsername(), person.getLastName(), person.getFirstName(), person.getEmail(), person.isActive());
         applicationEventPublisher.publishEvent(eventToPublish);
     }
 

@@ -41,7 +41,7 @@ class PersonServiceExtensionImplTest {
     private static Person anyPerson() {
         PersonDTO personDTO = anyPersonDTO(1L);
         final Person createdPerson = new Person(personDTO.getUsername(), personDTO.getLastName(), personDTO.getFirstName(), personDTO.getEmail());
-        createdPerson.setId(personDTO.getId());
+        createdPerson.setId(personDTO.getId().intValue());
         createdPerson.setPermissions(Set.of(Role.USER));
         return createdPerson;
     }
@@ -144,7 +144,7 @@ class PersonServiceExtensionImplTest {
 
         Optional<PersonDTO> personById = sut.getPersonById(personDTO.getId());
 
-        verify(personService).getPersonByID(personDTO.getId());
+        verify(personService).getPersonByID(personDTO.getId().intValue());
         assertThat(personById).isPresent()
             .contains(personDTO);
     }
