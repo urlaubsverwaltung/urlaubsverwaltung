@@ -262,5 +262,5 @@ However, with the following manual steps an you can migrate to the 2.0.0 version
 1. Adjust chart configuration as necessary
 2. Make a database backup
 3. Uninstall the old chart
-3. Install the new version of the chart
-4. Restore the database from your backup
+4. Install the new version of the chart
+5. Restore the database from your backup
