@@ -420,9 +420,9 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationInteractionService.allow(any(), any(), any())).thenReturn(allowedApplication());
 
         perform(post("/web/application/" + APPLICATION_ID + "/allow")
-            .param("redirect", "/web/application/"))
+            .param("redirect", "/web/application"))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/"));
+            .andExpect(redirectedUrl("/web/application"));
     }
 
     @Test
@@ -760,9 +760,9 @@ class ApplicationForLeaveDetailsViewControllerTest {
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(someApplication()));
 
         perform(post("/web/application/" + APPLICATION_ID + "/reject")
-            .param("redirect", "/web/application/"))
+            .param("redirect", "/web/application"))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("/web/application/"));
+            .andExpect(redirectedUrl("/web/application"));
     }
 
     @Test

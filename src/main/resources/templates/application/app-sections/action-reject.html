@@ -27,7 +27,7 @@
         class="form confirm alert alert-danger"
         th:classappend="${action eq 'reject' ? '' : 'tw-hidden'}"
         method="post"
-        th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/application/__${app.id}__/reject?redirect=/web/application/' : '/web/application/__${app.id}__/reject'}"
+        th:with="actionUrl=${param.shortcut != null && #lists.contains(param.shortcut, 'true') ? '/web/application/__${app.id}__/reject?redirect=/web/application' : '/web/application/__${app.id}__/reject'}"
         th:action="@{__${actionUrl}__}"
         th:object="${comment}"
       >
