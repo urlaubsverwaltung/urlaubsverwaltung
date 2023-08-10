@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{::scripts})">
+  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
     <title
       th:with="departmentTitleMessagekey=${department.id == null ? 'department.data.header.title.new' : 'department.data.header.title.edit'}"
       th:text="#{__${departmentTitleMessagekey}__}"
@@ -11,7 +11,7 @@
       <script defer asset:src="department_form.js"></script>
     </th:block>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
       <div class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
         <form
