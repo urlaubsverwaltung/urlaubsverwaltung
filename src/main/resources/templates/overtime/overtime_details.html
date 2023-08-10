@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="_layout::head(~{::title}, ~{}, ~{})">
+  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{})}">
     <title th:text="#{overtime.details.header.title}">Überstunden</title>
   </head>
-  <body th:replace="_layout::body(~{::main}, ~{})">
+  <body th:replace="~{_layout::body(~{::main}, ~{})}">
     <main th:fragment="main">
       <div class="feedback tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
         <p
@@ -157,10 +157,10 @@
                 ></div>
               </div>
               <div class="box tw-mb-5 tw-p-5">
-                <div th:replace="overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})"></div>
+                <div th:replace="~{overtime/box::overtime-box-total(overtimeTotal=${overtimeTotal})}"></div>
               </div>
               <div class="box tw-mb-5 tw-p-5">
-                <div th:replace="overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})"></div>
+                <div th:replace="~{overtime/box::overtime-box-left(overtimeLeft=${overtimeLeft})}"></div>
               </div>
             </div>
           </div>
