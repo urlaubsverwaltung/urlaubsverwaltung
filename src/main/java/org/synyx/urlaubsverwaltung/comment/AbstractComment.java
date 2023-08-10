@@ -1,18 +1,13 @@
 package org.synyx.urlaubsverwaltung.comment;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.SequenceGenerator;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.Objects;
 
-import static jakarta.persistence.GenerationType.SEQUENCE;
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Optional.ofNullable;
 
@@ -22,12 +17,6 @@ import static java.util.Optional.ofNullable;
  */
 @MappedSuperclass
 public abstract class AbstractComment {
-
-    @Id
-    @Column(name = "id", unique = true, nullable = false, updatable = false)
-    @GeneratedValue(strategy = SEQUENCE, generator = "comment_generator")
-    @SequenceGenerator(name = "comment_generator", sequenceName = "comment_id_seq")
-    private Long id;
 
     // Who has written the comment?
     @ManyToOne
@@ -47,14 +36,6 @@ public abstract class AbstractComment {
     protected AbstractComment(Clock clock) {
         final Clock c = ofNullable(clock).orElse(Clock.systemUTC());
         this.date = Instant.now(c).truncatedTo(DAYS);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Person getPerson() {
@@ -79,22 +60,5 @@ public abstract class AbstractComment {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final AbstractComment that = (AbstractComment) o;
-        return null != this.getId() && Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }

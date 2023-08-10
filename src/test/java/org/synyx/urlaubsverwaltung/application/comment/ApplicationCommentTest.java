@@ -11,9 +11,6 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-/**
- * Unit test for {@link ApplicationComment}.
- */
 class ApplicationCommentTest {
 
     private final Clock clock = Clock.systemUTC();
@@ -29,7 +26,6 @@ class ApplicationCommentTest {
         assertDateIsSetToToday.accept(new ApplicationComment(new Person("muster", "Muster", "Marlene", "muster@example.org"), clock));
     }
 
-
     @Test
     void ensureCanBeInitializedWithPerson() {
 
@@ -37,5 +33,32 @@ class ApplicationCommentTest {
         ApplicationComment comment = new ApplicationComment(commentingPerson, clock);
 
         assertThat(comment.getPerson()).isEqualTo(commentingPerson);
+    }
+
+    @Test
+    void equals() {
+        final ApplicationComment commentOne = new ApplicationComment(Clock.systemUTC());
+        commentOne.setId(1L);
+
+        final ApplicationComment commentOneOne = new ApplicationComment(Clock.systemUTC());
+        commentOneOne.setId(1L);
+
+        final ApplicationComment commentTwo = new ApplicationComment(Clock.systemUTC());
+        commentTwo.setId(2L);
+
+        assertThat(commentOne)
+            .isEqualTo(commentOne)
+            .isEqualTo(commentOneOne)
+            .isNotEqualTo(commentTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
+    }
+
+    @Test
+    void hashCodeTest() {
+        final ApplicationComment commentOne = new ApplicationComment(Clock.systemUTC());
+        commentOne.setId(1L);
+
+        assertThat(commentOne.hashCode()).isEqualTo(32);
     }
 }

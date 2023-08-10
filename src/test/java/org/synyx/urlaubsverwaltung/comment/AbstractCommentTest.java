@@ -35,33 +35,6 @@ class AbstractCommentTest {
             .isThrownBy(comment::getDate);
     }
 
-    @Test
-    void equals() {
-        final TestComment commentOne = new TestComment(Clock.systemUTC());
-        commentOne.setId(1L);
-
-        final TestComment commentOneOne = new TestComment(Clock.systemUTC());
-        commentOneOne.setId(1L);
-
-        final TestComment commentTwo = new TestComment(Clock.systemUTC());
-        commentTwo.setId(2L);
-
-        assertThat(commentOne)
-            .isEqualTo(commentOne)
-            .isEqualTo(commentOneOne)
-            .isNotEqualTo(commentTwo)
-            .isNotEqualTo(new Object())
-            .isNotEqualTo(null);
-    }
-
-    @Test
-    void hashCodeTest() {
-        final TestComment commentOne = new TestComment(Clock.systemUTC());
-        commentOne.setId(1L);
-
-        assertThat(commentOne.hashCode()).isEqualTo(32);
-    }
-
     private class TestComment extends AbstractComment {
 
         private TestComment(Clock clock) {
