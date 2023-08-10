@@ -15,7 +15,7 @@ class SpecialLeaveSettingsEntity {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = SEQUENCE, generator = "special_leaves_settings_generator")
-    @SequenceGenerator(name = "special_leaves_settings_generator", sequenceName = "special_leaves_settings_id_seq")
+    @SequenceGenerator(name = "special_leaves_settings_generator", sequenceName = "special_leave_settings_id_seq")
     private Long id;
 
     private boolean active;

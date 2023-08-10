@@ -36,7 +36,7 @@
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
                     minValue="1" sequenceName="sick_note_comment_id_seq" startValue="1"/>
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
-                    minValue="1" sequenceName="special_leaves_settings_id_seq" startValue="1"/>
+                    minValue="1" sequenceName="special_leave_settings_id_seq" startValue="1"/>
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
                     minValue="1" sequenceName="working_time_id_seq" startValue="1"/>
     <createTable tableName="absence_mapping">
