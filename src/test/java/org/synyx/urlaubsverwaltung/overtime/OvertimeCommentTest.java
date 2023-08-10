@@ -28,4 +28,31 @@ class OvertimeCommentTest {
         assertThat(comment.getDate()).isEqualTo(Instant.now(clock).truncatedTo(DAYS));
         assertThat(comment.getText()).isNull();
     }
+
+    @Test
+    void equals() {
+        final OvertimeComment commentOne = new OvertimeComment(Clock.systemUTC());
+        commentOne.setId(1L);
+
+        final OvertimeComment commentOneOne = new OvertimeComment(Clock.systemUTC());
+        commentOneOne.setId(1L);
+
+        final OvertimeComment commentTwo = new OvertimeComment(Clock.systemUTC());
+        commentTwo.setId(2L);
+
+        assertThat(commentOne)
+            .isEqualTo(commentOne)
+            .isEqualTo(commentOneOne)
+            .isNotEqualTo(commentTwo)
+            .isNotEqualTo(new Object())
+            .isNotEqualTo(null);
+    }
+
+    @Test
+    void hashCodeTest() {
+        final OvertimeComment commentOne = new OvertimeComment(Clock.systemUTC());
+        commentOne.setId(1L);
+
+        assertThat(commentOne.hashCode()).isEqualTo(32);
+    }
 }

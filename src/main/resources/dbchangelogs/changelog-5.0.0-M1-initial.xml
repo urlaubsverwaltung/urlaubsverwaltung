@@ -12,9 +12,9 @@
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
                     minValue="1" sequenceName="application_id_seq" startValue="1"/>
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
-                    minValue="1" sequenceName="calendar_accessible_id_seq" startValue="1"/>
+                    minValue="1" sequenceName="application_comment_id_seq" startValue="1"/>
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
-                    minValue="1" sequenceName="comment_id_seq" startValue="1"/>
+                    minValue="1" sequenceName="calendar_accessible_id_seq" startValue="1"/>
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
                     minValue="1" sequenceName="company_calendar_id_seq" startValue="1"/>
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
@@ -24,6 +24,8 @@
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
                     minValue="1" sequenceName="overtime_id_seq" startValue="1"/>
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="overtime_comment_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
                     minValue="1" sequenceName="person_calendar_id_seq" startValue="1"/>
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
                     minValue="1" sequenceName="person_id_seq" startValue="1"/>
@@ -32,7 +34,9 @@
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
                     minValue="1" sequenceName="sick_note_id_seq" startValue="1"/>
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
-                    minValue="1" sequenceName="special_leaves_settings_id_seq" startValue="1"/>
+                    minValue="1" sequenceName="sick_note_comment_id_seq" startValue="1"/>
+    <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
+                    minValue="1" sequenceName="special_leave_settings_id_seq" startValue="1"/>
     <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="50" maxValue="9223372036854775807"
                     minValue="1" sequenceName="working_time_id_seq" startValue="1"/>
     <createTable tableName="absence_mapping">
