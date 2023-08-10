@@ -57,9 +57,9 @@ spring:
         one-indexed-parameters: true
         default-page-size: 10
   datasource:
+    username: urlaubsverwaltung
     password: urlaubsverwaltung
     url: jdbc:postgresql://localhost:5434/urlaubsverwaltung
-    username: urlaubsverwaltung
   jpa:
     open-in-view: false
   session:
