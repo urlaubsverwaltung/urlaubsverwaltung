@@ -74,11 +74,6 @@ spring:
     servlet:
       produce-partial-output-while-processing: false
 
-info:
-  app:
-    version: @project.version@
-    name: @project.name@
-
 server:
   compression:
     min-response-size: 1024
@@ -96,3 +91,8 @@ management:
   endpoint:
     prometheus:
       enabled: false
+
+info:
+  app:
+    name: "@project.name@"
+    version: "@project.version@"
