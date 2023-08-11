@@ -1,13 +1,14 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -20,9 +21,11 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -42,24 +45,11 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     void getWorkdaysWithoutAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/workdays"));
-        resultActions.andExpect(status().isUnauthorized());
+        perform(get("/api/workdays"))
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @WithMockUser
-    void getWorkdaysAsAuthenticatedUserForOtherUserIsForbidden() throws Exception {
-        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
-
-        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
-            .param("from", "2016-01-04")
-            .param("to", "2016-01-04")
-            .param("length", "FULL"));
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(username = "department head", authorities = "DEPARTMENT_HEAD")
     void getWorkdaysAsDepartmentHeadUserForOtherUserIsForbidden() throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
@@ -72,15 +62,17 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         when(departmentService.isDepartmentHeadAllowedToManagePerson(requester, requestedPerson)).thenReturn(false);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
-            .param("from", "2016-01-04")
-            .param("to", "2016-01-04")
-            .param("length", "FULL"));
-        resultActions.andExpect(status().isForbidden());
+        perform(
+            get("/api/persons/1/workdays")
+                .with(user("department head").authorities(new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
+                .param("from", "2016-01-04")
+                .param("to", "2016-01-04")
+                .param("length", "FULL")
+        )
+            .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(username = "second stage authority", authorities = "SECOND_STAGE_AUTHORITY")
     void getWorkdaysAsSecondStageAuthorityUserForOtherUserIsForbidden() throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
@@ -93,39 +85,32 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(requester, requestedPerson)).thenReturn(false);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
-            .param("from", "2016-01-04")
-            .param("to", "2016-01-04")
-            .param("length", "FULL"));
-        resultActions.andExpect(status().isForbidden());
+        perform(
+            get("/api/persons/1/workdays")
+                .with(user("second stage authority").authorities(new SimpleGrantedAuthority("SECOND_STAGE_AUTHORITY")))
+                .param("from", "2016-01-04")
+                .param("to", "2016-01-04")
+                .param("length", "FULL")
+        )
+            .andExpect(status().isForbidden());
     }
 
-    @Test
-    @WithMockUser(authorities = "ADMIN")
-    void getWorkdaysAsAdminUserForOtherUserIsForbidden() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"USER", "ADMIN", "INACTIVE"})
+    void getWorkdaysIsForbiddenFor(final String role) throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
-            .param("from", "2016-01-04")
-            .param("to", "2016-01-04")
-            .param("length", "FULL"));
-        resultActions.andExpect(status().isForbidden());
+        perform(
+            get("/api/persons/1/workdays")
+                .with(user("user").authorities(new SimpleGrantedAuthority(role)))
+                .param("from", "2016-01-04")
+                .param("to", "2016-01-04")
+                .param("length", "FULL")
+        )
+            .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(authorities = "INACTIVE")
-    void getWorkdaysAsInactiveUserForOtherUserIsForbidden() throws Exception {
-        when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
-
-        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
-            .param("from", "2016-01-04")
-            .param("to", "2016-01-04")
-            .param("length", "FULL"));
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(username = "department head", authorities = "DEPARTMENT_HEAD")
     void getWorkdaysAsDepartmentHeadUserForOtherUserIsOk() throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
@@ -138,15 +123,17 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         when(departmentService.isDepartmentHeadAllowedToManagePerson(requester, requestedPerson)).thenReturn(true);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
-            .param("from", "2016-01-04")
-            .param("to", "2016-01-04")
-            .param("length", "FULL"));
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/1/workdays")
+                .with(user("department head").authorities(new SimpleGrantedAuthority("DEPARTMENT_HEAD")))
+                .param("from", "2016-01-04")
+                .param("to", "2016-01-04")
+                .param("length", "FULL")
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "second stage authority", authorities = "SECOND_STAGE_AUTHORITY")
     void getWorkdaysAsSecondStageAuthorityUserForOtherUserIsOk() throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
@@ -159,42 +146,48 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
 
         when(departmentService.isSecondStageAuthorityAllowedToManagePerson(requester, requestedPerson)).thenReturn(true);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
-            .param("from", "2016-01-04")
-            .param("to", "2016-01-04")
-            .param("length", "FULL"));
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/1/workdays")
+                .with(user("second stage authority").authorities(new SimpleGrantedAuthority("SECOND_STAGE_AUTHORITY")))
+                .param("from", "2016-01-04")
+                .param("to", "2016-01-04")
+                .param("length", "FULL")
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(authorities = "BOSS")
     void getWorkdaysAsBossUserForOtherUserIsForbidden() throws Exception {
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
 
-        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
-            .param("from", "2016-01-04")
-            .param("to", "2016-01-04")
-            .param("length", "FULL"));
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/1/workdays")
+                .with(user("user").authorities(new SimpleGrantedAuthority("BOSS")))
+                .param("from", "2016-01-04")
+                .param("to", "2016-01-04")
+                .param("length", "FULL")
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(authorities = "OFFICE")
     void getWorkdaysWithOfficeRoleIsOk() throws Exception {
 
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person()));
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
-            .param("from", "2016-01-04")
-            .param("to", "2016-01-04")
-            .param("length", "FULL"));
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/1/workdays")
+                .with(user("user").authorities(new SimpleGrantedAuthority("OFFICE")))
+                .param("from", "2016-01-04")
+                .param("to", "2016-01-04")
+                .param("length", "FULL")
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "user")
     void getWorkdaysWithSameUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -202,29 +195,34 @@ class WorkingTimeCalendarApiControllerSecurityIT extends TestContainersBase {
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
         when(workDaysCountService.getWorkDaysCount(any(), any(), any(), any())).thenReturn(BigDecimal.ONE);
 
-        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
-            .param("from", "2016-01-04")
-            .param("to", "2016-01-04")
-            .param("length", "FULL"));
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/1/workdays")
+                .with(user("user"))
+                .param("from", "2016-01-04")
+                .param("to", "2016-01-04")
+                .param("length", "FULL")
+        )
+            .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "differentUser")
     void getWorkdaysWithDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        final ResultActions resultActions = perform(get("/api/persons/1/workdays")
-            .param("from", "2016-01-04")
-            .param("to", "2016-01-04")
-            .param("length", "FULL"));
-        resultActions.andExpect(status().isForbidden());
+        perform(
+            get("/api/persons/1/workdays")
+                .with(user("differentUser"))
+                .param("from", "2016-01-04")
+                .param("to", "2016-01-04")
+                .param("length", "FULL")
+        )
+            .andExpect(status().isForbidden());
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build().perform(builder);
+        return webAppContextSetup(context).apply(springSecurity()).build().perform(builder);
     }
 }

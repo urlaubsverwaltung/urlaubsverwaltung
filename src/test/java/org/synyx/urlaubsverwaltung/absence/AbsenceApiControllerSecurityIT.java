@@ -51,8 +51,8 @@ class AbsenceApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     void getAbsencesWithoutBasicAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/absences"));
-        resultActions.andExpect(status().isUnauthorized());
+        perform(get("/api/absences"))
+            .andExpect(status().isUnauthorized());
     }
 
     @Test
