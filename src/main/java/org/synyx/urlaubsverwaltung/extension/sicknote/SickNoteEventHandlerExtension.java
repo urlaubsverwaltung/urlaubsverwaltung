@@ -78,7 +78,7 @@ public class SickNoteEventHandlerExtension {
 
     private static SickNotePersonDTO toSickNotePersonDTO(Person person) {
         return SickNotePersonDTO.builder()
-            .personId(Long.valueOf(person.getId()))
+            .personId(person.getId())
             .username(person.getUsername())
             .build();
     }
@@ -105,7 +105,7 @@ public class SickNoteEventHandlerExtension {
 
             return SickNoteCancelledEventDTO.builder()
                 .id(event.getId())
-                .sourceId(Long.valueOf(event.getSickNote().getId()))
+                .sourceId(event.getSickNote().getId())
                 .createdAt(event.getCreatedAt())
                 .tenantId(tenantId)
                 .person(person)
@@ -130,7 +130,7 @@ public class SickNoteEventHandlerExtension {
 
             return SickNoteCreatedEventDTO.builder()
                 .id(event.getId())
-                .sourceId(Long.valueOf(event.getSickNote().getId()))
+                .sourceId(event.getSickNote().getId())
                 .createdAt(event.getCreatedAt())
                 .tenantId(tenantId)
                 .person(person)
@@ -155,7 +155,7 @@ public class SickNoteEventHandlerExtension {
 
             return SickNoteUpdatedEventDTO.builder()
                 .id(event.getId())
-                .sourceId(Long.valueOf(event.getSickNote().getId()))
+                .sourceId(event.getSickNote().getId())
                 .createdAt(event.getCreatedAt())
                 .tenantId(tenantId)
                 .person(person)
@@ -180,7 +180,7 @@ public class SickNoteEventHandlerExtension {
 
             return SickNoteConvertedToApplicationEventDTO.builder()
                 .id(event.getId())
-                .sourceId(Long.valueOf(event.getSickNote().getId()))
+                .sourceId(event.getSickNote().getId())
                 .createdAt(event.getCreatedAt())
                 .tenantId(tenantId)
                 .person(person)
