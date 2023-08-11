@@ -81,8 +81,8 @@ public class SortComparator<T> implements Comparator<T> {
         }
 
         if (properties.size() == 1) {
-            if (value instanceof String) {
-                value = ((String) value).toLowerCase();
+            if (value instanceof String string) {
+                value = string.toLowerCase();
             }
             return (Comparable<? super Comparable>) value;
         }

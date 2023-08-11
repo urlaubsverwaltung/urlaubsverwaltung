@@ -116,8 +116,9 @@ class OvertimeTest {
 
         final Map<Integer, Duration> durationByYear = overtime.getDurationByYear();
 
-        assertThat(durationByYear).containsEntry(2022, Duration.ofHours(10));
-        assertThat(durationByYear).containsEntry(2023, Duration.ofHours(10));
+        assertThat(durationByYear)
+            .containsEntry(2022, Duration.ofHours(10))
+            .containsEntry(2023, Duration.ofHours(10));
     }
 
     @Test
