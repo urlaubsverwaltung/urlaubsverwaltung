@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>asset-dependency-preload</title>
+  </head>
+  <body>
+    <th:block th:fragment="links(asset)">
+      <link
+        th:each="preload : ${assets.get(asset)}"
+        rel="preload"
+        th:as="${preload.as}"
+        th:href="${preload.href}"
+        crossorigin
+      />
+    </th:block>
+  </body>
+</html>

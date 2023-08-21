@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer})}">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
     <title th:text="#{sicknotes.header.title}">Krankmeldungen</title>
     <th:block th:fragment="scripts">
       <script th:inline="javascript">
@@ -11,6 +13,9 @@
         /*]]>*/
       </script>
       <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('sick_notes.js')" />
     </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="sick_notes.js"></script>

@@ -1,10 +1,13 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer})}">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title
       th:with="departmentTitleMessagekey=${department.id == null ? 'department.data.header.title.new' : 'department.data.header.title.edit'}"
       th:text="#{__${departmentTitleMessagekey}__}"
     ></title>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('department_form.js')" />
+    </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="department_form.js"></script>
     </th:block>

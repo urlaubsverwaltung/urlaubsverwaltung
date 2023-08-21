@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.web.thymeleaf;
+package org.synyx.urlaubsverwaltung.web;
 
 import java.util.List;
 import java.util.Objects;

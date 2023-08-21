@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer})}">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
     <title th:text="${sickNote.id == null} ? #{sicknote.create.header.title} : #{sicknote.edit.header.title}">
       Neue Krankmeldung
     </title>
@@ -15,6 +17,9 @@
       </script>
       <script th:replace="~{fragments/datepicker-localization}"></script>
       <script th:replace="~{fragments/vacation-type-colors-script :: vacation-type-colors-script}"></script>
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('sick_note_form.js')" />
     </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="sick_note_form.js"></script>

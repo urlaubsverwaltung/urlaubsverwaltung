@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer})}">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload}))}"
+  >
     <title th:text="#{person.form.annualVacation.header.title(${person.niceName})}">Urlaubsanspruch</title>
     <th:block th:fragment="scripts">
       <script th:inline="javascript">
@@ -13,6 +15,9 @@
       </script>
       <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
       <script th:replace="~{fragments/vacation-type-colors-script :: vacation-type-colors-script}"></script>
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('account_form.js')" />
     </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="account_form.js"></script>

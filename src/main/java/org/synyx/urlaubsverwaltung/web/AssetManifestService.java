@@ -1,9 +1,10 @@
-package org.synyx.urlaubsverwaltung.web.thymeleaf;
+package org.synyx.urlaubsverwaltung.web;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,10 +13,12 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.stream.Collectors.toMap;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.hasText;
 
-public class AssetFilenameHashMapper {
+@Service
+public class AssetManifestService {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -23,7 +26,7 @@ public class AssetFilenameHashMapper {
 
     private final ResourceLoader resourceLoader;
 
-    public AssetFilenameHashMapper(ResourceLoader resourceLoader) {
+    public AssetManifestService(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
@@ -31,8 +34,11 @@ public class AssetFilenameHashMapper {
         return getAsset(assetNameWithoutHash, contextPath).getUrl();
     }
 
-    public List<String> getAssetDependencies(String assetNameWithoutHash, String contextPath) {
-        return getAsset(assetNameWithoutHash, contextPath).getDependencies();
+    public Map<String, Asset> getAssets(String contextPath) {
+        return readAssetManifest()
+            .entrySet()
+            .stream()
+            .collect(toMap(Map.Entry::getKey, entry -> withContext(entry.getValue(), contextPath)));
     }
 
     private Asset getAsset(String assetNameWithoutHash, String contextPath) {
