@@ -3,7 +3,7 @@
   <head th:replace="~{_layout::head(title=~{::title}, styles=~{::styles}, scriptsDefer=~{::scriptsDefer})}">
     <title th:text="#{absences.overview.header.title}">Absence Overview</title>
     <th:block th:fragment="styles">
-      <link rel="stylesheet" type="text/css" th:href="@{/assets/css/absences_overview.css}" />
+      <link rel="stylesheet" type="text/css" th:href="@{/css/absences-overview.css}" />
     </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="absences_overview.js"></script>

@@ -1,6 +1,5 @@
 import $ from "jquery";
 import "tablesorter";
-import "./absences-overview.css";
 
 $(function () {
   $("#absence-table").tablesorter({

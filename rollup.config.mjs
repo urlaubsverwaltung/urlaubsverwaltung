@@ -85,17 +85,9 @@ export default {
       $: "jquery",
       jQuery: "jquery",
     }),
-    // generating multiple css files with include/exclude... ugly as hell...
-    // and why is the css file imported in js anyway?!?
-    // (will be migrated to plain css soon. this has nothing to do with JavaScript...)
     postcss({
       use: ["less"],
-      exclude: "src/main/javascript/js/absences-overview.css",
       extract: "css/common.css",
-    }),
-    postcss({
-      include: "src/main/javascript/js/absences-overview.css",
-      extract: "css/absences_overview.css",
     }),
     // `@rollup/plugin-dynamic-import-vars` is required for duetds-datepicker (bundled with stencil and dynamic imports)
     dynamicImportVariables(),
