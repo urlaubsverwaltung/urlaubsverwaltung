@@ -17,7 +17,7 @@
     "css:dev": "cross-env NODE_ENV=development concurrently 'npm:css:build:*'",
     "css:watch": "onchange -i src/main/css -- npm run css:dev",
     "css:build:less": "lessc src/main/css/bootstrap.less target/classes/static/css/bootstrap.css --clean-css",
-    "css:build:postcss": "postcss src/main/css/style.css --dir target/classes/static/css",
+    "css:build:postcss": "postcss src/main/css/bundles --dir target/classes/static/css",
     "format": "concurrently 'npm:format:*'",
     "format:html": "prettier --write src/main/resources/templates",
     "format:js": "prettier --write src/main/javascript",
