@@ -1,2 +1,4 @@
 import "../js/common";
-import "../js/navigate";
+import { navigate } from "../js/navigate";
+
+window.navigate = navigate;
