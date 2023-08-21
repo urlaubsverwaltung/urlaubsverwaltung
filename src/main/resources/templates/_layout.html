@@ -120,6 +120,13 @@
     <link rel="stylesheet" type="text/css" th:href="@{/assets/css/common.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
     <th:block th:replace="${styles}"></th:block>
+    <link
+      rel="preload"
+      href="/fonts/kaushanscript/KaushanScript-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <th:block th:replace="${preload}"></th:block>
 
     <script defer type="module" asset:src="npm.datalist_polyfill.js"></script>
