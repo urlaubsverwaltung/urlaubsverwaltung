@@ -1,0 +1,419 @@
+{
+  "absences_overview.js": {
+    "url": "/assets/absences_overview.17114c23.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.tablesorter-71f082ee.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js",
+      "/assets/npm.duetds-2d11af0c.js"
+    ]
+  },
+  "account_form.js": {
+    "url": "/assets/account_form.22d8ee12.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/create-datepicker-86e1ad1a.js",
+      "/assets/person_form.539c3747.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "app_detail.js": {
+    "url": "/assets/app_detail.8beb82f3.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js",
+      "/assets/npm.duetds-2d11af0c.js"
+    ]
+  },
+  "app_form.js": {
+    "url": "/assets/app_form.a8faac5e.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/create-datepicker-86e1ad1a.js",
+      "/assets/npm.timepicker-afe0162a.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/person_form.539c3747.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/npm.babel-833cf893.js"
+    ]
+  },
+  "app_overview.js": {
+    "url": "/assets/app_overview.b3bc796b.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "app_statistics.js": {
+    "url": "/assets/app_statistics.1a1427ec.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.hotwired-713f7371.js",
+      "/assets/turbo-before-render-restore-99e14383.js",
+      "/assets/create-datepicker-86e1ad1a.js",
+      "/assets/hotwire-turbo-progressbar-24a22422.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "calendar_sharing.js": {
+    "url": "/assets/calendar_sharing.1ad79b3d.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/index-649e5f2a.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "custom_elements_polyfill.js": {
+    "url": "/assets/custom_elements_polyfill.b9743d6d.js",
+    "dependencies": []
+  },
+  "department_form.js": {
+    "url": "/assets/department_form.03d716c8.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.hotwired-713f7371.js",
+      "/assets/person_form.539c3747.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "department_list.js": {
+    "url": "/assets/department_list.dbf9fcca.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.tablesorter-71f082ee.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js",
+      "/assets/npm.duetds-2d11af0c.js"
+    ]
+  },
+  "npm.datalist_polyfill.js": {
+    "url": "/assets/npm.datalist_polyfill.6a6bce84.js",
+    "dependencies": []
+  },
+  "overtime_details.js": {
+    "url": "/assets/overtime_details.69e067e3.js",
+    "dependencies": [
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.duetds-2d11af0c.js"
+    ]
+  },
+  "overtime_form.js": {
+    "url": "/assets/overtime_form.df41cd39.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/create-datepicker-86e1ad1a.js",
+      "/assets/person_form.539c3747.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js",
+      "/assets/npm.duetds-2d11af0c.js"
+    ]
+  },
+  "overtime_overview.js": {
+    "url": "/assets/overtime_overview.cf9166c8.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "overtime_reduced.js": {
+    "url": "/assets/overtime_reduced.67295059.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "person_basedata.js": {
+    "url": "/assets/person_basedata.38882827.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/person_form.539c3747.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "person_form.js": {
+    "url": "/assets/person_form.539c3747.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "person_notifications.js": {
+    "url": "/assets/person_notifications.d75d166a.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.hotwired-713f7371.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "person_overview.js": {
+    "url": "/assets/person_overview.c0c1279d.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/npm.babel-833cf893.js"
+    ]
+  },
+  "person.js": {
+    "url": "/assets/person.3af69c63.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.hotwired-713f7371.js",
+      "/assets/hotwire-turbo-progressbar-24a22422.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "persons.js": {
+    "url": "/assets/persons.38eb7f8d.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.hotwired-713f7371.js",
+      "/assets/hotwire-turbo-progressbar-24a22422.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "settings_form.js": {
+    "url": "/assets/settings_form.4e6954a9.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/index-649e5f2a.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js",
+      "/assets/npm.duetds-2d11af0c.js"
+    ]
+  },
+  "sick_note_convert.js": {
+    "url": "/assets/sick_note_convert.38882827.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/person_form.539c3747.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "sick_note_form.js": {
+    "url": "/assets/sick_note_form.7d948c3b.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/create-datepicker-86e1ad1a.js",
+      "/assets/person_form.539c3747.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js",
+      "/assets/npm.duetds-2d11af0c.js"
+    ]
+  },
+  "sick_note.js": {
+    "url": "/assets/sick_note.5cc1a1a1.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "sick_notes_statistics.js": {
+    "url": "/assets/sick_notes_statistics.67295059.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "sick_notes.js": {
+    "url": "/assets/sick_notes.e7ddd629.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.hotwired-713f7371.js",
+      "/assets/turbo-before-render-restore-99e14383.js",
+      "/assets/create-datepicker-86e1ad1a.js",
+      "/assets/hotwire-turbo-progressbar-24a22422.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "user_settings.js": {
+    "url": "/assets/user_settings.c7728ec5.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  },
+  "workingtime_form.js": {
+    "url": "/assets/workingtime_form.29e667cd.js",
+    "dependencies": [
+      "/assets/overtime_details.69e067e3.js",
+      "/assets/create-datepicker-86e1ad1a.js",
+      "/assets/person_form.539c3747.js",
+      "/assets/npm.date-fns-4185b7e7.js",
+      "/assets/npm.babel-833cf893.js",
+      "/assets/npm.underscore-a93db516.js",
+      "/assets/npm.bootstrap-138cee50.js",
+      "/assets/npm.jquery-229bb3f4.js",
+      "/assets/npm.duetds-2d11af0c.js",
+      "/assets/custom_elements_polyfill.b9743d6d.js",
+      "/assets/npm.datalist_polyfill.6a6bce84.js"
+    ]
+  }
+}

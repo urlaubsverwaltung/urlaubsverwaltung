@@ -36,6 +36,8 @@ export default {
     entryFileNames: isProduction ? `[name].[hash].js` : `[name].js`,
     // custom assets like css files extracted by `rollup-plugin-styles`
     assetFileNames: "[name].[hash].[ext]",
+    minifyInternalExports: true, // set to false while debugging output bundles (keeps internal export names)
+    experimentalMinChunkSize: 100 * 1024,
     manualChunks(id) {
       if (id.includes("node_modules")) {
         const packageName = id.match(/[/\\]node_modules[/\\](.*?)([/\\]|$)/)[1];
@@ -108,7 +110,7 @@ export default {
       minify: isProduction,
     }),
     assetsManifest({
-      output: "target/classes/assets-manifest.json",
+      output: "assets-manifest.json",
       publicPath: "/assets",
     }),
   ],
