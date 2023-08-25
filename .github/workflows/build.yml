@@ -64,7 +64,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Upload video of failed tests
         uses: actions/upload-artifact@v3
-        if: hashFiles('target/FAILED-*.flv') != ''
+        if: hashFiles('target/*.webm') != ''
         with:
-          name: failed-selenium-tests
-          path: target/FAILED-*.flv
+          name: ui-tests
+          path: target/*.webm

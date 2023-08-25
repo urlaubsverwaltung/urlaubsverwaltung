@@ -1,9 +1,10 @@
 package org.synyx.urlaubsverwaltung.ui;
 
+import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -21,16 +22,13 @@ import org.synyx.urlaubsverwaltung.ui.pages.OvertimeDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OvertimePage;
 import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
-import org.testcontainers.containers.BrowserWebDriverContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.TEN;
@@ -49,13 +47,9 @@ import static java.time.Month.JANUARY;
 import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.openqa.selenium.support.ui.ExpectedConditions.not;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.ui.PageConditions.isTrue;
-import static org.synyx.urlaubsverwaltung.ui.PageConditions.pageIsVisible;
-import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_FAILING;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -64,11 +58,6 @@ class OvertimeCreateIT {
 
     @LocalServerPort
     private int port;
-
-    @Container
-    private final BrowserWebDriverContainer<?> browserContainer = new BrowserWebDriverContainer<>()
-        .withRecordingMode(RECORD_FAILING, new File("target"))
-        .withCapabilities(chromeOptions());
 
     static final TestPostgreContainer postgre = new TestPostgreContainer();
 
@@ -91,58 +80,57 @@ class OvertimeCreateIT {
     void ensureOvertimeCreation() {
         final Person person = createPerson();
 
-        final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+        withPage(page -> {
 
-        final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final SettingsPage settingsPage = new SettingsPage(webDriver);
-        final OvertimePage overtimePage = new OvertimePage(webDriver);
-        final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(webDriver);
+            final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+            final NavigationPage navigationPage = new NavigationPage(page);
+            final SettingsPage settingsPage = new SettingsPage(page);
+            final OvertimePage overtimePage = new OvertimePage(page);
+            final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
 
-        webDriver.get("http://host.testcontainers.internal:" + port);
+            page.navigate("http://localhost:" + port);
+            page.waitForURL(url -> url.endsWith("/login"));
 
-        wait.until(pageIsVisible(loginPage));
-        loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
+            loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
 
-        wait.until(pageIsVisible(navigationPage));
+            page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(person.getId())));
 
-        navigationPage.clickSettings();
-        wait.until(pageIsVisible(settingsPage));
+            navigationPage.clickSettings();
 
-        settingsPage.clickWorkingTimeTab();
-        assertThat(settingsPage.overtimeEnabled()).isFalse();
+            settingsPage.clickWorkingTimeTab();
+            assertThat(settingsPage.overtimeEnabled()).isFalse();
 
-        settingsPage.enableOvertime();
-        settingsPage.saveSettings();
+            settingsPage.enableOvertime();
+            settingsPage.saveSettings();
 
-        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
-        navigationPage.quickAdd.click();
-        navigationPage.quickAdd.newOvertime();
-        wait.until(pageIsVisible(overtimePage));
+            assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
+            navigationPage.quickAdd.click();
+            navigationPage.quickAdd.newOvertime();
 
-        final int currentYear = LocalDate.now().getYear();
+            final int currentYear = LocalDate.now().getYear();
 
-        overtimePage.startDate(LocalDate.of(currentYear, FEBRUARY, 23));
-        assertThat(overtimePage.showsEndDate(LocalDate.of(currentYear, FEBRUARY, 23))).isTrue();
+            overtimePage.startDate(LocalDate.of(currentYear, FEBRUARY, 23));
+            page.context().waitForCondition(() -> overtimePage.showsEndDate(LocalDate.of(currentYear, FEBRUARY, 23)));
 
-        overtimePage.hours(1);
-        overtimePage.minutes(90);
+            overtimePage.hours(1);
+            overtimePage.minutes(90);
 
-        overtimePage.submit();
+            overtimePage.submit();
 
-        wait.until(pageIsVisible(overtimeDetailPage));
-        wait.until(isTrue(overtimeDetailPage::showsOvertimeCreatedInfo));
+            page.context().waitForCondition(overtimeDetailPage::isVisible);
+            page.context().waitForCondition(overtimeDetailPage::showsOvertimeCreatedInfo);
 
-        // overtime created info vanishes sometime
-        wait.until(not(isTrue(overtimeDetailPage::showsOvertimeCreatedInfo)));
+            // overtime created info vanishes sometime
+            page.context().waitForCondition(() -> !overtimeDetailPage.showsOvertimeCreatedInfo());
 
-        assertThat(overtimeDetailPage.isVisibleForPerson(person.getNiceName())).isTrue();
-        assertThat(overtimeDetailPage.showsHours(2)).isTrue();
-        assertThat(overtimeDetailPage.showsMinutes(30)).isTrue();
+            assertThat(overtimeDetailPage.isVisibleForPerson(person.getNiceName())).isTrue();
+            assertThat(overtimeDetailPage.showsHours(2)).isTrue();
+            assertThat(overtimeDetailPage.showsMinutes(30)).isTrue();
 
-        navigationPage.logout();
-        wait.until(pageIsVisible(loginPage));
+            navigationPage.logout();
+        });
+
+
     }
 
     private Person createPerson() {
@@ -162,10 +150,26 @@ class OvertimeCreateIT {
         return savedPerson;
     }
 
-    private ChromeOptions chromeOptions() {
-        final ChromeOptions options = new ChromeOptions();
-        options.setExperimentalOption("prefs", Map.of("intl.accept_languages", "de-DE"));
-        options.addArguments("--disable-dev-shm-usage");
-        return options;
+    // TODO use junit extension
+    private void withPage(Consumer<Page> consumer) {
+
+        try (Playwright playwright = Playwright.create(new Playwright.CreateOptions())) {
+            try (Browser browser = playwright.chromium().launch()) {
+                try (BrowserContext browserContext = browser.newContext(browserContextOptions())) {
+
+                    final Page page = browserContext.newPage();
+
+                    consumer.accept(page);
+                }
+            }
+        }
+    }
+
+    private static Browser.NewContextOptions browserContextOptions() {
+        return new Browser.NewContextOptions()
+            .setRecordVideoDir(Paths.get("target"))
+            .setLocale("de-DE")
+            .setScreenSize(1500, 500)
+            .setViewportSize(1920, 1080);
     }
 }

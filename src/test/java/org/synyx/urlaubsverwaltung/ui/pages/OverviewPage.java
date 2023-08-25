@@ -1,37 +1,34 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import com.microsoft.playwright.Page;
 import org.springframework.context.MessageSource;
-import org.synyx.urlaubsverwaltung.ui.Page;
 
 import java.util.Locale;
 
-public class OverviewPage implements Page {
+public class OverviewPage {
 
-    private static final By DATEPICKER_SELECTOR = By.id("datepicker");
+    private static final String DATEPICKER_SELECTOR = "#datepicker";
 
-    private final WebDriver driver;
+    private final Page page;
     private final MessageSource messageSource;
     private final Locale locale;
 
-    public OverviewPage(WebDriver driver, MessageSource messageSource, Locale locale) {
-        this.driver = driver;
+    public OverviewPage(Page page, MessageSource messageSource, Locale locale) {
+        this.page = page;
         this.messageSource = messageSource;
         this.locale = locale;
     }
 
-    @Override
-    public boolean isVisible(WebDriver driver) {
-        return datepickerExists(driver);
+    public boolean isVisible() {
+        return datepickerExists(page);
     }
 
-    private static boolean datepickerExists(WebDriver driver) {
-        return !driver.findElements(DATEPICKER_SELECTOR).isEmpty();
+    private static boolean datepickerExists(Page page) {
+        return page.locator(DATEPICKER_SELECTOR).isVisible();
     }
 
     public boolean isVisibleForPerson(String username, int year) {
         final String titleText = messageSource.getMessage("overview.header.title", new Object[]{username, year}, locale);
-        return driver.getTitle().contains(titleText);
+        return page.title().contains(titleText);
     }
 }
