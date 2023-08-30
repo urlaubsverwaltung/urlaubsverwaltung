@@ -32,7 +32,7 @@ public class DemoDataPersonCreationForLocalDevelopment {
     @Async
     @EventListener(ApplicationStartedEvent.class)
     public void createDemoPersons() {
-        LOG.info("creating demo persons for local development");
+        LOG.info("Creating demo persons for local development");
         personDataProvider.createTestPerson("user", "Klaus", "Müller", "user@urlaubsverwaltung.cloud");
         personDataProvider.createTestPerson("departmentHead", "Thorsten", "Krüger", "departmentHead@urlaubsverwaltung.cloud");
         personDataProvider.createTestPerson("secondStageAuthority", "Juliane", "Huber", "secondStageAuthority@urlaubsverwaltung.cloud");
@@ -49,6 +49,6 @@ public class DemoDataPersonCreationForLocalDevelopment {
         personDataProvider.createTestPerson("heinz", "Holger", "Dieter", "hdieter@urlaubsverwaltung.cloud");
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalActiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-active-" + i, "Horst", "Aktiv", "hdieter-active@urlaubsverwaltung.cloud"));
         IntStream.rangeClosed(0, demoDataProperties.getAdditionalInactiveUser()).forEach(i -> personDataProvider.createTestPerson("horst-inactive-" + i, "Horst", "Inaktiv", "hdieter-inactive@urlaubsverwaltung.cloud"));
-        LOG.info("created demo persons for local development");
+        LOG.info("Created demo persons for local development");
     }
 }

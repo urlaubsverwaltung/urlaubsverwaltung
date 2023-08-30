@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.dev;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -39,6 +41,8 @@ class PersonDataProvider {
     private final WorkingTimeWriteService workingTimeWriteService;
     private final AccountInteractionService accountInteractionService;
     private final Clock clock;
+
+    private static final Logger LOG = LoggerFactory.getLogger(DemoDataPersonCreationForLocalDevelopment.class);
 
     PersonDataProvider(PersonService personService, PersonBasedataService personBasedataService, WorkingTimeWriteService workingTimeWriteService,
                        AccountInteractionService accountInteractionService, Clock clock) {
@@ -93,13 +97,14 @@ class PersonDataProvider {
         return null;
     }
 
-    Person createTestPerson(String username, String firstName, String lastName, String email) {
+    void createTestPerson(String username, String firstName, String lastName, String email) {
 
-        final Optional<Person> personByUsername = personService.getPersonByUsername(username);
-        if (personByUsername.isPresent()) {
-            return personByUsername.get();
+        final Optional<Person> person = personService.getPersonByUsername(username);
+        if (person.isPresent()) {
+            LOG.info("Person {} already exists, nothing to do...", person.get());
+            return;
         }
 
-        return personService.create(username, firstName, lastName, email, List.of(), List.of());
+        personService.create(username, firstName, lastName, email, List.of(), List.of());
     }
 }
