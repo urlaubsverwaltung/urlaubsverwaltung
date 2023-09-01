@@ -9,7 +9,9 @@ uv:
     organizer: organizer@example.org
   development:
     demodata:
+      # Should demo data be created on person creation?
       create: true
+      # Should demo data persons created for local development
       local-development: true
 
 spring:
