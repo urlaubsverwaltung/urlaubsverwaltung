@@ -57,8 +57,8 @@ public class SpecialLeaveSettingsService {
             specialLeaveSettingsEntity.getDays());
     }
 
-    @EventListener
-    void insertDefaultSpecialLeaveSettings(ApplicationStartedEvent event) {
+    @EventListener(ApplicationStartedEvent.class)
+    void insertDefaultSpecialLeaveSettings() {
         final long count = specialLeaveSettingsRepository.count();
         if (count == 0) {
 

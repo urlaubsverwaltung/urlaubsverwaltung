@@ -30,8 +30,8 @@ class SickNoteTypeServiceImpl implements SickNoteTypeService {
         return this.sickNoteTypeRepository.findAll();
     }
 
-    @EventListener
-    void insertDefaultSickNoteTypes(ApplicationStartedEvent event) {
+    @EventListener(ApplicationStartedEvent.class)
+    void insertDefaultSickNoteTypes() {
         final long count = sickNoteTypeRepository.count();
         if (count == 0) {
 
