@@ -44,7 +44,7 @@
     "lint-staged": "13.2.3",
     "postcss-loader": "4.3.0",
     "tablesorter": "2.31.3",
-    "timepicker": "1.14.0",
+    "timepicker": "1.14.1",
     "underscore": "1.13.6"
   },
   "devDependencies": {
