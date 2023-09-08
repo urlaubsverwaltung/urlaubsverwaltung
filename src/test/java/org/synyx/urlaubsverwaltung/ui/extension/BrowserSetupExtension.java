@@ -45,7 +45,7 @@ public class BrowserSetupExtension implements AfterEachCallback {
             }
         } else {
             // rename video file
-            final String newVideoFilePath = normalizeVideoFileName("target/%s.webm".formatted(context.getDisplayName()));
+            final String newVideoFilePath = normalizeVideoFileName("target/FAILED-%s.webm".formatted(context.getDisplayName()));
             final File newVideoFile = new File(Paths.get(newVideoFilePath).toUri());
             final boolean isMoved = videoFile.renameTo(newVideoFile);
             if (!isMoved) {
