@@ -33,18 +33,32 @@ public class BrowserSetupExtension implements AfterEachCallback {
         final Browser browser = getBrowser(context);
         final Playwright playwright = getPlaywright(context);
 
-        final File videoFile = new File(page.video().path().toUri());
-        final String newVideoFilePath = normalizeVideoFileName("target/%s.webm".formatted(context.getDisplayName()));
-        final File newVideoFile = new File(Paths.get(newVideoFilePath).toUri());
-        final boolean isMoved = videoFile.renameTo(newVideoFile);
-        if (!isMoved) {
-            LOG.info("could not rename test video file.");
-        }
+        handleVideoFile(context, page);
 
         page.close();
         browserContext.close();
         browser.close();
         playwright.close();
+    }
+
+    private static void handleVideoFile(ExtensionContext context, Page page) {
+
+        final File videoFile = new File(page.video().path().toUri());
+        if (context.getExecutionException().isEmpty()) {
+            // delete video files of successful tests
+            final boolean isDeleted = videoFile.delete();
+            if (!isDeleted) {
+                LOG.info("could not delete file=%s of successful test.".formatted(videoFile.getAbsolutePath()));
+            }
+        } else {
+            // rename video file
+            final String newVideoFilePath = normalizeVideoFileName("target/%s.webm".formatted(context.getDisplayName()));
+            final File newVideoFile = new File(Paths.get(newVideoFilePath).toUri());
+            final boolean isMoved = videoFile.renameTo(newVideoFile);
+            if (!isMoved) {
+                LOG.info("could not rename test video file.");
+            }
+        }
     }
 
     private static String normalizeVideoFileName(String original) {
