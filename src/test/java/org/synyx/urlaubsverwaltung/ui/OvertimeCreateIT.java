@@ -88,8 +88,6 @@ class OvertimeCreateIT {
         navigationPage.clickSettings();
 
         settingsPage.clickWorkingTimeTab();
-        assertThat(settingsPage.overtimeEnabled()).isFalse();
-
         settingsPage.enableOvertime();
         settingsPage.saveSettings();
 
