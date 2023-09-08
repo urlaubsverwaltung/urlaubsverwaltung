@@ -5,6 +5,8 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -24,6 +26,7 @@ import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.io.File;
 import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -31,6 +34,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -47,6 +51,7 @@ import static java.time.Month.JANUARY;
 import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -55,6 +60,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ContextConfiguration(initializers = UITestInitializer.class)
 class OvertimeCreateIT {
+
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     @LocalServerPort
     private int port;
@@ -77,10 +84,10 @@ class OvertimeCreateIT {
     private MessageSource messageSource;
 
     @Test
-    void ensureOvertimeCreation() {
+    void ensureOvertimeCreation(TestInfo testInfo) {
         final Person person = createPerson();
 
-        withPage(page -> {
+        withPage(testInfo, page -> {
 
             final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
             final NavigationPage navigationPage = new NavigationPage(page);
@@ -151,15 +158,25 @@ class OvertimeCreateIT {
     }
 
     // TODO use junit extension
-    private void withPage(Consumer<Page> consumer) {
+    private void withPage(TestInfo testInfo, Consumer<Page> consumer) {
+
+        Page page = null;
 
         try (Playwright playwright = Playwright.create(new Playwright.CreateOptions())) {
             try (Browser browser = playwright.chromium().launch()) {
                 try (BrowserContext browserContext = browser.newContext(browserContextOptions())) {
-
-                    final Page page = browserContext.newPage();
-
+                    page = browserContext.newPage();
                     consumer.accept(page);
+                }
+            }
+        } finally {
+            if (page != null) {
+                final File videoFile = new File(page.video().path().toUri());
+                final String newVideoFilePath = "target/%s.webm".formatted(testInfo.getDisplayName()).replaceAll(" ", "-");
+                final File newVideoFile = new File(Paths.get(newVideoFilePath).toUri());
+                final boolean isMoved = videoFile.renameTo(newVideoFile);
+                if (!isMoved) {
+                    LOG.info("could not rename test video file.");
                 }
             }
         }
