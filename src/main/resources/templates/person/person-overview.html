@@ -23,7 +23,7 @@
       <script th:replace="~{fragments/vacation-type-colors-script :: vacation-type-colors-script}"></script>
     </th:block>
     <th:block th:fragment="preload">
-      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('person_overview.js')" />
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('person_overview.js')}" />
     </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="person_overview.js"></script>

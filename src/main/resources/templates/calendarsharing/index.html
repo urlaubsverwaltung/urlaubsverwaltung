@@ -3,7 +3,7 @@
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{calendar.share.header.title}">Kalenderfreigabe</title>
     <th:block th:fragment="preload">
-      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('calendar_sharing.js')" />
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('calendar_sharing.js')}" />
     </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="calendar_sharing.js"></script>

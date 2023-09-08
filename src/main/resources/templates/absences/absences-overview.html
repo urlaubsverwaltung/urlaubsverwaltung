@@ -8,7 +8,7 @@
       <link rel="stylesheet" type="text/css" th:href="@{/css/absences-overview.css}" />
     </th:block>
     <th:block th:fragment="preload">
-      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('absences_overview.js')" />
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('absences_overview.js')}" />
     </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="absences_overview.js"></script>

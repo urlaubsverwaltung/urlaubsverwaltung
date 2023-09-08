@@ -3,7 +3,7 @@
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{person.overview.header.title}"></title>
     <th:block th:fragment="preload">
-      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('persons.js')" />
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('persons.js')}" />
     </th:block>
     <th:block th:ref="scriptsDefer">
       <script defer type="module" asset:src="persons.js"></script>

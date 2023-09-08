@@ -18,7 +18,7 @@
       </script>
     </th:block>
     <th:block th:fragment="preload">
-      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('app_detail.js')" />
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('app_detail.js')}" />
     </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="app_detail.js"></script>

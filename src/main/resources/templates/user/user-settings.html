@@ -9,7 +9,7 @@
   <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{user-settings.header.title}"></title>
     <th:block th:fragment="preload">
-      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('user_settings.js')" />
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('user_settings.js')}" />
     </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="user_settings.js"></script>

@@ -6,7 +6,7 @@
       th:text="#{__${departmentTitleMessagekey}__}"
     ></title>
     <th:block th:fragment="preload">
-      <link rel="preload" th:replace="fragments/asset-dependency-preload::links('department_form.js')" />
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('department_form.js')}" />
     </th:block>
     <th:block th:fragment="scriptsDefer">
       <script defer type="module" asset:src="department_form.js"></script>
