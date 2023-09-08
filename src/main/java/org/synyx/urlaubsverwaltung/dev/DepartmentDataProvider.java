@@ -49,7 +49,7 @@ class DepartmentDataProvider {
 
 
         if(optionalDepartment.isEmpty()) {
-            LOG.info("department with name={} doesn't exists - ask bob!", departmentName);
+            LOG.info("department with name={} doesn't exists!", departmentName);
             return;
         }
 
@@ -68,7 +68,7 @@ class DepartmentDataProvider {
 
 
         if(optionalDepartment.isEmpty()) {
-            LOG.info("department with name={} doesn't exists - ask bob!", departmentName);
+            LOG.info("department with name={} doesn't exists!", departmentName);
             return;
         }
 
@@ -86,7 +86,7 @@ class DepartmentDataProvider {
         Optional<Department> optionalDepartment = departmentService.getDepartmentByName(departmentName);
 
         if(optionalDepartment.isEmpty()) {
-            LOG.info("department with name={} doesn't exists - ask bob!", departmentName);
+            LOG.info("department with name={} doesn't exists!", departmentName);
             return;
         }
 
