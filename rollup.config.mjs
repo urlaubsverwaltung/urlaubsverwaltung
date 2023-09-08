@@ -8,8 +8,8 @@ import esbuild from "rollup-plugin-esbuild";
 import { assetsManifest } from "./rollup-plugin-assets-manifest.mjs";
 import { rimraf } from "rimraf";
 import glob from "fast-glob";
-import path, { dirname } from "node:path";
-import { fileURLToPath } from 'node:url'
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const NODE_ENV = process.env.NODE_ENV;
 const MODE = process.env.MODE || NODE_ENV || "development";
@@ -36,8 +36,6 @@ export default {
     entryFileNames: isProduction ? `[name].[hash].js` : `[name].js`,
     // custom assets like css files extracted by `rollup-plugin-styles`
     assetFileNames: "[name].[hash].[ext]",
-    minifyInternalExports: true, // set to false while debugging output bundles (keeps internal export names)
-    experimentalMinChunkSize: 100 * 1024,
     manualChunks(id) {
       if (id.includes("node_modules")) {
         const packageName = id.match(/[/\\]node_modules[/\\](.*?)([/\\]|$)/)[1];
@@ -110,7 +108,7 @@ export default {
       minify: isProduction,
     }),
     assetsManifest({
-      output: "assets-manifest.json",
+      output: "target/classes/assets-manifest.json",
       publicPath: "/assets",
     }),
   ],
