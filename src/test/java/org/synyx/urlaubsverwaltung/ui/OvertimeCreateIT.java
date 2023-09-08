@@ -82,11 +82,8 @@ class OvertimeCreateIT {
         final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
 
         page.navigate("http://localhost:" + port);
-        page.waitForURL(url -> url.endsWith("/login"));
 
         loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
-
-        page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(person.getId())));
 
         navigationPage.clickSettings();
 

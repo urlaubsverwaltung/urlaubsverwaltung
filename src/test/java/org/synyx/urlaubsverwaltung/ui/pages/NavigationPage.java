@@ -3,6 +3,8 @@ package org.synyx.urlaubsverwaltung.ui.pages;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
+import java.util.regex.Pattern;
+
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static com.microsoft.playwright.options.WaitForSelectorState.ATTACHED;
 import static com.microsoft.playwright.options.WaitForSelectorState.DETACHED;
@@ -34,11 +36,13 @@ public class NavigationPage {
 
     public void clickSickNotes() {
         page.locator(SICK_NOTES_SELECTOR).click();
+        page.waitForURL(Pattern.compile("/web/sickdays$"));
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 
     public void clickSettings() {
         page.locator(SETTINGS_SELECTOR).click();
+        page.waitForURL(Pattern.compile("/web/settings$"));
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 
@@ -79,23 +83,26 @@ public class NavigationPage {
             }
             else if (page.locator(PLAIN_APPLICATION_SELECTOR).isVisible()) {
                 page.locator(PLAIN_APPLICATION_SELECTOR).click();
-                // page load, wait
+                page.waitForURL(Pattern.compile("/web/application/new$"));
                 page.waitForLoadState(DOMCONTENTLOADED);
             }
         }
 
         public void newApplication() {
             page.locator(APPLICATION_SELECTOR).click();
+            page.waitForURL(Pattern.compile("/web/application/new$"));
             page.waitForLoadState(DOMCONTENTLOADED);
         }
 
         public void newOvertime() {
             page.locator(OVERTIME_SELECTOR).click();
+            page.waitForURL(Pattern.compile("/web/overtime/new$"));
             page.waitForLoadState(DOMCONTENTLOADED);
         }
 
         public void newSickNote() {
             page.locator(SICKNOTE_SELECTOR).click();
+            page.waitForURL(Pattern.compile("/web/sicknote/new$"));
             page.waitForLoadState(DOMCONTENTLOADED);
         }
     }
