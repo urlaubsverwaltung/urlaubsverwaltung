@@ -1,12 +1,7 @@
 package org.synyx.urlaubsverwaltung.ui;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -18,6 +13,7 @@ import org.synyx.urlaubsverwaltung.TestPostgreContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.OvertimeDetailPage;
@@ -26,15 +22,11 @@ import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
-import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -51,7 +43,6 @@ import static java.time.Month.JANUARY;
 import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -59,9 +50,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ContextConfiguration(initializers = UITestInitializer.class)
+@UiTest
 class OvertimeCreateIT {
-
-    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     @LocalServerPort
     private int port;
@@ -84,60 +74,55 @@ class OvertimeCreateIT {
     private MessageSource messageSource;
 
     @Test
-    void ensureOvertimeCreation(TestInfo testInfo) {
+    void ensureOvertimeCreation(Page page) {
         final Person person = createPerson();
 
-        withPage(testInfo, page -> {
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SettingsPage settingsPage = new SettingsPage(page);
+        final OvertimePage overtimePage = new OvertimePage(page);
+        final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
 
-            final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
-            final NavigationPage navigationPage = new NavigationPage(page);
-            final SettingsPage settingsPage = new SettingsPage(page);
-            final OvertimePage overtimePage = new OvertimePage(page);
-            final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
+        page.navigate("http://localhost:" + port);
+        page.waitForURL(url -> url.endsWith("/login"));
 
-            page.navigate("http://localhost:" + port);
-            page.waitForURL(url -> url.endsWith("/login"));
+        loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
 
-            loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
+        page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(person.getId())));
 
-            page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(person.getId())));
+        navigationPage.clickSettings();
 
-            navigationPage.clickSettings();
+        settingsPage.clickWorkingTimeTab();
+        assertThat(settingsPage.overtimeEnabled()).isFalse();
 
-            settingsPage.clickWorkingTimeTab();
-            assertThat(settingsPage.overtimeEnabled()).isFalse();
+        settingsPage.enableOvertime();
+        settingsPage.saveSettings();
 
-            settingsPage.enableOvertime();
-            settingsPage.saveSettings();
+        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newOvertime();
 
-            assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
-            navigationPage.quickAdd.click();
-            navigationPage.quickAdd.newOvertime();
+        final int currentYear = LocalDate.now().getYear();
 
-            final int currentYear = LocalDate.now().getYear();
+        overtimePage.startDate(LocalDate.of(currentYear, FEBRUARY, 23));
+        page.context().waitForCondition(() -> overtimePage.showsEndDate(LocalDate.of(currentYear, FEBRUARY, 23)));
 
-            overtimePage.startDate(LocalDate.of(currentYear, FEBRUARY, 23));
-            page.context().waitForCondition(() -> overtimePage.showsEndDate(LocalDate.of(currentYear, FEBRUARY, 23)));
+        overtimePage.hours(1);
+        overtimePage.minutes(90);
 
-            overtimePage.hours(1);
-            overtimePage.minutes(90);
+        overtimePage.submit();
 
-            overtimePage.submit();
+        page.context().waitForCondition(overtimeDetailPage::isVisible);
+        page.context().waitForCondition(overtimeDetailPage::showsOvertimeCreatedInfo);
 
-            page.context().waitForCondition(overtimeDetailPage::isVisible);
-            page.context().waitForCondition(overtimeDetailPage::showsOvertimeCreatedInfo);
+        // overtime created info vanishes sometime
+        page.context().waitForCondition(() -> !overtimeDetailPage.showsOvertimeCreatedInfo());
 
-            // overtime created info vanishes sometime
-            page.context().waitForCondition(() -> !overtimeDetailPage.showsOvertimeCreatedInfo());
+        assertThat(overtimeDetailPage.isVisibleForPerson(person.getNiceName())).isTrue();
+        assertThat(overtimeDetailPage.showsHours(2)).isTrue();
+        assertThat(overtimeDetailPage.showsMinutes(30)).isTrue();
 
-            assertThat(overtimeDetailPage.isVisibleForPerson(person.getNiceName())).isTrue();
-            assertThat(overtimeDetailPage.showsHours(2)).isTrue();
-            assertThat(overtimeDetailPage.showsMinutes(30)).isTrue();
-
-            navigationPage.logout();
-        });
-
-
+        navigationPage.logout();
     }
 
     private Person createPerson() {
@@ -155,38 +140,5 @@ class OvertimeCreateIT {
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), true, expiryDate.plusDays(1), TEN, TEN, TEN, ZERO, null);
 
         return savedPerson;
-    }
-
-    // TODO use junit extension
-    private void withPage(TestInfo testInfo, Consumer<Page> consumer) {
-
-        Page page = null;
-
-        try (Playwright playwright = Playwright.create(new Playwright.CreateOptions())) {
-            try (Browser browser = playwright.chromium().launch()) {
-                try (BrowserContext browserContext = browser.newContext(browserContextOptions())) {
-                    page = browserContext.newPage();
-                    consumer.accept(page);
-                }
-            }
-        } finally {
-            if (page != null) {
-                final File videoFile = new File(page.video().path().toUri());
-                final String newVideoFilePath = "target/%s.webm".formatted(testInfo.getDisplayName()).replaceAll(" ", "-");
-                final File newVideoFile = new File(Paths.get(newVideoFilePath).toUri());
-                final boolean isMoved = videoFile.renameTo(newVideoFile);
-                if (!isMoved) {
-                    LOG.info("could not rename test video file.");
-                }
-            }
-        }
-    }
-
-    private static Browser.NewContextOptions browserContextOptions() {
-        return new Browser.NewContextOptions()
-            .setRecordVideoDir(Paths.get("target"))
-            .setLocale("de-DE")
-            .setScreenSize(1500, 500)
-            .setViewportSize(1920, 1080);
     }
 }

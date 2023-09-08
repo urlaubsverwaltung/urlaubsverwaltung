@@ -1,13 +1,8 @@
 package org.synyx.urlaubsverwaltung.ui;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -22,6 +17,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.ApplicationDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.ApplicationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
@@ -32,17 +28,13 @@ import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
-import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -58,7 +50,6 @@ import static java.time.Month.DECEMBER;
 import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -66,9 +57,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ContextConfiguration(initializers = UITestInitializer.class)
+@UiTest
 class ApplicationForLeaveCreateIT {
-
-    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     @LocalServerPort
     private int port;
@@ -96,248 +86,240 @@ class ApplicationForLeaveCreateIT {
 
     @Test
     @DisplayName("when USER is logged in and overtime feature is disabled then quick-add directly links to application-for-leave")
-    void ensureQuickAddDirectlyLinksToApplicationForLeave(TestInfo testInfo) {
+    void ensureQuickAddDirectlyLinksToApplicationForLeave(Page page) {
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
         final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
 
-        withPage(testInfo, page -> {
-            final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
-            final NavigationPage navigationPage = new NavigationPage(page);
-            final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
-            final SettingsPage settingsPage = new SettingsPage(page);
-            final ApplicationPage applicationPage = new ApplicationPage(page);
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+        final SettingsPage settingsPage = new SettingsPage(page);
+        final ApplicationPage applicationPage = new ApplicationPage(page);
 
-            page.navigate("http://localhost:" + port);
+        page.navigate("http://localhost:" + port);
 
-            // log in as office user
-            // and disable the overtime feature
+        // log in as office user
+        // and disable the overtime feature
 
-            page.context().waitForCondition(loginPage::isVisible);
-            loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+        page.context().waitForCondition(loginPage::isVisible);
+        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
 
-            page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
-            page.context().waitForCondition(navigationPage::isVisible);
-            page.context().waitForCondition(overviewPage::isVisible);
+        page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
+        page.context().waitForCondition(navigationPage::isVisible);
+        page.context().waitForCondition(overviewPage::isVisible);
 
-            navigationPage.clickSettings();
-            page.context().waitForCondition(settingsPage::isVisible);
+        navigationPage.clickSettings();
+        page.context().waitForCondition(settingsPage::isVisible);
 
-            settingsPage.clickWorkingTimeTab();
-            assertThat(settingsPage.overtimeEnabled()).isFalse();
+        settingsPage.clickWorkingTimeTab();
+        assertThat(settingsPage.overtimeEnabled()).isFalse();
 
-            navigationPage.logout();
-            page.waitForURL(url -> url.endsWith("/login"));
-            page.context().waitForCondition(loginPage::isVisible);
+        navigationPage.logout();
+        page.waitForURL(url -> url.endsWith("/login"));
+        page.context().waitForCondition(loginPage::isVisible);
 
-            // now the quick-add button should link directly to application-for-leave page
-            // for the user logged in with role=USER
+        // now the quick-add button should link directly to application-for-leave page
+        // for the user logged in with role=USER
 
-            loginPage.login(new LoginPage.Credentials(userPerson.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(userPerson.getUsername(), "secret"));
 
-            page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(userPerson.getId())));
-            page.context().waitForCondition(navigationPage::isVisible);
-            page.context().waitForCondition(overviewPage::isVisible);
+        page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(userPerson.getId())));
+        page.context().waitForCondition(navigationPage::isVisible);
+        page.context().waitForCondition(overviewPage::isVisible);
 
-            assertThat(navigationPage.quickAdd.hasNoPopup()).isTrue();
+        assertThat(navigationPage.quickAdd.hasNoPopup()).isTrue();
 
-            navigationPage.quickAdd.click();
-            page.context().waitForCondition(applicationPage::isVisible);
-        });
+        navigationPage.quickAdd.click();
+        page.context().waitForCondition(applicationPage::isVisible);
     }
 
     @Test
     @DisplayName("when USER is logged in and overtime feature is enabled then quick-add opens a popupmenu")
-    void ensureQuickAddOpensPopupMenu(TestInfo testInfo) {
+    void ensureQuickAddOpensPopupMenu(Page page) {
         final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
 
-        withPage(testInfo, page -> {
-            final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
-            final NavigationPage navigationPage = new NavigationPage(page);
-            final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
-            final SettingsPage settingsPage = new SettingsPage(page);
-            final ApplicationPage applicationPage = new ApplicationPage(page);
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+        final SettingsPage settingsPage = new SettingsPage(page);
+        final ApplicationPage applicationPage = new ApplicationPage(page);
 
-            page.navigate("http://localhost:" + port);
+        page.navigate("http://localhost:" + port);
 
-            page.context().waitForCondition(loginPage::isVisible);
-            loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+        page.context().waitForCondition(loginPage::isVisible);
+        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
 
-            page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
-            page.context().waitForCondition(navigationPage::isVisible);
+        page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
+        page.context().waitForCondition(navigationPage::isVisible);
 
-            navigationPage.clickSettings();
-            page.context().waitForCondition(settingsPage::isVisible);
+        navigationPage.clickSettings();
+        page.context().waitForCondition(settingsPage::isVisible);
 
-            settingsPage.clickWorkingTimeTab();
-            settingsPage.enableOvertime();
-            settingsPage.saveSettings();
+        settingsPage.clickWorkingTimeTab();
+        settingsPage.enableOvertime();
+        settingsPage.saveSettings();
 
-            navigationPage.logout();
-            page.context().waitForCondition(loginPage::isVisible);
+        navigationPage.logout();
+        page.context().waitForCondition(loginPage::isVisible);
 
-            loginPage.login(new LoginPage.Credentials(userPerson.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(userPerson.getUsername(), "secret"));
 
-            page.context().waitForCondition(overviewPage::isVisible);
-            assertThat(overviewPage.isVisibleForPerson(userPerson.getNiceName(), LocalDate.now().getYear())).isTrue();
+        page.context().waitForCondition(overviewPage::isVisible);
+        assertThat(overviewPage.isVisibleForPerson(userPerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
-            assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
+        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
 
-            // clicking the element should open the popup menu
-            navigationPage.quickAdd.click();
-            navigationPage.quickAdd.newApplication();
+        // clicking the element should open the popup menu
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newApplication();
 
-            page.context().waitForCondition(applicationPage::isVisible);
+        page.context().waitForCondition(applicationPage::isVisible);
 
-            navigationPage.logout();
-            page.context().waitForCondition(loginPage::isVisible);
-        });
+        navigationPage.logout();
+        page.context().waitForCondition(loginPage::isVisible);
     }
 
     @Test
-    void checkIfItIsPossibleToRequestAnApplicationForLeave(TestInfo testInfo) {
+    void checkIfItIsPossibleToRequestAnApplicationForLeave(Page page) {
         final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
         final Person batman = createPerson("Bruce", "Wayne", List.of(USER));
         final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
 
-        withPage(testInfo, page -> {
-            final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
-            final NavigationPage navigationPage = new NavigationPage(page);
-            final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
-            final ApplicationPage applicationPage = new ApplicationPage(page);
-            final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
-            page.navigate("http://localhost:" + port);
+        page.navigate("http://localhost:" + port);
 
-            page.context().waitForCondition(loginPage::isVisible);
-            loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+        page.context().waitForCondition(loginPage::isVisible);
+        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
 
-            page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
-            page.context().waitForCondition(navigationPage::isVisible);
-            page.context().waitForCondition(overviewPage::isVisible);
-            assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
+        page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
+        page.context().waitForCondition(navigationPage::isVisible);
+        page.context().waitForCondition(overviewPage::isVisible);
+        assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
-            assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
-            navigationPage.quickAdd.click();
-            navigationPage.quickAdd.newApplication();
-            page.context().waitForCondition(applicationPage::isVisible);
+        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newApplication();
+        page.context().waitForCondition(applicationPage::isVisible);
 
-            applicationPage.from(getNextWorkday());
+        applicationPage.from(getNextWorkday());
 
-            applicationPage.selectReplacement(batman);
-            page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1));
+        applicationPage.selectReplacement(batman);
+        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1));
 
-            applicationPage.selectReplacement(joker);
-            page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1));
-            page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2));
+        applicationPage.selectReplacement(joker);
+        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1));
+        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2));
 
-            applicationPage.setCommentForReplacement(batman, "please be gentle!");
+        applicationPage.setCommentForReplacement(batman, "please be gentle!");
 
-            applicationPage.submit();
+        applicationPage.submit();
 
-            page.context().waitForCondition(applicationDetailPage::isVisible);
-            page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
-            assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();
+        page.context().waitForCondition(applicationDetailPage::isVisible);
+        page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
+        assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();
 
-            // application created info vanishes sometime
-            page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
+        // application created info vanishes sometime
+        page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
 
-            assertThat(applicationDetailPage.showsReplacement(batman)).isTrue();
-            assertThat(applicationDetailPage.showsReplacement(joker)).isTrue();
+        assertThat(applicationDetailPage.showsReplacement(batman)).isTrue();
+        assertThat(applicationDetailPage.showsReplacement(joker)).isTrue();
 
-            // ensure given information has been persisted successfully
-            // (currently the detail page hides some information like comments for replacements)
-            applicationDetailPage.selectEdit();
-            page.context().waitForCondition(applicationPage::isVisible);
+        // ensure given information has been persisted successfully
+        // (currently the detail page hides some information like comments for replacements)
+        applicationDetailPage.selectEdit();
+        page.context().waitForCondition(applicationPage::isVisible);
 
-            assertThat(applicationPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
-            assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
+        assertThat(applicationPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
+        assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
 
-            navigationPage.logout();
-            page.context().waitForCondition(loginPage::isVisible);
-        });
+        navigationPage.logout();
+        page.context().waitForCondition(loginPage::isVisible);
     }
 
     @Test
     @DisplayName("when USER is logged in and halfDay is disabled then application-for-leave can be created only for full days.")
-    void ensureApplicationForLeaveWithDisabledHalfDayOption(TestInfo testInfo) {
+    void ensureApplicationForLeaveWithDisabledHalfDayOption(Page page) {
         final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
         final Person batman = createPerson("Bruce", "Wayne", List.of(USER));
         final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
 
-        withPage(testInfo, page -> {
-            final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
-            final NavigationPage navigationPage = new NavigationPage(page);
-            final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
-            final SettingsPage settingsPage = new SettingsPage(page);
-            final ApplicationPage applicationPage = new ApplicationPage(page);
-            final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+        final SettingsPage settingsPage = new SettingsPage(page);
+        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
-            page.navigate("http://localhost:" + port);
+        page.navigate("http://localhost:" + port);
 
-            // log in as office user
-            // and disable halfDay
+        // log in as office user
+        // and disable halfDay
 
-            page.context().waitForCondition(loginPage::isVisible);
-            loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+        page.context().waitForCondition(loginPage::isVisible);
+        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
 
-            page.context().waitForCondition(navigationPage::isVisible);
-            page.context().waitForCondition(overviewPage::isVisible);
+        page.context().waitForCondition(navigationPage::isVisible);
+        page.context().waitForCondition(overviewPage::isVisible);
 
-            navigationPage.quickAdd.click();
-            navigationPage.quickAdd.newApplication();
-            page.context().waitForCondition(applicationPage::isVisible);
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newApplication();
+        page.context().waitForCondition(applicationPage::isVisible);
 
-            // default is: half days enabled
-            assertThat(applicationPage.showsDayLengthInputs()).isTrue();
+        // default is: half days enabled
+        assertThat(applicationPage.showsDayLengthInputs()).isTrue();
 
-            navigationPage.clickSettings();
-            page.context().waitForCondition(settingsPage::isVisible);
+        navigationPage.clickSettings();
+        page.context().waitForCondition(settingsPage::isVisible);
 
-            settingsPage.clickDisableHalfDayAbsence();
-            settingsPage.saveSettings();
-            page.context().waitForCondition(navigationPage::isVisible);
+        settingsPage.clickDisableHalfDayAbsence();
+        settingsPage.saveSettings();
+        page.context().waitForCondition(navigationPage::isVisible);
 
-            navigationPage.quickAdd.click();
-            navigationPage.quickAdd.newApplication();
-            page.context().waitForCondition(applicationPage::isVisible);
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newApplication();
+        page.context().waitForCondition(applicationPage::isVisible);
 
-            // we just disabled half days in the settings
-            assertThat(applicationPage.showsDayLengthInputs()).isFalse();
+        // we just disabled half days in the settings
+        assertThat(applicationPage.showsDayLengthInputs()).isFalse();
 
-            applicationPage.from(getNextWorkday());
+        applicationPage.from(getNextWorkday());
 
-            applicationPage.selectReplacement(batman);
-            page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1));
+        applicationPage.selectReplacement(batman);
+        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1));
 
-            applicationPage.selectReplacement(joker);
-            page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1));
-            page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2));
+        applicationPage.selectReplacement(joker);
+        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1));
+        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2));
 
-            applicationPage.setCommentForReplacement(batman, "please be gentle!");
+        applicationPage.setCommentForReplacement(batman, "please be gentle!");
 
-            applicationPage.submit();
-            page.context().waitForCondition(applicationDetailPage::isVisible);
-            page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
-            assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();
+        applicationPage.submit();
+        page.context().waitForCondition(applicationDetailPage::isVisible);
+        page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
+        assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();
 
-            // application created info vanishes sometime
-            page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
+        // application created info vanishes sometime
+        page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
 
-            assertThat(applicationDetailPage.showsReplacement(batman)).isTrue();
-            assertThat(applicationDetailPage.showsReplacement(joker)).isTrue();
+        assertThat(applicationDetailPage.showsReplacement(batman)).isTrue();
+        assertThat(applicationDetailPage.showsReplacement(joker)).isTrue();
 
-            // ensure given information has been persisted successfully
-            // (currently the detail page hides some information like comments for replacements)
-            applicationDetailPage.selectEdit();
-            page.context().waitForCondition(applicationPage::isVisible);
+        // ensure given information has been persisted successfully
+        // (currently the detail page hides some information like comments for replacements)
+        applicationDetailPage.selectEdit();
+        page.context().waitForCondition(applicationPage::isVisible);
 
-            assertThat(applicationPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
-            assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
+        assertThat(applicationPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
+        assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
 
-            navigationPage.logout();
-            page.context().waitForCondition(loginPage::isVisible);
-        });
+        navigationPage.logout();
+        page.context().waitForCondition(loginPage::isVisible);
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
@@ -367,39 +349,5 @@ class ApplicationForLeaveCreateIT {
             nextWorkDay = nextWorkDay.plusDays(1);
         }
         return nextWorkDay;
-    }
-
-
-    // TODO use junit extension
-    private void withPage(TestInfo testInfo, Consumer<Page> consumer) {
-
-        Page page = null;
-
-        try (Playwright playwright = Playwright.create(new Playwright.CreateOptions())) {
-            try (Browser browser = playwright.chromium().launch()) {
-                try (BrowserContext browserContext = browser.newContext(browserContextOptions())) {
-                    page = browserContext.newPage();
-                    consumer.accept(page);
-                }
-            }
-        } finally {
-            if (page != null) {
-                final File videoFile = new File(page.video().path().toUri());
-                final String newVideoFilePath = "target/%s.webm".formatted(testInfo.getDisplayName());
-                final File newVideoFile = new File(Paths.get(newVideoFilePath).toUri());
-                final boolean isMoved = videoFile.renameTo(newVideoFile);
-                if (!isMoved) {
-                    LOG.info("could not rename test video file.");
-                }
-            }
-        }
-    }
-
-    private static Browser.NewContextOptions browserContextOptions() {
-        return new Browser.NewContextOptions()
-            .setRecordVideoDir(Paths.get("target"))
-            .setLocale("de-DE")
-            .setScreenSize(1500, 1000)
-            .setViewportSize(1500, 1080);
     }
 }

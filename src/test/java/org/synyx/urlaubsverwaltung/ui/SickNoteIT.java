@@ -1,12 +1,7 @@
 package org.synyx.urlaubsverwaltung.ui;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -21,6 +16,7 @@ import org.synyx.urlaubsverwaltung.TestPostgreContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteDetailPage;
@@ -29,18 +25,14 @@ import org.synyx.urlaubsverwaltung.ui.pages.SickNotePage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
-import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -59,7 +51,6 @@ import static java.time.Month.MAY;
 import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
@@ -67,9 +58,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"spring.main.allow-bean-definition-overriding=true"})
 @ContextConfiguration(initializers = UITestInitializer.class)
+@UiTest
 class SickNoteIT {
-
-    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     @TestConfiguration
     static class Configuration {
@@ -102,29 +92,27 @@ class SickNoteIT {
     private MessageSource messageSource;
 
     @Test
-    void ensureSickNote(TestInfo testInfo) {
+    void ensureSickNote(Page page) {
         final Person person = createPerson();
 
-        withPage(testInfo, page -> {
-            final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
-            final NavigationPage navigationPage = new NavigationPage(page);
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
 
-            page.navigate("http://localhost:" + port);
+        page.navigate("http://localhost:" + port);
 
-            loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
 
-            page.context().waitForCondition(navigationPage::isVisible);
-            assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
+        page.context().waitForCondition(navigationPage::isVisible);
+        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
 
-            sickNote(page, person);
-            sickNoteWithIncapacityCertificate(page, person);
-            childSickNote(page, person);
-            childSickNoteWithIncapacityCertificate(page, person);
-            sickNoteStatisticListView(page, person);
+        sickNote(page, person);
+        sickNoteWithIncapacityCertificate(page, person);
+        childSickNote(page, person);
+        childSickNoteWithIncapacityCertificate(page, person);
+        sickNoteStatisticListView(page, person);
 
-            navigationPage.logout();
-            page.context().waitForCondition(loginPage::isVisible);
-        });
+        navigationPage.logout();
+        page.context().waitForCondition(loginPage::isVisible);
     }
 
     private void sickNote(Page page, Person person) {
@@ -262,38 +250,5 @@ class SickNoteIT {
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), true, expiryDate.plusYears(1), TEN, TEN, TEN, ZERO, null);
 
         return savedPerson;
-    }
-
-    // TODO use junit extension
-    private void withPage(TestInfo testInfo, Consumer<Page> consumer) {
-
-        Page page = null;
-
-        try (Playwright playwright = Playwright.create(new Playwright.CreateOptions())) {
-            try (Browser browser = playwright.chromium().launch()) {
-                try (BrowserContext browserContext = browser.newContext(browserContextOptions())) {
-                    page = browserContext.newPage();
-                    consumer.accept(page);
-                }
-            }
-        } finally {
-            if (page != null) {
-                final File videoFile = new File(page.video().path().toUri());
-                final String newVideoFilePath = "target/%s.webm".formatted(testInfo.getDisplayName());
-                final File newVideoFile = new File(Paths.get(newVideoFilePath).toUri());
-                final boolean isMoved = videoFile.renameTo(newVideoFile);
-                if (!isMoved) {
-                    LOG.info("could not rename test video file.");
-                }
-            }
-        }
-    }
-
-    private static Browser.NewContextOptions browserContextOptions() {
-        return new Browser.NewContextOptions()
-            .setRecordVideoDir(Paths.get("target"))
-            .setLocale("de-DE")
-            .setScreenSize(1500, 500)
-            .setViewportSize(1920, 1080);
     }
 }
