@@ -64,7 +64,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Upload video of failed tests
         uses: actions/upload-artifact@v3
-        if: hashFiles('target/*.webm') != ''
+        if: always()
         with:
           name: ui-tests
           path: target/*.webm
