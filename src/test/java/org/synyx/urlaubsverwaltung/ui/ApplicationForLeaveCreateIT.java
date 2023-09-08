@@ -110,7 +110,8 @@ class ApplicationForLeaveCreateIT {
         page.context().waitForCondition(settingsPage::isVisible);
 
         settingsPage.clickWorkingTimeTab();
-        assertThat(settingsPage.overtimeEnabled()).isFalse();
+        settingsPage.disableOvertime();
+        settingsPage.saveSettings();
 
         navigationPage.logout();
         page.waitForURL(url -> url.endsWith("/login"));

@@ -9,6 +9,7 @@ public class SettingsPage {
     private static final String WORKING_TIME_TAB_SELECTOR = "[data-test-id=settings-tab-working-time]";
     private static final String WORKING_TIME_TAB_ACTIVE_SELECTOR = "[data-test-id=settings-tab-working-time].active";
     private static final String OVERTIME_ENABLED_SELECTOR = "[data-test-id=setting-overtime-enabled]";
+    private static final String OVERTIME_DISABLED_SELECTOR = "[data-test-id=setting-overtime-disabled]";
     private static final String SAVE_BUTTON_SELECTOR = "[data-test-id=settings-save-button]";
     private static final String HALF_DAY_DISABLE_SELECTOR = "[data-test-id=vacation-half-day-disable]";
 
@@ -29,9 +30,8 @@ public class SettingsPage {
     public void enableOvertime() {
         page.locator(OVERTIME_ENABLED_SELECTOR).click();
     }
-
-    public boolean overtimeEnabled() {
-        return page.locator(OVERTIME_ENABLED_SELECTOR).isChecked();
+    public void disableOvertime() {
+        page.locator(OVERTIME_DISABLED_SELECTOR).click();
     }
 
     /**
