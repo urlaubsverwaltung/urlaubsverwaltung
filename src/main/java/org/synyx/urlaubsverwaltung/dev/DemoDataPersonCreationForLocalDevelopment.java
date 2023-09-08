@@ -16,7 +16,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * This class creates person demo data for local development
  */
-@ConditionalOnProperty(prefix = "uv.development.demodata", name = "localDevelopment", havingValue = "true")
+@ConditionalOnProperty(prefix = "uv.development.demodata", name = "local-development", havingValue = "true")
 @ConditionalOnBean(PersonDataProvider.class)
 @Component
 public class DemoDataPersonCreationForLocalDevelopment {
