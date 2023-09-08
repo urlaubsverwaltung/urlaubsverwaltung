@@ -28,20 +28,13 @@ public class BrowserSetupExtension implements AfterEachCallback {
     @Override
     public void afterEach(ExtensionContext context) throws Exception {
 
-        final Page page = getPage(context);
-        final BrowserContext browserContext = getBrowserContext(context);
-        final Browser browser = getBrowser(context);
-        final Playwright playwright = getPlaywright(context);
-
-        handleVideoFile(context, page);
-
-        page.close();
-        browserContext.close();
-        browser.close();
-        playwright.close();
+        handleVideoFile(context);
+        close(context);
     }
 
-    private static void handleVideoFile(ExtensionContext context, Page page) {
+    private static void handleVideoFile(ExtensionContext context) {
+
+        final Page page = getPage(context);
 
         final File videoFile = new File(page.video().path().toUri());
         if (context.getExecutionException().isEmpty()) {
@@ -63,5 +56,18 @@ public class BrowserSetupExtension implements AfterEachCallback {
 
     private static String normalizeVideoFileName(String original) {
         return original.replaceAll(" ", "_");
+    }
+
+    private static void close(ExtensionContext context) {
+
+        final Page page = getPage(context);
+        final BrowserContext browserContext = getBrowserContext(context);
+        final Browser browser = getBrowser(context);
+        final Playwright playwright = getPlaywright(context);
+
+        page.close();
+        browserContext.close();
+        browser.close();
+        playwright.close();
     }
 }
