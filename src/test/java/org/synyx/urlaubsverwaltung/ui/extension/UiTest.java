@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.ui.extension;
 
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -14,5 +15,6 @@ import java.lang.annotation.Target;
 @Documented
 @Inherited
 @ExtendWith({ BrowserSetupExtension.class, PageParameterResolver.class })
+@ContextConfiguration(initializers = UITestInitializer.class)
 public @interface UiTest {
 }

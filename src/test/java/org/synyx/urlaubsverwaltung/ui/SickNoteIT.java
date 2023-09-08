@@ -9,7 +9,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.TestPostgreContainer;
@@ -57,7 +56,6 @@ import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"spring.main.allow-bean-definition-overriding=true"})
-@ContextConfiguration(initializers = UITestInitializer.class)
 @UiTest
 class SickNoteIT {
 
