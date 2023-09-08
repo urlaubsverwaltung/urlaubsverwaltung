@@ -48,13 +48,13 @@ class DepartmentDataProvider {
         Optional<Department> optionalDepartment = departmentService.getDepartmentByName(departmentName);
 
 
-        if(optionalDepartment.isEmpty()) {
+        if (optionalDepartment.isEmpty()) {
             LOG.info("department with name={} doesn't exists!", departmentName);
             return;
         }
 
         Department department = optionalDepartment.get();
-        if(department.getMembers().stream().noneMatch(member -> member.getEmail().equalsIgnoreCase(person.getEmail()))) {
+        if (department.getMembers().stream().noneMatch(member -> member.getEmail().equalsIgnoreCase(person.getEmail()))) {
             department.getMembers().add(person);
             departmentService.update(department);
         } else {
@@ -66,14 +66,13 @@ class DepartmentDataProvider {
 
         Optional<Department> optionalDepartment = departmentService.getDepartmentByName(departmentName);
 
-
-        if(optionalDepartment.isEmpty()) {
+        if (optionalDepartment.isEmpty()) {
             LOG.info("department with name={} doesn't exists!", departmentName);
             return;
         }
 
         Department department = optionalDepartment.get();
-        if(department.getDepartmentHeads().stream().noneMatch(member -> member.getEmail().equalsIgnoreCase(person.getEmail()))) {
+        if (department.getDepartmentHeads().stream().noneMatch(member -> member.getEmail().equalsIgnoreCase(person.getEmail()))) {
             department.getDepartmentHeads().add(person);
             departmentService.update(department);
         } else {
@@ -85,13 +84,13 @@ class DepartmentDataProvider {
 
         Optional<Department> optionalDepartment = departmentService.getDepartmentByName(departmentName);
 
-        if(optionalDepartment.isEmpty()) {
+        if (optionalDepartment.isEmpty()) {
             LOG.info("department with name={} doesn't exists!", departmentName);
             return;
         }
 
         Department department = optionalDepartment.get();
-        if(department.getSecondStageAuthorities().stream().noneMatch(member -> member.getEmail().equalsIgnoreCase(person.getEmail()))) {
+        if (department.getSecondStageAuthorities().stream().noneMatch(member -> member.getEmail().equalsIgnoreCase(person.getEmail()))) {
             department.getSecondStageAuthorities().add(person);
             department.setTwoStageApproval(true);
             departmentService.update(department);
