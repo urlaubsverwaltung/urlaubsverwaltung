@@ -26,7 +26,7 @@ public class DemoDataPersonCreationForLocalDevelopment {
     private final PersonDataProvider personDataProvider;
     private final DemoDataProperties demoDataProperties;
 
-    public DemoDataPersonCreationForLocalDevelopment(PersonDataProvider personDataProvider, DemoDataProperties demoDataProperties) {
+    DemoDataPersonCreationForLocalDevelopment(PersonDataProvider personDataProvider, DemoDataProperties demoDataProperties) {
         this.personDataProvider = personDataProvider;
         this.demoDataProperties = demoDataProperties;
     }
