@@ -54,10 +54,6 @@ class PersonDataProvider {
         this.clock = clock;
     }
 
-    boolean isPersonAlreadyCreated(String email) {
-        return personService.getPersonByMailAddress(email).isPresent();
-    }
-
     Optional<Person> getPersonByMailAddress(String email) {
         return personService.getPersonByMailAddress(email);
     }
@@ -82,16 +78,16 @@ class PersonDataProvider {
             workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
 
             accountInteractionService.updateOrCreateHolidaysAccount(
-                    savedPerson,
-                    firstDayOfYear,
-                    lastDayOfYear,
-                    null,
-                    LocalDate.of(currentYear, APRIL, 1),
-                    BigDecimal.valueOf(30),
-                    BigDecimal.valueOf(30),
-                    BigDecimal.valueOf(5),
-                    ZERO,
-                    null);
+                savedPerson,
+                firstDayOfYear,
+                lastDayOfYear,
+                null,
+                LocalDate.of(currentYear, APRIL, 1),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(5),
+                ZERO,
+                null);
 
             return savedPerson;
         }
