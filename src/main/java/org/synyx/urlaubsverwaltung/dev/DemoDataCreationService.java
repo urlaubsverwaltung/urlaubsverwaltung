@@ -4,12 +4,12 @@ import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.Role;
 
+import java.security.SecureRandom;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Stream;
 
 import static java.time.DayOfWeek.FRIDAY;
@@ -94,7 +94,7 @@ public class DemoDataCreationService {
     private final DepartmentDataProvider departmentDataProvider;
     private final Clock clock;
 
-    private final Random random = new Random();
+    private final SecureRandom random = new SecureRandom();
 
     public DemoDataCreationService(PersonDataProvider personDataProvider, ApplicationForLeaveDataProvider applicationForLeaveDataProvider,
                                    SickNoteDataProvider sickNoteDataProvider, OvertimeRecordDataProvider overtimeRecordDataProvider,
