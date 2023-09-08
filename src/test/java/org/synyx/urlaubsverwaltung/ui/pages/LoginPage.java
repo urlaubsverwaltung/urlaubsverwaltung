@@ -36,6 +36,7 @@ public class LoginPage {
         page.fill(USERNAME_SELECTOR, credentials.username);
         page.fill(PASSWORD_SELECTOR, credentials.username);
         page.locator(SUBMIT_SELECTOR).click();
+        page.waitForURL(url -> url.contains("/web/")); // next part of application is unknown here
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 
