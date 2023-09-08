@@ -30,9 +30,9 @@ class DepartmentDataProvider {
     void createTestDepartment(String name, String description) {
 
         if (departmentService.getDepartmentByName(name).isEmpty()) {
-            LocalDate now = LocalDate.now(clock);
+            final LocalDate now = LocalDate.now(clock);
 
-            Department department = new Department();
+            final Department department = new Department();
             department.setName(name);
             department.setDescription(description);
             department.setCreatedAt(now);
@@ -45,7 +45,7 @@ class DepartmentDataProvider {
 
     void addDepartmentMember(String departmentName, Person person) {
 
-        Optional<Department> optionalDepartment = departmentService.getDepartmentByName(departmentName);
+        final Optional<Department> optionalDepartment = departmentService.getDepartmentByName(departmentName);
 
 
         if (optionalDepartment.isEmpty()) {
@@ -64,7 +64,7 @@ class DepartmentDataProvider {
 
     void addDepartmentHead(String departmentName, Person person) {
 
-        Optional<Department> optionalDepartment = departmentService.getDepartmentByName(departmentName);
+        final Optional<Department> optionalDepartment = departmentService.getDepartmentByName(departmentName);
 
         if (optionalDepartment.isEmpty()) {
             LOG.info("department with name={} doesn't exists!", departmentName);
