@@ -1,5 +1,6 @@
 package org.synyx.urlaubsverwaltung.dev;
 
+import org.slf4j.Logger;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;
@@ -28,6 +30,7 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.toList;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Provides person demo data.
@@ -40,6 +43,8 @@ class PersonDataProvider {
     private final AccountInteractionService accountInteractionService;
     private final Clock clock;
 
+    private static final Logger LOG = getLogger(lookup().lookupClass());
+
     PersonDataProvider(PersonService personService, PersonBasedataService personBasedataService, WorkingTimeWriteService workingTimeWriteService,
                        AccountInteractionService accountInteractionService, Clock clock) {
         this.personService = personService;
@@ -49,39 +54,54 @@ class PersonDataProvider {
         this.clock = clock;
     }
 
-    boolean isPersonAlreadyCreated(String email) {
-        return personService.getPersonByMailAddress(email).isPresent();
+    Optional<Person> getPersonByMailAddress(String email) {
+        return personService.getPersonByMailAddress(email);
     }
 
-    Person createTestPerson(String username, int personnelNumber, String firstName, String lastName, String email, List<Role> permissions, List<MailNotification> notifications) {
+    Person updateTestPerson(int personnelNumber, String email, List<Role> permissions, List<MailNotification> notifications) {
 
-        final Optional<Person> personByUsername = personService.getPersonByUsername(username);
+        final Optional<Person> personByUsername = personService.getPersonByMailAddress(email);
         if (personByUsername.isPresent()) {
-            return personByUsername.get();
+
+            Person person = personByUsername.get();
+            person.setPermissions(permissions);
+            person.setNotifications(notifications);
+
+            final Person savedPerson = personService.update(person);
+            personBasedataService.update(new PersonBasedata(new PersonId(savedPerson.getId()), String.valueOf(personnelNumber), ""));
+
+            final int currentYear = Year.now(clock).getValue();
+            final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);
+            final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
+
+            final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).map(DayOfWeek::getValue).collect(toList());
+            workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
+
+            accountInteractionService.updateOrCreateHolidaysAccount(
+                savedPerson,
+                firstDayOfYear,
+                lastDayOfYear,
+                null,
+                LocalDate.of(currentYear, APRIL, 1),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(30),
+                BigDecimal.valueOf(5),
+                ZERO,
+                null);
+
+            return savedPerson;
+        }
+        return null;
+    }
+
+    void createTestPerson(String username, String firstName, String lastName, String email) {
+
+        final Optional<Person> person = personService.getPersonByUsername(username);
+        if (person.isPresent()) {
+            LOG.info("Person {} already exists, nothing to do...", person.get());
+            return;
         }
 
-        final Person savedPerson = personService.create(username, firstName, lastName, email, notifications, permissions);
-        personBasedataService.update(new PersonBasedata(new PersonId(savedPerson.getId()), String.valueOf(personnelNumber), ""));
-
-        final int currentYear = Year.now(clock).getValue();
-        final LocalDate firstDayOfYear = Year.of(currentYear).atDay(1);
-        final LocalDate lastDayOfYear = firstDayOfYear.with(lastDayOfYear());
-
-        final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY).map(DayOfWeek::getValue).collect(toList());
-        workingTimeWriteService.touch(workingDays, firstDayOfYear.minusYears(1), savedPerson);
-
-        accountInteractionService.updateOrCreateHolidaysAccount(
-            savedPerson,
-            firstDayOfYear,
-            lastDayOfYear,
-            null,
-            LocalDate.of(currentYear, APRIL, 1),
-            BigDecimal.valueOf(30),
-            BigDecimal.valueOf(30),
-            BigDecimal.valueOf(5),
-            ZERO,
-            null);
-
-        return savedPerson;
+        personService.create(username, firstName, lastName, email, List.of(), List.of());
     }
 }

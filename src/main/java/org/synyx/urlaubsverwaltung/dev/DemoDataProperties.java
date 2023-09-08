@@ -6,9 +6,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class DemoDataProperties {
 
     /**
-     * Enables the creation of demo data
+     * Enables the creation of demo data based on person created events
      */
-    private boolean create = true;
+    private boolean create = false;
+
+    /**
+     * Enabled the creation of demo data persons for local development
+     */
+    private boolean localDevelopment = false;
 
     /**
      * Number of additional inactive users to create
@@ -26,6 +31,14 @@ public class DemoDataProperties {
 
     public void setCreate(boolean create) {
         this.create = create;
+    }
+
+    public boolean isLocalDevelopment() {
+        return localDevelopment;
+    }
+
+    public void setLocalDevelopment(boolean localDevelopment) {
+        this.localDevelopment = localDevelopment;
     }
 
     public int getAdditionalInactiveUser() {

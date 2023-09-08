@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -20,4 +21,6 @@ interface DepartmentRepository extends JpaRepository<DepartmentEntity, Integer> 
     List<DepartmentEntity> findByMembersPerson(Person person);
 
     List<DepartmentEntity> findDistinctByMembersPersonIn(List<Person> person);
+
+    Optional<DepartmentEntity> findFirstByName(String departmentName);
 }
