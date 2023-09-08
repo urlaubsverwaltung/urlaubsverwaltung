@@ -34,7 +34,7 @@ public class BrowserSetupExtension implements AfterEachCallback {
         final Playwright playwright = getPlaywright(context);
 
         final File videoFile = new File(page.video().path().toUri());
-        final String newVideoFilePath = "target/%s.webm".formatted(context.getDisplayName());
+        final String newVideoFilePath = normalizeVideoFileName("target/%s.webm".formatted(context.getDisplayName()));
         final File newVideoFile = new File(Paths.get(newVideoFilePath).toUri());
         final boolean isMoved = videoFile.renameTo(newVideoFile);
         if (!isMoved) {
@@ -45,5 +45,9 @@ public class BrowserSetupExtension implements AfterEachCallback {
         browserContext.close();
         browser.close();
         playwright.close();
+    }
+
+    private static String normalizeVideoFileName(String original) {
+        return original.replaceAll(" ", "_");
     }
 }
