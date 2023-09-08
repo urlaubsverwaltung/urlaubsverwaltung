@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.dev;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -11,6 +10,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.IntStream;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * This class creates person demo data for local development
  */
@@ -19,7 +21,7 @@ import java.util.stream.IntStream;
 @Component
 public class DemoDataPersonCreationForLocalDevelopment {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DemoDataPersonCreationForLocalDevelopment.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final PersonDataProvider personDataProvider;
     private final DemoDataProperties demoDataProperties;

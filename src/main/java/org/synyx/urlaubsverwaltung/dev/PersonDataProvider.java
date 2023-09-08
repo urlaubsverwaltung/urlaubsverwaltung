@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.dev;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;
@@ -30,6 +30,7 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.toList;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Provides person demo data.
@@ -42,7 +43,7 @@ class PersonDataProvider {
     private final AccountInteractionService accountInteractionService;
     private final Clock clock;
 
-    private static final Logger LOG = LoggerFactory.getLogger(DemoDataPersonCreationForLocalDevelopment.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     PersonDataProvider(PersonService personService, PersonBasedataService personBasedataService, WorkingTimeWriteService workingTimeWriteService,
                        AccountInteractionService accountInteractionService, Clock clock) {

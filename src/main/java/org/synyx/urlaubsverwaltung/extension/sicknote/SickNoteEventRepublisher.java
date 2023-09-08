@@ -14,14 +14,16 @@ import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteService;
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
 @ConditionalOnProperty(value = "uv.extensions.sicknote.republish.enabled", havingValue = "true")
 @ConditionalOnBean(SickNoteEventHandlerExtension.class)
 public class SickNoteEventRepublisher {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SickNoteEventRepublisher.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final SickNoteService sickNoteService;
     private final SickNoteEventHandlerExtension sickNoteEventHandlerExtension;

@@ -1,22 +1,23 @@
 package org.synyx.urlaubsverwaltung.dev;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 
 import java.time.Clock;
 import java.time.LocalDate;
-
 import java.util.Optional;
+
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Provides department demo data.
  */
 class DepartmentDataProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DepartmentDataProvider.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final DepartmentService departmentService;
     private final Clock clock;
