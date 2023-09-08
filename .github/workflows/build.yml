@@ -66,5 +66,5 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: ui-tests
-          path: target/*.webm
+          name: failed-ui-tests
+          path: target/FAILED-*.webm
