@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.ui.extension;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
+import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -27,7 +28,7 @@ public class PageParameterResolver implements ParameterResolver {
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
 
         final Playwright playwright = Playwright.create();
-        final Browser browser = playwright.chromium().launch();
+        final Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setSlowMo(100));
         final BrowserContext browserContext = browser.newContext(browserContextOptions());
         final Page page = browserContext.newPage();
 
