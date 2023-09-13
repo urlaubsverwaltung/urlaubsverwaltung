@@ -28,7 +28,7 @@ public class PageParameterResolver implements ParameterResolver {
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
 
         final Playwright playwright = Playwright.create();
-        final Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setSlowMo(100));
+        final Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setSlowMo(200));
         final BrowserContext browserContext = browser.newContext(browserContextOptions());
         final Page page = browserContext.newPage();
 

@@ -24,6 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.TEN;
@@ -82,6 +83,8 @@ class OvertimeCreateIT {
         final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
 
         page.navigate("http://localhost:" + port);
+        page.waitForURL(Pattern.compile("/login$"));
+        page.waitForLoadState();
 
         loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
 
