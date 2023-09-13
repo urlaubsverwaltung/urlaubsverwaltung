@@ -158,6 +158,11 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public Optional<Department> getDepartmentByName(String departmentName) {
+        return departmentRepository.findFirstByName(departmentName).map(this::mapToDepartment);
+    }
+
+    @Override
     public Department create(Department department) {
 
         final DepartmentEntity departmentEntity = mapToDepartmentEntityWithoutMembers(department);

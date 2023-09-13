@@ -23,7 +23,6 @@ class SickNoteDataProvider {
     private final SickNoteTypeService sickNoteTypeService;
 
     SickNoteDataProvider(SickNoteInteractionService sickNoteInteractionService, DurationChecker durationChecker, SickNoteTypeService sickNoteTypeService) {
-
         this.sickNoteInteractionService = sickNoteInteractionService;
         this.durationChecker = durationChecker;
         this.sickNoteTypeService = sickNoteTypeService;

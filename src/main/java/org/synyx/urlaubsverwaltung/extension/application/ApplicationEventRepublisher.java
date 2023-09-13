@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.extension.application;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -14,7 +13,9 @@ import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
 import java.time.Clock;
 import java.time.LocalDate;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 
 @Component
@@ -22,7 +23,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 @ConditionalOnBean(ApplicationEventHandlerExtension.class)
 public class ApplicationEventRepublisher {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationEventRepublisher.class);
+    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final ApplicationService applicationService;
     private final ApplicationEventHandlerExtension applicationEventHandlerExtension;
