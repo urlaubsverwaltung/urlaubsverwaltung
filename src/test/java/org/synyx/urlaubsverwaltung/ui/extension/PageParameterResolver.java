@@ -44,7 +44,7 @@ public class PageParameterResolver implements ParameterResolver {
         return new Browser.NewContextOptions()
             .setRecordVideoDir(Paths.get("target"))
             .setLocale("de-DE")
-            .setScreenSize(1500, 500)
-            .setViewportSize(1920, 1080);
+            .setScreenSize(1500, 1080)
+            .setViewportSize(1500, 1080);
     }
 }
