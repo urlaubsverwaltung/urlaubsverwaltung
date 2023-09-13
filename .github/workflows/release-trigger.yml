@@ -22,7 +22,7 @@ jobs:
     env:
       MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - name: Set up JDK 11
