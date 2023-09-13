@@ -26,7 +26,7 @@ public class PageParameterResolver implements ParameterResolver {
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
 
-        final Playwright playwright = Playwright.create(new Playwright.CreateOptions());
+        final Playwright playwright = Playwright.create();
         final Browser browser = playwright.chromium().launch();
         final BrowserContext browserContext = browser.newContext(browserContextOptions());
         final Page page = browserContext.newPage();
