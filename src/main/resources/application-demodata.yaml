@@ -10,6 +10,7 @@ uv:
   development:
     demodata:
       create: true
+      local-development: true
 
 spring:
   mail:
