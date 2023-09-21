@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.workingtime;
 
-import de.focus_shift.HolidayManager;
+import de.focus_shift.jollyday.core.HolidayManager;
+import de.focus_shift.jollyday.core.ManagerParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +20,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import static de.focus_shift.ManagerParameters.create;
 import static java.math.BigDecimal.TEN;
 import static java.time.DayOfWeek.FRIDAY;
 import static java.time.DayOfWeek.MONDAY;
@@ -419,7 +419,7 @@ class WorkingTimeCalendarServiceTest {
     private HolidayManager getHolidayManager() {
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
         final URL url = cl.getResource("Holidays_de.xml");
-        return HolidayManager.getInstance(create(url));
+        return HolidayManager.getInstance(ManagerParameters.create(url));
     }
 
     public static WorkingTime createWorkingTime(Person person, LocalDate validFrom, DayOfWeek... daysOfWeek) {
