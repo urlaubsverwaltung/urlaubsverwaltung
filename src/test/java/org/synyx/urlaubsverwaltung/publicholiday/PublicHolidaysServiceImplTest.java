@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.publicholiday;
 
-import de.focus_shift.HolidayManager;
+import de.focus_shift.jollyday.core.HolidayManager;
+import de.focus_shift.jollyday.core.ManagerParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static de.focus_shift.ManagerParameters.create;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.ZERO;
 import static java.time.LocalDate.of;
@@ -367,6 +367,6 @@ class PublicHolidaysServiceImplTest {
     private HolidayManager getHolidayManager() {
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
         final URL url = cl.getResource("Holidays_de.xml");
-        return HolidayManager.getInstance(create(url));
+        return HolidayManager.getInstance(ManagerParameters.create(url));
     }
 }
