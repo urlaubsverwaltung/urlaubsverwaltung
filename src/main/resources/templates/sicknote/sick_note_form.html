@@ -48,7 +48,7 @@
     <main th:fragment="main">
       <form
         method="post"
-        th:with="actionUrl=${sickNote.id == null ? '/web/sicknote' : '/web/sicknote/__${sickNote.id}__/edit/'}"
+        th:with="actionUrl=${sickNote.id == null ? '/web/sicknote' : '/web/sicknote/__${sickNote.id}__/edit'}"
         th:action="@{__${actionUrl}__}"
         th:object="${sickNote}"
         class="form-horizontal tw-max-w-2xl lg:tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0"
