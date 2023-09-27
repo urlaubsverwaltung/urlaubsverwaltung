@@ -1,41 +1,38 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.ui.Page;
 
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
-public class ApplicationPage implements Page {
+public class ApplicationPage {
 
-    private static final By FROM_INPUT_SELECTOR = By.id("from");
-    private static final By SUBMIT_SELECTOR = By.cssSelector("button#apply-application");
-    private static final By VACATION_TYPE_SELECT_SELECTOR = By.cssSelector("[data-test-id=vacation-type-select]");
-    private static final By DAY_LENGTH_FULL_SELECTOR = By.cssSelector("[data-test-id=day-length-full]");
-    private static final By DAY_LENGTH_MORNING_SELECTOR = By.cssSelector("[data-test-id=day-length-morning]");
-    private static final By DAY_LENGTH_NOON_SELECTOR = By.cssSelector("[data-test-id=day-length-noon]");
+    private static final String FROM_INPUT_SELECTOR = "#from";
+    private static final String SUBMIT_SELECTOR = "button#apply-application";
+    private static final String VACATION_TYPE_SELECT_SELECTOR = "[data-test-id=vacation-type-select]";
+    private static final String DAY_LENGTH_FULL_SELECTOR = "[data-test-id=day-length-full]";
+    private static final String DAY_LENGTH_MORNING_SELECTOR = "[data-test-id=day-length-morning]";
+    private static final String DAY_LENGTH_NOON_SELECTOR = "[data-test-id=day-length-noon]";
 
-    private final WebDriver driver;
+    private final Page page;
 
-    public ApplicationPage(WebDriver driver) {
-        this.driver = driver;
+    public ApplicationPage(Page page) {
+        this.page = page;
     }
 
-    @Override
-    public boolean isVisible(WebDriver driver) {
-        return vacationTypeSelectExists(driver) && fromInputExists(driver);
+    public boolean isVisible() {
+        return page.locator(VACATION_TYPE_SELECT_SELECTOR).isVisible()
+            && page.locator(FROM_INPUT_SELECTOR).isVisible();
     }
 
     public void from(LocalDate date) {
         final String dateString = ofPattern("dd.MM.yyyy").format(date);
-        driver.findElement(FROM_INPUT_SELECTOR).sendKeys(dateString);
+        page.locator(FROM_INPUT_SELECTOR).fill(dateString);
     }
 
     /**
@@ -45,9 +42,8 @@ public class ApplicationPage implements Page {
      * @param person person that should be selected
      */
     public void selectReplacement(Person person) {
-        final WebElement selectElement = driver.findElement(By.cssSelector("[data-test-id=holiday-replacement-select]"));
-        final Select select = new Select(selectElement);
-        select.selectByValue(String.valueOf(person.getId()));
+        final Locator element = page.locator("[data-test-id=holiday-replacement-select]");
+        element.selectOption(String.valueOf(person.getId()));
     }
 
     public void setCommentForReplacement(Person person, String comment) {
@@ -57,14 +53,13 @@ public class ApplicationPage implements Page {
             throw new IllegalStateException("could not find replacement row for the given person.");
         }
 
-        final WebElement textarea = holidayReplacementRow.rowElement.findElement(By.tagName("textarea"));
-        textarea.clear();
-        textarea.sendKeys(comment);
+        final Locator textarea = holidayReplacementRow.rowElement.locator("textarea");
+        textarea.fill("");
+        textarea.fill(comment);
 
         // for whatever reasons we have to blur the textarea afterwards
         // otherwise a single form submit click doesn't submit the form...
-        final JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("Boolean(document.activeElement) ? document.activeElement.blur() : 0");
+        page.locator(":focus").blur();
     }
 
     /**
@@ -73,10 +68,9 @@ public class ApplicationPage implements Page {
      * @return {@code true} when inputs are visible, {@code false} otherwise.
      */
     public boolean showsDayLengthInputs() {
-        final List<WebElement> fullDay = driver.findElements(DAY_LENGTH_FULL_SELECTOR);
-        final List<WebElement> morning = driver.findElements(DAY_LENGTH_MORNING_SELECTOR);
-        final List<WebElement> noon = driver.findElements(DAY_LENGTH_NOON_SELECTOR);
-        return !fullDay.isEmpty() || !morning.isEmpty() || !noon.isEmpty();
+        return page.locator(DAY_LENGTH_FULL_SELECTOR).isVisible()
+            && page.locator(DAY_LENGTH_MORNING_SELECTOR).isVisible()
+            && page.locator(DAY_LENGTH_NOON_SELECTOR).isVisible();
     }
 
     /**
@@ -108,39 +102,33 @@ public class ApplicationPage implements Page {
             return false;
         }
 
-        final WebElement row = holidayReplacementRow.rowElement;
+        final Locator row = holidayReplacementRow.rowElement;
         final int rowPosition = holidayReplacementRow.position;
 
         if (position != rowPosition) {
             return false;
         }
 
-        final WebElement textarea = row.findElement(By.tagName("textarea"));
-        return textarea.getAttribute("value").equals(comment);
+        final Locator textarea = row.locator("textarea");
+        return textarea.inputValue().equals(comment);
     }
 
     public void submit() {
-        driver.findElement(SUBMIT_SELECTOR).click();
-    }
-
-    private static boolean fromInputExists(WebDriver driver) {
-        return !driver.findElements(FROM_INPUT_SELECTOR).isEmpty();
-    }
-
-    private static boolean vacationTypeSelectExists(WebDriver driver) {
-        return !driver.findElements(VACATION_TYPE_SELECT_SELECTOR).isEmpty();
+        page.locator(SUBMIT_SELECTOR).click();
+        page.waitForLoadState(DOMCONTENTLOADED);
     }
 
     private HolidayReplacementRowElement getHolidayReplacementRow(Person person) {
-        final List<WebElement> rows = driver.findElements(By.cssSelector("[data-test-id=holiday-replacement-row]"));
+
+        final List<Locator> rows = page.locator("[data-test-id=holiday-replacement-row]").all();
 
         for (int i = 0; i < rows.size(); i++) {
-            final WebElement row = rows.get(i);
-            final List<WebElement> hiddenInputElements = row.findElements(By.cssSelector("input[type=hidden]"));
+            final Locator row = rows.get(i);
+            final List<Locator> hiddenInputElements = row.locator("input[type=hidden]").all();
 
             final boolean isRowOfPerson = hiddenInputElements.stream().anyMatch(input -> {
                 final String name = input.getAttribute("name");
-                final String value = input.getAttribute("value");
+                final String value = input.inputValue();
                 return name.startsWith("holidayReplacements[")
                     && name.endsWith("].person")
                     && value.equals(String.valueOf(person.getId()));
@@ -155,10 +143,10 @@ public class ApplicationPage implements Page {
     }
 
     private static class HolidayReplacementRowElement {
-        final WebElement rowElement;
+        final Locator rowElement;
         final int position;
 
-        HolidayReplacementRowElement(WebElement rowElement, int position) {
+        HolidayReplacementRowElement(Locator rowElement, int position) {
             this.rowElement = rowElement;
             this.position = position;
         }

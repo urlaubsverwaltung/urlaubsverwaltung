@@ -1,29 +1,27 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.Select;
-import org.synyx.urlaubsverwaltung.ui.Page;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
 
 import java.time.LocalDate;
 
+import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
-public class SickNotePage implements Page {
+public class SickNotePage {
 
-    private static final By PERSON_SELECTOR = By.cssSelector("[data-test-id=person-select]");
-    private static final By SICKNOTE_TYPE_SELECTOR = By.cssSelector("[data-test-id=sicknote-type-select]");
-    private static final By DAY_TYPE_FULL_SELECTOR = By.cssSelector("[data-test-id=day-type-full]");
-    private static final By DAY_TYPE_MORNING_SELECTOR = By.cssSelector("[data-test-id=day-type-morning]");
-    private static final By DAY_TYPE_NOON_SELECTOR = By.cssSelector("[data-test-id=day-type-noon]");
-    private static final By FROM_SELECTOR = By.cssSelector("[data-test-id=sicknote-from-date]");
-    private static final By TO_SELECTOR = By.cssSelector("[data-test-id=sicknote-to-date]");
-    private static final By AUB_FROM_SELECTOR = By.cssSelector("[data-test-id=sicknote-aub-from]");
-    private static final By AUB_TO_SELECTOR = By.cssSelector("[data-test-id=sicknote-aub-from]");
-    private static final By SUBMIT_SELECTOR = By.cssSelector("[data-test-id=sicknote-submit-button]");
+    private static final String PERSON_SELECTOR = "[data-test-id=person-select]";
+    private static final String SICKNOTE_TYPE_SELECTOR = "[data-test-id=sicknote-type-select]";
+    private static final String DAY_TYPE_FULL_SELECTOR = "[data-test-id=day-type-full]";
+    private static final String DAY_TYPE_MORNING_SELECTOR = "[data-test-id=day-type-morning]";
+    private static final String DAY_TYPE_NOON_SELECTOR = "[data-test-id=day-type-noon]";
+    private static final String FROM_SELECTOR = "[data-test-id=sicknote-from-date]";
+    private static final String TO_SELECTOR = "[data-test-id=sicknote-to-date]";
+    private static final String AUB_FROM_SELECTOR = "[data-test-id=sicknote-aub-from]";
+    private static final String AUB_TO_SELECTOR = "[data-test-id=sicknote-aub-from]";
+    private static final String SUBMIT_SELECTOR = "[data-test-id=sicknote-submit-button]";
 
-    private final WebDriver driver;
+    private final Page page;
 
     private enum Type {
         SICK_NOTE("1000"),
@@ -36,13 +34,12 @@ public class SickNotePage implements Page {
         }
     }
 
-    public SickNotePage(WebDriver driver) {
-        this.driver = driver;
+    public SickNotePage(Page page) {
+        this.page = page;
     }
 
-    @Override
-    public boolean isVisible(WebDriver driver) {
-        return !driver.findElements(SUBMIT_SELECTOR).isEmpty();
+    public boolean isVisible() {
+        return page.locator(SUBMIT_SELECTOR).isVisible();
     }
 
     public void startDate(LocalDate startDate) {
@@ -54,8 +51,7 @@ public class SickNotePage implements Page {
     }
 
     public void selectTypeChildSickNote() {
-        final Select select = new Select(driver.findElement(SICKNOTE_TYPE_SELECTOR));
-        select.selectByValue(Type.CHILD_SICK_NOTE.value);
+        page.selectOption(SICKNOTE_TYPE_SELECTOR, Type.CHILD_SICK_NOTE.value);
     }
 
     public void aubStartDate(LocalDate aubStartDate) {
@@ -67,27 +63,27 @@ public class SickNotePage implements Page {
      * You may have to add a wait yourself after calling this method.
      */
     public void submit() {
-        driver.findElement(SUBMIT_SELECTOR).click();
+        page.locator(SUBMIT_SELECTOR).click();
+        page.waitForLoadState(DOMCONTENTLOADED);
     }
 
     public boolean dayTypeFullSelected() {
-        return driver.findElement(DAY_TYPE_FULL_SELECTOR).isSelected();
+        return page.locator(DAY_TYPE_FULL_SELECTOR).isChecked();
     }
 
     public boolean typeSickNoteSelected() {
-        final String value = driver.findElement(SICKNOTE_TYPE_SELECTOR).getAttribute("value");
-        return Type.SICK_NOTE.value.equals(value);
+        return page.locator(SICKNOTE_TYPE_SELECTOR).inputValue().equals(Type.SICK_NOTE.value);
     }
 
     public boolean showsToDate(LocalDate fromDate) {
-        final String value = driver.findElement(TO_SELECTOR).getAttribute("value");
         final String expectedDateString = ofPattern("dd.MM.yyyy").format(fromDate);
+        final String value = page.locator(TO_SELECTOR).inputValue();
         return value.equals(expectedDateString);
     }
 
     public boolean showsAubToDate(LocalDate fromDate) {
-        final String value = driver.findElement(AUB_TO_SELECTOR).getAttribute("value");
         final String expectedDateString = ofPattern("dd.MM.yyyy").format(fromDate);
+        final String value = page.locator(AUB_TO_SELECTOR).inputValue();
         return value.equals(expectedDateString);
     }
 
@@ -98,16 +94,16 @@ public class SickNotePage implements Page {
      * @return <code>true</code> when the given name is the selected element, <code>false</code> otherwise
      */
     public boolean personSelected(String name) {
-        final WebElement selectElement = driver.findElement(PERSON_SELECTOR);
-        final String value = selectElement.getAttribute("value");
-        final WebElement optionElement = selectElement.findElement(By.cssSelector("option[value=\"" + value + "\"]"));
-        return optionElement.getText().strip().equals(name);
+        final Locator selectElement = page.locator(PERSON_SELECTOR);
+        final String value = (String) selectElement.evaluate("node => node.value");
+        final Locator optionElement = selectElement.locator("option[value=\"" + value + "\"]");
+        return optionElement.textContent().strip().equals(name);
     }
 
-    private void setDate(LocalDate date, By selector) {
+    private void setDate(LocalDate date, String selector) {
         final String dateString = ofPattern("dd.MM.yyyy").format(date);
-        final WebElement input = driver.findElement(selector);
-        input.clear();
-        input.sendKeys(dateString);
+        final Locator input = page.locator(selector);
+        input.fill("");
+        input.fill(dateString);
     }
 }

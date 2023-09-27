@@ -1,49 +1,47 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
 import org.springframework.context.MessageSource;
-import org.synyx.urlaubsverwaltung.ui.Page;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class SickNoteOverviewPage implements Page {
+public class SickNoteOverviewPage {
 
-    private static final By TABLE_SELECTOR = By.cssSelector("[data-test-id=sick-notes-table]");
+    private static final String TABLE_SELECTOR = "[data-test-id=sick-notes-table]";
 
-    private final WebDriver driver;
+    private final Page page;
     private final Locale locale;
     private final MessageSource messageSource;
 
-    public SickNoteOverviewPage(WebDriver driver, MessageSource messageSource, Locale locale) {
-        this.driver = driver;
+    public SickNoteOverviewPage(Page page, MessageSource messageSource, Locale locale) {
+        this.page = page;
         this.locale = locale;
         this.messageSource = messageSource;
     }
 
-    @Override
-    public boolean isVisible(WebDriver driver) {
+    public boolean isVisible() {
         final String sickNoteHeaderTitle = messageSource.getMessage("sicknotes.header.title", new Object[]{}, locale);
-        return driver.getTitle().equals(sickNoteHeaderTitle);
+        return page.title().equals(sickNoteHeaderTitle);
     }
 
     public boolean showsSickNoteStatistic(String firstName, String lastName, int sickDays, int daysWithIncapacityCertificate) {
         final String sickDaysText = messageSource.getMessage("sicknotes.daysOverview.sickDays.number", new Object[]{}, locale);
         final String sickDaysAubText = messageSource.getMessage("overview.sicknotes.sickdays.aub", new Object[]{daysWithIncapacityCertificate}, locale);
 
-        Predicate<String> hasSickDaysText = textContent -> textContent.contains(sickDays + " " + sickDaysText);
-        Predicate<String> hasSickDaysCertificate = textContent -> textContent.contains(sickDaysAubText);
+        Predicate<String> hasSickDaysText = text -> text.contains(sickDays + " " + sickDaysText);
+        Predicate<String> hasSickDaysCertificate = text -> text.contains(sickDaysAubText);
 
         if (daysWithIncapacityCertificate == 0) {
             hasSickDaysCertificate = Predicate.not(hasSickDaysCertificate);
         }
 
         return rowWithPerson(firstName, lastName)
-            .map(WebElement::getText)
+            .map(Locator::textContent)
+            .map(SickNoteOverviewPage::cleanupTextContent)
             .filter(hasSickDaysText.and(hasSickDaysCertificate))
             .isPresent();
     }
@@ -60,18 +58,28 @@ public class SickNoteOverviewPage implements Page {
         }
 
         return rowWithPerson(firstName, lastName)
-            .map(WebElement::getText)
+            .map(Locator::textContent)
+            .map(SickNoteOverviewPage::cleanupTextContent)
             .filter(hasSickDaysText.and(hasSickDaysCertificate))
             .isPresent();
     }
 
-    private Optional<WebElement> rowWithPerson(String firstName, String lastName) {
+    private static String cleanupTextContent(String text) {
+        // remove new lines from textContent (<br /> are new lines for instance)
+        return text.replaceAll("\\n", "")
+            // remove tabs from textContent (don't know where tabs come from)
+            .replaceAll("\\t", "")
+            // and remove multiple whitespace characters
+            .replaceAll(" {2,}"," ");
+    }
 
-        final WebElement table = driver.findElement(TABLE_SELECTOR);
-        final List<WebElement> tableRows = table.findElements(By.cssSelector("tr"));
+    private Optional<Locator> rowWithPerson(String firstName, String lastName) {
 
-        for (WebElement tableRow : tableRows) {
-            if (tableRow.getText().contains(firstName) && tableRow.getText().contains(lastName)) {
+        final Locator table = page.locator(TABLE_SELECTOR);
+        final List<Locator> tableRows = table.locator("tr").all();
+
+        for (Locator tableRow : tableRows) {
+            if (tableRow.textContent().contains(firstName) && tableRow.textContent().contains(lastName)) {
                 return Optional.of(tableRow);
             }
         }

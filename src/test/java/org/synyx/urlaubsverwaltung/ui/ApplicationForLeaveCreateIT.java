@@ -1,15 +1,12 @@
 package org.synyx.urlaubsverwaltung.ui;
 
+import com.microsoft.playwright.Page;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.MessageSource;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.TestPostgreContainer;
@@ -19,6 +16,7 @@ import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.publicholiday.PublicHolidaysService;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
+import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.ApplicationDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.ApplicationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
@@ -27,17 +25,12 @@ import org.synyx.urlaubsverwaltung.ui.pages.OverviewPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SettingsPage;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
-import org.testcontainers.containers.BrowserWebDriverContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -56,26 +49,17 @@ import static java.time.Month.DECEMBER;
 import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.openqa.selenium.support.ui.ExpectedConditions.not;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.ui.PageConditions.isTrue;
-import static org.synyx.urlaubsverwaltung.ui.PageConditions.pageIsVisible;
-import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_FAILING;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@ContextConfiguration(initializers = UITestInitializer.class)
+@UiTest
 class ApplicationForLeaveCreateIT {
 
     @LocalServerPort
     private int port;
-
-    @Container
-    private final BrowserWebDriverContainer<?> browserContainer = new BrowserWebDriverContainer<>()
-        .withRecordingMode(RECORD_FAILING, new File("target"))
-        .withCapabilities(chromeOptions());
 
     static final TestPostgreContainer postgre = new TestPostgreContainer();
 
@@ -100,87 +84,87 @@ class ApplicationForLeaveCreateIT {
 
     @Test
     @DisplayName("when USER is logged in and overtime feature is disabled then quick-add directly links to application-for-leave")
-    void ensureQuickAddDirectlyLinksToApplicationForLeave() {
-        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
+    void ensureQuickAddDirectlyLinksToApplicationForLeave(Page page) {
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
+        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
 
-        final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+        final SettingsPage settingsPage = new SettingsPage(page);
+        final ApplicationPage applicationPage = new ApplicationPage(page);
 
-        final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, GERMAN);
-        final SettingsPage settingsPage = new SettingsPage(webDriver);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
-
-        webDriver.get("http://host.testcontainers.internal:" + port);
+        page.navigate("http://localhost:" + port);
 
         // log in as office user
         // and disable the overtime feature
 
-        wait.until(pageIsVisible(loginPage));
+        page.context().waitForCondition(loginPage::isVisible);
         loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
 
-        wait.until(pageIsVisible(navigationPage));
-        wait.until(pageIsVisible(overviewPage));
+        page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
+        page.context().waitForCondition(navigationPage::isVisible);
+        page.context().waitForCondition(overviewPage::isVisible);
 
         navigationPage.clickSettings();
-        wait.until(pageIsVisible(settingsPage));
+        page.context().waitForCondition(settingsPage::isVisible);
 
         settingsPage.clickWorkingTimeTab();
-        assertThat(settingsPage.overtimeEnabled()).isFalse();
+        settingsPage.disableOvertime();
+        settingsPage.saveSettings();
 
         navigationPage.logout();
-        wait.until(pageIsVisible(loginPage));
+        page.waitForURL(url -> url.endsWith("/login"));
+        page.context().waitForCondition(loginPage::isVisible);
 
         // now the quick-add button should link directly to application-for-leave page
         // for the user logged in with role=USER
 
         loginPage.login(new LoginPage.Credentials(userPerson.getUsername(), "secret"));
 
-        wait.until(pageIsVisible(overviewPage));
+        page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(userPerson.getId())));
+        page.context().waitForCondition(navigationPage::isVisible);
+        page.context().waitForCondition(overviewPage::isVisible);
 
-        assertThat(navigationPage.quickAdd.hasPopup()).isFalse();
+        assertThat(navigationPage.quickAdd.hasNoPopup()).isTrue();
 
         navigationPage.quickAdd.click();
-        wait.until(pageIsVisible(applicationPage));
+        page.context().waitForCondition(applicationPage::isVisible);
     }
 
     @Test
     @DisplayName("when USER is logged in and overtime feature is enabled then quick-add opens a popupmenu")
-    void ensureQuickAddOpensPopupMenu() {
+    void ensureQuickAddOpensPopupMenu(Page page) {
         final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
         final Person userPerson = createPerson("The", "Joker", List.of(USER));
 
-        final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+        final SettingsPage settingsPage = new SettingsPage(page);
+        final ApplicationPage applicationPage = new ApplicationPage(page);
 
-        final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, GERMAN);
-        final SettingsPage settingsPage = new SettingsPage(webDriver);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
+        page.navigate("http://localhost:" + port);
 
-        webDriver.get("http://host.testcontainers.internal:" + port);
-
-        wait.until(pageIsVisible(loginPage));
+        page.context().waitForCondition(loginPage::isVisible);
         loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
 
-        wait.until(pageIsVisible(navigationPage));
+        page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
+        page.context().waitForCondition(navigationPage::isVisible);
 
         navigationPage.clickSettings();
-        wait.until(pageIsVisible(settingsPage));
+        page.context().waitForCondition(settingsPage::isVisible);
 
         settingsPage.clickWorkingTimeTab();
         settingsPage.enableOvertime();
         settingsPage.saveSettings();
 
         navigationPage.logout();
-        wait.until(pageIsVisible(loginPage));
+        page.context().waitForCondition(loginPage::isVisible);
 
         loginPage.login(new LoginPage.Credentials(userPerson.getUsername(), "secret"));
 
-        wait.until(pageIsVisible(overviewPage));
+        page.context().waitForCondition(overviewPage::isVisible);
         assertThat(overviewPage.isVisibleForPerson(userPerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
@@ -189,60 +173,58 @@ class ApplicationForLeaveCreateIT {
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();
 
-        wait.until(pageIsVisible(applicationPage));
+        page.context().waitForCondition(applicationPage::isVisible);
 
         navigationPage.logout();
-        wait.until(pageIsVisible(loginPage));
+        page.context().waitForCondition(loginPage::isVisible);
     }
 
     @Test
-    void checkIfItIsPossibleToRequestAnApplicationForLeave() {
+    void checkIfItIsPossibleToRequestAnApplicationForLeave(Page page) {
         final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
         final Person batman = createPerson("Bruce", "Wayne", List.of(USER));
         final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
 
-        final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
-        final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, GERMAN);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
-        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(webDriver, messageSource, GERMAN);
+        page.navigate("http://localhost:" + port);
 
-        webDriver.get("http://host.testcontainers.internal:" + port);
-
-        wait.until(pageIsVisible(loginPage));
+        page.context().waitForCondition(loginPage::isVisible);
         loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
 
-        wait.until(pageIsVisible(navigationPage));
-        wait.until(pageIsVisible(overviewPage));
+        page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
+        page.context().waitForCondition(navigationPage::isVisible);
+        page.context().waitForCondition(overviewPage::isVisible);
         assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
 
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();
-        wait.until(pageIsVisible(applicationPage));
+        page.context().waitForCondition(applicationPage::isVisible);
 
         applicationPage.from(getNextWorkday());
 
         applicationPage.selectReplacement(batman);
-        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1)));
+        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1));
 
         applicationPage.selectReplacement(joker);
-        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1)));
-        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2)));
+        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1));
+        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2));
 
         applicationPage.setCommentForReplacement(batman, "please be gentle!");
 
         applicationPage.submit();
 
-        wait.until(pageIsVisible(applicationDetailPage));
-        wait.until(isTrue(applicationDetailPage::showsApplicationCreatedInfo));
+        page.context().waitForCondition(applicationDetailPage::isVisible);
+        page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
         assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();
 
         // application created info vanishes sometime
-        wait.until(not(isTrue(applicationDetailPage::showsApplicationCreatedInfo)));
+        page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
 
         assertThat(applicationDetailPage.showsReplacement(batman)).isTrue();
         assertThat(applicationDetailPage.showsReplacement(joker)).isTrue();
@@ -250,60 +232,57 @@ class ApplicationForLeaveCreateIT {
         // ensure given information has been persisted successfully
         // (currently the detail page hides some information like comments for replacements)
         applicationDetailPage.selectEdit();
-        wait.until(pageIsVisible(applicationPage));
+        page.context().waitForCondition(applicationPage::isVisible);
 
         assertThat(applicationPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
         assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
 
         navigationPage.logout();
-        wait.until(pageIsVisible(loginPage));
+        page.context().waitForCondition(loginPage::isVisible);
     }
 
     @Test
     @DisplayName("when USER is logged in and halfDay is disabled then application-for-leave can be created only for full days.")
-    void ensureApplicationForLeaveWithDisabledHalfDayOption() {
+    void ensureApplicationForLeaveWithDisabledHalfDayOption(Page page) {
         final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
         final Person batman = createPerson("Bruce", "Wayne", List.of(USER));
         final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
 
-        final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+        final SettingsPage settingsPage = new SettingsPage(page);
+        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
-        final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final OverviewPage overviewPage = new OverviewPage(webDriver, messageSource, GERMAN);
-        final SettingsPage settingsPage = new SettingsPage(webDriver);
-        final ApplicationPage applicationPage = new ApplicationPage(webDriver);
-        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(webDriver, messageSource, GERMAN);
-
-        webDriver.get("http://host.testcontainers.internal:" + port);
+        page.navigate("http://localhost:" + port);
 
         // log in as office user
         // and disable halfDay
 
-        wait.until(pageIsVisible(loginPage));
+        page.context().waitForCondition(loginPage::isVisible);
         loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
 
-        wait.until(pageIsVisible(navigationPage));
-        wait.until(pageIsVisible(overviewPage));
+        page.context().waitForCondition(navigationPage::isVisible);
+        page.context().waitForCondition(overviewPage::isVisible);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();
-        wait.until(pageIsVisible(applicationPage));
+        page.context().waitForCondition(applicationPage::isVisible);
 
         // default is: half days enabled
         assertThat(applicationPage.showsDayLengthInputs()).isTrue();
 
         navigationPage.clickSettings();
-        wait.until(pageIsVisible(settingsPage));
+        page.context().waitForCondition(settingsPage::isVisible);
 
         settingsPage.clickDisableHalfDayAbsence();
         settingsPage.saveSettings();
-        wait.until(pageIsVisible(navigationPage));
+        page.context().waitForCondition(navigationPage::isVisible);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newApplication();
-        wait.until(pageIsVisible(applicationPage));
+        page.context().waitForCondition(applicationPage::isVisible);
 
         // we just disabled half days in the settings
         assertThat(applicationPage.showsDayLengthInputs()).isFalse();
@@ -311,21 +290,21 @@ class ApplicationForLeaveCreateIT {
         applicationPage.from(getNextWorkday());
 
         applicationPage.selectReplacement(batman);
-        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1)));
+        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 1));
 
         applicationPage.selectReplacement(joker);
-        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1)));
-        wait.until(isTrue(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2)));
+        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(joker, 1));
+        page.context().waitForCondition(() -> applicationPage.showsAddedReplacementAtPosition(batman, 2));
 
         applicationPage.setCommentForReplacement(batman, "please be gentle!");
 
         applicationPage.submit();
-        wait.until(pageIsVisible(applicationDetailPage));
-        wait.until(isTrue(applicationDetailPage::showsApplicationCreatedInfo));
+        page.context().waitForCondition(applicationDetailPage::isVisible);
+        page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
         assertThat(applicationDetailPage.isVisibleForPerson(officePerson.getNiceName())).isTrue();
 
         // application created info vanishes sometime
-        wait.until(not(isTrue(applicationDetailPage::showsApplicationCreatedInfo)));
+        page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
 
         assertThat(applicationDetailPage.showsReplacement(batman)).isTrue();
         assertThat(applicationDetailPage.showsReplacement(joker)).isTrue();
@@ -333,13 +312,13 @@ class ApplicationForLeaveCreateIT {
         // ensure given information has been persisted successfully
         // (currently the detail page hides some information like comments for replacements)
         applicationDetailPage.selectEdit();
-        wait.until(pageIsVisible(applicationPage));
+        page.context().waitForCondition(applicationPage::isVisible);
 
         assertThat(applicationPage.showsAddedReplacementAtPosition(joker, 1)).isTrue();
         assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
 
         navigationPage.logout();
-        wait.until(pageIsVisible(loginPage));
+        page.context().waitForCondition(loginPage::isVisible);
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
@@ -369,12 +348,5 @@ class ApplicationForLeaveCreateIT {
             nextWorkDay = nextWorkDay.plusDays(1);
         }
         return nextWorkDay;
-    }
-
-    private ChromeOptions chromeOptions() {
-        final ChromeOptions options = new ChromeOptions();
-        options.setExperimentalOption("prefs", Map.of("intl.accept_languages", "de-DE"));
-        options.addArguments("--disable-dev-shm-usage");
-        return options;
     }
 }

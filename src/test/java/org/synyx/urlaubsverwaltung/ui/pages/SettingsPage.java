@@ -1,37 +1,37 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.synyx.urlaubsverwaltung.ui.Page;
+import com.microsoft.playwright.Page;
 
-public class SettingsPage implements Page {
+import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 
-    private static final By WORKING_TIME_TAB_SELECTOR = By.cssSelector("[data-test-id=settings-tab-working-time]");
-    private static final By OVERTIME_ENABLED_SELECTOR = By.cssSelector("[data-test-id=setting-overtime-enabled]");
-    private static final By SAVE_BUTTON_SELECTOR = By.cssSelector("[data-test-id=settings-save-button]");
-    private static final By HALF_DAY_DISABLE_SELECTOR = By.cssSelector("[data-test-id=vacation-half-day-disable]");
+public class SettingsPage {
 
-    private final WebDriver driver;
+    private static final String WORKING_TIME_TAB_SELECTOR = "[data-test-id=settings-tab-working-time]";
+    private static final String WORKING_TIME_TAB_ACTIVE_SELECTOR = "[data-test-id=settings-tab-working-time].active";
+    private static final String OVERTIME_ENABLED_SELECTOR = "[data-test-id=setting-overtime-enabled]";
+    private static final String OVERTIME_DISABLED_SELECTOR = "[data-test-id=setting-overtime-disabled]";
+    private static final String SAVE_BUTTON_SELECTOR = "[data-test-id=settings-save-button]";
+    private static final String HALF_DAY_DISABLE_SELECTOR = "[data-test-id=vacation-half-day-disable]";
 
-    public SettingsPage(WebDriver driver) {
-        this.driver = driver;
+    private final Page page;
+
+    public SettingsPage(Page page) {
+        this.page = page;
     }
 
-    @Override
-    public boolean isVisible(WebDriver driver) {
-        return !driver.findElements(WORKING_TIME_TAB_SELECTOR).isEmpty();
+    public boolean isVisible() {
+        return page.locator(WORKING_TIME_TAB_SELECTOR).isVisible();
     }
 
     public void clickWorkingTimeTab() {
-        driver.findElement(WORKING_TIME_TAB_SELECTOR).click();
+        page.locator(WORKING_TIME_TAB_SELECTOR).click();
     }
 
     public void enableOvertime() {
-        driver.findElement(OVERTIME_ENABLED_SELECTOR).click();
+        page.locator(OVERTIME_ENABLED_SELECTOR).click();
     }
-
-    public boolean overtimeEnabled() {
-        return driver.findElement(OVERTIME_ENABLED_SELECTOR).isSelected();
+    public void disableOvertime() {
+        page.locator(OVERTIME_DISABLED_SELECTOR).click();
     }
 
     /**
@@ -39,10 +39,11 @@ public class SettingsPage implements Page {
      * You may have to add a wait yourself after calling this method.
      */
     public void saveSettings() {
-        driver.findElement(SAVE_BUTTON_SELECTOR).click();
+        page.locator(SAVE_BUTTON_SELECTOR).click();
+        page.waitForLoadState(DOMCONTENTLOADED);
     }
 
     public void clickDisableHalfDayAbsence() {
-        driver.findElement(HALF_DAY_DISABLE_SELECTOR).click();
+        page.locator(HALF_DAY_DISABLE_SELECTOR).click();
     }
 }

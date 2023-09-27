@@ -1,50 +1,47 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.ui.Page;
 
 import java.util.Locale;
 
-public class ApplicationDetailPage implements Page {
+import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 
-    private static final By ALERT_SUCCESS_SELECTOR = By.className("alert-success");
+public class ApplicationDetailPage {
 
-    private final WebDriver driver;
+    private final Page page;
     private final MessageSource messageSource;
     private final Locale locale;
 
-    public ApplicationDetailPage(WebDriver driver, MessageSource messageSource, Locale locale) {
-        this.driver = driver;
+    public ApplicationDetailPage(Page page, MessageSource messageSource, Locale locale) {
+        this.page = page;
         this.messageSource = messageSource;
         this.locale = locale;
     }
 
     public boolean isVisibleForPerson(String username) {
-        return driver.getTitle().equals(title(username));
+        return page.title().equals(title(username));
     }
 
-    @Override
-    public boolean isVisible(WebDriver driver) {
-        return driver.getTitle().startsWith(title(""));
+    public boolean isVisible() {
+        return page.title().startsWith(title(""));
     }
 
     public boolean showsApplicationCreatedInfo() {
-        final WebElement element = driver.findElement(ALERT_SUCCESS_SELECTOR);
-        return element != null && element.isDisplayed();
+        final String text = messageSource.getMessage("application.action.apply.success", new Object[]{}, locale);
+        return page.getByText(text).isVisible();
     }
 
     public boolean showsReplacement(Person person) {
-        final WebElement holidayReplacementList = driver.findElement(By.cssSelector("[data-test-id=holiday-replacement-list]"));
-        return holidayReplacementList.getText().contains(person.getNiceName());
+        final Locator element = page.locator("[data-test-id=holiday-replacement-list]");
+        return element.textContent().contains(person.getNiceName());
     }
 
     public void selectEdit() {
-        final WebElement button = driver.findElement(By.cssSelector("[data-test-id=application-edit-button]"));
-        button.click();
+        page.locator("[data-test-id=application-edit-button]").click();
+        page.waitForLoadState(DOMCONTENTLOADED);
     }
 
     private String title(String username) {

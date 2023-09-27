@@ -1,4 +1,4 @@
-package org.synyx.urlaubsverwaltung.ui;
+package org.synyx.urlaubsverwaltung.ui.extension;
 
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.context.ApplicationContextInitializer;

@@ -1,9 +1,7 @@
 package org.synyx.urlaubsverwaltung.ui;
 
+import com.microsoft.playwright.Page;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -11,32 +9,27 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.synyx.urlaubsverwaltung.TestPostgreContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteDetailPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNoteOverviewPage;
 import org.synyx.urlaubsverwaltung.ui.pages.SickNotePage;
 import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
-import org.testcontainers.containers.BrowserWebDriverContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
 import java.time.Clock;
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.math.BigDecimal.TEN;
@@ -60,12 +53,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
-import static org.synyx.urlaubsverwaltung.ui.PageConditions.pageIsVisible;
-import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_FAILING;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT, properties = {"spring.main.allow-bean-definition-overriding=true"})
-@ContextConfiguration(initializers = UITestInitializer.class)
+@UiTest
 class SickNoteIT {
 
     @TestConfiguration
@@ -80,11 +71,6 @@ class SickNoteIT {
 
     @LocalServerPort
     private int port;
-
-    @Container
-    private final BrowserWebDriverContainer<?> browserContainer = new BrowserWebDriverContainer<>()
-        .withRecordingMode(RECORD_FAILING, new File("target"))
-        .withCapabilities(chromeOptions());
 
     static final TestPostgreContainer postgre = new TestPostgreContainer();
 
@@ -104,44 +90,37 @@ class SickNoteIT {
     private MessageSource messageSource;
 
     @Test
-    void ensureSickNote() {
+    void ensureSickNote(Page page) {
         final Person person = createPerson();
 
-        final RemoteWebDriver webDriver = browserContainer.getWebDriver();
-        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
 
-        final LoginPage loginPage = new LoginPage(webDriver, messageSource, GERMAN);
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
+        page.navigate("http://localhost:" + port);
 
-        webDriver.get("http://host.testcontainers.internal:" + port);
-
-        wait.until(pageIsVisible(loginPage));
         loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
 
-        wait.until(pageIsVisible(navigationPage));
+        page.context().waitForCondition(navigationPage::isVisible);
         assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
 
-        sickNote(webDriver, person);
-        sickNoteWithIncapacityCertificate(webDriver, person);
-        childSickNote(webDriver, person);
-        childSickNoteWithIncapacityCertificate(webDriver, person);
-
-        sickNoteStatisticListView(webDriver, person);
+        sickNote(page, person);
+        sickNoteWithIncapacityCertificate(page, person);
+        childSickNote(page, person);
+        childSickNoteWithIncapacityCertificate(page, person);
+        sickNoteStatisticListView(page, person);
 
         navigationPage.logout();
-        wait.until(pageIsVisible(loginPage));
+        page.context().waitForCondition(loginPage::isVisible);
     }
 
-    private void sickNote(RemoteWebDriver webDriver, Person person) {
-        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
-
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, GERMAN);
+    private void sickNote(Page page, Person person) {
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SickNotePage sickNotePage = new SickNotePage(page);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
-        wait.until(pageIsVisible(sickNotePage));
+        page.context().waitForCondition(sickNotePage::isVisible);
 
         assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
@@ -151,23 +130,21 @@ class SickNoteIT {
         assertThat(sickNotePage.showsToDate(LocalDate.of(2022, FEBRUARY, 23))).isTrue();
 
         sickNotePage.submit();
+        page.context().waitForCondition(sickNoteDetailPage::isVisible);
 
-        wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, FEBRUARY, 23))).isTrue();
         assertThat(sickNoteDetailPage.showsNoIncapacityCertificate()).isTrue();
     }
 
-    private void sickNoteWithIncapacityCertificate(RemoteWebDriver webDriver, Person person) {
-        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
-
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, GERMAN);
+    private void sickNoteWithIncapacityCertificate(Page page, Person person) {
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SickNotePage sickNotePage = new SickNotePage(page);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
-        wait.until(pageIsVisible(sickNotePage));
+        page.context().waitForCondition(sickNotePage::isVisible);
 
         assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
@@ -180,8 +157,8 @@ class SickNoteIT {
         assertThat(sickNotePage.showsAubToDate(LocalDate.of(2022, MARCH, 11))).isTrue();
 
         sickNotePage.submit();
+        page.context().waitForCondition(sickNoteDetailPage::isVisible);
 
-        wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, MARCH, 10))).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2022, MARCH, 11))).isTrue();
@@ -189,16 +166,14 @@ class SickNoteIT {
         assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(2022, MARCH, 11))).isTrue();
     }
 
-    private void childSickNote(RemoteWebDriver webDriver, Person person) {
-        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
-
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, GERMAN);
+    private void childSickNote(Page page, Person person) {
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SickNotePage sickNotePage = new SickNotePage(page);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
-        wait.until(pageIsVisible(sickNotePage));
+        page.context().waitForCondition(sickNotePage::isVisible);
 
         assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
@@ -209,24 +184,22 @@ class SickNoteIT {
         sickNotePage.toDate(LocalDate.of(2022, APRIL, 12));
 
         sickNotePage.submit();
+        page.context().waitForCondition(sickNoteDetailPage::isVisible);
 
-        wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsChildSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, APRIL, 11))).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2022, APRIL, 12))).isTrue();
         assertThat(sickNoteDetailPage.showsNoIncapacityCertificate()).isTrue();
     }
 
-    private void childSickNoteWithIncapacityCertificate(RemoteWebDriver webDriver, Person person) {
-        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
-
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final SickNotePage sickNotePage = new SickNotePage(webDriver);
-        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(webDriver, messageSource, GERMAN);
+    private void childSickNoteWithIncapacityCertificate(Page page, Person person) {
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SickNotePage sickNotePage = new SickNotePage(page);
+        final SickNoteDetailPage sickNoteDetailPage = new SickNoteDetailPage(page, messageSource, GERMAN);
 
         navigationPage.quickAdd.click();
         navigationPage.quickAdd.newSickNote();
-        wait.until(pageIsVisible(sickNotePage));
+        page.context().waitForCondition(sickNotePage::isVisible);
 
         assertThat(sickNotePage.personSelected(person.getNiceName())).isTrue();
         assertThat(sickNotePage.typeSickNoteSelected()).isTrue();
@@ -240,8 +213,8 @@ class SickNoteIT {
         assertThat(sickNotePage.showsAubToDate(LocalDate.of(2022, MAY, 11))).isTrue();
 
         sickNotePage.submit();
+        page.context().waitForCondition(sickNoteDetailPage::isVisible);
 
-        wait.until(pageIsVisible(sickNoteDetailPage));
         assertThat(sickNoteDetailPage.showsChildSickNoteForPerson(person.getNiceName())).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateFrom(LocalDate.of(2022, MAY, 10))).isTrue();
         assertThat(sickNoteDetailPage.showsSickNoteDateTo(LocalDate.of(2022, MAY, 11))).isTrue();
@@ -249,14 +222,13 @@ class SickNoteIT {
         assertThat(sickNoteDetailPage.showsSickNoteAubDateTo(LocalDate.of(2022, MAY, 11))).isTrue();
     }
 
-    private void sickNoteStatisticListView(RemoteWebDriver webDriver, Person person) {
-        final WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+    private void sickNoteStatisticListView(Page page, Person person) {
 
-        final NavigationPage navigationPage = new NavigationPage(webDriver);
-        final SickNoteOverviewPage sickNoteOverviewPage = new SickNoteOverviewPage(webDriver, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SickNoteOverviewPage sickNoteOverviewPage = new SickNoteOverviewPage(page, messageSource, GERMAN);
 
         navigationPage.clickSickNotes();
-        wait.until(pageIsVisible(sickNoteOverviewPage));
+        page.context().waitForCondition(sickNoteOverviewPage::isVisible);
 
         assertThat(sickNoteOverviewPage.showsSickNoteStatistic(person.getFirstName(), person.getLastName(), 3, 1)).isTrue();
         assertThat(sickNoteOverviewPage.showsChildSickNoteStatistic(person.getFirstName(), person.getLastName(), 4, 1)).isTrue();
@@ -275,14 +247,6 @@ class SickNoteIT {
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, true, expiryDate, TEN, TEN, TEN, ZERO, null);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), true, expiryDate.plusYears(1), TEN, TEN, TEN, ZERO, null);
 
-
         return savedPerson;
-    }
-
-    private ChromeOptions chromeOptions() {
-        final ChromeOptions options = new ChromeOptions();
-        options.setExperimentalOption("prefs", Map.of("intl.accept_languages", "de-DE"));
-        options.addArguments("--disable-dev-shm-usage");
-        return options;
     }
 }

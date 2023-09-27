@@ -1,45 +1,43 @@
 package org.synyx.urlaubsverwaltung.ui.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.synyx.urlaubsverwaltung.ui.Page;
+import com.microsoft.playwright.Page;
 
 import java.time.LocalDate;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
 
-public class OvertimePage implements Page {
+public class OvertimePage {
 
-    private static final By START_DATE_SELECTOR = By.cssSelector("[data-test-id=overtime-start-date]");
-    private static final By END_DATE_SELECTOR = By.cssSelector("[data-test-id=overtime-end-date]");
-    private static final By HOURS_SELECTOR = By.cssSelector("[data-test-id=overtime-hours]");
-    private static final By MINUTES_SELECTOR = By.cssSelector("[data-test-id=overtime-minutes]");
-    private static final By SUBMIT_SELECTOR = By.cssSelector("[data-test-id=overtime-submit-button]");
+    private static final String DUET_START_DATE_SELECTOR = "duet-date-picker [data-test-id=overtime-start-date]";
+    private static final String DUET_END_DATE_SELECTOR = "duet-date-picker [data-test-id=overtime-end-date]";
+    private static final String HOURS_SELECTOR = "[data-test-id=overtime-hours]";
+    private static final String MINUTES_SELECTOR = "[data-test-id=overtime-minutes]";
+    private static final String SUBMIT_SELECTOR = "[data-test-id=overtime-submit-button]";
 
-    private final WebDriver driver;
+    private final Page page;
 
-    public OvertimePage(WebDriver driver) {
-        this.driver = driver;
+    public OvertimePage(Page page) {
+        this.page = page;
     }
 
-    @Override
-    public boolean isVisible(WebDriver driver) {
-        return !driver.findElements(START_DATE_SELECTOR).isEmpty()
-            && !driver.findElements(END_DATE_SELECTOR).isEmpty()
-            && !driver.findElements(SUBMIT_SELECTOR).isEmpty();
+    public boolean isVisible() {
+        page.locator(DUET_START_DATE_SELECTOR).waitFor();
+        page.locator(DUET_END_DATE_SELECTOR).waitFor();
+        page.locator(SUBMIT_SELECTOR).waitFor();
+        return true;
     }
 
     public void startDate(LocalDate startDate) {
         final String dateString = ofPattern("dd.MM.yyyy").format(startDate);
-        driver.findElement(START_DATE_SELECTOR).sendKeys(dateString);
+        page.locator(DUET_START_DATE_SELECTOR).fill(dateString);
     }
 
     public void hours(int hours) {
-        driver.findElement(HOURS_SELECTOR).sendKeys(String.valueOf(hours));
+        page.locator(HOURS_SELECTOR).fill(String.valueOf(hours));
     }
 
     public void minutes(int minutes) {
-        driver.findElement(MINUTES_SELECTOR).sendKeys(String.valueOf(minutes));
+        page.locator(MINUTES_SELECTOR).fill(String.valueOf(minutes));
     }
 
     /**
@@ -47,11 +45,11 @@ public class OvertimePage implements Page {
      * You may have to add a wait yourself after calling this method.
      */
     public void submit() {
-        driver.findElement(SUBMIT_SELECTOR).click();
+        page.locator(SUBMIT_SELECTOR).click();
     }
 
     public boolean showsEndDate(LocalDate endDate) {
-        final String value = driver.findElement(END_DATE_SELECTOR).getAttribute("value");
+        final String value = page.locator(DUET_END_DATE_SELECTOR).inputValue();
         final String expectedDateString = ofPattern("dd.MM.yyyy").format(endDate);
         return value.equals(expectedDateString);
     }
