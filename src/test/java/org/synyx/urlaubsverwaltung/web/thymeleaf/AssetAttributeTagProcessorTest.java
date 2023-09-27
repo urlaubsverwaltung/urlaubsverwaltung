@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.web.thymeleaf;
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.web.AssetManifestService;
 import org.thymeleaf.processor.element.IElementTagStructureHandler;
 
 import static org.mockito.Mockito.mock;
@@ -11,10 +12,11 @@ class AssetAttributeTagProcessorTest {
 
     @Test
     void ensureDoProcessCallsAssetFilenameHashMapperAndSetsTheHashedValue() {
-        final AssetFilenameHashMapper assetFilenameHashMapper = mock(AssetFilenameHashMapper.class);
-        final AssetAttributeTagProcessor assetAttributeTagProcessor = new AssetAttributeTagProcessor("uv", "href", assetFilenameHashMapper);
+        final AssetManifestService assetManifestService = mock(AssetManifestService.class);
+        final AssetAttributeTagProcessor assetAttributeTagProcessor = new AssetAttributeTagProcessor("uv", "href", assetManifestService);
+        final String contextPath = "";
 
-        when(assetFilenameHashMapper.getHashedAssetFilename("awesome-attribute-value"))
+        when(assetManifestService.getHashedAssetFilename("awesome-attribute-value", contextPath))
             .thenReturn("value-with-hash");
 
         final IElementTagStructureHandler structureHandler = mock(IElementTagStructureHandler.class);

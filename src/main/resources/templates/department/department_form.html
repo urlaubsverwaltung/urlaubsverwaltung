@@ -1,14 +1,15 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title
       th:with="departmentTitleMessagekey=${department.id == null ? 'department.data.header.title.new' : 'department.data.header.title.edit'}"
       th:text="#{__${departmentTitleMessagekey}__}"
     ></title>
-    <th:block th:fragment="scripts">
-      <script defer asset:src="npm.hotwired.js"></script>
-      <script defer asset:src="app_statistics~department_form~person_notifications~persons~sick_notes.js"></script>
-      <script defer asset:src="department_form.js"></script>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('department_form.js')}" />
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="department_form.js"></script>
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">

@@ -1,9 +1,12 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{}, ~{::scripts})}">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{sicknote.convert.header.title}">Krankmeldung in Abwesenheit umwandeln</title>
-    <th:block th:fragment="scripts">
-      <script defer asset:src="sick_note_convert.js"></script>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('sick_note_convert.js')}" />
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="sick_note_convert.js"></script>
     </th:block>
   </head>
 

@@ -1,16 +1,12 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
     <title th:text="#{overview.header.title(${person.niceName}, ${selectedYear})}"></title>
-    <th:block th:fragment="styles">
-      <link
-        rel="stylesheet"
-        type="text/css"
-        asset:href="account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css"
-      />
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('overtime_reduced.js')}" />
     </th:block>
-    <th:block th:fragment="scripts">
-      <script th:inline="javascript"></script>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="overtime_reduced.js"></script>
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">

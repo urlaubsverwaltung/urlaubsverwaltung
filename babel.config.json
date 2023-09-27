@@ -1,20 +1,9 @@
 {
-  "presets": [
-    [
-      "@babel/preset-env",
-      {
-        "modules": false,
-        "useBuiltIns": "entry",
-        "corejs": "2",
-        "targets": "> 0.25%, not dead"
-      }
-    ]
-  ],
-  "plugins": [
-    "@babel/plugin-syntax-dynamic-import"
-  ],
   "env": {
     "test": {
+      "plugins": [
+        "@babel/plugin-syntax-dynamic-import"
+      ],
       "presets": [
         [
           "@babel/preset-env",

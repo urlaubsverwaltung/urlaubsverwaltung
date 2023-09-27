@@ -9,14 +9,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 class FrameConfiguration implements WebMvcConfigurer {
 
     private final FrameDataProvider frameDataProvider;
+    private final PreloadAssetProvider preloadAssetProvider;
 
     @Autowired
-    FrameConfiguration(FrameDataProvider frameDataProvider) {
+    FrameConfiguration(FrameDataProvider frameDataProvider, PreloadAssetProvider preloadAssetProvider) {
         this.frameDataProvider = frameDataProvider;
+        this.preloadAssetProvider = preloadAssetProvider;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(frameDataProvider);
+        registry.addInterceptor(preloadAssetProvider);
     }
 }

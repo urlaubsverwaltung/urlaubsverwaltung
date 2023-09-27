@@ -1,21 +1,11 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{_layout::head(~{::title}, ~{::styles}, ~{::scripts})}">
+  <head
+    th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
+  >
     <title th:text="${sickNote.id == null} ? #{sicknote.create.header.title} : #{sicknote.edit.header.title}">
       Neue Krankmeldung
     </title>
-    <th:block th:fragment="styles">
-      <link
-        rel="stylesheet"
-        type="text/css"
-        asset:href="account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.css"
-      />
-      <link
-        rel="stylesheet"
-        type="text/css"
-        asset:href="account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.css"
-      />
-    </th:block>
     <th:block th:fragment="scripts">
       <script th:inline="javascript">
         /*<![CDATA[*/
@@ -25,23 +15,14 @@
         window.uv.apiPrefix = /*[[@{/api}]]*/ "/api";
         /*]]>*/
       </script>
-      <script defer asset:src="npm.duetds.js"></script>
-      <script defer asset:src="npm.date-fns.js"></script>
-      <script
-        defer
-        asset:src="account_form~app_form~app_statistics~overtime_form~sick_note_form~sick_notes~workingtime_form.js"
-      ></script>
-      <script
-        defer
-        asset:src="account_form~app_form~app_statistics~overtime_form~person_overview~sick_note_form~sick_notes~workingtime_form.js"
-      ></script>
-      <script
-        defer
-        asset:src="account_form~app_detail~app_form~app_statistics~common~overtime_form~person_overview~sick_note_form~~ac852a85.js"
-      ></script>
-      <script defer asset:src="sick_note_form.js"></script>
-      <script th:replace="~{fragments/datepicker-localization}"></script>
+      <script th:replace="~{fragments/datepicker-localization :: datepicker-localization}"></script>
       <script th:replace="~{fragments/vacation-type-colors-script :: vacation-type-colors-script}"></script>
+    </th:block>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('sick_note_form.js')}" />
+    </th:block>
+    <th:block th:fragment="scriptsDefer">
+      <script defer type="module" asset:src="sick_note_form.js"></script>
     </th:block>
   </head>
   <body th:replace="~{_layout::body(~{::main}, ~{})}">

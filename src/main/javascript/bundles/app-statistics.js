@@ -1,3 +1,4 @@
+import "../js/common";
 import * as Turbo from "@hotwired/turbo";
 import "../components/details-dropdown";
 import { initAutosubmit } from "../components/form";

@@ -14,7 +14,7 @@ indent_size = 4
 [.eslintrc]
 indent_size = 2
 
-[*.{html,js,css,json,svg,xml,yml,yaml}]
+[*.{html,js,mjs,css,json,svg,xml,yml,yaml}]
 indent_size = 2
 
 [*.md]

@@ -1,9 +1,12 @@
+import "../js/common";
 import * as Turbo from "@hotwired/turbo";
 import "../components/details-dropdown";
-import { initAutosubmit } from "../components/form";
 import "../js/sick-notes/sick-days";
 import "../js/hotwire-turbo-progressbar";
-import "../js/navigate";
+import { initAutosubmit } from "../components/form";
+import { navigate } from "../js/navigate";
+
+window.navigate = navigate;
 
 initAutosubmit();
 

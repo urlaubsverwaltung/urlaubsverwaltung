@@ -1,0 +1,10 @@
+{
+  "file-one.js": {
+    "url": "/public-path/file-one.contenthash.min.js",
+    "dependencies": []
+  },
+  "file-one.css": {
+    "url": "/public-path/file-one.contenthash.css",
+    "dependencies": []
+  }
+}
