@@ -2,7 +2,6 @@ package org.synyx.urlaubsverwaltung.web;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
@@ -12,15 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
-import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toMap;
-import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.hasText;
 
 @Service
 public class AssetManifestService {
-
-    private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private static final String ASSETS_MANIFEST_FILE = "classpath:assets-manifest.json";
 
@@ -43,9 +38,8 @@ public class AssetManifestService {
 
     private Asset getAsset(String assetNameWithoutHash, String contextPath) {
 
-        LOG.info("reading assets-manifest with contextPath={}", contextPath);
-
         final Map<String, Asset> assets = readAssetManifest();
+
         if (assets.containsKey(assetNameWithoutHash)) {
             return withContext(assets.get(assetNameWithoutHash), contextPath);
         }
