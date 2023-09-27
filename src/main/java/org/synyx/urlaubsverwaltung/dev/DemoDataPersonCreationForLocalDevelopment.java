@@ -3,7 +3,7 @@ package org.synyx.urlaubsverwaltung.dev;
 import org.slf4j.Logger;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.availability.AvailabilityChangeEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,8 @@ public class DemoDataPersonCreationForLocalDevelopment {
     }
 
     @Async
-    @EventListener(ApplicationStartedEvent.class)
+    // AvailabilityChangeEvent is after ApplicationStartedEvent which creates sick note type definitions in database which are needed for demo data creations
+    @EventListener(AvailabilityChangeEvent.class)
     public void createDemoPersons() {
         LOG.info("Creating demo persons for local development");
         personDataProvider.createTestPerson("user", "Klaus", "Müller", "user@urlaubsverwaltung.cloud");

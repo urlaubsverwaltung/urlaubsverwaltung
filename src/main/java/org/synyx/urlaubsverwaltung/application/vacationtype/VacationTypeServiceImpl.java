@@ -125,8 +125,8 @@ public class VacationTypeServiceImpl implements VacationTypeService {
         );
     }
 
-    @EventListener
-    void insertDefaultVacationTypes(ApplicationStartedEvent event) {
+    @EventListener(ApplicationStartedEvent.class)
+    void insertDefaultVacationTypes() {
         final long count = vacationTypeRepository.count();
         if (count == 0) {
 
