@@ -30,7 +30,7 @@ public class AvatarController {
         final String svg = svgService.createSvg("svg/avatar", locale, model);
 
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.maxAge(60, TimeUnit.MINUTES))
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
             .contentType(MediaType.valueOf("image/svg+xml"))
             .body(svg);
     }
