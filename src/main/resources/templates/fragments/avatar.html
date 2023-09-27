@@ -6,40 +6,46 @@
   </head>
   <body>
     <th:block th:fragment="avatar(url,niceName,width,height,personId)">
-      <a
-        th:if="${personId != null}"
-        th:href="@{/web/person/__${personId}__/overview}"
-        th:aria-label="#{nav.avatar-menu.overview.link(${niceName})}"
-        class="tw-text-inherit"
-        data-turbo="false"
-      >
-        <img
-          th:if="${url != null}"
-          src="#"
-          th:src="${gravatarEnabled ? url : '#'}"
-          alt=""
-          class="gravatar gravatar--medium tw-rounded-full tw-block"
-          th:classappend="${className}"
-          th:width="${width == null ? '32px' : width}"
-          th:height="${height == null ? '32px' : height}"
-          th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
-          th:data-fallback="${fallbackAvatarUrl}"
-          is="uv-avatar"
-        />
-      </a>
-      <img
-        th:if="${url != null && personId == null}"
-        src="#"
-        th:src="${gravatarEnabled ? url : '#'}"
-        alt=""
-        class="gravatar gravatar--medium tw-rounded-full"
-        th:classappend="${className}"
-        th:width="${width == null ? '32px' : width}"
-        th:height="${height == null ? '32px' : height}"
-        th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
-        th:data-fallback="${fallbackAvatarUrl}"
-        is="uv-avatar"
-      />
+      <th:block th:if="${personId != null}">
+        <a
+          th:href="@{/web/person/__${personId}__/overview}"
+          th:aria-label="#{nav.avatar-menu.overview.link(${niceName})}"
+          class="tw-text-inherit"
+          data-turbo="false"
+        >
+          <th:block th:ref="avatar-images">
+            <img
+              th:if="${gravatarEnabled == true}"
+              src="#"
+              th:src="${url}"
+              alt=""
+              class="gravatar gravatar--medium tw-rounded-full tw-block"
+              th:classappend="${className}"
+              th:width="${width == null ? '32px' : width}"
+              th:height="${height == null ? '32px' : height}"
+              th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
+              th:data-fallback="${fallbackAvatarUrl}"
+              is="uv-avatar"
+            />
+            <img
+              th:if="${gravatarEnabled == false}"
+              src="#"
+              th:src="@{/web/avatar (name=${niceName})}"
+              alt=""
+              class="gravatar gravatar--medium tw-rounded-full tw-block"
+              th:classappend="${className}"
+              th:width="${width == null ? '32px' : width}"
+              th:height="${height == null ? '32px' : height}"
+              is="uv-avatar"
+            />
+          </th:block>
+        </a>
+      </th:block>
+
+      <th:block th:if="${url != null && personId == null}">
+        <th:block th:replace="~{:: avatar-images}"></th:block>
+      </th:block>
+
       <th:block th:if="${url == null}">
         <svg th:replace="icon/avatar-unknown::svg"></svg>
       </th:block>
