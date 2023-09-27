@@ -52,7 +52,7 @@ class AvatarControllerTest {
             .param("name", name))
             .andExpect(status().isOk())
             .andExpect(content().contentType("image/svg+xml"))
-            .andExpect(header().string("Cache-Control", "max-age=3600"))
+            .andExpect(header().string("Cache-Control", "max-age=31536000"))
             .andExpect(content().string("<svg></svg>"));
     }
 
