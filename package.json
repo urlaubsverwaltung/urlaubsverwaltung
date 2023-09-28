@@ -48,7 +48,7 @@
     "esbuild": "0.18.17",
     "fast-glob": "3.3.1",
     "font-awesome": "4.7.0",
-    "jquery": "3.7.0",
+    "jquery": "3.7.1",
     "less-plugin-clean-css": "1.5.1",
     "lint-staged": "13.2.3",
     "rimraf": "5.0.5",
