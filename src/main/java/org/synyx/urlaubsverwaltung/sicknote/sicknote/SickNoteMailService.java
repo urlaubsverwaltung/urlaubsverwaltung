@@ -65,8 +65,7 @@ class SickNoteMailService {
         for (SickNote sickNote : sickNotes) {
 
             // we need to subtract 1 day, because the start date is inclusive
-            final LocalDate lastDayOfSickPayDays = sickNote.getStartDate()
-                .plus(maximumSickPayDays.longValue(), DAYS)
+            final LocalDate lastDayOfSickPayDays = sickNote.getStartDate().plusDays(maximumSickPayDays.longValue())
                 .minusDays(1);
             final long sickPayDaysEndedDaysAgo = LocalDate.now(clock).until(lastDayOfSickPayDays, DAYS);
 

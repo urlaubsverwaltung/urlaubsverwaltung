@@ -161,7 +161,7 @@ public class ICalService {
     }
 
     private String generateUid(Absence absence) {
-        final String data = absence.getStartDate() + "" + absence.getEndDate() + "" + absence.getPerson();
+        final String data = absence.getStartDate() + "" + absence.getEndDate() + absence.getPerson();
         return DigestUtils.md5Hex(data).toUpperCase();
     }
 

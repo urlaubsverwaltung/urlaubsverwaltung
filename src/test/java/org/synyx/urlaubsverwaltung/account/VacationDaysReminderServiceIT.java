@@ -74,7 +74,7 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        final String content = (String) readPlainContent(msg);
+        final String content = readPlainContent(msg);
         assertThat(content).isEqualTo("""
             Hallo Lieschen Müller,
 
@@ -123,7 +123,7 @@ class VacationDaysReminderServiceIT extends TestContainersBase {
         assertThat(new InternetAddress(person.getEmail())).isEqualTo(msg.getAllRecipients()[0]);
 
         // check content of email
-        final String content = (String) readPlainContent(msg);
+        final String content = readPlainContent(msg);
         assertThat(content).isEqualTo("""
             Hallo Lieschen Müller,
 
