@@ -8,5 +8,5 @@ public enum VacationTypeColor {
     CYAN,
     BLUE,
     VIOLET,
-    PINK;
+    PINK
 }

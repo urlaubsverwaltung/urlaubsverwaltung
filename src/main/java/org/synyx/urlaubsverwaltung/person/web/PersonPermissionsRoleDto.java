@@ -10,5 +10,5 @@ public enum PersonPermissionsRoleDto {
     ADMIN,
     INACTIVE,
     APPLICATION_ADD_CANCEL,
-    SICK_NOTE_VIEW_ADD_EDIT;
+    SICK_NOTE_VIEW_ADD_EDIT
 }

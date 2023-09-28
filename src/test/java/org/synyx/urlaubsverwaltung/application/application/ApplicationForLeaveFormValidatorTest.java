@@ -644,7 +644,6 @@ class ApplicationForLeaveFormValidatorTest {
         VacationType holiday = new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
         VacationType specialLeave = new VacationType(1L, true, SPECIALLEAVE, "message_key", true, true, YELLOW, false);
         VacationType unpaidLeave = new VacationType(1L, true, UNPAIDLEAVE, "message_key", true, true, YELLOW, false);
-        ;
 
         assertHoursNotMandatory.accept(holiday);
         assertHoursNotMandatory.accept(specialLeave);

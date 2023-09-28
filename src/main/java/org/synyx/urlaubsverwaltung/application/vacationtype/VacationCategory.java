@@ -9,5 +9,5 @@ public enum VacationCategory {
     SPECIALLEAVE,
     UNPAIDLEAVE,
     OVERTIME,
-    OTHER;
+    OTHER
 }
