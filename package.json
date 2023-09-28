@@ -67,7 +67,7 @@
     "@types/jest": "29.5.5",
     "@urlaubsverwaltung/eslint-plugin": "1.2.0",
     "autoprefixer": "10.4.16",
-    "babel-jest": "29.6.4",
+    "babel-jest": "29.7.0",
     "concurrently": "8.2.1",
     "cross-env": "7.0.3",
     "cssnano": "6.0.1",
