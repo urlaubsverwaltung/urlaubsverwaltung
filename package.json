@@ -51,7 +51,7 @@
     "jquery": "3.7.0",
     "less-plugin-clean-css": "1.5.1",
     "lint-staged": "13.2.3",
-    "rimraf": "5.0.1",
+    "rimraf": "5.0.5",
     "rollup": "3.29.4",
     "rollup-plugin-esbuild": "5.0.0",
     "rollup-plugin-postcss": "4.0.2",
