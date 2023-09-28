@@ -1,61 +1,61 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8" />
-  <title>avatar</title>
-</head>
-<body>
-<th:block th:fragment="avatar(url,niceName,width,height,personId)">
-  <th:block th:if="${personId != null}">
-    <a
-      th:href="@{/web/person/__${personId}__/overview}"
-      th:aria-label="#{nav.avatar-menu.overview.link(${niceName})}"
-      class="tw-text-inherit"
-      data-turbo="false"
-    >
-      <th:block th:ref="avatar-images">
-        <img
-          th:if="${gravatarEnabled == true}"
-          src="#"
-          th:src="${url}"
-          alt=""
-          class="gravatar gravatar--medium tw-rounded-full tw-block"
-          th:classappend="${className}"
-          th:width="${width == null ? '32px' : width}"
-          th:height="${height == null ? '32px' : height}"
-          th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
-          th:data-fallback="${fallbackAvatarUrl}"
-          is="uv-avatar"
-        />
-        <img
-          th:if="${gravatarEnabled == false}"
-          src="#"
-          th:src="@{/web/avatar (name=${niceName})}"
-          alt=""
-          class="gravatar gravatar--medium tw-rounded-full tw-block"
-          th:classappend="${className}"
-          th:width="${width == null ? '32px' : width}"
-          th:height="${height == null ? '32px' : height}"
-          is="uv-avatar"
-        />
+  <head>
+    <meta charset="UTF-8" />
+    <title>avatar</title>
+  </head>
+  <body>
+    <th:block th:fragment="avatar(url,niceName,width,height,personId)">
+      <th:block th:if="${personId != null}">
+        <a
+          th:href="@{/web/person/__${personId}__/overview}"
+          th:aria-label="#{nav.avatar-menu.overview.link(${niceName})}"
+          class="tw-text-inherit"
+          data-turbo="false"
+        >
+          <th:block th:ref="avatar-images">
+            <img
+              th:if="${gravatarEnabled == true}"
+              src="#"
+              th:src="${url}"
+              alt=""
+              class="gravatar gravatar--medium tw-rounded-full tw-block"
+              th:classappend="${className}"
+              th:width="${width == null ? '32px' : width}"
+              th:height="${height == null ? '32px' : height}"
+              th:with="fallbackAvatarUrl=@{/web/avatar (name=${niceName})}"
+              th:data-fallback="${fallbackAvatarUrl}"
+              is="uv-avatar"
+            />
+            <img
+              th:if="${gravatarEnabled == false}"
+              src="#"
+              th:src="@{/web/avatar (name=${niceName})}"
+              alt=""
+              class="gravatar gravatar--medium tw-rounded-full tw-block"
+              th:classappend="${className}"
+              th:width="${width == null ? '32px' : width}"
+              th:height="${height == null ? '32px' : height}"
+              is="uv-avatar"
+            />
+          </th:block>
+        </a>
       </th:block>
-    </a>
-  </th:block>
 
-  <th:block th:if="${url != null && personId == null}">
-    <th:block th:replace="~{:: avatar-images}"></th:block>
-  </th:block>
+      <th:block th:if="${url != null && personId == null}">
+        <th:block th:replace="~{:: avatar-images}"></th:block>
+      </th:block>
 
-  <th:block th:if="${url == null}">
-    <svg th:replace="~{icon/avatar-unknown::svg}"></svg>
-  </th:block>
-</th:block>
+      <th:block th:if="${url == null}">
+        <svg th:replace="~{icon/avatar-unknown::svg}"></svg>
+      </th:block>
+    </th:block>
 
-<span
-  th:fragment="avatar-bordered(url,niceName,width,height,personId)"
-  class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-rounded-full tw-p-1 tw-inline-flex"
->
+    <span
+      th:fragment="avatar-bordered(url,niceName,width,height,personId)"
+      class="tw-bg-gradient-to-br tw-from-blue-50 tw-to-blue-200 dark:tw-from-sky-800 dark:tw-to-zinc-800 tw-rounded-full tw-p-1 tw-inline-flex"
+    >
       <img src="#" alt="" th:replace="~{::avatar(${url},${niceName},${width},${height},${personId})}" />
     </span>
-</body>
+  </body>
 </html>
