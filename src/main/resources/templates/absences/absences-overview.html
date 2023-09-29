@@ -116,24 +116,26 @@
                 >
                   Department
                 </label>
-                <select
-                  th:replace="~{fragments/select::multi(id='departmentSelect', name='department', options=~{::department-select-options}, className='tw-row-start-3')}"
-                  id="departmentSelect"
-                >
-                  <th:block th:fragment="department-select-options">
-                    <option
-                      th:each="department : ${visibleDepartments}"
-                      value=""
+                <div class="tw-row-start-3 tw-flex tw-gap-2">
+                  <span
+                    th:each="department : ${visibleDepartments}"
+                    th:with="id=${'department-' + departmentStat.index}, selected=${#lists.contains(selectedDepartments, department.name)}"
+                    class="department-checkbox checkbox-switch checkbox-switch--sm"
+                  >
+                    <input
+                      type="checkbox"
+                      name="department"
                       th:value="${department.name}"
-                      th:selected="${#lists.contains(selectedDepartments, department.name)}"
-                      th:text="${department.name}"
-                    ></option>
-                  </th:block>
-                </select>
-                <span class="help-block tw-hidden md:tw-inline tw-text-sm tw-col-start-3 tw-row-start-3">
-                  <svg th:replace="~{icon/info::svg(className='tw-w-4 tw-h-4')}"></svg>
-                  <th:block th:text="#{absences.overview.department.help}"></th:block>
-                </span>
+                      th:checked="${selected}"
+                      id="department-one"
+                      th:id="${id}"
+                      class="tw-m-0"
+                    />
+                    <label for="department-one" th:for="${id}" th:text="${department.name}" class="tw-m-0">
+                      Department
+                    </label>
+                  </span>
+                </div>
               </th:block>
             </div>
           </form>

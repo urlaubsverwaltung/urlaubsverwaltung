@@ -1,3 +1,27 @@
+.department-checkbox {
+  @apply tw-cursor-pointer;
+  @apply tw-border;
+  @apply tw-border-zinc-200;
+  @apply dark:tw-border-zinc-600;
+  @apply tw-rounded;
+  @apply tw-pl-1;
+  @apply tw-pr-2;
+  @apply tw-py-1;
+  @apply tw-flex;
+  @apply tw-items-center;
+  @apply tw-gap-1;
+}
+.department-checkbox label {
+  @apply tw-cursor-pointer;
+}
+
+.department-checkbox:has(:checked) {
+  @apply tw-border-blue-100;
+  @apply tw-bg-blue-50;
+  @apply dark:tw-border-zinc-600;
+  @apply dark:tw-bg-zinc-950;
+}
+
 th.vacationOverview-cal-head.today {
   --vacation-overview-rows: 0;
   position: relative;
