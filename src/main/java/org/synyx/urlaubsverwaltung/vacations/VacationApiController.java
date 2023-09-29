@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceMarker;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
-import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
@@ -25,7 +24,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -120,11 +118,10 @@ public class VacationApiController {
         final Person person = getPerson(personId);
 
         final List<Application> applications = new ArrayList<>();
-        final List<Department> departments = departmentService.getAssignedDepartmentsOfMember(person);
-        if (departments.isEmpty()) {
+        final long numberOfDepartments = departmentService.getNumberOfDepartments();
+        if (numberOfDepartments == 0) {
             applications.addAll(applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED));
             applications.addAll(applicationService.getApplicationsForACertainPeriodAndState(startDate, endDate, ALLOWED_CANCELLATION_REQUESTED));
-
         } else {
             applications.addAll(departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(person, startDate, endDate));
         }
@@ -138,7 +135,6 @@ public class VacationApiController {
     }
 
     private VacationsDto mapToVacationResponse(List<Application> applications) {
-        final List<VacationDto> vacationsDto = applications.stream().map(VacationDto::new).collect(toList());
-        return new VacationsDto(vacationsDto);
+        return new VacationsDto(applications.stream().map(VacationDto::new).toList());
     }
 }
