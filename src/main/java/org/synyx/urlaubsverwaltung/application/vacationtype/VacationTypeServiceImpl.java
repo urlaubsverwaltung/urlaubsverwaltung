@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +44,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
 
     @Override
     public List<VacationType> getAllVacationTypes() {
-        return vacationTypeRepository.findAll().stream()
+        return vacationTypeRepository.findAll(Sort.by("id")).stream()
             .map(convertToVacationType())
             .collect(toList());
     }

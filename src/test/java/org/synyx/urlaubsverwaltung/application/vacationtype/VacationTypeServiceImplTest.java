@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Set;
@@ -91,7 +92,7 @@ class VacationTypeServiceImplTest {
         overtime.setCategory(OVERTIME);
         overtime.setActive(false);
 
-        when(vacationTypeRepository.findAll()).thenReturn(List.of(holiday, overtime));
+        when(vacationTypeRepository.findAll(Sort.by("id"))).thenReturn(List.of(holiday, overtime));
 
         final List<VacationType> allVacationTypes = sut.getAllVacationTypes();
         assertThat(allVacationTypes).hasSize(2);
