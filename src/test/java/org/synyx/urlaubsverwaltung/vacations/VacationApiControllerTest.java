@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.synyx.urlaubsverwaltung.api.RestControllerAdviceExceptionHandler;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
-import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -155,8 +154,7 @@ class VacationApiControllerTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        final List<Department> departments = List.of(new Department(), new Department());
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(departments);
+        when(departmentService.getNumberOfDepartments()).thenReturn(2L);
 
         when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
 
@@ -186,7 +184,7 @@ class VacationApiControllerTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
 
-        when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of());
+        when(departmentService.getNumberOfDepartments()).thenReturn(0L);
 
         when(personService.getPersonByID(23)).thenReturn(Optional.of(person));
 
