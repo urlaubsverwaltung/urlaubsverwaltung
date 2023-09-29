@@ -116,7 +116,7 @@
                 >
                   Department
                 </label>
-                <div class="tw-row-start-3 tw-flex tw-gap-2">
+                <div class="tw-row-start-3 tw-col-span-2 tw-flex tw-flex-col tw-gap-2 xs:tw-flex-row tw-flex-wrap">
                   <span
                     th:each="department : ${visibleDepartments}"
                     th:with="id=${'department-' + departmentStat.index}, selected=${#lists.contains(selectedDepartments, department.name)}"
