@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
   <head
-    th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload}))}"
+    th:replace="~{_layout::head(title=~{::title}, scripts=~{::scripts}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}"
   >
     <title th:text="#{person.form.annualVacation.header.title(${person.niceName})}">Urlaubsanspruch</title>
     <th:block th:fragment="scripts">

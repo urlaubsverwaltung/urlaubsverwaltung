@@ -41,7 +41,7 @@ class VacationTypeEntityRepositoryIT extends TestContainersBase {
         inactive.setColor(YELLOW);
         sut.save(inactive);
 
-        final List<VacationTypeEntity> activeVacationTypes = sut.findByActiveIsTrue();
+        final List<VacationTypeEntity> activeVacationTypes = sut.findByActiveIsTrueOrderById();
         assertThat(activeVacationTypes)
             .hasSize(1)
             .contains(active);

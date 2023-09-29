@@ -33,13 +33,13 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     private final VacationTypeRepository vacationTypeRepository;
 
     @Autowired
-    public VacationTypeServiceImpl(VacationTypeRepository vacationTypeRepository) {
+    VacationTypeServiceImpl(VacationTypeRepository vacationTypeRepository) {
         this.vacationTypeRepository = vacationTypeRepository;
     }
 
     @Override
     public Optional<VacationType> getById(Long id) {
-        return Optional.of(convert(vacationTypeRepository.getById(id)));
+        return Optional.of(convert(vacationTypeRepository.getReferenceById(id)));
     }
 
     @Override
@@ -51,7 +51,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
 
     @Override
     public List<VacationType> getActiveVacationTypes() {
-        return vacationTypeRepository.findByActiveIsTrue().stream()
+        return vacationTypeRepository.findByActiveIsTrueOrderById().stream()
             .map(convertToVacationType())
             .collect(toList());
     }

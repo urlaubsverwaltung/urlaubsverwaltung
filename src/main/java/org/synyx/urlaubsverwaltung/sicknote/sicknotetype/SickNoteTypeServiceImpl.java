@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +28,7 @@ class SickNoteTypeServiceImpl implements SickNoteTypeService {
 
     @Override
     public List<SickNoteType> getSickNoteTypes() {
-        return this.sickNoteTypeRepository.findAll();
+        return this.sickNoteTypeRepository.findAll(Sort.by("id"));
     }
 
     @EventListener(ApplicationStartedEvent.class)

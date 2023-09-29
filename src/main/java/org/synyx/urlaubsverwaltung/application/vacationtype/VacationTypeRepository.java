@@ -6,5 +6,5 @@ import java.util.List;
 
 interface VacationTypeRepository extends JpaRepository<VacationTypeEntity, Long> {
 
-    List<VacationTypeEntity> findByActiveIsTrue();
+    List<VacationTypeEntity> findByActiveIsTrueOrderById();
 }
