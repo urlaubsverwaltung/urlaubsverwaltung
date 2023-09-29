@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Set;
@@ -59,7 +60,7 @@ class SpecialLeaveSettingsServiceTest {
         specialLeaveSettingsEntity.setActive(false);
         specialLeaveSettingsEntity.setMessageKey("messageKey");
         specialLeaveSettingsEntity.setDays(2);
-        when(specialLeaveSettingsRepository.findAll()).thenReturn(List.of(specialLeaveSettingsEntity));
+        when(specialLeaveSettingsRepository.findAll(Sort.by("id"))).thenReturn(List.of(specialLeaveSettingsEntity));
 
         final List<SpecialLeaveSettingsItem> specialLeaveSettings = sut.getSpecialLeaveSettings();
         assertThat(specialLeaveSettings)
