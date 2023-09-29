@@ -1,9 +1,12 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -17,6 +20,7 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -62,35 +66,11 @@ class CalendarSharingViewControllerPersonCalendarSecurityIT extends TestContaine
             .andExpect(status().isForbidden());
     }
 
-    @Test
-    @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    void indexAsDepartmentHeadIsForbidden() throws Exception {
-
-        perform(get("/web/calendars/share/persons/1"))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    void indexAsSecondStageAuthorityIsForbidden() throws Exception {
-
-        perform(get("/web/calendars/share/persons/1"))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "ADMIN")
-    void indexAsAdminIsForbidden() throws Exception {
-
-        perform(get("/web/calendars/share/persons/1"))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "INACTIVE")
-    void indexAsInactiveIsForbidden() throws Exception {
-
-        perform(get("/web/calendars/share/persons/1"))
+    @ParameterizedTest
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    void ensureIndexAsWithIncorrectRoleIsForbidden(final String role) throws Exception {
+        perform(get("/web/calendars/share/persons/1")
+            .with(user("user").authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role))))
             .andExpect(status().isForbidden());
     }
 
