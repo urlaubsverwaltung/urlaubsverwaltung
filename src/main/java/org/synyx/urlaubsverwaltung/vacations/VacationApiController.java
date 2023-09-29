@@ -24,7 +24,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -136,7 +135,6 @@ public class VacationApiController {
     }
 
     private VacationsDto mapToVacationResponse(List<Application> applications) {
-        final List<VacationDto> vacationsDto = applications.stream().map(VacationDto::new).collect(toList());
-        return new VacationsDto(vacationsDto);
+        return new VacationsDto(applications.stream().map(VacationDto::new).toList());
     }
 }
