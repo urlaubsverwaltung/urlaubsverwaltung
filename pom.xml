@@ -327,6 +327,9 @@
         <configuration>
           <layout>ZIP</layout>
           <image>
+            <env>
+              <BP_JVM_VERSION>17</BP_JVM_VERSION>
+            </env>
             <name>
               ${docker-publish-registry}/${docker-publish-registry-path}/${project.artifactId}:${project.version}
             </name>
