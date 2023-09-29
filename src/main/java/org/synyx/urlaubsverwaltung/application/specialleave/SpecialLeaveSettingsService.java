@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.application.specialleave;
 import org.slf4j.Logger;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class SpecialLeaveSettingsService {
     }
 
     public List<SpecialLeaveSettingsItem> getSpecialLeaveSettings() {
-        return specialLeaveSettingsRepository.findAll().stream()
+        return specialLeaveSettingsRepository.findAll(Sort.by("id")).stream()
             .map(this::toSpecialLeaveSettingsItem)
             .collect(toList());
     }
