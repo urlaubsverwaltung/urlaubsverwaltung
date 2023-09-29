@@ -52,7 +52,7 @@ class VacationTypeServiceImplTest {
         overtimeActive.setCategory(OVERTIME);
         overtimeActive.setActive(true);
 
-        when(vacationTypeRepository.findByActiveIsTrue()).thenReturn(List.of(holiday, overtimeActive, overtime));
+        when(vacationTypeRepository.findByActiveIsTrueOrderById()).thenReturn(List.of(holiday, overtimeActive, overtime));
 
         final List<VacationType> typesWithoutCategory = sut.getActiveVacationTypesWithoutCategory(OVERTIME);
         assertThat(typesWithoutCategory).hasSize(1);
@@ -72,7 +72,7 @@ class VacationTypeServiceImplTest {
         overtimeActive.setCategory(OVERTIME);
         overtimeActive.setActive(true);
 
-        when(vacationTypeRepository.findByActiveIsTrue()).thenReturn(List.of(holiday, overtimeActive));
+        when(vacationTypeRepository.findByActiveIsTrueOrderById()).thenReturn(List.of(holiday, overtimeActive));
 
         final List<VacationType> activeVacationTypes = sut.getActiveVacationTypes();
         assertThat(activeVacationTypes).hasSize(2);
