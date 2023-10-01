@@ -28,7 +28,7 @@
   }
 
   /* Do not show sort icons in tables */
-  th.sortable-field .tablesorter-header-inner:after {
+  .tablesorter-header-inner:after {
     content: "";
   }
 

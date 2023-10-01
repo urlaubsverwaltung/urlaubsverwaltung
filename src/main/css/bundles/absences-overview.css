@@ -94,7 +94,7 @@ th.vacationOverview-cal-head.today::after {
   }
 }
 
-.vacationOverview-table th.tablesorter-header > div.tablesorter-header-inner {
+.vacationOverview-table div.tablesorter-header-inner {
   /* h-full only works when parent td has an explicit height */
   height: 100%;
 }
