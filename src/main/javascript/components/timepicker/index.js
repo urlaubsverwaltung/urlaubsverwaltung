@@ -1,2 +1,1 @@
-import "timepicker";
-import "timepicker/jquery.timepicker.css";
+export * from "./timepicker";

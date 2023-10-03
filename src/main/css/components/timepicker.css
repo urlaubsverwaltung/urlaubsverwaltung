@@ -1,0 +1,17 @@
+.timepicker-list-box .list-box-option {
+  padding: 0.125rem 1rem;
+}
+
+.timepicker-list-box .list-box-option:hover,
+.timepicker-list-box .list-box-option[data-focused] {
+  @apply dark:tw-bg-zinc-700;
+}
+
+.timepicker-list-box .list-box-option[aria-selected="true"] {
+  @apply dark:tw-bg-blue-700;
+}
+
+.timepicker-list-box .list-box-option[aria-selected="true"]:hover,
+.timepicker-list-box .list-box-option[aria-selected="true"][data-focused] {
+  @apply dark:tw-bg-blue-800;
+}
