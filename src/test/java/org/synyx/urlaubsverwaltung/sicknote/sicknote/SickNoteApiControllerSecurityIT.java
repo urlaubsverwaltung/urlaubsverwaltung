@@ -1,18 +1,20 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.synyx.urlaubsverwaltung.TestContainersBase;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,13 +23,13 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
-import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
-import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
 import static org.synyx.urlaubsverwaltung.person.Role.SICK_NOTE_VIEW;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
@@ -48,105 +50,36 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
 
     @Test
     void getSickNotesWithoutBasicAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/sicknotes"));
-        resultActions.andExpect(status().isUnauthorized());
+        perform(
+            get("/api/sicknotes")
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
     }
 
-    @Test
-    @WithMockUser(authorities = {"OFFICE", "SICK_NOTE_VIEW"})
-    void getSickNotesWithBasicAuthIsOk() throws Exception {
-
-        final Person office = new Person();
-        office.setPermissions(List.of(USER, OFFICE));
-        when(personService.getSignedInUser()).thenReturn(office);
-
+    @ParameterizedTest
+    @ValueSource(strings = {"USER", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "INACTIVE", "ADMIN"})
+    void getSicknotesIsForbidden(final String role) throws Exception {
         final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))));
-
-        resultActions.andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser
-    void getSicknotesWithNotPrivilegedUserIsForbidden() throws Exception {
-        final LocalDateTime now = LocalDateTime.now();
-        perform(get("/api/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "BOSS")
-    void getSicknotesWithBossUserIsForbidden() throws Exception {
-        final LocalDateTime now = LocalDateTime.now();
-        perform(get("/api/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    void getSicknotesWithDepartmentHeadUserIsForbidden() throws Exception {
-
-        final LocalDateTime now = LocalDateTime.now();
-        perform(get("/api/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    void getSicknotesWithSecondStageUserIsForbidden() throws Exception {
-        LocalDateTime now = LocalDateTime.now();
-        perform(get("/api/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "USER")
-    void getSicknotesWithUserIsForbidden() throws Exception {
-        LocalDateTime now = LocalDateTime.now();
-        perform(get("/api/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "INACTIVE")
-    void getSicknotesWithInactiveIsForbidden() throws Exception {
-        LocalDateTime now = LocalDateTime.now();
-        perform(get("/api/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "ADMIN")
-    void getSicknotesWithAdminIsForbidden() throws Exception {
-        LocalDateTime now = LocalDateTime.now();
-        perform(get("/api/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))))
+        perform(
+            get("/api/sicknotes")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(5)))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+        )
             .andExpect(status().isForbidden());
     }
 
     @Test
     void personsSickNotesWithoutBasicAuthIsUnauthorized() throws Exception {
-        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes"));
-        resultActions.andExpect(status().isUnauthorized());
+        perform(
+            get("/api/persons/1/sicknotes")
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
     }
 
     @Test
-    @WithMockUser(authorities = "OFFICE")
     void personsSickNotesWithOfficeUserOnlyIsOk() throws Exception {
 
         final Person person = new Person();
@@ -159,150 +92,70 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
         when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(SickNote.builder().build()));
 
         final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))));
 
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/1/sicknotes")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(5)))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+        )
+            .andExpect(status().isOk());
     }
 
-    @Test
-    @WithMockUser(authorities = {"BOSS", "SICK_NOTE_VIEW"})
-    void personsSickNotesWithBossUserAndSickNoteViewAuthorityIsOk() throws Exception {
-        final Person person = new Person();
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
+    @ParameterizedTest
+    @ValueSource(strings = {"OFFICE", "BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void personsSickNotesAndSickNoteViewAuthorityIsOk(final String role) throws Exception {
 
-        final Person office = new Person();
-        office.setPermissions(List.of(USER, BOSS, SICK_NOTE_VIEW));
-        when(personService.getSignedInUser()).thenReturn(office);
-
-        when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(SickNote.builder().build()));
+        final Person management = new Person();
+        management.setPermissions(List.of(USER, SICK_NOTE_VIEW, Role.valueOf(role)));
+        when(personService.getSignedInUser()).thenReturn(management);
 
         final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))));
 
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/sicknotes")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(5)))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("SICK_NOTE_VIEW"), new SimpleGrantedAuthority(role)))
+        )
+            .andExpect(status().isOk());
     }
 
-    @Test
-    @WithMockUser(authorities = {"DEPARTMENT_HEAD", "SICK_NOTE_VIEW"})
-    void personsSickNotesWithDepartmentHeadUserAndSickNoteViewAuthorityIsOk() throws Exception {
-        final Person person = new Person();
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-
-        final Person departmentHead = new Person();
-        departmentHead.setPermissions(List.of(USER, DEPARTMENT_HEAD, SICK_NOTE_VIEW));
-        when(personService.getSignedInUser()).thenReturn(departmentHead);
-
-        when(departmentService.isDepartmentHeadAllowedToManagePerson(departmentHead, person)).thenReturn(true);
-        when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(SickNote.builder().build()));
-
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))));
-
-        resultActions.andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser(authorities = {"BOSS"})
-    void personsSickNotesWithBossUserWithoutSickNoteViewAuthorityIsForbidden() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"BOSS", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY"})
+    void personsSickNotesWithoutSickNoteViewAuthorityIsForbidden(final String role) throws Exception {
         final Person person = new Person();
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
         final Person signedInPerson = new Person();
-        signedInPerson.setPermissions(List.of(USER, BOSS));
+        signedInPerson.setPermissions(List.of(USER, Role.valueOf(role)));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
         final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))));
 
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = {"DEPARTMENT_HEAD"})
-    void personsSickNotesWithDepartmentHeadUserWithoutSickNoteViewAuthorityIsForbidden() throws Exception {
-        final Person person = new Person();
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-
-        final Person signedInPerson = new Person();
-        signedInPerson.setPermissions(List.of(USER, DEPARTMENT_HEAD));
-        when(personService.getSignedInUser()).thenReturn(signedInPerson);
-
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))));
-
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = {"SECOND_STAGE_AUTHORITY"})
-    void personsSickNotesWithSecondStageUserWithoutSickNoteViewAuthorityIsForbidden() throws Exception {
-        final Person person = new Person();
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
-
-        final Person signedInPerson = new Person();
-        signedInPerson.setPermissions(List.of(USER, SECOND_STAGE_AUTHORITY));
-        when(personService.getSignedInUser()).thenReturn(signedInPerson);
-
-        final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))));
-
-        resultActions.andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser
-    void personsSickNotesWithNotPrivilegedUserIsForbidden() throws Exception {
-        final LocalDateTime now = LocalDateTime.now();
-        perform(get("/api/persons/1/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))))
+        perform(
+            get("/api/persons/1/sicknotes")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(5)))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+        )
             .andExpect(status().isForbidden());
     }
 
-    @Test
-    @WithMockUser(authorities = "USER")
-    void personsSickNotesWithUserIsForbidden() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"USER", "ADMIN", "INACTIVE"})
+    void personsSickNotesIsForbidden(final String role) throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        perform(get("/api/persons/1/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))))
+        perform(
+            get("/api/persons/1/sicknotes")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(5)))
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+        )
             .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(authorities = "INACTIVE")
-    void personsSickNotesWithInactiveIsForbidden() throws Exception {
-        LocalDateTime now = LocalDateTime.now();
-        perform(get("/api/persons/1/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "ADMIN")
-    void personsSickNotesWithAdminIsForbidden() throws Exception {
-        LocalDateTime now = LocalDateTime.now();
-        perform(get("/api/persons/1/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5))))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(username = "user")
     void personsSickNotesWithSameUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -314,16 +167,16 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
         when(sickNoteService.getByPersonAndPeriod(any(), any(), any())).thenReturn(List.of(SickNote.builder().build()));
 
         final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
-            .param("from", dtf.format(now))
-            .param("to", dtf.format(now.plusDays(5)))
-        );
 
-        resultActions.andExpect(status().isOk());
+        perform(
+            get("/api/persons/1/sicknotes")
+                .param("from", dtf.format(now))
+                .param("to", dtf.format(now.plusDays(5)))
+                .with(oidcLogin().idToken(builder -> builder.subject("user")))
+        ).andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "differentUser")
     void personsSickNotesWithDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
@@ -337,15 +190,15 @@ class SickNoteApiControllerSecurityIT extends TestContainersBase {
         when(personService.getSignedInUser()).thenReturn(otherPerson);
 
         final LocalDateTime now = LocalDateTime.now();
-        final ResultActions resultActions = perform(get("/api/persons/1/sicknotes")
+
+        perform(get("/api/persons/1/sicknotes")
             .param("from", dtf.format(now))
             .param("to", dtf.format(now.plusDays(5)))
-        );
-
-        resultActions.andExpect(status().isForbidden());
+            .with(oidcLogin().idToken(builder -> builder.subject("differentUser")))
+        ).andExpect(status().isForbidden());
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {
-        return MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build().perform(builder);
+        return webAppContextSetup(context).apply(springSecurity()).build().perform(builder);
     }
 }

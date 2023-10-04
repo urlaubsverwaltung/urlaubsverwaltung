@@ -14,7 +14,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -35,7 +34,6 @@ import static java.util.Locale.ENGLISH;
 import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.user.Theme.LIGHT;
 
@@ -284,8 +282,6 @@ class UserSettingsServiceTest {
 
     static Stream<Arguments> authentications() {
         return Stream.of(
-            Arguments.of(new TestingAuthenticationToken(new User("username", "password", List.of()), null), GERMAN),
-            Arguments.of(new TestingAuthenticationToken(new User("username", "password", List.of()), null), ENGLISH),
             Arguments.of(new TestingAuthenticationToken(new DefaultOidcUser(List.of(), new OidcIdToken("tokenValue", Instant.parse("2020-12-01T00:00:00.00Z"), Instant.parse("2020-12-02T00:00:00.00Z"), Map.of("sub", "username"))), null), GERMAN),
             Arguments.of(new TestingAuthenticationToken(new DefaultOidcUser(List.of(), new OidcIdToken("tokenValue", Instant.parse("2020-12-01T00:00:00.00Z"), Instant.parse("2020-12-02T00:00:00.00Z"), Map.of("sub", "username"))), null), ENGLISH)
         );
@@ -313,24 +309,5 @@ class UserSettingsServiceTest {
         sut.handleAuthenticationSuccess(authenticationSuccessEvent);
 
         verify(localeResolver).setLocale(request, null, locale);
-    }
-
-    @Test
-    void ensureAuthenticationSuccessDoesNotSetLocaleWhenNotAvailable() {
-
-        final Person person = new Person();
-        person.setId(1L);
-        person.setUsername("username");
-        when(personService.getPersonByUsername("username")).thenReturn(Optional.of(person));
-
-        final UserSettingsEntity userSettingsEntity = new UserSettingsEntity();
-        userSettingsEntity.setLocale(null);
-
-        when(userSettingsRepository.findByPerson(person)).thenReturn(Optional.of(userSettingsEntity));
-
-        final AuthenticationSuccessEvent authenticationSuccessEvent = new AuthenticationSuccessEvent(new TestingAuthenticationToken(new User("username", "password", List.of()), null));
-        sut.handleAuthenticationSuccess(authenticationSuccessEvent);
-
-        verifyNoInteractions(localeResolver);
     }
 }

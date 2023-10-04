@@ -1,13 +1,4 @@
 uv:
-  security:
-    oidc:
-      client-secret: 51964fe9-8509-419d-9ee8-d2450822b7c9
-      issuer-uri: http://localhost:8090/auth/realms/urlaubsverwaltung
-      client-id: urlaubsverwaltung
-      logout-uri: http://localhost:8090/auth/realms/urlaubsverwaltung/protocol/openid-connect/logout
-      group-claim:
-        enabled: false
-    auth: oidc
   mail:
     application-url: http://localhost:8080
     sender: sender@example.org
@@ -16,6 +7,21 @@ uv:
     organizer: organizer@example.org
 
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          default:
+            client-id: urlaubsverwaltung
+            client-secret: 51964fe9-8509-419d-9ee8-d2450822b7c9
+            client-name: urlaubsverwaltung
+            scope: openid,profile,email,roles
+            authorization-grant-type: authorization_code
+            redirect-uri: http://{baseHost}:8080/login/oauth2/code/{registrationId}
+            provider: default
+        provider:
+          default:
+            issuer-uri: http://localhost:8090/auth/realms/urlaubsverwaltung
   mail:
     host: localhost
     port: 1025

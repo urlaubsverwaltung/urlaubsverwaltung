@@ -1,39 +1,4 @@
 uv:
-  security:
-    auth: oidc
-    oidc:
-      client-secret:
-      client-id:
-      issuer-uri:
-      logout-uri:
-    directory-service:
-      active-directory:
-        sync:
-          user-search-base: dc=example,dc=org
-          user-dn: cn=Administrator,cn=users,dc=example,dc=org
-          enabled: false
-          password: password
-        domain: example.org
-        url: ldap://ad.example.org/
-      ldap:
-        manager-dn:
-        url: ldap://ldap.example.org/
-        user-search-filter: (uid={0})
-        base: dc=example,dc=org
-        sync:
-          enabled: false
-          user-dn: uid=username,ou=other,ou=accounts,dc=example,dc=org
-          password: password
-          user-search-base: ou=people,ou=accounts
-        manager-password:
-        user-search-base: ou=accounts
-      identifier: sAMAccountName
-      last-name: sn
-      filter:
-        object-class: person
-        member-of:
-      first-name: givenName
-      mail-address: mail
   mail:
     senderDisplayName: Urlaubsverwaltung
 

@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,7 +46,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
 
         final LocalDateTime now = LocalDateTime.now();
         perform(get("/web/sickdays")
-            .with(user("user").authorities(new SimpleGrantedAuthority(role)))
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority(role)))
             .param("from", dtf.format(now))
             .param("to", dtf.format(now.plusDays(1)))
         ).andExpect(status().isForbidden());
@@ -61,7 +61,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
 
         final LocalDateTime now = LocalDateTime.now();
         perform(get("/web/sickdays")
-            .with(user("user").authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
             .param("from", dtf.format(now))
             .param("to", dtf.format(now.plusDays(1)))
         ).andExpect(status().isOk());
@@ -77,7 +77,7 @@ class SickDaysOverviewViewControllerSecurityIT extends TestContainersBase {
 
         final LocalDateTime now = LocalDateTime.now();
         perform(get("/web/sickdays")
-            .with(user("user").authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("SICK_NOTE_VIEW"), new SimpleGrantedAuthority(role)))
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("SICK_NOTE_VIEW"), new SimpleGrantedAuthority(role)))
             .param("from", dtf.format(now))
             .param("to", dtf.format(now.plusDays(1)))
         ).andExpect(status().isOk());

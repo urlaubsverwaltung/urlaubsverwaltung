@@ -1,0 +1,29 @@
+{
+  "realm" : "master",
+  "users" : [ {
+    "id" : "372b3d24-d9e6-42ba-ba07-0cddeec53ebe",
+    "createdTimestamp" : 1613753964669,
+    "username" : "admin",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "firstName" : "admin",
+    "lastName" : "user",
+    "email" : "admin@master.localdomain",
+    "credentials" : [ {
+      "id" : "4124fa98-a7e5-4e49-b26e-9661f455144e",
+      "type" : "password",
+      "createdDate" : 1613753964751,
+      "secretData" : "{\"value\":\"uPi+w5NHhf4Kjv3xZR7ek2BkKDoWOvNPsWRYZXactAYWmQojAPR3j8TJFQLP+VoQpO4AGIiGlFv7CNnugmf3fg==\",\"salt\":\"6O/K55IYEAf7d9YCbdgTtA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "uma_authorization", "offline_access", "admin" ],
+    "clientRoles" : {
+      "account" : [ "manage-account", "view-profile" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ "/URLAUBSVERWALTUNG_OPERATOR", "/registry operator" ]
+  } ]
+}

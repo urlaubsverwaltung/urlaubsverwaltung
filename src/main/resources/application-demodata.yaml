@@ -1,6 +1,7 @@
 uv:
   security:
-    auth: development
+    oidc:
+      login-form-url: http://localhost:8060/oauth2/authorization/default
   mail:
     application-url: http://localhost:8080
     sender: sender@example.org
@@ -15,6 +16,20 @@ uv:
       local-development: true
 
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          default:
+            client-id: urlaubsverwaltung
+            client-secret: urlaubsverwaltung-secret
+            provider: default
+            scope: openid,profile,email,roles
+            authorization-grant-type: authorization_code
+            redirect-uri: http://{baseHost}{basePort}/login/oauth2/code/{registrationId}
+        provider:
+          default:
+            issuer-uri: http://localhost:8090/realms/urlaubsverwaltung-realm
   mail:
     host: localhost
     port: 1025

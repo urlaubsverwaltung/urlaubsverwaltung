@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
@@ -214,83 +213,6 @@ class UserApiMethodSecurityTest {
         final String username = "Hans";
         final Authentication authentication = getAuthenticationToken(username);
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person("differentUsername", "lastname", "firstName", "email")));
-
-        final boolean isSamePerson = sut.isSamePersonId(authentication, 1L);
-        assertThat(isSamePerson).isFalse();
-    }
-
-    @Test
-    void isSamePersonIdWithSimpleAuthentication() {
-
-        final String username = "Hans";
-        final User user = new User(username, "password", List.of());
-        final TestingAuthenticationToken authentication = new TestingAuthenticationToken(user, List.of());
-
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person(username, "lastname", "firstName", "email")));
-
-        final boolean isSamePerson = sut.isSamePersonId(authentication, 1L);
-        assertThat(isSamePerson).isTrue();
-    }
-
-    @Test
-    void isDifferentPersonIdWithSimpleAuthentication() {
-
-        final User user = new User("username", "password", List.of());
-        final TestingAuthenticationToken authentication = new TestingAuthenticationToken(user, List.of());
-
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person("differentUsername", "lastname", "firstName", "email")));
-
-        final boolean isSamePerson = sut.isSamePersonId(authentication, 1L);
-        assertThat(isSamePerson).isFalse();
-    }
-
-    @Test
-    void isDifferentPersonIdCaseSensitiveWithSimpleAuthentication() {
-
-        final User user = new User("Username", "password", List.of());
-        final TestingAuthenticationToken authentication = new TestingAuthenticationToken(user, List.of());
-
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person("username", "lastname", "firstName", "email")));
-
-        final boolean isSamePerson = sut.isSamePersonId(authentication, 1L);
-        assertThat(isSamePerson).isFalse();
-    }
-
-    @Test
-    void isSamePersonIdWithLdap() {
-
-        final String username = "Hans";
-        final org.springframework.security.ldap.userdetails.Person ldapUser = mock(org.springframework.security.ldap.userdetails.Person.class);
-        final TestingAuthenticationToken authentication = new TestingAuthenticationToken(ldapUser, List.of());
-
-        when(ldapUser.getUsername()).thenReturn(username);
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person(username, "lastname", "firstName", "email")));
-
-        final boolean isSamePerson = sut.isSamePersonId(authentication, 1L);
-        assertThat(isSamePerson).isTrue();
-    }
-
-    @Test
-    void isDifferentPersonIdWithLdap() {
-
-        final org.springframework.security.ldap.userdetails.Person ldapUser = mock(org.springframework.security.ldap.userdetails.Person.class);
-        final TestingAuthenticationToken authentication = new TestingAuthenticationToken(ldapUser, List.of());
-
-        when(ldapUser.getUsername()).thenReturn("username");
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person("differentUsername", "lastname", "firstName", "email")));
-
-        final boolean isSamePerson = sut.isSamePersonId(authentication, 1L);
-        assertThat(isSamePerson).isFalse();
-    }
-
-    @Test
-    void isDifferentPersonIdCaseSensitiveWithLdap() {
-
-        final org.springframework.security.ldap.userdetails.Person ldapUser = mock(org.springframework.security.ldap.userdetails.Person.class);
-        final TestingAuthenticationToken authentication = new TestingAuthenticationToken(ldapUser, List.of());
-
-        when(ldapUser.getUsername()).thenReturn("Username");
-        when(personService.getPersonByID(1L)).thenReturn(Optional.of(new Person("username", "lastname", "firstName", "email")));
 
         final boolean isSamePerson = sut.isSamePersonId(authentication, 1L);
         assertThat(isSamePerson).isFalse();

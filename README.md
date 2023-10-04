@@ -141,39 +141,7 @@ uv.mail.application-url
 uv.mail.sender
 uv.mail.senderDisplayName=Urlaubsverwaltung
 
-# security
-uv.security.auth=default
-
-uv.security.directory-service.identifier=sAMAccountName
-uv.security.directory-service.last-name=givenName
-uv.security.directory-service.first-name=sn
-uv.security.directory-service.mail-address=mail
-uv.security.directory-service.sync.cron=0 0 1 * * ?
-uv.security.directory-service.filter.member-of
-uv.security.directory-service.filter.object-class=person
-
-## active directory
-uv.security.directory-service.active-directory.url=ldap://ad.example.org/
-uv.security.directory-service.active-directory.domain=example.org
-uv.security.directory-service.active-directory.searchFilter=
-uv.security.directory-service.active-directory.sync.enabled=false
-uv.security.directory-service.active-directory.sync.password=password
-uv.security.directory-service.active-directory.sync.user-dn=cn=Administrator,cn=users,dc=example,dc=org
-uv.security.directory-service.active-directory.sync.user-search-base=dc=example,dc=org
-
-## ldap
-uv.security.directory-service.ldap.url=ldap://ldap.example.org/
-uv.security.directory-service.ldap.base=dc=example,dc=org
-uv.security.directory-service.ldap.manager-dn
-uv.security.directory-service.ldap.manager-password
-uv.security.directory-service.ldap.user-search-filter=(uid={0})
-uv.security.directory-service.ldap.user-search-base=ou=accounts
-uv.security.directory-service.ldap.sync.enabled=false
-uv.security.directory-service.ldap.sync.password=password
-uv.security.directory-service.ldap.sync.user-dn=uid=username,ou=other,ou=accounts,dc=example,dc=org
-uv.security.directory-service.ldap.sync.user-search-base=ou=people,ou=accounts
-
-# oidc (openid connect)
+# TODO oidc (openid connect)
 uv.security.oidc.client-id
 uv.security.oidc.client-secret
 uv.security.oidc.issuer-uri
@@ -187,8 +155,6 @@ uv.sick-note.end-of-pay-notification.cron=0 0 6 * * *
 
 #### Security Provider konfigurieren
 
-Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkeiten:
-
 * `oidc`
     * Authentifizierung via OpenID Connect (OIDC)
     * Es müssen die OIDC issuerUri sowie die client id/secret definiert werden.
@@ -196,26 +162,9 @@ Die Anwendung verfügt über **vier** verschiedene Authentifizierungsmöglichkei
       die 'Allowed Callback URLs' und ggf. weitere Einstellungen vorgenommen werden.
     * Es wird erwartet, dass der OIDC Provider im Access Token folgende Attribute enthält: `given_name`, `family_name`, `email`.
       Die Urlaubsverwaltung fragt deswegen standardmäßig den OIDC Provider mit den Scopes `openid`,`profile` und `email` an.
-      Sollten diese Scopes nicht passen, können sie mit dem Property `uv.security.oidc.scopes` überschrieben werden.
-* `ldap`
-    * Authentifizierung via LDAP
-    * Es müssen die LDAP URL, die LDAP Base und LDAP User DN Patterns
-      konfiguriert sein, damit eine Authentifizierung via LDAP möglich ist.
-    * Wenn ldaps verwendet werden soll, dann muss die url
-      `uv.security.directory-service.ldap.url=ldaps://oc.example.org`
-      angepasst und am LDAP Server der entsprechende Port freigegeben werden.
-* `activedirectory`
-    * Authentifizierung via Active Directory
-    * Es müssen die Active Directory Domain und LDAP URL konfiguriert
-      sein, damit eine Authentifizierung via Active Directory möglich ist.
-* `development`
-    * für lokalen Entwicklungsmodus und [Demodaten-Modus](#demodaten-modus)
     
 Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet, wird mit der Rolle `Office` angelegt.
 Dies ermöglicht Benutzer- und Rechteverwaltung und das Pflegen der Einstellungen innerhalb der Anwendung.
-
-Der Authentifizierungsmodus muss über die Property `uv.security.auth` in der eigenen Konfigurationsdatei gesetzt werden.
-
 
 #### Datenbank konfigurieren
 
@@ -256,12 +205,8 @@ eingesehen werden.
 
 #### Benutzer-Synchronisation konfigurieren
 
-Seit der Version 2.14 werden die LDAP/AD-Benutzer nicht mehr automatisch in die Urlaubsverwaltung synchronisiert,
-sondern nur noch beim Login des jeweiligen Users in die Datenbank übertragen.
-Man kann die automatische Synchronisation aller Benutzer aktivieren, indem der Konfigurationsparameter
-`uv.security.directory-service.ldap.sync.enabled` bzw. `uv.security.directory-service.active-directory.sync.enabled`
- auf `true` gesetzt wird.
-
+Personen werden nicht mehr automatisch in die Urlaubsverwaltung synchronisiert,
+sondern nur noch beim Login der jeweiligen Person in der Urlaubsverwaltung angelegt.
 
 #### Logging konfigurieren
 

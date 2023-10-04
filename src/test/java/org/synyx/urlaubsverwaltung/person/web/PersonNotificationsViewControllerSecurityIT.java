@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.person.web;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
@@ -21,6 +23,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,7 +47,6 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
     private UserNotificationSettingsService userNotificationSettingsService;
 
     @Test
-    @WithMockUser(authorities = "USER", username = "user")
     void personNotificationAsSameUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -57,12 +59,14 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
             .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
-        perform(get("/web/person/1/notifications"))
+        perform(
+            get("/web/person/1/notifications")
+                .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER")))
+        )
             .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(authorities = {"USER", "OFFICE"})
     void personNotificationAsOfficeUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -75,46 +79,33 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
         when(userNotificationSettingsService.findNotificationSettings(new PersonId(1L)))
             .thenReturn(new UserNotificationSettings(new PersonId(1L), false));
 
-        perform(get("/web/person/1/notifications"))
+        perform(
+            get("/web/person/1/notifications")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+        )
             .andExpect(status().isOk());
     }
 
     @Test
     void personNotificationAndNotLoggedInWillBeRedirectedToLoginPage() throws Exception {
-        perform(get("/web/person/1/notifications"))
-            .andExpect(status().is3xxRedirection());
+        perform(
+            get("/web/person/1/notifications")
+        )
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("http://localhost/oauth2/authorization/default"));
     }
 
-    @Test
-    @WithMockUser(authorities = {"USER", "DEPARTMENT_HEAD"})
-    void personNotificationAsDepartmentHeadIsForbidden() throws Exception {
-        perform(get("/web/person/1/notifications"))
+    @ParameterizedTest
+    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    void personNotificationIsForbidden(final String role) throws Exception {
+        perform(
+            get("/web/person/1/notifications")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+        )
             .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(authorities = {"USER", "SECOND_STAGE_AUTHORITY"})
-    void personNotificationAsSecondStageAuthorityIsForbidden() throws Exception {
-        perform(get("/web/person/1/notifications"))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = {"USER", "ADMIN"})
-    void personNotificationAsAdminIsForbidden() throws Exception {
-        perform(get("/web/person/1/notifications"))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "INACTIVE")
-    void personNotificationAsInactiveIsForbidden() throws Exception {
-        perform(get("/web/person/1/notifications"))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "USER", username = "user")
     void personChangeNotificationAsSameUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -127,6 +118,7 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
         when(personService.update(any())).thenReturn(person);
 
         perform(post("/web/person/1/notifications")
+            .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER")))
             .with(csrf())
             .param("id", "1")
             .param("name", "user")
@@ -153,7 +145,6 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
     }
 
     @Test
-    @WithMockUser(authorities = {"USER", "OFFICE"})
     void personChangeNotificationAsOfficeUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -170,6 +161,7 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
         when(personService.getSignedInUser()).thenReturn(office);
 
         perform(post("/web/person/1/notifications")
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
             .with(csrf())
             .param("id", "1")
             .param("name", "user")
@@ -197,39 +189,20 @@ class PersonNotificationsViewControllerSecurityIT extends TestContainersBase {
 
     @Test
     void personChangeNotificationAndNotLoggedInWillBeRedirectedToLoginPage() throws Exception {
-        perform(post("/web/person/1/notifications"))
+        perform(
+            post("/web/person/1/notifications")
+        )
             .andExpect(status().isForbidden());
     }
 
-    @Test
-    @WithMockUser(authorities = {"USER", "DEPARTMENT_HEAD"})
-    void personChangeNotificationAsDepartmentHeadIsForbidden() throws Exception {
-        perform(post("/web/person/1/notifications")
-            .with(csrf()))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = {"USER", "SECOND_STAGE_AUTHORITY"})
-    void personChangeNotificationAsSecondStageAuthorityIsForbidden() throws Exception {
-        perform(post("/web/person/1/notifications")
-            .with(csrf()))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = {"USER", "ADMIN"})
-    void personChangeNotificationAsAdminIsForbidden() throws Exception {
-        perform(post("/web/person/1/notifications")
-            .with(csrf()))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "INACTIVE")
-    void personChangeNotificationAsInactiveIsForbidden() throws Exception {
-        perform(post("/web/person/1/notifications")
-            .with(csrf()))
+    @ParameterizedTest
+    @ValueSource(strings = {"DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    void personChangeNotificationIsForbidden(final String role) throws Exception {
+        perform(
+            post("/web/person/1/notifications")
+                .with(csrf())
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+        )
             .andExpect(status().isForbidden());
     }
 

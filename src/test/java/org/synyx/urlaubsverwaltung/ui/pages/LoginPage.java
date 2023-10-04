@@ -11,7 +11,7 @@ public class LoginPage {
 
     private static final String USERNAME_SELECTOR = "#username";
     private static final String PASSWORD_SELECTOR = "#password";
-    private static final String SUBMIT_SELECTOR = "button[type=submit]";
+    private static final String SUBMIT_SELECTOR = "#kc-login";
 
     private final Page page;
     private final MessageSource messageSource;
@@ -24,7 +24,7 @@ public class LoginPage {
     }
 
     public boolean isVisible() {
-        return webpageTitleIsShown(page) && usernameElementExists(page) && passwordElementExists(page);
+        return usernameElementExists(page) && passwordElementExists(page);
     }
 
     /**
@@ -34,7 +34,7 @@ public class LoginPage {
      */
     public void login(Credentials credentials) {
         page.fill(USERNAME_SELECTOR, credentials.username);
-        page.fill(PASSWORD_SELECTOR, credentials.username);
+        page.fill(PASSWORD_SELECTOR, credentials.password);
         page.locator(SUBMIT_SELECTOR).click();
         page.waitForURL(url -> url.contains("/web/")); // next part of application is unknown here
         page.waitForLoadState(DOMCONTENTLOADED);

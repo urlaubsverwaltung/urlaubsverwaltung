@@ -8,10 +8,12 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.synyx.urlaubsverwaltung.TestKeycloakContainer;
 import org.synyx.urlaubsverwaltung.TestPostgreContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.ui.extension.UiTest;
 import org.synyx.urlaubsverwaltung.ui.pages.LoginPage;
 import org.synyx.urlaubsverwaltung.ui.pages.NavigationPage;
@@ -23,10 +25,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -39,28 +43,32 @@ import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.Month.APRIL;
 import static java.time.Month.DECEMBER;
 import static java.time.Month.FEBRUARY;
-import static java.time.Month.JANUARY;
 import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.util.StringUtils.trimAllWhitespace;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @UiTest
-class OvertimeCreateIT {
+class OvertimeUIIT {
 
     @LocalServerPort
     private int port;
 
     static final TestPostgreContainer postgre = new TestPostgreContainer();
+    static final TestKeycloakContainer keycloak = new TestKeycloakContainer();
 
     @DynamicPropertySource
-    static void postgreDBProperties(DynamicPropertyRegistry registry) {
+    static void containerProperties(DynamicPropertyRegistry registry) {
         postgre.start();
         postgre.configureSpringDataSource(registry);
+
+        keycloak.start();
+        keycloak.configureSpringDataSource(registry);
     }
 
     @Autowired
@@ -74,7 +82,7 @@ class OvertimeCreateIT {
 
     @Test
     void ensureOvertimeCreation(Page page) {
-        final Person person = createPerson();
+        final Person person = createPerson("dBradley", "Donald", List.of(USER, OFFICE));
 
         final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(page);
@@ -82,11 +90,11 @@ class OvertimeCreateIT {
         final OvertimePage overtimePage = new OvertimePage(page);
         final OvertimeDetailPage overtimeDetailPage = new OvertimeDetailPage(page);
 
-        page.navigate("http://localhost:" + port);
-        page.waitForURL(Pattern.compile("/login$"));
+        page.navigate("http://localhost:" + port+ "/oauth2/authorization/keycloak");
+        page.context().waitForCondition(loginPage::isVisible);
         page.waitForLoadState();
 
-        loginPage.login(new LoginPage.Credentials(person.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(person.getEmail(), person.getEmail()));
 
         navigationPage.clickSettings();
 
@@ -121,19 +129,26 @@ class OvertimeCreateIT {
         navigationPage.logout();
     }
 
-    private Person createPerson() {
-        final Person savedPerson = personService.create("dBradley", "Donald", "Bradley", "Donald.Bradley@example.org", List.of(), List.of(USER, OFFICE));
+    private Person createPerson(String firstName, String lastName, List<Role> roles) {
 
-        final int currentYear = LocalDate.now().getYear();
-        final LocalDate validFrom = LocalDate.of(currentYear - 1, 1, 1);
+        final String email = format("%s.%s@example.org", trimAllWhitespace(firstName), trimAllWhitespace(lastName)).toLowerCase();
+        final Optional<Person> personByMailAddress = personService.getPersonByMailAddress(email);
+        if (personByMailAddress.isPresent()) {
+            return personByMailAddress.get();
+        }
+
+        final String userId = keycloak.createUser(email, firstName, lastName, email, email);
+        final Person savedPerson = personService.create(userId, firstName, lastName, email, List.of(), roles);
+
+        final Year currentYear = Year.now();
+        final LocalDate firstDayOfYear = currentYear.atDay(1);
         final List<Integer> workingDays = Stream.of(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY).map(DayOfWeek::getValue).collect(toList());
-        workingTimeWriteService.touch(workingDays, validFrom, savedPerson);
+        workingTimeWriteService.touch(workingDays, firstDayOfYear, savedPerson);
 
-        final LocalDate firstDayOfYear = LocalDate.of(currentYear, JANUARY, 1);
-        final LocalDate lastDayOfYear = LocalDate.of(currentYear, DECEMBER, 31);
-        final LocalDate expiryDate = LocalDate.of(currentYear, APRIL, 1);
+        final LocalDate lastDayOfYear = firstDayOfYear.withMonth(DECEMBER.getValue()).withDayOfMonth(31);
+        final LocalDate expiryDate = LocalDate.of(currentYear.getValue(), APRIL, 1);
         accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear, lastDayOfYear, true, expiryDate, TEN, TEN, TEN, ZERO, null);
-        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), true, expiryDate.plusDays(1), TEN, TEN, TEN, ZERO, null);
+        accountInteractionService.updateOrCreateHolidaysAccount(savedPerson, firstDayOfYear.plusYears(1), lastDayOfYear.plusYears(1), true, expiryDate.plusYears(1), TEN, TEN, TEN, ZERO, null);
 
         return savedPerson;
     }
