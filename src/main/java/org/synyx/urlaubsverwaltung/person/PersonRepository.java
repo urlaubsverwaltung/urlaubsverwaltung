@@ -18,9 +18,9 @@ interface PersonRepository extends JpaRepository<Person, Long> {
     @Modifying
     void deleteById(Long id);
 
-    Optional<Person> findByUsername(String username);
+    Optional<Person> findByUsernameIgnoreCase(String username);
 
-    Optional<Person> findByEmail(String email);
+    Optional<Person> findByEmailIgnoreCase(String email);
 
     int countByPermissionsNotContaining(Role permission);
 

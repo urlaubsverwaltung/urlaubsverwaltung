@@ -145,12 +145,12 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public Optional<Person> getPersonByUsername(String username) {
-        return personRepository.findByUsername(username);
+        return personRepository.findByUsernameIgnoreCase(username);
     }
 
     @Override
     public Optional<Person> getPersonByMailAddress(String mailAddress) {
-        return personRepository.findByEmail(mailAddress);
+        return personRepository.findByEmailIgnoreCase(mailAddress);
     }
 
     @Override

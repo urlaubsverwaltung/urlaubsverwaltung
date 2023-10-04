@@ -11,7 +11,6 @@ import java.util.Optional;
 
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
 import static org.synyx.urlaubsverwaltung.person.Role.SECOND_STAGE_AUTHORITY;
-import static org.synyx.urlaubsverwaltung.security.AuthenticationHelper.userName;
 
 @Component
 public class UserApiMethodSecurity {
@@ -26,7 +25,7 @@ public class UserApiMethodSecurity {
     }
 
     public boolean isInDepartmentOfSecondStageAuthority(Authentication authentication, Long userId) {
-        final Optional<Person> loggedInUser = personService.getPersonByUsername(userName(authentication));
+        final Optional<Person> loggedInUser = personService.getPersonByUsername(authentication.getName());
 
         if (loggedInUser.isEmpty() || !loggedInUser.get().hasRole(SECOND_STAGE_AUTHORITY)) {
             return false;
@@ -39,7 +38,7 @@ public class UserApiMethodSecurity {
     }
 
     public boolean isInDepartmentOfDepartmentHead(Authentication authentication, Long userId) {
-        final Optional<Person> loggedInUser = personService.getPersonByUsername(userName(authentication));
+        final Optional<Person> loggedInUser = personService.getPersonByUsername(authentication.getName());
 
         if (loggedInUser.isEmpty() || !loggedInUser.get().hasRole(DEPARTMENT_HEAD)) {
             return false;
@@ -58,6 +57,6 @@ public class UserApiMethodSecurity {
         }
 
         final String usernameToCheck = person.get().getUsername();
-        return (usernameToCheck != null) && usernameToCheck.equals(userName(authentication));
+        return (usernameToCheck != null) && usernameToCheck.equals(authentication.getName());
     }
 }

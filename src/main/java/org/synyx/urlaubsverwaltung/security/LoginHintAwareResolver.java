@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI;
 
-public class LoginHintAwareResolver implements OAuth2AuthorizationRequestResolver {
+class LoginHintAwareResolver implements OAuth2AuthorizationRequestResolver {
 
     private static final String OIDC_PARAMETER_LOGIN_HINT = "login_hint";
 

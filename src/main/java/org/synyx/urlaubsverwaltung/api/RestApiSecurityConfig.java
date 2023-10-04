@@ -5,18 +5,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.synyx.urlaubsverwaltung.security.SecurityConfigurationProperties;
 
+import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.config.http.SessionCreationPolicy.NEVER;
 
 @Configuration
 class RestApiSecurityConfig {
-
-    private final boolean isOauth2Enabled;
-
-    RestApiSecurityConfig(SecurityConfigurationProperties properties) {
-        isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
-    }
 
     @Bean
     @Order(1)
@@ -29,11 +23,8 @@ class RestApiSecurityConfig {
                 sessionManagement -> sessionManagement.sessionCreationPolicy(NEVER)
             );
 
-        if (isOauth2Enabled) {
-            http.securityMatcher("/api/**").oauth2Login();
-        } else {
-            http.securityMatcher("/api/**").httpBasic();
-        }
+        http.securityMatcher("/api/**")
+            .oauth2Login(withDefaults());
 
         return http.build();
     }

@@ -9,6 +9,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.synyx.urlaubsverwaltung.TestKeycloakContainer;
 import org.synyx.urlaubsverwaltung.TestPostgreContainer;
 import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -32,9 +33,10 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -51,23 +53,28 @@ import static java.util.Locale.GERMAN;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.util.StringUtils.trimAllWhitespace;
 import static org.synyx.urlaubsverwaltung.person.Role.OFFICE;
 import static org.synyx.urlaubsverwaltung.person.Role.USER;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @UiTest
-class ApplicationForLeaveCreateIT {
+class ApplicationForLeaveUIIT {
 
     @LocalServerPort
     private int port;
 
     static final TestPostgreContainer postgre = new TestPostgreContainer();
+    static final TestKeycloakContainer keycloak = new TestKeycloakContainer();
 
     @DynamicPropertySource
-    static void postgreProperties(DynamicPropertyRegistry registry) {
+    static void containerProperties(DynamicPropertyRegistry registry) {
         postgre.start();
         postgre.configureSpringDataSource(registry);
+
+        keycloak.start();
+        keycloak.configureSpringDataSource(registry);
     }
 
     @Autowired
@@ -95,13 +102,11 @@ class ApplicationForLeaveCreateIT {
         final SettingsPage settingsPage = new SettingsPage(page);
         final ApplicationPage applicationPage = new ApplicationPage(page);
 
-        page.navigate("http://localhost:" + port);
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
 
-        // log in as office user
-        // and disable the overtime feature
-
+        // log in as office user and disable the overtime feature
         page.context().waitForCondition(loginPage::isVisible);
-        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
         page.context().waitForCondition(navigationPage::isVisible);
@@ -115,13 +120,14 @@ class ApplicationForLeaveCreateIT {
         settingsPage.saveSettings();
 
         navigationPage.logout();
-        page.waitForURL(url -> url.endsWith("/login"));
+
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         page.context().waitForCondition(loginPage::isVisible);
 
         // now the quick-add button should link directly to application-for-leave page
         // for the user logged in with role=USER
 
-        loginPage.login(new LoginPage.Credentials(userPerson.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), userPerson.getEmail()));
 
         page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(userPerson.getId())));
         page.context().waitForCondition(navigationPage::isVisible);
@@ -136,8 +142,8 @@ class ApplicationForLeaveCreateIT {
     @Test
     @DisplayName("when USER is logged in and overtime feature is enabled then quick-add opens a popupmenu")
     void ensureQuickAddOpensPopupMenu(Page page) {
-        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
-        final Person userPerson = createPerson("The", "Joker", List.of(USER));
+        final Person officePerson = createPerson("Alfred", "Pennyworth the second", List.of(USER, OFFICE));
+        final Person userPerson = createPerson("The", "Joker the second", List.of(USER));
 
         final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(page);
@@ -145,10 +151,10 @@ class ApplicationForLeaveCreateIT {
         final SettingsPage settingsPage = new SettingsPage(page);
         final ApplicationPage applicationPage = new ApplicationPage(page);
 
-        page.navigate("http://localhost:" + port);
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
 
         page.context().waitForCondition(loginPage::isVisible);
-        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
         page.context().waitForCondition(navigationPage::isVisible);
@@ -161,9 +167,11 @@ class ApplicationForLeaveCreateIT {
         settingsPage.saveSettings();
 
         navigationPage.logout();
+
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         page.context().waitForCondition(loginPage::isVisible);
 
-        loginPage.login(new LoginPage.Credentials(userPerson.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(userPerson.getEmail(), (userPerson.getEmail())));
 
         page.context().waitForCondition(overviewPage::isVisible);
         assertThat(overviewPage.isVisibleForPerson(userPerson.getNiceName(), LocalDate.now().getYear())).isTrue();
@@ -177,14 +185,16 @@ class ApplicationForLeaveCreateIT {
         page.context().waitForCondition(applicationPage::isVisible);
 
         navigationPage.logout();
+
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         page.context().waitForCondition(loginPage::isVisible);
     }
 
     @Test
     void checkIfItIsPossibleToRequestAnApplicationForLeave(Page page) {
-        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
-        final Person batman = createPerson("Bruce", "Wayne", List.of(USER));
-        final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
+        final Person officePerson = createPerson("Alfred", "Pennyworth the third", List.of(USER, OFFICE));
+        final Person batman = createPerson("Bruce", "Wayne the third", List.of(USER));
+        final Person joker = createPerson("Arthur", "Fleck the third", List.of(USER));
 
         final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(page);
@@ -192,10 +202,10 @@ class ApplicationForLeaveCreateIT {
         final ApplicationPage applicationPage = new ApplicationPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
-        page.navigate("http://localhost:" + port);
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
 
         page.context().waitForCondition(loginPage::isVisible);
-        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
         page.context().waitForCondition(navigationPage::isVisible);
@@ -239,12 +249,14 @@ class ApplicationForLeaveCreateIT {
         assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
 
         navigationPage.logout();
+
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         page.context().waitForCondition(loginPage::isVisible);
     }
 
     @Test
     void ensureCreatingApplicationForLeaveOfTypeSpecialLeave(Page page) {
-        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
+        final Person officePerson = createPerson("Alfred", "Pennyworth the fifth", List.of(USER, OFFICE));
 
         final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(page);
@@ -252,10 +264,10 @@ class ApplicationForLeaveCreateIT {
         final ApplicationPage applicationPage = new ApplicationPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
-        page.navigate("http://localhost:" + port);
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
 
         page.context().waitForCondition(loginPage::isVisible);
-        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
         page.context().waitForCondition(navigationPage::isVisible);
@@ -294,7 +306,7 @@ class ApplicationForLeaveCreateIT {
 
     @Test
     void ensureCreatingApplicationForLeaveOfTypeOvertime(Page page) {
-        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
+        final Person officePerson = createPerson("Alfred", "Pennyworth the sixth", List.of(USER, OFFICE));
 
         final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(page);
@@ -303,10 +315,10 @@ class ApplicationForLeaveCreateIT {
         final ApplicationPage applicationPage = new ApplicationPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
-        page.navigate("http://localhost:" + port);
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
 
         page.context().waitForCondition(loginPage::isVisible);
-        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
         page.context().waitForCondition(navigationPage::isVisible);
@@ -353,9 +365,9 @@ class ApplicationForLeaveCreateIT {
     @Test
     @DisplayName("when USER is logged in and halfDay is disabled then application-for-leave can be created only for full days.")
     void ensureApplicationForLeaveWithDisabledHalfDayOption(Page page) {
-        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
-        final Person batman = createPerson("Bruce", "Wayne", List.of(USER));
-        final Person joker = createPerson("Arthur", "Fleck", List.of(USER));
+        final Person officePerson = createPerson("Alfred", "Pennyworth the fourth", List.of(USER, OFFICE));
+        final Person batman = createPerson("Bruce", "Wayne the fourth", List.of(USER));
+        final Person joker = createPerson("Arthur", "Fleck the fourth", List.of(USER));
 
         final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
         final NavigationPage navigationPage = new NavigationPage(page);
@@ -364,13 +376,13 @@ class ApplicationForLeaveCreateIT {
         final ApplicationPage applicationPage = new ApplicationPage(page);
         final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
 
-        page.navigate("http://localhost:" + port);
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
 
         // log in as office user
         // and disable halfDay
 
         page.context().waitForCondition(loginPage::isVisible);
-        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+        loginPage.login(new LoginPage.Credentials(officePerson.getEmail(), officePerson.getEmail()));
 
         page.context().waitForCondition(navigationPage::isVisible);
         page.context().waitForCondition(overviewPage::isVisible);
@@ -427,13 +439,21 @@ class ApplicationForLeaveCreateIT {
         assertThat(applicationPage.showsAddedReplacementAtPosition(batman, 2, "please be gentle!")).isTrue();
 
         navigationPage.logout();
+
+        page.navigate("http://localhost:" + port + "/oauth2/authorization/keycloak");
         page.context().waitForCondition(loginPage::isVisible);
     }
 
     private Person createPerson(String firstName, String lastName, List<Role> roles) {
-        final String username = lastName + UUID.randomUUID().getLeastSignificantBits();
-        final String email = String.format("%s.%s@example.org", firstName, lastName);
-        final Person savedPerson = personService.create(username, firstName, lastName, email, List.of(), roles);
+
+        final String email = format("%s.%s@example.org", trimAllWhitespace(firstName), trimAllWhitespace(lastName)).toLowerCase();
+        final Optional<Person> personByMailAddress = personService.getPersonByMailAddress(email);
+        if (personByMailAddress.isPresent()) {
+            return personByMailAddress.get();
+        }
+
+        final String userId = keycloak.createUser(email, firstName, lastName, email, email);
+        final Person savedPerson = personService.create(userId, firstName, lastName, email, List.of(), roles);
 
         final Year currentYear = Year.now();
         final LocalDate firstDayOfYear = currentYear.atDay(1);

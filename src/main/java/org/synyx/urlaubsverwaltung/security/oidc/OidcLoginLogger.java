@@ -21,8 +21,7 @@ class OidcLoginLogger {
 
     private final PersonService personService;
 
-    public OidcLoginLogger(PersonService personService) {
-
+    OidcLoginLogger(PersonService personService) {
         this.personService = personService;
     }
 

@@ -1,10 +1,12 @@
 package org.synyx.urlaubsverwaltung.calendar;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
@@ -19,6 +21,7 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -51,58 +54,40 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     // department calendar => index
 
     @Test
-    @WithMockUser(authorities = "USER")
     void indexUnauthorized() throws Exception {
-        perform(get("/web/calendars/share/persons/1/departments/2"))
+        perform(
+            get("/web/calendars/share/persons/1/departments/2")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER")))
+        )
             .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(username = "differentUser")
     void indexForDifferentUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        perform(get("/web/calendars/share/persons/1/departments/2"))
+        perform(
+            get("/web/calendars/share/persons/1/departments/2")
+                .with(oidcLogin().idToken(builder -> builder.subject("differentUser")).authorities(new SimpleGrantedAuthority("USER")))
+        )
+            .andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    void indexIsForbidden(final String role) throws Exception {
+
+        perform(
+            get("/web/calendars/share/persons/1/departments/2")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+        )
             .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    void indexAsDepartmentHeadIsForbidden() throws Exception {
-
-        perform(get("/web/calendars/share/persons/1/departments/2"))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    void indexAsSecondStageAuthorityIsForbidden() throws Exception {
-
-        perform(get("/web/calendars/share/persons/1/departments/2"))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "ADMIN")
-    void indexAsAdminIsForbidden() throws Exception {
-
-        perform(get("/web/calendars/share/persons/1/departments/2"))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "INACTIVE")
-    void indexAsInactiveIsForbidden() throws Exception {
-
-        perform(get("/web/calendars/share/persons/1/departments/2"))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "OFFICE")
     void indexAsOfficeUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -117,12 +102,14 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
         when(personService.getSignedInUser()).thenReturn(boss);
         when(companyCalendarService.getCompanyCalendar(1337)).thenReturn(Optional.empty());
 
-        perform(get("/web/calendars/share/persons/1/departments/2"))
+        perform(
+            get("/web/calendars/share/persons/1/departments/2")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+        )
             .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(authorities = "BOSS")
     void indexAsBossUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -137,13 +124,15 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
         when(personService.getSignedInUser()).thenReturn(boss);
         when(companyCalendarService.getCompanyCalendar(1337)).thenReturn(Optional.empty());
 
-        perform(get("/web/calendars/share/persons/1/departments/2"))
+        perform(
+            get("/web/calendars/share/persons/1/departments/2")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("BOSS")))
+        )
             .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockUser(username = "user")
-    void indexForSameUserIsForbidden() throws Exception {
+    void indexForSameUserIsOk() throws Exception {
 
         final Person person = new Person();
         person.setId(1L);
@@ -155,7 +144,10 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
         department.setId(2L);
         when(departmentService.getAssignedDepartmentsOfMember(person)).thenReturn(List.of(department));
 
-        perform(get("/web/calendars/share/persons/1/departments/2"))
+        perform(
+            get("/web/calendars/share/persons/1/departments/2")
+                .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER")))
+        )
             .andExpect(status().isOk());
     }
 
@@ -163,7 +155,6 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     // department calendar => link
 
     @Test
-    @WithMockUser(username = "user")
     void linkDepartmentCalendarForUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -172,17 +163,17 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2L)).thenReturn(Optional.of(new Department()));
 
-        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/departments/2")
-            .with(csrf())
-            .param("calendarPeriod", "YEAR");
-
-        perform(request)
+        perform(
+            post("/web/calendars/share/persons/1/departments/2")
+                .with(csrf())
+                .param("calendarPeriod", "YEAR")
+                .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER")))
+        )
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
 
     @Test
-    @WithMockUser(authorities = "BOSS")
     void linkDepartmentCalendarAsBossUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -191,17 +182,17 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2L)).thenReturn(Optional.of(new Department()));
 
-        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/departments/2")
-            .with(csrf())
-            .param("calendarPeriod", "YEAR");
-
-        perform(request)
+        perform(
+            post("/web/calendars/share/persons/1/departments/2")
+                .with(csrf())
+                .param("calendarPeriod", "YEAR")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("BOSS")))
+        )
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
 
     @Test
-    @WithMockUser(authorities = "OFFICE")
     void linkDepartmentCalendarAsOfficeUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -210,56 +201,40 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2L)).thenReturn(Optional.of(new Department()));
 
-        final MockHttpServletRequestBuilder request = post("/web/calendars/share/persons/1/departments/2")
-            .with(csrf())
-            .param("calendarPeriod", "YEAR");
-
-        perform(request)
+        perform(
+            post("/web/calendars/share/persons/1/departments/2")
+                .with(csrf())
+                .param("calendarPeriod", "YEAR")
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+        )
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
 
-    @Test
-    @WithMockUser(authorities = "ADMIN")
-    void linkDepartmentCalendarAsAdminIsForbidden() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    void linkDepartmentCalendarIsForbidden(final String role) throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
+        perform(
+            post("/web/calendars/share/persons/1/departments/2")
+                .with(csrf())
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+        )
             .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(authorities = "INACTIVE")
-    void linkDepartmentCalendarAsInactiveIsForbidden() throws Exception {
-
-        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    void linkDepartmentCalendarAsDepartmentHeadIsForbidden() throws Exception {
-
-        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    void linkDepartmentCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
-
-        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(username = "otheruser")
     void linkDepartmentCalendarForOtherUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/departments/2").with(csrf()))
+        perform(
+            post("/web/calendars/share/persons/1/departments/2")
+                .with(csrf())
+                .with(oidcLogin().idToken(builder -> builder.subject("differentUser")).authorities(new SimpleGrantedAuthority("USER")))
+        )
             .andExpect(status().isForbidden());
     }
 
@@ -267,7 +242,6 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
     // department calendar => unlink
 
     @Test
-    @WithMockUser(username = "user")
     void unlinkDepartmentCalendarForUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -276,13 +250,17 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2L)).thenReturn(Optional.of(new Department()));
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
+        perform(
+            post("/web/calendars/share/persons/1/departments/2")
+                .param("unlink", "")
+                .with(csrf())
+                .with(oidcLogin().idToken(builder -> builder.subject("user")).authorities(new SimpleGrantedAuthority("USER")))
+        )
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
 
     @Test
-    @WithMockUser(authorities = "BOSS")
     void unlinkDepartmentCalendarAsBossUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -291,13 +269,17 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2L)).thenReturn(Optional.of(new Department()));
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
+        perform(
+            post("/web/calendars/share/persons/1/departments/2")
+                .param("unlink", "")
+                .with(csrf())
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("BOSS")))
+        )
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
 
     @Test
-    @WithMockUser(authorities = "OFFICE")
     void unlinkDepartmentCalendarAsOfficeUserForOtherUserIsOk() throws Exception {
 
         final Person person = new Person();
@@ -306,52 +288,41 @@ class CalendarSharingViewControllerDepartmentCalendarSecurityIT extends TestCont
 
         when(departmentService.getDepartmentById(2L)).thenReturn(Optional.of(new Department()));
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
+        perform(
+            post("/web/calendars/share/persons/1/departments/2")
+                .param("unlink", "")
+                .with(csrf())
+                .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority("OFFICE")))
+        )
             .andExpect(status().is3xxRedirection())
             .andExpect(view().name("redirect:/web/calendars/share/persons/1/departments/2"));
     }
 
-    @Test
-    @WithMockUser(authorities = "ADMIN")
-    void unlinkDepartmentCalendarAsAdminIsForbidden() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"USER", "DEPARTMENT_HEAD", "SECOND_STAGE_AUTHORITY", "ADMIN", "INACTIVE"})
+    void unlinkDepartmentCalendarIsForbidden(final String role) throws Exception {
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
+        perform(post("/web/calendars/share/persons/1/departments/2")
+            .param("unlink", "")
+            .with(csrf())
+            .with(oidcLogin().authorities(new SimpleGrantedAuthority("USER"), new SimpleGrantedAuthority(role)))
+        )
             .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(authorities = "INACTIVE")
-    void unlinkDepartmentCalendarAsInactiveIsForbidden() throws Exception {
-
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "DEPARTMENT_HEAD")
-    void unlinkDepartmentCalendarAsDepartmentHeadIsForbidden() throws Exception {
-
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(authorities = "SECOND_STAGE_AUTHORITY")
-    void unlinkDepartmentCalendarAsSecondStageAuthorityIsForbidden() throws Exception {
-
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockUser(username = "otheruser")
     void unlinkDepartmentCalendarForOtherUserIsForbidden() throws Exception {
 
         final Person person = new Person();
         person.setUsername("user");
         when(personService.getPersonByID(1L)).thenReturn(Optional.of(person));
 
-        perform(post("/web/calendars/share/persons/1/departments/2").param("unlink", "").with(csrf()))
+        perform(
+            post("/web/calendars/share/persons/1/departments/2")
+                .param("unlink", "")
+                .with(csrf())
+                .with(oidcLogin().idToken(builder -> builder.subject("otheruser")).authorities(new SimpleGrantedAuthority("USER")))
+        )
             .andExpect(status().isForbidden());
     }
 

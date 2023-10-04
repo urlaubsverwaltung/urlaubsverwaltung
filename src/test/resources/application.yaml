@@ -1,6 +1,4 @@
 uv:
-  security:
-    auth: development
   calendar:
     organizer: organizer@example.org
   mail:
@@ -8,8 +6,26 @@ uv:
     sender: sender@example.org
     administrator: administrators@example.org
     senderDisplayName: Urlaubsverwaltung
+  security:
+    oidc:
+      login-form-url: http://localhost:8080/login/redirect
 
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          default:
+            client-id: urlaubsverwaltung
+            provider: default
+            scope: openid,profile,email,roles
+            authorization-grant-type: authorization_code
+            redirect-uri: http://{baseHost}{basePort}/login/oauth2/code/{registrationId}
+        provider:
+          default:
+            token-uri: https://auth.example.org/realms/2657fdc6/protocol/openid-connect/token
+            authorization-uri: https://auth.example.org/realms/2657fdc6/protocol/openid-connect/auth
+            jwk-set-uri: https://auth.example.org/realms/2657fdc6/protocol/openid-connect/certs
   mail:
     host: localhost
   main:

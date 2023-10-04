@@ -188,7 +188,7 @@ class PersonServiceImplTest {
         final String username = "foo";
         sut.getPersonByUsername(username);
 
-        verify(personRepository).findByUsername(username);
+        verify(personRepository).findByUsernameIgnoreCase(username);
     }
 
     @Test
@@ -196,7 +196,7 @@ class PersonServiceImplTest {
         final String mailAddress = "foo@bar.test";
         sut.getPersonByMailAddress(mailAddress);
 
-        verify(personRepository).findByEmail(mailAddress);
+        verify(personRepository).findByEmailIgnoreCase(mailAddress);
     }
 
     @Test
@@ -297,7 +297,7 @@ class PersonServiceImplTest {
     void ensureReturnsPersonForCurrentlySignedInUser() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personRepository.findByUsername("muster")).thenReturn(Optional.of(person));
+        when(personRepository.findByUsernameIgnoreCase("muster")).thenReturn(Optional.of(person));
 
         final Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn(person.getUsername());
