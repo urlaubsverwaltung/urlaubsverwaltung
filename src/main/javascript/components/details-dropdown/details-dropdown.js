@@ -11,7 +11,7 @@ class DetailsDropdown extends HTMLDetailsElement {
           // otherwise we would prevent a form submit for instance.
           event.preventDefault();
         }
-        if (target.tagName === "SUMMARY" || target.closest("summary")) {
+        if (target.closest("summary")) {
           this.open = !this.open;
         }
       } else if (target !== this) {
