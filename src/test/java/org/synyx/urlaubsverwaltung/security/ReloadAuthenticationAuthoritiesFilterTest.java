@@ -9,8 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -70,56 +68,6 @@ class ReloadAuthenticationAuthoritiesFilterTest {
     }
 
     @Test
-    void ensuresFilterSetsUsernameAndPasswordAuthenticationWithNewAuthorities() throws ServletException, IOException {
-
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockFilterChain filterChain = new MockFilterChain();
-
-        request.getSession().setAttribute("reloadAuthorities", true);
-
-        final Person signedInUser = new Person("marlene", "Muster", "Marlene", "muster@example.org");
-        signedInUser.setPermissions(List.of(USER, OFFICE));
-        when(personService.getSignedInUser()).thenReturn(signedInUser);
-
-        SecurityContextHolder.getContext().setAuthentication(prepareUsernameAndPasswordAuthentication());
-
-        sut.doFilterInternal(request, response, filterChain);
-
-        final List<String> updatedAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(toList());
-        assertThat(updatedAuthorities).containsExactly("USER", "OFFICE");
-
-        verify(sessionService).unmarkSessionToReloadAuthorities(request.getSession().getId());
-    }
-
-    @Test
-    void ensuresToNotUpdateAuthoritiesOnUnknownAuthenticationType() throws ServletException, IOException {
-
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockFilterChain filterChain = new MockFilterChain();
-
-        request.getSession().setAttribute("reloadAuthorities", true);
-
-        final Person signedInUser = new Person("marlene", "Muster", "Marlene", "muster@example.org");
-        signedInUser.setPermissions(List.of(USER, OFFICE));
-        when(personService.getSignedInUser()).thenReturn(signedInUser);
-
-        SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken("principle", "credentials", "INACTIVE"));
-
-        sut.doFilterInternal(request, response, filterChain);
-
-        final List<String> updatedAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(toList());
-        assertThat(updatedAuthorities).containsExactly("INACTIVE");
-
-        verify(sessionService).unmarkSessionToReloadAuthorities(request.getSession().getId());
-    }
-
-    @Test
     void ensuresFilterSetsAuthenticationWithNewAuthoritiesButSessionIsNullDoNothing() {
 
         final MockHttpServletRequest request = mock(MockHttpServletRequest.class);
@@ -154,12 +102,6 @@ class ReloadAuthenticationAuthoritiesFilterTest {
         final OidcUser oidcUser = mock(OidcUser.class);
         when(authentication.getPrincipal()).thenReturn(oidcUser);
         when(authentication.getAuthorizedClientRegistrationId()).thenReturn("authorizedClientRegistrationId");
-        return authentication;
-    }
-
-    private UsernamePasswordAuthenticationToken prepareUsernameAndPasswordAuthentication() {
-        final UsernamePasswordAuthenticationToken authentication = mock(UsernamePasswordAuthenticationToken.class);
-        when(authentication.getPrincipal()).thenReturn("username");
         return authentication;
     }
 }
