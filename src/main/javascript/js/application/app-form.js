@@ -1,6 +1,5 @@
 import $ from "jquery";
 import { parseISO } from "date-fns";
-import parseQueryString from "../parse-query-string";
 import { createDatepicker } from "../../components/datepicker";
 import "../../components/timepicker";
 import sendGetDaysRequest from "../send-get-days-request";
@@ -54,7 +53,7 @@ $(document).ready(async function () {
   toDateElement = toDateResult.value;
 
   // CALENDAR: PRESET DATE IN APP FORM ON CLICKING DAY
-  const { from, to } = parseQueryString(window.location.search);
+  const { from, to } = Object.fromEntries(new URLSearchParams(window.location.search));
   if (from) {
     const startDate = parseISO(from);
     const endDate = parseISO(to || from);
