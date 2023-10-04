@@ -1,7 +1,5 @@
 import $ from "jquery";
 import { getYear, setYear, startOfYear, subMonths, addMonths } from "date-fns";
-
-import getUrlParameter from "../get-url-parameter";
 import "../../components/calendar";
 
 $(document).ready(function () {
@@ -13,11 +11,15 @@ $(document).ready(function () {
     return window.uv.i18n[messageKey] || `/i18n:${messageKey}/`;
   }
 
+  function getUrlParameter(name) {
+    return new URL(window.location).searchParams.get(name);
+  }
+
   function initCalendar() {
     const year = getUrlParameter("year");
     let date = new Date();
 
-    if (year.length > 0 && year != getYear(date)) {
+    if (year && year != getYear(date)) {
       date = startOfYear(setYear(date, year));
     }
 
