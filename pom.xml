@@ -478,31 +478,6 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>get-agent</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>io.opentelemetry.javaagent</groupId>
-                  <artifactId>opentelemetry-javaagent</artifactId>
-                  <version>1.28.0</version>
-                  <overWrite>true</overWrite>
-                  <outputDirectory>${project.build.directory}/docker-extra/opentelemetry-agent
-                  </outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <source>16</source>
