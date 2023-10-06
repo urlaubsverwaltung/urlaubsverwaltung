@@ -142,6 +142,51 @@ describe("table-sortable", () => {
     expect(text(document.querySelector("tbody tr:nth-child(4)"))).toEqual("04.10.2022");
   });
 
+  it("sorts if th is available instead of td", function () {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <table is="uv-table-sortable">
+        <thead>
+          <tr>
+            <th data-sortable data-sort-type="date">Datum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>03.10.2023</th>
+          </tr>
+          <tr>
+            <td>03.01.2023</td>
+          </tr>
+          <tr>
+            <td>04.10.2023</td>
+          </tr>
+          <tr>
+            <td>04.10.2022</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+    document.body.append(div);
+
+    expect(text(document.querySelector("tbody tr:nth-child(1)"))).toEqual("03.10.2023");
+    expect(text(document.querySelector("tbody tr:nth-child(2)"))).toEqual("03.01.2023");
+    expect(text(document.querySelector("tbody tr:nth-child(3)"))).toEqual("04.10.2023");
+    expect(text(document.querySelector("tbody tr:nth-child(4)"))).toEqual("04.10.2022");
+
+    document.querySelector("thead th").click();
+    expect(text(document.querySelector("tbody tr:nth-child(1)"))).toEqual("04.10.2022");
+    expect(text(document.querySelector("tbody tr:nth-child(2)"))).toEqual("03.01.2023");
+    expect(text(document.querySelector("tbody tr:nth-child(3)"))).toEqual("03.10.2023");
+    expect(text(document.querySelector("tbody tr:nth-child(4)"))).toEqual("04.10.2023");
+
+    document.querySelector("thead th").click();
+    expect(text(document.querySelector("tbody tr:nth-child(1)"))).toEqual("04.10.2023");
+    expect(text(document.querySelector("tbody tr:nth-child(2)"))).toEqual("03.10.2023");
+    expect(text(document.querySelector("tbody tr:nth-child(3)"))).toEqual("03.01.2023");
+    expect(text(document.querySelector("tbody tr:nth-child(4)"))).toEqual("04.10.2022");
+  });
+
   it("does not sort columns without 'data-sortable'", function () {
     const div = document.createElement("div");
     div.innerHTML = `
