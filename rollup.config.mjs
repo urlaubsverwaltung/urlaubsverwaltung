@@ -26,7 +26,6 @@ const paths = {
 export default {
   input: {
     custom_elements_polyfill: `@ungap/custom-elements`,
-    "npm.datalist_polyfill": `datalist-polyfill`,
     ...inputFiles(),
   },
   output: {
