@@ -149,6 +149,10 @@ class CalculationService {
         final LocalDate lastDayOfPeriod = account.doRemainingVacationDaysExpire() ?
             account.getExpiryDate().minusDays(1) : firstDayOfYear.with(lastDayOfYear());
 
+        if (lastDayOfPeriod.isBefore(firstDayOfYear)) {
+            return ZERO;
+        }
+
         final List<DateRange> beforeExpiryDate = overlapService.getListOfOverlaps(
             firstDayOfYear,
             lastDayOfPeriod,
@@ -162,6 +166,7 @@ class CalculationService {
     private BigDecimal calculateWorkDaysBeforeExpiryDate(Application application, List<DateRange> beforeExpiryDate) {
         final LocalDate start = beforeExpiryDate.get(0).getStartDate();
         final LocalDate end = beforeExpiryDate.get(0).getEndDate();
+
         return workDaysCountService.getWorkDaysCount(
             application.getDayLength(),
             LocalDate.of(start.getYear(), start.getMonth(), start.getDayOfMonth()),
