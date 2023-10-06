@@ -111,13 +111,13 @@ tr.inactive td > * {
   TABLE SORTER
 **************************************************************************/
 
-.tablesorter-header {
+table thead th[data-sortable] {
   color: #2a6496;
   font-weight: normal;
   @apply dark:tw-text-sky-500;
 }
 
-.tablesorter-header:hover {
+table thead th[data-sortable]:hover {
   cursor: pointer;
   color: #1896db;
   @apply dark:tw-text-sky-400;
@@ -128,7 +128,7 @@ tr.inactive td > * {
   align-items: center;
 }
 
-th.sortable-field .tablesorter-header-inner:after {
+.tablesorter-header-inner:after {
   content: "";
   margin-left: 0.5rem;
   background-size: cover;
@@ -137,23 +137,23 @@ th.sortable-field .tablesorter-header-inner:after {
   background-image: url("../icons/selector.svg");
 }
 
-.tw-dark th.sortable-field .tablesorter-header-inner:after {
+.tw-dark .tablesorter-header-inner:after {
   background-image: url("../icons/selector-dark.svg");
 }
 
-th.tablesorter-headerDesc .tablesorter-header-inner:after {
+th[data-sorted][data-sort-direction="desc"] .tablesorter-header-inner:after {
   background-image: url("../icons/chevron-down.svg");
 }
 
-.tw-dark th.tablesorter-headerDesc .tablesorter-header-inner:after {
+.tw-dark th[data-sorted][data-sort-direction="desc"] .tablesorter-header-inner:after {
   background-image: url("../icons/chevron-down-dark.svg");
 }
 
-th.tablesorter-headerAsc .tablesorter-header-inner:after {
+th[data-sorted][data-sort-direction="asc"] .tablesorter-header-inner:after {
   background-image: url("../icons/chevron-up.svg");
 }
 
-.tw-dark th.tablesorter-headerAsc .tablesorter-header-inner:after {
+.tw-dark th[data-sorted][data-sort-direction="asc"] .tablesorter-header-inner:after {
   background-image: url("../icons/chevron-up-dark.svg");
 }
 

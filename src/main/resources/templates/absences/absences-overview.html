@@ -156,6 +156,7 @@
             class="vacationOverview-table tw-text-sm"
             role="grid"
             th:aria-describedby="${'absence-table-' + month.nameOfMonth}"
+            is="uv-table-sortable"
           >
             <caption class="" th:text="#{absences.overview.table.caption(${month.nameOfMonth}, ${selectedYear})}">
               Absences in april 2022
@@ -168,7 +169,15 @@
                 >
                   &nbsp;
                 </th>
-                <th scope="col" class="sortable-field tw-cursor-default tw-p-2">&nbsp;</th>
+                <th
+                  scope="col"
+                  class="tw-cursor-default tw-p-2"
+                  data-sortable
+                  data-sorted="true"
+                  data-sort-direction="asc"
+                >
+                  &nbsp;
+                </th>
                 <th
                   th:each="day : ${month.days}"
                   scope="col"

@@ -73,16 +73,32 @@
             </div>
 
             <p th:if="${#lists.isEmpty(departments)}" th:text="#{departments.none}"></p>
-            <table th:if="${not #lists.isEmpty(departments)}" id="department-table" class="list-table tw-text-sm">
+            <table
+              th:if="${not #lists.isEmpty(departments)}"
+              id="department-table"
+              class="list-table tw-text-sm"
+              is="uv-table-sortable"
+            >
               <caption class="tw-sr-only" th:text="#{departments.title}">
                 Departments
               </caption>
               <thead class="hidden-xs hidden-sm">
                 <tr>
-                  <th th:text="#{department.data.name}" scope="col" class="sortable-field"></th>
-                  <th th:text="#{department.members}" scope="col" class="sortable-field"></th>
-                  <th th:text="#{department.data.twoStageApproval}" scope="col" class="sortable-field"></th>
-                  <th th:text="#{department.data.lastModification}" scope="col" class="sortable-field"></th>
+                  <th
+                    th:text="#{department.data.name}"
+                    scope="col"
+                    data-sortable
+                    data-sorted="true"
+                    data-sort-direction="asc"
+                  ></th>
+                  <th th:text="#{department.members}" scope="col" data-sortable data-sort-type="numeric"></th>
+                  <th th:text="#{department.data.twoStageApproval}" scope="col" data-sortable></th>
+                  <th
+                    th:text="#{department.data.lastModification}"
+                    scope="col"
+                    data-sortable
+                    data-sort-type="date"
+                  ></th>
                   <th th:if="${canCreateAndModifyDepartment}" scope="col">
                     <!--placeholder to ensure correct number of th-->
                   </th>
@@ -123,7 +139,7 @@
                       <th:block th:text="#{department.members.inactive}" />
                     </a>
                   </td>
-                  <td class="is-centered hidden-xs">
+                  <td class="is-centered hidden-xs" th:data-sort-value="${department.twoStageApproval ? 0 : 1}">
                     <th:block th:if="${department.twoStageApproval == true}">
                       <svg th:replace="~{icon/check::svg(className='tw-w-5 tw-h-5')}"></svg>
                     </th:block>
