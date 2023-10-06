@@ -85,7 +85,7 @@
               <tbody>
                 <tr th:each="department : ${departments}">
                   <td>
-                    <details th:if="${department.description != null}" is="uv-popover">
+                    <details th:if="${not #strings.isEmpty(department.description)}" is="uv-popover">
                       <summary class="overflow tw-flex tw-items-center">
                         <th:block th:text="${department.name}"></th:block>
                         <span data-uv-popover-placement class="tw-flex tw-items-center tw-ml-1">
@@ -97,7 +97,7 @@
                         <span data-uv-popover-content th:text="${department.description}"></span>
                       </p>
                     </details>
-                    <div th:if="${department.description == null}" th:text="${department.name}"></div>
+                    <div th:if="${#strings.isEmpty(department.description)}" th:text="${department.name}"></div>
                   </td>
                   <td class="hidden-xs">
                     <a
