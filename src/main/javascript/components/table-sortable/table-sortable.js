@@ -22,7 +22,7 @@ function initTableSortable(table) {
 
       const trs = [...tbody.querySelectorAll("tr")];
       const rows = trs.map((tr) => {
-        const cell = tr.querySelector(`td:nth-child(${index + 1})`);
+        const cell = tr.children[index];
         return [tr, getSortValue(cell, sortType)];
       });
 
