@@ -43,24 +43,6 @@ jobs:
           files: |
             ./target/urlaubsverwaltung-*.jar
           prerelease: true
-      - name: Publish docker image to Docker Hub synyx
-        run: >
-          ./mvnw $MAVEN_CLI_OPTS
-          spring-boot:build-image
-          -Dspring-boot.build-image.publish=true
-          -Ddocker-publish-registry=registry.hub.docker.com
-          -Ddocker-publish-registry-path=synyx
-          -Ddocker-publish-registry-username=${{ secrets.DOCKER_USERNAME }}
-          -Ddocker-publish-registry-password=${{ secrets.DOCKER_PASSWORD }}
-      - name: Publish docker image to Docker Hub urlaubsverwaltung
-        run: >
-          ./mvnw $MAVEN_CLI_OPTS
-          spring-boot:build-image
-          -Dspring-boot.build-image.publish=true
-          -Ddocker-publish-registry=registry.hub.docker.com
-          -Ddocker-publish-registry-path=urlaubsverwaltung
-          -Ddocker-publish-registry-username=${{ secrets.DOCKER_UV_USERNAME }}
-          -Ddocker-publish-registry-password=${{ secrets.DOCKER_UV_TOKEN }}
       - name: Publish docker image to GitHub Container Registry
         run: >
           ./mvnw $MAVEN_CLI_OPTS
@@ -70,3 +52,21 @@ jobs:
           -Ddocker-publish-registry-path=${{ github.repository }}
           -Ddocker-publish-registry-username=${{ github.actor }}
           -Ddocker-publish-registry-password=${{ secrets.GITHUB_TOKEN }}
+      - name: Publish docker image to Docker Hub urlaubsverwaltung
+        run: >
+          ./mvnw $MAVEN_CLI_OPTS
+          spring-boot:build-image
+          -Dspring-boot.build-image.publish=true
+          -Ddocker-publish-registry=registry.hub.docker.com
+          -Ddocker-publish-registry-path=urlaubsverwaltung
+          -Ddocker-publish-registry-username=${{ secrets.DOCKER_UV_USERNAME }}
+          -Ddocker-publish-registry-password=${{ secrets.DOCKER_UV_TOKEN }}
+      - name: Publish docker image to Docker Hub synyx
+        run: >
+          ./mvnw $MAVEN_CLI_OPTS
+          spring-boot:build-image
+          -Dspring-boot.build-image.publish=true
+          -Ddocker-publish-registry=registry.hub.docker.com
+          -Ddocker-publish-registry-path=synyx
+          -Ddocker-publish-registry-username=${{ secrets.DOCKER_USERNAME }}
+          -Ddocker-publish-registry-password=${{ secrets.DOCKER_PASSWORD }}
