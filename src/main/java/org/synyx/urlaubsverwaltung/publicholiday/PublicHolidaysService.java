@@ -33,6 +33,9 @@ public interface PublicHolidaysService {
      * Returns a list of public holiday information for the given date range (inclusive from and to) and the federal state.
      * If there is no public holiday at the given date range the return value is an empty list, otherwise
      * the public holidays will be returned.
+     * <p>
+     * Hint: it is possible that there are two public holidays at the same day e.g. if there is a fixed public holiday
+     * and a movable that will be at the same day in a special year.
      *
      * @param from         to get public holiday from
      * @param to           to get public holiday to
@@ -64,6 +67,9 @@ public interface PublicHolidaysService {
      * <p>
      * Hint: we added this method so that the working time settings will not be requested from the database for each call of a day e.g.
      * We will remove this method when the "betriebsferien" will be ready so that we do not need to call for Christmas and new years eve.
+     * <p>
+     * Hint: it is possible that there are two public holidays at the same day e.g. if there is a fixed public holiday
+     * and a movable that will be at the same day in a special year.
      *
      * @param from                to get public holiday from
      * @param to                  to get public holiday to
