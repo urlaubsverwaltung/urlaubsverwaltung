@@ -1,13 +1,3 @@
-import $ from "jquery";
-import "bootstrap/js/tooltip";
-// popover depends on tooltip
-import "bootstrap/js/popover";
-
-$(function () {
-  // bootstrap popover elements
-  $('[data-toggle="popover"]').popover();
-});
-
 // note: still depends on bootstrap popover css classes
 class Popover extends HTMLDetailsElement {
   connectedCallback() {

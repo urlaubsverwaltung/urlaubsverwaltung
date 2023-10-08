@@ -101,7 +101,7 @@ class ColorPicker extends HTMLDivElement {
 
     const handleColorSelectionClick = (event) => {
       let target = event.target;
-      let clickedLabel = target.tag === "LABEL" ? target : target.closest("label");
+      let clickedLabel = target.closest("label");
 
       if (clickedLabel) {
         // prevent scrolling up to the absolute positioned checkbox.
