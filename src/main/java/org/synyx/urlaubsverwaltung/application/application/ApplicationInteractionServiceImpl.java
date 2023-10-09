@@ -528,7 +528,7 @@ class ApplicationInteractionServiceImpl implements ApplicationInteractionService
             final List<HolidayReplacementEntity> stillExistingReplacements = savedEditedApplication.getHolidayReplacements()
                 .stream()
                 .filter(oldReplacements::contains)
-                .collect(toList());
+                .toList();
             for (HolidayReplacementEntity replacement : stillExistingReplacements) {
                 applicationMailService.notifyHolidayReplacementAboutEdit(replacement, savedEditedApplication);
             }

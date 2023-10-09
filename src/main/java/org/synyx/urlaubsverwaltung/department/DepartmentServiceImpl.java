@@ -37,7 +37,6 @@ import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
@@ -137,7 +136,7 @@ class DepartmentServiceImpl implements DepartmentService {
             .distinct()
             .filter(nameContains(personPageableSearchQuery.getQuery()).and(predicate))
             .sorted(new SortComparator<>(Person.class, pageable.getSort()))
-            .collect(toList());
+            .toList();
 
         final List<Person> content = managedMembers.stream()
             .skip((long) pageable.getPageNumber() * pageable.getPageSize())
@@ -427,7 +426,7 @@ class DepartmentServiceImpl implements DepartmentService {
 
             final List<String> departmentNames = departmentList.stream()
                 .map(Department::getName)
-                .collect(toUnmodifiableList());
+                .toList();
 
             personList.forEach(person -> {
                 if (persons.contains(person)) {

@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_ALLOWED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_APPLIED;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_EMAIL_APPLICATION_CANCELLATION;
@@ -178,7 +177,7 @@ final class PersonNotificationsMapper {
             .map(PersonNotificationDtoDepartmentAware.class::cast)
             .filter(not(PersonNotificationDtoDepartmentAware::isDepartmentAware))
             .filter(PersonNotificationDto::isVisible)
-            .collect(toList());
+            .toList();
 
         final long visiblePersonalCount = visiblePersonal.size();
         final long activePersonalCount = visiblePersonal.stream().filter(PersonNotificationDto::isActive).count();
@@ -204,7 +203,7 @@ final class PersonNotificationsMapper {
             .map(PersonNotificationDtoDepartmentAware.class::cast)
             .filter(PersonNotificationDtoDepartmentAware::isDepartmentAware)
             .filter(PersonNotificationDto::isVisible)
-            .collect(toList());
+            .toList();
 
         final long visibleDepartmentCount = visibleDepartment.size();
         final long activeDepartmentCount = visibleDepartment.stream().filter(PersonNotificationDto::isActive).count();

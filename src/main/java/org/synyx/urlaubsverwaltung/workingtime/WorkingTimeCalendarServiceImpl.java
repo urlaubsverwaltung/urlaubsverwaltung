@@ -20,7 +20,6 @@ import java.util.function.Supplier;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Service
@@ -59,7 +58,7 @@ class WorkingTimeCalendarServiceImpl implements WorkingTimeCalendarService {
             final List<WorkingTime> workingTimesInDateRange = workingTimesByPerson.getOrDefault(person, List.of())
                 .stream()
                 .filter(workingTime -> !workingTime.getValidFrom().isAfter(end))
-                .collect(toList());
+                .toList();
 
             final Map<LocalDate, DayLength> dayLengthByDate = new HashMap<>();
 

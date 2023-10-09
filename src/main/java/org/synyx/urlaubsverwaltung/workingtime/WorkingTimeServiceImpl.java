@@ -98,7 +98,7 @@ class WorkingTimeServiceImpl implements WorkingTimeService, WorkingTimeWriteServ
         final List<WorkingTime> workingTimesByPerson = toWorkingTimes(workingTimeRepository.findByPersonOrderByValidFromDesc(person));
         final List<WorkingTime> workingTimeList = workingTimesByPerson.stream()
             .filter(workingTime -> !workingTime.getValidFrom().isAfter(dateRange.getEndDate()))
-            .collect(toList());
+            .toList();
 
         final HashMap<DateRange, WorkingTime> workingTimesOfPersonByDateRange = new HashMap<>();
         LocalDate nextEnd = dateRange.getEndDate();

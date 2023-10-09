@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
@@ -60,7 +59,7 @@ class VacationAbsenceProvider extends AbstractTimedAbsenceProvider {
                 || application.hasStatus(TEMPORARY_ALLOWED)
                 || application.hasStatus(ALLOWED)
                 || application.hasStatus(ALLOWED_CANCELLATION_REQUESTED))
-            .collect(toList());
+            .toList();
 
         if (applications.isEmpty()) {
             return List.of();
