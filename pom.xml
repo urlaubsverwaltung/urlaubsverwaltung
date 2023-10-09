@@ -164,7 +164,7 @@
     <dependency>
       <groupId>de.focus-shift</groupId>
       <artifactId>jollyday-core</artifactId>
-      <version>0.20.0</version>
+      <version>0.21.0</version>
     </dependency>
     <dependency>
       <groupId>de.focus-shift</groupId>
