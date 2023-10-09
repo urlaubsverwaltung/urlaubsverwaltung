@@ -32,12 +32,10 @@ public class UserApiMethodSecurity {
             return false;
         }
 
-        final Optional<Person> person = personService.getPersonByID(userId);
-        if (person.isEmpty()) {
-            return false;
-        }
+        return personService.getPersonByID(userId)
+            .filter(person -> departmentService.isSecondStageAuthorityAllowedToManagePerson(loggedInUser.get(), person))
+            .isPresent();
 
-        return departmentService.isSecondStageAuthorityAllowedToManagePerson(loggedInUser.get(), person.get());
     }
 
     public boolean isInDepartmentOfDepartmentHead(Authentication authentication, Long userId) {
@@ -47,12 +45,9 @@ public class UserApiMethodSecurity {
             return false;
         }
 
-        final Optional<Person> person = personService.getPersonByID(userId);
-        if (person.isEmpty()) {
-            return false;
-        }
-
-        return departmentService.isDepartmentHeadAllowedToManagePerson(loggedInUser.get(), person.get());
+        return personService.getPersonByID(userId)
+            .filter(person -> departmentService.isDepartmentHeadAllowedToManagePerson(loggedInUser.get(), person))
+            .isPresent();
     }
 
     public boolean isSamePersonId(Authentication authentication, Long userId) {
