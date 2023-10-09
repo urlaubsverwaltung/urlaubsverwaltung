@@ -275,14 +275,16 @@ class FederalStateTest {
         final List<FederalState> grFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "gr".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> mtFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "mt".equals(federalState.getCountry())).collect(toList());
         final List<FederalState> itFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "it".equals(federalState.getCountry())).collect(toList());
+        final List<FederalState> hrFederalStates = Arrays.stream(FederalState.values()).filter(federalState -> "hr".equals(federalState.getCountry())).collect(toList());
 
-        assertThat(federalStatesTypesByCountry).hasSize(7)
+        assertThat(federalStatesTypesByCountry).hasSize(8)
             .contains(entry("de", germanyFederalStates))
             .contains(entry("at", austriaFederalStates))
             .contains(entry("ch", switzerlandFederalStates))
             .contains(entry("gb", ukFederalStates))
             .contains(entry("gr", grFederalStates))
             .contains(entry("mt", mtFederalStates))
-            .contains(entry("it", itFederalStates));
+            .contains(entry("it", itFederalStates))
+            .contains(entry("hr", hrFederalStates));
     }
 }
