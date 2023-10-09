@@ -91,7 +91,7 @@
             </li>
           </ul>
 
-          <div class="tab-content tw-mb-16">
+          <div class="tab-content">
             <div class="tab-pane active" id="absence">
               <div class="form-section tw-mb-8">
                 <div th:replace="~{settings/absence/vacation::section}"></div>
@@ -157,9 +157,8 @@
             </div>
           </div>
 
-          <div class="form-section">
+          <div class="form-section tw-mt-16">
             <div class="tw-mb-16 tw-flex tw-flex-col">
-              <p th:text="#{settings.action.update.description}" class="help-block tw-text-sm"></p>
               <button
                 th:text="#{action.save}"
                 type="submit"

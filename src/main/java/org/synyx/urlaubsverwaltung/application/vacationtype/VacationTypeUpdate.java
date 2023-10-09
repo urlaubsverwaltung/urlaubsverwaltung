@@ -1,5 +1,7 @@
 package org.synyx.urlaubsverwaltung.application.vacationtype;
 
+import java.util.Objects;
+
 public class VacationTypeUpdate {
 
     private final Long id;
@@ -18,15 +20,15 @@ public class VacationTypeUpdate {
         this.visibleToEveryone = visibleToEveryone;
     }
 
-    Long getId() {
+    public Long getId() {
         return id;
     }
 
-    boolean isActive() {
+    public boolean isActive() {
         return active;
     }
 
-    boolean isRequiresApprovalToApply() {
+    public boolean isRequiresApprovalToApply() {
         return requiresApprovalToApply;
     }
 
@@ -40,5 +42,35 @@ public class VacationTypeUpdate {
 
     public boolean isVisibleToEveryone() {
         return visibleToEveryone;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VacationTypeUpdate that = (VacationTypeUpdate) o;
+        return active == that.active
+            && requiresApprovalToApply == that.requiresApprovalToApply
+            && requiresApprovalToCancel == that.requiresApprovalToCancel
+            && visibleToEveryone == that.visibleToEveryone
+            && Objects.equals(id, that.id)
+            && color == that.color;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, active, requiresApprovalToApply, requiresApprovalToCancel, color, visibleToEveryone);
+    }
+
+    @Override
+    public String toString() {
+        return "VacationTypeUpdate{" +
+            "id=" + id +
+            ", active=" + active +
+            ", requiresApprovalToApply=" + requiresApprovalToApply +
+            ", requiresApprovalToCancel=" + requiresApprovalToCancel +
+            ", color=" + color +
+            ", visibleToEveryone=" + visibleToEveryone +
+            '}';
     }
 }

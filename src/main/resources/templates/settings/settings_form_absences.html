@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" th:lang="${language}" th:class="|tw-${theme}|" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{_layout::head(title=~{::title}, scriptsDefer=~{::scriptsDefer}, preload=~{::preload})}">
+    <title th:text="#{settings.header.title}"></title>
+    <th:block th:fragment="preload">
+      <link rel="preload" th:replace="~{fragments/asset-dependency-preload::links('settings_form.js')}" />
+    </th:block>
+    <th:block th:ref="scriptsDefer">
+      <script defer type="module" asset:src="settings_form.js"></script>
+    </th:block>
+  </head>
+  <body th:replace="~{_layout::body(~{::content}, ~{})}">
+    <th:block th:ref="content">
+      <main class="tw-max-w-6xl tw-mx-auto tw-px-4 lg:tw-px-12 xl:tw-px-0">
+        <h1 th:text="#{settings.header.title}" class="tw-sr-only"></h1>
+
+        <form
+          method="post"
+          th:action="@{/web/settings/absences}"
+          th:object="${settings}"
+          class="form-horizontal"
+          role="form"
+        >
+          <input type="hidden" th:field="*{id}" />
+          <button type="submit" hidden></button>
+
+          <div class="tw-mb-4">
+            <div class="feedback">
+              <div
+                th:if="${not #strings.isEmpty(errors)}"
+                th:text="#{settings.action.update.error}"
+                class="alert alert-danger"
+              ></div>
+              <div th:if="${success}" th:text="#{settings.action.update.success}" class="alert alert-success"></div>
+            </div>
+          </div>
+
+          <ul class="nav nav-tabs">
+            <li
+              th:with="hasErrors=${#fields.hasErrors('applicationSettings.*') || #fields.hasErrors('sickNoteSettings.*') || #fields.hasErrors('accountSettings.*')}"
+              class="active"
+            >
+              <a href="#" th:href="@{/web/settings/absences}" th:class="${hasErrors ? 'tw-text-red-800' : ''}">
+                <th:block th:text="#{settings.tabs.absence}" />
+                <th:block th:if="${hasErrors}">*</th:block>
+              </a>
+            </li>
+            <li>
+              <a href="#absenceTypes" th:href="@{/web/settings/absence-types}" th:text="#{settings.tabs.absenceTypes}">
+                Abwesenheitsarten
+              </a>
+            </li>
+            <li
+              th:with="hasErrors=${#fields.hasErrors('workingTimeSettings.*') || #fields.hasErrors('timeSettings.*') || #fields.hasErrors('overtimeSettings.*')}"
+            >
+              <a
+                href="#"
+                th:href="@{/web/settings/working-time}"
+                th:class="${hasErrors ? 'tw-text-red-800' : ''}"
+                data-test-id="settings-tab-working-time"
+              >
+                <th:block th:text="#{settings.tabs.workingTime}" />
+                <th:block th:if="${hasErrors}">*</th:block>
+              </a>
+            </li>
+            <li>
+              <a href="#" th:href="@{/web/settings/avatar}">
+                <th:block th:text="#{settings.tabs.avatar}" />
+              </a>
+            </li>
+            <li th:with="hasErrors=${#fields.hasErrors('calendarSettings.*')}" role="presentation">
+              <a href="#" th:href="@{/web/settings/calendar-sync}" th:class="${hasErrors ? 'tw-text-red-800' : ''}">
+                <th:block th:text="#{settings.tabs.calendar}" />
+                <th:block th:if="${hasErrors}">*</th:block>
+              </a>
+            </li>
+          </ul>
+
+          <div id="absence" class="tw-mt-6">
+            <div class="form-section tw-mb-8">
+              <div th:replace="~{settings/absences/vacation::section}"></div>
+            </div>
+            <div class="form-section tw-mb-8">
+              <div th:replace="~{settings/absences/reminder-waiting-application::section}"></div>
+            </div>
+            <div class="form-section tw-mb-8">
+              <div th:replace="~{settings/absences/reminder-holiday-replacement::section}"></div>
+            </div>
+            <div class="form-section tw-mb-8">
+              <div th:replace="~{settings/absences/reminder-upcoming-application::section}"></div>
+            </div>
+            <div class="form-section">
+              <div th:replace="~{settings/absences/sick-days::section}"></div>
+            </div>
+          </div>
+
+          <div class="form-section tw-mt-16">
+            <div class="tw-mb-16 tw-flex tw-flex-col">
+              <button
+                th:text="#{action.save}"
+                type="submit"
+                class="button-main-green tw-w-56"
+                data-test-id="settings-save-button"
+              ></button>
+            </div>
+          </div>
+        </form>
+      </main>
+    </th:block>
+  </body>
+</html>

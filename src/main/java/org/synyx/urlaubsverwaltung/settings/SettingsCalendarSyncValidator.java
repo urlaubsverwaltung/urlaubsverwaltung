@@ -3,7 +3,6 @@ package org.synyx.urlaubsverwaltung.settings;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -13,15 +12,8 @@ import org.synyx.urlaubsverwaltung.calendarintegration.GoogleCalendarSettings;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.exchange.ExchangeCalendarProvider;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.google.GoogleCalendarSyncProvider;
 
-import static org.synyx.urlaubsverwaltung.absence.TimeSettingsValidator.validateTimeSettings;
-import static org.synyx.urlaubsverwaltung.account.AccountSettingsValidator.validateAccountSettings;
-import static org.synyx.urlaubsverwaltung.application.settings.ApplicationSettingsValidator.validateApplicationSettings;
-import static org.synyx.urlaubsverwaltung.overtime.OvertimeSettingsValidator.validateOvertimeSettings;
-import static org.synyx.urlaubsverwaltung.sicknote.settings.SickNoteSettingsValidator.validateSickNoteSettings;
-import static org.synyx.urlaubsverwaltung.workingtime.WorkTimeSettingsValidator.validateWorkingTimeSettings;
-
 @Component
-public class SettingsValidator implements Validator {
+public class SettingsCalendarSyncValidator implements Validator {
 
     private static final String ERROR_MANDATORY_FIELD = "error.entry.mandatory";
     private static final String ERROR_INVALID_EMAIL = "error.entry.mail";
@@ -30,22 +22,13 @@ public class SettingsValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.equals(Settings.class);
+        return clazz.equals(SettingsCalendarSyncDto.class);
     }
 
     @Override
     public void validate(Object o, @NonNull Errors errors) {
-
-        Assert.isTrue(supports(o.getClass()), "The given object must be an instance of Settings");
-
-        final Settings settings = (Settings) o;
-        validateWorkingTimeSettings(settings.getWorkingTimeSettings(), errors);
-        validateOvertimeSettings(settings.getOvertimeSettings(), errors);
-        validateApplicationSettings(settings.getApplicationSettings(), errors);
-        validateAccountSettings(settings.getAccountSettings(), errors);
-        validateSickNoteSettings(settings.getSickNoteSettings(), errors);
+        final SettingsCalendarSyncDto settings = (SettingsCalendarSyncDto) o;
         validateCalendarSettings(settings.getCalendarSettings(), errors);
-        validateTimeSettings(settings.getTimeSettings(), errors);
     }
 
 
