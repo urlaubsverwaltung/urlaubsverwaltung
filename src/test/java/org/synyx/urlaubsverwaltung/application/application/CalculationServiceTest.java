@@ -1,8 +1,8 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
-import de.focus_shift.HolidayManager;
-import de.focus_shift.ManagerParameter;
-import de.focus_shift.ManagerParameters;
+import de.focus_shift.jollyday.core.HolidayManager;
+import de.focus_shift.jollyday.core.ManagerParameter;
+import de.focus_shift.jollyday.core.ManagerParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
