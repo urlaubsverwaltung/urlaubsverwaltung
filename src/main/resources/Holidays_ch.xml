@@ -1,314 +1,315 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tns:Configuration hierarchy="ch" description="Switzerland" xmlns:tns="http://www.example.org/Holiday"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.example.org/Holiday /Holiday.xsd">
-  <tns:Holidays>
-    <tns:Fixed month="JANUARY" day="1" descriptionPropertiesKey="NEW_YEAR"/>
-    <tns:Fixed month="AUGUST" day="1" descriptionPropertiesKey="NATIONAL_DAY"/>
-    <tns:Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
-    <tns:Fixed month="DECEMBER" day="25" descriptionPropertiesKey="CHRISTMAS"/>
-    <tns:Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
-    <tns:ChristianHoliday type="ASCENSION_DAY" descriptionPropertiesKey="christian.ASCENSION_DAY"/>
-    <tns:ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
-  </tns:Holidays>
+<Configuration hierarchy="ch" description="Switzerland"
+               xmlns="https://focus_shift.de/jollyday/schema/holiday"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="https://focus_shift.de/jollyday/schema/holiday https://focus_shift.de/jollyday/schema/holiday/holiday.xsd">
+  <Holidays>
+    <Fixed month="JANUARY" day="1" descriptionPropertiesKey="NEW_YEAR"/>
+    <Fixed month="AUGUST" day="1" descriptionPropertiesKey="NATIONAL_DAY"/>
+    <Fixed month="DECEMBER" day="24" descriptionPropertiesKey="CHRISTMAS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
+    <Fixed month="DECEMBER" day="25" descriptionPropertiesKey="CHRISTMAS"/>
+    <Fixed month="DECEMBER" day="31" descriptionPropertiesKey="NEW_YEARS_EVE" localizedType="UNOFFICIAL_HOLIDAY"/>
+    <ChristianHoliday type="ASCENSION_DAY" descriptionPropertiesKey="christian.ASCENSION_DAY"/>
+    <ChristianHoliday type="EASTER" descriptionPropertiesKey="christian.EASTER"/>
+  </Holidays>
 
-  <tns:SubConfigurations hierarchy="ag" description="Aargau">
-    <tns:Holidays>
-      <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="ag" description="Aargau">
+    <Holidays>
+      <Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="ai" description="Appenzell Innerrhoden">
-    <tns:Holidays>
-      <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
-      <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
-      <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
-      <tns:Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-      <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="ai" description="Appenzell Innerrhoden">
+    <Holidays>
+      <Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+      <Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+      <Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+      <Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+      <ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="ar" description="Appenzell Ausserrhoden">
-    <tns:Holidays>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="ar" description="Appenzell Ausserrhoden">
+    <Holidays>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="be" description="Bern">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="be" description="Bern">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="bl" description="Basel-Landschaft">
-    <tns:Holidays>
-      <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="bl" description="Basel-Landschaft">
+    <Holidays>
+      <Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="bs" description="Basel-Stadt">
-    <tns:Holidays>
-      <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="bs" description="Basel-Stadt">
+    <Holidays>
+      <Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="fr" description="Freiburg">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="fr" description="Freiburg">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="ge" description="Genf">
-    <tns:Holidays>
-      <tns:RelativeToWeekdayInMonth weekday="THURSDAY" when="AFTER" descriptionPropertiesKey="GENEVAN_FAST">
-        <tns:FixedWeekday which="FIRST" weekday="SUNDAY" month="SEPTEMBER"/>
-      </tns:RelativeToWeekdayInMonth>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="ge" description="Genf">
+    <Holidays>
+      <RelativeToWeekdayInMonth weekday="THURSDAY" when="AFTER" descriptionPropertiesKey="GENEVAN_FAST">
+        <FixedWeekday which="FIRST" weekday="SUNDAY" month="SEPTEMBER"/>
+      </RelativeToWeekdayInMonth>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="gl" description="Glarus">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="gl" description="Glarus">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="gr" description="Graubünden">
-    <tns:Holidays>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="gr" description="Graubünden">
+    <Holidays>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="ju" description="Jura">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
-      <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
-      <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-      <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="ju" description="Jura">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+      <Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+      <Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+      <ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="lu" description="Luzern">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
-      <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
-      <tns:Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-      <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="lu" description="Luzern">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+      <Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+      <Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+      <ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="ne" description="Neuenburg">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
-      <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="ne" description="Neuenburg">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+      <Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="nw" description="Nidwalden">
-    <tns:Holidays>
-      <tns:Fixed month="MARCH" day="19" descriptionPropertiesKey="ST_JOSEPH"/>
-      <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
-      <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
-      <tns:Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-      <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="nw" description="Nidwalden">
+    <Holidays>
+      <Fixed month="MARCH" day="19" descriptionPropertiesKey="ST_JOSEPH"/>
+      <Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+      <Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+      <Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+      <ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="ow" description="Obwalden">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
-      <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
-      <tns:Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-      <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="ow" description="Obwalden">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+      <Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+      <Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+      <ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="sg" description="St.Gallen">
-    <tns:Holidays>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="sg" description="St.Gallen">
+    <Holidays>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="sh" description="Schaffhausen">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="sh" description="Schaffhausen">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="so" description="Solothurn">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="so" description="Solothurn">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="sz" description="Schwyz">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/>
-      <tns:Fixed month="MARCH" day="19" descriptionPropertiesKey="ST_JOSEPH"/>
-      <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
-      <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
-      <tns:Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-      <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="sz" description="Schwyz">
+    <Holidays>
+      <Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/>
+      <Fixed month="MARCH" day="19" descriptionPropertiesKey="ST_JOSEPH"/>
+      <Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+      <Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+      <Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+      <ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="tg" description="Thurgau">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="tg" description="Thurgau">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="ti" description="Tessin">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/>
-      <tns:Fixed month="MARCH" day="19" descriptionPropertiesKey="ST_JOSEPH"/>
-      <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
-      <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
-      <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
-      <tns:Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-      <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="ti" description="Tessin">
+    <Holidays>
+      <Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/>
+      <Fixed month="MARCH" day="19" descriptionPropertiesKey="ST_JOSEPH"/>
+      <Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+      <Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+      <Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+      <Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+      <ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="ur" description="Uri">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/>
-      <tns:Fixed month="MARCH" day="19" descriptionPropertiesKey="ST_JOSEPH"/>
-      <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
-      <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
-      <tns:Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-      <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="ur" description="Uri">
+    <Holidays>
+      <Fixed month="JANUARY" day="6" descriptionPropertiesKey="EPIPHANY"/>
+      <Fixed month="MARCH" day="19" descriptionPropertiesKey="ST_JOSEPH"/>
+      <Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+      <Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+      <Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+      <ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="vd" description="Waadt">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:RelativeToWeekdayInMonth weekday="MONDAY" when="AFTER"
-                                    descriptionPropertiesKey="FEDERAL_DAY_THANKSGIVING_MON">
-        <tns:FixedWeekday which="THIRD" weekday="SUNDAY" month="SEPTEMBER"/>
-      </tns:RelativeToWeekdayInMonth>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="vd" description="Waadt">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <RelativeToWeekdayInMonth weekday="MONDAY" when="AFTER"
+                                descriptionPropertiesKey="FEDERAL_DAY_THANKSGIVING_MON">
+        <FixedWeekday which="THIRD" weekday="SUNDAY" month="SEPTEMBER"/>
+      </RelativeToWeekdayInMonth>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="vs" description="Wallis">
-    <tns:Holidays>
-      <tns:Fixed month="MARCH" day="19" descriptionPropertiesKey="ST_JOSEPH"/>
-      <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
-      <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
-      <tns:Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
-      <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="vs" description="Wallis">
+    <Holidays>
+      <Fixed month="MARCH" day="19" descriptionPropertiesKey="ST_JOSEPH"/>
+      <Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+      <Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+      <Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
+      <ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="zg" description="Zug">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
-      <tns:Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
-      <tns:Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-      <tns:ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
+  <SubConfigurations hierarchy="zg" description="Zug">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="AUGUST" day="15" descriptionPropertiesKey="ASSUMPTION_DAY"/>
+      <Fixed month="NOVEMBER" day="1" descriptionPropertiesKey="ALL_SAINTS"/>
+      <Fixed month="DECEMBER" day="8" descriptionPropertiesKey="IMMACULATE_CONCEPTION"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+      <ChristianHoliday type="CORPUS_CHRISTI" descriptionPropertiesKey="christian.CORPUS_CHRISTI"/>
+    </Holidays>
+  </SubConfigurations>
 
-  <tns:SubConfigurations hierarchy="zh" description="Zürich">
-    <tns:Holidays>
-      <tns:Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
-      <tns:Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
-      <tns:Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
-      <tns:ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
-      <tns:ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
-      <tns:ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
-    </tns:Holidays>
-  </tns:SubConfigurations>
-</tns:Configuration>
+  <SubConfigurations hierarchy="zh" description="Zürich">
+    <Holidays>
+      <Fixed month="JANUARY" day="2" descriptionPropertiesKey="ST_BERCHTHOLD"/>
+      <Fixed month="MAY" day="1" descriptionPropertiesKey="LABOUR_DAY"/>
+      <Fixed month="DECEMBER" day="26" descriptionPropertiesKey="STEPHENS"/>
+      <ChristianHoliday type="GOOD_FRIDAY" descriptionPropertiesKey="christian.GOOD_FRIDAY"/>
+      <ChristianHoliday type="EASTER_MONDAY" descriptionPropertiesKey="christian.EASTER_MONDAY"/>
+      <ChristianHoliday type="WHIT_MONDAY" descriptionPropertiesKey="christian.WHIT_MONDAY"/>
+    </Holidays>
+  </SubConfigurations>
+</Configuration>
