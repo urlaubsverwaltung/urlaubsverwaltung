@@ -101,37 +101,37 @@ class MailRecipientServiceImpl implements MailRecipientService {
 
     private List<Person> getOfficeBossWithDepartmentMatch(Person personOfInterest, List<Person> officeAndBosses) {
 
-        final List<Person> distinctOfficesAndBosses = officeAndBosses.stream().distinct().collect(toList());
+        final List<Person> distinctOfficesAndBosses = officeAndBosses.stream().distinct().toList();
 
         if (noDepartmentsAvailable()) {
             return distinctOfficesAndBosses;
         }
 
         final Map<PersonId, Person> byPersonId = distinctOfficesAndBosses.stream().collect(toMap(person -> new PersonId(person.getId()), identity(), (person, person2) -> person));
-        final List<PersonId> officeBossIds = distinctOfficesAndBosses.stream().map(Person::getId).map(PersonId::new).collect(toList());
+        final List<PersonId> officeBossIds = distinctOfficesAndBosses.stream().map(Person::getId).map(PersonId::new).toList();
         final Predicate<PersonId> departmentMatch = personId -> departmentService.hasDepartmentMatch(byPersonId.get(personId), personOfInterest);
 
         final List<PersonId> notInterestedIds = userNotificationSettingsService.findNotificationSettings(officeBossIds).values().stream()
             .filter(UserNotificationSettings::isRestrictToDepartments)
             .map(UserNotificationSettings::getPersonId)
             .filter(not(departmentMatch))
-            .collect(toList());
+            .toList();
 
         return distinctOfficesAndBosses.stream()
             .filter(not(person -> notInterestedIds.contains(new PersonId(person.getId()))))
-            .collect(toList());
+            .toList();
     }
 
     private List<Person> getBossWithApplicationManagementAllNotification(MailNotification concerningMailNotification) {
         return personService.getActivePersonsByRole(BOSS).stream()
             .filter(boss -> boss.getNotifications().contains(concerningMailNotification))
-            .collect(toList());
+            .toList();
     }
 
     private List<Person> getOfficesWithApplicationManagementAllNotification(MailNotification concerningMailNotification) {
         return personService.getActivePersonsByRole(OFFICE).stream()
             .filter(office -> office.getNotifications().contains(concerningMailNotification))
-            .collect(toList());
+            .toList();
     }
 
     private boolean noDepartmentsAvailable() {
