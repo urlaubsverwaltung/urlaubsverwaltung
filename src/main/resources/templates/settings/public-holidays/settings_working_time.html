@@ -24,9 +24,9 @@
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
 
-          <th:block th:replace="~{/settings/settings_form::save-feedback}" />
+          <th:block th:replace="~{/settings/fragments::save-feedback}" />
 
-          <th:block th:replace="~{/settings/settings_form::tab-navigation(activeElement='working-time')}" />
+          <th:block th:replace="~{/settings/fragments::tab-navigation(activeElement='working-time')}" />
 
           <div id="publicHolidays" class="tw-mt-6">
             <div th:if="${defaultWorkingTimeFromSettings}" class="form-section tw-mb-8">
@@ -43,7 +43,7 @@
             </div>
           </div>
 
-          <th:block th:replace="~{/settings/settings_form::save-button}" />
+          <th:block th:replace="~{/settings/fragments::save-button}" />
         </form>
       </main>
     </th:block>
