@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypePropertyEditor;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeViewModelService;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -109,7 +109,6 @@ class SickNoteViewController implements HasLaunchpad {
     public void initBinder(DataBinder binder) {
         binder.registerCustomEditor(Instant.class, new InstantPropertyEditor(clock, settingsService));
         binder.registerCustomEditor(Person.class, new PersonPropertyEditor(personService));
-        binder.registerCustomEditor(VacationType.class, new VacationTypePropertyEditor(vacationTypeService));
     }
 
     @GetMapping("/sicknote/{id}")
@@ -412,19 +411,35 @@ class SickNoteViewController implements HasLaunchpad {
 
     private Application generateApplicationForLeave(SickNoteConvertForm sickNoteConvertForm) {
 
-        final Application applicationForLeave = new Application();
+        final Long vacationTypeId = sickNoteConvertForm.getVacationType();
+        final VacationType vacationType = vacationTypeService.getById(vacationTypeId)
+            .orElseThrow(() -> new IllegalStateException("vacationType with id=%s does not exist.".formatted(vacationTypeId)));
+        final VacationTypeEntity vacationTypeEntity = toVacationTypeEntity(vacationType);
 
+        final Application applicationForLeave = new Application();
         applicationForLeave.setPerson(sickNoteConvertForm.getPerson());
-        applicationForLeave.setVacationType(sickNoteConvertForm.getVacationType());
+        applicationForLeave.setVacationType(vacationTypeEntity);
         applicationForLeave.setDayLength(sickNoteConvertForm.getDayLength());
         applicationForLeave.setStartDate(sickNoteConvertForm.getStartDate());
         applicationForLeave.setEndDate(sickNoteConvertForm.getEndDate());
         applicationForLeave.setReason(sickNoteConvertForm.getReason());
-
         applicationForLeave.setStatus(ALLOWED);
         applicationForLeave.setApplicationDate(LocalDate.now(clock));
         applicationForLeave.setEditedDate(LocalDate.now(clock));
 
         return applicationForLeave;
+    }
+
+    private static VacationTypeEntity toVacationTypeEntity(VacationType vacationType) {
+        final VacationTypeEntity vacationTypeEntity = new VacationTypeEntity();
+        vacationTypeEntity.setId(vacationType.getId());
+        vacationTypeEntity.setActive(vacationType.isActive());
+        vacationTypeEntity.setCategory(vacationType.getCategory());
+        vacationTypeEntity.setMessageKey(vacationType.getMessageKey());
+        vacationTypeEntity.setRequiresApprovalToApply(vacationType.isRequiresApprovalToApply());
+        vacationTypeEntity.setRequiresApprovalToCancel(vacationType.isRequiresApprovalToCancel());
+        vacationTypeEntity.setColor(vacationType.getColor());
+        vacationTypeEntity.setVisibleToEveryone(vacationType.isVisibleToEveryone());
+        return vacationTypeEntity;
     }
 }

@@ -1121,9 +1121,15 @@ class SickNoteViewControllerTest {
     @Test
     void ensureRedirectToSickNoteAfterConvert() throws Exception {
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        final SickNote sickNote = SickNote.builder()
+            .person(new Person())
+            .status(ACTIVE)
+            .build();
 
-        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
+        when(vacationTypeService.getById(42L)).thenReturn(Optional.of(new VacationType()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
+
+        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert").param("vacationType", "42"))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/sicknote/" + SOME_SICK_NOTE_ID));
     }
@@ -1283,12 +1289,20 @@ class SickNoteViewControllerTest {
     @Test
     void ensurePostConvertSickNoteToVacationConvertsSickNoteIfValidationSuccessful() throws Exception {
 
-        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
+        final SickNote sickNote = SickNote.builder()
+            .person(new Person())
+            .status(ACTIVE)
+            .build();
+
+        when(vacationTypeService.getById(42L)).thenReturn(Optional.of(new VacationType()));
+        when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
 
         final Person signedInPerson = new Person();
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"));
+        perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert")
+            .param("vacationType", "42")
+        );
 
         verify(sickNoteInteractionService).convert(any(SickNote.class), any(Application.class), eq(signedInPerson));
     }

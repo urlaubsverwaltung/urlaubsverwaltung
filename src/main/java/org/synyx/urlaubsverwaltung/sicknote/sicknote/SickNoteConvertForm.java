@@ -1,6 +1,5 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -16,7 +15,7 @@ public class SickNoteConvertForm {
     private DayLength dayLength;
     private LocalDate startDate;
     private LocalDate endDate;
-    private VacationTypeEntity vacationType;
+    private Long vacationType;
     private String reason;
 
     public SickNoteConvertForm() {
@@ -62,11 +61,11 @@ public class SickNoteConvertForm {
         this.endDate = endDate;
     }
 
-    public VacationTypeEntity getVacationType() {
+    public Long getVacationType() {
         return vacationType;
     }
 
-    public void setVacationType(VacationTypeEntity vacationType) {
+    public void setVacationType(Long vacationType) {
         this.vacationType = vacationType;
     }
 
