@@ -43,16 +43,7 @@
             </div>
           </div>
 
-          <div class="form-section tw-mt-16">
-            <div class="tw-mb-16 tw-flex tw-flex-col">
-              <button
-                th:text="#{action.save}"
-                type="submit"
-                class="button-main-green tw-w-56"
-                data-test-id="settings-save-button"
-              ></button>
-            </div>
-          </div>
+          <th:block th:replace="~{/settings/settings_form::save-button}" />
         </form>
       </main>
     </th:block>
