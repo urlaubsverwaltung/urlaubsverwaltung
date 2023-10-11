@@ -1,15 +1,11 @@
 package org.synyx.urlaubsverwaltung.sicknote.sicknote;
 
-import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
-import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 
 /**
  * Represents a form to convert a sick note to vacation.
@@ -80,24 +76,6 @@ public class SickNoteConvertForm {
 
     public void setReason(String reason) {
         this.reason = reason;
-    }
-
-    public Application generateApplicationForLeave(Clock clock) {
-
-        final Application applicationForLeave = new Application();
-
-        applicationForLeave.setPerson(person);
-        applicationForLeave.setVacationType(vacationType);
-        applicationForLeave.setDayLength(dayLength);
-        applicationForLeave.setStartDate(startDate);
-        applicationForLeave.setEndDate(endDate);
-        applicationForLeave.setReason(reason);
-
-        applicationForLeave.setStatus(ALLOWED);
-        applicationForLeave.setApplicationDate(LocalDate.now(clock));
-        applicationForLeave.setEditedDate(LocalDate.now(clock));
-
-        return applicationForLeave;
     }
 
     public DayOfWeek getWeekDayOfStartDate() {

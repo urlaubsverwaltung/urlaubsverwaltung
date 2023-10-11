@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeDto;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypePropertyEditor;
@@ -38,6 +39,7 @@ import org.synyx.urlaubsverwaltung.web.InstantPropertyEditor;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -45,6 +47,7 @@ import java.util.stream.Stream;
 import static java.lang.String.format;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
 import static org.synyx.urlaubsverwaltung.person.Role.DEPARTMENT_HEAD;
@@ -322,7 +325,8 @@ class SickNoteViewController implements HasLaunchpad {
             return "sicknote/sick_note_convert";
         }
 
-        sickNoteInteractionService.convert(sickNote, sickNoteConvertForm.generateApplicationForLeave(clock), personService.getSignedInUser());
+        final Application application = generateApplicationForLeave(sickNoteConvertForm);
+        sickNoteInteractionService.convert(sickNote, application, personService.getSignedInUser());
 
         return "redirect:/web/sicknote/" + id;
     }
@@ -404,5 +408,23 @@ class SickNoteViewController implements HasLaunchpad {
             .aubStartDate(sickNote.getAubStartDate())
             .aubEndDate(sickNote.getAubEndDate())
             .build();
+    }
+
+    private Application generateApplicationForLeave(SickNoteConvertForm sickNoteConvertForm) {
+
+        final Application applicationForLeave = new Application();
+
+        applicationForLeave.setPerson(sickNoteConvertForm.getPerson());
+        applicationForLeave.setVacationType(sickNoteConvertForm.getVacationType());
+        applicationForLeave.setDayLength(sickNoteConvertForm.getDayLength());
+        applicationForLeave.setStartDate(sickNoteConvertForm.getStartDate());
+        applicationForLeave.setEndDate(sickNoteConvertForm.getEndDate());
+        applicationForLeave.setReason(sickNoteConvertForm.getReason());
+
+        applicationForLeave.setStatus(ALLOWED);
+        applicationForLeave.setApplicationDate(LocalDate.now(clock));
+        applicationForLeave.setEditedDate(LocalDate.now(clock));
+
+        return applicationForLeave;
     }
 }
