@@ -42,7 +42,7 @@ public class SettingsPage {
      * You may have to add a wait yourself after calling this method.
      */
     public void saveSettings() {
-        page.locator(SAVE_BUTTON_SELECTOR).click();
+        page.locator(SAVE_BUTTON_SELECTOR).first().click();
         page.waitForLoadState(DOMCONTENTLOADED);
     }
 

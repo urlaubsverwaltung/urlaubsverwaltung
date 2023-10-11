@@ -31,10 +31,9 @@
           <div id="avatar" class="tw-mt-6">
             <div class="form-section tw-mb-8">
               <div th:replace="~{settings/avatar/avatar::section}"></div>
+              <th:block th:replace="~{/settings/fragments::save-button}" />
             </div>
           </div>
-
-          <th:block th:replace="~{/settings/fragments::save-button}" />
         </form>
       </main>
     </th:block>

@@ -31,13 +31,13 @@
           <div id="absenceTypes" class="tw-mt-6">
             <div class="form-section tw-mb-12 tw-relative tw-z-10">
               <div th:replace="~{settings/absence-types/absence-types::section}"></div>
+              <th:block th:replace="~{/settings/fragments::save-button}" />
             </div>
             <div class="form-section">
               <div th:replace="~{settings/absence-types/special-leave::section}"></div>
+              <th:block th:replace="~{/settings/fragments::save-button}" />
             </div>
           </div>
-
-          <th:block th:replace="~{/settings/fragments::save-button}" />
         </form>
       </main>
     </th:block>

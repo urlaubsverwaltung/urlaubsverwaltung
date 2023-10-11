@@ -31,19 +31,21 @@
           <div id="publicHolidays" class="tw-mt-6">
             <div th:if="${defaultWorkingTimeFromSettings}" class="form-section tw-mb-8">
               <div th:replace="~{settings/public-holidays/default-workingtime::section}"></div>
+              <th:block th:replace="~{/settings/fragments::save-button}" />
             </div>
             <div class="form-section tw-mb-8">
               <div th:replace="~{settings/public-holidays/time::section}"></div>
+              <th:block th:replace="~{/settings/fragments::save-button}" />
             </div>
             <div class="form-section tw-mb-8">
               <div th:replace="~{settings/public-holidays/public-holidays::section}"></div>
+              <th:block th:replace="~{/settings/fragments::save-button}" />
             </div>
             <div class="form-section tw-mb-8">
               <div th:replace="~{settings/public-holidays/overtime::section}"></div>
+              <th:block th:replace="~{/settings/fragments::save-button}" />
             </div>
           </div>
-
-          <th:block th:replace="~{/settings/fragments::save-button}" />
         </form>
       </main>
     </th:block>
