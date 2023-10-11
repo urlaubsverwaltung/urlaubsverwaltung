@@ -24,16 +24,7 @@
           <input type="hidden" th:field="*{id}" />
           <button type="submit" hidden></button>
 
-          <div class="tw-mb-4">
-            <div class="feedback">
-              <div
-                th:if="${not #strings.isEmpty(errors)}"
-                th:text="#{settings.action.update.error}"
-                class="alert alert-danger"
-              ></div>
-              <div th:if="${success}" th:text="#{settings.action.update.success}" class="alert alert-success"></div>
-            </div>
-          </div>
+          <th:block th:replace="~{/settings/settings_form::save-feedback}" />
 
           <th:block th:replace="~{/settings/settings_form::tab-navigation(activeElement='calendar-sync')}" />
 
