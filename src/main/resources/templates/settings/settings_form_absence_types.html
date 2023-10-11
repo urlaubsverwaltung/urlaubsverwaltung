@@ -35,45 +35,7 @@
             </div>
           </div>
 
-          <ul class="nav nav-tabs">
-            <li
-              th:with="hasErrors=${#fields.hasErrors('applicationSettings.*') || #fields.hasErrors('sickNoteSettings.*') || #fields.hasErrors('accountSettings.*')}"
-            >
-              <a href="#" th:href="@{/web/settings/absences}" th:class="${hasErrors ? 'tw-text-red-800' : ''}">
-                <th:block th:text="#{settings.tabs.absence}" />
-                <th:block th:if="${hasErrors}">*</th:block>
-              </a>
-            </li>
-            <li class="active">
-              <a href="#absenceTypes" th:href="@{/web/settings/absence-types}" th:text="#{settings.tabs.absenceTypes}">
-                Abwesenheitsarten
-              </a>
-            </li>
-            <li
-              th:with="hasErrors=${#fields.hasErrors('workingTimeSettings.*') || #fields.hasErrors('timeSettings.*') || #fields.hasErrors('overtimeSettings.*')}"
-            >
-              <a
-                href="#"
-                th:href="@{/web/settings/working-time}"
-                th:class="${hasErrors ? 'tw-text-red-800' : ''}"
-                data-test-id="settings-tab-working-time"
-              >
-                <th:block th:text="#{settings.tabs.workingTime}" />
-                <th:block th:if="${hasErrors}">*</th:block>
-              </a>
-            </li>
-            <li>
-              <a href="#" th:href="@{/web/settings/avatar}">
-                <th:block th:text="#{settings.tabs.avatar}" />
-              </a>
-            </li>
-            <li th:with="hasErrors=${#fields.hasErrors('calendarSettings.*')}" role="presentation">
-              <a href="#" th:href="@{/web/settings/calendar-sync}" th:class="${hasErrors ? 'tw-text-red-800' : ''}">
-                <th:block th:text="#{settings.tabs.calendar}" />
-                <th:block th:if="${hasErrors}">*</th:block>
-              </a>
-            </li>
-          </ul>
+          <th:block th:replace="~{/settings/settings_form::tab-navigation(activeElement='absence-types')}" />
 
           <div id="absenceTypes" class="tw-mt-6">
             <div class="form-section tw-mb-12 tw-relative tw-z-10">
