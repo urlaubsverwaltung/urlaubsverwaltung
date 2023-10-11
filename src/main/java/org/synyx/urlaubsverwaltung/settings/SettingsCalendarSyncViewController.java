@@ -64,7 +64,7 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
             model.addAttribute("oautherrors", googleOAuthError);
         }
 
-        return "settings/settings_form_calendar_sync";
+        return "settings/calendar/settings_calendar_sync";
     }
 
     @PostMapping
@@ -84,7 +84,7 @@ public class SettingsCalendarSyncViewController implements HasLaunchpad {
 
             model.addAttribute("errors", errors);
 
-            return "settings/settings_form_calendar_sync";
+            return "settings/calendar/settings_calendar_sync";
         }
 
         final Settings settings = settingsDtoToSettings(settingsDto);

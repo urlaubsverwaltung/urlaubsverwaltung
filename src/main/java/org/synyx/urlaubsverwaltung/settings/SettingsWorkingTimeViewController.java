@@ -43,7 +43,7 @@ public class SettingsWorkingTimeViewController implements HasLaunchpad {
 
         fillModel(model, settingsDto);
 
-        return "settings/settings_form_working_time";
+        return "settings/public-holidays/settings_working_time";
     }
 
     @PostMapping
@@ -56,7 +56,7 @@ public class SettingsWorkingTimeViewController implements HasLaunchpad {
         if (errors.hasErrors()) {
             fillModel(model, settingsDto);
             model.addAttribute("errors", errors);
-            return "settings/settings_form_working_time";
+            return "settings/public-holidays/settings_working_time";
         }
 
         final Settings settings = settingsDtoToSettings(settingsDto);

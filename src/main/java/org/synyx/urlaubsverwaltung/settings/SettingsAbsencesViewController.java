@@ -37,7 +37,7 @@ public class SettingsAbsencesViewController implements HasLaunchpad {
 
         model.addAttribute("settings", dto);
 
-        return "settings/settings_form_absences";
+        return "settings/absences/settings_absences";
     }
 
     @PostMapping
@@ -50,7 +50,7 @@ public class SettingsAbsencesViewController implements HasLaunchpad {
         if (errors.hasErrors()) {
             model.addAttribute("settings", settingsDto);
             model.addAttribute("errors", errors);
-            return "settings/settings_form_absences";
+            return "settings/absences/settings_absences";
         }
 
         final Settings settings = settingsDtoToSettings(settingsDto);

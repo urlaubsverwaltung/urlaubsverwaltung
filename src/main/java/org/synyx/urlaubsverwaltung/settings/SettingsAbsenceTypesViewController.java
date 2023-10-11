@@ -50,7 +50,7 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
 
         model.addAttribute("settings", dto);
 
-        return "settings/settings_form_absence_types";
+        return "settings/absence-types/settings_absence_types";
     }
 
     @PostMapping
@@ -61,7 +61,7 @@ public class SettingsAbsenceTypesViewController implements HasLaunchpad {
         if (errors.hasErrors()) {
             model.addAttribute("settings", settingsDto);
             model.addAttribute("errors", errors);
-            return "settings/settings_form_absence_types";
+            return "settings/absence-types/settings_absence_types";
         }
 
         final List<VacationTypeUpdate> vacationTypeUpdates = settingsDto.getAbsenceTypeSettings().getItems()

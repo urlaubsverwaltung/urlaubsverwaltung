@@ -34,7 +34,7 @@ public class SettingsAvatarViewController implements HasLaunchpad {
 
         model.addAttribute("settings", settingsDto);
 
-        return "settings/settings_form_avatar";
+        return "settings/avatar/settings_avatar";
     }
 
     @PostMapping
