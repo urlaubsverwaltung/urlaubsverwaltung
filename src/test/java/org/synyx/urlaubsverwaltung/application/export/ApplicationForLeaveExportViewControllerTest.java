@@ -82,11 +82,12 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(true);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("messagekey.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .visibleToEveryone(true)
+            .messageKey("messagekey.holiday")
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -128,11 +129,12 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(true);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("messagekey.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .visibleToEveryone(true)
+            .messageKey("messagekey.holiday")
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -176,11 +178,12 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(true);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("messagekey.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .visibleToEveryone(true)
+            .messageKey("messagekey.holiday")
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -223,11 +226,12 @@ class ApplicationForLeaveExportViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(true);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("messagekey.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .visibleToEveryone(true)
+            .messageKey("messagekey.holiday")
+            .build();
 
         final Application application = new Application();
         application.setId(42L);

@@ -61,11 +61,12 @@ class ApplicationForLeaveCsvExportServiceTest {
         person.setFirstName("personOneFirstName");
         person.setLastName("personOneLastName");
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(true);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("messagekey.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .visibleToEveryone(true)
+            .messageKey("messagekey.holiday")
+            .build();
 
         final Application application = new Application();
         application.setId(42L);

@@ -52,7 +52,16 @@ class SettingsAbsenceTypesViewControllerTest {
     void ensureGetSettings() throws Exception {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(
-            new VacationType(1L, true, HOLIDAY, "message-key-1", true, true, CYAN, true)
+            VacationType.builder()
+                .id(1L)
+                .active(true)
+                .category(HOLIDAY)
+                .messageKey("message-key-1")
+                .requiresApprovalToApply(true)
+                .requiresApprovalToCancel(true)
+                .color(CYAN)
+                .visibleToEveryone(true)
+                .build()
         ));
 
         when(specialLeaveSettingsService.getSpecialLeaveSettings()).thenReturn(List.of(

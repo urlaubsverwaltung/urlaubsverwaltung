@@ -185,8 +185,7 @@ class ApplicationServiceImplTest {
         final Person holidayReplacementPerson = new Person();
         person.setId(5L);
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
+        final VacationType vacationType = VacationType.builder().id(1L).build();
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacementPerson);

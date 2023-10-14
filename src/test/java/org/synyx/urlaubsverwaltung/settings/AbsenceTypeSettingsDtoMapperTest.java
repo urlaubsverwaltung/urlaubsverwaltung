@@ -16,13 +16,14 @@ class AbsenceTypeSettingsDtoMapperTest {
     @Test
     void mapToAbsenceTypeItemSettingDtoTest() {
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setColor(YELLOW);
-        vacationType.setId(42L);
-        vacationType.setActive(true);
-        vacationType.setRequiresApprovalToApply(false);
-        vacationType.setMessageKey("messageKey");
-        vacationType.setCategory(HOLIDAY);
+        final VacationType vacationType = VacationType.builder()
+            .color(YELLOW)
+            .id(42L)
+            .active(true)
+            .requiresApprovalToApply(false)
+            .messageKey("messageKey")
+            .category(HOLIDAY)
+            .build();
 
         List<VacationType> vacationTypes = List.of(vacationType);
         final AbsenceTypeSettingsDto absenceTypeSettingsDto = mapToAbsenceTypeItemSettingDto(vacationTypes);

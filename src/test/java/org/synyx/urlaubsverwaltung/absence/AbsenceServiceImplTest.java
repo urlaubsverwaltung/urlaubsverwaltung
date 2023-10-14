@@ -43,6 +43,7 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.REVOKED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.period.DayLength.ZERO;
 import static org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteStatus.ACTIVE;
@@ -180,9 +181,10 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(true);
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .visibleToEveryone(true)
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -221,9 +223,10 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(false);
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .visibleToEveryone(false)
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -262,9 +265,10 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(false);
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .visibleToEveryone(false)
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -713,9 +717,10 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(true);
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .visibleToEveryone(true)
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -754,9 +759,10 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(false);
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .visibleToEveryone(false)
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -795,9 +801,10 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-        vacationType.setVisibleToEveryone(false);
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .visibleToEveryone(false)
+            .build();
 
         final Application application = new Application();
         application.setId(42L);
@@ -1200,11 +1207,7 @@ class AbsenceServiceImplTest {
     }
 
     private static VacationType anyVacationType() {
-
-        final VacationType vacationType = new VacationType();
-        vacationType.setId(1L);
-
-        return vacationType;
+        return VacationType.builder().id(1L).build();
     }
 
     private Map<LocalDate, DayLength> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, DayLength> dayLengthProvider) {

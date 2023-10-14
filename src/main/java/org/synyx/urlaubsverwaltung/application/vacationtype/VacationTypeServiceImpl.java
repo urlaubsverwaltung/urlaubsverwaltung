@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.stream.Collectors.toList;
@@ -45,14 +44,14 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     @Override
     public List<VacationType> getAllVacationTypes() {
         return vacationTypeRepository.findAll(Sort.by("id")).stream()
-            .map(convertToVacationType())
+            .map(VacationTypeServiceImpl::convert)
             .collect(toList());
     }
 
     @Override
     public List<VacationType> getActiveVacationTypes() {
         return vacationTypeRepository.findByActiveIsTrueOrderById().stream()
-            .map(convertToVacationType())
+            .map(VacationTypeServiceImpl::convert)
             .collect(toList());
     }
 
@@ -73,31 +72,18 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             .map(VacationTypeServiceImpl::convert)
             .map(vacationType -> {
                 final VacationTypeUpdate vacationTypeUpdate = byId.get(vacationType.getId());
-                vacationType.setActive(vacationTypeUpdate.isActive());
-                vacationType.setRequiresApprovalToApply(vacationTypeUpdate.isRequiresApprovalToApply());
-                vacationType.setRequiresApprovalToCancel(vacationTypeUpdate.isRequiresApprovalToCancel());
-                vacationType.setColor(vacationTypeUpdate.getColor());
-                vacationType.setVisibleToEveryone(vacationTypeUpdate.isVisibleToEveryone());
-                return vacationType;
+                return VacationType.builder(vacationType)
+                    .active(vacationTypeUpdate.isActive())
+                    .requiresApprovalToApply(vacationTypeUpdate.isRequiresApprovalToApply())
+                    .requiresApprovalToCancel(vacationTypeUpdate.isRequiresApprovalToCancel())
+                    .color(vacationTypeUpdate.getColor())
+                    .visibleToEveryone(vacationTypeUpdate.isVisibleToEveryone())
+                    .build();
             })
             .map(VacationTypeServiceImpl::convert)
             .collect(toList());
 
         vacationTypeRepository.saveAll(updatedEntities);
-    }
-
-    private Function<VacationTypeEntity, VacationType> convertToVacationType() {
-        return vacationTypeEntity ->
-            new VacationType(
-                vacationTypeEntity.getId(),
-                vacationTypeEntity.isActive(),
-                vacationTypeEntity.getCategory(),
-                vacationTypeEntity.getMessageKey(),
-                vacationTypeEntity.isRequiresApprovalToApply(),
-                vacationTypeEntity.isRequiresApprovalToCancel(),
-                vacationTypeEntity.getColor(),
-                vacationTypeEntity.isVisibleToEveryone()
-            );
     }
 
     public static VacationTypeEntity convert(VacationType vacationType) {
@@ -114,16 +100,16 @@ public class VacationTypeServiceImpl implements VacationTypeService {
     }
 
     public static VacationType convert(VacationTypeEntity vacationTypeEntity) {
-        return new VacationType(
-            vacationTypeEntity.getId(),
-            vacationTypeEntity.isActive(),
-            vacationTypeEntity.getCategory(),
-            vacationTypeEntity.getMessageKey(),
-            vacationTypeEntity.isRequiresApprovalToApply(),
-            vacationTypeEntity.isRequiresApprovalToCancel(),
-            vacationTypeEntity.getColor(),
-            vacationTypeEntity.isVisibleToEveryone()
-        );
+        return VacationType.builder()
+            .id(vacationTypeEntity.getId())
+            .active(vacationTypeEntity.isActive())
+            .category(vacationTypeEntity.getCategory())
+            .messageKey(vacationTypeEntity.getMessageKey())
+            .requiresApprovalToApply(vacationTypeEntity.isRequiresApprovalToApply())
+            .requiresApprovalToCancel(vacationTypeEntity.isRequiresApprovalToCancel())
+            .color(vacationTypeEntity.getColor())
+            .visibleToEveryone(vacationTypeEntity.isVisibleToEveryone())
+            .build();
     }
 
     @EventListener(ApplicationStartedEvent.class)

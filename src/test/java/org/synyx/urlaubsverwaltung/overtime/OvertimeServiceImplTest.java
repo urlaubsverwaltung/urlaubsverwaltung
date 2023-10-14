@@ -494,9 +494,10 @@ class OvertimeServiceImplTest {
         when(overtimeRepository.findByPersonIsInAndEndDateIsGreaterThanEqualAndStartDateIsLessThanEqual(persons, from, to))
             .thenReturn(List.of(overtimeOne, overtimeTwo));
 
-        final VacationType overtimeVacationType = new VacationType();
-        overtimeVacationType.setId(1L);
-        overtimeVacationType.setCategory(VacationCategory.OVERTIME);
+        final VacationType overtimeVacationType = VacationType.builder()
+            .id(1L)
+            .category(VacationCategory.OVERTIME)
+            .build();
 
         final Application personOvertimeReduction = new Application();
         personOvertimeReduction.setId(1L);

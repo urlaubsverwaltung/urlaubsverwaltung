@@ -29,8 +29,6 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationForLeaveStatisticsCsvExportServiceTest {
@@ -64,8 +62,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         person.setLastName("personOneLastName");
         final PersonBasedata basedata = new PersonBasedata(new PersonId((long) -1), "42", "OneInformation");
 
-        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "holiday", true, true, YELLOW, false);
-
+        final VacationType vacationType = VacationType.builder().id(1L).messageKey("holiday").build();
         final ApplicationForLeaveStatistics applicationForLeaveStatistics = new ApplicationForLeaveStatistics(person, List.of(vacationType));
         applicationForLeaveStatistics.setPersonBasedata(basedata);
         applicationForLeaveStatistics.setLeftVacationDaysForPeriod(BigDecimal.valueOf(10));
@@ -116,8 +113,7 @@ class ApplicationForLeaveStatisticsCsvExportServiceTest {
         personTwo.setLastName("personTwoLastName");
         final PersonBasedata basedataTwo = new PersonBasedata(new PersonId(-1L), "42", "SecondInformation");
 
-        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "holiday", true, true, YELLOW, false);
-
+        final VacationType vacationType = VacationType.builder().id(1L).messageKey("holiday").build();
         final ApplicationForLeaveStatistics personOneStatistics = new ApplicationForLeaveStatistics(personOne, List.of(vacationType));
         personOneStatistics.setPersonBasedata(basedataOne);
         personOneStatistics.addWaitingVacationDays(vacationType, ONE);

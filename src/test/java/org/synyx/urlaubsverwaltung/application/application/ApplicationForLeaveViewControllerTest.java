@@ -41,6 +41,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.ALLOWED_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.TEMPORARY_ALLOWED;
 import static org.synyx.urlaubsverwaltung.application.application.ApplicationStatus.WAITING;
+import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.period.DayLength.FULL;
 import static org.synyx.urlaubsverwaltung.person.Role.APPLICATION_CANCELLATION_REQUESTED;
 import static org.synyx.urlaubsverwaltung.person.Role.BOSS;
@@ -1451,10 +1452,11 @@ class ApplicationForLeaveViewControllerTest {
     }
 
     private static VacationType anyVacationType() {
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(VacationCategory.HOLIDAY);
-        vacationType.setMessageKey("vacationTypeMessageKey");
-        return vacationType;
+        return VacationType.builder()
+            .id(1L)
+            .category(VacationCategory.HOLIDAY)
+            .messageKey("vacationTypeMessageKey")
+            .build();
     }
 
     private ResultActions perform(MockHttpServletRequestBuilder builder) throws Exception {

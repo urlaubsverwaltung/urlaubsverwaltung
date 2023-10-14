@@ -905,8 +905,13 @@ class ApplicationForLeaveDetailsViewControllerTest {
         signedInPerson.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        final Application application = applicationOfPerson(signedInPerson);
-        application.getVacationType().setRequiresApprovalToCancel(false);
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .requiresApprovalToApply(true)
+            .requiresApprovalToCancel(false)
+            .build();
+
+        final Application application = applicationOfPerson(signedInPerson, vacationType);
         when(applicationService.getApplicationById(APPLICATION_ID)).thenReturn(Optional.of(application));
 
         perform(post("/web/application/" + APPLICATION_ID + "/cancel"))
@@ -1279,14 +1284,22 @@ class ApplicationForLeaveDetailsViewControllerTest {
     }
 
     private static Application applicationOfPerson(Person person) {
+
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .requiresApprovalToApply(true)
+            .requiresApprovalToCancel(true)
+            .build();
+
+        return applicationOfPerson(person, vacationType);
+    }
+
+    private static Application applicationOfPerson(Person person, VacationType vacationType) {
         final Application application = new Application();
         application.setPerson(person);
         application.setStartDate(LocalDate.now().plusDays(10));
         application.setEndDate(LocalDate.now().plusDays(30));
         application.setStatus(WAITING);
-        final VacationType vacationType = new VacationType();
-        vacationType.setRequiresApprovalToApply(true);
-        vacationType.setRequiresApprovalToCancel(true);
         application.setVacationType(vacationType);
         return application;
     }

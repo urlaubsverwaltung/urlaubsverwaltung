@@ -526,8 +526,10 @@ class OverviewViewControllerTest {
 
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .build();
 
         final LocalDate localDate = LocalDate.parse("2021-06-10");
 

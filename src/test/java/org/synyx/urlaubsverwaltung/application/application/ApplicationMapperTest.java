@@ -18,7 +18,6 @@ import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCateg
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.UNPAIDLEAVE;
-import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeColor.YELLOW;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationMapperTest {
@@ -36,8 +35,10 @@ class ApplicationMapperTest {
     @Test
     void ensureOvertimeReductionForEditingVacationOvertime() {
 
-        final VacationType oldVacationType = new VacationType();
-        oldVacationType.setCategory(UNPAIDLEAVE);
+        final VacationType oldVacationType = VacationType.builder()
+            .id(1L)
+            .category(UNPAIDLEAVE)
+            .build();
 
         final Application oldApplication = new Application();
         oldApplication.setVacationType(oldVacationType);
@@ -52,7 +53,7 @@ class ApplicationMapperTest {
         applicationForLeaveForm.setVacationType(vacationTypeDto);
         applicationForLeaveForm.setHours(BigDecimal.ONE);
 
-        final VacationType newVacationType = new VacationType(2L, true, OVERTIME, "message_key", true, true, YELLOW, false);
+        final VacationType newVacationType = VacationType.builder().id(2L).category(OVERTIME).build();
         when(vacationTypeService.getById(2L)).thenReturn(Optional.of(newVacationType));
 
         final Application newApplication = sut.merge(oldApplication, applicationForLeaveForm);
@@ -63,9 +64,10 @@ class ApplicationMapperTest {
     @Test
     void ensureReasonForEditingVacationSpecialLeave() {
 
-        final VacationType oldVacationType = new VacationType();
-        oldVacationType.setId(1L);
-        oldVacationType.setCategory(SPECIALLEAVE);
+        final VacationType oldVacationType = VacationType.builder()
+            .id(1L)
+            .category(SPECIALLEAVE)
+            .build();
 
         final Application oldApplication = new Application();
         oldApplication.setVacationType(oldVacationType);
@@ -80,7 +82,7 @@ class ApplicationMapperTest {
         applicationForLeaveForm.setVacationType(vacationTypeDto);
         applicationForLeaveForm.setReason("Birth of a child");
 
-        final VacationType newVacationType = new VacationType(1L, true, SPECIALLEAVE, "message_key", true, true, YELLOW, false);
+        final VacationType newVacationType = VacationType.builder().id(1L).category(SPECIALLEAVE).build();
         when(vacationTypeService.getById(1L)).thenReturn(Optional.of(newVacationType));
 
         final Application newApplication = sut.merge(oldApplication, applicationForLeaveForm);
@@ -91,9 +93,10 @@ class ApplicationMapperTest {
     @Test
     void ensureNoOvertimeReductionForConvertingVacationOvertimeToHoliday() {
 
-        final VacationType oldVacationType = new VacationType();
-        oldVacationType.setId(1L);
-        oldVacationType.setCategory(OVERTIME);
+        final VacationType oldVacationType = VacationType.builder()
+            .id(1L)
+            .category(OVERTIME)
+            .build();
 
         final Application oldApplication = new Application();
         oldApplication.setVacationType(oldVacationType);
@@ -107,7 +110,7 @@ class ApplicationMapperTest {
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(vacationTypeDto);
 
-        final VacationType newVacationType = new VacationType(2L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
+        final VacationType newVacationType = VacationType.builder().id(2L).category(HOLIDAY).build();
         when(vacationTypeService.getById(2L)).thenReturn(Optional.of(newVacationType));
 
         final Application newApplication = sut.merge(oldApplication, applicationForLeaveForm);
@@ -118,9 +121,10 @@ class ApplicationMapperTest {
     @Test
     void ensureNoReasonForConvertingVacationSpecialLeaveToHoliday() {
 
-        final VacationType oldVacationType = new VacationType();
-        oldVacationType.setId(1L);
-        oldVacationType.setCategory(SPECIALLEAVE);
+        final VacationType oldVacationType = VacationType.builder()
+            .id(1L)
+            .category(SPECIALLEAVE)
+            .build();
 
         final Application oldApplication = new Application();
         oldApplication.setVacationType(oldVacationType);
@@ -134,7 +138,7 @@ class ApplicationMapperTest {
         final ApplicationForLeaveForm applicationForLeaveForm = new ApplicationForLeaveForm();
         applicationForLeaveForm.setVacationType(vacationTypeDto);
 
-        final VacationType newVacationType = new VacationType(2L, true, HOLIDAY, "message_key", true, true, YELLOW, false);
+        final VacationType newVacationType = VacationType.builder().id(2L).category(HOLIDAY).build();
         when(vacationTypeService.getById(2L)).thenReturn(Optional.of(newVacationType));
 
         final Application newApplication = sut.merge(oldApplication, applicationForLeaveForm);

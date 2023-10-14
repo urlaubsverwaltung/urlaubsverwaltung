@@ -98,9 +98,11 @@ class ApplicationMailServiceTest {
         person.setId(0L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -165,9 +167,11 @@ class ApplicationMailServiceTest {
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_REJECTED));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -209,9 +213,11 @@ class ApplicationMailServiceTest {
         final Person recipient = new Person();
         final Person sender = new Person();
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -244,8 +250,10 @@ class ApplicationMailServiceTest {
         final Person editor = new Person();
         editor.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_EDITED));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -542,9 +550,11 @@ class ApplicationMailServiceTest {
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -581,10 +591,12 @@ class ApplicationMailServiceTest {
         person.setId(1L);
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setRequiresApprovalToApply(false);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .requiresApprovalToApply(false)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -631,10 +643,12 @@ class ApplicationMailServiceTest {
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_ALLOWED));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setRequiresApprovalToApply(false);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .requiresApprovalToApply(false)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -682,10 +696,12 @@ class ApplicationMailServiceTest {
         person.setFirstName("Lord");
         person.setLastName("Helmchen");
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setRequiresApprovalToApply(false);
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .requiresApprovalToApply(false)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -767,9 +783,11 @@ class ApplicationMailServiceTest {
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_APPLIED));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -801,9 +819,11 @@ class ApplicationMailServiceTest {
 
         final Person person = new Person();
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -844,9 +864,11 @@ class ApplicationMailServiceTest {
         final ByteArrayResource attachment = new ByteArrayResource("".getBytes());
         when(iCalService.getSingleAppointment(any(), any(), any())).thenReturn(attachment);
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
@@ -900,9 +922,11 @@ class ApplicationMailServiceTest {
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_CANCELLATION));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -1009,9 +1033,11 @@ class ApplicationMailServiceTest {
         person.setFirstName("Lord");
         person.setLastName("Helmchen");
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -1057,9 +1083,11 @@ class ApplicationMailServiceTest {
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_TEMPORARY_ALLOWED, NOTIFICATION_EMAIL_APPLICATION_MANAGEMENT_TEMPORARY_ALLOWED));
         final List<Person> recipients = singletonList(person);
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
-        vacationType.setMessageKey("application.data.vacationType.holiday");
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .messageKey("application.data.vacationType.holiday")
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -1110,8 +1138,10 @@ class ApplicationMailServiceTest {
         final Person person = new Person();
         person.setNotifications(List.of(NOTIFICATION_EMAIL_APPLICATION_UPCOMING));
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .build();
 
         final Application application = new Application();
         application.setVacationType(vacationType);
@@ -1155,8 +1185,10 @@ class ApplicationMailServiceTest {
         holidayReplacementEntityTwo.setPerson(holidayReplacementTwo);
         holidayReplacementEntityTwo.setNote("Note 2");
 
-        final VacationType vacationType = new VacationType();
-        vacationType.setCategory(HOLIDAY);
+        final VacationType vacationType = VacationType.builder()
+            .id(1L)
+            .category(HOLIDAY)
+            .build();
 
         final Person applicant = new Person();
         applicant.setFirstName("Senior");

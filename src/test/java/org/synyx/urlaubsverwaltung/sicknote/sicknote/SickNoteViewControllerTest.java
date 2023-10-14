@@ -1126,7 +1126,7 @@ class SickNoteViewControllerTest {
             .status(ACTIVE)
             .build();
 
-        when(vacationTypeService.getById(42L)).thenReturn(Optional.of(new VacationType()));
+        when(vacationTypeService.getById(42L)).thenReturn(Optional.of(VacationType.builder().build()));
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
 
         perform(post("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert").param("vacationType", "42"))
@@ -1197,7 +1197,8 @@ class SickNoteViewControllerTest {
         overtimeActive(false);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
-        final List<VacationType> vacationTypes = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
+        final List<VacationType> vacationTypes = List.of(VacationType.builder().build());
+//        final List<VacationType> vacationTypes = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
@@ -1212,7 +1213,8 @@ class SickNoteViewControllerTest {
         overtimeActive(true);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
-        final List<VacationType> vacationTypes = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
+        final List<VacationType> vacationTypes = List.of(VacationType.builder().build());
+//        final List<VacationType> vacationTypes = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         perform(get("/web/sicknote/" + SOME_SICK_NOTE_ID + "/convert"))
@@ -1246,7 +1248,8 @@ class SickNoteViewControllerTest {
         overtimeActive(false);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
-        final List<VacationType> vacationTypes = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
+        final List<VacationType> vacationTypes = List.of(VacationType.builder().build());
+//        final List<VacationType> vacationTypes = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
         when(vacationTypeService.getActiveVacationTypesWithoutCategory(OVERTIME)).thenReturn(vacationTypes);
 
         doAnswer(invocation -> {
@@ -1269,7 +1272,8 @@ class SickNoteViewControllerTest {
         overtimeActive(true);
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(SickNote.builder().person(new Person()).status(ACTIVE).build()));
 
-        final List<VacationType> vacationTypes = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
+        final List<VacationType> vacationTypes = List.of(VacationType.builder().build());
+//        final List<VacationType> vacationTypes = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
         when(vacationTypeService.getActiveVacationTypes()).thenReturn(vacationTypes);
 
         doAnswer(invocation -> {
@@ -1294,7 +1298,7 @@ class SickNoteViewControllerTest {
             .status(ACTIVE)
             .build();
 
-        when(vacationTypeService.getById(42L)).thenReturn(Optional.of(new VacationType()));
+        when(vacationTypeService.getById(42L)).thenReturn(Optional.of(VacationType.builder().build()));
         when(sickNoteService.getById(SOME_SICK_NOTE_ID)).thenReturn(Optional.of(sickNote));
 
         final Person signedInPerson = new Person();
