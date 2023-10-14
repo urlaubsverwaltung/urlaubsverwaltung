@@ -18,8 +18,8 @@ class VacationTypeViewModelServiceTest {
         final VacationTypeService vacationTypeService = mock(VacationTypeService.class);
         final VacationTypeViewModelService sut = new VacationTypeViewModelService(vacationTypeService);
 
-        final VacationType personalHoliday = VacationType.builder().id(1L).color(YELLOW).build();
-        final VacationType companyHoliday = VacationType.builder().id(2L).color(ORANGE).build();
+        final VacationType personalHoliday = ProvidedVacationType.builder().id(1L).color(YELLOW).build();
+        final VacationType companyHoliday = ProvidedVacationType.builder().id(2L).color(ORANGE).build();
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(personalHoliday, companyHoliday));
 
         final List<VacationTypeDto> actual = sut.getVacationTypeColors();

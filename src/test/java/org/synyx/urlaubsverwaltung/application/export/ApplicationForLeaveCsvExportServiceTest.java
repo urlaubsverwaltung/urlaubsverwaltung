@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationForLeave;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -61,7 +62,7 @@ class ApplicationForLeaveCsvExportServiceTest {
         person.setFirstName("personOneFirstName");
         person.setLastName("personOneLastName");
 
-        final VacationType vacationType = VacationType.builder()
+        final VacationType vacationType = ProvidedVacationType.builder()
             .id(1L)
             .category(HOLIDAY)
             .visibleToEveryone(true)

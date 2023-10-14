@@ -17,6 +17,7 @@ import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentForm;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentValidator;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -905,7 +906,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
         signedInPerson.setPermissions(List.of(USER));
         when(personService.getSignedInUser()).thenReturn(signedInPerson);
 
-        final VacationType vacationType = VacationType.builder()
+        final VacationType vacationType = ProvidedVacationType.builder()
             .id(1L)
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(false)
@@ -1285,7 +1286,7 @@ class ApplicationForLeaveDetailsViewControllerTest {
 
     private static Application applicationOfPerson(Person person) {
 
-        final VacationType vacationType = VacationType.builder()
+        final VacationType vacationType = ProvidedVacationType.builder()
             .id(1L)
             .requiresApprovalToApply(true)
             .requiresApprovalToCancel(true)

@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.csv.CSVFile;
@@ -103,7 +104,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         when(applicationForLeaveStatisticsService.getStatistics(signedInUser, filterPeriod, defaultPersonSearchQuery()))
             .thenReturn(new PageImpl<>(List.of()));
 
-        final List<VacationType> vacationType = List.of(VacationType.builder().build());
+        final List<VacationType> vacationType = List.of(ProvidedVacationType.builder().build());
 //        final List<VacationType> vacationType = List.of(new VacationType(1L, true, HOLIDAY, "message_key", true, true, YELLOW, false));
         when(vacationTypeService.getAllVacationTypes()).thenReturn(vacationType);
 
@@ -132,7 +133,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
 
         when(messageSource.getMessage("hours.abbr", new Object[]{}, locale)).thenReturn("Std.");
 
-        final VacationType vacationType = VacationType.builder().build();
+        final VacationType vacationType = ProvidedVacationType.builder().build();
 //        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(vacationType));
 
@@ -360,7 +361,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = VacationType.builder().build();
+        final VacationType vacationType = ProvidedVacationType.builder().build();
 //        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
@@ -390,7 +391,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = VacationType.builder().build();
+        final VacationType vacationType = ProvidedVacationType.builder().build();
 //        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
@@ -424,7 +425,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = VacationType.builder().build();
+        final VacationType vacationType = ProvidedVacationType.builder().build();
 //        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));
@@ -457,7 +458,7 @@ class ApplicationForLeaveStatisticsViewControllerTest {
         final LocalDate endDate = LocalDate.parse("2019-08-01");
         final FilterPeriod filterPeriod = new FilterPeriod(startDate, endDate);
 
-        final VacationType vacationType = VacationType.builder().build();
+        final VacationType vacationType = ProvidedVacationType.builder().build();
 //        final VacationType vacationType = new VacationType(1L, true, HOLIDAY, "message_key_holiday", true, true, YELLOW, false);
 
         final ApplicationForLeaveStatistics statistics = new ApplicationForLeaveStatistics(signedInUser, List.of(vacationType));

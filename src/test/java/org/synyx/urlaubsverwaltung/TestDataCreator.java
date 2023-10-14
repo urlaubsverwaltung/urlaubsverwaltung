@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung;
 import org.synyx.urlaubsverwaltung.account.Account;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationStatus;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
@@ -84,7 +85,7 @@ public final class TestDataCreator {
 
     public static Application createApplication(Person person, LocalDate startDate, LocalDate endDate, DayLength dayLength) {
 
-        final VacationType vacationType = VacationType.builder()
+        final VacationType vacationType = ProvidedVacationType.builder()
             .id(1L)
             .category(HOLIDAY)
             .messageKey("application.data.vacationType.holiday")
@@ -196,7 +197,7 @@ public final class TestDataCreator {
     }
 
     public static VacationType createVacationType(Long id, VacationCategory category, String messageKey) {
-        return VacationType.builder()
+        return ProvidedVacationType.builder()
             .id(id)
             .category(category)
             .messageKey(messageKey)
@@ -206,7 +207,7 @@ public final class TestDataCreator {
 
     public static List<VacationType> createVacationTypes() {
         return List.of(
-            VacationType.builder()
+            ProvidedVacationType.builder()
                 .id(1000L)
                 .active(true)
                 .category(HOLIDAY)
@@ -216,7 +217,7 @@ public final class TestDataCreator {
                 .color(YELLOW)
                 .visibleToEveryone(false)
                 .build(),
-            VacationType.builder()
+            ProvidedVacationType.builder()
                 .id(2000L)
                 .active(true)
                 .category(SPECIALLEAVE)
@@ -226,7 +227,7 @@ public final class TestDataCreator {
                 .color(YELLOW)
                 .visibleToEveryone(false)
                 .build(),
-            VacationType.builder()
+            ProvidedVacationType.builder()
                 .id(3000L)
                 .active(true)
                 .category(UNPAIDLEAVE)
@@ -236,7 +237,7 @@ public final class TestDataCreator {
                 .color(YELLOW)
                 .visibleToEveryone(false)
                 .build(),
-            VacationType.builder()
+            ProvidedVacationType.builder()
                 .id(4000L)
                 .active(true)
                 .category(OVERTIME)

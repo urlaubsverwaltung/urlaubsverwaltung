@@ -9,7 +9,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsItem;
 import org.synyx.urlaubsverwaltung.application.specialleave.SpecialLeaveSettingsService;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 
@@ -52,7 +52,7 @@ class SettingsAbsenceTypesViewControllerTest {
     void ensureGetSettings() throws Exception {
 
         when(vacationTypeService.getAllVacationTypes()).thenReturn(List.of(
-            VacationType.builder()
+            ProvidedVacationType.builder()
                 .id(1L)
                 .active(true)
                 .category(HOLIDAY)

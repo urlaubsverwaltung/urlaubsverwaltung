@@ -14,6 +14,7 @@ import org.synyx.urlaubsverwaltung.account.AccountInteractionService;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationComment;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentAction;
 import org.synyx.urlaubsverwaltung.application.comment.ApplicationCommentService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMapping;
 import org.synyx.urlaubsverwaltung.calendarintegration.AbsenceMappingService;
@@ -245,7 +246,7 @@ class ApplicationInteractionServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Optional<String> comment = of("Foo");
 
-        final VacationType holidayType = VacationType.builder().build();
+        final VacationType holidayType = ProvidedVacationType.builder().build();
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setVacationType(holidayType);
@@ -284,7 +285,7 @@ class ApplicationInteractionServiceImplTest {
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         final Optional<String> comment = of("Foo");
 
-        final VacationType holidayType = VacationType.builder().build();
+        final VacationType holidayType = ProvidedVacationType.builder().build();
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setVacationType(holidayType);
@@ -321,7 +322,7 @@ class ApplicationInteractionServiceImplTest {
         office.setPermissions(List.of(OFFICE));
         final Optional<String> comment = of("Foo");
 
-        final VacationType holidayType = VacationType.builder().build();
+        final VacationType holidayType = ProvidedVacationType.builder().build();
 
         final Application applicationForLeave = getDummyApplication(person);
         applicationForLeave.setVacationType(holidayType);

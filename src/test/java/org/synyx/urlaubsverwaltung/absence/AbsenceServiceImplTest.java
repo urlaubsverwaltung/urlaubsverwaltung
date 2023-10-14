@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.synyx.urlaubsverwaltung.application.application.Application;
 import org.synyx.urlaubsverwaltung.application.application.ApplicationService;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
@@ -181,7 +182,7 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationType vacationType = VacationType.builder()
+        final VacationType vacationType = ProvidedVacationType.builder()
             .id(1L)
             .visibleToEveryone(true)
             .build();
@@ -223,7 +224,7 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationType vacationType = VacationType.builder()
+        final VacationType vacationType = ProvidedVacationType.builder()
             .id(1L)
             .visibleToEveryone(false)
             .build();
@@ -265,7 +266,7 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationType vacationType = VacationType.builder()
+        final VacationType vacationType = ProvidedVacationType.builder()
             .id(1L)
             .visibleToEveryone(false)
             .build();
@@ -717,7 +718,7 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationType vacationType = VacationType.builder()
+        final VacationType vacationType = ProvidedVacationType.builder()
             .id(1L)
             .visibleToEveryone(true)
             .build();
@@ -759,7 +760,7 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationType vacationType = VacationType.builder()
+        final VacationType vacationType = ProvidedVacationType.builder()
             .id(1L)
             .visibleToEveryone(false)
             .build();
@@ -801,7 +802,7 @@ class AbsenceServiceImplTest {
         final WorkingTimeCalendar workingTimeCalendar = new WorkingTimeCalendar(personWorkingTimeByDate);
         when(workingTimeCalendarService.getWorkingTimesByPersons(List.of(batman), new DateRange(start, end))).thenReturn(Map.of(batman, workingTimeCalendar));
 
-        final VacationType vacationType = VacationType.builder()
+        final VacationType vacationType = ProvidedVacationType.builder()
             .id(1L)
             .visibleToEveryone(false)
             .build();
@@ -1207,7 +1208,7 @@ class AbsenceServiceImplTest {
     }
 
     private static VacationType anyVacationType() {
-        return VacationType.builder().id(1L).build();
+        return ProvidedVacationType.builder().id(1L).build();
     }
 
     private Map<LocalDate, DayLength> buildWorkingTimeByDate(LocalDate from, LocalDate to, Function<LocalDate, DayLength> dayLengthProvider) {

@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.department.DepartmentService;
@@ -1452,7 +1453,7 @@ class ApplicationForLeaveViewControllerTest {
     }
 
     private static VacationType anyVacationType() {
-        return VacationType.builder()
+        return ProvidedVacationType.builder()
             .id(1L)
             .category(VacationCategory.HOLIDAY)
             .messageKey("vacationTypeMessageKey")

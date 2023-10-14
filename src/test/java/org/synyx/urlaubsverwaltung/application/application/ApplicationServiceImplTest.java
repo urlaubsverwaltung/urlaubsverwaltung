@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
@@ -185,7 +186,7 @@ class ApplicationServiceImplTest {
         final Person holidayReplacementPerson = new Person();
         person.setId(5L);
 
-        final VacationType vacationType = VacationType.builder().id(1L).build();
+        final VacationType vacationType = ProvidedVacationType.builder().id(1L).build();
 
         final HolidayReplacementEntity holidayReplacementEntity = new HolidayReplacementEntity();
         holidayReplacementEntity.setPerson(holidayReplacementPerson);

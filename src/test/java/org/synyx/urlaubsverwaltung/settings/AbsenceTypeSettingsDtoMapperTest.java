@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings;
 
 import org.junit.jupiter.api.Test;
+import org.synyx.urlaubsverwaltung.application.vacationtype.ProvidedVacationType;
 import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 
 import java.util.List;
@@ -16,7 +17,7 @@ class AbsenceTypeSettingsDtoMapperTest {
     @Test
     void mapToAbsenceTypeItemSettingDtoTest() {
 
-        final VacationType vacationType = VacationType.builder()
+        final VacationType vacationType = ProvidedVacationType.builder()
             .color(YELLOW)
             .id(42L)
             .active(true)

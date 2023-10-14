@@ -72,7 +72,7 @@ public class VacationTypeServiceImpl implements VacationTypeService {
             .map(VacationTypeServiceImpl::convert)
             .map(vacationType -> {
                 final VacationTypeUpdate vacationTypeUpdate = byId.get(vacationType.getId());
-                return VacationType.builder(vacationType)
+                return ProvidedVacationType.builder(vacationType)
                     .active(vacationTypeUpdate.isActive())
                     .requiresApprovalToApply(vacationTypeUpdate.isRequiresApprovalToApply())
                     .requiresApprovalToCancel(vacationTypeUpdate.isRequiresApprovalToCancel())
@@ -99,8 +99,8 @@ public class VacationTypeServiceImpl implements VacationTypeService {
         return vacationTypeEntity;
     }
 
-    public static VacationType convert(VacationTypeEntity vacationTypeEntity) {
-        return VacationType.builder()
+    public static ProvidedVacationType convert(VacationTypeEntity vacationTypeEntity) {
+        return ProvidedVacationType.builder()
             .id(vacationTypeEntity.getId())
             .active(vacationTypeEntity.isActive())
             .category(vacationTypeEntity.getCategory())
