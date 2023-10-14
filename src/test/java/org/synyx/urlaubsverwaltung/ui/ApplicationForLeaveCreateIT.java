@@ -242,6 +242,55 @@ class ApplicationForLeaveCreateIT {
     }
 
     @Test
+    void ensureCreatingApplicationForLeaveOfTypeSpecialLeave(Page page) {
+        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
+
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
+
+        page.navigate("http://localhost:" + port);
+
+        page.context().waitForCondition(loginPage::isVisible);
+        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+
+        page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
+        page.context().waitForCondition(navigationPage::isVisible);
+        page.context().waitForCondition(overviewPage::isVisible);
+        assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
+
+        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newApplication();
+        page.context().waitForCondition(applicationPage::isVisible);
+
+        assertThat(applicationPage.showsReason()).isFalse();
+
+        applicationPage.selectVacationTypeOfName("Sonderurlaub");
+        assertThat(applicationPage.showsReason()).isTrue();
+
+        applicationPage.submit();
+
+        assertThat(applicationPage.showsFromError()).isTrue();
+        assertThat(applicationPage.showsToError()).isTrue();
+        assertThat(applicationPage.showsReasonError()).isTrue();
+
+        applicationPage.from(getNextWorkday());
+        applicationPage.reason("some reason text.");
+        applicationPage.submit();
+
+        page.context().waitForCondition(applicationDetailPage::isVisible);
+        page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
+        // application created info vanishes sometime
+        page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
+
+        navigationPage.logout();
+        page.context().waitForCondition(loginPage::isVisible);
+    }
+
+    @Test
     @DisplayName("when USER is logged in and halfDay is disabled then application-for-leave can be created only for full days.")
     void ensureApplicationForLeaveWithDisabledHalfDayOption(Page page) {
         final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));

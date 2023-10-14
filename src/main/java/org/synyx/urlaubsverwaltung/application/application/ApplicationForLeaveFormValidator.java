@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.synyx.urlaubsverwaltung.application.settings.ApplicationSettings;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
+import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeService;
 import org.synyx.urlaubsverwaltung.overlap.OverlapCase;
 import org.synyx.urlaubsverwaltung.overlap.OverlapService;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeService;
@@ -28,7 +30,6 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.springframework.util.StringUtils.hasText;
-import static org.synyx.urlaubsverwaltung.application.application.ApplicationMapper.mapToApplication;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME;
 import static org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.SPECIALLEAVE;
@@ -86,12 +87,15 @@ class ApplicationForLeaveFormValidator implements Validator {
     private final CalculationService calculationService;
     private final SettingsService settingsService;
     private final OvertimeService overtimeService;
+    private final VacationTypeService vacationTypeService;
+    private final ApplicationMapper applicationMapper;
     private final Clock clock;
 
     @Autowired
     ApplicationForLeaveFormValidator(WorkingTimeService workingTimeService, WorkDaysCountService workDaysCountService,
                                      OverlapService overlapService, CalculationService calculationService, SettingsService settingsService,
-                                     OvertimeService overtimeService, Clock clock) {
+                                     OvertimeService overtimeService, VacationTypeService vacationTypeService, ApplicationMapper applicationMapper,
+                                     Clock clock) {
 
         this.workingTimeService = workingTimeService;
         this.workDaysCountService = workDaysCountService;
@@ -99,6 +103,8 @@ class ApplicationForLeaveFormValidator implements Validator {
         this.calculationService = calculationService;
         this.settingsService = settingsService;
         this.overtimeService = overtimeService;
+        this.vacationTypeService = vacationTypeService;
+        this.applicationMapper = applicationMapper;
         this.clock = clock;
     }
 
@@ -112,17 +118,18 @@ class ApplicationForLeaveFormValidator implements Validator {
 
         final ApplicationForLeaveForm applicationForm = (ApplicationForLeaveForm) target;
         final Settings settings = settingsService.getSettings();
+        final VacationType vacationType = getVacationType(applicationForm.getVacationType().getId());
 
         // check if date fields are valid
         validateDateFields(applicationForm, settings, errors);
 
         // check overtime reduction
-        validateOvertimeReduction(applicationForm, settings, errors);
+        validateOvertimeReduction(applicationForm, settings, vacationType, errors);
 
         validateDayLength(applicationForm, settings, errors);
 
         // check if reason is not filled
-        if (SPECIALLEAVE.equals(applicationForm.getVacationType().getCategory()) && !hasText(applicationForm.getReason())) {
+        if (SPECIALLEAVE.equals(vacationType.getCategory()) && !hasText(applicationForm.getReason())) {
             errors.rejectValue(ATTRIBUTE_REASON, ERROR_MISSING_REASON);
         }
 
@@ -134,8 +141,13 @@ class ApplicationForLeaveFormValidator implements Validator {
         if (!errors.hasErrors()) {
             // validate if applying for leave is possible
             // (check overlapping applications for leave, vacation days of the person etc.)
-            validateIfApplyingForLeaveIsPossible(applicationForm, settings, errors);
+            validateIfApplyingForLeaveIsPossible(applicationForm, settings, vacationType, errors);
         }
+    }
+
+    private VacationType getVacationType(Long vacationTypeId) {
+        return vacationTypeService.getById(vacationTypeId)
+            .orElseThrow(() -> new IllegalStateException("could not find vacationType with id=" + vacationTypeId));
     }
 
     private static void validateDayLength(ApplicationForLeaveForm applicationForm, Settings settings, Errors errors) {
@@ -292,9 +304,9 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateOvertimeReduction(ApplicationForLeaveForm applicationForLeave, Settings settings, Errors errors) {
+    private void validateOvertimeReduction(ApplicationForLeaveForm applicationForLeave, Settings settings, VacationType vacationType, Errors errors) {
 
-        final boolean isOvertime = OVERTIME.equals(applicationForLeave.getVacationType().getCategory());
+        final boolean isOvertime = OVERTIME.equals(vacationType.getCategory());
         if (!isOvertime) {
             return;
         }
@@ -334,7 +346,7 @@ class ApplicationForLeaveFormValidator implements Validator {
         }
     }
 
-    private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Settings settings, Errors errors) {
+    private void validateIfApplyingForLeaveIsPossible(ApplicationForLeaveForm applicationForm, Settings settings, VacationType vacationType, Errors errors) {
 
         /*
          * Ensure the person has a working time for the period of the application for leave
@@ -367,7 +379,7 @@ class ApplicationForLeaveFormValidator implements Validator {
          * Ensure that the person has enough vacation days left if the vacation type is
          * {@link org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.HOLIDAY}
          */
-        if (!enoughVacationDaysLeft(applicationForm)) {
+        if (!enoughVacationDaysLeft(applicationForm, vacationType)) {
             errors.reject(ERROR_NOT_ENOUGH_DAYS);
         }
 
@@ -375,7 +387,7 @@ class ApplicationForLeaveFormValidator implements Validator {
          * Ensure that the person has enough overtime hours left if the vacation type is
          * {@link org.synyx.urlaubsverwaltung.application.vacationtype.VacationCategory.OVERTIME}
          */
-        if (!enoughOvertimeHoursLeft(applicationForm, settings)) {
+        if (!enoughOvertimeHoursLeft(applicationForm, settings, vacationType)) {
             errors.reject(ERROR_NOT_ENOUGH_OVERTIME);
         }
     }
@@ -396,27 +408,27 @@ class ApplicationForLeaveFormValidator implements Validator {
 
     private boolean vacationIsOverlapping(ApplicationForLeaveForm applicationForLeaveForm) {
 
-        final Application application = mapToApplication(applicationForLeaveForm);
+        final Application application = applicationMapper.mapToApplication(applicationForLeaveForm);
         final OverlapCase overlap = overlapService.checkOverlap(application);
 
         return overlap == FULLY_OVERLAPPING || overlap == PARTLY_OVERLAPPING;
     }
 
-    private boolean enoughVacationDaysLeft(ApplicationForLeaveForm applicationForLeaveForm) {
+    private boolean enoughVacationDaysLeft(ApplicationForLeaveForm applicationForLeaveForm, VacationType vacationType) {
 
-        final boolean isHoliday = HOLIDAY.equals(applicationForLeaveForm.getVacationType().getCategory());
+        final boolean isHoliday = HOLIDAY.equals(vacationType.getCategory());
 
         if (isHoliday) {
-            final Application application = mapToApplication(applicationForLeaveForm);
+            final Application application = applicationMapper.mapToApplication(applicationForLeaveForm);
             return calculationService.checkApplication(application);
         }
 
         return true;
     }
 
-    private boolean enoughOvertimeHoursLeft(ApplicationForLeaveForm applicationForLeaveForm, Settings settings) {
+    private boolean enoughOvertimeHoursLeft(ApplicationForLeaveForm applicationForLeaveForm, Settings settings, VacationType vacationType) {
 
-        final boolean isOvertime = OVERTIME.equals(applicationForLeaveForm.getVacationType().getCategory());
+        final boolean isOvertime = OVERTIME.equals(vacationType.getCategory());
 
         if (isOvertime) {
             final OvertimeSettings overtimeSettings = settings.getOvertimeSettings();

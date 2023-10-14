@@ -1,7 +1,6 @@
 package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.synyx.urlaubsverwaltung.application.vacationtype.VacationType;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
 
@@ -45,7 +44,7 @@ public class ApplicationForLeaveForm {
     private LocalTime endTime;
 
     // Type of holiday, e.g. holiday, special leave, etc.
-    private VacationType vacationType;
+    private ApplicationForLeaveFormVacationTypeDto vacationType;
 
     // length of day: contains time of day (morning, noon or full day) and value (1.0 or 0.5 - as BigDecimal)
     private DayLength dayLength = FULL;
@@ -168,11 +167,11 @@ public class ApplicationForLeaveForm {
         this.endTime = endTime;
     }
 
-    public VacationType getVacationType() {
+    public ApplicationForLeaveFormVacationTypeDto getVacationType() {
         return vacationType;
     }
 
-    public void setVacationType(VacationType vacationType) {
+    public void setVacationType(ApplicationForLeaveFormVacationTypeDto vacationType) {
         this.vacationType = vacationType;
     }
 
@@ -255,7 +254,7 @@ public class ApplicationForLeaveForm {
         private LocalTime startTime;
         private LocalDate endDate;
         private LocalTime endTime;
-        private VacationType vacationType;
+        private ApplicationForLeaveFormVacationTypeDto vacationType;
         private DayLength dayLength;
         private BigDecimal hours;
         private Integer minutes;
@@ -292,7 +291,7 @@ public class ApplicationForLeaveForm {
             return this;
         }
 
-        public ApplicationForLeaveForm.Builder vacationType(VacationType vacationType) {
+        public ApplicationForLeaveForm.Builder vacationType(ApplicationForLeaveFormVacationTypeDto vacationType) {
             this.vacationType = vacationType;
             return this;
         }

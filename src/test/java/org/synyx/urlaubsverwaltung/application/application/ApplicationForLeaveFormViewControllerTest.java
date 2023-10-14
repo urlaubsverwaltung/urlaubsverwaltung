@@ -119,7 +119,7 @@ class ApplicationForLeaveFormViewControllerTest {
     void setUp() {
         sut = new ApplicationForLeaveFormViewController(personService, departmentService, accountService, vacationTypeService,
             vacationTypeViewModelService, applicationInteractionService, applicationForLeaveFormValidator, settingsService,
-            dateFormatAware, clock, specialLeaveSettingsService);
+            dateFormatAware, clock, specialLeaveSettingsService, new ApplicationMapper(vacationTypeService));
     }
 
     @Test
@@ -597,11 +597,13 @@ class ApplicationForLeaveFormViewControllerTest {
         when(applicationInteractionService.directAllow(any(Application.class), eq(person), any(Optional.class)))
             .thenReturn(new Application());
 
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
+
         perform(post("/web/application")
             .param("person.id", "1")
             .param("startDate", "2022-11-02")
             .param("endDate", "2022-11-03")
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("dayLength", "FULL")
         )
             .andExpect(status().is3xxRedirection());
@@ -618,7 +620,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 .param("person.id", "1")
                 .param("startDate", "2022-11-02")
                 .param("endDate", "2022-11-03")
-                .param("vacationType.category", "HOLIDAY")
+                .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
             );
         }).hasCauseInstanceOf(AccessDeniedException.class);
@@ -635,7 +637,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 .param("person.id", "1")
                 .param("startDate", "2022-11-02")
                 .param("endDate", "2022-11-03")
-                .param("vacationType.category", "HOLIDAY")
+                .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
             );
         }).hasCauseInstanceOf(AccessDeniedException.class);
@@ -653,7 +655,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 .param("person.id", "1")
                 .param("startDate", "2022-11-02")
                 .param("endDate", "2022-11-03")
-                .param("vacationType.category", "HOLIDAY")
+                .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
             );
         }).hasCauseInstanceOf(AccessDeniedException.class);
@@ -669,11 +671,13 @@ class ApplicationForLeaveFormViewControllerTest {
         when(applicationInteractionService.directAllow(any(Application.class), any(Person.class), any(Optional.class)))
             .thenReturn(new Application());
 
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
+
         perform(post("/web/application")
             .param("person.id", "1")
             .param("startDate", "2022-11-02")
             .param("endDate", "2022-11-03")
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("dayLength", "FULL")
         ).andExpect(status().is3xxRedirection());
     }
@@ -689,7 +693,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 .param("person.id", "1")
                 .param("startDate", "2022-11-02")
                 .param("endDate", "2022-11-03")
-                .param("vacationType.category", "HOLIDAY")
+                .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
             );
         }).hasCauseInstanceOf(AccessDeniedException.class);
@@ -707,7 +711,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 .param("person.id", "1")
                 .param("startDate", "2022-11-02")
                 .param("endDate", "2022-11-03")
-                .param("vacationType.category", "HOLIDAY")
+                .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
             );
         }).hasCauseInstanceOf(AccessDeniedException.class);
@@ -723,11 +727,13 @@ class ApplicationForLeaveFormViewControllerTest {
         when(applicationInteractionService.directAllow(any(Application.class), any(Person.class), any(Optional.class)))
             .thenReturn(new Application());
 
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
+
         perform(post("/web/application")
             .param("person.id", "1")
             .param("startDate", "2022-11-02")
             .param("endDate", "2022-11-03")
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("dayLength", "FULL")
         ).andExpect(status().is3xxRedirection());
     }
@@ -743,7 +749,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 .param("person.id", "1")
                 .param("startDate", "2022-11-02")
                 .param("endDate", "2022-11-03")
-                .param("vacationType.category", "HOLIDAY")
+                .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
             );
         }).hasCauseInstanceOf(AccessDeniedException.class);
@@ -777,9 +783,14 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(applicationInteractionService.apply(any(), any(), any())).thenReturn(someApplication());
 
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setRequiresApprovalToApply(true);
+
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
+
         perform(post("/web/application")
-            .param("vacationType.category", "HOLIDAY")
-            .param("vacationType.requiresApprovalToApply", "true"));
+            .param("vacationType.id", "1"));
 
         verify(applicationInteractionService).apply(any(), eq(person), any());
     }
@@ -791,9 +802,14 @@ class ApplicationForLeaveFormViewControllerTest {
         when(personService.getSignedInUser()).thenReturn(person);
         when(applicationInteractionService.directAllow(any(), any(), any())).thenReturn(someApplication());
 
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(1L);
+        vacationType.setRequiresApprovalToApply(false);
+
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(vacationType));
+
         perform(post("/web/application")
-            .param("vacationType.category", "HOLIDAY")
-            .param("vacationType.requiresApprovalToApply", "false"));
+            .param("vacationType.id", "1"));
 
         verify(applicationInteractionService).directAllow(any(), eq(person), any());
     }
@@ -805,11 +821,13 @@ class ApplicationForLeaveFormViewControllerTest {
         final Person person = personWithRole(OFFICE);
 
         when(personService.getSignedInUser()).thenReturn(person);
-        when(applicationInteractionService.apply(any(), any(), any())).thenReturn(applicationWithId(applicationId));
+        when(applicationInteractionService.directAllow(any(), any(), any())).thenReturn(applicationWithId(applicationId));
+
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
 
         perform(post("/web/application")
-            .param("vacationType.category", "HOLIDAY")
-            .param("vacationType.requiresApprovalToApply", "true"))
+            .param("vacationType.id", "1")
+        )
             .andExpect(flash().attribute("applySuccess", true))
             .andExpect(status().isFound())
             .andExpect(redirectedUrl("/web/application/" + applicationId));
@@ -833,7 +851,7 @@ class ApplicationForLeaveFormViewControllerTest {
             perform(post(url)
                 .param("holidayReplacementToAdd", "1")
                 .param("person", "1337")
-                .param("vacationType.categorfinal Long applicationId = 1L;y", "HOLIDAY")
+                .param("vacationType.id", "1")
                 .param("holidayReplacements[0].person.id", "42")
                 .param("holidayReplacements[1].person.id", "1337")
                 .param("add-holiday-replacement", ""));
@@ -857,7 +875,7 @@ class ApplicationForLeaveFormViewControllerTest {
             .header("X-Requested-With", "ajax")
             .param("holidayReplacementToAdd", "1")
             .param("person", "1337")
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("holidayReplacements[0].person.id", "42")
             .param("holidayReplacements[1].person.id", "1337")
             .param("add-holiday-replacement", ""))).hasCauseInstanceOf(AccessDeniedException.class);
@@ -878,7 +896,7 @@ class ApplicationForLeaveFormViewControllerTest {
         when(vacationTypeViewModelService.getVacationTypeColors()).thenReturn(List.of(new VacationTypeDto(1L, ORANGE)));
 
         final ResultActions perform = perform(post("/web/application/new")
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("holidayReplacements[0].person.id", "42")
             .param("holidayReplacements[1].person.id", "1337")
             .param("add-holiday-replacement", ""));
@@ -909,7 +927,7 @@ class ApplicationForLeaveFormViewControllerTest {
 
         final ResultActions perform = perform(post("/web/application/new/replacements")
             .header("X-Requested-With", "ajax")
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("holidayReplacements[0].person.id", "42")
             .param("holidayReplacements[1].person.id", "1337")
             .param("holidayReplacementToAdd", ""));
@@ -944,12 +962,11 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final ResultActions perform = perform(post(url)
-            .param("vacationType.category", "HOLIDAY")
+        perform(post(url)
+            .param("vacationType.id", "1")
             .param("add-holiday-replacement", "")
-            .param("holidayReplacementToAdd", "42"));
-
-        perform
+            .param("holidayReplacementToAdd", "42")
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("id", nullValue()),
@@ -975,14 +992,13 @@ class ApplicationForLeaveFormViewControllerTest {
         replacementPerson.setId(42L);
         when(personService.getPersonByID(42L)).thenReturn(Optional.of(replacementPerson));
 
-        final ResultActions perform = perform(post("/web/application/new/replacements")
+        perform(post("/web/application/new/replacements")
             .header("X-Requested-With", "ajax")
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("holidayReplacements[0].person.id", "1337")
             .param("holidayReplacements[1].person.id", "21")
-            .param("holidayReplacementToAdd", "42"));
-
-        perform
+            .param("holidayReplacementToAdd", "42")
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("holidayReplacement", allOf(
                 hasProperty("person", hasProperty("id", is(42L))),
@@ -1004,15 +1020,14 @@ class ApplicationForLeaveFormViewControllerTest {
         replacementPerson.setId(42L);
         when(personService.getPersonByID(42L)).thenReturn(Optional.of(replacementPerson));
 
-        final ResultActions perform = perform(post("/web/application/7/replacements")
+        perform(post("/web/application/7/replacements")
             .header("X-Requested-With", "ajax")
             .param("id", "7")
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("holidayReplacements[0].person.id", "1337")
             .param("holidayReplacements[1].person.id", "21")
-            .param("holidayReplacementToAdd", "42"));
-
-        perform
+            .param("holidayReplacementToAdd", "42")
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("holidayReplacement", allOf(
                 hasProperty("person", hasProperty("id", is(42L))),
@@ -1039,7 +1054,7 @@ class ApplicationForLeaveFormViewControllerTest {
             perform(post(url)
                 .param("remove-holiday-replacement", "1")
                 .param("person", "1337")
-                .param("vacationType.category", "HOLIDAY"));
+                .param("vacationType.id", "1"));
         }).hasCauseInstanceOf(AccessDeniedException.class);
     }
 
@@ -1057,14 +1072,13 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final ResultActions perform = perform(post("/web/application/new")
-            .param("vacationType.category", "HOLIDAY")
+        perform(post("/web/application/new")
+            .param("vacationType.id", "1")
             .param("holidayReplacements[0].person.id", "42")
             .param("holidayReplacements[1].person.id", "1337")
             .param("holidayReplacements[2].person.id", "21")
-            .param("remove-holiday-replacement", "1337"));
-
-        perform
+            .param("remove-holiday-replacement", "1337")
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("id", nullValue()),
@@ -1100,14 +1114,13 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final ResultActions perform = perform(post("/web/application/new")
-            .param("vacationType.category", "HOLIDAY")
+        perform(post("/web/application/new")
+            .param("vacationType.id", "1")
             .param("holidayReplacements[0].person.id", "42")
             .param("holidayReplacements[1].person.id", "1337")
             .param("holidayReplacements[2].person.id", "21")
-            .param("remove-holiday-replacement", "1337"));
-
-        perform
+            .param("remove-holiday-replacement", "1337")
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("applicationForLeaveForm", hasProperty("id", nullValue())))
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
@@ -1304,14 +1317,13 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final ResultActions perform = perform(post("/web/application/7")
-            .param("vacationType.category", "HOLIDAY")
+        perform(post("/web/application/7")
+            .param("vacationType.id", "1")
             .param("id", "7")
             .param("holidayReplacements[0].person.id", "42")
             .param("holidayReplacements[1].person.id", "1337")
-            .param("add-holiday-replacement", ""));
-
-        perform
+            .param("add-holiday-replacement", "")
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("id", is(7L)),
@@ -1341,15 +1353,14 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final ResultActions perform = perform(post("/web/application/7")
-            .param("vacationType.category", "HOLIDAY")
+        perform(post("/web/application/7")
+            .param("vacationType.id", "1")
             .param("id", "7")
             .param("holidayReplacements[0].person.id", "42")
             .param("holidayReplacements[1].person.id", "1337")
             .param("holidayReplacements[2].person.id", "21")
-            .param("remove-holiday-replacement", "1337"));
-
-        perform
+            .param("remove-holiday-replacement", "1337")
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("applicationForLeaveForm", allOf(
                 hasProperty("id", is(7L)),
@@ -1385,15 +1396,14 @@ class ApplicationForLeaveFormViewControllerTest {
         when(accountService.getHolidaysAccount(now.getYear(), signedInPerson)).thenReturn(Optional.of(account));
         when(settingsService.getSettings()).thenReturn(new Settings());
 
-        final ResultActions perform = perform(post("/web/application/7")
-            .param("vacationType.category", "HOLIDAY")
+        perform(post("/web/application/7")
+            .param("vacationType.id", "1")
             .param("id", "7")
             .param("holidayReplacements[0].person.id", "42")
             .param("holidayReplacements[1].person.id", "1337")
             .param("holidayReplacements[2].person.id", "21")
-            .param("remove-holiday-replacement", "1337"));
-
-        perform
+            .param("remove-holiday-replacement", "1337")
+        )
             .andExpect(status().isOk())
             .andExpect(model().attribute("applicationForLeaveForm", hasProperty("id", is(7L))))
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
@@ -1417,13 +1427,16 @@ class ApplicationForLeaveFormViewControllerTest {
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
         when(applicationInteractionService.edit(eq(application), any(Application.class), eq(person), eq(Optional.of("comment")))).thenReturn(editedApplication);
 
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
+
         perform(post("/web/application/1")
             .param("person.id", "1")
             .param("startDate", "28.10.2020")
             .param("endDate", "28.10.2020")
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("dayLength", "FULL")
-            .param("comment", "comment"))
+            .param("comment", "comment")
+        )
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/application/1"));
     }
@@ -1444,13 +1457,16 @@ class ApplicationForLeaveFormViewControllerTest {
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
         when(applicationInteractionService.edit(eq(application), any(Application.class), eq(person), eq(Optional.of("comment")))).thenReturn(editedApplication);
 
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
+
         perform(post("/web/application/1")
             .param("person.id", "1")
             .param("startDate", givenDate)
             .param("endDate", givenDate)
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("dayLength", "FULL")
-            .param("comment", "comment"))
+            .param("comment", "comment")
+        )
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/application/1"));
     }
@@ -1468,9 +1484,10 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("person.id", "1")
             .param("startDate", "28.10.2020")
             .param("endDate", "28.10.2020")
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("dayLength", "FULL")
-            .param("comment", "comment"))
+            .param("comment", "comment")
+        )
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/web/application/1"))
             .andExpect(flash().attribute("editError", true));
@@ -1490,7 +1507,7 @@ class ApplicationForLeaveFormViewControllerTest {
                 .param("person.id", "1")
                 .param("startDate", "28.10.2020")
                 .param("endDate", "28.10.2020")
-                .param("vacationType.category", "HOLIDAY")
+                .param("vacationType.id", "1")
                 .param("dayLength", "FULL")
                 .param("comment", "comment"))
         ).hasCauseInstanceOf(UnknownApplicationForLeaveException.class);
@@ -1510,13 +1527,16 @@ class ApplicationForLeaveFormViewControllerTest {
         when(applicationInteractionService.get(applicationId)).thenReturn(Optional.of(application));
         when(applicationInteractionService.edit(eq(application), any(Application.class), eq(person), eq(Optional.of("comment")))).thenThrow(EditApplicationForLeaveNotAllowedException.class);
 
+        when(vacationTypeService.getById(1L)).thenReturn(Optional.of(anyVacationType(1L)));
+
         perform(post("/web/application/1")
             .param("person.id", "1")
             .param("startDate", "28.10.2020")
             .param("endDate", "28.10.2020")
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("dayLength", "FULL")
-            .param("comment", "comment"))
+            .param("comment", "comment")
+        )
             .andExpect(status().isOk())
             .andExpect(view().name("application/application-notwaiting"));
     }
@@ -1545,9 +1565,10 @@ class ApplicationForLeaveFormViewControllerTest {
             .param("person.id", "1")
             .param("startDate", "28.10.2020")
             .param("endDate", "28.10.2020")
-            .param("vacationType.category", "HOLIDAY")
+            .param("vacationType.id", "1")
             .param("dayLength", "FULL")
-            .param("comment", "comment"))
+            .param("comment", "comment")
+        )
             .andExpect(status().isOk())
             .andExpect(view().name("application/application_form"))
             .andExpect(model().attribute("showHalfDayOption", is(true)));
@@ -1585,12 +1606,11 @@ class ApplicationForLeaveFormViewControllerTest {
         application.setStatus(WAITING);
         when(applicationInteractionService.get(7L)).thenReturn(Optional.of(application));
 
-        final ResultActions perform = perform(post("/web/application/7")
-            .param("vacationType.category", "HOLIDAY")
+        perform(post("/web/application/7")
+            .param("vacationType.id", "1")
             .param("person.id", "1")
-            .param("id", "7"));
-
-        perform
+            .param("id", "7")
+        )
             .andExpect(status().isOk())
             .andExpect(model().attributeHasFieldErrors("applicationForLeaveForm", "startDate"))
             .andExpect(model().attribute("selectableHolidayReplacements", contains(
@@ -1625,6 +1645,12 @@ class ApplicationForLeaveFormViewControllerTest {
         application.setEndDate(LocalDate.now().plusDays(20));
 
         return new Application();
+    }
+
+    private VacationType anyVacationType(Long id) {
+        final VacationType vacationType = new VacationType();
+        vacationType.setId(id);
+        return vacationType;
     }
 
     private Application applicationWithId(long id) {

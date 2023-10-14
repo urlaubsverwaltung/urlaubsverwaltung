@@ -35,6 +35,15 @@ public class ApplicationPage {
         page.locator(FROM_INPUT_SELECTOR).fill(dateString);
     }
 
+    public void selectVacationTypeOfName(String vacationTypeName) {
+        final Locator option = page.locator("option").and(page.getByText(vacationTypeName));
+        page.locator(VACATION_TYPE_SELECT_SELECTOR).selectOption(option.elementHandle());
+    }
+
+    public void reason(String reasonText) {
+        page.locator("[data-test-id=reason]").fill(reasonText);
+    }
+
     /**
      * selected the given person in the  replacement select box.
      * Note that this does not submit the form! Maybe there is JavaScript loaded which does it, though.
@@ -116,6 +125,22 @@ public class ApplicationPage {
     public void submit() {
         page.locator(SUBMIT_SELECTOR).click();
         page.waitForLoadState(DOMCONTENTLOADED);
+    }
+
+    public boolean showsFromError() {
+        return page.locator("[data-test-id=from-error]").isVisible();
+    }
+
+    public boolean showsToError() {
+        return page.locator("[data-test-id=to-error]").isVisible();
+    }
+
+    public boolean showsReason() {
+        return page.locator("[data-test-id=reason]").isVisible();
+    }
+
+    public boolean showsReasonError() {
+        return page.locator("[data-test-id=reason-error]").isVisible();
     }
 
     private HolidayReplacementRowElement getHolidayReplacementRow(Person person) {
