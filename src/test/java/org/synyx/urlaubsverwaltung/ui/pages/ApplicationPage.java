@@ -143,6 +143,21 @@ public class ApplicationPage {
         return page.locator("[data-test-id=reason-error]").isVisible();
     }
 
+    public boolean showsOvertimeReductionHours() {
+        return page.locator("[data-test-id=overtime-hours]").isVisible();
+    }
+    public boolean showsOvertimeReductionHoursError() {
+        return page.locator("[data-test-id=overtime-hours-error]").isVisible();
+    }
+
+    public void overtimeReductionHours(double hours) {
+        page.locator("[data-test-id=overtime-hours]").fill(String.valueOf(hours));
+    }
+
+    public void overtimeReductionMinutes(int minutes) {
+        page.locator("[data-test-id=overtime-minutes]").fill(String.valueOf(minutes));
+    }
+
     private HolidayReplacementRowElement getHolidayReplacementRow(Person person) {
 
         final List<Locator> rows = page.locator("[data-test-id=holiday-replacement-row]").all();

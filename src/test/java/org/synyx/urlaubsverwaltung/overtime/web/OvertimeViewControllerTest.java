@@ -218,7 +218,7 @@ class OvertimeViewControllerTest {
         when(overtimeService.getTotalOvertimeForPersonAndYear(person, year)).thenReturn(Duration.ofHours(1));
         when(overtimeService.getLeftOvertimeForPerson(person)).thenReturn(Duration.ZERO);
 
-        final Application applicationNonEditable = createApplication(person, createVacationTypeEntity(OVERTIME), today.plusDays(5), today.plusDays(5), FULL);
+        final Application applicationNonEditable = createApplication(person, createVacationTypeEntity(1L, OVERTIME), today.plusDays(5), today.plusDays(5), FULL);
         applicationNonEditable.setHours(Duration.ofHours(8));
 
         final List<ApplicationStatus> statuses = List.of(WAITING, TEMPORARY_ALLOWED, ALLOWED, ALLOWED_CANCELLATION_REQUESTED);

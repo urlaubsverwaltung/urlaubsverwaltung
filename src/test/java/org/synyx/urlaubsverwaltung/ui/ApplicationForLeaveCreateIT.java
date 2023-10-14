@@ -31,6 +31,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -268,8 +269,9 @@ class ApplicationForLeaveCreateIT {
 
         assertThat(applicationPage.showsReason()).isFalse();
 
-        applicationPage.selectVacationTypeOfName("Sonderurlaub");
+        applicationPage.selectVacationTypeOfName(msg("application.data.vacationType.specialleave", GERMAN));
         assertThat(applicationPage.showsReason()).isTrue();
+        assertThat(applicationPage.showsOvertimeReductionHours()).isFalse();
 
         applicationPage.submit();
 
@@ -279,6 +281,64 @@ class ApplicationForLeaveCreateIT {
 
         applicationPage.from(getNextWorkday());
         applicationPage.reason("some reason text.");
+        applicationPage.submit();
+
+        page.context().waitForCondition(applicationDetailPage::isVisible);
+        page.context().waitForCondition(applicationDetailPage::showsApplicationCreatedInfo);
+        // application created info vanishes sometime
+        page.context().waitForCondition(() -> !applicationDetailPage.showsApplicationCreatedInfo());
+
+        navigationPage.logout();
+        page.context().waitForCondition(loginPage::isVisible);
+    }
+
+    @Test
+    void ensureCreatingApplicationForLeaveOfTypeOvertime(Page page) {
+        final Person officePerson = createPerson("Alfred", "Pennyworth", List.of(USER, OFFICE));
+
+        final LoginPage loginPage = new LoginPage(page, messageSource, GERMAN);
+        final NavigationPage navigationPage = new NavigationPage(page);
+        final SettingsPage settingsPage = new SettingsPage(page);
+        final OverviewPage overviewPage = new OverviewPage(page, messageSource, GERMAN);
+        final ApplicationPage applicationPage = new ApplicationPage(page);
+        final ApplicationDetailPage applicationDetailPage = new ApplicationDetailPage(page, messageSource, GERMAN);
+
+        page.navigate("http://localhost:" + port);
+
+        page.context().waitForCondition(loginPage::isVisible);
+        loginPage.login(new LoginPage.Credentials(officePerson.getUsername(), "secret"));
+
+        page.waitForURL(url -> url.endsWith("/web/person/%s/overview".formatted(officePerson.getId())));
+        page.context().waitForCondition(navigationPage::isVisible);
+        page.context().waitForCondition(overviewPage::isVisible);
+        assertThat(overviewPage.isVisibleForPerson(officePerson.getNiceName(), LocalDate.now().getYear())).isTrue();
+
+        // ensure overtime feature is enabled
+        navigationPage.clickSettings();
+        settingsPage.clickWorkingTimeTab();
+        settingsPage.enableOvertime();
+        settingsPage.saveSettings();
+
+        assertThat(navigationPage.quickAdd.hasPopup()).isTrue();
+        navigationPage.quickAdd.click();
+        navigationPage.quickAdd.newApplication();
+        page.context().waitForCondition(applicationPage::isVisible);
+
+        assertThat(applicationPage.showsOvertimeReductionHours()).isFalse();
+
+        applicationPage.selectVacationTypeOfName(msg("application.data.vacationType.overtime", GERMAN));
+        assertThat(applicationPage.showsOvertimeReductionHours()).isTrue();
+        assertThat(applicationPage.showsReason()).isFalse();
+
+        applicationPage.submit();
+
+        assertThat(applicationPage.showsFromError()).isTrue();
+        assertThat(applicationPage.showsToError()).isTrue();
+        assertThat(applicationPage.showsOvertimeReductionHoursError()).isTrue();
+
+        applicationPage.from(getNextWorkday());
+        applicationPage.overtimeReductionHours(1);
+        applicationPage.overtimeReductionMinutes(30);
         applicationPage.submit();
 
         page.context().waitForCondition(applicationDetailPage::isVisible);
@@ -397,5 +457,9 @@ class ApplicationForLeaveCreateIT {
             nextWorkDay = nextWorkDay.plusDays(1);
         }
         return nextWorkDay;
+    }
+
+    private String msg(String code, Locale locale) {
+        return messageSource.getMessage(code, new Object[]{}, locale);
     }
 }

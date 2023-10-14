@@ -3816,7 +3816,7 @@ class ApplicationMailServiceIT extends TestContainersBase {
         final Application application = new Application();
         application.setId(1234L);
         application.setPerson(person);
-        application.setVacationType(createVacationTypeEntity(HOLIDAY, "application.data.vacationType.holiday"));
+        application.setVacationType(createVacationTypeEntity(1L, HOLIDAY, "application.data.vacationType.holiday"));
         application.setDayLength(FULL);
         application.setApplicationDate(now);
         application.setStartDate(now);

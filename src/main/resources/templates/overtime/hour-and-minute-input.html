@@ -25,7 +25,11 @@
             />
           </th:block>
         </th:block>
-        <span th:if="${#fields.hasErrors('hours')}" class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400">
+        <span
+          th:if="${#fields.hasErrors('hours')}"
+          class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+          data-test-id="overtime-hours-error"
+        >
           <th:block th:errors="*{hours}">hours Error</th:block>
         </span>
       </span>
@@ -48,7 +52,11 @@
             />
           </th:block>
         </th:block>
-        <span th:if="${#fields.hasErrors('minutes')}" class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400">
+        <span
+          th:if="${#fields.hasErrors('minutes')}"
+          class="tw-mt-1 tw-text-sm tw-text-red-800 dark:tw-text-red-400"
+          data-test-id="overtime-minutes-error"
+        >
           <th:block th:errors="*{minutes}">minutes Error</th:block>
         </span>
       </span>
