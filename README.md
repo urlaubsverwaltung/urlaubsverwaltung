@@ -292,14 +292,14 @@ Auf diese Weise wird die Anwendung mit einer PostgreSQL-Datenbankmanagementsyste
 
 Die Demodaten enthalten folgende **Benutzer**, ein Passwort wird nicht benötigt:
 
-| Benutzername         | Rolle                            |
-|----------------------|----------------------------------|
-| user                 | User                             |
-| departmentHead       | User & Abteilungsleiter          |
-| secondStageAuthority | User & Freigabe-Verantwortlicher |
-| boss                 | User & Chef                      |
-| office               | User & Office                    |
-| admin                | User & Admin                     |
+| Benutzername                                 | Passwort | Rolle                            |
+|----------------------------------------------|----------|----------------------------------|
+| user@urlaubsverwaltung.cloud                 | secret   | User                             |
+| departmentHead@urlaubsverwaltung.cloud       | secret   | User & Abteilungsleiter          |
+| secondStageAuthority@urlaubsverwaltung.cloud | secret   | User & Freigabe-Verantwortlicher |
+| boss@urlaubsverwaltung.cloud                 | secret   | User & Chef                      |
+| office@urlaubsverwaltung.cloud               | secret   | User & Office                    |
+| admin@urlaubsverwaltung.cloud                | secret   | User & Admin                     |
 
 Möchte man, dass beim Starten der Anwendung keine Demodaten generiert werden, muss die Konfiguration
 

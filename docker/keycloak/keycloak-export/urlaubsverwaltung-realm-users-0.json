@@ -1,17 +1,17 @@
 {
   "realm" : "urlaubsverwaltung-realm",
   "users" : [ {
-    "id" : "9e7f6ab0-7075-4a17-853b-9a76fd063381",
+    "id" : "l0k9j8h7-7075-4a17-853b-9a76fd064385",
     "createdTimestamp" : 1608290049557,
-    "username" : "boss",
+    "username" : "departmentHead",
     "enabled" : true,
     "totp" : false,
     "emailVerified" : true,
-    "firstName" : "Max",
-    "lastName" : "Mustermann",
-    "email" : "boss@example.org",
+    "firstName" : "Thorsten",
+    "lastName" : "Krüger",
+    "email" : "departmentHead@urlaubsverwaltung.cloud",
     "credentials" : [ {
-      "id" : "a1d26e8c-889b-475c-a8a6-bf2952039937",
+      "id" : "a1d26e8c-889b-475c-a8a6-bf1952039939",
       "type" : "password",
       "createdDate" : 1608291016953,
       "secretData" : "{\"value\":\"g04uOVjPtRih+pnh9NGCRMRLv++n5DZ6syKJ9UTtht5g242bp2Cb9TMAoOn2GhCn1rSHJH7SE3d7lMhhCRz8Og==\",\"salt\":\"06nlS41GB2EFTXwiXs9a+A==\"}",
@@ -24,9 +24,84 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ "/URLAUBSVERWALTUNG_ACCESS", "/URLAUBSVERWALTUNG_PRIVILEGED" ]
+    "groups" : [ "/URLAUBSVERWALTUNG_ACCESS" ]
   }, {
-    "id" : "58400ef7-1cc9-48cb-93a8-f45c7af186ad",
+    "id" : "a2b2c3d4-7075-4a17-853b-9a76fd063381",
+    "createdTimestamp" : 1608290049557,
+    "username" : "secondStageAuthority",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "firstName" : "Juliane",
+    "lastName" : "Huber",
+    "email" : "secondStageAuthority@urlaubsverwaltung.cloud",
+    "credentials" : [ {
+      "id" : "a1a26e8c-889b-475c-a8a6-bf2952038939",
+      "type" : "password",
+      "createdDate" : 1608291016953,
+      "secretData" : "{\"value\":\"g04uOVjPtRih+pnh9NGCRMRLv++n5DZ6syKJ9UTtht5g242bp2Cb9TMAoOn2GhCn1rSHJH7SE3d7lMhhCRz8Og==\",\"salt\":\"06nlS41GB2EFTXwiXs9a+A==\"}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "offline_access", "uma_authorization" ],
+    "clientRoles" : {
+      "account" : [ "view-profile", "manage-account" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ "/URLAUBSVERWALTUNG_ACCESS" ]
+  }, {
+    "id" : "a1b2c3d4-7075-4b17-853b-7a76fd063381",
+    "createdTimestamp" : 1608290049557,
+    "username" : "admin",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "firstName" : "Anne",
+    "lastName" : "Roth",
+    "email" : "admin@urlaubsverwaltung.cloud",
+    "credentials" : [ {
+      "id" : "a1d26e8c-889b-475c-a8a6-bf2962038939",
+      "type" : "password",
+      "createdDate" : 1608291016953,
+      "secretData" : "{\"value\":\"g04uOVjPtRih+pnh9NGCRMRLv++n5DZ6syKJ9UTtht5g242bp2Cb9TMAoOn2GhCn1rSHJH7SE3d7lMhhCRz8Og==\",\"salt\":\"06nlS41GB2EFTXwiXs9a+A==\"}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "offline_access", "uma_authorization" ],
+    "clientRoles" : {
+      "account" : [ "view-profile", "manage-account" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ "/URLAUBSVERWALTUNG_ACCESS" ]
+  }, {
+    "id" : "9e7f6ab1-7075-4a17-853b-9a76fd063381",
+    "createdTimestamp" : 1608290049557,
+    "username" : "boss",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : true,
+    "firstName" : "Theresa",
+    "lastName" : "Scherer",
+    "email" : "boss@urlaubsverwaltung.cloud",
+    "credentials" : [ {
+      "id" : "a1d26e8c-889b-475c-a8a6-bf2952037937",
+      "type" : "password",
+      "createdDate" : 1608291016953,
+      "secretData" : "{\"value\":\"g04uOVjPtRih+pnh9NGCRMRLv++n5DZ6syKJ9UTtht5g242bp2Cb9TMAoOn2GhCn1rSHJH7SE3d7lMhhCRz8Og==\",\"salt\":\"06nlS41GB2EFTXwiXs9a+A==\"}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "offline_access", "uma_authorization" ],
+    "clientRoles" : {
+      "account" : [ "view-profile", "manage-account" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ "/URLAUBSVERWALTUNG_ACCESS" ]
+  }, {
+    "id" : "58400ef7-1cc9-48cb-93a6-f45c7af186ad",
     "createdTimestamp" : 1608289715282,
     "username" : "office",
     "enabled" : true,
@@ -34,7 +109,7 @@
     "emailVerified" : true,
     "firstName" : "Marlene",
     "lastName" : "Muster",
-    "email" : "office@example.org",
+    "email" : "office@urlaubsverwaltung.cloud",
     "credentials" : [ {
       "id" : "32b65824-bb1e-4d56-9176-5c539037c5ea",
       "type" : "password",
@@ -49,9 +124,9 @@
       "account" : [ "view-profile", "manage-account" ]
     },
     "notBefore" : 0,
-    "groups" : [ "/URLAUBSVERWALTUNG_ACCESS", "/URLAUBSVERWALTUNG_PRIVILEGED" ]
+    "groups" : [ "/URLAUBSVERWALTUNG_ACCESS" ]
   }, {
-    "id" : "3d07ae0d-90a1-4dfd-9393-172c0c9e7c10",
+    "id" : "3d07ae0d-90a2-4dfd-9393-172c0c9e7c10",
     "createdTimestamp" : 1608289984833,
     "username" : "user",
     "enabled" : true,
@@ -59,9 +134,9 @@
     "emailVerified" : true,
     "firstName" : "Klaus",
     "lastName" : "Müller",
-    "email" : "user@example.org",
+    "email" : "user@urlaubsverwaltung.cloud",
     "credentials" : [ {
-      "id" : "87dbff48-3016-44ae-9eeb-84a899d570dd",
+      "id" : "87dbff48-3026-44ae-9eeb-84a899d570dd",
       "type" : "password",
       "createdDate" : 1608291068439,
       "secretData" : "{\"value\":\"8xJSqRDU0IMbCJLPN3xn94HSHozvWHx+K1B8aRMDABNUhtit8LqdPokIVZsDFAyx9pfIToZDLrGHfTK5Ovd+3g==\",\"salt\":\"m4Eiq27tcWt5eX2tdABLdg==\"}",
