@@ -170,12 +170,7 @@ Der erste Benutzer, welcher sich erfolgreich bei der Urlaubsverwaltung anmeldet,
 #### Datenbank konfigurieren
 
 Die Anwendung verwendet zur Speicherung der Daten ein PostgreSQL-Datenbankmanagementsystem. 
-Erstelle in deinem PostgreSQL-Datenbankmanagementsystem eine Datenbank mit z.B. dem Namen `urlaubsverwaltung`.
-
-```sql
-CREATE DATABASE urlaubsverwaltung DEFAULT CHARACTER SET = utf8mb4 DEFAULT COLLATE = utf8mb4_unicode_ci;
-```
-sowie einen Benutzer mit Zugriffsrechten für diese Datenbank und konfiguriere diese
+Erstelle in deinem PostgreSQL-Datenbankmanagementsystem eine Datenbank sowie einen Benutzer mit Zugriffsrechten für diese Datenbank und konfiguriere diese
 
 ```properties
 spring.datasource.url=jdbc:postgresql://$HOST:$PORT/$NAME_DER_DATENBANK
@@ -187,7 +182,7 @@ Wenn Sie die Urlaubsverwaltung das erste Mal starten, werden automatisch alle Da
 
 #### E-Mail-Server konfigurieren
 
-Um den E-Mail-Server zu konfigurieren müssen folgende Konfigurationen vorgenommen werden.
+Um den E-Mail-Server zu konfigurieren, müssen folgende Konfigurationen vorgenommen werden.
 
 ```properties
 uv.mail.sender=absender@example.org         # Absender der E-Mails
